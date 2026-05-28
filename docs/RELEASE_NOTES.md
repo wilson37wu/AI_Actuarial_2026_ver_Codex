@@ -4,7 +4,7 @@
 **Version:** v1.0.0-dev  
 **Release Date:** 2026-05-23  
 **Status:** ⚠️ DEVELOPMENT / INTERNAL USE ONLY — NOT CLEARED FOR PRODUCTION  
-**Repository:** https://github.com/wilson37wu/AI_Actuarial_2026_ver  
+**Repository:** https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex  
 **Branch:** main  
 **Development Cycles:** 33 automated 12-hour cycles (2026-05-17 → 2026-05-23)
 

@@ -2652,7 +2652,7 @@ results = DistributedExecutor(n_workers=8).map(worker, scenario_ids)
 
 **Actions Taken:**
 - Read state file and MODEL_DEV_LOG.md — confirmed 5/5 phases complete, 100% completion, 34/34 tasks.
-- Note: local folder is not a git repo mount; git operations target remote https://github.com/wilson37wu/AI_Actuarial_2026_ver
+- Note: local folder is not a git repo mount; git operations target remote https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex
 - Created Gmail draft to wilson.cuhk.ifa@gmail.com: recurring post-completion status report.
 
 **Outstanding Human Actions (unchanged from prior cycle):**

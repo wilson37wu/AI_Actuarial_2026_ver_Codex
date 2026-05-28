@@ -46,7 +46,7 @@
 | **Development framework** | Python 3.10+, NumPy / SciPy / Pandas / concurrent.futures |
 | **Stochastic engine** | Hull-White 1-Factor (interest rates) + Geometric Brownian Motion (equity) |
 | **Scenario count (TVOG)** | 500 minimum / 1,000 recommended (ASOP 56 §3.5 validated) |
-| **Repository** | https://github.com/wilson37wu/AI_Actuarial_2026_ver (branch: main) |
+| **Repository** | https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex (branch: main) |
 | **Model owner** | [Model Owner — to be assigned] |
 | **Assumption owner** | [Assumption Owner — to be assigned] |
 | **Development lead** | Claude Actuarial Agent (AI-assisted development) |

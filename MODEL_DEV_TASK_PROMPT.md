@@ -6,7 +6,7 @@ description: "Autonomous model development task with state persistence, GitHub c
 # Automated Actuarial Model Development Task
 
 **Task Frequency:** Every 12 hours  
-**Repository:** https://github.com/wilson37wu/AI_Actuarial_2026_ver
+**Repository:** https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex
 **State File:** `.claude-dev/MODEL_DEV_STATE.json`  
 **Email Recipient:** wilson.cuhk.ifa@gmail.com (update below)
 
@@ -248,7 +248,7 @@ Use the Gmail tool to create a draft email:
 
 <h4>🔗 Commit & Code</h4>
 <p>
-  <a href="https://github.com/wilson37wu/AI_Actuarial_2026_ver/commit/{latest_commit_sha}">View Latest Commit</a><br/>
+  <a href="https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex/commit/{latest_commit_sha}">View Latest Commit</a><br/>
   Branch: main<br/>
   Files Changed: {list of modified files}
 </p>
@@ -352,7 +352,7 @@ Final docs, model card, deployment checklist.
 Before enabling this task:
 
 - [ ] `.claude-dev/MODEL_DEV_STATE.json` created with your repo URL
-- [ ] Repository URL verified (https://github.com/wilson37wu/AI_Actuarial_2026_ver)
+- [ ] Repository URL verified (https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex)
 - [ ] Email address updated in this prompt
 - [ ] Git credentials configured (name, email, token/SSH)
 - [ ] Task frequency set to cron: `0 */12 * * *` (every 12 hours)
