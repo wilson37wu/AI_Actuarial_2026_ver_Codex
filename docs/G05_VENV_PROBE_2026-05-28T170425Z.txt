@@ -1,0 +1,8 @@
+﻿python.exe : C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe: No module named venv
+At line:21 char:13
++   $output = & $py @($cmd.Args) 2>&1 | Out-String
++             ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Program File...dule named venv:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+

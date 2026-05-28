@@ -1,0 +1,199 @@
+{
+  "model_name": "PAR Fund Stochastic ALM & TVOG",
+  "model_version": "0.2.0",
+  "audit_trail": [
+    {
+      "entry_id": "0d8ba45f2ed1439ca0923c8e56eeaa32",
+      "timestamp": "2026-05-18T02:18:55.749102+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Claude-Actuarial-Agent",
+      "description": "Governance event: Initial risk register seeded from Phase 1 findings (8 entries)",
+      "details": {
+        "source_documents": [
+          "docs/MODEL_AUDIT_REPORT.md",
+          "docs/IA_GOVERNANCE_REQUIREMENTS.md",
+          "docs/SOA_ASSUMPTIONS_DOCUMENT.md",
+          "docs/VALIDATION_FRAMEWORK_REVIEW.md"
+        ],
+        "entries_created": 8,
+        "critical_open": 0,
+        "critical_in_progress": 4
+      },
+      "phase": "Phase 2: Industry Standards Alignment",
+      "digest": "e219725233a79d2c63050b04ef66ccbe15a9d740d546968f2e7e953d8acde13d",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "0fe619bb4df64602ba939fdba0b9911a",
+      "timestamp": "2026-05-18T02:18:55.749336+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "Claude-Actuarial-Agent",
+      "description": "Model run cycle-11: PASS",
+      "details": {
+        "run_id": "cycle-11",
+        "scenario_count": 0,
+        "duration_seconds": 3600.0,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/governance/__init__.py",
+          "par_model_v2/governance/audit_trail.py",
+          "tests/test_governance.py",
+          "docs/GOVERNANCE_FRAMEWORK.md"
+        ],
+        "test_summary": "161/161 passed"
+      },
+      "phase": "Phase 2: Industry Standards Alignment",
+      "digest": "8ae98f0b149185d2b0072143313b8e14384d05e941e33c2d0f57dd2aabc9b05a",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "df66318a5f0d4405b482e65dbcdc5f88",
+      "timestamp": "2026-05-18T02:18:55.749419+00:00",
+      "entry_type": "VALIDATION",
+      "actor": "Claude-Actuarial-Agent",
+      "description": "Validation: tests/ (all) \u2014 161/161 passed (PASS)",
+      "details": {
+        "test_suite": "tests/ (all)",
+        "tests_run": 161,
+        "tests_passed": 161,
+        "tests_failed": 0,
+        "outcome": "PASS",
+        "failed_tests": []
+      },
+      "phase": "Phase 2: Industry Standards Alignment",
+      "digest": "d857f8abefde56df9416d6d8f07c406aa9b93e16ca1f8e3d92787947783cc757",
+      "corrects_entry_id": null
+    }
+  ],
+  "change_records": [],
+  "risk_register": [
+    {
+      "risk_id": "MR-001",
+      "title": "Discount rate exceeds CBIRC regulatory cap",
+      "description": "Current discount rate assumption is 3.5%, exceeding the CBIRC regulatory cap of 3.0% (effective 2023 reserve valuation guidance). This produces an understated liability reserve and overstated solvency margin.",
+      "category": "assumption_error",
+      "likelihood": "HIGH",
+      "impact": "CRITICAL",
+      "overall_rating": "CRITICAL",
+      "owner": "Assumption Owner",
+      "mitigation": "Reduce discount rate to \u22643.0% in Phase 4 calibration; document deviation formally per ASOP 25 \u00a73.3.",
+      "mitigation_status": "IN_PROGRESS",
+      "related_standard": "SOA ASOP 25 \u00a73.3; CBIRC Reserve Valuation Guidance 2023",
+      "created_at": "2026-05-18T02:18:55.748943+00:00",
+      "updated_at": "2026-05-18T02:18:55.748943+00:00",
+      "notes": "Flagged in docs/SOA_ASSUMPTIONS_DOCUMENT.md \u00a73.3"
+    },
+    {
+      "risk_id": "MR-002",
+      "title": "Investment return assumptions overstated vs CNY market",
+      "description": "Bond return assumptions (4.0\u20135.0%) are 100\u2013180 bps above current CNY government bond yields (2.2\u20132.6% as of calibration date). Equity ERP has not been calibrated. This systematically understates TVOG and liability PV.",
+      "category": "assumption_error",
+      "likelihood": "HIGH",
+      "impact": "HIGH",
+      "overall_rating": "HIGH",
+      "owner": "Assumption Owner",
+      "mitigation": "Recalibrate bond returns and ERP to CNY market data in Phase 4 (GBMCalibrator); interim sensitivity analysis required.",
+      "mitigation_status": "IN_PROGRESS",
+      "related_standard": "SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3",
+      "created_at": "2026-05-18T02:18:55.749003+00:00",
+      "updated_at": "2026-05-18T02:18:55.749003+00:00",
+      "notes": "GBMCalibrator scaffolded in calibration_framework.py; full calibration Phase 4."
+    },
+    {
+      "risk_id": "MR-003",
+      "title": "Dynamic lapse assumption absent",
+      "description": "No dynamic lapse function is implemented. Dynamic lapse is the single most impactful assumption for TVOG and ALM under stressed rate scenarios. Static lapse at current flat rates will materially understate TVOG sensitivity (estimated \u00b115\u201330% TVOG per \u00b125% lapse shock per Phase 1 assessment).",
+      "category": "model_error",
+      "likelihood": "MEDIUM",
+      "impact": "CRITICAL",
+      "overall_rating": "CRITICAL",
+      "owner": "Model Developer",
+      "mitigation": "Implement dynamic lapse function in Phase 3/4; document functional form and calibration basis.",
+      "mitigation_status": "OPEN",
+      "related_standard": "SOA ASOP 7 \u00a73.3; IA TAS M \u00a73.5",
+      "created_at": "2026-05-18T02:18:55.749015+00:00",
+      "updated_at": "2026-05-18T02:18:55.749015+00:00",
+      "notes": "Identified in Phase 1 audit; no implementation yet."
+    },
+    {
+      "risk_id": "MR-004",
+      "title": "P/Q measure not enforced at runtime",
+      "description": "Prior to Phase 2, the codebase did not enforce or document the distinction between real-world (P) and risk-neutral (Q) scenario sets. Mixing measures is a critical actuarial error that invalidates both VaR/ES and TVOG outputs.",
+      "category": "model_error",
+      "likelihood": "LOW",
+      "impact": "CRITICAL",
+      "overall_rating": "CRITICAL",
+      "owner": "Model Developer",
+      "mitigation": "Measure enum implemented in esg_process.py (Phase 2, Task 1). LossDistribution enforces Measure.P for VaR/ES (risk_metrics.py). Remaining gap: simulate() stubs do not yet validate measure at execution.",
+      "mitigation_status": "IN_PROGRESS",
+      "related_standard": "SOA ASOP 56 \u00a73.1.3; IA TAS M \u00a73.4",
+      "created_at": "2026-05-18T02:18:55.749025+00:00",
+      "updated_at": "2026-05-18T02:18:55.749025+00:00",
+      "notes": "Critical Deviation D-04 in MODEL_AUDIT_REPORT.md. Partially remediated."
+    },
+    {
+      "risk_id": "MR-005",
+      "title": "Distributed executor pickling failure",
+      "description": "DistributedExecutor fails to serialise complex model objects for multiprocessing, causing 7 test failures in the original repository test suite. This blocks all distributed scenario execution, TVOG computation, and VaR/ES integration.",
+      "category": "process_risk",
+      "likelihood": "HIGH",
+      "impact": "HIGH",
+      "overall_rating": "HIGH",
+      "owner": "Model Developer",
+      "mitigation": "Fix pickling in Phase 3, Task 1 (Fix distributed executor pickling bug). This is the critical path for TVOG.",
+      "mitigation_status": "OPEN",
+      "related_standard": "SOA ASOP 56 \u00a73.5 (scenario adequacy requires successful batch execution)",
+      "created_at": "2026-05-18T02:18:55.749034+00:00",
+      "updated_at": "2026-05-18T02:18:55.749034+00:00",
+      "notes": "Identified in VALIDATION_FRAMEWORK_REVIEW.md as highest-leverage Phase 3 fix."
+    },
+    {
+      "risk_id": "MR-006",
+      "title": "Model validation readiness below production threshold",
+      "description": "Overall validation readiness assessed at 2/5 (development-grade). Stochastic validation (scenario convergence, martingale test, VaR/ES integration) is entirely absent. Model is not fit for regulatory reporting or production use in current state.",
+      "category": "governance_risk",
+      "likelihood": "HIGH",
+      "impact": "CRITICAL",
+      "overall_rating": "CRITICAL",
+      "owner": "Assumption Owner",
+      "mitigation": "4-layer validation framework implementation across Phases 3\u20134. Full validation cadence in Phase 5.",
+      "mitigation_status": "IN_PROGRESS",
+      "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; APS X2",
+      "created_at": "2026-05-18T02:18:55.749042+00:00",
+      "updated_at": "2026-05-18T02:18:55.749042+00:00",
+      "notes": "Documented in VALIDATION_FRAMEWORK_REVIEW.md."
+    },
+    {
+      "risk_id": "MR-007",
+      "title": "No assumption change control process",
+      "description": "The model has no documented assumption change control process. Any assumption can be changed without sign-off, impact assessment, or audit trail. This is a material IA TAS M \u00a73.7 gap.",
+      "category": "governance_risk",
+      "likelihood": "HIGH",
+      "impact": "HIGH",
+      "overall_rating": "HIGH",
+      "owner": "Assumption Owner",
+      "mitigation": "GovernanceStore + ChangeRecord + SignOffWorkflow implemented in Phase 2, Task 4 (this module). Requires organisational adoption.",
+      "mitigation_status": "IN_PROGRESS",
+      "related_standard": "IA TAS M \u00a73.7; IA TAS M \u00a73.3",
+      "created_at": "2026-05-18T02:18:55.749049+00:00",
+      "updated_at": "2026-05-18T02:18:55.749049+00:00",
+      "notes": "Remediated by this module (audit_trail.py). Framework in place; process adoption pending."
+    },
+    {
+      "risk_id": "MR-008",
+      "title": "HW1F calibration not yet executed",
+      "description": "HullWhiteCalibrator.calibrate() is a NotImplementedError stub. HW1F parameters (a=0.10, \u03c3_r=0.012) are placeholders producing model swaption vol ~250 bps vs ~42 bps market \u2014 a 6x error. All interest rate paths and ZCB prices derived from these parameters are unreliable.",
+      "category": "model_error",
+      "likelihood": "HIGH",
+      "impact": "CRITICAL",
+      "overall_rating": "CRITICAL",
+      "owner": "Model Developer",
+      "mitigation": "Implement L-BFGS-B calibration in Phase 4 using CNY swaption market data.",
+      "mitigation_status": "OPEN",
+      "related_standard": "SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3",
+      "created_at": "2026-05-18T02:18:55.749056+00:00",
+      "updated_at": "2026-05-18T02:18:55.749056+00:00",
+      "notes": "Calibration scaffold complete (calibration_framework.py). Data sourcing required."
+    }
+  ]
+}

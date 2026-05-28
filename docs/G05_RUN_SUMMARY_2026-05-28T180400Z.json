@@ -1,0 +1,59 @@
+﻿{
+    "timestamp_utc":  "2026-05-28T180400Z",
+    "status":  "BLOCKED",
+    "run_type":  "G-05 runtime blocker re-check",
+    "results":  [
+                    {
+                        "name":  "environment_probe",
+                        "artifact":  "docs\\G05_ENVIRONMENT_PROBE_2026-05-28T180400Z.json",
+                        "exit_code":  0
+                    },
+                    {
+                        "name":  "static_guard",
+                        "artifact":  "docs\\G05_STATIC_GUARD_REPORT_2026-05-28T180400Z.json",
+                        "exit_code":  0
+                    },
+                    {
+                        "name":  "compileall",
+                        "artifact":  "docs\\G05_COMPILEALL_2026-05-28T180400Z.txt",
+                        "exit_code":  0
+                    },
+                    {
+                        "name":  "pytest_risk_metrics",
+                        "artifact":  "docs\\G05_PYTEST_RISK_METRICS_2026-05-28T180400Z.txt",
+                        "exit_code":  1
+                    },
+                    {
+                        "name":  "pytest_tvog",
+                        "artifact":  "docs\\G05_PYTEST_TVOG_2026-05-28T180400Z.txt",
+                        "exit_code":  1
+                    },
+                    {
+                        "name":  "pytest_full",
+                        "artifact":  "docs\\G05_PYTEST_FULL_2026-05-28T180400Z.txt",
+                        "exit_code":  1
+                    },
+                    {
+                        "name":  "venv_probe",
+                        "artifact":  "docs\\G05_VENV_PROBE_2026-05-28T180400Z.txt",
+                        "exit_code":  1
+                    },
+                    {
+                        "name":  "pip_dry_run",
+                        "artifact":  "docs\\G05_PIP_DRY_RUN_2026-05-28T180400Z.txt",
+                        "exit_code":  1
+                    },
+                    {
+                        "name":  "git_status",
+                        "artifact":  "docs\\G05_GIT_STATUS_2026-05-28T180400Z.txt",
+                        "exit_code":  128
+                    }
+                ],
+    "blockers":  [
+                     "Reachable interpreter lacks pytest, numpy, pandas, and scipy.",
+                     "Reachable interpreter lacks stdlib venv module.",
+                     "pip cannot reach PyPI in sandbox and no workspace offline wheelhouse is present.",
+                     "Local Git metadata is incomplete, so commit and push remain blocked."
+                 ],
+    "next_step":  "Provision dependencies from requirements-dev.txt in a usable Python environment, restore complete Git metadata, rerun targeted G-05 tests and full suite."
+}

@@ -1,0 +1,8 @@
+﻿python.exe : C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe: No module named pytest
+At line:14 char:1
++ & $py -m pytest tests/test_tvog.py -q *> "docs\G05_PYTEST_TVOG_$ts.tx ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Program File...le named pytest:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+

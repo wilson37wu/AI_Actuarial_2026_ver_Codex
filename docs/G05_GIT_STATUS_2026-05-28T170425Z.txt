@@ -1,0 +1,8 @@
+﻿git : fatal: not a git repository (or any of the parent directories): .git
+At line:27 char:14
++ $gitOutput = git status --short 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (fatal: not a gi...ectories): .git:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+

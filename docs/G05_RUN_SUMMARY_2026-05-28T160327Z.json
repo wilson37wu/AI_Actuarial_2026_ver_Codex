@@ -1,0 +1,26 @@
+﻿{
+    "timestamp_utc":  "2026-05-28T160327Z",
+    "python_executable":  "C:\\Program Files\\PostgreSQL\\18\\pgAdmin 4\\python\\python.exe",
+    "artifacts":  {
+                      "environment_probe":  "docs/G05_ENVIRONMENT_PROBE_2026-05-28T160327Z.json",
+                      "static_guard_report":  "docs/G05_STATIC_GUARD_REPORT_2026-05-28T160327Z.json",
+                      "compileall":  "docs/G05_COMPILEALL_2026-05-28T160327Z.txt",
+                      "pytest_risk_metrics":  "docs/G05_PYTEST_RISK_METRICS_2026-05-28T160327Z.txt",
+                      "pytest_tvog":  "docs/G05_PYTEST_TVOG_2026-05-28T160327Z.txt",
+                      "pytest_full":  "docs/G05_PYTEST_FULL_2026-05-28T160327Z.txt",
+                      "venv_probe":  "docs/G05_VENV_PROBE_2026-05-28T160327Z.txt",
+                      "pip_dry_run":  "docs/G05_PIP_DRY_RUN_2026-05-28T160327Z.txt",
+                      "git_status":  "docs/G05_GIT_STATUS_2026-05-28T160327Z.txt"
+                  },
+    "exit_codes":  {
+                       "environment_probe":  0,
+                       "static_guard_report":  0,
+                       "compileall":  0,
+                       "pytest_risk_metrics":  1,
+                       "pytest_tvog":  1,
+                       "pytest_full":  1,
+                       "venv_probe":  1,
+                       "pip_dry_run":  1,
+                       "git_status":  128
+                   }
+}

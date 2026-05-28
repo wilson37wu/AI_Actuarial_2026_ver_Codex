@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAR Endowment Actuarial Model</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0c0e1a;--s1:#141728;--s2:#1c2038;--s3:#242848;--border:#2a2e50;
+  --acc:#5b8df7;--acc2:#a06cf5;--acc3:#27c9a0;--acc4:#f59340;--acc5:#e85c7a;
+  --ok:#2fc97a;--warn:#f5c842;--err:#e05252;
+  --t1:#eef0f8;--t2:#8f96b0;--t3:#4d5370;
+  --r:8px;--rs:5px;--f:'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--t1);font-family:var(--f);font-size:13px;min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* HEADER */
+header{
+  background:linear-gradient(135deg,var(--s1) 0%,#10122a 100%);
+  border-bottom:1px solid var(--border);padding:14px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+}
+.h-brand{display:flex;align-items:center;gap:12px}
+.h-icon{
+  width:38px;height:38px;border-radius:9px;font-size:18px;
+  background:linear-gradient(135deg,var(--acc),var(--acc2));
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.h-title{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.h-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.h-actions{display:flex;gap:8px;align-items:center}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:var(--rs);border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .14s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn-ghost{background:var(--s2);color:var(--t2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--s3);color:var(--t1)}
+.btn-acc{background:var(--acc);color:#fff}
+.btn-acc:hover{background:#4a7dee}
+.btn-ok{background:var(--ok);color:#fff}
+.btn-ok:hover{background:#25b36a}
+.btn-warn{background:var(--warn);color:#111}
+.btn-run{
+  background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;
+  padding:9px 24px;font-size:13px;border-radius:var(--r);
+  box-shadow:0 3px 16px rgba(91,141,247,.4);
+}
+.btn-run:hover{box-shadow:0 5px 22px rgba(91,141,247,.55)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-xs{padding:3px 8px;font-size:11px}
+
+/* TABS */
+.tab-nav{
+  display:flex;border-bottom:1px solid var(--border);
+  background:var(--s1);padding:0 28px;
+  position:sticky;top:67px;z-index:199;overflow-x:auto;
+}
+.tab-btn{
+  padding:13px 18px;font-size:12px;font-weight:600;color:var(--t3);
+  background:transparent;border:none;cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.tab-btn:hover{color:var(--t1)}
+.tab-btn.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tab-badge{
+  background:var(--ok);color:#fff;border-radius:10px;
+  padding:1px 6px;font-size:10px;font-weight:700;
+}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* LAYOUT */
+main{padding:24px 28px;max-width:1440px;margin:0 auto}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:18px}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.card-title-left{display:flex;align-items:center;gap:8px}
+.ctag{width:3px;height:14px;border-radius:2px;background:var(--acc);display:inline-block}
+.ctag-g{background:var(--acc3)}
+.ctag-p{background:var(--acc4)}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:600;color:var(--t2);letter-spacing:.3px}
+.field input,.field select,.field textarea{
+  background:var(--s2);border:1px solid var(--border);color:var(--t1);
+  border-radius:var(--rs);padding:8px 11px;font-size:13px;
+  font-family:var(--f);outline:none;width:100%;transition:border-color .14s;
+}
+.field input:focus,.field select:focus{border-color:var(--acc)}
+.field input.err{border-color:var(--err)}
+.field-hint{font-size:10px;color:var(--t3)}
+.field-err{font-size:10px;color:var(--err);display:none}
+.field.invalid .field-err{display:block}
+.field.invalid input,.field.invalid select{border-color:var(--err)}
+
+/* RANGE */
+.rrow{display:flex;align-items:center;gap:8px}
+.rrow input[type=range]{flex:1;background:transparent;border:none;padding:3px 0;accent-color:var(--acc);cursor:pointer}
+.rval{min-width:58px;text-align:center;font-size:12px;font-weight:700;color:var(--acc);background:var(--s2);padding:4px 8px;border-radius:var(--rs);border:1px solid var(--border);flex-shrink:0}
+
+/* RADIO */
+.rgroup{display:flex;gap:6px;flex-wrap:wrap}
+.rbtn input{display:none}
+.rbtn label{
+  display:flex;align-items:center;justify-content:center;
+  padding:7px 16px;border-radius:var(--rs);border:1px solid var(--border);
+  background:var(--s2);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:all .14s;
+}
+.rbtn input:checked+label{background:var(--acc);border-color:var(--acc);color:#fff}
+.rbtn label:hover{border-color:var(--acc);color:var(--t1)}
+
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;gap:10px;cursor:pointer}
+.toggle{width:38px;height:20px;background:var(--s3);border-radius:10px;position:relative;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--acc)}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .2s}
+.toggle.on::after{left:21px}
+
+/* ASSET TABLE */
+.tbl-wrap{overflow-x:auto}
+.atbl{width:100%;border-collapse:collapse;font-size:12px}
+.atbl th{background:var(--s2);color:var(--t2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:8px 9px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+.atbl td{padding:6px 7px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+.atbl tr:hover td{background:rgba(255,255,255,.02)}
+.atbl input,.atbl select{background:var(--s2);border:1px solid var(--border);color:var(--t1);border-radius:4px;padding:4px 7px;font-size:12px;width:100%;outline:none}
+.atbl input:focus,.atbl select:focus{border-color:var(--acc)}
+.atbl tfoot td{background:var(--s2);font-weight:700;padding:8px 9px;border-top:1px solid var(--border)}
+
+/* METRIC CARDS */
+.mcard{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden}
+.mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--mc,var(--acc))}
+.mlabel{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
+.mvalue{font-size:22px;font-weight:800;margin:5px 0 2px;letter-spacing:-.5px}
+.msub{font-size:10px;color:var(--t3)}
+.mchange{font-size:11px;font-weight:600;margin-top:4px}
+.mchange.pos{color:var(--ok)}
+.mchange.neg{color:var(--err)}
+
+/* RESULT SUBTABS */
+.rtabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.rtab{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:all .14s}
+.rtab.active{background:var(--acc);border-color:var(--acc);color:#fff}
+.rtab-panel{display:none}
+.rtab-panel.active{display:block}
+
+/* CHARTS */
+.chart-box{background:var(--s2);border-radius:var(--rs);padding:14px;margin-bottom:14px}
+.chart-box canvas{max-height:300px}
+.chart-title{font-size:11px;font-weight:700;color:var(--t2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px}
+
+/* DATA TABLES */
+.dtbl-wrap{overflow:auto;max-height:400px;border-radius:var(--rs)}
+.dtbl{width:100%;border-collapse:collapse;font-size:11px}
+.dtbl th{position:sticky;top:0;background:var(--s2);color:var(--t2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:7px 9px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+.dtbl th:first-child{text-align:left}
+.dtbl td{padding:5px 9px;border-bottom:1px solid rgba(255,255,255,.03);text-align:right;font-variant-numeric:tabular-nums}
+.dtbl td:first-child{text-align:left;color:var(--t2)}
+.dtbl tr:hover td{background:rgba(91,141,247,.06)}
+.dtbl tr.yr-hdr td{background:var(--s2);color:var(--acc);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;text-align:left}
+.pos{color:var(--ok)}
+.neg{color:var(--err)}
+
+/* STRESS TABLE */
+.stbl{width:100%;border-collapse:collapse;font-size:12px}
+.stbl th{background:var(--s2);color:var(--t2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:9px 12px;border-bottom:1px solid var(--border)}
+.stbl td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.stbl tr:hover td{background:rgba(255,255,255,.02)}
+.stress-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.badge-warn{background:rgba(245,200,66,.15);color:var(--warn);border:1px solid rgba(245,200,66,.3)}
+.badge-err{background:rgba(224,82,82,.15);color:var(--err);border:1px solid rgba(224,82,82,.3)}
+.badge-ok{background:rgba(47,201,122,.15);color:var(--ok);border:1px solid rgba(47,201,122,.3)}
+
+/* ALERTS */
+.alert{padding:11px 14px;border-radius:var(--rs);font-size:12px;display:flex;align-items:flex-start;gap:9px;margin-bottom:14px}
+.alert-i{background:rgba(91,141,247,.1);border:1px solid rgba(91,141,247,.25);color:var(--acc)}
+.alert-w{background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.25);color:var(--warn)}
+.alert-e{background:rgba(224,82,82,.1);border:1px solid rgba(224,82,82,.25);color:var(--err)}
+
+/* DIVIDER */
+hr.div{border:none;border-top:1px solid var(--border);margin:18px 0}
+
+/* SCENARIO */
+.scenario-bar{display:flex;gap:8px;align-items:center;padding:10px 14px;background:var(--s2);border-radius:var(--rs);margin-bottom:18px;border:1px solid var(--border)}
+.scen-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* COMPARE */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ILLUSTRATION TABLE */
+.illus-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.illus-tbl th{background:var(--acc);color:#fff;padding:8px 12px;text-align:center;font-size:11px;font-weight:700}
+.illus-tbl th:first-child{text-align:left}
+.illus-tbl td{padding:7px 12px;border-bottom:1px solid var(--border);text-align:center}
+.illus-tbl td:first-child{text-align:left;font-weight:600;color:var(--t2)}
+.illus-tbl tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.illus-tbl tfoot td{background:var(--s2);font-weight:700;border-top:2px solid var(--acc)}
+
+@media(max-width:900px){
+  .g2,.g3,.g4{grid-template-columns:1fr 1fr}
+  main{padding:14px}
+  .tab-nav{padding:0 14px}
+  header{padding:12px 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HEADER ═══════════════════════ -->
+<header>
+  <div class="h-brand">
+    <div class="h-icon">📊</div>
+    <div>
+      <div class="h-title">PAR Endowment Actuarial Projection Model</div>
+      <div class="h-sub">Monthly cashflow engine · Guaranteed &amp; Non-guaranteed split · 70/30 profit sharing · SOA ASOP 56</div>
+    </div>
+  </div>
+  <div class="h-actions">
+    <button class="btn btn-ghost btn-sm" onclick="loadSample()">⚡ Sample Data</button>
+    <button class="btn btn-ghost btn-sm" onclick="clearAll()">✕ Clear</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
+    <button class="btn btn-run" onclick="runAll()">▶ Run Projection</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════ TABS ═══════════════════════ -->
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="goTab('product',this)">🔖 Product</button>
+  <button class="tab-btn" onclick="goTab('assets',this)">💼 Assets</button>
+  <button class="tab-btn" onclick="goTab('assumptions',this)">⚙ Assumptions</button>
+  <button class="tab-btn" onclick="goTab('stress',this)">⚠ Stress Tests</button>
+  <button class="tab-btn" onclick="goTab('results',this)" id="btn-results">
+    📈 Results <span class="tab-badge" id="ok-badge" style="display:none">✓</span>
+  </button>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════ PRODUCT ═══════════════════════ -->
+<div class="tab-panel active" id="tab-product">
+
+  <div class="card">
+    <div class="card-title"><div class="card-title-left"><span class="ctag"></span>Policy Structure</div></div>
+    <div class="g3">
+      <div class="field">
+        <label>Policy Term</label>
+        <div class="rgroup">
+          <div class="rbtn"><input type="radio" name="term" id="t5" value="5"><label for="t5">5 Yr</label></div>
+          <div class="rbtn"><input type="radio" name="term" id="t10" value="10" checked><label for="t10">10 Yr</label></div>
+          <div class="rbtn"><input type="radio" name="term" id="t20" value="20"><label for="t20">20 Yr</label></div>
+        </div>
+        <div class="field-hint">Endowment term (whole-life coming soon)</div>
+      </div>
+      <div class="field">
+        <label>Gender</label>
+        <div class="rgroup">
+          <div class="rbtn"><input type="radio" name="gender" id="gM" value="M" checked><label for="gM">♂ Male</label></div>
+          <div class="rbtn"><input type="radio" name="gender" id="gF" value="F"><label for="gF">♀ Female</label></div>
+          <div class="rbtn"><input type="radio" name="gender" id="gU" value="U"><label for="gU">Unisex</label></div>
+        </div>
+        <div class="field-hint">Drives mortality table selection</div>
+      </div>
+      <div class="field">
+        <label>Issue Age (years)</label>
+        <div class="rrow">
+          <input type="range" id="p-age" min="18" max="65" value="35" oninput="sr(this,'p-age-v')">
+          <span class="rval" id="p-age-v">35</span>
+        </div>
+        <div class="field-hint">Entry age at policy inception (18–65)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="card-title-left"><span class="ctag"></span>Financial Parameters</div></div>
+    <div class="g4">
+      <div class="field" id="f-sa">
+        <label>Sum Assured (CNY)</label>
+        <input type="number" id="p-sa" value="100000" min="1000" step="1000">
+        <div class="field-hint">Guaranteed death / maturity SA</div>
+        <div class="field-err">Must be ≥ 1,000</div>
+      </div>
+      <div class="field" id="f-prem">
+        <label>Annual Premium (CNY)</label>
+        <input type="number" id="p-prem" value="5000" min="100" step="100">
+        <div class="field-hint">Level annual premium (paid monthly)</div>
+        <div class="field-err">Must be ≥ 100</div>
+      </div>
+      <div class="field">
+        <label>Premium Payment Mode</label>
+        <select id="p-mode">
+          <option value="monthly" selected>Monthly (÷12)</option>
+          <option value="quarterly">Quarterly (÷4)</option>
+          <option value="semi">Semi-Annual (÷2)</option>
+          <option value="annual">Annual (×1)</option>
+        </select>
+        <div class="field-hint">Affects cashflow timing within year</div>
+      </div>
+      <div class="field">
+        <label>Initial RB Accumulation (CNY)</label>
+        <input type="number" id="p-rb0" value="0" min="0" step="100">
+        <div class="field-hint">Opening RB balance (in-force policies)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="card-title-left"><span class="ctag ctag-p"></span>Reversionary Bonus &amp; Non-Guaranteed</div></div>
+    <div class="g3">
+      <div class="field">
+        <label>RB Accumulation Rate (Annual)</label>
+        <div class="rrow">
+          <input type="range" id="p-rb" min="0" max="0.10" step="0.001" value="0.030" oninput="srp(this,'p-rb-v')">
+          <span class="rval" id="p-rb-v">3.00%</span>
+        </div>
+        <div class="field-hint">Annual RB crediting rate (0–10%)</div>
+      </div>
+      <div class="field">
+        <label>Terminal Bonus % (of Proxy Asset Share)</label>
+        <div class="rrow">
+          <input type="range" id="p-tb" min="0" max="2.0" step="0.01" value="0.50" oninput="srp(this,'p-tb-v')">
+          <span class="rval" id="p-tb-v">50.00%</span>
+        </div>
+        <div class="field-hint">Non-guaranteed bonus added at maturity</div>
+      </div>
+      <div class="field">
+        <label>Surrender Value % (of Proxy Asset Share)</label>
+        <div class="rrow">
+          <input type="range" id="p-sv" min="0.0" max="1.0" step="0.01" value="0.90" oninput="srp(this,'p-sv-v')">
+          <span class="rval" id="p-sv-v">90.00%</span>
+        </div>
+        <div class="field-hint">Cash value on surrender / lapse</div>
+      </div>
+    </div>
+    <div class="g3" style="margin-top:16px">
+      <div class="field">
+        <label>Policyholder Share of Surplus</label>
+        <div class="rrow">
+          <input type="range" id="p-ph" min="0.50" max="0.95" step="0.01" value="0.70" oninput="updatePh(this)">
+          <span class="rval" id="p-ph-v">70% PH</span>
+        </div>
+        <div class="field-hint">Remaining goes to shareholders</div>
+      </div>
+      <div class="field">
+        <label>Minimum Distributable Surplus (CNY)</label>
+        <input type="number" id="p-mindist" value="0" min="0" step="1">
+        <div class="field-hint">Threshold below which no distribution occurs</div>
+      </div>
+      <div class="field">
+        <label>Num. Policies in Force (for scaling)</label>
+        <input type="number" id="p-count" value="1000" min="1" step="100">
+        <div class="field-hint">Scales aggregate cashflows in output tables</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="card-title-left"><span class="ctag ctag-g"></span>Benefit Illustration Preview</div>
+      <button class="btn btn-ghost btn-sm" onclick="runIllustration()">Generate Illustration</button>
+    </div>
+    <div id="illus-wrap">
+      <div class="alert alert-i">ℹ Click "Generate Illustration" or "Run Projection" to see the benefit table for this product.</div>
+    </div>
+  </div>
+
+</div><!-- /product -->
+
+<!-- ═══════════════════════ ASSETS ═══════════════════════ -->
+<div class="tab-panel" id="tab-assets">
+
+  <div class="card">
+    <div class="card-title">
+      <div class="card-title-left"><span class="ctag"></span>Fund Positions</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="loadPreset('conservative')">🛡 Conservative</button>
+        <button class="btn btn-ghost btn-sm" onclick="loadPreset('balanced')">⚖ Balanced</button>
+        <button class="btn btn-ghost btn-sm" onclick="loadPreset('aggressive')">🚀 Growth</button>
+        <button class="btn btn-ghost btn-sm" onclick="loadPreset('sample')">📋 Sample</button>
+        <button class="btn btn-acc btn-sm" onclick="addRow()">+ Add Position</button>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table class="atbl" id="atbl">
+        <thead><tr>
+          <th>#</th><th>Label</th><th>Asset Class</th>
+          <th>Market Value (CNY)</th><th>Book Value (CNY)</th>
+          <th>Duration (yrs)</th><th>Annual Yield %</th>
+          <th>Capital Growth %</th><th>Avg Maturity (yrs)</th>
+          <th>Rating</th><th>✕</th>
+        </tr></thead>
+        <tbody id="atbody"></tbody>
+        <tfoot><tr>
+          <td colspan="3" style="text-align:left">TOTAL</td>
+          <td id="a-totmv" style="text-align:right">—</td>
+          <td id="a-totbv" style="text-align:right">—</td>
+          <td colspan="6"></td>
+        </tr></tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title"><div class="card-title-left"><span class="ctag ctag-g"></span>Asset Allocation</div></div>
+      <div class="chart-box"><canvas id="chart-alloc" style="max-height:220px"></canvas></div>
+      <div id="alloc-summary" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-title-left"><span class="ctag ctag-p"></span>Weighted Portfolio Metrics</div></div>
+      <div id="port-metrics" style="margin-top:4px"></div>
+      <hr class="div" style="margin:12px 0">
+      <div class="card-title" style="margin-bottom:8px"><div class="card-title-left"><span class="ctag"></span>Asset Class Notes</div></div>
+      <div class="alert alert-i" style="font-size:11px">
+        Positions are aggregated by broad class: <b>Govt</b> (sovereign/policy bank bonds), <b>Credit</b> (all other bonds), <b>Equity</b> (listed stocks, funds), <b>Cash</b> (MMF, deposits). Within-class parameters are MV-weighted.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /assets -->
+
+<!-- ═══════════════════════ ASSUMPTIONS ═══════════════════════ -->
+<div class="tab-panel" id="tab-assumptions">
+
+  <!-- SII Discount Curve (full width) -->
+  <div class="card">
+    <div class="card-title">
+      <div class="card-title-left"><span class="ctag"></span>Solvency II Discount Rate Curve</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="btn btn-xs btn-ghost" onclick="loadCurve('cny2024')">CNY 2024</button>
+        <button class="btn btn-xs btn-ghost" onclick="loadCurve('eur2024')">EUR EIOPA</button>
+        <button class="btn btn-xs btn-ghost" onclick="loadCurve('hkd2024')">HKD RFR</button>
+        <button class="btn btn-xs btn-ghost" onclick="loadCurve('flat35')">Flat 3.5%</button>
+        <button class="btn btn-xs btn-ghost" onclick="loadCurve('flat45')">Flat 4.5%</button>
+        <button class="btn btn-xs btn-warn" onclick="loadCurve('cny_stress')">+100bp Stress</button>
+      </div>
+    </div>
+    <div class="g4" style="margin-bottom:16px">
+      <div class="field">
+        <label>UFR — Ultimate Forward Rate</label>
+        <div class="rrow">
+          <input type="range" id="c-ufr" min="0.005" max="0.10" step="0.001" value="0.032" oninput="srp(this,'c-ufr-v');refreshCurve()">
+          <span class="rval" id="c-ufr-v">3.20%</span>
+        </div>
+        <div class="field-hint">Long-run equilibrium forward rate target</div>
+      </div>
+      <div class="field">
+        <label>LLP — Last Liquid Point (years)</label>
+        <select id="c-llp" onchange="refreshCurve()" style="background:var(--s2);border:1px solid var(--border);color:var(--t1);border-radius:var(--rs);padding:8px 11px;font-size:13px;width:100%">
+          <option value="10">10</option>
+          <option value="15">15</option>
+          <option value="20" selected>20</option>
+          <option value="25">25</option>
+          <option value="30">30</option>
+        </select>
+        <div class="field-hint">Beyond LLP, UFR extrapolation applies</div>
+      </div>
+      <div class="field">
+        <label>Alpha — Mean Reversion Speed</label>
+        <div class="rrow">
+          <input type="range" id="c-alpha" min="0.01" max="0.50" step="0.01" value="0.10" oninput="srx3(this,'c-alpha-v');refreshCurve()">
+          <span class="rval" id="c-alpha-v">0.100</span>
+        </div>
+        <div class="field-hint">Smith-Wilson convergence parameter (EIOPA: 0.1)</div>
+      </div>
+      <div class="field">
+        <label>VA — Volatility Adjustment (bp)</label>
+        <div class="rrow">
+          <input type="range" id="c-va" min="-100" max="200" step="5" value="0" oninput="srBp2(this,'c-va-v');refreshCurve()">
+          <span class="rval" id="c-va-v">+0 bp</span>
+        </div>
+        <div class="field-hint">Flat spread added uniformly to all forward rates</div>
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:16px">
+      <div class="field">
+        <label>Reinvestment Rate (Bond Principal Rollover)</label>
+        <div class="rrow">
+          <input type="range" id="a-reinv" min="0.005" max="0.10" step="0.001" value="0.032" oninput="srp(this,'a-reinv-v')">
+          <span class="rval" id="a-reinv-v">3.20%</span>
+        </div>
+        <div class="field-hint">Rate applied to repaid principal reinvestment</div>
+      </div>
+      <div class="field">
+        <label>Parallel Rate Shift / Shock (basis points)</label>
+        <div class="rrow">
+          <input type="range" id="a-shock" min="-200" max="300" step="10" value="0" oninput="srs(this,'a-shock-v');refreshCurve()">
+          <span class="rval" id="a-shock-v">0 bp</span>
+        </div>
+        <div class="field-hint">Added uniformly to all forward rates and reinvestment rate</div>
+      </div>
+    </div>
+    <div style="overflow-x:auto;margin-bottom:16px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead>
+          <tr style="background:var(--s2)">
+            <th style="padding:8px 10px;text-align:left;color:var(--t2);font-size:11px;font-weight:700;border-bottom:1px solid var(--border)">Year</th>
+            <th style="padding:8px 10px;text-align:right;color:var(--acc4);font-size:11px;font-weight:700;border-bottom:1px solid var(--border)">Fwd Rate %</th>
+            <th style="padding:8px 10px;text-align:right;color:var(--acc);font-size:11px;font-weight:700;border-bottom:1px solid var(--border)">Spot (Zero) %</th>
+            <th style="padding:8px 10px;text-align:right;color:var(--acc2);font-size:11px;font-weight:700;border-bottom:1px solid var(--border)">Par Yield %</th>
+            <th style="padding:8px 10px;text-align:right;color:var(--acc3);font-size:11px;font-weight:700;border-bottom:1px solid var(--border)">DF P(0,t)</th>
+            <th style="padding:8px 10px;text-align:left;color:var(--t3);font-size:11px;font-weight:700;border-bottom:1px solid var(--border)">Type</th>
+          </tr>
+        </thead>
+        <tbody id="curve-tbody"></tbody>
+      </table>
+    </div>
+    <div class="chart-box"><canvas id="chart-curve" style="max-height:220px"></canvas></div>
+  </div>
+
+  <!-- Mortality + Expenses (side by side) -->
+  <div class="g2">
+    <div class="card">
+      <div class="card-title"><div class="card-title-left"><span class="ctag ctag-g"></span>Mortality Assumptions</div></div>
+      <div class="field" style="margin-bottom:14px">
+        <label>Mortality Scale (× Base Table)</label>
+        <div class="rrow">
+          <input type="range" id="a-mort" min="0.25" max="3.0" step="0.05" value="1.0" oninput="srx(this,'a-mort-v');updateMortPreview()">
+          <span class="rval" id="a-mort-v">1.00×</span>
+        </div>
+        <div class="field-hint">Multiplier on base China Life shape (Makeham)</div>
+      </div>
+      <div class="field" style="margin-bottom:14px">
+        <label>Mortality Improvement (Annual %)</label>
+        <div class="rrow">
+          <input type="range" id="a-mimp" min="0" max="0.03" step="0.001" value="0" oninput="srp(this,'a-mimp-v')">
+          <span class="rval" id="a-mimp-v">0.00%</span>
+        </div>
+        <div class="field-hint">Annual secular improvement rate applied to qx</div>
+      </div>
+      <div style="font-size:11px;color:var(--t3);margin-top:4px">
+        Male: q<sub>x</sub> = 0.00040 × e<sup>0.080(x−25)</sup> &nbsp;|&nbsp; Female: q<sub>x</sub> = 0.00028 × e<sup>0.078(x−25)</sup>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="card-title-left"><span class="ctag ctag-g"></span>Mortality Curve Preview</div></div>
+    <div class="chart-box"><canvas id="chart-mort" style="max-height:200px"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="card-title-left"><span class="ctag ctag-p"></span>Lapse / Persistency Assumptions</div></div>
+    <div class="g4">
+      <div class="field">
+        <label>Year 1 Annual Lapse</label>
+        <div class="rrow"><input type="range" id="a-l1" min="0" max="0.40" step="0.005" value="0.12" oninput="srp(this,'a-l1-v');updateLapseChart()"><span class="rval" id="a-l1-v">12.00%</span></div>
+      </div>
+      <div class="field">
+        <label>Year 2 Annual Lapse</label>
+        <div class="rrow"><input type="range" id="a-l2" min="0" max="0.30" step="0.005" value="0.09" oninput="srp(this,'a-l2-v');updateLapseChart()"><span class="rval" id="a-l2-v">9.00%</span></div>
+      </div>
+      <div class="field">
+        <label>Year 3 Annual Lapse</label>
+        <div class="rrow"><input type="range" id="a-l3" min="0" max="0.25" step="0.005" value="0.07" oninput="srp(this,'a-l3-v');updateLapseChart()"><span class="rval" id="a-l3-v">7.00%</span></div>
+      </div>
+      <div class="field">
+        <label>Years 4–5 Annual Lapse</label>
+        <div class="rrow"><input type="range" id="a-l45" min="0" max="0.20" step="0.005" value="0.05" oninput="srp(this,'a-l45-v');updateLapseChart()"><span class="rval" id="a-l45-v">5.00%</span></div>
+      </div>
+      <div class="field">
+        <label>Years 6–10 Annual Lapse</label>
+        <div class="rrow"><input type="range" id="a-l610" min="0" max="0.12" step="0.005" value="0.03" oninput="srp(this,'a-l610-v');updateLapseChart()"><span class="rval" id="a-l610-v">3.00%</span></div>
+      </div>
+      <div class="field">
+        <label>Year 11+ Annual Lapse</label>
+        <div class="rrow"><input type="range" id="a-l11" min="0" max="0.08" step="0.002" value="0.015" oninput="srp(this,'a-l11-v');updateLapseChart()"><span class="rval" id="a-l11-v">1.50%</span></div>
+      </div>
+      <div class="field">
+        <label>Lapse Multiplier</label>
+        <div class="rrow"><input type="range" id="a-lm" min="0.2" max="3.0" step="0.05" value="1.0" oninput="srx(this,'a-lm-v');updateLapseChart()"><span class="rval" id="a-lm-v">1.00×</span></div>
+        <div class="field-hint">Global stress multiplier</div>
+      </div>
+    </div>
+    <div class="chart-box" style="margin-top:14px"><canvas id="chart-lapse" style="max-height:160px"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="card-title-left"><span class="ctag"></span>Expense Assumptions</div></div>
+    <div class="g4">
+      <div class="field">
+        <label>Acquisition Cost (% Annual Premium)</label>
+        <div class="rrow"><input type="range" id="a-acq" min="0" max="0.30" step="0.005" value="0.08" oninput="srp(this,'a-acq-v')"><span class="rval" id="a-acq-v">8.00%</span></div>
+        <div class="field-hint">Year-1 acquisition expense only</div>
+      </div>
+      <div class="field">
+        <label>Renewal Expense (% Monthly Premium)</label>
+        <div class="rrow"><input type="range" id="a-ren" min="0" max="0.15" step="0.005" value="0.04" oninput="srp(this,'a-ren-v')"><span class="rval" id="a-ren-v">4.00%</span></div>
+      </div>
+      <div class="field">
+        <label>Renewal Fixed Expense (CNY/month)</label>
+        <input type="number" id="a-renf" value="12.50" min="0" step="0.5">
+        <div class="field-hint">Per-policy admin cost per month</div>
+      </div>
+      <div class="field">
+        <label>Expense Inflation (Annual)</label>
+        <div class="rrow"><input type="range" id="a-einf" min="0" max="0.08" step="0.005" value="0.00" oninput="srp(this,'a-einf-v')"><span class="rval" id="a-einf-v">0.00%</span></div>
+        <div class="field-hint">Applied to fixed renewal expense only</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /assumptions -->
+
+<!-- ═══════════════════════ STRESS TESTS ═══════════════════════ -->
+<div class="tab-panel" id="tab-stress">
+
+  <div class="alert alert-i">ℹ Run the base projection first, then click <b>Run All Stresses</b> to see impact vs base case across 8 standard scenarios.</div>
+
+  <div class="card">
+    <div class="card-title">
+      <div class="card-title-left"><span class="ctag"></span>Stress Scenario Configuration</div>
+      <button class="btn btn-warn btn-sm" onclick="runStresses()">⚡ Run All Stresses</button>
+    </div>
+    <table class="stbl" id="stress-config-tbl">
+      <thead><tr>
+        <th style="text-align:left">Scenario</th>
+        <th>Discount Rate Shift</th>
+        <th>Mortality Scale</th>
+        <th>Lapse Mult</th>
+        <th>Expense Mult</th>
+        <th>Equity Shock</th>
+        <th>Enabled</th>
+      </tr></thead>
+      <tbody id="stress-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="card" id="stress-results-card" style="display:none">
+    <div class="card-title"><div class="card-title-left"><span class="ctag"></span>Stress Results vs Base</div></div>
+    <div class="tbl-wrap"><table class="stbl" id="stress-results-tbl">
+      <thead><tr>
+        <th style="text-align:left">Scenario</th>
+        <th>PV Net Liability</th><th>Δ vs Base</th>
+        <th>Asset Share @ Maturity</th><th>Δ vs Base</th>
+        <th>PV Premiums</th>
+        <th>Loss Ratio</th>
+        <th>Severity</th>
+      </tr></thead>
+      <tbody id="stress-results-tbody"></tbody>
+    </table></div>
+    <div class="chart-box" style="margin-top:16px">
+      <div class="chart-title">Net Liability Change vs Base (CNY)</div>
+      <canvas id="chart-stress" style="max-height:260px"></canvas>
+    </div>
+  </div>
+
+</div><!-- /stress -->
+
+<!-- ═══════════════════════ RESULTS ═══════════════════════ -->
+<div class="tab-panel" id="tab-results">
+
+  <div id="no-result-msg" class="alert alert-w">⚠ No projection run yet. Set up your inputs and click <b>▶ Run Projection</b>.</div>
+
+  <div id="result-body" style="display:none">
+
+    <!-- Run metadata bar -->
+    <div class="scenario-bar">
+      <div class="scen-dot" style="background:var(--acc)"></div>
+      <span style="font-size:12px;font-weight:700;color:var(--t1)" id="run-label">Base Projection</span>
+      <span style="font-size:11px;color:var(--t3)" id="run-meta"></span>
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost btn-sm" onclick="exportAll()">⬇ Export CSV (All)</button>
+    </div>
+
+    <!-- Summary metrics (6 cards) -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px" id="metric-row"></div>
+
+    <!-- Additional KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px" id="kpi-row"></div>
+
+    <!-- Sub-tabs -->
+    <div class="rtabs">
+      <button class="rtab active" onclick="goRtab('r-liab',this)">📋 Liability CFs</button>
+      <button class="rtab" onclick="goRtab('r-assets',this)">💰 Asset CFs</button>
+      <button class="rtab" onclick="goRtab('r-share',this)">📈 Asset Share</button>
+      <button class="rtab" onclick="goRtab('r-pv',this)">🥧 PV Summary</button>
+      <button class="rtab" onclick="goRtab('r-illus',this)">📄 Policy Illustration</button>
+    </div>
+
+    <!-- Liability CFs -->
+    <div class="rtab-panel active" id="r-liab">
+      <div class="card">
+        <div class="card-title"><div class="card-title-left"><span class="ctag"></span>Liability Cashflows (per policy)</div>
+          <button class="btn btn-ghost btn-sm" onclick="dlCSV('liab')">⬇ CSV</button>
+        </div>
+        <div class="g2">
+          <div><div class="chart-title">Annual Net Cashflows by Component</div><div class="chart-box"><canvas id="c-liab-cf"></canvas></div></div>
+          <div><div class="chart-title">In-Force Probability &amp; RB Accumulation</div><div class="chart-box"><canvas id="c-liab-if"></canvas></div></div>
+        </div>
+        <div class="dtbl-wrap"><table class="dtbl" id="tbl-liab"><thead><tr></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- Asset CFs -->
+    <div class="rtab-panel" id="r-assets">
+      <div class="card">
+        <div class="card-title"><div class="card-title-left"><span class="ctag"></span>Asset Cashflows by Class</div>
+          <button class="btn btn-ghost btn-sm" onclick="dlCSV('assets')">⬇ CSV</button>
+        </div>
+        <div class="g2">
+          <div><div class="chart-title">Annual Income by Asset Class (stacked)</div><div class="chart-box"><canvas id="c-asset-income"></canvas></div></div>
+          <div><div class="chart-title">Running Fund Market Value</div><div class="chart-box"><canvas id="c-fund-mv"></canvas></div></div>
+        </div>
+        <div class="dtbl-wrap"><table class="dtbl" id="tbl-assets"><thead><tr></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- Asset Share -->
+    <div class="rtab-panel" id="r-share">
+      <div class="card">
+        <div class="card-title"><div class="card-title-left"><span class="ctag"></span>Asset Share Projection &amp; Profit Distribution</div>
+          <button class="btn btn-ghost btn-sm" onclick="dlCSV('share')">⬇ CSV</button>
+        </div>
+        <div class="g2">
+          <div><div class="chart-title">Asset Share Growth (BOM vs EOM)</div><div class="chart-box"><canvas id="c-share"></canvas></div></div>
+          <div><div class="chart-title">Annual Profit Distribution (PH vs SH)</div><div class="chart-box"><canvas id="c-dist"></canvas></div></div>
+        </div>
+        <div class="dtbl-wrap"><table class="dtbl" id="tbl-share"><thead><tr></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- PV Summary -->
+    <div class="rtab-panel" id="r-pv">
+      <div class="card">
+        <div class="card-title"><div class="card-title-left"><span class="ctag"></span>Present Value Summary</div></div>
+        <div style="display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start">
+          <div class="chart-box"><canvas id="c-pv-donut" style="max-height:300px"></canvas></div>
+          <div id="pv-detail"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Policy Illustration -->
+    <div class="rtab-panel" id="r-illus">
+      <div class="card">
+        <div class="card-title"><div class="card-title-left"><span class="ctag"></span>Annual Policy Illustration</div>
+          <button class="btn btn-ghost btn-sm" onclick="dlCSV('illus')">⬇ CSV</button>
+        </div>
+        <div id="illus-result-wrap"></div>
+      </div>
+    </div>
+
+  </div><!-- /result-body -->
+</div><!-- /results -->
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════
+const $=id=>document.getElementById(id);
+const fv=(v,dp=0)=>isNaN(v)||!isFinite(v)?'—':v.toLocaleString('en-HK',{minimumFractionDigits:dp,maximumFractionDigits:dp});
+const fp=v=>(v*100).toFixed(2)+'%';
+const fk=v=>{if(!isFinite(v))return'—';const a=Math.abs(v);if(a>=1e6)return(v/1e6).toFixed(3)+'M';if(a>=1e3)return(v/1e3).toFixed(1)+'K';return v.toFixed(1)};
+const clr=(v,rev=false)=>(v>0)!=rev?'pos':'neg';
+
+function sr(el,id){$(id).textContent=parseFloat(el.value).toFixed(0)}
+function srp(el,id){$(id).textContent=(parseFloat(el.value)*100).toFixed(2)+'%'}
+function srx(el,id){$(id).textContent=parseFloat(el.value).toFixed(2)+'×'}
+function srs(el,id){const v=parseInt(el.value);$(id).textContent=(v>=0?'+':'')+v+' bp'}
+function updatePh(el){const v=parseFloat(el.value);$('p-ph-v').textContent=Math.round(v*100)+'% PH / '+Math.round((1-v)*100)+'% SH'}
+
+function goTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  $('tab-'+name).classList.add('active'); btn.classList.add('active');
+}
+function goRtab(id,btn){
+  document.querySelectorAll('.rtab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+  $(id).classList.add('active'); btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════
+// ASSET TABLE
+// ═══════════════════════════════════════════════════════════
+let rows=[], rid=0;
+const CLASSES=['Govt','Credit_A','Credit_AA','Credit_BBB','Credit_B','Equity','Cash'];
+
+function addRow(d={}){
+  const id=++rid;
+  rows.push({id,label:d.label||'Position '+id,cls:d.cls||'Govt',mv:d.mv||0,bv:d.bv||0,dur:d.dur||5,yld:d.yld||3.2,grw:d.grw||0,mat:d.mat||5,rating:d.rating||''});
+  renderRows();
+}
+function delRow(id){rows=rows.filter(r=>r.id!==id);renderRows()}
+function upd(id,f,v){const r=rows.find(r=>r.id===id);if(r)r[f]=v;refreshSummary()}
+
+function renderRows(){
+  $('atbody').innerHTML=rows.map((r,i)=>`
+    <tr>
+      <td style="color:var(--t3)">${i+1}</td>
+      <td><input value="${r.label}" oninput="upd(${r.id},'label',this.value)" style="min-width:80px"></td>
+      <td><select onchange="upd(${r.id},'cls',this.value)">${CLASSES.map(c=>`<option value="${c}"${c===r.cls?' selected':''}>${c}</option>`).join('')}</select></td>
+      <td><input type="number" value="${r.mv}" min="0" step="1000" oninput="upd(${r.id},'mv',+this.value)" style="min-width:110px;text-align:right"></td>
+      <td><input type="number" value="${r.bv}" min="0" step="1000" oninput="upd(${r.id},'bv',+this.value)" style="min-width:110px;text-align:right"></td>
+      <td><input type="number" value="${r.dur}" min="0" max="30" step="0.5" oninput="upd(${r.id},'dur',+this.value)" style="width:56px;text-align:right"></td>
+      <td><input type="number" value="${r.yld}" min="0" max="20" step="0.05" oninput="upd(${r.id},'yld',+this.value)" style="width:62px;text-align:right"></td>
+      <td><input type="number" value="${r.grw}" min="-15" max="25" step="0.1" oninput="upd(${r.id},'grw',+this.value)" style="width:62px;text-align:right"></td>
+      <td><input type="number" value="${r.mat}" min="0" max="30" step="0.5" oninput="upd(${r.id},'mat',+this.value)" style="width:56px;text-align:right"></td>
+      <td><input value="${r.rating}" oninput="upd(${r.id},'rating',this.value)" style="width:50px"></td>
+      <td><button class="btn btn-ghost btn-xs" onclick="delRow(${r.id})" style="color:var(--err)">✕</button></td>
+    </tr>`).join('');
+  refreshSummary();
+}
+
+function refreshSummary(){
+  const tmv=rows.reduce((s,r)=>s+(+r.mv||0),0);
+  const tbv=rows.reduce((s,r)=>s+(+r.bv||0),0);
+  $('a-totmv').textContent='¥'+fv(tmv);
+  $('a-totbv').textContent='¥'+fv(tbv);
+  updateAllocChart();
+  updatePortMetrics();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PRESETS
+// ═══════════════════════════════════════════════════════════
+const PRESETS={
+  sample:[
+    {label:'CGBs 10Y',cls:'Govt',mv:900000,bv:880000,dur:8.5,yld:3.2,grw:0,mat:8.5,rating:''},
+    {label:'Corp A',cls:'Credit_A',mv:575000,bv:570000,dur:6.2,yld:3.8,grw:0,mat:6.2,rating:'A'},
+    {label:'CSI300',cls:'Equity',mv:700000,bv:700000,dur:0,yld:2.5,grw:6,mat:0,rating:''},
+    {label:'MMF',cls:'Cash',mv:125000,bv:125000,dur:0,yld:2.0,grw:0,mat:0,rating:''},
+  ],
+  conservative:[
+    {label:'CGBs 5Y',cls:'Govt',mv:900000,bv:885000,dur:5,yld:2.8,grw:0,mat:5,rating:''},
+    {label:'CGBs 10Y',cls:'Govt',mv:600000,bv:580000,dur:10,yld:3.1,grw:0,mat:10,rating:''},
+    {label:'CorpAA',cls:'Credit_AA',mv:400000,bv:396000,dur:4,yld:3.4,grw:0,mat:4,rating:'AA'},
+    {label:'MMF',cls:'Cash',mv:300000,bv:300000,dur:0,yld:1.9,grw:0,mat:0,rating:''},
+  ],
+  balanced:[
+    {label:'CGBs',cls:'Govt',mv:750000,bv:740000,dur:7,yld:3.0,grw:0,mat:7,rating:''},
+    {label:'Corp A',cls:'Credit_A',mv:450000,bv:445000,dur:5,yld:3.7,grw:0,mat:5,rating:'A'},
+    {label:'A-Shares',cls:'Equity',mv:600000,bv:600000,dur:0,yld:2.5,grw:6,mat:0,rating:''},
+    {label:'MMF',cls:'Cash',mv:200000,bv:200000,dur:0,yld:1.9,grw:0,mat:0,rating:''},
+  ],
+  aggressive:[
+    {label:'CGBs',cls:'Govt',mv:350000,bv:340000,dur:8,yld:3.2,grw:0,mat:8,rating:''},
+    {label:'Corp BBB',cls:'Credit_BBB',mv:300000,bv:294000,dur:4,yld:4.5,grw:0,mat:4,rating:'BBB'},
+    {label:'HK Eq',cls:'Equity',mv:800000,bv:800000,dur:0,yld:3.5,grw:8,mat:0,rating:''},
+    {label:'PE',cls:'Equity',mv:400000,bv:400000,dur:0,yld:0,grw:12,mat:0,rating:''},
+    {label:'Cash',cls:'Cash',mv:150000,bv:150000,dur:0,yld:1.8,grw:0,mat:0,rating:''},
+  ]
+};
+function loadPreset(name){rows=[];rid=0;PRESETS[name].forEach(d=>addRow(d))}
+
+// ═══════════════════════════════════════════════════════════
+// SOLVENCY II DISCOUNT CURVE ENGINE
+// ═══════════════════════════════════════════════════════════
+
+function srx3(el,id){$(id).textContent=parseFloat(el.value).toFixed(3)}
+function srBp2(el,id){const v=parseInt(el.value);$(id).textContent=(v>=0?'+':'')+v+' bp'}
+
+let curveNodes = {}; // {year(int): forwardPct(float)} — user-editable nodes, stored as %
+
+const CURVE_PRESETS = {
+  cny2024: {
+    ufr:3.20, llp:20, alpha:0.10, va:0,
+    nodes:{1:1.83,2:2.00,3:2.18,4:2.32,5:2.45,6:2.55,7:2.62,8:2.68,9:2.72,10:2.76,12:2.85,15:2.96,20:3.08,25:3.13,30:3.18}
+  },
+  eur2024: {
+    ufr:3.45, llp:20, alpha:0.10, va:0,
+    nodes:{1:3.88,2:3.55,3:3.28,4:3.15,5:3.00,7:2.88,10:2.78,15:2.68,20:2.63}
+  },
+  hkd2024: {
+    ufr:3.50, llp:15, alpha:0.10, va:0,
+    nodes:{1:4.45,2:4.25,3:4.08,5:3.85,7:3.68,10:3.55,15:3.45,20:3.40}
+  },
+  flat35:   {ufr:3.50, llp:20, alpha:0.10, va:0, nodes:{1:3.5,5:3.5,10:3.5,20:3.5,30:3.5}},
+  flat45:   {ufr:4.50, llp:20, alpha:0.10, va:0, nodes:{1:4.5,5:4.5,10:4.5,20:4.5,30:4.5}},
+  cny_stress:{ufr:3.20, llp:20, alpha:0.10, va:100,
+              nodes:{1:1.83,2:2.00,3:2.18,4:2.32,5:2.45,6:2.55,7:2.62,8:2.68,9:2.72,10:2.76,12:2.85,15:2.96,20:3.08,25:3.13,30:3.18}}
+};
+
+const CURVE_DISPLAY_YEARS = [1,2,3,4,5,6,7,8,9,10,12,15,20,25,30];
+
+// ── Core interpolation / extrapolation ──────────────────────────────────────
+function fwdGet(year, nodes, ufrPct, llp, alpha, vaBp, shockBp) {
+  const defined = Object.keys(nodes).map(Number).sort((a,b)=>a-b);
+  const extra = (vaBp + shockBp) / 10000;
+  if (!defined.length) return ufrPct/100 + extra;
+  if (nodes[year] !== undefined) return nodes[year]/100 + extra;
+  if (year > defined[defined.length-1]) {
+    const lastY = defined[defined.length-1];
+    const fLast = nodes[lastY]/100;
+    const ufr = ufrPct/100;
+    const extFrom = Math.max(lastY, llp);
+    return ufr + (fLast - ufr) * Math.exp(-alpha * (year - extFrom)) + extra;
+  }
+  const lo = Math.max(...defined.filter(y=>y<year));
+  const hi = Math.min(...defined.filter(y=>y>year));
+  const t = (year-lo)/(hi-lo);
+  return (nodes[lo]*(1-t) + nodes[hi]*t)/100 + extra;
+}
+
+// ── Build monthly DF array DF(1/12), …, DF(T/12) from current curve ─────────
+function buildMonthlyDFs(months) {
+  const nodes  = curveNodes;
+  const ufrPct = parseFloat($('c-ufr').value)*100;
+  const llp    = parseInt($('c-llp').value);
+  const alpha  = parseFloat($('c-alpha').value);
+  const vaBp   = parseFloat($('c-va').value);
+  const shockBp= parseFloat($('a-shock').value);
+  const dfs = new Array(months);
+  let df = 1.0;
+  for (let m=1;m<=months;m++){
+    const yr = Math.floor((m-1)/12)+1;
+    const fAnn = fwdGet(yr, nodes, ufrPct, llp, alpha, vaBp, shockBp);
+    df /= Math.pow(1+fAnn, 1/12);
+    dfs[m-1] = df;
+  }
+  return dfs;
+}
+
+// ── Spot rate for given maturity ────────────────────────────────────────────
+function curveSpot(years) {
+  const m = Math.max(1, Math.round(years*12));
+  const dfs = buildMonthlyDFs(m);
+  return Math.pow(dfs[dfs.length-1], -1/years) - 1;
+}
+
+// ── Load preset ─────────────────────────────────────────────────────────────
+function loadCurve(key) {
+  const p = CURVE_PRESETS[key]; if(!p) return;
+  curveNodes = {...p.nodes};
+  $('c-ufr').value   = p.ufr/100;  $('c-ufr-v').textContent  = p.ufr.toFixed(2)+'%';
+  $('c-llp').value   = p.llp;
+  $('c-alpha').value = p.alpha; srx3($('c-alpha'),'c-alpha-v');
+  $('c-va').value    = p.va;    srBp2($('c-va'),'c-va-v');
+  refreshCurve();
+}
+
+// ── Refresh table + chart ───────────────────────────────────────────────────
+function refreshCurve() { renderCurveTable(); updateCurveChart(); }
+
+function renderCurveTable() {
+  const nodes  = curveNodes;
+  const ufrPct = parseFloat($('c-ufr').value)*100;
+  const llp    = parseInt($('c-llp').value);
+  const alpha  = parseFloat($('c-alpha').value);
+  const vaBp   = parseFloat($('c-va').value);
+  const shockBp= parseFloat($('a-shock').value);
+  const lastNode = Math.max(...Object.keys(nodes).map(Number), 0);
+
+  // Cumulative annual DFs for par yield denominator
+  let cumDf=1, annDfs={};
+  for(let y=1;y<=30;y++){
+    const f=fwdGet(y,nodes,ufrPct,llp,alpha,vaBp,shockBp);
+    cumDf/=(1+f); annDfs[y]=cumDf;
+  }
+
+  $('curve-tbody').innerHTML = CURVE_DISPLAY_YEARS.map(y=>{
+    const fAnn = fwdGet(y,nodes,ufrPct,llp,alpha,vaBp,shockBp);
+    const dfY  = annDfs[y];
+    const spot = Math.pow(dfY,-1/y)-1;
+    let sumDfs=0; for(let i=1;i<=y;i++) sumDfs+=annDfs[i]||0;
+    const parYld = sumDfs>0?(1-dfY)/sumDfs:fAnn;
+
+    const isNode = nodes[y]!==undefined;
+    const isLLP  = y===llp;
+    const isExtrap = y>lastNode;
+
+    const badge = isNode
+      ? '<span style="color:var(--acc);font-size:10px;font-weight:700">● defined node</span>'
+      : isLLP  ? '<span style="color:var(--warn);font-size:10px;font-weight:700">◆ LLP</span>'
+      : isExtrap ? '<span style="color:var(--t3);font-size:10px">~ UFR extrap</span>'
+      : '<span style="color:var(--t3);font-size:10px">~ interpolated</span>';
+
+    const cell = isNode
+      ? `<input type="number" value="${(nodes[y]).toFixed(3)}" step="0.01" min="0" max="15"
+           style="width:78px;text-align:right;background:var(--s3);border:1px solid var(--acc);
+                  color:var(--t1);border-radius:4px;padding:4px 6px;font-size:12px;font-weight:700"
+           onchange="setNode(${y},+this.value)">`
+      : `<span style="color:var(--t3);font-size:12px">${(fAnn*100).toFixed(3)}</span>`;
+
+    return `<tr style="${isNode?'':'opacity:.75'}">
+      <td style="font-weight:${isNode?700:400};color:${isNode?'var(--t1)':'var(--t3)'}">${y}</td>
+      <td>${cell}</td>
+      <td style="color:var(--acc3);font-variant-numeric:tabular-nums">${(spot*100).toFixed(3)}</td>
+      <td style="color:var(--acc4);font-variant-numeric:tabular-nums">${(parYld*100).toFixed(3)}</td>
+      <td style="color:var(--t2);font-variant-numeric:tabular-nums">${dfY.toFixed(6)}</td>
+      <td>${badge}</td>
+    </tr>`;
+  }).join('');
+}
+
+function setNode(year, pctVal) {
+  curveNodes[year] = pctVal;
+  refreshCurve();
+}
+
+function updateCurveChart() {
+  const nodes  = curveNodes;
+  const ufrPct = parseFloat($('c-ufr').value)*100;
+  const llp    = parseInt($('c-llp').value);
+  const alpha  = parseFloat($('c-alpha').value);
+  const vaBp   = parseFloat($('c-va').value);
+  const shockBp= parseFloat($('a-shock').value);
+  const yrs = Array.from({length:30},(_,i)=>i+1);
+  const fwds=[], spots=[], dfs=[];
+  let cumDf=1;
+  for(let y=1;y<=30;y++){
+    const f=fwdGet(y,nodes,ufrPct,llp,alpha,vaBp,shockBp);
+    cumDf/=(1+f);
+    fwds.push((f*100).toFixed(3));
+    spots.push(((Math.pow(cumDf,-1/y)-1)*100).toFixed(3));
+    dfs.push(cumDf.toFixed(5));
+  }
+  mkChart('chart-curve','line',yrs,[
+    {label:'Forward Rate (%)',data:fwds,borderColor:'#f59340',backgroundColor:'transparent',pointRadius:4,tension:.35,yAxisID:'y'},
+    {label:'Spot (Zero) Rate (%)',data:spots,borderColor:'#5b8df7',backgroundColor:'rgba(91,141,247,.12)',fill:true,pointRadius:2,tension:.4,yAxisID:'y'},
+    {label:'DF P(0,t)',data:dfs,borderColor:'#27c9a0',backgroundColor:'transparent',borderDash:[5,3],pointRadius:0,tension:.35,yAxisID:'y2'},
+  ],{scales:{
+    y:{title:{display:true,text:'Rate (%)',color:'#4d5370'},ticks:{color:'#4d5370',font:{size:10}}},
+    y2:{position:'right',title:{display:true,text:'Discount Factor',color:'#4d5370'},ticks:{color:'#4d5370',font:{size:10}},grid:{drawOnChartArea:false},min:0,max:1.05}
+  }});
+}
+
+// ═══════════════════════════════════════════════════════════
+// LIVE CHARTS (Assumptions tab)
+// ═══════════════════════════════════════════════════════════
+let CH={};
+function mkChart(id,type,labels,datasets,opts={}){
+  if(CH[id]){CH[id].destroy()}
+  const ctx=$(id).getContext('2d');
+  CH[id]=new Chart(ctx,{type,data:{labels,datasets},options:{
+    responsive:true,maintainAspectRatio:true,animation:{duration:200},
+    plugins:{legend:{labels:{color:'#8f96b0',font:{size:10}},position:'bottom'}},
+    scales:type!=='doughnut'&&type!=='pie'?{
+      x:{ticks:{color:'#4d5370',maxTicksLimit:15,font:{size:10}},grid:{color:'#1c2038'}},
+      y:{ticks:{color:'#4d5370',font:{size:10}},grid:{color:'#1c2038'}},
+      ...(opts.scales||{})
+    }:undefined,...(opts.extra||{})
+  }});
+}
+
+function updateMortPreview(){
+  const scale=parseFloat($('a-mort').value);
+  const gender=document.querySelector('input[name=gender]:checked')?.value||'M';
+  const ages=[];const qxM=[];const qxF=[];
+  for(let a=20;a<=75;a++){
+    ages.push(a);
+    const qm=Math.min(Math.max(0.00040*Math.exp(0.080*(a-25)),0.0001),1)*scale;
+    const qf=Math.min(Math.max(0.00028*Math.exp(0.078*(a-25)),0.0001),1)*scale;
+    qxM.push((qm*1000).toFixed(4));
+    qxF.push((qf*1000).toFixed(4));
+  }
+  mkChart('chart-mort','line',ages,[
+    {label:'Male q_x (‰)',data:qxM,borderColor:'#5b8df7',backgroundColor:'rgba(91,141,247,.1)',fill:true,pointRadius:0,tension:.4},
+    {label:'Female q_x (‰)',data:qxF,borderColor:'#e85c7a',backgroundColor:'rgba(232,92,122,.1)',fill:true,pointRadius:0,tension:.4},
+  ]);
+}
+
+function getLapseArr(){
+  const l=[parseFloat($('a-l1').value),parseFloat($('a-l2').value),parseFloat($('a-l3').value),parseFloat($('a-l45').value),parseFloat($('a-l45').value),parseFloat($('a-l610').value)];
+  for(let i=6;i<20;i++) l.push(i<10?parseFloat($('a-l610').value):parseFloat($('a-l11').value));
+  const m=parseFloat($('a-lm').value);
+  return l.map((v,i)=>Math.min(v*m,0.999));
+}
+function updateLapseChart(){
+  const l=getLapseArr().slice(0,20);
+  const yrs=Array.from({length:20},(_,i)=>'Y'+(i+1));
+  mkChart('chart-lapse','bar',yrs,[
+    {label:'Annual Lapse Rate',data:l.map(v=>(v*100).toFixed(2)),backgroundColor:'rgba(160,108,245,.6)',borderColor:'#a06cf5',borderWidth:1},
+  ]);
+}
+
+function updateAllocChart(){
+  const cls={Govt:0,Credit:0,Equity:0,Cash:0};
+  rows.forEach(r=>{const k=r.cls==='Govt'?'Govt':r.cls==='Equity'?'Equity':r.cls==='Cash'?'Cash':'Credit';cls[k]+=(+r.mv||0)});
+  const total=Object.values(cls).reduce((a,b)=>a+b,0)||1;
+  const labels=Object.keys(cls),data=Object.values(cls);
+  mkChart('chart-alloc','doughnut',labels,[{data,backgroundColor:['#5b8df7cc','#27c9a0cc','#f59340cc','#8f96b0cc'],borderColor:'var(--s1)',borderWidth:2}],{extra:{cutout:'58%'}});
+  $('alloc-summary').innerHTML=Object.entries(cls).map(([k,v])=>`
+    <div style="background:var(--s2);border-radius:var(--rs);padding:8px 10px;border:1px solid var(--border)">
+      <div style="font-size:10px;color:var(--t3);font-weight:700">${k}</div>
+      <div style="font-size:14px;font-weight:800;margin:2px 0">¥${fk(v)}</div>
+      <div style="font-size:10px;color:var(--t3)">${((v/total)*100).toFixed(1)}%</div>
+    </div>`).join('');
+}
+
+function updatePortMetrics(){
+  const cls={Govt:{mv:0,yldW:0,matW:0},Credit:{mv:0,yldW:0,matW:0},Equity:{mv:0,yldW:0,grwW:0},Cash:{mv:0,yldW:0}};
+  rows.forEach(r=>{
+    const k=r.cls==='Govt'?'Govt':r.cls==='Equity'?'Equity':r.cls==='Cash'?'Cash':'Credit';
+    const mv=+r.mv||0;
+    cls[k].mv+=mv; cls[k].yldW+=mv*(+r.yld||0);
+    if(k==='Govt'||k==='Credit') cls[k].matW+=mv*(+r.mat||0);
+    if(k==='Equity') cls[k].grwW+=mv*(+r.grw||0);
+  });
+  const total=Object.values(cls).reduce((s,v)=>s+v.mv,0)||1;
+  const wtdYld=Object.values(cls).reduce((s,v)=>s+v.yldW,0)/total;
+  const wtdMat=(cls.Govt.matW+cls.Credit.matW)/(cls.Govt.mv+cls.Credit.mv||1);
+  const eqGrw=cls.Equity.grwW/(cls.Equity.mv||1);
+  $('port-metrics').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      ${[
+        ['Weighted Portfolio Yield',((wtdYld).toFixed(2))+'%'],
+        ['Wtd Bond Avg Maturity',(wtdMat.toFixed(1))+' yrs'],
+        ['Expected Equity Growth',(eqGrw.toFixed(1))+'%'],
+        ['Total Fund MV','¥'+fk(total)],
+      ].map(([l,v])=>`<div style="background:var(--s2);border-radius:var(--rs);padding:8px 10px;border:1px solid var(--border)">
+        <div style="font-size:10px;color:var(--t3);font-weight:700">${l}</div>
+        <div style="font-size:15px;font-weight:800;color:var(--acc);margin-top:3px">${v}</div>
+      </div>`).join('')}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// STRESS TEST CONFIG
+// ═══════════════════════════════════════════════════════════
+const STRESSES=[
+  {name:'Rate +100bp',  discShift:0.01, mortScale:1.0, lapseMult:1.0, expMult:1.0, eqShock:0},
+  {name:'Rate −100bp',  discShift:-0.01,mortScale:1.0, lapseMult:1.0, expMult:1.0, eqShock:0},
+  {name:'Rate +200bp',  discShift:0.02, mortScale:1.0, lapseMult:1.0, expMult:1.0, eqShock:0},
+  {name:'Mortality 150%',discShift:0, mortScale:1.5, lapseMult:1.0, expMult:1.0, eqShock:0},
+  {name:'Lapse 200%',   discShift:0,  mortScale:1.0, lapseMult:2.0, expMult:1.0, eqShock:0},
+  {name:'Expense +50%', discShift:0,  mortScale:1.0, lapseMult:1.0, expMult:1.5, eqShock:0},
+  {name:'Equity −40%',  discShift:0,  mortScale:1.0, lapseMult:1.0, expMult:1.0, eqShock:-0.40},
+  {name:'Combined Adverse',discShift:0.01,mortScale:1.5,lapseMult:1.5,expMult:1.3,eqShock:-0.25},
+];
+
+function initStressTable(){
+  $('stress-tbody').innerHTML=STRESSES.map((s,i)=>`
+    <tr>
+      <td style="font-weight:600">${s.name}</td>
+      <td><input type="number" id="s${i}-disc" value="${s.discShift*100}" step="10" style="width:70px;background:var(--s2);border:1px solid var(--border);color:var(--t1);border-radius:4px;padding:4px 7px;text-align:right"> bp</td>
+      <td><input type="number" id="s${i}-mort" value="${s.mortScale}" step="0.1" min="0" style="width:60px;background:var(--s2);border:1px solid var(--border);color:var(--t1);border-radius:4px;padding:4px 7px;text-align:right">×</td>
+      <td><input type="number" id="s${i}-lapse" value="${s.lapseMult}" step="0.1" min="0" style="width:60px;background:var(--s2);border:1px solid var(--border);color:var(--t1);border-radius:4px;padding:4px 7px;text-align:right">×</td>
+      <td><input type="number" id="s${i}-exp" value="${s.expMult}" step="0.1" min="0" style="width:60px;background:var(--s2);border:1px solid var(--border);color:var(--t1);border-radius:4px;padding:4px 7px;text-align:right">×</td>
+      <td><input type="number" id="s${i}-eq" value="${s.eqShock*100}" step="5" style="width:65px;background:var(--s2);border:1px solid var(--border);color:var(--t1);border-radius:4px;padding:4px 7px;text-align:right"> %</td>
+      <td><input type="checkbox" id="s${i}-en" checked style="width:16px;height:16px;accent-color:var(--acc)"></td>
+    </tr>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// ACTUARIAL ENGINE
+// ═══════════════════════════════════════════════════════════
+function baseQx(age,gender){
+  age=Math.max(0,Math.min(Math.floor(age),100));
+  let raw=gender==='F'?0.00028*Math.exp(0.078*(age-25)):0.00040*Math.exp(0.080*(age-25));
+  if(gender==='U') raw=0.00035*Math.exp(0.079*(age-25));
+  return Math.min(Math.max(raw,0.0001),1.0);
+}
+function mthQx(aqx){return 1-Math.pow(1-Math.min(aqx,0.9999),1/12)}
+
+function lapseAnn(yr,lapses,mult){
+  let b=yr<=1?lapses.l1:yr===2?lapses.l2:yr===3?lapses.l3:yr<=5?lapses.l45:yr<=10?lapses.l610:lapses.l11;
+  return Math.min(b*mult,0.999);
+}
+
+function runEngine(params){
+  const{T,age,gender,sa,annPrem,rbRate,tbPct,svPct,rbInit,disc,acqPct,renPct,renFixed,lapses,lapseMult,mortScale,mortImp,expInf,phShare}=params;
+  const mthPrem=annPrem/12;
+  const rbMth=Math.pow(1+rbRate,1/12)-1;
+  const rp=disc/12; // representative monthly rate (spot proxy) for AS accumulation
+
+  const L=[],A=[],S=[];
+  let inf=1,rb=rbInit,asp=0;
+
+  for(let m=0;m<T;m++){
+    const mn=m+1,py=Math.floor(m/12)+1,a=age+m/12;
+    const imp=Math.pow(1-mortImp,m/12);
+    const qxA=baseQx(Math.floor(a),gender)*mortScale*imp;
+    const lA=lapseAnn(py,lapses,lapseMult);
+    const qm=mthQx(qxA),lm=lA/12;
+    const infFact=Math.pow(1+expInf,m/12);
+    const pBom=inf;
+    const prem=mthPrem*pBom;
+    let acq=0,ren=0;
+    if(m===0) acq=acqPct*annPrem*pBom;
+    else ren=(renPct*mthPrem+renFixed*infFact)*pBom;
+
+    asp=(asp+prem-acq-ren)*(1+rp);
+    rb=rb*(1+rbMth)+sa*rbMth*pBom;
+
+    const isMat=mn===T;
+    const dG=sa*qm*pBom, dN=rb*qm*pBom;
+    let mG=0,mN=0,sv=0;
+    if(isMat){const sp=pBom*(1-qm)*(1-lm);mG=sa*sp;mN=tbPct*asp*sp}
+    else sv=svPct*asp*lm*pBom;
+
+    const df=params.discDFs ? params.discDFs[m] : Math.pow(Math.pow(1+disc,-1/12),mn);
+    const ncf=prem-acq-ren-dG-dN-mG-mN-sv;
+
+    L.push({month:mn,py,inF:pBom,qm,lm,prem,acq,ren,dG,dN,mG,mN,sv,ncf,df,pvNcf:ncf*df,rb,asp});
+    if(!isMat) inf=Math.max(pBom*(1-qm)*(1-lm),0); else inf=0;
+  }
+
+  // Asset cashflows
+  const mv={Govt:0,Credit:0,Equity:0,Cash:0};
+  const yld={Govt:0,Credit:0,Equity:0,Cash:0};
+  const grw={Govt:0,Credit:0,Equity:0,Cash:0};
+  const mat={Govt:0,Credit:0,Equity:0,Cash:0};
+  const cnt={Govt:0,Credit:0,Equity:0,Cash:0};
+  rows.forEach(r=>{
+    const k=r.cls==='Govt'?'Govt':r.cls==='Equity'?'Equity':r.cls==='Cash'?'Cash':'Credit';
+    mv[k]+=(+r.mv||0); yld[k]+=(+r.yld||0)*(+r.mv||0);
+    grw[k]+=(+r.grw||0)*(+r.mv||0); mat[k]+=(+r.mat||0)*(+r.mv||0); cnt[k]+=(+r.mv||0);
+  });
+  // Apply equity shock
+  if(params.eqShock) mv.Equity*=(1+params.eqShock);
+  ['Govt','Credit','Equity','Cash'].forEach(c=>{if(cnt[c]>0){yld[c]/=cnt[c];grw[c]/=cnt[c];mat[c]/=cnt[c]}yld[c]/=100;grw[c]/=100});
+
+  const cmv={...mv};
+  const ri=params.reinv||disc;
+
+  for(let i=0;i<T;i++){
+    const mn=i+1; let gC=0,gM=0,cC=0,cM=0,eD=0,eG=0,ci=0;
+    if(cmv.Govt>0){gC=cmv.Govt*yld.Govt/12;gM=cmv.Govt/Math.max(mat.Govt*12,1);cmv.Govt=cmv.Govt-gM+gM*(1+ri/12)}
+    if(cmv.Credit>0){cC=cmv.Credit*yld.Credit/12;cM=cmv.Credit/Math.max(mat.Credit*12,1);cmv.Credit=cmv.Credit-cM+cM*(1+ri/12)}
+    if(cmv.Equity>0){eD=cmv.Equity*yld.Equity/12;eG=cmv.Equity*grw.Equity/12;cmv.Equity*=(1+grw.Equity/12)}
+    if(cmv.Cash>0){ci=cmv.Cash*yld.Cash/12;cmv.Cash*=(1+yld.Cash/12)}
+    const ti=gC+cC+eD+ci,fmv=cmv.Govt+cmv.Credit+cmv.Equity+cmv.Cash;
+    const df=params.discDFs ? params.discDFs[i] : Math.pow(Math.pow(1+disc,-1/12),mn);
+    A.push({month:mn,gC,gM,cC,cM,eD,eG,ci,ti,fmv,df,pv:ti*df});
+  }
+
+  // Asset share
+  const shSh=1-phShare;
+  let as=0,totSh=0,totPh=0;
+  for(let m=0;m<T;m++){
+    const lr=L[m],ar=A[m],ir=ar.fmv>0?ar.ti/ar.fmv:0;
+    const asBom=as,p=lr.prem,ac=lr.acq,re=lr.ren,dg=lr.dG,dn=lr.dN,sv=lr.sv;
+    const fMid=(asBom+p-ac-re)*(1+ir),inv=(asBom+p-ac-re)*ir;
+    let dist=0,sh=0,ph=0;
+    if(fMid>0&&inv>0){dist=inv;sh=shSh*dist;ph=phShare*dist}
+    totSh+=sh;totPh+=ph;
+    const asEom=Math.max(fMid-dg-dn-sv-sh,0);
+    as=asEom;
+    S.push({month:m+1,py:L[m].py,asBom,p,ac,re,inv,ir,dg,dn,sv,dist,sh,ph,asEom});
+  }
+
+  const sum=fn=>L.reduce((s,r)=>s+fn(r)*r.df,0);
+  const pvP=sum(r=>r.prem),pvG=sum(r=>r.dG+r.mG),pvN=sum(r=>r.dN+r.mN),pvSv=sum(r=>r.sv),pvE=sum(r=>r.acq+r.ren);
+  const pvNL=-(L.reduce((s,r)=>s+r.pvNcf,0));
+  const pvAI=A.reduce((s,r)=>s+r.pv,0);
+
+  return{L,A,S,pvP,pvG,pvN,pvSv,pvE,pvNL,pvAI,totSh,totPh,asAtMat:S[T-1]?.asEom||0};
+}
+
+function getParams(overrides={}){
+  const termYrs=parseInt(document.querySelector('input[name=term]:checked').value);
+  const gender=document.querySelector('input[name=gender]:checked').value;
+  const shockBp=parseFloat($('a-shock').value)+(overrides.discShift||0)*10000;
+  const disc=curveSpot(Math.min(termYrs,30)); // representative spot for proxy AS
+  const mortScale=(parseFloat($('a-mort').value))*(overrides.mortScale||1);
+  const lapseMult=(parseFloat($('a-lm').value))*(overrides.lapseMult||1);
+  const acqPct=parseFloat($('a-acq').value)*(overrides.expMult||1);
+  const renPct=parseFloat($('a-ren').value)*(overrides.expMult||1);
+  const renFixed=parseFloat($('a-renf').value)*(overrides.expMult||1);
+  return{
+    T:termYrs*12,termYrs,
+    discDFs:buildMonthlyDFs(termYrs*12),
+    age:parseInt($('p-age').value),gender,
+    sa:parseFloat($('p-sa').value),
+    annPrem:parseFloat($('p-prem').value),
+    rbRate:parseFloat($('p-rb').value),
+    tbPct:parseFloat($('p-tb').value),
+    svPct:parseFloat($('p-sv').value),
+    rbInit:parseFloat($('p-rb0').value)||0,
+    disc,reinv:parseFloat($('a-reinv').value)+parseFloat($('a-shock').value)/10000,
+    acqPct,renPct,renFixed,
+    lapses:{l1:parseFloat($('a-l1').value),l2:parseFloat($('a-l2').value),l3:parseFloat($('a-l3').value),l45:parseFloat($('a-l45').value),l610:parseFloat($('a-l610').value),l11:parseFloat($('a-l11').value)},
+    lapseMult, mortScale,
+    mortImp:parseFloat($('a-mimp').value),
+    expInf:parseFloat($('a-einf').value),
+    phShare:parseFloat($('p-ph').value),
+    eqShock:overrides.eqShock||0,
+    ...overrides,
+  };
+}
+
+function loadSample(){
+  // Product
+  document.querySelector('input[name=term][value="10"]').checked=true;
+  document.querySelector('input[name=gender][value="M"]').checked=true;
+  $('p-age').value=35; sr($('p-age'),'p-age-v');
+  $('p-sa').value=100000;
+  $('p-prem').value=8800;
+  $('p-rb').value=0.03;
+  $('p-tb').value=0.20;
+  $('p-sv').value=0.85;
+  $('p-rb0').value=0;
+  $('p-count').value=1000;
+  $('p-ph').value=0.70;
+  // Assets — balanced preset
+  loadPreset('balanced');
+  renderRows(); updateAllocChart(); updatePortMetrics();
+  // Discount curve — CNY 2024 SII curve
+  loadCurve('cny2024');
+  // Reinvestment rate
+  if($('a-reinv')) $('a-reinv').value=0.032;
+  if($('a-shock')) $('a-shock').value=0;
+  // Mortality & lapse
+  $('a-mort').value=1.0; if($('a-mort-v')) $('a-mort-v').textContent='1.000';
+  $('a-lm').value=1.0;   if($('a-lm-v')) $('a-lm-v').textContent='1.000';
+  $('a-mimp').value=0.0;
+  $('a-einf').value=0.02;
+  // Lapses
+  ['a-l1','a-l2','a-l3','a-l45','a-l610','a-l11'].forEach((id,i)=>{
+    const defaults=[0.12,0.08,0.06,0.04,0.03,0.02];
+    if($(id)) $(id).value=defaults[i];
+  });
+  // Expenses
+  $('a-acq').value=0.45; $('a-ren').value=0.02; $('a-renf').value=50;
+  // Refresh charts
+  refreshCurve();
+  if(typeof refreshMortChart==='function') refreshMortChart();
+  if(typeof refreshLapseChart==='function') refreshLapseChart();
+}
+
+function validate(){
+  let ok=true;
+  const rules=[['f-sa','p-sa',v=>v>=1000,'≥ 1,000'],['f-prem','p-prem',v=>v>=100,'≥ 100']];
+  rules.forEach(([fid,iid,fn,msg])=>{
+    const el=$(fid),v=parseFloat($(iid).value);
+    el.classList.toggle('invalid',!fn(v));
+    if(!fn(v)) ok=false;
+  });
+  if(!rows.length){alert('Add at least one asset position.');ok=false}
+  return ok;
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN RUN
+// ═══════════════════════════════════════════════════════════
+let RESULT=null;
+
+function runAll(){
+  if(!validate()) return;
+  const p=getParams();
+  RESULT=runEngine(p);
+  RESULT._p=p;
+  renderMetrics(RESULT,p);
+  renderCharts(RESULT,p);
+  renderTables(RESULT,p);
+  renderIllustration(RESULT,p,'illus-result-wrap');
+  renderIllustration(RESULT,p,'illus-wrap');
+  $('ok-badge').style.display='inline';
+  $('no-result-msg').style.display='none';
+  $('result-body').style.display='block';
+  $('run-label').textContent='Base Projection — '+p.termYrs+'Y PAR Endowment';
+  $('run-meta').textContent=`Issue age ${p.age} | SA ¥${fk(p.sa)} | Prem ¥${fk(p.annPrem)}/yr | disc ${fp(p.disc)}`;
+  goTab('results',$('btn-results'));
+}
+
+// ═══════════════════════════════════════════════════════════
+// METRICS
+// ═══════════════════════════════════════════════════════════
+function renderMetrics(r,p){
+  const lossRatio=(r.pvG+r.pvN+r.pvSv)/r.pvP;
+  const expRatio=r.pvE/r.pvP;
+  const metrics=[
+    {label:'PV Premiums',val:'¥'+fk(r.pvP),sub:`${p.termYrs}yr term`,mc:'var(--acc3)'},
+    {label:'PV Guaranteed Benefits',val:'¥'+fk(r.pvG),sub:'Death + maturity SA',mc:'var(--acc)'},
+    {label:'PV Non-Guaranteed',val:'¥'+fk(r.pvN),sub:'RB + terminal bonus',mc:'var(--acc2)'},
+    {label:'PV Surrender Benefits',val:'¥'+fk(r.pvSv),sub:'On lapse / surrender',mc:'var(--acc4)'},
+    {label:'Net Liability (PV)',val:'¥'+fk(r.pvNL),sub:r.pvNL>0?'Insurer owes PH':'Premium > Benefits',mc:r.pvNL>0?'var(--err)':'var(--ok)'},
+    {label:'Asset Share @ Maturity',val:'¥'+fk(r.asAtMat),sub:`SH dist ¥${fk(r.totSh)}`,mc:'var(--acc3)'},
+  ];
+  const kpis=[
+    {label:'Loss Ratio (Benefits/Prem)',val:fp(lossRatio),mc:lossRatio>1?'var(--err)':'var(--ok)'},
+    {label:'Expense Ratio',val:fp(expRatio),mc:'var(--acc4)'},
+    {label:'PV Asset Income',val:'¥'+fk(r.pvAI),mc:'var(--acc3)'},
+    {label:'PH Total Distribution',val:'¥'+fk(r.totPh),mc:'var(--acc)'},
+  ];
+  $('metric-row').innerHTML=metrics.map(m=>`<div class="mcard" style="--mc:${m.mc}"><div class="mlabel">${m.label}</div><div class="mvalue">${m.val}</div><div class="msub">${m.sub}</div></div>`).join('');
+  $('kpi-row').innerHTML=kpis.map(k=>`<div class="mcard" style="--mc:${k.mc}"><div class="mlabel">${k.label}</div><div class="mvalue" style="font-size:18px">${k.val}</div></div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════════════════════
+const CC={prem:'#5b8df7',dG:'#a06cf5',dN:'#c499f7',mG:'#27c9a0',mN:'#1aa584',sv:'#f59340',exp:'#e85c7a',gC:'#5b8df7',cC:'#27c9a0',eD:'#f59340',ci:'#8f96b0',asBom:'#27c9a0',asEom:'#5b8df7',sh:'#e85c7a',ph:'#2fc97a'};
+
+function renderCharts(r,p){
+  const{L,A,S}=r;
+  const ann=i=>i%12===11;
+  const aL=L.filter((_,i)=>ann(i)), aA=A.filter((_,i)=>ann(i)), aS=S.filter((_,i)=>ann(i));
+  const yrs=aL.map(v=>'Y'+v.py);
+
+  // Liability cashflows
+  mkChart('c-liab-cf','bar',yrs,[
+    {label:'Premium',data:aL.map(v=>v.prem*12),backgroundColor:CC.prem+'99',borderWidth:0},
+    {label:'Death (Guar)',data:aL.map(v=>-v.dG*12),backgroundColor:CC.dG+'99',borderWidth:0},
+    {label:'Death (NG)',data:aL.map(v=>-v.dN*12),backgroundColor:CC.dN+'99',borderWidth:0},
+    {label:'Maturity (Guar)',data:aL.map(v=>-v.mG),backgroundColor:CC.mG+'cc',borderWidth:0},
+    {label:'Maturity (NG)',data:aL.map(v=>-v.mN),backgroundColor:CC.mN+'cc',borderWidth:0},
+    {label:'Surrender',data:aL.map(v=>-v.sv*12),backgroundColor:CC.sv+'99',borderWidth:0},
+    {label:'Expenses',data:aL.map(v=>-(v.acq+v.ren)*12),backgroundColor:CC.exp+'99',borderWidth:0},
+  ],{scales:{x:{stacked:true},y:{stacked:true}}});
+
+  // In-force + RB
+  const yrsAll=L.map(v=>'M'+v.month);
+  mkChart('c-liab-if','line',yrsAll,[
+    {label:'In-Force Prob',data:L.map(v=>(v.inF*100).toFixed(3)),borderColor:CC.prem,backgroundColor:CC.prem+'22',fill:true,pointRadius:0,tension:.4,yAxisID:'y'},
+    {label:'RB Accum (÷SA)',data:L.map(v=>(v.rb/p.sa*100).toFixed(3)),borderColor:CC.mG,backgroundColor:'transparent',pointRadius:0,tension:.4,yAxisID:'y2'},
+  ],{scales:{y:{ticks:{callback:v=>v+'%'},title:{display:true,text:'In-Force %',color:'#4d5370'}},y2:{position:'right',ticks:{callback:v=>v+'%'},title:{display:true,text:'RB/SA %',color:'#4d5370'},grid:{drawOnChartArea:false}}}});
+
+  // Asset income
+  mkChart('c-asset-income','bar',yrs,[
+    {label:'Govt Coupon',data:aA.map(v=>v.gC*12),backgroundColor:CC.gC+'aa',borderWidth:0},
+    {label:'Credit Coupon',data:aA.map(v=>v.cC*12),backgroundColor:CC.cC+'aa',borderWidth:0},
+    {label:'Equity Dividend',data:aA.map(v=>v.eD*12),backgroundColor:CC.eD+'aa',borderWidth:0},
+    {label:'Cash Interest',data:aA.map(v=>v.ci*12),backgroundColor:CC.ci+'aa',borderWidth:0},
+  ],{scales:{x:{stacked:true},y:{stacked:true}}});
+
+  // Fund MV
+  mkChart('c-fund-mv','line',yrs,[
+    {label:'Fund MV',data:aA.map(v=>v.fmv),borderColor:CC.eD,backgroundColor:CC.eD+'22',fill:true,pointRadius:3,tension:.4},
+  ]);
+
+  // Asset share
+  mkChart('c-share','line',yrs,[
+    {label:'Asset Share EOM',data:aS.map(v=>v.asEom),borderColor:CC.asEom,backgroundColor:CC.asEom+'22',fill:false,pointRadius:3,tension:.3},
+    {label:'Asset Share BOM',data:aS.map(v=>v.asBom),borderColor:CC.asBom,backgroundColor:'transparent',borderDash:[5,4],pointRadius:0,tension:.3},
+  ]);
+
+  // Distribution
+  mkChart('c-dist','bar',yrs,[
+    {label:'Shareholder Dist',data:aS.map(v=>v.sh*12),backgroundColor:CC.sh+'99',borderWidth:0},
+    {label:'Policyholder Dist',data:aS.map(v=>v.ph*12),backgroundColor:CC.ph+'99',borderWidth:0},
+  ],{scales:{x:{stacked:true},y:{stacked:true}}});
+
+  // PV donut
+  mkChart('c-pv-donut','doughnut',['PV Premiums','PV Guar Ben','PV Non-Guar','PV Surrender','PV Expenses'],[{
+    data:[r.pvP,r.pvG,r.pvN,r.pvSv,r.pvE],
+    backgroundColor:['#5b8df7cc','#a06cf5cc','#c499f7cc','#f59340cc','#e85c7acc'],
+    borderColor:'var(--s1)',borderWidth:2
+  }],{extra:{cutout:'55%'}});
+
+
+  $('pv-detail').innerHTML=`
+    <table class="dtbl" style="font-size:12px">
+      <thead><tr><th style="text-align:left">Component</th><th>PV (CNY)</th><th>% of PV Prem</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>PV Premiums (in)</td><td class="pos">¥${fv(r.pvP)}</td><td>100.0%</td><td style="color:var(--t3);font-size:10px">Gross of tax</td></tr>
+        <tr><td>PV Guar Benefits</td><td class="neg">¥${fv(r.pvG)}</td><td>${((r.pvG/r.pvP)*100).toFixed(1)}%</td><td style="color:var(--t3);font-size:10px">SA on death + maturity</td></tr>
+        <tr><td>PV Non-Guar Benefits</td><td class="neg">¥${fv(r.pvN)}</td><td>${((r.pvN/r.pvP)*100).toFixed(1)}%</td><td style="color:var(--t3);font-size:10px">RB + terminal bonus</td></tr>
+        <tr><td>PV Surrender Benefits</td><td class="neg">¥${fv(r.pvSv)}</td><td>${((r.pvSv/r.pvP)*100).toFixed(1)}%</td><td style="color:var(--t3);font-size:10px">On lapse</td></tr>
+        <tr><td>PV Expenses</td><td class="neg">¥${fv(r.pvE)}</td><td>${((r.pvE/r.pvP)*100).toFixed(1)}%</td><td style="color:var(--t3);font-size:10px">Acq + renewal</td></tr>
+        <tr style="font-weight:700;border-top:2px solid var(--border)"><td>Net Liability</td><td class="${r.pvNL>0?'neg':'pos'}">¥${fv(r.pvNL)}</td><td>${((r.pvNL/r.pvP)*100).toFixed(1)}%</td><td style="color:var(--t3);font-size:10px">+ve = insurer owes</td></tr>
+        <tr><td colspan="4" style="height:8px;border:none"></td></tr>
+        <tr><td>PV Asset Income</td><td class="pos">¥${fv(r.pvAI)}</td><td>—</td><td style="color:var(--t3);font-size:10px">Coupon + div</td></tr>
+        <tr><td>SH Cumulative Dist</td><td class="neg">¥${fv(r.totSh)}</td><td>—</td><td style="color:var(--t3);font-size:10px">${Math.round((1-parseFloat($('p-ph').value))*100)}% of surplus</td></tr>
+        <tr><td>PH Cumulative Dist</td><td class="pos">¥${fv(r.totPh)}</td><td>—</td><td style="color:var(--t3);font-size:10px">${Math.round(parseFloat($('p-ph').value)*100)}% of surplus</td></tr>
+        <tr><td>Asset Share @ Maturity</td><td class="pos">¥${fv(r.asAtMat)}</td><td>—</td><td style="color:var(--t3);font-size:10px">Per policy</td></tr>
+      </tbody>
+    </table>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DATA TABLES
+// ═══════════════════════════════════════════════════════════
+function buildTbl(id,headers,data,rowFn){
+  const t=$(id);
+  t.querySelector('thead tr').innerHTML=headers.map(h=>`<th>${h}</th>`).join('');
+  t.querySelector('tbody').innerHTML=data.map(r=>{
+    const yh=r.month%12===1&&r.month>1?`<tr class="yr-hdr"><td colspan="${headers.length}">▸ Policy Year ${r.py}</td></tr>`:'';
+    return yh+`<tr>${rowFn(r)}</tr>`;
+  }).join('');
+}
+function tc(v,dp=0,pos=false){const cl=v>0?(pos?'pos':''):(v<0?'neg':'');return`<td class="${cl}">${fv(v,dp)}</td>`}
+function tp(v){return`<td>${fp(v)}</td>`}
+
+function renderTables(r,p){
+  buildTbl('tbl-liab',
+    ['Mo','Yr','In-Force%','qx(m)%','λ(m)%','Premium','Acq Exp','Ren Exp','Death-G','Death-NG','Mat-G','Mat-NG','Surrender','Net CF','DF','PV Net CF','RB Accum','AS Proxy'],
+    r.L,
+    v=>[`<td>${v.month}</td><td>${v.py}</td>`,
+      tp(v.inF),tp(v.qm),tp(v.lm),
+      tc(v.prem),tc(v.acq),tc(v.ren),
+      tc(v.dG),tc(v.dN),tc(v.mG),tc(v.mN),tc(v.sv),
+      tc(v.ncf,0,true),
+      `<td>${v.df.toFixed(5)}</td>`,
+      tc(v.pvNcf,0,true),tc(v.rb),tc(v.asp)
+    ].join(''));
+
+  buildTbl('tbl-assets',
+    ['Mo','Govt Cpn','Govt Mat','Credit Cpn','Credit Mat','Eq Div','Eq CapGain','Cash Int','Total Income','Fund MV','DF','PV CF'],
+    r.A,
+    v=>[`<td>${v.month}</td>`,tc(v.gC),tc(v.gM),tc(v.cC),tc(v.cM),tc(v.eD),tc(v.eG),tc(v.ci),tc(v.ti,0,true),tc(v.fmv),`<td>${v.df.toFixed(5)}</td>`,tc(v.pv)].join(''));
+
+  buildTbl('tbl-share',
+    ['Mo','Yr','AS BOM','Premium','Acq','Renewal','Inv Return','Rate%','Death-G','Death-NG','Surrender','Distributable','SH Dist','PH Dist','AS EOM'],
+    r.S,
+    v=>[`<td>${v.month}</td><td>${v.py}</td>`,
+      tc(v.asBom),tc(v.p),tc(v.ac),tc(v.re),tc(v.inv),tp(v.ir),
+      tc(v.dg),tc(v.dn),tc(v.sv),tc(v.dist),tc(v.sh),tc(v.ph),
+      tc(v.asEom,0,true)
+    ].join(''));
+}
+
+// ═══════════════════════════════════════════════════════════
+// POLICY ILLUSTRATION
+// ═══════════════════════════════════════════════════════════
+function renderIllustration(r,p,wrapId){
+  const T=p.T, nPol=parseInt($('p-count').value)||1;
+  const rows2=[];
+  for(let y=1;y<=p.termYrs;y++){
+    const lastM=r.L[y*12-1], lastS=r.S[y*12-1];
+    const annPrem=r.L.slice((y-1)*12,y*12).reduce((s,v)=>s+v.prem,0)*nPol;
+    const cumPrem=r.L.slice(0,y*12).reduce((s,v)=>s+v.prem,0)*nPol;
+    const annDeath=r.L.slice((y-1)*12,y*12).reduce((s,v)=>s+(v.dG+v.dN)*nPol,0);
+    const svAmt=lastM?(lastM.sv*nPol*(p.sa*lastM.inF)*0.85):0;
+    const rbAccum=lastM?lastM.rb:0;
+    const asEom=lastS?lastS.asEom*nPol:0;
+    rows2.push({y,annPrem,cumPrem,annDeath,svAmt,rbAccum,asEom,
+      inF:lastM?lastM.inF:0,
+      matSA:y===p.termYrs?p.sa*(lastM?lastM.inF*(1-lastM.qm)*(1-lastM.lm):0)*nPol:0,
+      matNG:y===p.termYrs?p.tbPct*asEom:0
+    });
+  }
+  const wrap=$(wrapId);
+  if(!wrap) return;
+  wrap.innerHTML=`
+  <table class="illus-tbl">
+    <thead>
+      <tr>
+        <th style="text-align:left">Policy Year</th>
+        <th>Annual Premium</th>
+        <th>Cumulative Premium</th>
+        <th>Death Benefit (Guar)</th>
+        <th>RB Accumulated</th>
+        <th>Surrender Value</th>
+        <th>Asset Share</th>
+        <th>In-Force %</th>
+        ${p.termYrs<=rows2.length?'<th>Maturity SA</th><th>Terminal Bonus</th>':''}
+      </tr>
+    </thead>
+    <tbody>
+      ${rows2.map(v=>`<tr style="${v.y===p.termYrs?'font-weight:700;color:var(--acc3)':''}">
+        <td>Year ${v.y}${v.y===p.termYrs?' ★':''}</td>
+        <td>¥${fk(v.annPrem*nPol)}</td>
+        <td>¥${fk(v.cumPrem*nPol)}</td>
+        <td>¥${fk(p.sa*nPol)}</td>
+        <td>¥${fk(v.rbAccum*nPol)}</td>
+        <td>¥${fk(v.asEom*0.85)}</td>
+        <td>¥${fk(v.asEom)}</td>
+        <td>${fp(v.inF)}</td>
+        ${p.termYrs<=rows2.length?`<td>¥${fk(v.matSA)}</td><td>¥${fk(v.matNG)}</td>`:''}
+      </tr>`).join('')}
+    </tbody>
+    <tfoot><tr>
+      <td colspan="3">Based on ${nPol.toLocaleString()} policies · Illustrated benefits are non-guaranteed where marked</td>
+      <td colspan="7" style="text-align:right;font-size:10px;color:var(--t3)">Disc curve: SII forward rates · Monthly UDD mortality · CNY amounts</td>
+    </tr></tfoot>
+  </table>`;
+}
+
+// CSV Export
+function exportCSV(){
+  if(!RESULT) return alert('Run projection first.');
+  const rows3=RESULT.L.map((v,i)=>{
+    const a=RESULT.A[i]||{}, s=RESULT.S[i]||{};
+    return [v.month,v.py,v.inF.toFixed(6),v.qm.toFixed(6),v.lm.toFixed(6),
+      v.prem.toFixed(2),v.acq.toFixed(2),v.ren.toFixed(2),
+      v.dG.toFixed(2),v.dN.toFixed(2),v.mG.toFixed(2),v.mN.toFixed(2),v.sv.toFixed(2),
+      v.ncf.toFixed(2),v.df.toFixed(6),v.pvNcf.toFixed(2),v.rb.toFixed(2),
+      (a.ti||0).toFixed(2),(a.fmv||0).toFixed(2),(a.pv||0).toFixed(2),
+      (s.asEom||0).toFixed(2),(s.sh||0).toFixed(2),(s.ph||0).toFixed(2)
+    ].join(',');
+  });
+  const hdr='Month,PolicyYear,InForce,qx_m,lambda_m,Premium,AcqExp,RenExp,DeathG,DeathNG,MatG,MatNG,Surrender,NetCF,DF,PV_NetCF,RB_Accum,AssetIncome,FundMV,PV_AssetIncome,AssetShare_EOM,SH_Dist,PH_Dist';
+  const blob=new Blob([hdr+'\n'+rows3.join('\n')],{type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='par_projection_results.csv'; a.click();
+}
+
+// ═══════════════════════════════════════════════════════════
+// STARTUP INIT
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function(){
+  // Load CNY 2024 curve as default
+  loadCurve('cny2024');
+  // Load sample balanced asset portfolio
+  loadPreset('balanced');
+  renderRows(); updateAllocChart(); updatePortMetrics();
+  // Draw assumption charts
+  updateMortPreview();
+  updateLapseChart();
+  // Init stress table
+  initStressTable();
+});
+
+</script>
+</body>
+</html>

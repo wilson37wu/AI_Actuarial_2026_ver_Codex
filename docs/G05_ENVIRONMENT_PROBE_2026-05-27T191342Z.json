@@ -1,0 +1,79 @@
+﻿{
+  "generated_at": "2026-05-27T19:13:42.698820+00:00",
+  "workspace_root": "C:\\Users\\SkiesNet\\Downloads\\Auto_Actuarial_Model_Dev_May26",
+  "python": {
+    "executable": "C:\\Program Files\\PostgreSQL\\18\\pgAdmin 4\\python\\python.exe",
+    "version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+    "implementation": "CPython"
+  },
+  "environment": {
+    "cwd": "C:\\Users\\SkiesNet\\Downloads\\Auto_Actuarial_Model_Dev_May26",
+    "path_has_python_launcher": false
+  },
+  "dependencies": {
+    "required_modules": {
+      "pytest": false,
+      "numpy": false,
+      "pandas": false,
+      "scipy": false
+    },
+    "missing_modules": [
+      "pytest",
+      "numpy",
+      "pandas",
+      "scipy"
+    ],
+    "runtime_ready": false
+  },
+  "installer": {
+    "pip_available": true,
+    "offline_wheelhouse": {
+      "candidate_locations": [
+        {
+          "path": "C:\\Users\\SkiesNet\\Downloads\\Auto_Actuarial_Model_Dev_May26\\wheelhouse",
+          "exists": false,
+          "top_level_wheel_count": 0
+        },
+        {
+          "path": "C:\\Users\\SkiesNet\\Downloads\\Auto_Actuarial_Model_Dev_May26\\wheels",
+          "exists": false,
+          "top_level_wheel_count": 0
+        },
+        {
+          "path": "C:\\Users\\SkiesNet\\Downloads\\Auto_Actuarial_Model_Dev_May26\\.wheels",
+          "exists": false,
+          "top_level_wheel_count": 0
+        },
+        {
+          "path": "C:\\Users\\SkiesNet\\Downloads\\Auto_Actuarial_Model_Dev_May26\\vendor",
+          "exists": false,
+          "top_level_wheel_count": 0
+        },
+        {
+          "path": "C:\\Users\\SkiesNet\\Downloads\\Auto_Actuarial_Model_Dev_May26\\.vendor",
+          "exists": false,
+          "top_level_wheel_count": 0
+        }
+      ],
+      "total_top_level_wheels": 0,
+      "offline_install_source_available": false
+    },
+    "summary": "pip is available, but no workspace wheelhouse was found."
+  },
+  "git": {
+    "git_dir": "C:\\Users\\SkiesNet\\Downloads\\Auto_Actuarial_Model_Dev_May26\\.git",
+    "status": "incomplete",
+    "summary": "Git metadata is incomplete; local git status/log/commit operations are expected to fail.",
+    "head": "ref: refs/heads/master",
+    "required_paths": {
+      "HEAD": true,
+      "config": true,
+      "refs": true,
+      "objects": false,
+      "index": false
+    }
+  },
+  "overall_status": "BLOCKED",
+  "next_step": "Provision a Python environment from requirements-dev.txt and restore a complete .git checkout."
+}
+
