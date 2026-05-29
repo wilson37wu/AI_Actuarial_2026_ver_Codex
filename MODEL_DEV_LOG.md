@@ -38,6 +38,18 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
   `github.com` on port 443.
 - Gmail draft `r626300314084698796` was created for manual review.
 
+**Blocker Resolution Follow-up 2026-05-29T18:39:25Z:**
+- Network access was available on follow-up; pushed local commits through
+  `60ba123` to `origin/main`.
+- Installed `numpy`, `pandas`, `scipy`, and `pytest` into the pgAdmin Python
+  3.13 user site with `pip install --user -r requirements-dev.txt`.
+- Because pgAdmin Python uses isolated `python313._pth` path handling, tests
+  must be launched with the workspace inserted into `sys.path`.
+- Targeted ESG validation passed: `42 passed in 8.03s`.
+- Full test suite passed: `928 passed, 48 warnings in 79.62s`.
+- Added `.gitignore` commit `60ba123` to keep generated Python cache folders
+  out of automation status output.
+
 **Next Step:** Add design documentation and acceptance tests for schema compatibility.
 
 **Industry Standards Progress:**
