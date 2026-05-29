@@ -4,6 +4,73 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-05-29T03:30:00Z - Phase 6: ESG Scope and Architecture
+
+**Task Completed:** Define multi-market ESG requirements and scenario schema
+
+**Accomplishments:**
+- Added `docs/ESG_SCOPE_AND_SCHEMA_DESIGN.md` as the Phase 6 schema baseline
+  for multi-market, multi-currency ESG expansion.
+- Defined supported P/Q measures, starter markets, currencies, risk factors,
+  and the canonical scenario package structure.
+- Documented a compatibility path from canonical long-form scenario
+  observations to the existing v1 wide `ScenarioSet.data` view.
+- Mapped schema expectations to current `ScenarioSet`, `ESGAdapter`,
+  `TVOGEngine`, `RiskMetrics`, and ALM consumers.
+- Added an acceptance test plan covering metadata, measure segregation,
+  factor references, wide-view conversion, consumer guardrails, and monthly grid
+  completeness.
+
+**Next Step:** Design scenario metadata and parameter snapshot structure,
+including ownership, calibration sources, model equations, discretisation,
+limitations, and audit traceability fields.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Section 3.1.3: Scenario schema now requires explicit measure,
+  risk factor, model, calibration, seed, and limitation traceability.
+- IA TAS M Section 3.9: Schema rules and acceptance tests now define data
+  validation expectations before additional ESG generators are implemented.
+- ERM: Multi-market scope now covers rates, discount factors, public equity,
+  FX, credit spreads, and cross-factor correlation design inputs.
+
+---
+
+## Run 2026-05-29T00:00:00Z - Planning: Post-v1 Stochastic Model Expansion
+
+**Task Completed:** Expanded the development plan for post-v1 stochastic ESG,
+asset, liability, scale, and educational reporting work
+
+**Status:** v1 remains complete. The automation plan is now extended into a
+post-v1 roadmap and the active state is set to **Phase 6: ESG Scope and
+Architecture**, starting with the design task "Define multi-market ESG
+requirements and scenario schema."
+
+**Actions Taken:**
+- Created `docs/POST_V1_STOCHASTIC_MODEL_EXPANSION_PLAN.md` with Phases 6-12.
+- Expanded `MODEL_DEV_TASK_PROMPT.md` Industry Standards Context to cover
+  stochastic ESG design, negative-rate-capable interest-rate models, multi-market
+  equity scenarios, wider asset classes, derivatives, Hong Kong participating
+  liabilities, and 100,000-policy educational processing.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` so future automation cycles work
+  one task at a time from Phase 6 rather than stopping at completed Phase 5.
+- Preserved the v1 completion summary while adding a post-v1 expansion summary
+  and scope-control note.
+
+**Next Step:** Phase 6, Task 1 - define multi-market ESG requirements and
+scenario schema, including measure, currency, market, risk factor, time grid,
+metadata, parameter snapshot, and compatibility with existing model consumers.
+
+**Industry Standards Progress:**
+- SOA ASOP 56: Expanded stochastic process documentation requirements to
+  include model equations, calibration basis, scenario metadata, tail behaviour,
+  reproducibility, and limitations.
+- IA TAS M: Added traceability requirements from assumption source to output
+  report, including model version, parameter snapshot, and run metadata.
+- ERM: Added explicit roadmap coverage for market, credit, liquidity, basis,
+  option / guarantee, management-action, derivative, and private-asset risks.
+
+---
+
 ## Run 2026-05-28T18:05:53Z - Maintenance: G-05 Runtime Blocker Re-Check
 
 **Task Completed:** Refreshed G-05 environment, static guard, syntax,

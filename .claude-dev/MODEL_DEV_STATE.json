@@ -1,10 +1,10 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-05-28T18:05:53Z",
-  "last_run_duration_minutes": 8,
-  "current_phase": "Phase 5: Documentation & Delivery",
-  "overall_status": "completed",
+  "last_run": "2026-05-29T03:30:00Z",
+  "last_run_duration_minutes": 19,
+  "current_phase": "Phase 6: ESG Scope and Architecture",
+  "overall_status": "active_post_v1_expansion",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -95,6 +95,108 @@
       ],
       "in_progress": [],
       "next": null
+    },
+    "Phase 6: ESG Scope and Architecture": {
+      "status": "in_progress",
+      "description": "Define the expanded multi-market economic scenario generator architecture, scenario schema, P/Q measure metadata, calibration interfaces, and compatibility with existing TVOG, risk, ALM, and reporting consumers",
+      "tasks": [
+        "Define multi-market ESG requirements and scenario schema",
+        "Design scenario metadata and parameter snapshot structure",
+        "Define calibration data interfaces for curves, equity indices, FX, credit spreads, and correlations",
+        "Map ESG outputs to existing TVOG, VaR/ES, ALM, and reporting consumers",
+        "Add design documentation and acceptance tests for schema compatibility"
+      ],
+      "completed": [
+        "Define multi-market ESG requirements and scenario schema"
+      ],
+      "in_progress": [
+        "Design scenario metadata and parameter snapshot structure"
+      ],
+      "next": "Define calibration data interfaces for curves, equity indices, FX, credit spreads, and correlations"
+    },
+    "Phase 7: Interest Rate and Yield Curve ESG": {
+      "status": "planned",
+      "description": "Implement negative-rate-capable risk-free rate models and starter market curves for USD, EUR, HKD, CNY, and JPY, with validation and market-consistency evidence",
+      "tasks": [
+        "Implement enhanced Hull-White 1-factor process with explicit curve input and negative-rate support",
+        "Add G2++ design or prototype for two-factor curve dynamics",
+        "Support USD, EUR, HKD, CNY, and JPY starter curves through parameter files or fixtures",
+        "Add yield curve validation for discount factors, forwards, negative-rate paths, and stresses",
+        "Add Q-measure martingale evidence for discount factors"
+      ],
+      "completed": [],
+      "in_progress": [],
+      "next": "Implement enhanced Hull-White 1-factor process with explicit curve input and negative-rate support"
+    },
+    "Phase 8: Equity, FX, and Correlation ESG": {
+      "status": "planned",
+      "description": "Add regional equity factors, FX translation where needed, and cross-risk-factor correlation validation for US, Europe, Hong Kong / China, Japan, and Asia ex-Japan markets",
+      "tasks": [
+        "Add US, Europe, Hong Kong / China, Japan, and Asia ex-Japan equity factors",
+        "Add FX return factors where currency translation is needed",
+        "Implement correlation matrix validation, positive-semidefinite repair or rejection, and scenario diagnostics",
+        "Add P-measure backtest scaffold for equity return distribution and correlation stability",
+        "Document model limitations and upgrade path to stochastic volatility or jump diffusion"
+      ],
+      "completed": [],
+      "in_progress": [],
+      "next": "Add US, Europe, Hong Kong / China, Japan, and Asia ex-Japan equity factors"
+    },
+    "Phase 9: Asset Class and Derivative Library": {
+      "status": "planned",
+      "description": "Expand asset coverage to richer fixed income, public equity, private credit, private equity, infrastructure, interest rate swaps, and bond forwards",
+      "tasks": [
+        "Add fixed-income instruments with coupon, duration, spread, downgrade, and default loss fields",
+        "Add private credit, private equity, and infrastructure educational asset models",
+        "Add interest rate swap valuation and bond forward valuation examples",
+        "Add asset cashflow aggregation and market value roll-forward reporting",
+        "Add asset class stress tests and governance notes"
+      ],
+      "completed": [],
+      "in_progress": [],
+      "next": "Add fixed-income instruments with coupon, duration, spread, downgrade, and default loss fields"
+    },
+    "Phase 10: Hong Kong Participating Liability Products": {
+      "status": "planned",
+      "description": "Enrich liability modelling for Hong Kong participating products, starting with cash dividend and reversionary bonus mechanics",
+      "tasks": [
+        "Define Hong Kong cash dividend product mechanics and sample policy data",
+        "Define reversionary bonus mechanics including vested bonus, terminal bonus, and guarantee split",
+        "Implement dividend and bonus declaration assumptions and sensitivity hooks",
+        "Add asset-share support tests for cash dividend and reversionary bonus variants",
+        "Add liability reporting views for reserves, TVOG, bonus supportability, and management summaries"
+      ],
+      "completed": [],
+      "in_progress": [],
+      "next": "Define Hong Kong cash dividend product mechanics and sample policy data"
+    },
+    "Phase 11: 100,000-Policy Processing and Reporting Cycle": {
+      "status": "planned",
+      "description": "Demonstrate a realistic educational actuarial reporting cycle with 100,000 synthetic policies, chunked processing, checkpoints, reconciliation, validation, and reporting packs",
+      "tasks": [
+        "Generate or ingest a 100,000-policy synthetic Hong Kong PAR portfolio",
+        "Add grouping, chunking, checkpoint restart, failed-chunk audit, and reconciliation",
+        "Add reporting-cycle workflow for assumption lock, model run, validation checks, output review, and sign-off pack",
+        "Add performance benchmarks and memory profiling",
+        "Create educational reporting pack with model run log, movement analysis, risk metrics, validation exceptions, and sign-off checklist"
+      ],
+      "completed": [],
+      "in_progress": [],
+      "next": "Generate or ingest a 100,000-policy synthetic Hong Kong PAR portfolio"
+    },
+    "Phase 12: Governance, Calibration, and Educational Packaging": {
+      "status": "planned",
+      "description": "Package the expanded model as a governed educational tool with calibration examples, model limitation cards, tutorial runs, validation reports, and refreshed release documentation",
+      "tasks": [
+        "Add calibration notebooks or scripts for curves, equity, credit, and liability assumptions",
+        "Add model limitation cards for every ESG and liability module",
+        "Add guided examples for pricing, valuation, TVOG, ALM, stress, and reporting close",
+        "Add validation dashboards or markdown reports",
+        "Refresh final documentation, release notes, and model risk card"
+      ],
+      "completed": [],
+      "in_progress": [],
+      "next": "Add calibration notebooks or scripts for curves, equity, credit, and liability assumptions"
     }
   },
   "repository_info": {
@@ -105,10 +207,10 @@
     "commits_this_session": 28
   },
   "progress_metrics": {
-    "total_tasks": 31,
-    "tasks_completed": 34,
+    "total_tasks": 66,
+    "tasks_completed": 35,
     "phases_completed": 5,
-    "estimated_completion_pct": 100,
+    "estimated_completion_pct": 53,
     "average_cycle_duration_minutes": 52,
     "cycles_run": 85
   },
@@ -129,15 +231,21 @@
   },
   "completion_summary": {
     "version": "v1.0.0-dev",
-    "milestone": "ALL 5 PHASES COMPLETE",
+    "milestone": "V1 COMPLETE; POST-V1 EXPANSION ACTIVE",
     "release_date": "2026-05-23",
     "production_status": "NOT CLEARED FOR PRODUCTION",
     "production_gates_cleared": 0,
     "production_gates_total": 10,
     "estimated_remediation_weeks": "8-12",
     "test_suite": "743/743 passing",
-    "documents_produced": 16,
+    "documents_produced": 18,
     "model_risks_open": 4,
     "model_risks_mitigated": 4
+  },
+  "post_v1_expansion_summary": {
+    "roadmap_document": "docs/POST_V1_STOCHASTIC_MODEL_EXPANSION_PLAN.md",
+    "scope": "Multi-market ESG, negative-rate-capable interest rates, regional equity / FX / correlation, broader asset classes, Hong Kong participating liabilities, 100,000-policy educational reporting cycle",
+    "scope_control": "Complete one task per cycle; user may adjust scope after each phase based on development progress and outcome",
+    "current_decision": "Begin with Phase 6 design before implementing additional generators or liability features"
   }
 }

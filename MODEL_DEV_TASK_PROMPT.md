@@ -84,16 +84,47 @@ Quick scan (2 min):
 - Stochastic models must document stochastic process assumptions
 - Parameter calibration methodology must be explicit
 - Model governance and validation framework required
+- Economic scenario generators must identify measure, calibration date, model
+  equations, discretisation, correlation basis, and limitations
+- Scenario validation should include distribution diagnostics, tail behaviour,
+  convergence, reproducibility, and model-use restrictions
 
 **IA (Institute of Actuaries):**
 - Model documentation, assumptions, sensitivity analysis
 - Regular backtest and review cadence
 - Clear audit trail of model changes
+- Model changes must maintain traceability from assumption source to output
+  report, including model version, parameter snapshot, and run metadata
+- Educational examples must still disclose limitations and unsuitable uses
 
 **ERM (Enterprise Risk Management):**
 - Tail risk metrics (VaR, ES) at appropriate confidence levels
 - Scenario stress testing
 - Model limitations and known issues disclosure
+- Multi-asset ALM should cover market risk, credit risk, liquidity risk,
+  basis risk, option / guarantee risk, and management-action risk
+- Derivatives and private assets require explicit valuation conventions,
+  stress treatment, and governance notes
+
+**Stochastic ESG Expansion:**
+- Build or extend an economic scenario generator for risk-free rates, equity
+  returns, FX / currency translation where needed, credit spreads, and
+  cross-risk-factor correlations
+- Cover starter equity markets: US, Europe, Hong Kong / China, Japan, and broad
+  Asia ex-Japan
+- Use contemporary interest-rate models that can support low and negative
+  rates; enhanced Hull-White 1F and G2++ are the first candidates
+- Separate P-measure real-world scenarios from Q-measure market-consistent
+  scenarios and enforce consumer guardrails
+
+**Asset and Liability Expansion:**
+- Expand assets beyond fixed income and public equity to private credit,
+  private equity, infrastructure, interest rate swaps, bond forwards, and
+  other educational derivative examples
+- Enrich liabilities for Hong Kong participating business, starting with cash
+  dividend and reversionary bonus product mechanics
+- Target a 100,000-policy educational portfolio with chunked processing,
+  checkpointing, reconciliation, and reporting-cycle evidence
 
 ### What Counts as "Complete" for a Task
 
@@ -219,7 +250,7 @@ Use the Gmail tool to create a draft email:
 
 <h4>📈 Progress Overview</h4>
 <p>
-  <strong>Phases Completed:</strong> {X}/5<br/>
+  <strong>Phases Completed:</strong> {phases_completed}/{total_phases}<br/>
   <strong>Estimated Overall Completion:</strong> {estimated_completion_pct}%
 </p>
 <div class="progress-bar">
@@ -333,6 +364,34 @@ Calibrate to historical data. Generate backtest reports.
 
 **Phase 5: Documentation & Delivery**  
 Final docs, model card, deployment checklist.
+
+**Phase 6: ESG Scope and Architecture**  
+Define multi-market ESG requirements, scenario schema, P/Q measure metadata,
+calibration interfaces, and compatibility with current TVOG / ALM consumers.
+
+**Phase 7: Interest Rate and Yield Curve ESG**  
+Implement negative-rate-capable risk-free rate models for starter markets
+including USD, EUR, HKD, CNY, and JPY.
+
+**Phase 8: Equity, FX, and Correlation ESG**  
+Add US, Europe, Hong Kong / China, Japan, and Asia ex-Japan equity factors plus
+FX and correlation validation.
+
+**Phase 9: Asset Class and Derivative Library**  
+Add fixed income depth, public equity, private credit, private equity,
+infrastructure, interest rate swaps, and bond forwards.
+
+**Phase 10: Hong Kong Participating Liability Products**  
+Add cash dividend and reversionary bonus liability mechanics using Hong Kong
+participating business as the first reference market.
+
+**Phase 11: 100,000-Policy Processing and Reporting Cycle**  
+Demonstrate chunked high-volume processing, checkpoints, reconciliation,
+validation, and educational actuarial reporting packs.
+
+**Phase 12: Governance, Calibration, and Educational Packaging**  
+Package the expanded model as a governed educational tool with calibration
+examples, model limitation cards, tutorial runs, and refreshed release docs.
 
 ---
 
