@@ -3608,3 +3608,43 @@ FX, credit spreads, and correlations.
   outputs.
 
 ---
+
+## Run 2026-05-29T19:12:16Z - Phase 6: ESG Scope and Architecture (COMPLETED)
+
+**Task Completed:** Add design documentation and acceptance tests for schema compatibility
+
+**Major unblock:** This cycle ran in a Linux environment where
+`requirements-dev.txt` dependencies (numpy, pandas, scipy, pytest) install
+successfully. The runtime validation that was blocked across prior cycles
+(pgAdmin-only interpreter, no pytest, no PyPI) is now captured.
+
+**Accomplishments:**
+- Ran the full repository test suite: **928 passed, 0 failed** across 19 test
+  modules (recorded in `docs/G05_RUNTIME_TEST_EVIDENCE_*.md`).
+- Added `tests/test_schema_compatibility.py` (18 tests, all passing): a Phase 6
+  acceptance suite tying together metadata/parameter-snapshot, calibration
+  interface, and consumer-mapping contracts. Proves v1 wide-view backward
+  compatibility by round-tripping generated scenarios and each consumer wide
+  view through the v1 `ESGAdapter` schema/dtype/range validator.
+- Verified P/Q measure guardrails, audit metadata propagation, monthly-grid
+  completeness, metadata/snapshot ID consistency, and DynamicALM annual-return
+  derivation.
+- Created `docs/ESG_SCHEMA_COMPATIBILITY_ACCEPTANCE.md` defining the 10
+  compatibility invariants and their acceptance checks.
+- Marked Phase 6 complete and advanced state to Phase 7.
+
+**Validation:**
+- `tests/test_schema_compatibility.py`: 18 passed in 1.89s.
+- Full suite: 928 passed (esg_process 42, batch1 479, ia/integration/health/tvog
+  191, monthly/risk/sensitivity/stress 216). With the new module: 946 total.
+
+**Next Step:** Implement enhanced Hull-White 1-factor process with explicit
+curve input and negative-rate support (Phase 7, Task 1).
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.1.3 / §3.4 / §3.5: process docs, calibration inputs, and
+  scenario adequacy exercised at runtime; schema superset proven.
+- IA TAS M §3.6 / §3.9: runtime validation evidence requirement now satisfied;
+  traceability fields verified to propagate to consumer views.
+
+---
