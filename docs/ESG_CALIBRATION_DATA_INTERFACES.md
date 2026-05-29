@@ -103,9 +103,14 @@ Targeted tests are in `tests/test_esg_process.py`:
 - duplicate field specs are rejected;
 - generated parameter snapshots include default Phase 6 interface IDs.
 
-## 8. Next Task
+## 8. Consumer Mapping Linkage
 
-The next Phase 6 task is to map ESG outputs to existing TVOG, VaR/ES, ALM, and
-reporting consumers. That mapping should define factor selections, wide-view
-conversion rules, measure guardrails, and audit metadata propagation for each
-consumer.
+Phase 6 Task 4 is implemented in
+`docs/ESG_OUTPUT_CONSUMER_MAPPING.md` and
+`par_model_v2.stochastic.esg_process`.
+
+The consumer mapping layer defines factor selections, wide-view requirements,
+measure guardrails, ALM return proxies, and audit metadata propagation for
+TVOG, VaR/ES, DynamicALMEngine, and reporting consumers. The next Phase 6 task
+should add design documentation and acceptance tests for schema compatibility
+across all Phase 6 contracts.

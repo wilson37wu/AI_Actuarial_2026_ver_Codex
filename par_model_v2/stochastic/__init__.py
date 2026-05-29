@@ -47,6 +47,9 @@ from par_model_v2.stochastic.esg_process import (
     ParameterSnapshot,
     ScenarioSet,
     ScenarioMetadata,
+    ConsumerOutputMapping,
+    default_phase6_consumer_mappings,
+    phase6_consumer_mapping,
     Measure,
 )
 from par_model_v2.stochastic.esg_adapter import (
@@ -75,6 +78,9 @@ __all__ = [
     "ParameterSnapshot",
     "ScenarioSet",
     "ScenarioMetadata",
+    "ConsumerOutputMapping",
+    "default_phase6_consumer_mappings",
+    "phase6_consumer_mapping",
     "Measure",
     # esg_adapter
     "ESGAdapter",

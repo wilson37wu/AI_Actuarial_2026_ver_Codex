@@ -290,10 +290,19 @@ The implementation adds:
 - `ParameterSnapshot.calibration_interfaces` so future calibrated snapshots can
   reference the input contracts they satisfy.
 
-The next Phase 6 task should map ESG outputs to existing TVOG, VaR/ES, ALM, and
-reporting consumers. That task should formalize:
+Phase 6 Task 4 is implemented in
+`docs/ESG_OUTPUT_CONSUMER_MAPPING.md` and
+`par_model_v2.stochastic.esg_process`.
+
+The implementation adds:
 
 - selected factor IDs for each current v1 consumer column;
-- long-form to wide-view conversion requirements;
-- P/Q measure guardrails by consumer; and
-- scenario metadata and parameter snapshot propagation into reports.
+- P/Q measure guardrails by consumer;
+- `ConsumerOutputMapping` validation before downstream use;
+- `ScenarioSet.consumer_wide_view(...)` with traceability attrs for reports;
+  and
+- `ScenarioSet.alm_annual_returns(...)` for current DynamicALMEngine inputs.
+
+The next Phase 6 task should add design documentation and acceptance tests for
+schema compatibility across the metadata, calibration interface, and consumer
+mapping contracts.

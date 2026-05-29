@@ -784,6 +784,239 @@ class ScenarioMetadata:
         return result
 
 
+@dataclass(frozen=True)
+class ConsumerOutputMapping:
+    """Mapping from Phase 6 ESG scenario outputs to existing model consumers."""
+
+    consumer_id: str
+    consumer_name: str
+    accepted_measures: Tuple[Measure, ...]
+    required_columns: Tuple[str, ...]
+    factor_ids: Dict[str, str]
+    propagated_metadata_fields: Tuple[str, ...]
+    output_contract: str
+    notes: str = ""
+
+    def __post_init__(self):
+        object.__setattr__(self, "consumer_id", _require_text(self.consumer_id, "consumer_id"))
+        object.__setattr__(self, "consumer_name", _require_text(self.consumer_name, "consumer_name"))
+        accepted_measures = tuple(_coerce_measure(measure) for measure in self.accepted_measures)
+        if not accepted_measures:
+            raise ValueError("accepted_measures must not be empty")
+        object.__setattr__(self, "accepted_measures", accepted_measures)
+        required_columns = tuple(_require_text(col, "required column") for col in self.required_columns)
+        if not required_columns:
+            raise ValueError("required_columns must not be empty")
+        object.__setattr__(self, "required_columns", required_columns)
+        factor_ids = {
+            _require_text(key, "factor mapping key"): _require_text(value, "factor id")
+            for key, value in dict(self.factor_ids).items()
+        }
+        object.__setattr__(self, "factor_ids", factor_ids)
+        metadata_fields = tuple(
+            _require_text(field_name, "metadata field")
+            for field_name in self.propagated_metadata_fields
+        )
+        if not metadata_fields:
+            raise ValueError("propagated_metadata_fields must not be empty")
+        object.__setattr__(self, "propagated_metadata_fields", metadata_fields)
+        object.__setattr__(self, "output_contract", _require_text(self.output_contract, "output_contract"))
+
+    def validate_scenario_set(self, scenario_set):
+        """Validate measure, wide columns, and metadata before consumer use."""
+        measure = _coerce_measure(scenario_set.measure)
+        if measure not in self.accepted_measures:
+            raise ValueError(
+                "{} requires scenario measure in {}; got {}".format(
+                    self.consumer_id,
+                    [accepted.value for accepted in self.accepted_measures],
+                    measure.value,
+                )
+            )
+        missing = [column for column in self.required_columns if column not in scenario_set.data.columns]
+        if missing:
+            raise ValueError(
+                "{} missing required scenario columns: {}".format(
+                    self.consumer_id, ", ".join(missing)
+                )
+            )
+        if scenario_set.metadata is None:
+            raise ValueError("{} requires ScenarioMetadata for audit traceability".format(self.consumer_id))
+        if scenario_set.parameter_snapshot is None:
+            raise ValueError("{} requires a ParameterSnapshot for audit traceability".format(self.consumer_id))
+        if scenario_set.metadata.parameter_snapshot_id != scenario_set.parameter_snapshot.snapshot_id:
+            raise ValueError("{} metadata and parameter snapshot IDs do not match".format(self.consumer_id))
+        return True
+
+    def wide_view(self, scenario_set):
+        """Return a consumer-ready wide view with audit metadata in DataFrame attrs."""
+        self.validate_scenario_set(scenario_set)
+        view = scenario_set.data.copy()
+        view.attrs.update(self.traceability_attributes(scenario_set))
+        return view
+
+    def traceability_attributes(self, scenario_set):
+        """Return the metadata fields that reports should carry forward."""
+        self.validate_scenario_set(scenario_set)
+        metadata = scenario_set.metadata
+        snapshot = scenario_set.parameter_snapshot
+        attributes = {
+            "consumer_id": self.consumer_id,
+            "consumer_name": self.consumer_name,
+            "measure": metadata.measure.value,
+            "scenario_set_id": metadata.scenario_set_id,
+            "model_version": metadata.model_version,
+            "base_currency": metadata.base_currency,
+            "valuation_date": metadata.valuation_date.isoformat(),
+            "projection_months": metadata.projection_months,
+            "n_scenarios": metadata.n_scenarios,
+            "seed_policy": metadata.seed_policy,
+            "parameter_snapshot_id": metadata.parameter_snapshot_id,
+            "calibration_date": snapshot.calibration_date.isoformat(),
+            "approval_status": snapshot.approval_status,
+            "is_placeholder": snapshot.is_placeholder,
+            "limitations_id": metadata.limitations_id,
+        }
+        return {
+            field_name: attributes[field_name]
+            for field_name in self.propagated_metadata_fields
+            if field_name in attributes
+        }
+
+    def annual_returns_for_alm(self, scenario_set, scenario_id, month):
+        """Map one scenario-month observation into DynamicALMEngine returns."""
+        if self.consumer_id != "dynamic_alm":
+            raise ValueError("annual_returns_for_alm is only valid for the dynamic_alm mapping")
+        self.validate_scenario_set(scenario_set)
+        rows = scenario_set.data[
+            (scenario_set.data["scenario_id"] == int(scenario_id))
+            & (scenario_set.data["month"] == int(month))
+        ]
+        if len(rows) != 1:
+            raise ValueError(
+                "expected exactly one scenario row for scenario_id={}, month={}; got {}".format(
+                    scenario_id, month, len(rows)
+                )
+            )
+        row = rows.iloc[0]
+        short_rate = float(row["r_short"])
+        equity_return_1m = float(row["equity_return_1m"])
+        if equity_return_1m <= -1.0:
+            raise ValueError("equity_return_1m must be greater than -100% for ALM mapping")
+        equity_annual = (1.0 + equity_return_1m) ** 12 - 1.0
+        return {
+            "Cash": short_rate,
+            "Govt": short_rate,
+            "Credit": short_rate,
+            "Equity": equity_annual,
+        }
+
+    def to_dict(self):
+        return {
+            "consumer_id": self.consumer_id,
+            "consumer_name": self.consumer_name,
+            "accepted_measures": [measure.value for measure in self.accepted_measures],
+            "required_columns": list(self.required_columns),
+            "factor_ids": dict(self.factor_ids),
+            "propagated_metadata_fields": list(self.propagated_metadata_fields),
+            "output_contract": self.output_contract,
+            "notes": self.notes,
+        }
+
+
+_V1_WIDE_COLUMNS = (
+    "scenario_id",
+    "month",
+    "r_short",
+    "zcb_1y",
+    "zcb_10y",
+    "equity_index",
+    "equity_return_1m",
+    "measure",
+)
+
+_TRACEABILITY_FIELDS = (
+    "consumer_id",
+    "measure",
+    "scenario_set_id",
+    "model_version",
+    "base_currency",
+    "valuation_date",
+    "projection_months",
+    "n_scenarios",
+    "seed_policy",
+    "parameter_snapshot_id",
+    "calibration_date",
+    "approval_status",
+    "is_placeholder",
+    "limitations_id",
+)
+
+
+def default_phase6_consumer_mappings(base_currency="CNY", equity_market="CN"):
+    """Return governed ESG output mappings for current v1 consumers."""
+    base_currency = _validate_currency_code(base_currency, "base_currency")
+    equity_market = _require_text(equity_market, "equity_market").upper()
+    factor_ids = {
+        "short_rate": "RATE_SHORT_{}".format(base_currency),
+        "discount_factor_1y": "DF_1Y_{}".format(base_currency),
+        "discount_factor_10y": "DF_10Y_{}".format(base_currency),
+        "equity_index": "EQUITY_{}".format(equity_market),
+        "equity_return_1m": "EQUITY_RETURN_1M_{}".format(equity_market),
+    }
+    return (
+        ConsumerOutputMapping(
+            consumer_id="tvog",
+            consumer_name="TVOGEngine",
+            accepted_measures=(Measure.Q,),
+            required_columns=("scenario_id", "month", "r_short", "measure"),
+            factor_ids=factor_ids,
+            propagated_metadata_fields=_TRACEABILITY_FIELDS,
+            output_contract="Q-measure v1 wide view with base-currency short-rate path",
+            notes="Used for market-consistent guarantee valuation; P-measure inputs are rejected.",
+        ),
+        ConsumerOutputMapping(
+            consumer_id="risk_metrics",
+            consumer_name="RiskMetrics / LossDistribution",
+            accepted_measures=(Measure.P,),
+            required_columns=_V1_WIDE_COLUMNS,
+            factor_ids=factor_ids,
+            propagated_metadata_fields=_TRACEABILITY_FIELDS,
+            output_contract="P-measure projection lineage for scenario PV loss distributions",
+            notes="RiskMetrics consumes projected losses, but the ESG lineage must remain P-measure.",
+        ),
+        ConsumerOutputMapping(
+            consumer_id="dynamic_alm",
+            consumer_name="DynamicALMEngine",
+            accepted_measures=(Measure.P,),
+            required_columns=("scenario_id", "month", "r_short", "equity_return_1m", "measure"),
+            factor_ids=factor_ids,
+            propagated_metadata_fields=_TRACEABILITY_FIELDS,
+            output_contract="P-measure annual return dictionary by asset class for each scenario month",
+            notes="Cash, Govt, and Credit use the short-rate proxy until richer asset factors are implemented.",
+        ),
+        ConsumerOutputMapping(
+            consumer_id="reporting",
+            consumer_name="Reporting and audit packs",
+            accepted_measures=(Measure.P, Measure.Q),
+            required_columns=_V1_WIDE_COLUMNS,
+            factor_ids=factor_ids,
+            propagated_metadata_fields=_TRACEABILITY_FIELDS,
+            output_contract="Scenario wide view plus metadata and parameter snapshot lineage",
+            notes="Reporting may include P or Q sets, but each set remains single-measure and separately traced.",
+        ),
+    )
+
+
+def phase6_consumer_mapping(consumer_id, base_currency="CNY", equity_market="CN"):
+    """Return one Phase 6 consumer mapping by ID."""
+    normalized = _require_text(consumer_id, "consumer_id").lower()
+    for mapping in default_phase6_consumer_mappings(base_currency, equity_market):
+        if mapping.consumer_id == normalized:
+            return mapping
+    raise KeyError("unknown Phase 6 consumer mapping: {!r}".format(consumer_id))
+
+
 # ---------------------------------------------------------------------------
 # 2. Hull-White 1-Factor Rate Process
 # ---------------------------------------------------------------------------
@@ -1025,6 +1258,39 @@ class ScenarioSet:
             results[col + "_p95"] = grp.quantile(0.95)
         return pd.DataFrame(results)
 
+    def consumer_wide_view(self, consumer_id="reporting", base_currency=None, equity_market="CN"):
+        """Return a consumer-ready v1 wide view with traceability attrs."""
+        mapping = phase6_consumer_mapping(
+            consumer_id,
+            base_currency=base_currency or (
+                self.metadata.base_currency if self.metadata is not None else "CNY"
+            ),
+            equity_market=equity_market,
+        )
+        return mapping.wide_view(self)
+
+    def consumer_traceability(self, consumer_id="reporting", base_currency=None, equity_market="CN"):
+        """Return report metadata required to trace this ScenarioSet."""
+        mapping = phase6_consumer_mapping(
+            consumer_id,
+            base_currency=base_currency or (
+                self.metadata.base_currency if self.metadata is not None else "CNY"
+            ),
+            equity_market=equity_market,
+        )
+        return mapping.traceability_attributes(self)
+
+    def alm_annual_returns(self, scenario_id, month, base_currency=None, equity_market="CN"):
+        """Return DynamicALMEngine annual returns for one scenario-month."""
+        mapping = phase6_consumer_mapping(
+            "dynamic_alm",
+            base_currency=base_currency or (
+                self.metadata.base_currency if self.metadata is not None else "CNY"
+            ),
+            equity_market=equity_market,
+        )
+        return mapping.annual_returns_for_alm(self, scenario_id, month)
+
     @classmethod
     def generate(
         cls,
@@ -1154,6 +1420,9 @@ __all__ = [
     "default_phase6_calibration_interfaces",
     "ParameterSnapshot",
     "ScenarioMetadata",
+    "ConsumerOutputMapping",
+    "default_phase6_consumer_mappings",
+    "phase6_consumer_mapping",
     "HullWhiteParams",
     "GBMParams",
     "HullWhiteRateProcess",

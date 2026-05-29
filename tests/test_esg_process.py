@@ -21,6 +21,7 @@ from par_model_v2.stochastic.esg_process import (
     CalibrationDataInterface,
     CalibrationFieldSpec,
     CalibrationSource,
+    ConsumerOutputMapping,
     GBMEquityProcess,
     GBMParams,
     HullWhiteParams,
@@ -30,6 +31,8 @@ from par_model_v2.stochastic.esg_process import (
     ScenarioSet,
     ScenarioMetadata,
     default_phase6_calibration_interfaces,
+    default_phase6_consumer_mappings,
+    phase6_consumer_mapping,
 )
 
 
@@ -422,3 +425,85 @@ class TestPhase6CalibrationDataInterfaces:
                     CalibrationFieldSpec("date", "string"),
                 ),
             )
+
+
+class TestPhase6ConsumerOutputMappings:
+    def test_default_mappings_cover_existing_consumers(self):
+        mappings = default_phase6_consumer_mappings(base_currency="HKD", equity_market="HK_CN")
+        by_id = {mapping.consumer_id: mapping for mapping in mappings}
+
+        assert {"tvog", "risk_metrics", "dynamic_alm", "reporting"} == set(by_id)
+        assert by_id["tvog"].accepted_measures == (Measure.Q,)
+        assert by_id["risk_metrics"].accepted_measures == (Measure.P,)
+        assert by_id["dynamic_alm"].factor_ids["short_rate"] == "RATE_SHORT_HKD"
+        assert by_id["reporting"].factor_ids["equity_index"] == "EQUITY_HK_CN"
+
+    def test_tvog_mapping_accepts_q_and_rejects_p(self):
+        mapping = phase6_consumer_mapping("tvog")
+        q_scenarios = ScenarioSet.generate(3, 2, Measure.Q, seed=7)
+        p_scenarios = ScenarioSet.generate(3, 2, Measure.P, seed=7)
+
+        assert mapping.validate_scenario_set(q_scenarios) is True
+        with pytest.raises(ValueError, match="tvog"):
+            mapping.validate_scenario_set(p_scenarios)
+
+    def test_risk_mapping_requires_p_measure(self):
+        mapping = phase6_consumer_mapping("risk_metrics")
+        p_scenarios = ScenarioSet.generate(3, 2, Measure.P, seed=11)
+        q_scenarios = ScenarioSet.generate(3, 2, Measure.Q, seed=11)
+
+        assert mapping.validate_scenario_set(p_scenarios) is True
+        with pytest.raises(ValueError, match="risk_metrics"):
+            mapping.validate_scenario_set(q_scenarios)
+
+    def test_consumer_wide_view_propagates_traceability_attrs(self):
+        scenarios = ScenarioSet.generate(
+            4,
+            3,
+            Measure.P,
+            seed=44,
+            scenario_set_id="SCEN-CNY-P-CONSUMER",
+            model_version="consumer-test",
+            valuation_date=date(2026, 5, 29),
+        )
+
+        view = scenarios.consumer_wide_view("risk_metrics")
+
+        view_for_compare = view.copy()
+        view_for_compare.attrs.clear()
+        pd.testing.assert_frame_equal(view_for_compare, scenarios.data)
+        assert view.attrs["consumer_id"] == "risk_metrics"
+        assert view.attrs["scenario_set_id"] == "SCEN-CNY-P-CONSUMER"
+        assert view.attrs["parameter_snapshot_id"] == scenarios.parameter_snapshot.snapshot_id
+        assert view.attrs["valuation_date"] == "2026-05-29"
+
+    def test_dynamic_alm_mapping_returns_annual_return_dictionary(self):
+        scenarios = ScenarioSet.generate(2, 2, Measure.P, seed=99)
+        row = scenarios.data[
+            (scenarios.data["scenario_id"] == 1)
+            & (scenarios.data["month"] == 1)
+        ].iloc[0]
+
+        returns = scenarios.alm_annual_returns(scenario_id=1, month=1)
+
+        assert set(returns) == {"Cash", "Govt", "Credit", "Equity"}
+        assert returns["Cash"] == pytest.approx(float(row["r_short"]))
+        assert returns["Govt"] == pytest.approx(float(row["r_short"]))
+        assert returns["Credit"] == pytest.approx(float(row["r_short"]))
+        assert returns["Equity"] == pytest.approx((1.0 + float(row["equity_return_1m"])) ** 12 - 1.0)
+
+    def test_consumer_mapping_to_dict_is_json_ready(self):
+        mapping = ConsumerOutputMapping(
+            consumer_id="example",
+            consumer_name="Example Consumer",
+            accepted_measures=(Measure.P,),
+            required_columns=("scenario_id", "measure"),
+            factor_ids={"short_rate": "RATE_SHORT_CNY"},
+            propagated_metadata_fields=("scenario_set_id", "parameter_snapshot_id"),
+            output_contract="example contract",
+        )
+
+        result = mapping.to_dict()
+
+        assert result["accepted_measures"] == ["P"]
+        assert result["factor_ids"]["short_rate"] == "RATE_SHORT_CNY"

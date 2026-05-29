@@ -144,7 +144,7 @@ The targeted metadata tests are in `tests/test_esg_process.py`:
 - Metadata rejects parameter snapshots with mismatched measure or currency.
 - `to_dict()` outputs are JSON-ready for later audit trail and report storage.
 
-## 8. Next Task
+## 8. Consumer Mapping Linkage
 
 Phase 6 Task 3 is implemented in
 `docs/ESG_CALIBRATION_DATA_INTERFACES.md`.
@@ -157,3 +157,11 @@ parameter_placeholder`.
 
 The next Phase 6 task is to map ESG outputs to existing TVOG, VaR/ES, ALM, and
 reporting consumers.
+
+Phase 6 Task 4 is implemented in
+`docs/ESG_OUTPUT_CONSUMER_MAPPING.md`. The mapping layer now requires
+`ScenarioMetadata` and `ParameterSnapshot` before a scenario set is handed to
+TVOG, VaR/ES, ALM, or reporting consumers, and it propagates scenario-set ID,
+model version, valuation date, seed policy, snapshot ID, calibration date,
+approval status, placeholder status, and limitations ID into consumer view
+attributes.
