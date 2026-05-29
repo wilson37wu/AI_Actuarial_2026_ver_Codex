@@ -106,6 +106,13 @@ def _validate_currency_code(value, field_name):
     return value.strip().upper()
 
 
+def _require_text(value, field_name):
+    """Return a stripped string or raise if the field is blank."""
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError("{} is required".format(field_name))
+    return value.strip()
+
+
 # ---------------------------------------------------------------------------
 # 1. Parameter Dataclasses
 # ---------------------------------------------------------------------------
@@ -186,6 +193,18 @@ class GBMParams:
 # 1b. Phase 6 Scenario Metadata and Parameter Snapshot Dataclasses
 # ---------------------------------------------------------------------------
 
+_CALIBRATION_SOURCE_TYPES = {
+    "curve",
+    "equity_index",
+    "fx",
+    "credit_spread",
+    "correlation",
+    "parameter_placeholder",
+}
+
+_CALIBRATION_FIELD_TYPES = {"string", "number", "integer", "date"}
+
+
 @dataclass(frozen=True)
 class CalibrationSource:
     """Governed source reference for one calibration input table or quote set.
@@ -207,24 +226,337 @@ class CalibrationSource:
     notes: str = ""
 
     def __post_init__(self):
-        if not str(self.source_id).strip():
-            raise ValueError("source_id is required")
-        if not str(self.source_type).strip():
-            raise ValueError("source_type is required")
-        if not str(self.market).strip():
-            raise ValueError("market is required")
+        object.__setattr__(self, "source_id", _require_text(self.source_id, "source_id"))
+        source_type = _require_text(self.source_type, "source_type").lower()
+        if source_type not in _CALIBRATION_SOURCE_TYPES:
+            raise ValueError(
+                "source_type must be one of {}; got {!r}".format(
+                    sorted(_CALIBRATION_SOURCE_TYPES), self.source_type
+                )
+            )
+        object.__setattr__(self, "source_type", source_type)
+        object.__setattr__(self, "market", _require_text(self.market, "market").upper())
         if self.currency is not None:
             object.__setattr__(self, "currency", _validate_currency_code(self.currency, "currency"))
         object.__setattr__(self, "as_of_date", _coerce_date(self.as_of_date, "as_of_date"))
-        if not str(self.provider).strip():
-            raise ValueError("provider is required")
-        if not str(self.dataset_name).strip():
-            raise ValueError("dataset_name is required")
+        object.__setattr__(self, "provider", _require_text(self.provider, "provider"))
+        object.__setattr__(self, "dataset_name", _require_text(self.dataset_name, "dataset_name"))
 
     def to_dict(self):
         result = asdict(self)
         result["as_of_date"] = self.as_of_date.isoformat()
         return result
+
+
+@dataclass(frozen=True)
+class CalibrationFieldSpec:
+    """Column-level contract for a calibration input table."""
+
+    name: str
+    data_type: str
+    required: bool = True
+    unit: str = ""
+    description: str = ""
+    min_value: Optional[float] = None
+    max_value: Optional[float] = None
+    allowed_values: Tuple[str, ...] = field(default_factory=tuple)
+
+    def __post_init__(self):
+        object.__setattr__(self, "name", _require_text(self.name, "field name"))
+        data_type = _require_text(self.data_type, "data_type").lower()
+        if data_type not in _CALIBRATION_FIELD_TYPES:
+            raise ValueError(
+                "data_type must be one of {}; got {!r}".format(
+                    sorted(_CALIBRATION_FIELD_TYPES), self.data_type
+                )
+            )
+        object.__setattr__(self, "data_type", data_type)
+        if self.min_value is not None and self.max_value is not None:
+            if float(self.min_value) > float(self.max_value):
+                raise ValueError("min_value must not exceed max_value for {!r}".format(self.name))
+        allowed_values = tuple(str(value).strip() for value in self.allowed_values)
+        if any(not value for value in allowed_values):
+            raise ValueError("allowed_values must not contain blank entries")
+        object.__setattr__(self, "allowed_values", allowed_values)
+
+    def to_dict(self):
+        result = asdict(self)
+        result["allowed_values"] = list(self.allowed_values)
+        return result
+
+
+@dataclass(frozen=True)
+class CalibrationDataInterface:
+    """Governed table contract for Phase 6 ESG calibration inputs.
+
+    These interfaces define the minimum columns, value ranges, measure scope,
+    and approval expectations for market and historical inputs before they are
+    transformed into a ParameterSnapshot.
+    """
+
+    interface_id: str
+    source_type: str
+    required_fields: Tuple[CalibrationFieldSpec, ...]
+    optional_fields: Tuple[CalibrationFieldSpec, ...] = field(default_factory=tuple)
+    measure_scope: Tuple[Measure, ...] = (Measure.P, Measure.Q)
+    market: str = "MULTI"
+    currency: Optional[str] = None
+    min_history_observations: int = 0
+    frequency: str = ""
+    provider_requirements: str = ""
+    approval_required: bool = True
+    notes: str = ""
+
+    def __post_init__(self):
+        object.__setattr__(self, "interface_id", _require_text(self.interface_id, "interface_id"))
+        source_type = _require_text(self.source_type, "source_type").lower()
+        if source_type not in _CALIBRATION_SOURCE_TYPES or source_type == "parameter_placeholder":
+            raise ValueError(
+                "source_type must be a calibration data type; got {!r}".format(self.source_type)
+            )
+        object.__setattr__(self, "source_type", source_type)
+        if not self.required_fields:
+            raise ValueError("required_fields must not be empty")
+        all_fields = self.required_fields + self.optional_fields
+        field_names = [field.name for field in all_fields]
+        if len(field_names) != len(set(field_names)):
+            raise ValueError("field names must be unique within an interface")
+        measure_scope = tuple(_coerce_measure(measure) for measure in self.measure_scope)
+        if not measure_scope:
+            raise ValueError("measure_scope must not be empty")
+        object.__setattr__(self, "measure_scope", measure_scope)
+        object.__setattr__(self, "market", _require_text(self.market, "market").upper())
+        if self.currency is not None:
+            object.__setattr__(self, "currency", _validate_currency_code(self.currency, "currency"))
+        if int(self.min_history_observations) != self.min_history_observations:
+            raise ValueError("min_history_observations must be an integer")
+        if self.min_history_observations < 0:
+            raise ValueError("min_history_observations must be non-negative")
+
+    def required_column_names(self):
+        return tuple(field.name for field in self.required_fields)
+
+    def field_specs(self):
+        return self.required_fields + self.optional_fields
+
+    def validate_frame(self, data):
+        """Validate a pandas DataFrame against this interface contract."""
+        if not isinstance(data, pd.DataFrame):
+            raise TypeError("data must be a pandas DataFrame")
+        missing = [name for name in self.required_column_names() if name not in data.columns]
+        if missing:
+            raise ValueError(
+                "{} missing required columns: {}".format(
+                    self.interface_id, ", ".join(missing)
+                )
+            )
+        if len(data) < self.min_history_observations:
+            raise ValueError(
+                "{} requires at least {} observations; got {}".format(
+                    self.interface_id, self.min_history_observations, len(data)
+                )
+            )
+
+        for spec in self.field_specs():
+            if spec.name not in data.columns:
+                continue
+            self._validate_series(data[spec.name], spec)
+        return True
+
+    def _validate_series(self, series, spec):
+        if spec.data_type in ("number", "integer"):
+            values = pd.to_numeric(series, errors="coerce")
+            invalid = values.isna()
+            if spec.required and invalid.any():
+                raise ValueError("{} must be numeric".format(spec.name))
+            finite_values = values.dropna().to_numpy(dtype=float)
+            if finite_values.size and not np.isfinite(finite_values).all():
+                raise ValueError("{} must contain finite values".format(spec.name))
+            if spec.data_type == "integer" and finite_values.size:
+                if not np.all(np.equal(np.mod(finite_values, 1.0), 0.0)):
+                    raise ValueError("{} must contain integer values".format(spec.name))
+            if spec.min_value is not None and finite_values.size:
+                if (finite_values < float(spec.min_value)).any():
+                    raise ValueError(
+                        "{} values must be >= {}".format(spec.name, spec.min_value)
+                    )
+            if spec.max_value is not None and finite_values.size:
+                if (finite_values > float(spec.max_value)).any():
+                    raise ValueError(
+                        "{} values must be <= {}".format(spec.name, spec.max_value)
+                    )
+        elif spec.data_type == "date":
+            parsed = pd.to_datetime(series, errors="coerce")
+            if spec.required and parsed.isna().any():
+                raise ValueError("{} must contain valid dates".format(spec.name))
+        elif spec.data_type == "string":
+            text = series.astype("string")
+            if spec.required and (text.isna() | (text.str.strip() == "")).any():
+                raise ValueError("{} must contain non-blank strings".format(spec.name))
+            if spec.allowed_values:
+                valid_values = {value.upper() for value in spec.allowed_values}
+                observed = text.dropna().str.strip().str.upper()
+                if not observed.isin(valid_values).all():
+                    raise ValueError(
+                        "{} must be one of {}".format(spec.name, sorted(valid_values))
+                    )
+
+    @classmethod
+    def risk_free_curve(cls, market, currency):
+        return cls(
+            interface_id="IFACE-CURVE-{}-{}".format(str(market).upper(), str(currency).upper()),
+            source_type="curve",
+            market=market,
+            currency=currency,
+            frequency="daily or valuation-date snapshot",
+            min_history_observations=2,
+            provider_requirements="Liquid sovereign, swap, or approved risk-free curve source",
+            required_fields=(
+                CalibrationFieldSpec("date", "date", description="Market data date"),
+                CalibrationFieldSpec("tenor_years", "number", min_value=0.0, description="Curve tenor in years"),
+                CalibrationFieldSpec("zero_rate", "number", min_value=-0.10, max_value=1.00, unit="decimal_rate"),
+            ),
+            optional_fields=(
+                CalibrationFieldSpec("discount_factor", "number", required=False, min_value=0.0, max_value=2.0),
+                CalibrationFieldSpec("compounding", "string", required=False),
+                CalibrationFieldSpec("quote_basis", "string", required=False),
+            ),
+            notes="Used for HW1F/G2++ initial curve, discount factors, and short-rate calibration.",
+        )
+
+    @classmethod
+    def equity_index(cls, market, currency):
+        return cls(
+            interface_id="IFACE-EQUITY-{}-{}".format(str(market).upper(), str(currency).upper()),
+            source_type="equity_index",
+            market=market,
+            currency=currency,
+            frequency="daily history plus valuation-date level",
+            min_history_observations=252,
+            provider_requirements="Approved total-return index or documented price-index plus dividend source",
+            required_fields=(
+                CalibrationFieldSpec("date", "date"),
+                CalibrationFieldSpec("index_level", "number", min_value=0.0, unit="index_level"),
+            ),
+            optional_fields=(
+                CalibrationFieldSpec("total_return_index", "number", required=False, min_value=0.0),
+                CalibrationFieldSpec("return_1d", "number", required=False, min_value=-1.0, max_value=5.0),
+                CalibrationFieldSpec("dividend_yield", "number", required=False, min_value=-0.10, max_value=1.00),
+                CalibrationFieldSpec("implied_vol_atm", "number", required=False, min_value=0.0, max_value=3.0),
+            ),
+            notes="Used for GBM or later equity process volatility, drift, dividend, and backtest inputs.",
+        )
+
+    @classmethod
+    def fx_rates(cls, market, currency):
+        return cls(
+            interface_id="IFACE-FX-{}-{}".format(str(market).upper(), str(currency).upper()),
+            source_type="fx",
+            market=market,
+            currency=currency,
+            frequency="daily history plus valuation-date spot",
+            min_history_observations=252,
+            provider_requirements="Approved central bank, market data vendor, or treasury source",
+            required_fields=(
+                CalibrationFieldSpec("date", "date"),
+                CalibrationFieldSpec("pair", "string", description="Currency pair, e.g. USDHKD"),
+                CalibrationFieldSpec("spot_rate", "number", min_value=0.0, unit="fx_rate"),
+                CalibrationFieldSpec("quotation", "string", allowed_values=("DIRECT", "INDIRECT")),
+            ),
+            optional_fields=(
+                CalibrationFieldSpec("return_1d", "number", required=False, min_value=-1.0, max_value=5.0),
+                CalibrationFieldSpec("forward_points", "number", required=False),
+            ),
+            notes="Used for currency translation, FX return calibration, and peg/basis disclosures.",
+        )
+
+    @classmethod
+    def credit_spread(cls, market, currency):
+        return cls(
+            interface_id="IFACE-CREDIT-{}-{}".format(str(market).upper(), str(currency).upper()),
+            source_type="credit_spread",
+            market=market,
+            currency=currency,
+            frequency="daily or monthly index history plus valuation-date curve",
+            min_history_observations=12,
+            provider_requirements="Approved bond index, spread curve, or internal credit assumption table",
+            required_fields=(
+                CalibrationFieldSpec("date", "date"),
+                CalibrationFieldSpec("rating", "string"),
+                CalibrationFieldSpec("tenor_years", "number", min_value=0.0),
+                CalibrationFieldSpec("spread_bp", "number", min_value=-500.0, max_value=10000.0, unit="basis_points"),
+            ),
+            optional_fields=(
+                CalibrationFieldSpec("sector", "string", required=False),
+                CalibrationFieldSpec("default_rate", "number", required=False, min_value=0.0, max_value=1.0),
+                CalibrationFieldSpec("recovery_rate", "number", required=False, min_value=0.0, max_value=1.0),
+            ),
+            notes="Used for credit spread scenarios, default-loss proxies, and asset stress calibration.",
+        )
+
+    @classmethod
+    def correlation_matrix(cls):
+        return cls(
+            interface_id="IFACE-CORRELATION-MULTI",
+            source_type="correlation",
+            market="MULTI",
+            currency=None,
+            frequency="valuation-date matrix plus historical estimation window",
+            min_history_observations=1,
+            provider_requirements="Approved model-owner correlation matrix or reproducible historical estimate",
+            required_fields=(
+                CalibrationFieldSpec("as_of_date", "date"),
+                CalibrationFieldSpec("factor_id_1", "string"),
+                CalibrationFieldSpec("factor_id_2", "string"),
+                CalibrationFieldSpec("correlation", "number", min_value=-1.0, max_value=1.0),
+                CalibrationFieldSpec("matrix_version", "string"),
+            ),
+            optional_fields=(
+                CalibrationFieldSpec("estimation_window_years", "number", required=False, min_value=0.0),
+                CalibrationFieldSpec("psd_status", "string", required=False),
+            ),
+            notes="Used for Cholesky inputs and later positive-semidefinite validation evidence.",
+        )
+
+    def to_dict(self):
+        return {
+            "interface_id": self.interface_id,
+            "source_type": self.source_type,
+            "required_fields": [field.to_dict() for field in self.required_fields],
+            "optional_fields": [field.to_dict() for field in self.optional_fields],
+            "measure_scope": [measure.value for measure in self.measure_scope],
+            "market": self.market,
+            "currency": self.currency,
+            "min_history_observations": self.min_history_observations,
+            "frequency": self.frequency,
+            "provider_requirements": self.provider_requirements,
+            "approval_required": self.approval_required,
+            "notes": self.notes,
+        }
+
+
+def default_phase6_calibration_interfaces():
+    """Return starter Phase 6 calibration interfaces for the ESG roadmap."""
+    return (
+        CalibrationDataInterface.risk_free_curve("US", "USD"),
+        CalibrationDataInterface.risk_free_curve("EU", "EUR"),
+        CalibrationDataInterface.risk_free_curve("HK", "HKD"),
+        CalibrationDataInterface.risk_free_curve("CN", "CNY"),
+        CalibrationDataInterface.risk_free_curve("JP", "JPY"),
+        CalibrationDataInterface.equity_index("US", "USD"),
+        CalibrationDataInterface.equity_index("EU", "EUR"),
+        CalibrationDataInterface.equity_index("HK_CN", "HKD"),
+        CalibrationDataInterface.equity_index("JP", "JPY"),
+        CalibrationDataInterface.equity_index("ASIA_EX_JP", "USD"),
+        CalibrationDataInterface.fx_rates("HK", "HKD"),
+        CalibrationDataInterface.fx_rates("CN", "CNY"),
+        CalibrationDataInterface.fx_rates("EU", "EUR"),
+        CalibrationDataInterface.fx_rates("JP", "JPY"),
+        CalibrationDataInterface.credit_spread("US", "USD"),
+        CalibrationDataInterface.credit_spread("HK", "HKD"),
+        CalibrationDataInterface.credit_spread("CN", "CNY"),
+        CalibrationDataInterface.correlation_matrix(),
+    )
 
 
 @dataclass(frozen=True)
@@ -242,6 +574,7 @@ class ParameterSnapshot:
     base_currency: str
     parameters: Dict[str, float]
     sources: Tuple[CalibrationSource, ...] = field(default_factory=tuple)
+    calibration_interfaces: Tuple[CalibrationDataInterface, ...] = field(default_factory=tuple)
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))
     owner: str = "Model Development"
     approver: Optional[str] = None
@@ -270,6 +603,9 @@ class ParameterSnapshot:
         source_ids = [source.source_id for source in self.sources]
         if len(source_ids) != len(set(source_ids)):
             raise ValueError("sources must have unique source_id values")
+        interface_ids = [interface.interface_id for interface in self.calibration_interfaces]
+        if len(interface_ids) != len(set(interface_ids)):
+            raise ValueError("calibration_interfaces must have unique interface_id values")
         if not str(self.owner).strip():
             raise ValueError("owner is required")
         if not str(self.approval_status).strip():
@@ -326,6 +662,7 @@ class ParameterSnapshot:
             base_currency=base_currency,
             parameters=parameters,
             sources=(source,),
+            calibration_interfaces=default_phase6_calibration_interfaces(),
             is_placeholder=bool(hw_params.is_placeholder or gbm_params.is_placeholder),
         )
 
@@ -335,6 +672,9 @@ class ParameterSnapshot:
         result["created_at"] = self.created_at.isoformat()
         result["measure"] = self.measure.value
         result["sources"] = [source.to_dict() for source in self.sources]
+        result["calibration_interfaces"] = [
+            interface.to_dict() for interface in self.calibration_interfaces
+        ]
         result["model_equation_refs"] = list(self.model_equation_refs)
         return result
 
@@ -809,6 +1149,9 @@ class ScenarioSet:
 __all__ = [
     "Measure",
     "CalibrationSource",
+    "CalibrationFieldSpec",
+    "CalibrationDataInterface",
+    "default_phase6_calibration_interfaces",
     "ParameterSnapshot",
     "ScenarioMetadata",
     "HullWhiteParams",

@@ -146,7 +146,14 @@ The targeted metadata tests are in `tests/test_esg_process.py`:
 
 ## 8. Next Task
 
-The next Phase 6 task is to define calibration data interfaces for curves,
-equity indices, FX, credit spreads, and correlations. That task should replace
-the placeholder source with explicit input contracts for market data and
-historical data loaders.
+Phase 6 Task 3 is implemented in
+`docs/ESG_CALIBRATION_DATA_INTERFACES.md`.
+
+`ParameterSnapshot` now supports `calibration_interfaces`, and generated
+placeholder snapshots attach the starter Phase 6 contracts for curves, equity
+indices, FX, credit spreads, and correlations. Placeholder sources remain
+explicitly identified through `CalibrationSource.source_type =
+parameter_placeholder`.
+
+The next Phase 6 task is to map ESG outputs to existing TVOG, VaR/ES, ALM, and
+reporting consumers.

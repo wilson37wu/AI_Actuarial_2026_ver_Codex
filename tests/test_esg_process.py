@@ -18,6 +18,8 @@ from par_model_v2.stochastic.esg_adapter import (
     ScenarioAdequacyWarning,
 )
 from par_model_v2.stochastic.esg_process import (
+    CalibrationDataInterface,
+    CalibrationFieldSpec,
     CalibrationSource,
     GBMEquityProcess,
     GBMParams,
@@ -27,6 +29,7 @@ from par_model_v2.stochastic.esg_process import (
     ParameterSnapshot,
     ScenarioSet,
     ScenarioMetadata,
+    default_phase6_calibration_interfaces,
 )
 
 
@@ -292,6 +295,9 @@ class TestScenarioMetadataAndParameterSnapshot:
         assert snapshot.parameters["rate.hw1f.initial_short_rate"] == 0.031
         assert snapshot.parameters["equity.gbm.equity_vol"] == 0.18
         assert snapshot.sources[0].source_id == "SRC-PLACEHOLDER-HKD"
+        assert "IFACE-CURVE-HK-HKD" in {
+            interface.interface_id for interface in snapshot.calibration_interfaces
+        }
 
     def test_parameter_snapshot_rejects_missing_parameters(self):
         with pytest.raises(ValueError, match="parameters"):
@@ -348,3 +354,71 @@ class TestScenarioMetadataAndParameterSnapshot:
         assert metadata["valuation_date"] == "2026-05-29"
         assert snapshot["calibration_date"] == "2026-05-29"
         assert snapshot["sources"][0]["as_of_date"] == "2026-05-29"
+        assert snapshot["calibration_interfaces"][0]["required_fields"][0]["name"] == "date"
+
+
+class TestPhase6CalibrationDataInterfaces:
+    def test_default_interfaces_cover_required_source_types(self):
+        interfaces = default_phase6_calibration_interfaces()
+        source_types = {interface.source_type for interface in interfaces}
+
+        assert {"curve", "equity_index", "fx", "credit_spread", "correlation"} <= source_types
+        assert len({interface.interface_id for interface in interfaces}) == len(interfaces)
+
+    def test_curve_interface_validates_required_columns_and_ranges(self):
+        interface = CalibrationDataInterface.risk_free_curve("HK", "HKD")
+        valid = pd.DataFrame({
+            "date": ["2026-05-29", "2026-05-29"],
+            "tenor_years": [1.0, 10.0],
+            "zero_rate": [0.025, 0.031],
+            "discount_factor": [0.975, 0.735],
+        })
+
+        assert interface.validate_frame(valid) is True
+
+        missing = valid.drop(columns=["zero_rate"])
+        with pytest.raises(ValueError, match="zero_rate"):
+            interface.validate_frame(missing)
+
+        bad_rate = valid.copy()
+        bad_rate.loc[0, "zero_rate"] = 1.25
+        with pytest.raises(ValueError, match="zero_rate"):
+            interface.validate_frame(bad_rate)
+
+    def test_fx_interface_rejects_bad_quotation_convention(self):
+        interface = CalibrationDataInterface.fx_rates("HK", "HKD")
+        data = pd.DataFrame({
+            "date": pd.date_range("2026-05-27", periods=252),
+            "pair": ["USDHKD"] * 252,
+            "spot_rate": [7.8] * 252,
+            "quotation": ["SIDEWAYS"] * 252,
+        })
+
+        with pytest.raises(ValueError, match="quotation"):
+            interface.validate_frame(data)
+
+    def test_correlation_interface_rejects_out_of_range_entries(self):
+        interface = CalibrationDataInterface.correlation_matrix()
+        data = pd.DataFrame({
+            "as_of_date": ["2026-05-29"],
+            "factor_id_1": ["RATE_SHORT_HKD"],
+            "factor_id_2": ["EQUITY_HK_CN"],
+            "correlation": [1.25],
+            "matrix_version": ["corr-20260529"],
+        })
+
+        with pytest.raises(ValueError, match="correlation"):
+            interface.validate_frame(data)
+
+    def test_duplicate_field_specs_are_rejected(self):
+        with pytest.raises(ValueError, match="unique"):
+            CalibrationDataInterface(
+                interface_id="IFACE-DUP",
+                source_type="curve",
+                market="HK",
+                currency="HKD",
+                required_fields=(
+                    CalibrationFieldSpec("date", "date"),
+                    CalibrationFieldSpec("date", "string"),
+                ),
+            )

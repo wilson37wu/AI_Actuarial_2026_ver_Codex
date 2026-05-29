@@ -276,11 +276,24 @@ the new fields are optional and appended after the legacy dataclass fields.
 
 ## 8. Next Design Task
 
-The next Phase 6 task should define calibration data interfaces for curves,
-equity indices, FX, credit spreads, and correlations. That task should formalize:
+Phase 6 Task 3 is implemented in
+`docs/ESG_CALIBRATION_DATA_INTERFACES.md` and
+`par_model_v2.stochastic.esg_process`.
 
-- calibration source tables for curves, equity indices, FX, credit spreads, and
-  correlations;
-- source credibility and approval rules;
-- loader and validator interfaces for market and historical data;
-- how parameter snapshots reference those calibrated source tables.
+The implementation adds:
+
+- `CalibrationFieldSpec` for column-level source table contracts;
+- `CalibrationDataInterface` for governed curve, equity, FX, credit spread,
+  and correlation table validation;
+- `default_phase6_calibration_interfaces()` for the starter multi-market ESG
+  roadmap; and
+- `ParameterSnapshot.calibration_interfaces` so future calibrated snapshots can
+  reference the input contracts they satisfy.
+
+The next Phase 6 task should map ESG outputs to existing TVOG, VaR/ES, ALM, and
+reporting consumers. That task should formalize:
+
+- selected factor IDs for each current v1 consumer column;
+- long-form to wide-view conversion requirements;
+- P/Q measure guardrails by consumer; and
+- scenario metadata and parameter snapshot propagation into reports.

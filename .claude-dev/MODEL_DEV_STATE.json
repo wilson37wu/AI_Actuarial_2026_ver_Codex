@@ -1,8 +1,8 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-05-29T06:11:03Z",
-  "last_run_duration_minutes": 38,
+  "last_run": "2026-05-29T12:09:20Z",
+  "last_run_duration_minutes": 44,
   "current_phase": "Phase 6: ESG Scope and Architecture",
   "overall_status": "active_post_v1_expansion",
   "phases": {
@@ -108,12 +108,13 @@
       ],
       "completed": [
         "Define multi-market ESG requirements and scenario schema",
-        "Design scenario metadata and parameter snapshot structure"
-      ],
-      "in_progress": [
+        "Design scenario metadata and parameter snapshot structure",
         "Define calibration data interfaces for curves, equity indices, FX, credit spreads, and correlations"
       ],
-      "next": "Map ESG outputs to existing TVOG, VaR/ES, ALM, and reporting consumers"
+      "in_progress": [
+        "Map ESG outputs to existing TVOG, VaR/ES, ALM, and reporting consumers"
+      ],
+      "next": "Add design documentation and acceptance tests for schema compatibility"
     },
     "Phase 7: Interest Rate and Yield Curve ESG": {
       "status": "planned",
@@ -209,11 +210,11 @@
   },
   "progress_metrics": {
     "total_tasks": 66,
-    "tasks_completed": 36,
+    "tasks_completed": 37,
     "phases_completed": 5,
-    "estimated_completion_pct": 55,
+    "estimated_completion_pct": 56,
     "average_cycle_duration_minutes": 52,
-    "cycles_run": 86
+    "cycles_run": 87
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",

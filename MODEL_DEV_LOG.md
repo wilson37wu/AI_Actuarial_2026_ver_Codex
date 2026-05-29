@@ -3507,3 +3507,45 @@ FX, credit spreads, and correlations.
   and limitation identifiers.
 
 ---
+
+## Run 2026-05-29T12:09:20Z - Phase 6: ESG Scope and Architecture
+
+**Task Completed:** Define calibration data interfaces for curves, equity indices, FX, credit spreads, and correlations
+
+**Accomplishments:**
+- Added `CalibrationFieldSpec` and `CalibrationDataInterface` contracts to
+  `par_model_v2.stochastic.esg_process`.
+- Added starter Phase 6 interfaces for risk-free curves, regional equity
+  indices, FX rates, credit spreads, and cross-factor correlations.
+- Linked default calibration interfaces from generated `ParameterSnapshot`
+  objects while preserving placeholder source disclosure.
+- Added targeted interface tests to `tests/test_esg_process.py`.
+- Created `docs/ESG_CALIBRATION_DATA_INTERFACES.md` and updated Phase 6 schema
+  and metadata design docs to point to the implemented task.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance the in-progress task to
+  ESG output consumer mapping.
+
+**Validation:**
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests/test_esg_process.py -q`
+  remains blocked before collection with `No module named pytest`.
+- Direct runtime smoke validation is also blocked because the reachable
+  interpreter lacks `pandas`.
+
+**Delivery:**
+- Local commit pending at log write time.
+- Remote push expected to remain blocked by sandbox network restrictions unless
+  credentials/network access are restored.
+
+**Next Step:** Map ESG outputs to existing TVOG, VaR/ES, ALM, and reporting consumers.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Section 3.4: Calibration inputs now have explicit table-level
+  contracts, field ranges, measure scope, source types, and provider
+  requirements.
+- IA TAS M Sections 3.5 and 3.6: Interface IDs, source IDs, approval flags, and
+  JSON-ready serialization improve traceability from assumptions to scenario
+  outputs.
+
+---
