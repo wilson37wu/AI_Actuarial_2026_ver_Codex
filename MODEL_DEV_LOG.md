@@ -4,6 +4,52 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-05-29T18:10:10Z - Phase 6: ESG Scope and Architecture
+
+**Task Completed:** Map ESG outputs to existing TVOG, VaR/ES, ALM, and reporting consumers
+
+**Accomplishments:**
+- Added `ConsumerOutputMapping` contracts for TVOG, RiskMetrics / LossDistribution,
+  DynamicALMEngine, and reporting consumers.
+- Added `ScenarioSet.consumer_wide_view(...)`,
+  `ScenarioSet.consumer_traceability(...)`, and
+  `ScenarioSet.alm_annual_returns(...)` helpers to enforce P/Q guardrails and
+  carry scenario metadata into downstream views.
+- Created `docs/ESG_OUTPUT_CONSUMER_MAPPING.md` and updated Phase 6 schema,
+  metadata, and calibration-interface docs to link the implemented consumer
+  mapping contract.
+- Added targeted tests covering default mappings, TVOG Q-measure acceptance,
+  RiskMetrics P-measure acceptance, traceability attrs, ALM annual-return
+  mapping, and JSON-ready mapping serialization.
+
+**Validation:**
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests/test_esg_process.py -q`
+  remains blocked before collection with `No module named pytest`.
+- Direct runtime smoke validation remains blocked because the reachable
+  interpreter lacks `numpy`.
+
+**Delivery:**
+- Local implementation commit created:
+  `e78286bb2f98b7aa31c851bcb7287c66b593c0d6`.
+- Local automation record commit created after state/log update.
+- `git push origin main` failed because the sandbox could not connect to
+  `github.com` on port 443.
+- Gmail draft `r626300314084698796` was created for manual review.
+
+**Next Step:** Add design documentation and acceptance tests for schema compatibility.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3 and 3.5: Scenario consumer use now has explicit
+  measure controls, factor selections, required fields, seed policy, and
+  limitation traceability.
+- IA TAS M Sections 3.5 and 3.6: Consumer views now carry scenario-set ID,
+  model version, valuation date, parameter snapshot ID, calibration date, and
+  approval / placeholder status into report-ready metadata attrs.
+
+---
+
 ## Run 2026-05-29T03:30:00Z - Phase 6: ESG Scope and Architecture
 
 **Task Completed:** Define multi-market ESG requirements and scenario schema
