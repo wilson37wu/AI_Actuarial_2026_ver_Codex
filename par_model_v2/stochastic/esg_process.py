@@ -26,8 +26,9 @@ Do not use for regulatory reporting until Phase 4 calibration is complete.
 from __future__ import annotations
 
 import enum
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import asdict, dataclass, field
+from datetime import date, datetime, timezone
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -84,6 +85,25 @@ class Measure(str, enum.Enum):
     """
     P = "P"
     Q = "Q"
+
+
+def _coerce_date(value, field_name):
+    """Return a date object or raise a descriptive error."""
+    if isinstance(value, date) and not isinstance(value, datetime):
+        return value
+    if isinstance(value, datetime):
+        return value.date()
+    try:
+        return date.fromisoformat(str(value))
+    except ValueError as exc:
+        raise ValueError("{} must be an ISO date; got {!r}".format(field_name, value)) from exc
+
+
+def _validate_currency_code(value, field_name):
+    """Validate ISO-style three-letter currency codes used by Phase 6 metadata."""
+    if not isinstance(value, str) or len(value.strip()) != 3 or not value.strip().isalpha():
+        raise ValueError("{} must be a three-letter currency code; got {!r}".format(field_name, value))
+    return value.strip().upper()
 
 
 # ---------------------------------------------------------------------------
@@ -160,6 +180,268 @@ class GBMParams:
     @property
     def is_placeholder(self):
         return True
+
+
+# ---------------------------------------------------------------------------
+# 1b. Phase 6 Scenario Metadata and Parameter Snapshot Dataclasses
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class CalibrationSource:
+    """Governed source reference for one calibration input table or quote set.
+
+    Phase 6 Task 2 uses these records to keep scenario parameter snapshots
+    traceable to curve, equity, FX, spread, and correlation data sources.
+    """
+
+    source_id: str
+    source_type: str
+    market: str
+    currency: Optional[str]
+    as_of_date: date
+    provider: str
+    dataset_name: str
+    version: str = "illustrative"
+    reliability_tier: str = "educational_placeholder"
+    approval_status: str = "draft"
+    notes: str = ""
+
+    def __post_init__(self):
+        if not str(self.source_id).strip():
+            raise ValueError("source_id is required")
+        if not str(self.source_type).strip():
+            raise ValueError("source_type is required")
+        if not str(self.market).strip():
+            raise ValueError("market is required")
+        if self.currency is not None:
+            object.__setattr__(self, "currency", _validate_currency_code(self.currency, "currency"))
+        object.__setattr__(self, "as_of_date", _coerce_date(self.as_of_date, "as_of_date"))
+        if not str(self.provider).strip():
+            raise ValueError("provider is required")
+        if not str(self.dataset_name).strip():
+            raise ValueError("dataset_name is required")
+
+    def to_dict(self):
+        result = asdict(self)
+        result["as_of_date"] = self.as_of_date.isoformat()
+        return result
+
+
+@dataclass(frozen=True)
+class ParameterSnapshot:
+    """Auditable ESG parameter set used to generate one scenario package.
+
+    The snapshot separates model run metadata from calibrated parameter values
+    so downstream TVOG, ALM, VaR/ES, and reporting outputs can reference the
+    exact assumption basis used for a scenario set.
+    """
+
+    snapshot_id: str
+    calibration_date: date
+    measure: Measure
+    base_currency: str
+    parameters: Dict[str, float]
+    sources: Tuple[CalibrationSource, ...] = field(default_factory=tuple)
+    created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))
+    owner: str = "Model Development"
+    approver: Optional[str] = None
+    approval_status: str = "draft"
+    model_equation_refs: Tuple[str, ...] = (
+        "HullWhiteRateProcess._simulate_array",
+        "GBMEquityProcess._simulate_array",
+    )
+    discretisation: str = "monthly time step with HW1F conditional normal rates and GBM equity returns"
+    limitations_id: str = "EDU-ESG-LIMITATIONS"
+    is_placeholder: bool = True
+
+    def __post_init__(self):
+        if not str(self.snapshot_id).strip():
+            raise ValueError("snapshot_id is required")
+        object.__setattr__(self, "calibration_date", _coerce_date(self.calibration_date, "calibration_date"))
+        object.__setattr__(self, "measure", _coerce_measure(self.measure))
+        object.__setattr__(self, "base_currency", _validate_currency_code(self.base_currency, "base_currency"))
+        if not self.parameters:
+            raise ValueError("parameters must not be empty")
+        for name, value in self.parameters.items():
+            if not str(name).strip():
+                raise ValueError("parameter names must be non-empty")
+            if not np.isfinite(float(value)):
+                raise ValueError("parameter {!r} must be finite; got {!r}".format(name, value))
+        source_ids = [source.source_id for source in self.sources]
+        if len(source_ids) != len(set(source_ids)):
+            raise ValueError("sources must have unique source_id values")
+        if not str(self.owner).strip():
+            raise ValueError("owner is required")
+        if not str(self.approval_status).strip():
+            raise ValueError("approval_status is required")
+
+    @classmethod
+    def from_process_params(
+        cls,
+        measure,
+        base_currency="CNY",
+        calibration_date=None,
+        hw_params=None,
+        gbm_params=None,
+        snapshot_id=None,
+    ):
+        """Create a Phase 6 snapshot from current HW1F and GBM parameter dataclasses."""
+        measure = _coerce_measure(measure)
+        base_currency = _validate_currency_code(base_currency, "base_currency")
+        calibration_date = _coerce_date(calibration_date or date.today(), "calibration_date")
+        hw_params = hw_params if hw_params is not None else HullWhiteParams()
+        gbm_params = gbm_params if gbm_params is not None else GBMParams()
+        snapshot_id = snapshot_id or "ps-{}-{}-{}".format(
+            calibration_date.isoformat().replace("-", ""),
+            base_currency,
+            measure.value,
+        )
+        source = CalibrationSource(
+            source_id="SRC-PLACEHOLDER-{}".format(base_currency),
+            source_type="parameter_placeholder",
+            market=base_currency,
+            currency=base_currency,
+            as_of_date=calibration_date,
+            provider="par_model_v2 default parameter dataclasses",
+            dataset_name="HullWhiteParams and GBMParams defaults",
+            notes="Educational placeholder until market calibration interfaces are implemented.",
+        )
+        parameters = {
+            "rate.hw1f.mean_reversion_speed": hw_params.mean_reversion_speed,
+            "rate.hw1f.short_rate_vol": hw_params.short_rate_vol,
+            "rate.hw1f.initial_short_rate": hw_params.initial_short_rate,
+            "rate.hw1f.long_run_rate_p": hw_params.long_run_rate_p,
+            "rate.hw1f.market_price_of_risk": hw_params.market_price_of_risk,
+            "rate.hw1f.cbirc_rate_cap": hw_params.cbirc_rate_cap,
+            "equity.gbm.equity_vol": gbm_params.equity_vol,
+            "equity.gbm.dividend_yield": gbm_params.dividend_yield,
+            "equity.gbm.equity_risk_premium": gbm_params.equity_risk_premium,
+            "equity.gbm.rate_equity_correlation": gbm_params.rate_equity_correlation,
+            "equity.gbm.initial_index_level": gbm_params.initial_index_level,
+        }
+        return cls(
+            snapshot_id=snapshot_id,
+            calibration_date=calibration_date,
+            measure=measure,
+            base_currency=base_currency,
+            parameters=parameters,
+            sources=(source,),
+            is_placeholder=bool(hw_params.is_placeholder or gbm_params.is_placeholder),
+        )
+
+    def to_dict(self):
+        result = asdict(self)
+        result["calibration_date"] = self.calibration_date.isoformat()
+        result["created_at"] = self.created_at.isoformat()
+        result["measure"] = self.measure.value
+        result["sources"] = [source.to_dict() for source in self.sources]
+        result["model_equation_refs"] = list(self.model_equation_refs)
+        return result
+
+
+@dataclass(frozen=True)
+class ScenarioMetadata:
+    """Scenario-set level metadata required by the Phase 6 schema contract."""
+
+    scenario_set_id: str
+    model_version: str
+    measure: Measure
+    base_currency: str
+    valuation_date: date
+    projection_months: int
+    time_step_months: int
+    n_scenarios: int
+    seed_policy: str
+    parameter_snapshot_id: str
+    generator_name: str
+    generator_version: str
+    limitations_id: str
+    parameter_snapshot: Optional[ParameterSnapshot] = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(tz=timezone.utc))
+    reporting_purpose: str = "educational"
+
+    def __post_init__(self):
+        if not str(self.scenario_set_id).strip():
+            raise ValueError("scenario_set_id is required")
+        if not str(self.model_version).strip():
+            raise ValueError("model_version is required")
+        object.__setattr__(self, "measure", _coerce_measure(self.measure))
+        object.__setattr__(self, "base_currency", _validate_currency_code(self.base_currency, "base_currency"))
+        object.__setattr__(self, "valuation_date", _coerce_date(self.valuation_date, "valuation_date"))
+        if int(self.projection_months) != self.projection_months or self.projection_months < 0:
+            raise ValueError("projection_months must be a non-negative integer")
+        if int(self.time_step_months) != self.time_step_months or self.time_step_months <= 0:
+            raise ValueError("time_step_months must be a positive integer")
+        if int(self.n_scenarios) != self.n_scenarios or self.n_scenarios <= 0:
+            raise ValueError("n_scenarios must be a positive integer")
+        if not str(self.seed_policy).strip():
+            raise ValueError("seed_policy is required")
+        if not str(self.parameter_snapshot_id).strip():
+            raise ValueError("parameter_snapshot_id is required")
+        if not str(self.generator_name).strip():
+            raise ValueError("generator_name is required")
+        if not str(self.generator_version).strip():
+            raise ValueError("generator_version is required")
+        if not str(self.limitations_id).strip():
+            raise ValueError("limitations_id is required")
+        if self.parameter_snapshot is not None:
+            if self.parameter_snapshot.snapshot_id != self.parameter_snapshot_id:
+                raise ValueError("parameter_snapshot_id must match parameter_snapshot.snapshot_id")
+            if self.parameter_snapshot.measure != self.measure:
+                raise ValueError("metadata measure must match parameter snapshot measure")
+            if self.parameter_snapshot.base_currency != self.base_currency:
+                raise ValueError("metadata base_currency must match parameter snapshot base_currency")
+
+    @classmethod
+    def from_generation(
+        cls,
+        n_scenarios,
+        T_months,
+        measure,
+        seed,
+        parameter_snapshot,
+        scenario_set_id=None,
+        model_version="v1.0.0-dev",
+        base_currency="CNY",
+        valuation_date=None,
+        generator_name="ScenarioSet.generate",
+        generator_version="phase6-metadata-v1",
+        limitations_id="EDU-ESG-LIMITATIONS",
+    ):
+        """Build metadata for a generated v1-compatible ScenarioSet."""
+        measure = _coerce_measure(measure)
+        valuation_date = _coerce_date(valuation_date or date.today(), "valuation_date")
+        scenario_set_id = scenario_set_id or "scen-{}-{}-{}-{}".format(
+            valuation_date.isoformat().replace("-", ""),
+            _validate_currency_code(base_currency, "base_currency"),
+            measure.value,
+            seed,
+        )
+        return cls(
+            scenario_set_id=scenario_set_id,
+            model_version=model_version,
+            measure=measure,
+            base_currency=base_currency,
+            valuation_date=valuation_date,
+            projection_months=int(T_months),
+            time_step_months=1,
+            n_scenarios=int(n_scenarios),
+            seed_policy="fixed-seed:{}".format(seed),
+            parameter_snapshot_id=parameter_snapshot.snapshot_id,
+            generator_name=generator_name,
+            generator_version=generator_version,
+            limitations_id=limitations_id,
+            parameter_snapshot=parameter_snapshot,
+        )
+
+    def to_dict(self):
+        result = asdict(self)
+        result["measure"] = self.measure.value
+        result["valuation_date"] = self.valuation_date.isoformat()
+        result["created_at"] = self.created_at.isoformat()
+        if self.parameter_snapshot is not None:
+            result["parameter_snapshot"] = self.parameter_snapshot.to_dict()
+        return result
 
 
 # ---------------------------------------------------------------------------
@@ -362,6 +644,10 @@ class ScenarioSet:
     T_months : int
     measure : Measure
     seed : int
+    metadata : ScenarioMetadata, optional
+        Governed scenario-set metadata added in Phase 6.
+    parameter_snapshot : ParameterSnapshot, optional
+        Parameter snapshot linked from metadata.
 
     SOA ASOP 56 ss3.5 -- scenario count adequacy and convergence.
     ESG_PROCESS_DOCUMENTATION.md ss6 -- specification.
@@ -372,6 +658,8 @@ class ScenarioSet:
     T_months: int
     measure: Measure
     seed: int
+    metadata: Optional[ScenarioMetadata] = None
+    parameter_snapshot: Optional[ParameterSnapshot] = None
 
     def path(self, scenario_id):
         """Return a single scenario path by 1-based scenario_id."""
@@ -398,7 +686,20 @@ class ScenarioSet:
         return pd.DataFrame(results)
 
     @classmethod
-    def generate(cls, n, T_months, measure, hw_params=None, gbm_params=None, seed=42):
+    def generate(
+        cls,
+        n,
+        T_months,
+        measure,
+        hw_params=None,
+        gbm_params=None,
+        seed=42,
+        scenario_set_id=None,
+        model_version="v1.0.0-dev",
+        base_currency="CNY",
+        valuation_date=None,
+        parameter_snapshot=None,
+    ):
         """Generate correlated HW1F rate + GBM equity scenarios.
 
         Uses Cholesky decomposition for rate/equity correlation:
@@ -417,6 +718,17 @@ class ScenarioSet:
         hw_params : HullWhiteParams, optional
         gbm_params : GBMParams, optional
         seed : int, optional
+        scenario_set_id : str, optional
+            Stable metadata identifier for this generated scenario package.
+        model_version : str, optional
+            Model version or commit identifier recorded in metadata.
+        base_currency : str, optional
+            Reporting currency for the v1-compatible wide view.
+        valuation_date : date or str, optional
+            Scenario time-0 valuation date.
+        parameter_snapshot : ParameterSnapshot, optional
+            Auditable parameter snapshot.  If omitted, a placeholder snapshot
+            is derived from the supplied HW1F and GBM parameter dataclasses.
 
         Returns
         -------
@@ -431,6 +743,14 @@ class ScenarioSet:
 
         hw_process = HullWhiteRateProcess(hw_params)
         gbm_process = GBMEquityProcess(gbm_params, rate_process=hw_process)
+        if parameter_snapshot is None:
+            parameter_snapshot = ParameterSnapshot.from_process_params(
+                measure=measure,
+                base_currency=base_currency,
+                calibration_date=valuation_date,
+                hw_params=hw_process.params,
+                gbm_params=gbm_process.params,
+            )
 
         rng = np.random.default_rng(seed)
         z_rate = _antithetic_normals(rng, n, T_months)
@@ -463,12 +783,34 @@ class ScenarioSet:
             "equity_return_1m": equity_returns.reshape(-1),
             "measure": measure.value,
         })
+        metadata = ScenarioMetadata.from_generation(
+            n_scenarios=n,
+            T_months=T_months,
+            measure=measure,
+            seed=seed,
+            parameter_snapshot=parameter_snapshot,
+            scenario_set_id=scenario_set_id,
+            model_version=model_version,
+            base_currency=base_currency,
+            valuation_date=valuation_date,
+        )
 
-        return cls(data=data, n_scenarios=n, T_months=T_months, measure=measure, seed=seed)
+        return cls(
+            data=data,
+            n_scenarios=n,
+            T_months=T_months,
+            measure=measure,
+            seed=seed,
+            metadata=metadata,
+            parameter_snapshot=parameter_snapshot,
+        )
 
 
 __all__ = [
     "Measure",
+    "CalibrationSource",
+    "ParameterSnapshot",
+    "ScenarioMetadata",
     "HullWhiteParams",
     "GBMParams",
     "HullWhiteRateProcess",

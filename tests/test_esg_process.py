@@ -6,6 +6,7 @@ Phase 4, Task 1: GBM/Hull-White sample ESG generator.
 
 from __future__ import annotations
 
+from datetime import date
 import warnings
 
 import numpy as np
@@ -17,12 +18,15 @@ from par_model_v2.stochastic.esg_adapter import (
     ScenarioAdequacyWarning,
 )
 from par_model_v2.stochastic.esg_process import (
+    CalibrationSource,
     GBMEquityProcess,
     GBMParams,
     HullWhiteParams,
     HullWhiteRateProcess,
     Measure,
+    ParameterSnapshot,
     ScenarioSet,
+    ScenarioMetadata,
 )
 
 
@@ -161,6 +165,10 @@ class TestScenarioSetGenerate:
         assert scenarios.T_months == 36
         assert scenarios.measure == Measure.Q
         assert scenarios.seed == 101
+        assert scenarios.metadata.measure == Measure.Q
+        assert scenarios.metadata.n_scenarios == 25
+        assert scenarios.metadata.projection_months == 36
+        assert scenarios.metadata.parameter_snapshot_id == scenarios.parameter_snapshot.snapshot_id
 
     def test_generate_returns_combined_adapter_schema(self):
         scenarios = ScenarioSet.generate(10, 12, Measure.P, seed=19)
@@ -248,3 +256,95 @@ class TestScenarioSetGenerate:
             ScenarioSet.generate(0, 12, Measure.Q)
         with pytest.raises(ValueError, match="T_months"):
             ScenarioSet.generate(1, -1, Measure.Q)
+
+    def test_generate_accepts_custom_phase6_metadata_inputs(self):
+        scenarios = ScenarioSet.generate(
+            5,
+            12,
+            Measure.P,
+            seed=44,
+            scenario_set_id="SCEN-HKD-P-20260529",
+            model_version="test-version",
+            base_currency="HKD",
+            valuation_date=date(2026, 5, 29),
+        )
+
+        assert scenarios.metadata.scenario_set_id == "SCEN-HKD-P-20260529"
+        assert scenarios.metadata.model_version == "test-version"
+        assert scenarios.metadata.base_currency == "HKD"
+        assert scenarios.metadata.valuation_date == date(2026, 5, 29)
+        assert scenarios.parameter_snapshot.base_currency == "HKD"
+
+
+class TestScenarioMetadataAndParameterSnapshot:
+    def test_parameter_snapshot_from_process_params_captures_required_fields(self):
+        snapshot = ParameterSnapshot.from_process_params(
+            measure="q",
+            base_currency="hkd",
+            calibration_date="2026-05-29",
+            hw_params=HullWhiteParams(initial_short_rate=0.031),
+            gbm_params=GBMParams(equity_vol=0.18),
+        )
+
+        assert snapshot.measure == Measure.Q
+        assert snapshot.base_currency == "HKD"
+        assert snapshot.calibration_date == date(2026, 5, 29)
+        assert snapshot.parameters["rate.hw1f.initial_short_rate"] == 0.031
+        assert snapshot.parameters["equity.gbm.equity_vol"] == 0.18
+        assert snapshot.sources[0].source_id == "SRC-PLACEHOLDER-HKD"
+
+    def test_parameter_snapshot_rejects_missing_parameters(self):
+        with pytest.raises(ValueError, match="parameters"):
+            ParameterSnapshot(
+                snapshot_id="PS-EMPTY",
+                calibration_date=date(2026, 5, 29),
+                measure=Measure.P,
+                base_currency="CNY",
+                parameters={},
+            )
+
+    def test_calibration_source_rejects_bad_currency(self):
+        with pytest.raises(ValueError, match="currency"):
+            CalibrationSource(
+                source_id="SRC-BAD",
+                source_type="curve",
+                market="HK",
+                currency="Hong Kong Dollar",
+                as_of_date=date(2026, 5, 29),
+                provider="test",
+                dataset_name="test",
+            )
+
+    def test_scenario_metadata_rejects_snapshot_measure_mismatch(self):
+        snapshot = ParameterSnapshot.from_process_params(
+            measure=Measure.P,
+            base_currency="CNY",
+            calibration_date=date(2026, 5, 29),
+        )
+
+        with pytest.raises(ValueError, match="measure"):
+            ScenarioMetadata.from_generation(
+                n_scenarios=10,
+                T_months=12,
+                measure=Measure.Q,
+                seed=1,
+                parameter_snapshot=snapshot,
+                valuation_date=date(2026, 5, 29),
+            )
+
+    def test_metadata_and_snapshot_to_dict_are_json_ready(self):
+        scenarios = ScenarioSet.generate(
+            3,
+            2,
+            Measure.Q,
+            seed=7,
+            valuation_date=date(2026, 5, 29),
+        )
+
+        metadata = scenarios.metadata.to_dict()
+        snapshot = scenarios.parameter_snapshot.to_dict()
+
+        assert metadata["measure"] == "Q"
+        assert metadata["valuation_date"] == "2026-05-29"
+        assert snapshot["calibration_date"] == "2026-05-29"
+        assert snapshot["sources"][0]["as_of_date"] == "2026-05-29"

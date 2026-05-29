@@ -40,7 +40,10 @@ from par_model_v2.stochastic.esg_process import (
     GBMParams,
     HullWhiteRateProcess,
     GBMEquityProcess,
+    CalibrationSource,
+    ParameterSnapshot,
     ScenarioSet,
+    ScenarioMetadata,
     Measure,
 )
 from par_model_v2.stochastic.esg_adapter import (
@@ -62,7 +65,10 @@ __all__ = [
     "GBMParams",
     "HullWhiteRateProcess",
     "GBMEquityProcess",
+    "CalibrationSource",
+    "ParameterSnapshot",
     "ScenarioSet",
+    "ScenarioMetadata",
     "Measure",
     # esg_adapter
     "ESGAdapter",

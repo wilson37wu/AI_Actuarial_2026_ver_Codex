@@ -3463,3 +3463,41 @@ outputs to `docs/G05_MEASURE_GUARD_EVIDENCE.md`.
   dependency provisioning, not model logic.
 
 ---
+
+## Run 2026-05-29T06:11:03Z - Phase 6: ESG Scope and Architecture
+
+**Task Completed:** Design scenario metadata and parameter snapshot structure
+
+**Accomplishments:**
+- Added governed `CalibrationSource`, `ParameterSnapshot`, and
+  `ScenarioMetadata` dataclasses to `par_model_v2.stochastic.esg_process`.
+- Extended `ScenarioSet.generate(...)` with optional scenario-set ID, model
+  version, base currency, valuation date, and parameter snapshot inputs while
+  preserving the existing v1 wide scenario columns and positional call pattern.
+- Added metadata and parameter snapshot validation tests to
+  `tests/test_esg_process.py`.
+- Created `docs/ESG_METADATA_AND_PARAMETER_SNAPSHOT_DESIGN.md` and updated
+  `docs/ESG_SCOPE_AND_SCHEMA_DESIGN.md` to point to the implemented Phase 6
+  Task 2 contract.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance the in-progress task
+  to calibration data interface design.
+
+**Validation:**
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests/test_esg_process.py -q`
+  remains blocked before collection with `No module named pytest`.
+- Full pytest remains blocked for the same environment reason.
+
+**Next Step:** Define calibration data interfaces for curves, equity indices,
+FX, credit spreads, and correlations.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3 and 3.4: Scenario packages now carry explicit
+  model equation references, discretisation, calibration date, source records,
+  and parameter snapshot IDs.
+- IA TAS M Sections 3.5 and 3.6: Metadata supports audit trail reconstruction
+  through owner, approval status, model version, seed policy, valuation date,
+  and limitation identifiers.
+
+---

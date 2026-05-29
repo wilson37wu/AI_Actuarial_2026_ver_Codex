@@ -257,15 +257,30 @@ deeper model implementation begins.
 | `ESG-SCHEMA-09` | Preserve audit traceability fields through view conversion | Scenario set ID and parameter snapshot ID remain attached |
 | `ESG-SCHEMA-10` | Validate monthly grid completeness | Missing month 0 or ragged scenario horizon fails |
 
-## 7. Next Design Task
+## 7. Phase 6 Task 2 Implementation Note
 
-The next Phase 6 task should define the scenario metadata and parameter
-snapshot structure in more detail. That task should formalize:
+Phase 6 Task 2 is implemented in
+`docs/ESG_METADATA_AND_PARAMETER_SNAPSHOT_DESIGN.md` and
+`par_model_v2.stochastic.esg_process`.
 
-- parameter ownership and approval fields;
+The implementation adds three governed dataclasses without changing the
+existing v1 wide scenario columns:
+
+- `CalibrationSource`
+- `ParameterSnapshot`
+- `ScenarioMetadata`
+
+`ScenarioSet.generate(...)` now attaches `ScenarioSet.metadata` and
+`ScenarioSet.parameter_snapshot`. Existing callers remain compatible because
+the new fields are optional and appended after the legacy dataclass fields.
+
+## 8. Next Design Task
+
+The next Phase 6 task should define calibration data interfaces for curves,
+equity indices, FX, credit spreads, and correlations. That task should formalize:
+
 - calibration source tables for curves, equity indices, FX, credit spreads, and
   correlations;
-- model equation and discretisation references;
-- model limitations and unsuitable-use disclosures;
-- audit trail fields linking scenario generation to downstream output reports.
-
+- source credibility and approval rules;
+- loader and validator interfaces for market and historical data;
+- how parameter snapshots reference those calibrated source tables.
