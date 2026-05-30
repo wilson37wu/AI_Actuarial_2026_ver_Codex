@@ -3802,4 +3802,10 @@ parameter files or fixtures.
 - SOA ASOP 56 Sections 3.1.3 and 3.4: Starter curves now have explicit source IDs, curve IDs, tenor grids, compounding basis, and placeholder-use disclosures.
 - IA TAS M Sections 3.5 and 3.6: Curve fixture lineage is traceable through `RiskFreeCurve` and `ParameterSnapshot` when supplied to scenario generation.
 
+**Delivery:**
+- Local commit created: `c217828003da15e79faf54072a79ec795c4f5f01`.
+- `git push origin main` failed because the sandbox could not connect to `github.com` on port 443.
+- Gmail draft `r7559377408565805897` was created for manual review.
+- Pre-existing unstaged change in `tests/test_schema_compatibility.py` was left untouched.
+
 ---
