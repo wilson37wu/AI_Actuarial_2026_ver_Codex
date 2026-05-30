@@ -140,6 +140,12 @@ fixtures are for development and validation examples only; they remain
 placeholder inputs pending governed market-data calibration. See
 `docs/ESG_STARTER_CURVE_FIXTURES.md`.
 
+**Phase 7 yield-curve validation:** `YieldCurveValidator` now produces
+JSON-ready reports for curve discount factors, adjacent-tenor forwards,
+parallel up/down rate stresses, generated path discount factors, and optional
+negative-rate evidence using uncapped above-par discount factors. See
+`docs/ESG_YIELD_CURVE_VALIDATION.md`.
+
 ### 3.2b G2++ Two-Factor Prototype
 
 Phase 7 Task 2 adds `G2PlusRateProcess` as an educational two-factor Gaussian

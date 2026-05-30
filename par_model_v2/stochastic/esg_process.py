@@ -314,6 +314,34 @@ class RiskFreeCurve:
         width = tenors[right] - tenors[left]
         return float((zero_times_tenor[right] - zero_times_tenor[left]) / width)
 
+    def forward_rate(self, start_years, end_years):
+        """Return the continuously compounded forward rate over [start, end]."""
+        start = float(start_years)
+        end = float(end_years)
+        if start < 0 or end < 0:
+            raise ValueError("forward tenors must be non-negative")
+        if end <= start:
+            raise ValueError("end_years must exceed start_years")
+        log_df_start = -self.zero_rate(start) * start
+        log_df_end = -self.zero_rate(end) * end
+        return float((log_df_start - log_df_end) / (end - start))
+
+    def parallel_shift(self, shift):
+        """Return a curve with all zero rates shifted by a decimal rate amount."""
+        shift = float(shift)
+        if not np.isfinite(shift):
+            raise ValueError("shift must be finite")
+        return RiskFreeCurve(
+            tenors_years=self.tenors_years,
+            zero_rates=tuple(rate + shift for rate in self.zero_rates),
+            currency=self.currency,
+            market=self.market,
+            valuation_date=self.valuation_date,
+            curve_id="{}-SHIFT-{:+.0f}BP".format(self.curve_id, shift * 10000.0),
+            source_id=self.source_id,
+            compounding=self.compounding,
+        )
+
     def to_dict(self):
         return {
             "curve_id": self.curve_id,
@@ -390,6 +418,259 @@ def default_phase7_starter_curves(valuation_date=None):
         currency: starter_risk_free_curve(currency, valuation_date=valuation_date)
         for currency in available_starter_curve_currencies()
     }
+
+
+@dataclass(frozen=True)
+class YieldCurveValidationCheck:
+    """Single yield-curve validation check result."""
+
+    check_id: str
+    passed: bool
+    severity: str
+    message: str
+    observed_value: Optional[float] = None
+    threshold: Optional[float] = None
+
+    def __post_init__(self):
+        object.__setattr__(self, "check_id", _require_text(self.check_id, "check_id"))
+        object.__setattr__(self, "severity", _require_text(self.severity, "severity").upper())
+        object.__setattr__(self, "message", _require_text(self.message, "message"))
+        if self.observed_value is not None and not np.isfinite(float(self.observed_value)):
+            raise ValueError("observed_value must be finite")
+        if self.threshold is not None and not np.isfinite(float(self.threshold)):
+            raise ValueError("threshold must be finite")
+
+    def to_dict(self):
+        return {
+            "check_id": self.check_id,
+            "passed": bool(self.passed),
+            "severity": self.severity,
+            "message": self.message,
+            "observed_value": self.observed_value,
+            "threshold": self.threshold,
+        }
+
+
+@dataclass(frozen=True)
+class YieldCurveValidationReport:
+    """Validation report for Phase 7 risk-free curves and generated rate paths."""
+
+    curve_id: str
+    currency: str
+    valuation_date: date
+    passed: bool
+    checks: Tuple[YieldCurveValidationCheck, ...]
+    diagnostics: Dict[str, float]
+
+    def __post_init__(self):
+        object.__setattr__(self, "curve_id", _require_text(self.curve_id, "curve_id"))
+        object.__setattr__(self, "currency", _validate_currency_code(self.currency, "currency"))
+        object.__setattr__(self, "valuation_date", _coerce_date(self.valuation_date, "valuation_date"))
+        if not self.checks:
+            raise ValueError("checks must not be empty")
+        for key, value in self.diagnostics.items():
+            if not str(key).strip():
+                raise ValueError("diagnostic keys must be non-empty")
+            if not np.isfinite(float(value)):
+                raise ValueError("diagnostic {!r} must be finite".format(key))
+
+    def failed_checks(self):
+        return tuple(check for check in self.checks if not check.passed)
+
+    def to_dict(self):
+        return {
+            "curve_id": self.curve_id,
+            "currency": self.currency,
+            "valuation_date": self.valuation_date.isoformat(),
+            "passed": bool(self.passed),
+            "checks": [check.to_dict() for check in self.checks],
+            "diagnostics": dict(self.diagnostics),
+        }
+
+
+class YieldCurveValidator:
+    """Phase 7 validator for risk-free curve inputs and simulated rate outputs.
+
+    The validator is intentionally model-agnostic: it checks curve discount
+    factors and forwards, confirms parallel stress monotonicity, and optionally
+    validates generated HW1F/G2++ path columns including negative-rate evidence.
+    """
+
+    REQUIRED_PATH_COLUMNS = ("month", "r_short", "zcb_1y", "zcb_10y")
+
+    def __init__(
+        self,
+        min_forward_rate=-0.10,
+        max_forward_rate=1.00,
+        max_forward_jump=0.10,
+        stress_shift=0.01,
+    ):
+        self.min_forward_rate = float(min_forward_rate)
+        self.max_forward_rate = float(max_forward_rate)
+        self.max_forward_jump = float(max_forward_jump)
+        self.stress_shift = float(stress_shift)
+        for name, value in (
+            ("min_forward_rate", self.min_forward_rate),
+            ("max_forward_rate", self.max_forward_rate),
+            ("max_forward_jump", self.max_forward_jump),
+            ("stress_shift", self.stress_shift),
+        ):
+            if not np.isfinite(value):
+                raise ValueError("{} must be finite".format(name))
+        if self.min_forward_rate >= self.max_forward_rate:
+            raise ValueError("min_forward_rate must be below max_forward_rate")
+        if self.max_forward_jump <= 0:
+            raise ValueError("max_forward_jump must be positive")
+        if self.stress_shift <= 0:
+            raise ValueError("stress_shift must be positive")
+
+    def validate(self, curve, scenario_data=None, require_negative_rate_evidence=False):
+        """Return a report covering curve shape, stresses, and optional paths."""
+        if not isinstance(curve, RiskFreeCurve):
+            raise TypeError("curve must be a RiskFreeCurve")
+
+        checks = []
+        diagnostics = {}
+        tenors = np.asarray(curve.tenors_years, dtype=float)
+        dfs = np.asarray([curve.discount_factor(tenor) for tenor in tenors], dtype=float)
+        forward_rates = np.asarray(
+            [
+                curve.forward_rate(float(start), float(end))
+                for start, end in zip(tenors[:-1], tenors[1:])
+            ],
+            dtype=float,
+        )
+
+        diagnostics["min_discount_factor"] = float(np.min(dfs))
+        diagnostics["max_discount_factor"] = float(np.max(dfs))
+        diagnostics["min_forward_rate"] = float(np.min(forward_rates))
+        diagnostics["max_forward_rate"] = float(np.max(forward_rates))
+        forward_jumps = np.abs(np.diff(forward_rates)) if len(forward_rates) > 1 else np.array([0.0])
+        diagnostics["max_forward_jump"] = float(np.max(forward_jumps))
+
+        checks.append(YieldCurveValidationCheck(
+            "YC-DF-POSITIVE",
+            bool(np.all(np.isfinite(dfs)) and np.all(dfs > 0.0)),
+            "ERROR",
+            "Discount factors must be finite and strictly positive.",
+            observed_value=diagnostics["min_discount_factor"],
+            threshold=0.0,
+        ))
+        checks.append(YieldCurveValidationCheck(
+            "YC-FWD-RANGE",
+            bool(
+                np.all(np.isfinite(forward_rates))
+                and np.all(forward_rates >= self.min_forward_rate)
+                and np.all(forward_rates <= self.max_forward_rate)
+            ),
+            "ERROR",
+            "Adjacent tenor forward rates must stay inside configured bounds.",
+            observed_value=max(
+                abs(diagnostics["min_forward_rate"]),
+                abs(diagnostics["max_forward_rate"]),
+            ),
+            threshold=max(abs(self.min_forward_rate), abs(self.max_forward_rate)),
+        ))
+        checks.append(YieldCurveValidationCheck(
+            "YC-FWD-SMOOTHNESS",
+            bool(np.all(forward_jumps <= self.max_forward_jump)),
+            "WARNING",
+            "Adjacent forward-rate jumps should be explainable by the curve source.",
+            observed_value=diagnostics["max_forward_jump"],
+            threshold=self.max_forward_jump,
+        ))
+
+        up_curve = curve.parallel_shift(self.stress_shift)
+        down_curve = curve.parallel_shift(-self.stress_shift)
+        positive_tenors = tenors[tenors > 0.0]
+        base_stress_dfs = np.asarray([curve.discount_factor(tenor) for tenor in positive_tenors])
+        up_dfs = np.asarray([up_curve.discount_factor(tenor) for tenor in positive_tenors])
+        down_dfs = np.asarray([down_curve.discount_factor(tenor) for tenor in positive_tenors])
+        diagnostics["up_stress_max_df_change"] = float(np.max(up_dfs - base_stress_dfs))
+        diagnostics["down_stress_min_df_change"] = float(np.min(down_dfs - base_stress_dfs))
+        checks.append(YieldCurveValidationCheck(
+            "YC-STRESS-MONOTONIC",
+            bool(np.all(up_dfs < base_stress_dfs) and np.all(down_dfs > base_stress_dfs)),
+            "ERROR",
+            "Positive rate shocks must lower discount factors and negative shocks must raise them.",
+            observed_value=max(
+                diagnostics["up_stress_max_df_change"],
+                -diagnostics["down_stress_min_df_change"],
+            ),
+            threshold=0.0,
+        ))
+
+        if scenario_data is not None:
+            path_checks, path_diagnostics = self._validate_paths(
+                scenario_data,
+                require_negative_rate_evidence=require_negative_rate_evidence,
+            )
+            checks.extend(path_checks)
+            diagnostics.update(path_diagnostics)
+
+        passed = all(check.passed or check.severity != "ERROR" for check in checks)
+        return YieldCurveValidationReport(
+            curve_id=curve.curve_id,
+            currency=curve.currency,
+            valuation_date=curve.valuation_date,
+            passed=passed,
+            checks=tuple(checks),
+            diagnostics=diagnostics,
+        )
+
+    def _validate_paths(self, scenario_data, require_negative_rate_evidence=False):
+        frame = pd.DataFrame(scenario_data)
+        checks = []
+        diagnostics = {}
+        missing = [column for column in self.REQUIRED_PATH_COLUMNS if column not in frame.columns]
+        checks.append(YieldCurveValidationCheck(
+            "YC-PATH-COLUMNS",
+            not missing,
+            "ERROR",
+            "Scenario rate paths must include month, short-rate, and discount-factor columns.",
+            observed_value=float(len(missing)),
+            threshold=0.0,
+        ))
+        if missing:
+            return tuple(checks), diagnostics
+
+        zcb_values = frame[["zcb_1y", "zcb_10y"]].to_numpy(dtype=float)
+        rates = frame["r_short"].to_numpy(dtype=float)
+        diagnostics["path_min_short_rate"] = float(np.min(rates))
+        diagnostics["path_max_short_rate"] = float(np.max(rates))
+        diagnostics["path_min_discount_factor"] = float(np.min(zcb_values))
+        diagnostics["path_max_discount_factor"] = float(np.max(zcb_values))
+        diagnostics["negative_rate_row_count"] = float(np.sum(rates < 0.0))
+        diagnostics["above_par_discount_factor_count"] = float(np.sum(zcb_values > 1.0))
+
+        checks.append(YieldCurveValidationCheck(
+            "YC-PATH-DF-FINITE",
+            bool(np.all(np.isfinite(zcb_values)) and np.all(zcb_values > 0.0)),
+            "ERROR",
+            "Path discount-factor outputs must be finite and strictly positive.",
+            observed_value=diagnostics["path_min_discount_factor"],
+            threshold=0.0,
+        ))
+        checks.append(YieldCurveValidationCheck(
+            "YC-PATH-RATE-FINITE",
+            bool(np.all(np.isfinite(rates))),
+            "ERROR",
+            "Path short rates must be finite.",
+            observed_value=diagnostics["path_max_short_rate"],
+        ))
+        if require_negative_rate_evidence:
+            checks.append(YieldCurveValidationCheck(
+                "YC-PATH-NEGATIVE-RATE-EVIDENCE",
+                bool(
+                    diagnostics["negative_rate_row_count"] > 0.0
+                    and diagnostics["above_par_discount_factor_count"] > 0.0
+                ),
+                "ERROR",
+                "Negative-rate validation requires negative short rates and uncapped above-par discount factors.",
+                observed_value=diagnostics["above_par_discount_factor_count"],
+                threshold=1.0,
+            ))
+        return tuple(checks), diagnostics
 
 
 @dataclass
@@ -1868,6 +2149,9 @@ __all__ = [
     "HullWhiteParams",
     "G2PlusParams",
     "RiskFreeCurve",
+    "YieldCurveValidationCheck",
+    "YieldCurveValidationReport",
+    "YieldCurveValidator",
     "available_starter_curve_currencies",
     "starter_risk_free_curve",
     "default_phase7_starter_curves",

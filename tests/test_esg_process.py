@@ -33,6 +33,7 @@ from par_model_v2.stochastic.esg_process import (
     RiskFreeCurve,
     ScenarioSet,
     ScenarioMetadata,
+    YieldCurveValidator,
     default_phase6_calibration_interfaces,
     default_phase6_consumer_mappings,
     available_starter_curve_currencies,
@@ -204,6 +205,103 @@ class TestRiskFreeCurve:
     def test_unknown_starter_curve_currency_is_rejected(self):
         with pytest.raises(KeyError, match="available currencies"):
             starter_risk_free_curve("GBP")
+
+
+class TestYieldCurveValidator:
+    def test_curve_validation_checks_discount_factors_forwards_and_stresses(self):
+        curve = starter_risk_free_curve("HKD", valuation_date=date(2026, 5, 30))
+
+        report = YieldCurveValidator().validate(curve)
+
+        assert report.passed is True
+        assert report.currency == "HKD"
+        assert {check.check_id for check in report.checks} >= {
+            "YC-DF-POSITIVE",
+            "YC-FWD-RANGE",
+            "YC-FWD-SMOOTHNESS",
+            "YC-STRESS-MONOTONIC",
+        }
+        assert report.diagnostics["min_discount_factor"] > 0.0
+        assert report.diagnostics["down_stress_min_df_change"] > 0.0
+        assert report.to_dict()["valuation_date"] == "2026-05-30"
+
+    def test_curve_validation_flags_extreme_forward_jump(self):
+        curve = RiskFreeCurve(
+            tenors_years=(0.0, 1.0, 2.0, 10.0),
+            zero_rates=(0.010, 0.011, 0.120, 0.020),
+            currency="USD",
+            market="US",
+            valuation_date=date(2026, 5, 30),
+        )
+
+        report = YieldCurveValidator(max_forward_jump=0.05).validate(curve)
+
+        failed = {check.check_id for check in report.failed_checks()}
+        assert "YC-FWD-SMOOTHNESS" in failed
+        assert report.passed is True
+
+    def test_path_validation_accepts_negative_rates_with_uncapped_discount_factors(self):
+        curve = RiskFreeCurve.flat(
+            -0.005,
+            currency="JPY",
+            market="JP",
+            valuation_date=date(2026, 5, 30),
+        )
+        params = HullWhiteParams(
+            initial_short_rate=curve.instantaneous_forward(0.0),
+            short_rate_vol=0.001,
+            short_rate_floor=None,
+            short_rate_ceiling=0.15,
+        )
+        paths = HullWhiteRateProcess(params, initial_curve=curve).simulate(
+            12,
+            12,
+            Measure.Q,
+            seed=21,
+            cap_zcb_at_par=False,
+        )
+
+        report = YieldCurveValidator().validate(
+            curve,
+            scenario_data=paths,
+            require_negative_rate_evidence=True,
+        )
+
+        assert report.passed is True
+        assert report.diagnostics["negative_rate_row_count"] > 0.0
+        assert report.diagnostics["above_par_discount_factor_count"] > 0.0
+
+    def test_path_validation_rejects_capped_negative_rate_evidence(self):
+        curve = RiskFreeCurve.flat(
+            -0.005,
+            currency="JPY",
+            market="JP",
+            valuation_date=date(2026, 5, 30),
+        )
+        params = HullWhiteParams(
+            initial_short_rate=curve.instantaneous_forward(0.0),
+            short_rate_vol=0.001,
+            short_rate_floor=None,
+            short_rate_ceiling=0.15,
+        )
+        paths = HullWhiteRateProcess(params, initial_curve=curve).simulate(
+            4,
+            3,
+            Measure.Q,
+            seed=22,
+            cap_zcb_at_par=True,
+        )
+
+        report = YieldCurveValidator().validate(
+            curve,
+            scenario_data=paths,
+            require_negative_rate_evidence=True,
+        )
+
+        assert report.passed is False
+        assert "YC-PATH-NEGATIVE-RATE-EVIDENCE" in {
+            check.check_id for check in report.failed_checks()
+        }
 
 
 class TestG2PlusRateProcess:

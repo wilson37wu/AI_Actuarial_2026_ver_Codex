@@ -3809,3 +3809,34 @@ parameter files or fixtures.
 - Pre-existing unstaged change in `tests/test_schema_compatibility.py` was left untouched.
 
 ---
+
+## Run 2026-05-30T18:09:02Z - Phase 7: Interest Rate and Yield Curve ESG
+
+**Task Completed:** Add yield curve validation for discount factors, forwards, negative-rate paths, and stresses.
+
+**Accomplishments:**
+- Added `RiskFreeCurve.forward_rate(...)` and `RiskFreeCurve.parallel_shift(...)` for explicit adjacent-tenor forward-rate and deterministic rate-shock mechanics.
+- Added `YieldCurveValidator`, `YieldCurveValidationReport`, and `YieldCurveValidationCheck` to validate curve discount factors, forward-rate ranges, forward smoothness warnings, parallel stress monotonicity, scenario path discount factors, and optional negative-rate evidence.
+- Exported the validator through `par_model_v2.stochastic`.
+- Added targeted acceptance tests for starter-curve validation, forward-jump warnings, uncapped negative-rate path evidence, and capped-path rejection.
+- Created `docs/ESG_YIELD_CURVE_VALIDATION.md` and linked it from the ESG process documentation.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 7 to Q-measure martingale evidence.
+
+**Validation:**
+- `git diff --check` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_esg_process.py -q` remains blocked with `No module named pytest`.
+- Direct runtime smoke import remains blocked because the reachable embedded Python lacks `numpy`.
+
+**Next Step:** Add Q-measure martingale evidence for discount factors.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3, 3.4, and 3.5: Added governed validation evidence for curve mechanics, path discount factors, and stress response before martingale testing.
+- IA TAS M Sections 3.5 and 3.6: Added JSON-ready validation reports and documented review handling for negative-rate and stressed-curve evidence.
+
+**Delivery:**
+- Local commit created for this run; see `git log --oneline -1` for the final SHA.
+- `git push origin main` not attempted because network access is restricted in the sandbox.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`, `docs/MODEL_USER_MANUAL.md`, and `tests/test_schema_compatibility.py` were left untouched.
+
+---
