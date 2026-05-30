@@ -3648,3 +3648,85 @@ curve input and negative-rate support (Phase 7, Task 1).
   traceability fields verified to propagate to consumer views.
 
 ---
+
+**Delivery:** Local commit `de1e05f`. `git push origin main` failed (no GitHub credentials in sandbox). Gmail draft `r5879609845663726213` created for review.
+
+---
+
+## Run 2026-05-30T00:09:41Z - Phase 7: Interest Rate and Yield Curve ESG
+
+**Task Completed:** Implement enhanced Hull-White 1-factor process with explicit curve input and negative-rate support
+
+**Accomplishments:**
+- Added `RiskFreeCurve` as an explicit continuously compounded zero-curve input
+  with tenor validation, negative-rate support, interpolation, discount factors,
+  forward-rate approximation, and JSON-ready serialization.
+- Extended `HullWhiteRateProcess` to accept an explicit initial curve, use the
+  Q-measure forward-curve target, price zero-coupon bonds with an HW1F affine
+  curve-fit formula, and allow configurable short-rate floors / ceilings.
+- Preserved v1 ESGAdapter compatibility by keeping `zcb_1y` and `zcb_10y`
+  capped at par by default, while adding `cap_zcb_at_par=False` for Phase 7
+  diagnostics where negative-rate discount factors can exceed 1.0.
+- Extended `ScenarioSet.generate(...)` and `ParameterSnapshot` to carry the
+  explicit curve input and record curve zero-rate nodes plus curve source
+  lineage.
+- Added targeted tests for curve validation, negative-rate discount factors,
+  time-zero curve fit, uncapped negative-rate path diagnostics, and
+  ScenarioSet snapshot propagation.
+- Created `docs/ESG_HULL_WHITE_CURVE_INPUT_DESIGN.md` and updated
+  `docs/ESG_PROCESS_DOCUMENTATION.md`.
+
+**Validation:**
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_esg_process.py -q`
+  remains blocked before collection with `No module named pytest`.
+
+**Next Step:** Add G2++ design or prototype for two-factor curve dynamics.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3 and 3.4: HW1F now has explicit curve input,
+  model equation documentation, negative-rate behavior, and parameter-source
+  traceability.
+- IA TAS M Sections 3.5 and 3.6: Scenario parameter snapshots now include
+  curve nodes and curve source lineage needed for audit reconstruction.
+
+**Delivery:**
+- Phase 7 files were staged, but local commit was blocked by stale
+  `.git/HEAD.lock` and persistent `git.exe` processes. Lock cleanup was blocked
+  by policy in this run.
+- `git push origin main` was not attempted because the local commit did not
+  complete.
+- Gmail draft `r2868609659647522696` was created for manual review.
+
+---
+
+## Follow-up 2026-05-30T05:06:33Z - Phase 7 Test Environment Unblock
+
+**Task Completed:** Resolve blocked `pytest tests/test_esg_process.py -q`
+execution on the reachable Windows Python.
+
+**Actions Taken:**
+- Confirmed the reachable interpreter is
+  `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe` on Python 3.13.
+- Installed / verified `requirements-dev.txt` in the Python 3.13 user site:
+  NumPy, Pandas, SciPy, and Pytest are importable.
+- Added root `pytest.ini` with `pythonpath = .` because the pgAdmin embedded
+  Python ignores `PYTHONPATH` and does not place the working directory on
+  `sys.path`.
+- Added `C:\Users\SkiesNet\AppData\Roaming\Python\Python313\Scripts` to the
+  user PATH so future shells can resolve `pytest.exe`.
+
+**Validation:**
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_esg_process.py -q`:
+  **47 passed in 55.03s**.
+- `pytest tests/test_esg_process.py -q` with the user Scripts path active:
+  **47 passed in 53.99s**.
+
+**Delivery:**
+- Cleared stale `.git\HEAD.lock` after stopping stale `git.exe` processes.
+- Local commit created: `fc319f93f01c04a21f6aabc3fe31f3f9845a5415`.
+- `tests/test_schema_compatibility.py` remains an unrelated unstaged dirty file
+  from before this follow-up.
+
+---

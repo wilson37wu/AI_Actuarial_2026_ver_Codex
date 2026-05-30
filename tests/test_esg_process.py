@@ -28,6 +28,7 @@ from par_model_v2.stochastic.esg_process import (
     HullWhiteRateProcess,
     Measure,
     ParameterSnapshot,
+    RiskFreeCurve,
     ScenarioSet,
     ScenarioMetadata,
     default_phase6_calibration_interfaces,
@@ -106,6 +107,67 @@ class TestHullWhiteRateProcess:
         p_mean = p_df[p_df["month"] == 120]["r_short"].mean()
         q_mean = q_df[q_df["month"] == 120]["r_short"].mean()
         assert p_mean > q_mean + 0.001
+
+    def test_zcb_price_matches_explicit_flat_curve_at_time_zero(self):
+        curve = RiskFreeCurve.flat(
+            -0.004,
+            currency="JPY",
+            market="JP",
+            valuation_date=date(2026, 5, 30),
+        )
+        params = HullWhiteParams(initial_short_rate=-0.004)
+        process = HullWhiteRateProcess(params, initial_curve=curve)
+
+        assert process.zcb_price(-0.004, 0.0, 10.0) == pytest.approx(
+            curve.discount_factor(10.0)
+        )
+        assert process.zcb_price(-0.004, 0.0, 10.0) > 1.0
+
+    def test_negative_rate_paths_are_supported_without_floor_clipping(self):
+        curve = RiskFreeCurve.flat(
+            -0.006,
+            currency="JPY",
+            market="JP",
+            valuation_date=date(2026, 5, 30),
+        )
+        params = HullWhiteParams(
+            initial_short_rate=-0.006,
+            long_run_rate_p=-0.004,
+            short_rate_vol=0.001,
+            short_rate_floor=None,
+            short_rate_ceiling=0.15,
+        )
+        df = HullWhiteRateProcess(params, initial_curve=curve).simulate(
+            20,
+            12,
+            Measure.Q,
+            seed=9,
+            cap_zcb_at_par=False,
+        )
+
+        assert (df.loc[df["month"] == 0, "r_short"] < 0.0).all()
+        assert df["zcb_1y"].max() > 1.0
+
+
+class TestRiskFreeCurve:
+    def test_negative_zero_rate_discount_factor_can_exceed_one(self):
+        curve = RiskFreeCurve(
+            tenors_years=(0.0, 1.0, 10.0),
+            zero_rates=(-0.003, -0.002, 0.004),
+            currency="EUR",
+            market="EU",
+            valuation_date=date(2026, 5, 30),
+        )
+
+        assert curve.discount_factor(1.0) > 1.0
+        assert curve.zero_rate(5.5) == pytest.approx(0.001)
+
+    def test_curve_rejects_unsorted_tenors(self):
+        with pytest.raises(ValueError, match="strictly increasing"):
+            RiskFreeCurve(
+                tenors_years=(0.0, 10.0, 1.0),
+                zero_rates=(0.01, 0.02, 0.015),
+            )
 
 
 class TestGBMEquityProcess:
@@ -280,6 +342,34 @@ class TestScenarioSetGenerate:
         assert scenarios.metadata.base_currency == "HKD"
         assert scenarios.metadata.valuation_date == date(2026, 5, 29)
         assert scenarios.parameter_snapshot.base_currency == "HKD"
+
+    def test_generate_accepts_explicit_curve_and_records_snapshot_rates(self):
+        curve = RiskFreeCurve(
+            tenors_years=(0.0, 1.0, 5.0, 10.0),
+            zero_rates=(0.010, 0.012, 0.018, 0.021),
+            currency="HKD",
+            market="HK",
+            valuation_date=date(2026, 5, 30),
+            curve_id="CURVE-HKD-TEST",
+        )
+        params = HullWhiteParams(initial_short_rate=curve.instantaneous_forward(0.0))
+
+        scenarios = ScenarioSet.generate(
+            6,
+            3,
+            Measure.Q,
+            hw_params=params,
+            initial_curve=curve,
+            base_currency="HKD",
+            valuation_date=date(2026, 5, 30),
+            seed=17,
+        )
+
+        assert scenarios.parameter_snapshot.base_currency == "HKD"
+        assert scenarios.parameter_snapshot.parameters["rate.curve.zero_rate_10y"] == 0.021
+        assert scenarios.data.loc[scenarios.data["month"] == 0, "r_short"].iloc[0] == pytest.approx(
+            curve.instantaneous_forward(0.0)
+        )
 
 
 class TestScenarioMetadataAndParameterSnapshot:

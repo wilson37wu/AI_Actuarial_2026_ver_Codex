@@ -125,6 +125,13 @@ ln A(t,T) = ln(P(0,T)/P(0,t)) + B(t,T)·f(0,t) − (σ_r²/(4a))·B(t,T)²·(1 �
 
 **Note B (CBIRC Compliance):** The regulatory cap on discount rates for reserve calculations is **3.0%** per CBIRC guidance. When using simulated short rates for regulatory reserve computation, paths must be floored at a compliance minimum or the discount rate applied to liability valuation must use the regulatory rate, not the simulated rate. This distinction must be maintained in all liability projection code.
 
+**Phase 7 update:** `HullWhiteRateProcess` now accepts an explicit
+`RiskFreeCurve` input for Q-measure initial-curve fitting and zero-coupon
+pricing. Negative zero rates are supported for low-rate market examples, and
+the default v1 wide-view output still caps `zcb_1y` and `zcb_10y` at par unless
+`cap_zcb_at_par=False` is selected for diagnostics. See
+`docs/ESG_HULL_WHITE_CURVE_INPUT_DESIGN.md`.
+
 ### 3.3 Limitations
 
 - **1-factor model:** Cannot independently control the short-end and long-end volatility. If spread dynamics between short and long rates are material (e.g., yield curve twists), a 2-factor model (Hull-White 2F or G2++) should be considered.

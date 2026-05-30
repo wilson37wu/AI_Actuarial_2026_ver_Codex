@@ -137,6 +137,8 @@ class HullWhiteParams:
     long_run_rate_p: float = 0.025
     market_price_of_risk: float = -0.15
     cbirc_rate_cap: float = 0.030
+    short_rate_floor: Optional[float] = -0.020
+    short_rate_ceiling: Optional[float] = 0.150
 
     def __post_init__(self):
         if self.mean_reversion_speed <= 0:
@@ -147,10 +149,134 @@ class HullWhiteParams:
             raise ValueError(
                 "short_rate_vol must be positive; got {}".format(self.short_rate_vol)
             )
+        if self.short_rate_floor is not None and self.short_rate_ceiling is not None:
+            if float(self.short_rate_floor) >= float(self.short_rate_ceiling):
+                raise ValueError("short_rate_floor must be below short_rate_ceiling")
 
     @property
     def is_placeholder(self):
         return True
+
+
+@dataclass(frozen=True)
+class RiskFreeCurve:
+    """Continuously compounded risk-free zero curve for HW1F initial fitting.
+
+    Phase 7 uses this small curve object as the explicit market input to the
+    Hull-White process. Negative zero rates are allowed so JPY/EUR-style low
+    rate examples can be represented without shifting the process.
+    """
+
+    tenors_years: Tuple[float, ...]
+    zero_rates: Tuple[float, ...]
+    currency: str = "CNY"
+    market: str = "CN"
+    valuation_date: date = field(default_factory=date.today)
+    curve_id: str = "CURVE-EDU-PLACEHOLDER"
+    source_id: str = "SRC-PLACEHOLDER-CURVE"
+    compounding: str = "continuous"
+
+    def __post_init__(self):
+        tenors = tuple(float(value) for value in self.tenors_years)
+        rates = tuple(float(value) for value in self.zero_rates)
+        if len(tenors) != len(rates):
+            raise ValueError("tenors_years and zero_rates must have the same length")
+        if len(tenors) < 2:
+            raise ValueError("RiskFreeCurve requires at least two tenor points")
+        if any(not np.isfinite(value) for value in tenors + rates):
+            raise ValueError("RiskFreeCurve tenors and rates must be finite")
+        if any(value < 0.0 for value in tenors):
+            raise ValueError("RiskFreeCurve tenors must be non-negative")
+        if tuple(sorted(tenors)) != tenors or len(set(tenors)) != len(tenors):
+            raise ValueError("RiskFreeCurve tenors must be strictly increasing")
+        if any(value < -0.10 or value > 1.00 for value in rates):
+            raise ValueError("RiskFreeCurve zero_rates must be within [-0.10, 1.00]")
+
+        object.__setattr__(self, "tenors_years", tenors)
+        object.__setattr__(self, "zero_rates", rates)
+        object.__setattr__(self, "currency", _validate_currency_code(self.currency, "currency"))
+        object.__setattr__(self, "market", _require_text(self.market, "market").upper())
+        object.__setattr__(self, "valuation_date", _coerce_date(self.valuation_date, "valuation_date"))
+        object.__setattr__(self, "curve_id", _require_text(self.curve_id, "curve_id"))
+        object.__setattr__(self, "source_id", _require_text(self.source_id, "source_id"))
+        compounding = _require_text(self.compounding, "compounding").lower()
+        if compounding != "continuous":
+            raise ValueError("RiskFreeCurve currently supports continuous compounding only")
+        object.__setattr__(self, "compounding", compounding)
+
+    @classmethod
+    def flat(
+        cls,
+        rate,
+        currency="CNY",
+        market="CN",
+        valuation_date=None,
+        curve_id=None,
+        source_id=None,
+        max_tenor_years=30.0,
+    ):
+        """Return a flat continuously compounded curve."""
+        valuation_date = _coerce_date(valuation_date or date.today(), "valuation_date")
+        currency = _validate_currency_code(currency, "currency")
+        curve_id = curve_id or "CURVE-FLAT-{}-{}".format(
+            currency,
+            valuation_date.isoformat().replace("-", ""),
+        )
+        source_id = source_id or "SRC-FLAT-{}".format(currency)
+        return cls(
+            tenors_years=(0.0, float(max_tenor_years)),
+            zero_rates=(float(rate), float(rate)),
+            currency=currency,
+            market=market,
+            valuation_date=valuation_date,
+            curve_id=curve_id,
+            source_id=source_id,
+        )
+
+    def zero_rate(self, tenor_years):
+        """Linearly interpolate the continuously compounded zero rate."""
+        tenor = float(tenor_years)
+        if tenor < 0:
+            raise ValueError("tenor_years must be non-negative; got {}".format(tenor_years))
+        return float(np.interp(tenor, self.tenors_years, self.zero_rates))
+
+    def discount_factor(self, tenor_years):
+        """Return P(0,T) using continuous compounding."""
+        tenor = float(tenor_years)
+        if tenor < 0:
+            raise ValueError("tenor_years must be non-negative; got {}".format(tenor_years))
+        if tenor == 0:
+            return 1.0
+        return float(np.exp(-self.zero_rate(tenor) * tenor))
+
+    def instantaneous_forward(self, tenor_years):
+        """Approximate f(0,t) from the zero curve by piecewise secants."""
+        tenor = max(float(tenor_years), 0.0)
+        tenors = np.asarray(self.tenors_years, dtype=float)
+        rates = np.asarray(self.zero_rates, dtype=float)
+        zero_times_tenor = rates * tenors
+
+        if tenor <= tenors[0]:
+            left, right = 0, 1
+        elif tenor >= tenors[-1]:
+            left, right = len(tenors) - 2, len(tenors) - 1
+        else:
+            right = int(np.searchsorted(tenors, tenor, side="right"))
+            left = right - 1
+        width = tenors[right] - tenors[left]
+        return float((zero_times_tenor[right] - zero_times_tenor[left]) / width)
+
+    def to_dict(self):
+        return {
+            "curve_id": self.curve_id,
+            "source_id": self.source_id,
+            "market": self.market,
+            "currency": self.currency,
+            "valuation_date": self.valuation_date.isoformat(),
+            "compounding": self.compounding,
+            "tenors_years": list(self.tenors_years),
+            "zero_rates": list(self.zero_rates),
+        }
 
 
 @dataclass
@@ -619,6 +745,7 @@ class ParameterSnapshot:
         calibration_date=None,
         hw_params=None,
         gbm_params=None,
+        initial_curve=None,
         snapshot_id=None,
     ):
         """Create a Phase 6 snapshot from current HW1F and GBM parameter dataclasses."""
@@ -627,6 +754,12 @@ class ParameterSnapshot:
         calibration_date = _coerce_date(calibration_date or date.today(), "calibration_date")
         hw_params = hw_params if hw_params is not None else HullWhiteParams()
         gbm_params = gbm_params if gbm_params is not None else GBMParams()
+        initial_curve = initial_curve if initial_curve is not None else RiskFreeCurve.flat(
+            hw_params.initial_short_rate,
+            currency=base_currency,
+            market=base_currency,
+            valuation_date=calibration_date,
+        )
         snapshot_id = snapshot_id or "ps-{}-{}-{}".format(
             calibration_date.isoformat().replace("-", ""),
             base_currency,
@@ -642,6 +775,17 @@ class ParameterSnapshot:
             dataset_name="HullWhiteParams and GBMParams defaults",
             notes="Educational placeholder until market calibration interfaces are implemented.",
         )
+        curve_source = CalibrationSource(
+            source_id=initial_curve.source_id,
+            source_type="curve",
+            market=initial_curve.market,
+            currency=initial_curve.currency,
+            as_of_date=initial_curve.valuation_date,
+            provider="RiskFreeCurve input",
+            dataset_name=initial_curve.curve_id,
+            version=initial_curve.compounding,
+            notes="Explicit Phase 7 initial curve input for HW1F generation.",
+        )
         parameters = {
             "rate.hw1f.mean_reversion_speed": hw_params.mean_reversion_speed,
             "rate.hw1f.short_rate_vol": hw_params.short_rate_vol,
@@ -655,13 +799,21 @@ class ParameterSnapshot:
             "equity.gbm.rate_equity_correlation": gbm_params.rate_equity_correlation,
             "equity.gbm.initial_index_level": gbm_params.initial_index_level,
         }
+        if hw_params.short_rate_floor is not None:
+            parameters["rate.hw1f.short_rate_floor"] = hw_params.short_rate_floor
+        if hw_params.short_rate_ceiling is not None:
+            parameters["rate.hw1f.short_rate_ceiling"] = hw_params.short_rate_ceiling
+        parameters.update({
+            "rate.curve.zero_rate_{}y".format("{:g}".format(tenor)): rate
+            for tenor, rate in zip(initial_curve.tenors_years, initial_curve.zero_rates)
+        })
         return cls(
             snapshot_id=snapshot_id,
             calibration_date=calibration_date,
             measure=measure,
             base_currency=base_currency,
             parameters=parameters,
-            sources=(source,),
+            sources=(source, curve_source),
             calibration_interfaces=default_phase6_calibration_interfaces(),
             is_placeholder=bool(hw_params.is_placeholder or gbm_params.is_placeholder),
         )
@@ -1028,8 +1180,13 @@ class HullWhiteRateProcess:
     Use Measure.P for ALM/VaR; Measure.Q for TVOG/MCEV.
     """
 
-    def __init__(self, params=None):
+    def __init__(self, params=None, initial_curve=None):
         self.params = params if params is not None else HullWhiteParams()
+        self.initial_curve = (
+            initial_curve
+            if initial_curve is not None
+            else RiskFreeCurve.flat(self.params.initial_short_rate)
+        )
 
     def _mean_reversion_factor(self, dt):
         return np.exp(-self.params.mean_reversion_speed * dt)
@@ -1039,14 +1196,35 @@ class HullWhiteRateProcess:
         sigma = self.params.short_rate_vol
         return sigma * np.sqrt((1 - np.exp(-2 * a * dt)) / (2 * a))
 
+    def _target_rate(self, month, measure, dt):
+        if measure == Measure.Q:
+            return self.initial_curve.instantaneous_forward((month + 1) * dt)
+        return self.params.long_run_rate_p + self.params.short_rate_vol * self.params.market_price_of_risk
+
+    def _apply_rate_bounds(self, rates):
+        lower = self.params.short_rate_floor
+        upper = self.params.short_rate_ceiling
+        if lower is None and upper is None:
+            return rates
+        if lower is None:
+            return np.minimum(rates, float(upper))
+        if upper is None:
+            return np.maximum(rates, float(lower))
+        return np.clip(rates, float(lower), float(upper))
+
     def zcb_price(self, r_t, t, T):
-        """Zero-coupon bond price P(t,T) = exp(-B*r_t) under flat curve approx."""
+        """Zero-coupon bond price using the HW1F affine curve-fit formula."""
         a = self.params.mean_reversion_speed
+        sigma = self.params.short_rate_vol
         tau = T - t
         if tau <= 0:
             raise ValueError("Maturity T ({}) must exceed current time t ({})".format(T, t))
         B = (1.0 / a) * (1.0 - np.exp(-a * tau))
-        return np.exp(-B * r_t)
+        p0_T = self.initial_curve.discount_factor(T)
+        p0_t = self.initial_curve.discount_factor(t)
+        f0_t = self.initial_curve.instantaneous_forward(t)
+        variance_adjustment = (sigma ** 2 / (4.0 * a)) * B ** 2 * (1.0 - np.exp(-2.0 * a * t))
+        return (p0_T / p0_t) * np.exp(-B * (r_t - f0_t) - variance_adjustment)
 
     def _simulate_array(self, n_scenarios, T_months, measure, shocks):
         """Simulate short-rate paths into ndarray, shape (n_scenarios, T_months+1)."""
@@ -1060,21 +1238,18 @@ class HullWhiteRateProcess:
         cv = self._conditional_vol(dt)
         p = self.params
 
-        target_rate = p.initial_short_rate
-        if measure == Measure.P:
-            target_rate = p.long_run_rate_p + p.short_rate_vol * p.market_price_of_risk
-
         rates = np.empty((n_scenarios, T_months + 1), dtype=float)
         rates[:, 0] = p.initial_short_rate
         for month in range(T_months):
+            target_rate = self._target_rate(month, measure, dt)
             rates[:, month + 1] = (
                 rates[:, month] * mf
                 + target_rate * (1.0 - mf)
                 + cv * shocks[:, month]
             )
-        return np.clip(rates, -0.02, 0.15)
+        return self._apply_rate_bounds(rates)
 
-    def simulate(self, n_scenarios, T_months, measure, seed=42):
+    def simulate(self, n_scenarios, T_months, measure, seed=42, cap_zcb_at_par=True):
         """Simulate monthly short-rate paths as an ESGAdapter-compatible DataFrame.
 
         Columns: scenario_id, month, r_short, zcb_1y, zcb_10y, measure
@@ -1098,8 +1273,11 @@ class HullWhiteRateProcess:
         zcb_1y = np.empty_like(flat_rates)
         zcb_10y = np.empty_like(flat_rates)
         for idx, (r_t, t) in enumerate(zip(flat_rates, times)):
-            zcb_1y[idx] = min(self.zcb_price(float(r_t), float(t), float(t + 1.0)), 1.0)
-            zcb_10y[idx] = min(self.zcb_price(float(r_t), float(t), float(t + 10.0)), 1.0)
+            zcb_1y[idx] = self.zcb_price(float(r_t), float(t), float(t + 1.0))
+            zcb_10y[idx] = self.zcb_price(float(r_t), float(t), float(t + 10.0))
+        if cap_zcb_at_par:
+            zcb_1y = np.minimum(zcb_1y, 1.0)
+            zcb_10y = np.minimum(zcb_10y, 1.0)
 
         return pd.DataFrame({
             "scenario_id": scenario_ids,
@@ -1299,12 +1477,14 @@ class ScenarioSet:
         measure,
         hw_params=None,
         gbm_params=None,
+        initial_curve=None,
         seed=42,
         scenario_set_id=None,
         model_version="v1.0.0-dev",
         base_currency="CNY",
         valuation_date=None,
         parameter_snapshot=None,
+        cap_zcb_at_par=True,
     ):
         """Generate correlated HW1F rate + GBM equity scenarios.
 
@@ -1323,6 +1503,9 @@ class ScenarioSet:
             Single measure only -- do not mix P and Q.
         hw_params : HullWhiteParams, optional
         gbm_params : GBMParams, optional
+        initial_curve : RiskFreeCurve, optional
+            Explicit initial risk-free curve for Q-measure HW1F fitting and
+            zero-coupon bond pricing. If omitted, a flat curve at r(0) is used.
         seed : int, optional
         scenario_set_id : str, optional
             Stable metadata identifier for this generated scenario package.
@@ -1347,7 +1530,7 @@ class ScenarioSet:
         n = int(n)
         T_months = int(T_months)
 
-        hw_process = HullWhiteRateProcess(hw_params)
+        hw_process = HullWhiteRateProcess(hw_params, initial_curve=initial_curve)
         gbm_process = GBMEquityProcess(gbm_params, rate_process=hw_process)
         if parameter_snapshot is None:
             parameter_snapshot = ParameterSnapshot.from_process_params(
@@ -1356,6 +1539,7 @@ class ScenarioSet:
                 calibration_date=valuation_date,
                 hw_params=hw_process.params,
                 gbm_params=gbm_process.params,
+                initial_curve=hw_process.initial_curve,
             )
 
         rng = np.random.default_rng(seed)
@@ -1376,8 +1560,11 @@ class ScenarioSet:
         zcb_1y = np.empty_like(flat_rates)
         zcb_10y = np.empty_like(flat_rates)
         for idx, (r_t, t) in enumerate(zip(flat_rates, times)):
-            zcb_1y[idx] = min(hw_process.zcb_price(float(r_t), float(t), float(t + 1.0)), 1.0)
-            zcb_10y[idx] = min(hw_process.zcb_price(float(r_t), float(t), float(t + 10.0)), 1.0)
+            zcb_1y[idx] = hw_process.zcb_price(float(r_t), float(t), float(t + 1.0))
+            zcb_10y[idx] = hw_process.zcb_price(float(r_t), float(t), float(t + 10.0))
+        if cap_zcb_at_par:
+            zcb_1y = np.minimum(zcb_1y, 1.0)
+            zcb_10y = np.minimum(zcb_10y, 1.0)
 
         data = pd.DataFrame({
             "scenario_id": scenario_ids,
@@ -1424,6 +1611,7 @@ __all__ = [
     "default_phase6_consumer_mappings",
     "phase6_consumer_mapping",
     "HullWhiteParams",
+    "RiskFreeCurve",
     "GBMParams",
     "HullWhiteRateProcess",
     "GBMEquityProcess",
