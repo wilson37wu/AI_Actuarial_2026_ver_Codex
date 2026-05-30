@@ -1,0 +1,56 @@
+{
+  "fixture_id": "PHASE7_STARTER_RISK_FREE_CURVES",
+  "description": "Illustrative continuously compounded starter zero curves for Phase 7 ESG development. These are educational fixtures, not production market data.",
+  "curves": [
+    {
+      "currency": "USD",
+      "market": "US",
+      "valuation_date": "2026-05-30",
+      "curve_id_prefix": "CURVE-STARTER-USD",
+      "source_id": "SRC-STARTER-CURVE-USD",
+      "compounding": "continuous",
+      "tenors_years": [0.0, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 30.0],
+      "zero_rates": [0.043, 0.0425, 0.042, 0.041, 0.039, 0.037, 0.038, 0.040, 0.041]
+    },
+    {
+      "currency": "EUR",
+      "market": "EU",
+      "valuation_date": "2026-05-30",
+      "curve_id_prefix": "CURVE-STARTER-EUR",
+      "source_id": "SRC-STARTER-CURVE-EUR",
+      "compounding": "continuous",
+      "tenors_years": [0.0, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 30.0],
+      "zero_rates": [0.018, 0.017, 0.016, 0.015, 0.014, 0.016, 0.019, 0.023, 0.025]
+    },
+    {
+      "currency": "HKD",
+      "market": "HK",
+      "valuation_date": "2026-05-30",
+      "curve_id_prefix": "CURVE-STARTER-HKD",
+      "source_id": "SRC-STARTER-CURVE-HKD",
+      "compounding": "continuous",
+      "tenors_years": [0.0, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 30.0],
+      "zero_rates": [0.036, 0.035, 0.034, 0.033, 0.031, 0.030, 0.032, 0.034, 0.035]
+    },
+    {
+      "currency": "CNY",
+      "market": "CN",
+      "valuation_date": "2026-05-30",
+      "curve_id_prefix": "CURVE-STARTER-CNY",
+      "source_id": "SRC-STARTER-CURVE-CNY",
+      "compounding": "continuous",
+      "tenors_years": [0.0, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 30.0],
+      "zero_rates": [0.016, 0.0165, 0.017, 0.018, 0.020, 0.023, 0.026, 0.028, 0.029]
+    },
+    {
+      "currency": "JPY",
+      "market": "JP",
+      "valuation_date": "2026-05-30",
+      "curve_id_prefix": "CURVE-STARTER-JPY",
+      "source_id": "SRC-STARTER-CURVE-JPY",
+      "compounding": "continuous",
+      "tenors_years": [0.0, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 30.0],
+      "zero_rates": [-0.001, -0.0005, 0.0, 0.002, 0.005, 0.009, 0.013, 0.017, 0.019]
+    }
+  ]
+}

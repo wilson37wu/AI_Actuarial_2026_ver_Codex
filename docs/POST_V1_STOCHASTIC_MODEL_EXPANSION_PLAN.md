@@ -115,7 +115,7 @@ Tasks:
 
 1. Implement enhanced Hull-White 1-factor process with explicit curve input and negative-rate support.
 2. Add G2++ design / prototype for two-factor curve dynamics.
-3. Support USD, EUR, HKD, CNY, JPY starter curves through parameter files or fixtures.
+3. Support USD, EUR, HKD, CNY, JPY starter curves through parameter files or fixtures. **Implemented through `par_model_v2/stochastic/fixtures/risk_free_curves.json`; see `docs/ESG_STARTER_CURVE_FIXTURES.md`.**
 4. Add yield curve validation: monotonic discount factors, forward-rate diagnostics, negative-rate scenario tests, and stress scenarios.
 5. Add Q-measure martingale evidence for discount factors.
 

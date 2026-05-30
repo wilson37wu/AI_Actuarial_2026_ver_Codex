@@ -26,8 +26,10 @@ Do not use for regulatory reporting until Phase 4 calibration is complete.
 from __future__ import annotations
 
 import enum
+import json
 from dataclasses import asdict, dataclass, field
 from datetime import date, datetime, timezone
+from pathlib import Path
 from typing import Dict, Optional, Tuple
 
 import numpy as np
@@ -323,6 +325,71 @@ class RiskFreeCurve:
             "tenors_years": list(self.tenors_years),
             "zero_rates": list(self.zero_rates),
         }
+
+
+_STARTER_CURVE_FIXTURE_PATH = Path(__file__).with_name("fixtures").joinpath(
+    "risk_free_curves.json"
+)
+_STARTER_CURVE_RECORDS = None
+
+
+def _load_starter_curve_records():
+    global _STARTER_CURVE_RECORDS
+    if _STARTER_CURVE_RECORDS is None:
+        with _STARTER_CURVE_FIXTURE_PATH.open("r", encoding="utf-8") as fixture_file:
+            raw_records = json.load(fixture_file)
+        _STARTER_CURVE_RECORDS = {
+            _validate_currency_code(record["currency"], "currency"): record
+            for record in raw_records["curves"]
+        }
+    return _STARTER_CURVE_RECORDS
+
+
+def available_starter_curve_currencies():
+    """Return currencies covered by the Phase 7 starter risk-free curves."""
+    return tuple(sorted(_load_starter_curve_records()))
+
+
+def starter_risk_free_curve(currency, valuation_date=None):
+    """Return an illustrative Phase 7 starter risk-free curve fixture.
+
+    The fixtures are educational placeholders, not production market data. They
+    provide stable multi-currency curve shapes for USD, EUR, HKD, CNY, and JPY
+    development, validation, and documentation examples.
+    """
+    currency = _validate_currency_code(currency, "currency")
+    records = _load_starter_curve_records()
+    if currency not in records:
+        raise KeyError(
+            "no Phase 7 starter curve fixture for {}; available currencies are {}".format(
+                currency,
+                ", ".join(available_starter_curve_currencies()),
+            )
+        )
+    record = records[currency]
+    as_of = _coerce_date(
+        valuation_date or record["valuation_date"],
+        "valuation_date",
+    )
+    date_token = as_of.isoformat().replace("-", "")
+    return RiskFreeCurve(
+        tenors_years=tuple(record["tenors_years"]),
+        zero_rates=tuple(record["zero_rates"]),
+        currency=record["currency"],
+        market=record["market"],
+        valuation_date=as_of,
+        curve_id="{}-{}".format(record["curve_id_prefix"], date_token),
+        source_id=record["source_id"],
+        compounding=record.get("compounding", "continuous"),
+    )
+
+
+def default_phase7_starter_curves(valuation_date=None):
+    """Return all Phase 7 starter risk-free curve fixtures keyed by currency."""
+    return {
+        currency: starter_risk_free_curve(currency, valuation_date=valuation_date)
+        for currency in available_starter_curve_currencies()
+    }
 
 
 @dataclass
@@ -1801,6 +1868,9 @@ __all__ = [
     "HullWhiteParams",
     "G2PlusParams",
     "RiskFreeCurve",
+    "available_starter_curve_currencies",
+    "starter_risk_free_curve",
+    "default_phase7_starter_curves",
     "GBMParams",
     "HullWhiteRateProcess",
     "G2PlusRateProcess",

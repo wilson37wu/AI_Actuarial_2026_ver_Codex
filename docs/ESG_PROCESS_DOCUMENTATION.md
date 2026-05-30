@@ -132,6 +132,14 @@ the default v1 wide-view output still caps `zcb_1y` and `zcb_10y` at par unless
 `cap_zcb_at_par=False` is selected for diagnostics. See
 `docs/ESG_HULL_WHITE_CURVE_INPUT_DESIGN.md`.
 
+**Phase 7 starter curves:** USD, EUR, HKD, CNY, and JPY illustrative
+continuously compounded zero curves are available in
+`par_model_v2/stochastic/fixtures/risk_free_curves.json` through
+`starter_risk_free_curve(...)` and `default_phase7_starter_curves(...)`. These
+fixtures are for development and validation examples only; they remain
+placeholder inputs pending governed market-data calibration. See
+`docs/ESG_STARTER_CURVE_FIXTURES.md`.
+
 ### 3.2b G2++ Two-Factor Prototype
 
 Phase 7 Task 2 adds `G2PlusRateProcess` as an educational two-factor Gaussian

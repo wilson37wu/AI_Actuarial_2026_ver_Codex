@@ -35,7 +35,10 @@ from par_model_v2.stochastic.esg_process import (
     ScenarioMetadata,
     default_phase6_calibration_interfaces,
     default_phase6_consumer_mappings,
+    available_starter_curve_currencies,
+    default_phase7_starter_curves,
     phase6_consumer_mapping,
+    starter_risk_free_curve,
 )
 
 
@@ -170,6 +173,37 @@ class TestRiskFreeCurve:
                 tenors_years=(0.0, 10.0, 1.0),
                 zero_rates=(0.01, 0.02, 0.015),
             )
+
+    def test_phase7_starter_curves_cover_required_currencies(self):
+        assert available_starter_curve_currencies() == (
+            "CNY",
+            "EUR",
+            "HKD",
+            "JPY",
+            "USD",
+        )
+
+        curves = default_phase7_starter_curves(valuation_date=date(2026, 5, 30))
+        assert set(curves) == {"USD", "EUR", "HKD", "CNY", "JPY"}
+        for currency, curve in curves.items():
+            assert curve.currency == currency
+            assert curve.compounding == "continuous"
+            assert len(curve.tenors_years) == 9
+            assert curve.tenors_years[0] == 0.0
+            assert curve.tenors_years[-1] == 30.0
+            assert curve.discount_factor(10.0) > 0.0
+            assert curve.curve_id.endswith("20260530")
+
+    def test_starter_curve_supports_negative_rate_fixture(self):
+        curve = starter_risk_free_curve("JPY", valuation_date=date(2026, 5, 30))
+
+        assert curve.market == "JP"
+        assert curve.zero_rate(0.0) < 0.0
+        assert curve.discount_factor(0.25) > 1.0
+
+    def test_unknown_starter_curve_currency_is_rejected(self):
+        with pytest.raises(KeyError, match="available currencies"):
+            starter_risk_free_curve("GBP")
 
 
 class TestG2PlusRateProcess:
@@ -462,6 +496,29 @@ class TestScenarioSetGenerate:
         assert scenarios.data.loc[scenarios.data["month"] == 0, "r_short"].iloc[0] == pytest.approx(
             curve.instantaneous_forward(0.0)
         )
+
+    def test_generate_accepts_phase7_starter_curve_fixture(self):
+        curve = starter_risk_free_curve("USD", valuation_date=date(2026, 5, 30))
+        params = HullWhiteParams(initial_short_rate=curve.instantaneous_forward(0.0))
+
+        scenarios = ScenarioSet.generate(
+            5,
+            2,
+            Measure.Q,
+            hw_params=params,
+            initial_curve=curve,
+            base_currency="USD",
+            valuation_date=date(2026, 5, 30),
+            seed=51,
+        )
+
+        assert scenarios.metadata.base_currency == "USD"
+        assert scenarios.parameter_snapshot.sources[1].source_id == "SRC-STARTER-CURVE-USD"
+        assert scenarios.parameter_snapshot.parameters["rate.curve.zero_rate_30y"] == 0.041
+        assert scenarios.data.loc[
+            scenarios.data["month"] == 0,
+            "r_short",
+        ].iloc[0] == pytest.approx(curve.instantaneous_forward(0.0))
 
 
 class TestScenarioMetadataAndParameterSnapshot:

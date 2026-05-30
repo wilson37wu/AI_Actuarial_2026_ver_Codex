@@ -3777,3 +3777,29 @@ parameter files or fixtures.
   production use.
 
 ---
+
+## Run 2026-05-30T12:09:22Z - Phase 7: Interest Rate and Yield Curve ESG
+
+**Task Completed:** Support USD, EUR, HKD, CNY, and JPY starter curves through parameter files or fixtures
+
+**Accomplishments:**
+- Added `par_model_v2/stochastic/fixtures/risk_free_curves.json` with governed educational starter zero curves for USD, EUR, HKD, CNY, and JPY.
+- Added public loader helpers: `available_starter_curve_currencies()`, `starter_risk_free_curve(...)`, and `default_phase7_starter_curves(...)`.
+- Exported the Phase 7 curve helpers through `par_model_v2.stochastic`.
+- Added targeted tests proving fixture coverage, negative-rate JPY support, unknown-currency rejection, and `ScenarioSet.generate(...)` traceability when supplied a starter curve.
+- Created `docs/ESG_STARTER_CURVE_FIXTURES.md` and linked the fixture contract from the ESG process documentation and post-v1 expansion plan.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 7 to yield-curve validation.
+
+**Validation:**
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts` completed successfully.
+- PowerShell JSON fixture inspection confirmed five curve records with nine tenor and rate points each.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_esg_process.py -q` remains blocked with `No module named pytest`.
+- Direct runtime smoke import remains blocked because the reachable embedded Python also lacks `numpy`.
+
+**Next Step:** Add yield curve validation for discount factors, forwards, negative-rate paths, and stresses.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3 and 3.4: Starter curves now have explicit source IDs, curve IDs, tenor grids, compounding basis, and placeholder-use disclosures.
+- IA TAS M Sections 3.5 and 3.6: Curve fixture lineage is traceable through `RiskFreeCurve` and `ParameterSnapshot` when supplied to scenario generation.
+
+---
