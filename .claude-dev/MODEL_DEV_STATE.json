@@ -1,8 +1,8 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-05-30T00:09:41Z",
-  "last_run_duration_minutes": 38,
+  "last_run": "2026-05-30T06:09:07Z",
+  "last_run_duration_minutes": 40,
   "current_phase": "Phase 7: Interest Rate and Yield Curve ESG",
   "overall_status": "active_post_v1_expansion",
   "phases": {
@@ -127,12 +127,13 @@
         "Add Q-measure martingale evidence for discount factors"
       ],
       "completed": [
-        "Implement enhanced Hull-White 1-factor process with explicit curve input and negative-rate support"
-      ],
-      "in_progress": [
+        "Implement enhanced Hull-White 1-factor process with explicit curve input and negative-rate support",
         "Add G2++ design or prototype for two-factor curve dynamics"
       ],
-      "next": "Support USD, EUR, HKD, CNY, and JPY starter curves through parameter files or fixtures"
+      "in_progress": [
+        "Support USD, EUR, HKD, CNY, and JPY starter curves through parameter files or fixtures"
+      ],
+      "next": "Add yield curve validation for discount factors, forwards, negative-rate paths, and stresses"
     },
     "Phase 8: Equity, FX, and Correlation ESG": {
       "status": "planned",
@@ -209,16 +210,16 @@
     "url": "https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex",
     "branch": "main",
     "last_commit_sha": "fc319f93f01c04a21f6aabc3fe31f3f9845a5415",
-    "last_commit_message": "[Phase 7] Enhanced HW1F curve input and pytest unblock",
-    "commits_this_session": 31
+    "last_commit_message": "[Phase 7] Add G2++ two-factor rate prototype",
+    "commits_this_session": 32
   },
   "progress_metrics": {
     "total_tasks": 66,
-    "tasks_completed": 40,
+    "tasks_completed": 41,
     "phases_completed": 6,
-    "estimated_completion_pct": 61,
+    "estimated_completion_pct": 62,
     "average_cycle_duration_minutes": 52,
-    "cycles_run": 90
+    "cycles_run": 91
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",
@@ -230,6 +231,7 @@
       "HullWhiteRateProcess + GBMEquityProcess (par_model_v2/stochastic/esg_process.py -- PHASE 4 IMPLEMENTED)",
       "ScenarioSet (par_model_v2/stochastic/esg_process.py -- correlated HW1F+GBM; PHASE 4 TASK 1)",
       "RiskFreeCurve (par_model_v2/stochastic/esg_process.py -- explicit HW1F initial curve input; PHASE 7 TASK 1)",
+      "G2PlusRateProcess (par_model_v2/stochastic/esg_process.py -- two-factor Gaussian rate prototype; PHASE 7 TASK 2)",
       "TVOGEngine (par_model_v2/projection/tvog.py -- Q-measure TVOG; PHASE 4 TASK 2)",
       "HullWhiteCalibrator + GBMCalibrator (par_model_v2/calibration/calibration_framework.py -- PHASE 4 TASK 3)",
       "BacktestEngine + BacktestReport (par_model_v2/calibration/backtesting.py + backtest_reporting.py -- PHASE 4 TASKS 4-5)",

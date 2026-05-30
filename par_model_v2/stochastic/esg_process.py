@@ -158,6 +158,52 @@ class HullWhiteParams:
         return True
 
 
+@dataclass
+class G2PlusParams:
+    """Parameters for a two-factor Gaussian G2++ interest-rate prototype.
+
+    r(t) = phi(t) + x(t) + y(t)
+    dx(t) = -a*x(t) dt + sigma*dW_x(t)
+    dy(t) = -b*y(t) dt + eta*dW_y(t), corr(dW_x, dW_y) = rho
+
+    Phase 7 uses this as an educational prototype for yield-curve twists and
+    separate short / long factor volatility. Parameters are placeholders until
+    swaption surface calibration is implemented.
+    """
+
+    mean_reversion_x: float = 0.10
+    mean_reversion_y: float = 0.35
+    vol_x: float = 0.010
+    vol_y: float = 0.006
+    factor_correlation: float = -0.70
+    initial_x: float = 0.0
+    initial_y: float = 0.0
+    long_run_rate_p: float = 0.025
+    market_price_of_risk_x: float = -0.10
+    market_price_of_risk_y: float = -0.05
+    short_rate_floor: Optional[float] = -0.020
+    short_rate_ceiling: Optional[float] = 0.150
+
+    def __post_init__(self):
+        if self.mean_reversion_x <= 0:
+            raise ValueError("mean_reversion_x must be positive")
+        if self.mean_reversion_y <= 0:
+            raise ValueError("mean_reversion_y must be positive")
+        if self.vol_x <= 0:
+            raise ValueError("vol_x must be positive")
+        if self.vol_y <= 0:
+            raise ValueError("vol_y must be positive")
+        if not (-1.0 < self.factor_correlation < 1.0):
+            raise ValueError("factor_correlation must be in (-1, 1)")
+        if self.short_rate_floor is not None and self.short_rate_ceiling is not None:
+            if float(self.short_rate_floor) >= float(self.short_rate_ceiling):
+                raise ValueError("short_rate_floor must be below short_rate_ceiling")
+
+    @property
+    def is_placeholder(self):
+        return True
+
+
 @dataclass(frozen=True)
 class RiskFreeCurve:
     """Continuously compounded risk-free zero curve for HW1F initial fitting.
@@ -1290,6 +1336,148 @@ class HullWhiteRateProcess:
 
 
 # ---------------------------------------------------------------------------
+# 2b. G2++ Two-Factor Rate Process Prototype
+# ---------------------------------------------------------------------------
+
+class G2PlusRateProcess:
+    """Two-factor Gaussian G2++ rate-process prototype.
+
+    The prototype keeps the existing ESG wide columns while exposing `g2pp_x`
+    and `g2pp_y` diagnostic factor paths. Under Q-measure, the deterministic
+    shift is fitted to the supplied initial curve's instantaneous forward
+    rates. Under P-measure, the same two factors mean-revert around an
+    educational long-run rate with placeholder market-price-of-risk terms.
+    """
+
+    def __init__(self, params=None, initial_curve=None):
+        self.params = params if params is not None else G2PlusParams()
+        self.initial_curve = initial_curve if initial_curve is not None else RiskFreeCurve.flat(0.020)
+
+    def _conditional_vol(self, speed, volatility, dt):
+        return volatility * np.sqrt((1.0 - np.exp(-2.0 * speed * dt)) / (2.0 * speed))
+
+    def _target_shift(self, month, measure, dt):
+        if measure == Measure.Q:
+            return self.initial_curve.instantaneous_forward(month * dt)
+        p = self.params
+        return (
+            p.long_run_rate_p
+            + p.vol_x * p.market_price_of_risk_x
+            + p.vol_y * p.market_price_of_risk_y
+        )
+
+    def _apply_rate_bounds(self, rates):
+        lower = self.params.short_rate_floor
+        upper = self.params.short_rate_ceiling
+        if lower is None and upper is None:
+            return rates
+        if lower is None:
+            return np.minimum(rates, float(upper))
+        if upper is None:
+            return np.maximum(rates, float(lower))
+        return np.clip(rates, float(lower), float(upper))
+
+    def _simulate_arrays(self, n_scenarios, T_months, measure, shocks_x, shocks_independent):
+        expected_shape = (n_scenarios, T_months)
+        if shocks_x.shape != expected_shape:
+            raise ValueError("G2++ x shocks must have shape {}; got {}".format(expected_shape, shocks_x.shape))
+        if shocks_independent.shape != expected_shape:
+            raise ValueError(
+                "G2++ independent shocks must have shape {}; got {}".format(
+                    expected_shape, shocks_independent.shape
+                )
+            )
+
+        dt = 1.0 / 12.0
+        p = self.params
+        shocks_y = (
+            p.factor_correlation * shocks_x
+            + np.sqrt(1.0 - p.factor_correlation ** 2) * shocks_independent
+        )
+
+        x = np.empty((n_scenarios, T_months + 1), dtype=float)
+        y = np.empty((n_scenarios, T_months + 1), dtype=float)
+        rates = np.empty((n_scenarios, T_months + 1), dtype=float)
+        x[:, 0] = p.initial_x
+        y[:, 0] = p.initial_y
+        rates[:, 0] = self._target_shift(0, measure, dt) + x[:, 0] + y[:, 0]
+
+        mf_x = np.exp(-p.mean_reversion_x * dt)
+        mf_y = np.exp(-p.mean_reversion_y * dt)
+        cv_x = self._conditional_vol(p.mean_reversion_x, p.vol_x, dt)
+        cv_y = self._conditional_vol(p.mean_reversion_y, p.vol_y, dt)
+
+        for month in range(T_months):
+            x[:, month + 1] = x[:, month] * mf_x + cv_x * shocks_x[:, month]
+            y[:, month + 1] = y[:, month] * mf_y + cv_y * shocks_y[:, month]
+            rates[:, month + 1] = (
+                self._target_shift(month + 1, measure, dt)
+                + x[:, month + 1]
+                + y[:, month + 1]
+            )
+
+        return x, y, self._apply_rate_bounds(rates)
+
+    def _factor_loading(self, speed, t, T):
+        tau = T - t
+        if tau <= 0:
+            raise ValueError("Maturity T ({}) must exceed current time t ({})".format(T, t))
+        return (1.0 - np.exp(-speed * tau)) / speed
+
+    def zcb_price(self, x_t, y_t, t, T):
+        """Prototype G2++ zero-coupon price fitted to the initial curve at t=0."""
+        p0_T = self.initial_curve.discount_factor(T)
+        p0_t = self.initial_curve.discount_factor(t)
+        bx = self._factor_loading(self.params.mean_reversion_x, t, T)
+        by = self._factor_loading(self.params.mean_reversion_y, t, T)
+        return (p0_T / p0_t) * np.exp(-bx * float(x_t) - by * float(y_t))
+
+    def simulate(self, n_scenarios, T_months, measure, seed=42, cap_zcb_at_par=True):
+        """Simulate v1-compatible short-rate paths plus G2++ factor diagnostics."""
+        measure = _coerce_measure(measure)
+        _validate_simulation_dimensions(n_scenarios, T_months)
+        n_scenarios = int(n_scenarios)
+        T_months = int(T_months)
+
+        rng = np.random.default_rng(seed)
+        shocks_x = _antithetic_normals(rng, n_scenarios, T_months)
+        shocks_independent = _antithetic_normals(rng, n_scenarios, T_months)
+        x_paths, y_paths, rates = self._simulate_arrays(
+            n_scenarios,
+            T_months,
+            measure,
+            shocks_x,
+            shocks_independent,
+        )
+
+        scenario_ids, months = _month_grid(n_scenarios, T_months)
+        flat_x = x_paths.reshape(-1)
+        flat_y = y_paths.reshape(-1)
+        flat_rates = rates.reshape(-1)
+        times = months.astype(float) / 12.0
+
+        zcb_1y = np.empty_like(flat_rates)
+        zcb_10y = np.empty_like(flat_rates)
+        for idx, (x_t, y_t, t) in enumerate(zip(flat_x, flat_y, times)):
+            zcb_1y[idx] = self.zcb_price(float(x_t), float(y_t), float(t), float(t + 1.0))
+            zcb_10y[idx] = self.zcb_price(float(x_t), float(y_t), float(t), float(t + 10.0))
+        if cap_zcb_at_par:
+            zcb_1y = np.minimum(zcb_1y, 1.0)
+            zcb_10y = np.minimum(zcb_10y, 1.0)
+
+        return pd.DataFrame({
+            "scenario_id": scenario_ids,
+            "month": months,
+            "r_short": flat_rates,
+            "zcb_1y": zcb_1y,
+            "zcb_10y": zcb_10y,
+            "g2pp_x": flat_x,
+            "g2pp_y": flat_y,
+            "measure": measure.value,
+        })
+
+
+# ---------------------------------------------------------------------------
 # 3. GBM Equity Process
 # ---------------------------------------------------------------------------
 
@@ -1611,9 +1799,11 @@ __all__ = [
     "default_phase6_consumer_mappings",
     "phase6_consumer_mapping",
     "HullWhiteParams",
+    "G2PlusParams",
     "RiskFreeCurve",
     "GBMParams",
     "HullWhiteRateProcess",
+    "G2PlusRateProcess",
     "GBMEquityProcess",
     "ScenarioSet",
     "_coerce_measure",

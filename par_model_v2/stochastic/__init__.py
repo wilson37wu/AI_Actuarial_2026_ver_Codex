@@ -37,9 +37,11 @@ See docs/ESG_PROCESS_DOCUMENTATION.md §9 (Limitations and Disclosures).
 
 from par_model_v2.stochastic.esg_process import (
     HullWhiteParams,
+    G2PlusParams,
     RiskFreeCurve,
     GBMParams,
     HullWhiteRateProcess,
+    G2PlusRateProcess,
     GBMEquityProcess,
     CalibrationSource,
     CalibrationFieldSpec,
@@ -69,9 +71,11 @@ from par_model_v2.stochastic.esg_adapter import (
 __all__ = [
     # esg_process
     "HullWhiteParams",
+    "G2PlusParams",
     "RiskFreeCurve",
     "GBMParams",
     "HullWhiteRateProcess",
+    "G2PlusRateProcess",
     "GBMEquityProcess",
     "CalibrationSource",
     "CalibrationFieldSpec",

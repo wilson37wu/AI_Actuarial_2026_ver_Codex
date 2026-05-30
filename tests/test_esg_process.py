@@ -22,6 +22,8 @@ from par_model_v2.stochastic.esg_process import (
     CalibrationFieldSpec,
     CalibrationSource,
     ConsumerOutputMapping,
+    G2PlusParams,
+    G2PlusRateProcess,
     GBMEquityProcess,
     GBMParams,
     HullWhiteParams,
@@ -168,6 +170,96 @@ class TestRiskFreeCurve:
                 tenors_years=(0.0, 10.0, 1.0),
                 zero_rates=(0.01, 0.02, 0.015),
             )
+
+
+class TestG2PlusRateProcess:
+    def test_simulate_returns_v1_columns_and_factor_diagnostics(self):
+        df = G2PlusRateProcess().simulate(
+            n_scenarios=4,
+            T_months=12,
+            measure=Measure.Q,
+            seed=31,
+        )
+
+        assert len(df) == 4 * 13
+        assert list(df.columns) == [
+            "scenario_id",
+            "month",
+            "r_short",
+            "zcb_1y",
+            "zcb_10y",
+            "g2pp_x",
+            "g2pp_y",
+            "measure",
+        ]
+        assert set(df["measure"]) == {"Q"}
+
+    def test_q_measure_time_zero_matches_initial_forward_curve(self):
+        curve = RiskFreeCurve(
+            tenors_years=(0.0, 1.0, 5.0, 10.0),
+            zero_rates=(-0.002, 0.001, 0.010, 0.015),
+            currency="EUR",
+            market="EU",
+            valuation_date=date(2026, 5, 30),
+        )
+        df = G2PlusRateProcess(initial_curve=curve).simulate(
+            3,
+            1,
+            Measure.Q,
+            seed=8,
+            cap_zcb_at_par=False,
+        )
+
+        month0 = df[df["month"] == 0]
+        assert np.allclose(month0["r_short"].to_numpy(), curve.instantaneous_forward(0.0))
+        assert month0["zcb_10y"].iloc[0] == pytest.approx(curve.discount_factor(10.0))
+
+    def test_factor_correlation_is_reflected_in_simulated_increments(self):
+        params = G2PlusParams(
+            vol_x=0.020,
+            vol_y=0.018,
+            factor_correlation=0.65,
+            short_rate_floor=None,
+            short_rate_ceiling=None,
+        )
+        df = G2PlusRateProcess(params=params).simulate(1_000, 60, Measure.Q, seed=44)
+        x = df.pivot(index="scenario_id", columns="month", values="g2pp_x")
+        y = df.pivot(index="scenario_id", columns="month", values="g2pp_y")
+
+        corr = np.corrcoef(
+            x.diff(axis=1).iloc[:, 1:].to_numpy().reshape(-1),
+            y.diff(axis=1).iloc[:, 1:].to_numpy().reshape(-1),
+        )[0, 1]
+
+        assert corr > 0.45
+
+    def test_negative_rate_curve_can_produce_uncapped_discount_factors_above_par(self):
+        curve = RiskFreeCurve.flat(
+            -0.005,
+            currency="JPY",
+            market="JP",
+            valuation_date=date(2026, 5, 30),
+        )
+        params = G2PlusParams(
+            vol_x=0.001,
+            vol_y=0.001,
+            short_rate_floor=None,
+            short_rate_ceiling=0.15,
+        )
+        df = G2PlusRateProcess(params=params, initial_curve=curve).simulate(
+            10,
+            6,
+            Measure.Q,
+            seed=10,
+            cap_zcb_at_par=False,
+        )
+
+        assert (df.loc[df["month"] == 0, "r_short"] < 0.0).all()
+        assert df["zcb_1y"].max() > 1.0
+
+    def test_invalid_correlation_is_rejected(self):
+        with pytest.raises(ValueError, match="factor_correlation"):
+            G2PlusParams(factor_correlation=1.0)
 
 
 class TestGBMEquityProcess:

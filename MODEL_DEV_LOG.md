@@ -3730,3 +3730,50 @@ execution on the reachable Windows Python.
   from before this follow-up.
 
 ---
+
+## Run 2026-05-30T06:09:07Z - Phase 7: Interest Rate and Yield Curve ESG
+
+**Task Completed:** Add G2++ design or prototype for two-factor curve dynamics
+
+**Accomplishments:**
+- Added `G2PlusParams` and `G2PlusRateProcess` as a two-factor Gaussian rate
+  prototype with Q-measure initial-curve fitting, P-measure placeholder risk
+  premia, optional short-rate bounds, and v1-compatible `r_short`, `zcb_1y`,
+  `zcb_10y`, and `measure` outputs.
+- Added diagnostic `g2pp_x` and `g2pp_y` factor paths so validation can inspect
+  factor behaviour and empirical factor correlation without changing existing
+  v1 ESG consumers.
+- Added targeted tests for output schema, time-zero curve fit, factor
+  correlation, negative-rate discount factors, and invalid-correlation
+  validation.
+- Created `docs/ESG_G2PP_RATE_PROCESS_DESIGN.md` and updated
+  `docs/ESG_PROCESS_DOCUMENTATION.md` with the model form, measure treatment,
+  validation scope, and limitations.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 7 to starter
+  USD, EUR, HKD, CNY, and JPY curve fixtures.
+
+**Validation:**
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `python -m pytest tests/test_esg_process.py -q` could not run because
+  `python` is not on PATH in this shell.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_esg_process.py -q`
+  is blocked with `No module named pytest`; `pip show pytest numpy pandas scipy`
+  reports packages not found for the embedded interpreter.
+- Direct execution of
+  `C:\Users\SkiesNet\AppData\Roaming\Python\Python313\Scripts\pytest.exe` is
+  blocked by Windows `Access is denied`, and the user-site package directory is
+  not readable in this sandbox.
+
+**Next Step:** Support USD, EUR, HKD, CNY, and JPY starter curves through
+parameter files or fixtures.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3 and 3.4: Added explicit two-factor rate-process
+  equations, placeholder parameter disclosures, curve-fit basis, and calibration
+  limitations for G2++.
+- IA TAS M Sections 3.5 and 3.6: Documented the prototype assumptions, audit
+  status, validation scope, and restrictions needed before combined-scenario or
+  production use.
+
+---

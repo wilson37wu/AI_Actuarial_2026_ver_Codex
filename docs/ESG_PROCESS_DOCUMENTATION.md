@@ -132,6 +132,29 @@ the default v1 wide-view output still caps `zcb_1y` and `zcb_10y` at par unless
 `cap_zcb_at_par=False` is selected for diagnostics. See
 `docs/ESG_HULL_WHITE_CURVE_INPUT_DESIGN.md`.
 
+### 3.2b G2++ Two-Factor Prototype
+
+Phase 7 Task 2 adds `G2PlusRateProcess` as an educational two-factor Gaussian
+rate prototype:
+
+```
+r(t) = phi(t) + x(t) + y(t)
+dx(t) = -a*x(t) dt + sigma*dW_x(t)
+dy(t) = -b*y(t) dt + eta*dW_y(t)
+corr(dW_x, dW_y) = rho
+```
+
+Under Q-measure, `phi(t)` is fitted to the supplied `RiskFreeCurve`
+instantaneous forward curve. Under P-measure, the prototype uses an
+educational long-run-rate target plus placeholder market-price-of-risk terms.
+The output keeps the v1-compatible `r_short`, `zcb_1y`, `zcb_10y`, and
+`measure` fields while adding diagnostic `g2pp_x` and `g2pp_y` factor columns.
+
+See `docs/ESG_G2PP_RATE_PROCESS_DESIGN.md` for the implemented contract,
+validation scope, and limitations. The G2++ process is not yet integrated into
+`ScenarioSet.generate(...)` by default and is not calibrated to a swaption
+surface.
+
 ### 3.3 Limitations
 
 - **1-factor model:** Cannot independently control the short-end and long-end volatility. If spread dynamics between short and long rates are material (e.g., yield curve twists), a 2-factor model (Hull-White 2F or G2++) should be considered.
