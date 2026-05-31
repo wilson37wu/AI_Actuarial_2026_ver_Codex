@@ -45,8 +45,9 @@ repair or rejection, and scenario diagnostics.
 **Delivery:**
 - Local implementation commit created:
   `f07fd094e7a437783e1faf7a0bd47981087ffb51`.
-- `git push origin main` not attempted because network access is restricted in
-  the sandbox.
+- `git push origin main` failed because the sandbox could not connect to
+  `github.com` on port 443.
+- Gmail draft `r-5674029795985158565` was created for manual review.
 - Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`,
   `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
   `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
