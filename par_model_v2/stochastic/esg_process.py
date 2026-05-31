@@ -1099,6 +1099,177 @@ def default_phase8_equity_factors(valuation_date=None):
     }
 
 
+@dataclass
+class FXParams:
+    """Parameters for a lognormal FX spot-rate process.
+
+    Spot is quoted as base-currency units per one foreign-currency unit.  For
+    example, USDHKD is HKD per USD.
+    """
+
+    fx_vol: float = 0.08
+    real_world_drift: float = 0.0
+    domestic_foreign_rate_spread: float = 0.0
+    rate_fx_correlation: float = 0.0
+    initial_spot_rate: float = 1.0
+
+    def __post_init__(self):
+        if not (0.0 <= self.fx_vol < 2.0):
+            raise ValueError("fx_vol out of plausible range [0, 2.0); got {}".format(self.fx_vol))
+        if not (-1.0 < self.rate_fx_correlation < 1.0):
+            raise ValueError(
+                "rate_fx_correlation must be in (-1, 1); got {}".format(
+                    self.rate_fx_correlation
+                )
+            )
+        if self.initial_spot_rate <= 0.0:
+            raise ValueError("initial_spot_rate must be positive; got {}".format(self.initial_spot_rate))
+
+    @property
+    def is_placeholder(self):
+        return True
+
+
+@dataclass(frozen=True)
+class FXReturnFactor:
+    """Phase 8 FX return factor definition for currency translation."""
+
+    pair: str
+    foreign_currency: str
+    base_currency: str
+    market: str
+    quotation: str
+    factor_id: str
+    source_id: str
+    valuation_date: date
+    params: FXParams
+    notes: str = ""
+
+    def __post_init__(self):
+        foreign_currency = _validate_currency_code(self.foreign_currency, "foreign_currency")
+        base_currency = _validate_currency_code(self.base_currency, "base_currency")
+        pair = _normalize_fx_pair(self.pair)
+        if pair != "{}{}".format(foreign_currency, base_currency):
+            raise ValueError(
+                "pair must be foreign_currency + base_currency; got pair={!r}, currencies={}{}".format(
+                    self.pair,
+                    foreign_currency,
+                    base_currency,
+                )
+            )
+        object.__setattr__(self, "pair", pair)
+        object.__setattr__(self, "foreign_currency", foreign_currency)
+        object.__setattr__(self, "base_currency", base_currency)
+        object.__setattr__(self, "market", _require_text(self.market, "market").upper())
+        object.__setattr__(self, "quotation", _require_text(self.quotation, "quotation"))
+        object.__setattr__(self, "factor_id", _require_text(self.factor_id, "factor_id").upper())
+        object.__setattr__(self, "source_id", _require_text(self.source_id, "source_id"))
+        object.__setattr__(self, "valuation_date", _coerce_date(self.valuation_date, "valuation_date"))
+        if not isinstance(self.params, FXParams):
+            raise TypeError("params must be an FXParams instance")
+
+    @property
+    def is_placeholder(self):
+        return True
+
+    def to_dict(self):
+        return {
+            "pair": self.pair,
+            "foreign_currency": self.foreign_currency,
+            "base_currency": self.base_currency,
+            "market": self.market,
+            "quotation": self.quotation,
+            "factor_id": self.factor_id,
+            "source_id": self.source_id,
+            "valuation_date": self.valuation_date.isoformat(),
+            "params": asdict(self.params),
+            "notes": self.notes,
+            "is_placeholder": self.is_placeholder,
+        }
+
+
+_STARTER_FX_FIXTURE_PATH = Path(__file__).with_name("fixtures").joinpath(
+    "fx_return_factors.json"
+)
+_STARTER_FX_RECORDS = None
+
+
+def _normalize_fx_pair(value):
+    return _require_text(value, "pair").upper().replace("/", "").replace("-", "").replace(" ", "")
+
+
+def _load_starter_fx_records():
+    global _STARTER_FX_RECORDS
+    if _STARTER_FX_RECORDS is None:
+        with _STARTER_FX_FIXTURE_PATH.open("r", encoding="utf-8") as fixture_file:
+            raw_records = json.load(fixture_file)
+        _STARTER_FX_RECORDS = {
+            _normalize_fx_pair(record["pair"]): record
+            for record in raw_records["factors"]
+        }
+    return _STARTER_FX_RECORDS
+
+
+def available_starter_fx_pairs():
+    """Return FX pairs covered by the Phase 8 starter FX return factors."""
+    return tuple(sorted(_load_starter_fx_records()))
+
+
+def starter_fx_factor(pair, valuation_date=None):
+    """Return an illustrative Phase 8 FX return factor fixture."""
+    pair = _normalize_fx_pair(pair)
+    records = _load_starter_fx_records()
+    if pair not in records:
+        raise KeyError(
+            "no Phase 8 starter FX factor for {}; available pairs are {}".format(
+                pair,
+                ", ".join(available_starter_fx_pairs()),
+            )
+        )
+    record = records[pair]
+    return FXReturnFactor(
+        pair=record["pair"],
+        foreign_currency=record["foreign_currency"],
+        base_currency=record["base_currency"],
+        market=record["market"],
+        quotation=record["quotation"],
+        factor_id=record["factor_id"],
+        source_id=record["source_id"],
+        valuation_date=_coerce_date(
+            valuation_date or record["valuation_date"],
+            "valuation_date",
+        ),
+        params=FXParams(
+            fx_vol=record["fx_vol"],
+            real_world_drift=record["real_world_drift"],
+            domestic_foreign_rate_spread=record["domestic_foreign_rate_spread"],
+            rate_fx_correlation=record["rate_fx_correlation"],
+            initial_spot_rate=record["initial_spot_rate"],
+        ),
+        notes=record.get("notes", ""),
+    )
+
+
+def fx_factor_for_translation(foreign_currency, base_currency="HKD", valuation_date=None):
+    """Return the starter FX factor needed to translate foreign to base currency.
+
+    Returns None when no translation is required because both currencies match.
+    """
+    foreign_currency = _validate_currency_code(foreign_currency, "foreign_currency")
+    base_currency = _validate_currency_code(base_currency, "base_currency")
+    if foreign_currency == base_currency:
+        return None
+    return starter_fx_factor("{}{}".format(foreign_currency, base_currency), valuation_date=valuation_date)
+
+
+def default_phase8_fx_factors(valuation_date=None):
+    """Return all Phase 8 starter FX return factors keyed by currency pair."""
+    return {
+        pair: starter_fx_factor(pair, valuation_date=valuation_date)
+        for pair in available_starter_fx_pairs()
+    }
+
+
 # ---------------------------------------------------------------------------
 # 1b. Phase 6 Scenario Metadata and Parameter Snapshot Dataclasses
 # ---------------------------------------------------------------------------
@@ -1531,6 +1702,7 @@ class ParameterSnapshot:
         gbm_params=None,
         initial_curve=None,
         equity_factor=None,
+        fx_factor=None,
         snapshot_id=None,
     ):
         """Create a Phase 6 snapshot from current HW1F and GBM parameter dataclasses."""
@@ -1543,6 +1715,8 @@ class ParameterSnapshot:
                 raise TypeError("equity_factor must be a RegionalEquityFactor")
             if gbm_params is None:
                 gbm_params = equity_factor.params
+        if fx_factor is not None and not isinstance(fx_factor, FXReturnFactor):
+            raise TypeError("fx_factor must be an FXReturnFactor")
         gbm_params = gbm_params if gbm_params is not None else GBMParams()
         initial_curve = initial_curve if initial_curve is not None else RiskFreeCurve.flat(
             hw_params.initial_short_rate,
@@ -1588,6 +1762,17 @@ class ParameterSnapshot:
                 dataset_name=equity_factor.index_name,
                 notes=equity_factor.notes,
             ))
+        if fx_factor is not None:
+            sources.append(CalibrationSource(
+                source_id=fx_factor.source_id,
+                source_type="fx",
+                market=fx_factor.market,
+                currency=fx_factor.base_currency,
+                as_of_date=fx_factor.valuation_date,
+                provider="par_model_v2 Phase 8 starter FX fixture",
+                dataset_name=fx_factor.pair,
+                notes=fx_factor.notes,
+            ))
         parameters = {
             "rate.hw1f.mean_reversion_speed": hw_params.mean_reversion_speed,
             "rate.hw1f.short_rate_vol": hw_params.short_rate_vol,
@@ -1618,6 +1803,15 @@ class ParameterSnapshot:
                 prefix + "rate_equity_correlation": gbm_params.rate_equity_correlation,
                 prefix + "initial_index_level": gbm_params.initial_index_level,
             })
+        if fx_factor is not None:
+            prefix = "fx.gbm.{}.".format(fx_factor.pair)
+            parameters.update({
+                prefix + "fx_vol": fx_factor.params.fx_vol,
+                prefix + "real_world_drift": fx_factor.params.real_world_drift,
+                prefix + "domestic_foreign_rate_spread": fx_factor.params.domestic_foreign_rate_spread,
+                prefix + "rate_fx_correlation": fx_factor.params.rate_fx_correlation,
+                prefix + "initial_spot_rate": fx_factor.params.initial_spot_rate,
+            })
         return cls(
             snapshot_id=snapshot_id,
             calibration_date=calibration_date,
@@ -1630,6 +1824,7 @@ class ParameterSnapshot:
                 hw_params.is_placeholder
                 or gbm_params.is_placeholder
                 or (equity_factor is not None and equity_factor.is_placeholder)
+                or (fx_factor is not None and fx_factor.is_placeholder)
             ),
         )
 
@@ -2335,7 +2530,69 @@ class GBMEquityProcess:
 
 
 # ---------------------------------------------------------------------------
-# 4. ScenarioSet -- Container for combined rate + equity paths
+# 4. FX Spot Process
+# ---------------------------------------------------------------------------
+
+class FXSpotProcess:
+    """Lognormal FX spot process for Phase 8 currency translation."""
+
+    def __init__(self, params=None):
+        self.params = params if params is not None else FXParams()
+
+    def _simulate_array(self, n_scenarios, T_months, measure, shocks):
+        """Simulate FX spot paths quoted as base per foreign currency."""
+        expected_shape = (n_scenarios, T_months)
+        if shocks.shape != expected_shape:
+            raise ValueError(
+                "FX shocks must have shape {}; got {}".format(expected_shape, shocks.shape)
+            )
+
+        dt = 1.0 / 12.0
+        sqrt_dt = np.sqrt(dt)
+        p = self.params
+
+        spot = np.empty((n_scenarios, T_months + 1), dtype=float)
+        returns = np.zeros((n_scenarios, T_months + 1), dtype=float)
+        spot[:, 0] = p.initial_spot_rate
+
+        drift = p.domestic_foreign_rate_spread
+        if measure == Measure.P:
+            drift = p.real_world_drift
+
+        for month in range(T_months):
+            log_return = (
+                (drift - 0.5 * p.fx_vol ** 2) * dt
+                + p.fx_vol * sqrt_dt * shocks[:, month]
+            )
+            gross_return = np.exp(log_return)
+            spot[:, month + 1] = spot[:, month] * gross_return
+            returns[:, month + 1] = gross_return - 1.0
+
+        return spot, returns
+
+    def simulate(self, n_scenarios, T_months, measure, seed=42):
+        """Simulate monthly FX spot paths as a DataFrame."""
+        measure = _coerce_measure(measure)
+        _validate_simulation_dimensions(n_scenarios, T_months)
+        n_scenarios = int(n_scenarios)
+        T_months = int(T_months)
+
+        rng = np.random.default_rng(seed)
+        shocks = _antithetic_normals(rng, n_scenarios, T_months)
+        spot, returns = self._simulate_array(n_scenarios, T_months, measure, shocks)
+
+        scenario_ids, months = _month_grid(n_scenarios, T_months)
+        return pd.DataFrame({
+            "scenario_id": scenario_ids,
+            "month": months,
+            "fx_rate": spot.reshape(-1),
+            "fx_return_1m": returns.reshape(-1),
+            "measure": measure.value,
+        })
+
+
+# ---------------------------------------------------------------------------
+# 5. ScenarioSet -- Container for combined rate + equity paths
 # ---------------------------------------------------------------------------
 
 @dataclass
@@ -2347,7 +2604,8 @@ class ScenarioSet:
     data : pd.DataFrame
         Combined scenario data.  Columns:
           scenario_id, month, r_short, zcb_1y, zcb_10y,
-          equity_index, equity_return_1m, measure
+          equity_index, equity_return_1m, measure, and optional Phase 8
+          fx_rate, fx_return_1m, fx_pair
     n_scenarios : int
     T_months : int
     measure : Measure
@@ -2436,6 +2694,7 @@ class ScenarioSet:
         gbm_params=None,
         initial_curve=None,
         equity_factor=None,
+        fx_factor=None,
         seed=42,
         scenario_set_id=None,
         model_version="v1.0.0-dev",
@@ -2467,6 +2726,9 @@ class ScenarioSet:
         equity_factor : RegionalEquityFactor, optional
             Phase 8 regional equity fixture. If supplied without gbm_params,
             its GBM parameters drive the v1-compatible equity columns.
+        fx_factor : FXReturnFactor, optional
+            Phase 8 currency-translation fixture. If supplied, generated data
+            includes `fx_rate`, `fx_return_1m`, and `fx_pair` columns.
         seed : int, optional
         scenario_set_id : str, optional
             Stable metadata identifier for this generated scenario package.
@@ -2496,9 +2758,12 @@ class ScenarioSet:
                 raise TypeError("equity_factor must be a RegionalEquityFactor")
             if gbm_params is None:
                 gbm_params = equity_factor.params
+        if fx_factor is not None and not isinstance(fx_factor, FXReturnFactor):
+            raise TypeError("fx_factor must be an FXReturnFactor")
 
         hw_process = HullWhiteRateProcess(hw_params, initial_curve=initial_curve)
         gbm_process = GBMEquityProcess(gbm_params, rate_process=hw_process)
+        fx_process = FXSpotProcess(fx_factor.params) if fx_factor is not None else None
         if parameter_snapshot is None:
             parameter_snapshot = ParameterSnapshot.from_process_params(
                 measure=measure,
@@ -2508,11 +2773,13 @@ class ScenarioSet:
                 gbm_params=gbm_process.params,
                 initial_curve=hw_process.initial_curve,
                 equity_factor=equity_factor,
+                fx_factor=fx_factor,
             )
 
         rng = np.random.default_rng(seed)
         z_rate = _antithetic_normals(rng, n, T_months)
         z_independent = _antithetic_normals(rng, n, T_months)
+        z_fx_independent = _antithetic_normals(rng, n, T_months)
         rho = gbm_process.params.rate_equity_correlation
         z_equity = rho * z_rate + np.sqrt(1.0 - rho ** 2) * z_independent
 
@@ -2520,6 +2787,14 @@ class ScenarioSet:
         equity_paths, equity_returns = gbm_process._simulate_array(
             n, T_months, measure, rate_paths, z_equity
         )
+        fx_paths = None
+        fx_returns = None
+        if fx_process is not None:
+            rho_fx = fx_process.params.rate_fx_correlation
+            z_fx = rho_fx * z_rate + np.sqrt(1.0 - rho_fx ** 2) * z_fx_independent
+            fx_paths, fx_returns = fx_process._simulate_array(
+                n, T_months, measure, z_fx
+            )
 
         scenario_ids, months = _month_grid(n, T_months)
         flat_rates = rate_paths.reshape(-1)
@@ -2544,6 +2819,10 @@ class ScenarioSet:
             "equity_return_1m": equity_returns.reshape(-1),
             "measure": measure.value,
         })
+        if fx_factor is not None:
+            data["fx_rate"] = fx_paths.reshape(-1)
+            data["fx_return_1m"] = fx_returns.reshape(-1)
+            data["fx_pair"] = fx_factor.pair
         metadata = ScenarioMetadata.from_generation(
             n_scenarios=n,
             T_months=T_months,
@@ -2595,9 +2874,16 @@ __all__ = [
     "available_starter_equity_markets",
     "starter_equity_factor",
     "default_phase8_equity_factors",
+    "FXParams",
+    "FXReturnFactor",
+    "available_starter_fx_pairs",
+    "starter_fx_factor",
+    "fx_factor_for_translation",
+    "default_phase8_fx_factors",
     "HullWhiteRateProcess",
     "G2PlusRateProcess",
     "GBMEquityProcess",
+    "FXSpotProcess",
     "ScenarioSet",
     "_coerce_measure",
     "_validate_simulation_dimensions",

@@ -225,6 +225,13 @@ still exposes one `equity_index` and `equity_return_1m` pair at a time, but
 equity source and market-qualified GBM parameters in the `ParameterSnapshot`.
 See `docs/ESG_REGIONAL_EQUITY_FACTORS.md`.
 
+**Phase 8 FX return factors:** Starter lognormal FX fixtures now cover
+`USDHKD`, `EURHKD`, `CNYHKD`, and `JPYHKD` for HKD reporting examples.
+`ScenarioSet.generate(..., fx_factor=...)` adds optional `fx_rate`,
+`fx_return_1m`, and `fx_pair` columns while preserving the v1 rate/equity
+contract. The `ParameterSnapshot` records the selected FX source and
+pair-qualified parameters. See `docs/ESG_FX_RETURN_FACTORS.md`.
+
 ### 4.2 Correlated Brownian Motions (Cholesky Decomposition)
 
 The interest rate and equity Wiener processes are correlated. Simulate via:
@@ -350,6 +357,9 @@ Each scenario run produces a `pd.DataFrame` with:
 | `zcb_10y` | 10-year zero-coupon bond rate |
 | `equity_index` | Equity index level (S(t)/S(0)) |
 | `equity_return_1m` | Monthly equity return |
+| `fx_rate` | Optional Phase 8 FX spot rate, quoted base currency per foreign currency |
+| `fx_return_1m` | Optional monthly FX return |
+| `fx_pair` | Optional FX pair identifier, such as `JPYHKD` |
 | `measure` | "P" or "Q" (must be explicit in every row) |
 
 ---

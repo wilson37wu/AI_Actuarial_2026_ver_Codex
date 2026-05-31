@@ -22,6 +22,7 @@ from par_model_v2.stochastic.esg_process import (
     CalibrationFieldSpec,
     CalibrationSource,
     ConsumerOutputMapping,
+    FXSpotProcess,
     G2PlusParams,
     G2PlusRateProcess,
     GBMEquityProcess,
@@ -41,8 +42,12 @@ from par_model_v2.stochastic.esg_process import (
     available_starter_curve_currencies,
     default_phase7_starter_curves,
     default_phase8_equity_factors,
+    default_phase8_fx_factors,
+    available_starter_fx_pairs,
+    fx_factor_for_translation,
     phase6_consumer_mapping,
     starter_equity_factor,
+    starter_fx_factor,
     starter_risk_free_curve,
 )
 
@@ -602,6 +607,70 @@ class TestPhase8RegionalEquityFactors:
             scenarios.data["month"] == 0,
             "equity_index",
         ].iloc[0] == pytest.approx(factor.params.initial_index_level)
+
+
+class TestPhase8FXReturnFactors:
+    def test_starter_fx_fixtures_cover_hkd_translation_pairs(self):
+        assert available_starter_fx_pairs() == (
+            "CNYHKD",
+            "EURHKD",
+            "JPYHKD",
+            "USDHKD",
+        )
+
+        factors = default_phase8_fx_factors(valuation_date=date(2026, 5, 30))
+        assert set(factors) == {"USDHKD", "EURHKD", "CNYHKD", "JPYHKD"}
+        for pair, factor in factors.items():
+            assert factor.pair == pair
+            assert factor.base_currency == "HKD"
+            assert factor.factor_id.startswith("FX_")
+            assert factor.valuation_date == date(2026, 5, 30)
+            assert factor.params.initial_spot_rate > 0.0
+            assert 0.0 <= factor.params.fx_vol < 1.0
+            assert factor.to_dict()["params"]["fx_vol"] == factor.params.fx_vol
+
+    def test_unknown_starter_fx_pair_is_rejected(self):
+        with pytest.raises(KeyError, match="available pairs"):
+            starter_fx_factor("GBPHKD")
+
+    def test_translation_helper_skips_matching_currency(self):
+        assert fx_factor_for_translation("HKD", "HKD") is None
+
+    def test_fx_process_simulates_positive_spot_and_zero_month_return(self):
+        factor = starter_fx_factor("JPY/HKD", valuation_date=date(2026, 5, 30))
+        process = FXSpotProcess(factor.params)
+        df = process.simulate(6, 12, Measure.P, seed=57)
+
+        assert (df["fx_rate"] > 0.0).all()
+        assert df.loc[df["month"] == 0, "fx_rate"].iloc[0] == pytest.approx(
+            factor.params.initial_spot_rate
+        )
+        assert np.allclose(df.loc[df["month"] == 0, "fx_return_1m"].to_numpy(), 0.0)
+
+    def test_scenario_generation_records_fx_source_and_columns(self):
+        equity_factor = starter_equity_factor("JP", valuation_date=date(2026, 5, 30))
+        fx_factor = fx_factor_for_translation(equity_factor.currency, "HKD", valuation_date=date(2026, 5, 30))
+        scenarios = ScenarioSet.generate(
+            5,
+            2,
+            Measure.P,
+            equity_factor=equity_factor,
+            fx_factor=fx_factor,
+            base_currency="HKD",
+            valuation_date=date(2026, 5, 30),
+            seed=58,
+        )
+
+        source_ids = {source.source_id for source in scenarios.parameter_snapshot.sources}
+        assert "SRC-STARTER-FX-JPYHKD" in source_ids
+        assert scenarios.parameter_snapshot.parameters[
+            "fx.gbm.JPYHKD.initial_spot_rate"
+        ] == pytest.approx(fx_factor.params.initial_spot_rate)
+        assert scenarios.data.loc[
+            scenarios.data["month"] == 0,
+            "fx_rate",
+        ].iloc[0] == pytest.approx(fx_factor.params.initial_spot_rate)
+        assert set(scenarios.data["fx_pair"]) == {"JPYHKD"}
 
 
 class TestScenarioSetGenerate:

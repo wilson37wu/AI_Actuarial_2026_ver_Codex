@@ -137,6 +137,14 @@ Tasks:
 4. Add P-measure backtest scaffold for equity return distribution and correlation stability.
 5. Document model limitations and upgrade path to stochastic volatility / jump diffusion.
 
+Current implementation notes:
+
+- Task 1 is implemented through `RegionalEquityFactor` fixtures and
+  `ScenarioSet.generate(..., equity_factor=...)`.
+- Task 2 is implemented for HKD reporting through `FXReturnFactor` fixtures,
+  `fx_factor_for_translation(...)`, and optional `fx_rate` / `fx_return_1m`
+  scenario columns.
+
 Exit criteria:
 
 - Multi-region equity scenarios can be generated with documented correlation.

@@ -1,0 +1,70 @@
+{
+  "fixture_id": "PHASE8_STARTER_FX_RETURN_FACTORS",
+  "description": "Illustrative Phase 8 FX return inputs for educational currency translation. These are placeholders, not production calibration data.",
+  "factors": [
+    {
+      "pair": "USDHKD",
+      "foreign_currency": "USD",
+      "base_currency": "HKD",
+      "market": "HK",
+      "quotation": "HKD per 1 USD",
+      "factor_id": "FX_USDHKD",
+      "source_id": "SRC-STARTER-FX-USDHKD",
+      "valuation_date": "2026-05-30",
+      "initial_spot_rate": 7.8000,
+      "fx_vol": 0.010,
+      "real_world_drift": 0.000,
+      "domestic_foreign_rate_spread": 0.000,
+      "rate_fx_correlation": 0.05,
+      "notes": "Hong Kong dollar linked-rate placeholder for translating USD assets to HKD."
+    },
+    {
+      "pair": "EURHKD",
+      "foreign_currency": "EUR",
+      "base_currency": "HKD",
+      "market": "EU",
+      "quotation": "HKD per 1 EUR",
+      "factor_id": "FX_EURHKD",
+      "source_id": "SRC-STARTER-FX-EURHKD",
+      "valuation_date": "2026-05-30",
+      "initial_spot_rate": 8.4500,
+      "fx_vol": 0.090,
+      "real_world_drift": -0.005,
+      "domestic_foreign_rate_spread": 0.004,
+      "rate_fx_correlation": -0.10,
+      "notes": "Europe equity translation placeholder for HKD reporting."
+    },
+    {
+      "pair": "CNYHKD",
+      "foreign_currency": "CNY",
+      "base_currency": "HKD",
+      "market": "CN",
+      "quotation": "HKD per 1 CNY",
+      "factor_id": "FX_CNYHKD",
+      "source_id": "SRC-STARTER-FX-CNYHKD",
+      "valuation_date": "2026-05-30",
+      "initial_spot_rate": 1.0800,
+      "fx_vol": 0.045,
+      "real_world_drift": -0.002,
+      "domestic_foreign_rate_spread": 0.001,
+      "rate_fx_correlation": -0.05,
+      "notes": "CNY translation placeholder for Hong Kong / China asset-share examples."
+    },
+    {
+      "pair": "JPYHKD",
+      "foreign_currency": "JPY",
+      "base_currency": "HKD",
+      "market": "JP",
+      "quotation": "HKD per 1 JPY",
+      "factor_id": "FX_JPYHKD",
+      "source_id": "SRC-STARTER-FX-JPYHKD",
+      "valuation_date": "2026-05-30",
+      "initial_spot_rate": 0.0500,
+      "fx_vol": 0.110,
+      "real_world_drift": -0.004,
+      "domestic_foreign_rate_spread": 0.008,
+      "rate_fx_correlation": -0.12,
+      "notes": "Japan equity and JPY rate translation placeholder for HKD reporting."
+    }
+  ]
+}

@@ -28,6 +28,10 @@ source ID, factor ID, valuation date, and a `GBMParams` object. Existing v1
 consumers continue to receive the same `equity_index` and
 `equity_return_1m` columns.
 
+Foreign-currency markets can be paired with the Phase 8 FX fixtures documented
+in `docs/ESG_FX_RETURN_FACTORS.md`. For example, `EQUITY_JP` can be generated
+with `JPYHKD` when the reporting base is HKD.
+
 ## Process
 
 The current implementation keeps the existing GBM process:
