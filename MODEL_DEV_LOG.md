@@ -4,6 +4,59 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-05-31T18:13:44Z - Phase 8: Equity, FX, and Correlation ESG
+
+**Task Completed:** Implement correlation matrix validation, positive-semidefinite repair or rejection, and scenario diagnostics.
+
+**Accomplishments:**
+- Added `CorrelationMatrixValidator`, `CorrelationMatrixValidationReport`, and
+  `CorrelationMatrixValidationCheck` for JSON-ready matrix validation evidence.
+- Added finite-entry, unit-diagonal, symmetry, range, and positive-semidefinite
+  checks, plus `reject_invalid(...)` for governance rejection of invalid
+  matrices.
+- Added optional eigenvalue-floor PSD repair evidence with original/repaired
+  matrix output, minimum eigenvalue diagnostics, and maximum adjustment review
+  threshold.
+- Added `phase8_rate_equity_fx_correlation_matrix(...)` for the current
+  rate/equity/FX generator basis, including implied equity/FX correlation under
+  the shared-rate-shock construction.
+- Added empirical scenario diagnostics for generated short-rate changes,
+  equity returns, and optional FX returns.
+- Created `docs/ESG_CORRELATION_VALIDATION.md` and linked it from the ESG
+  process, regional equity, FX, and post-v1 roadmap documentation.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 8 to the
+  P-measure backtest scaffold.
+
+**Validation:**
+- `git diff --check` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_esg_process.py -q`
+  remains blocked with `No module named pytest`.
+- Direct runtime smoke execution is also blocked because the reachable embedded
+  Python cannot import `numpy`; the user-site package path is not readable in
+  this sandbox.
+
+**Next Step:** Add P-measure backtest scaffold for equity return distribution and correlation stability.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3, 3.4, and 3.5: Added explicit correlation basis,
+  matrix validity evidence, repair/rejection handling, and scenario diagnostics.
+- IA TAS M Sections 3.5 and 3.6: Added audit-ready validation reports and
+  model-owner review points for repaired matrices and sampling diagnostics.
+
+**Delivery:**
+- Local implementation commit created:
+  `0c35b9d15a95a612dbef1584d2bab23bc918e2ff`.
+- `git push origin main` failed because the sandbox could not connect to
+  `github.com` on port 443.
+- Gmail draft `r-2749501864065884148` was created for manual review.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-05-31T12:09:23Z - Phase 8: Equity, FX, and Correlation ESG
 
 **Task Completed:** Add FX return factors where currency translation is needed.
