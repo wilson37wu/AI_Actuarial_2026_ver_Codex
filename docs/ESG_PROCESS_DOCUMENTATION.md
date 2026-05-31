@@ -232,6 +232,12 @@ See `docs/ESG_REGIONAL_EQUITY_FACTORS.md`.
 contract. The `ParameterSnapshot` records the selected FX source and
 pair-qualified parameters. See `docs/ESG_FX_RETURN_FACTORS.md`.
 
+**Phase 8 correlation validation:** `CorrelationMatrixValidator` validates
+cross-risk-factor correlation matrices for finite entries, unit diagonal,
+symmetry, range, and positive-semidefinite status. It can reject invalid inputs,
+produce an eigenvalue-floor repair for model-owner review, and compute empirical
+rate/equity/FX scenario diagnostics. See `docs/ESG_CORRELATION_VALIDATION.md`.
+
 ### 4.2 Correlated Brownian Motions (Cholesky Decomposition)
 
 The interest rate and equity Wiener processes are correlated. Simulate via:

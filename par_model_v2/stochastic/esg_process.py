@@ -1270,6 +1270,482 @@ def default_phase8_fx_factors(valuation_date=None):
     }
 
 
+def phase8_rate_equity_fx_correlation_matrix(gbm_params=None, fx_params=None):
+    """Return the implied v1-compatible Phase 8 rate/equity/FX correlation matrix.
+
+    `ScenarioSet.generate(...)` drives equity and FX shocks from the same rate
+    shock plus independent residual shocks.  Under that construction, the
+    implied equity/FX correlation is rho(rate,equity) * rho(rate,FX).
+    """
+    gbm_params = gbm_params if gbm_params is not None else GBMParams()
+    factor_ids = ["RATE_SHORT_CHANGE", "EQUITY_RETURN_1M"]
+    matrix = [[1.0, gbm_params.rate_equity_correlation],
+              [gbm_params.rate_equity_correlation, 1.0]]
+    if fx_params is not None:
+        if not isinstance(fx_params, FXParams):
+            raise TypeError("fx_params must be an FXParams instance")
+        rho_re = gbm_params.rate_equity_correlation
+        rho_rf = fx_params.rate_fx_correlation
+        factor_ids.append("FX_RETURN_1M")
+        matrix = [
+            [1.0, rho_re, rho_rf],
+            [rho_re, 1.0, rho_re * rho_rf],
+            [rho_rf, rho_re * rho_rf, 1.0],
+        ]
+    return pd.DataFrame(matrix, index=factor_ids, columns=factor_ids, dtype=float)
+
+
+@dataclass(frozen=True)
+class CorrelationMatrixValidationCheck:
+    """Single Phase 8 correlation matrix validation check result."""
+
+    check_id: str
+    passed: bool
+    severity: str
+    message: str
+    observed_value: Optional[float] = None
+    threshold: Optional[float] = None
+
+    def __post_init__(self):
+        object.__setattr__(self, "check_id", _require_text(self.check_id, "check_id"))
+        object.__setattr__(self, "severity", _require_text(self.severity, "severity").upper())
+        object.__setattr__(self, "message", _require_text(self.message, "message"))
+        if self.observed_value is not None and not np.isfinite(float(self.observed_value)):
+            raise ValueError("observed_value must be finite")
+        if self.threshold is not None and not np.isfinite(float(self.threshold)):
+            raise ValueError("threshold must be finite")
+
+    def to_dict(self):
+        return {
+            "check_id": self.check_id,
+            "passed": bool(self.passed),
+            "severity": self.severity,
+            "message": self.message,
+            "observed_value": self.observed_value,
+            "threshold": self.threshold,
+        }
+
+
+@dataclass(frozen=True)
+class CorrelationMatrixValidationReport:
+    """JSON-ready Phase 8 correlation validation and scenario diagnostic report."""
+
+    factor_ids: Tuple[str, ...]
+    matrix_version: str
+    as_of_date: date
+    passed: bool
+    repaired: bool
+    repair_method: str
+    checks: Tuple[CorrelationMatrixValidationCheck, ...]
+    diagnostics: Dict[str, float]
+    correlation_matrix: Tuple[Tuple[float, ...], ...]
+    repaired_matrix: Optional[Tuple[Tuple[float, ...], ...]] = None
+
+    def __post_init__(self):
+        if not self.factor_ids:
+            raise ValueError("factor_ids must not be empty")
+        factor_ids = tuple(_require_text(value, "factor_id").upper() for value in self.factor_ids)
+        if len(set(factor_ids)) != len(factor_ids):
+            raise ValueError("factor_ids must be unique")
+        object.__setattr__(self, "factor_ids", factor_ids)
+        object.__setattr__(self, "matrix_version", _require_text(self.matrix_version, "matrix_version"))
+        object.__setattr__(self, "as_of_date", _coerce_date(self.as_of_date, "as_of_date"))
+        if not self.checks:
+            raise ValueError("checks must not be empty")
+        for key, value in self.diagnostics.items():
+            if not str(key).strip():
+                raise ValueError("diagnostic keys must be non-empty")
+            if not np.isfinite(float(value)):
+                raise ValueError("diagnostic {!r} must be finite".format(key))
+
+    def failed_checks(self):
+        return tuple(check for check in self.checks if not check.passed)
+
+    def to_dict(self):
+        return {
+            "factor_ids": list(self.factor_ids),
+            "matrix_version": self.matrix_version,
+            "as_of_date": self.as_of_date.isoformat(),
+            "passed": bool(self.passed),
+            "repaired": bool(self.repaired),
+            "repair_method": self.repair_method,
+            "checks": [check.to_dict() for check in self.checks],
+            "diagnostics": dict(self.diagnostics),
+            "correlation_matrix": [list(row) for row in self.correlation_matrix],
+            "repaired_matrix": (
+                None if self.repaired_matrix is None
+                else [list(row) for row in self.repaired_matrix]
+            ),
+        }
+
+
+class CorrelationMatrixValidator:
+    """Phase 8 validator for cross-risk-factor correlation inputs and outputs."""
+
+    SCENARIO_FACTOR_COLUMNS = (
+        ("RATE_SHORT_CHANGE", "r_short"),
+        ("EQUITY_RETURN_1M", "equity_return_1m"),
+        ("FX_RETURN_1M", "fx_return_1m"),
+    )
+
+    def __init__(
+        self,
+        eigenvalue_tolerance=1.0e-10,
+        diagonal_tolerance=1.0e-10,
+        symmetry_tolerance=1.0e-10,
+        max_repair_adjustment=0.05,
+        scenario_correlation_tolerance=0.20,
+    ):
+        self.eigenvalue_tolerance = float(eigenvalue_tolerance)
+        self.diagonal_tolerance = float(diagonal_tolerance)
+        self.symmetry_tolerance = float(symmetry_tolerance)
+        self.max_repair_adjustment = float(max_repair_adjustment)
+        self.scenario_correlation_tolerance = float(scenario_correlation_tolerance)
+        for name, value in (
+            ("eigenvalue_tolerance", self.eigenvalue_tolerance),
+            ("diagonal_tolerance", self.diagonal_tolerance),
+            ("symmetry_tolerance", self.symmetry_tolerance),
+            ("max_repair_adjustment", self.max_repair_adjustment),
+            ("scenario_correlation_tolerance", self.scenario_correlation_tolerance),
+        ):
+            if not np.isfinite(value) or value < 0.0:
+                raise ValueError("{} must be finite and non-negative".format(name))
+
+    def validate_matrix(
+        self,
+        matrix,
+        factor_ids=None,
+        matrix_version="PHASE8-CORRELATION",
+        as_of_date=None,
+        repair=False,
+    ):
+        """Validate a correlation matrix and optionally return a PSD repair."""
+        matrix_values, factor_ids = self._matrix_and_factor_ids(matrix, factor_ids)
+        as_of_date = _coerce_date(as_of_date or date.today(), "as_of_date")
+        checks, diagnostics = self._base_matrix_checks(matrix_values)
+        repaired = False
+        repair_method = "none"
+        repaired_matrix = None
+
+        base_passed = all(check.passed or check.severity != "ERROR" for check in checks)
+        finite_input = bool(np.all(np.isfinite(matrix_values)))
+        if repair and finite_input and not base_passed:
+            repaired_values = self._nearest_correlation_matrix(matrix_values)
+            repaired_checks, repaired_diagnostics = self._base_matrix_checks(repaired_values)
+            max_adjustment = float(np.max(np.abs(repaired_values - matrix_values)))
+            diagnostics.update({
+                "repair_max_abs_adjustment": max_adjustment,
+                "repair_min_eigenvalue": repaired_diagnostics["min_eigenvalue"],
+            })
+            checks.extend((
+                CorrelationMatrixValidationCheck(
+                    "CORR-REPAIR-PSD",
+                    bool(repaired_diagnostics["min_eigenvalue"] >= -self.eigenvalue_tolerance),
+                    "ERROR",
+                    "Repaired correlation matrix must be positive semidefinite.",
+                    observed_value=repaired_diagnostics["min_eigenvalue"],
+                    threshold=-self.eigenvalue_tolerance,
+                ),
+                CorrelationMatrixValidationCheck(
+                    "CORR-REPAIR-ADJUSTMENT",
+                    bool(max_adjustment <= self.max_repair_adjustment),
+                    "WARNING",
+                    "Correlation repair adjustment should stay within review threshold.",
+                    observed_value=max_adjustment,
+                    threshold=self.max_repair_adjustment,
+                ),
+            ))
+            checks.extend(
+                CorrelationMatrixValidationCheck(
+                    "REPAIRED-" + check.check_id,
+                    check.passed,
+                    check.severity,
+                    check.message,
+                    check.observed_value,
+                    check.threshold,
+                )
+                for check in repaired_checks
+            )
+            repaired = True
+            repair_method = "eigenvalue_floor_rescale"
+            repaired_matrix = self._matrix_tuple(repaired_values)
+
+        passed = all(check.passed or check.severity != "ERROR" for check in checks)
+        if repaired:
+            passed = bool(
+                diagnostics["repair_min_eigenvalue"] >= -self.eigenvalue_tolerance
+                and all(
+                    check.passed or check.severity != "ERROR"
+                    for check in checks
+                    if not check.check_id.startswith("CORR-PSD")
+                )
+            )
+        return CorrelationMatrixValidationReport(
+            factor_ids=tuple(factor_ids),
+            matrix_version=matrix_version,
+            as_of_date=as_of_date,
+            passed=passed,
+            repaired=repaired,
+            repair_method=repair_method,
+            checks=tuple(checks),
+            diagnostics=diagnostics,
+            correlation_matrix=self._matrix_tuple(matrix_values),
+            repaired_matrix=repaired_matrix,
+        )
+
+    def reject_invalid(self, matrix, factor_ids=None, matrix_version="PHASE8-CORRELATION", as_of_date=None):
+        """Return a passing report or raise ValueError with failed check IDs."""
+        report = self.validate_matrix(
+            matrix,
+            factor_ids=factor_ids,
+            matrix_version=matrix_version,
+            as_of_date=as_of_date,
+            repair=False,
+        )
+        if not report.passed:
+            failed = ", ".join(check.check_id for check in report.failed_checks())
+            raise ValueError("correlation matrix validation failed: {}".format(failed))
+        return report
+
+    def validate_scenario_diagnostics(
+        self,
+        scenario_data,
+        expected_matrix=None,
+        factor_ids=None,
+        matrix_version="PHASE8-SCENARIO-DIAGNOSTICS",
+        as_of_date=None,
+    ):
+        """Validate empirical scenario correlations for generated ESG factors."""
+        empirical_frame, diagnostics, checks = self._scenario_correlation_frame(scenario_data)
+        if empirical_frame is None:
+            return CorrelationMatrixValidationReport(
+                factor_ids=tuple(factor_ids or ("SCENARIO_FACTOR",)),
+                matrix_version=matrix_version,
+                as_of_date=_coerce_date(as_of_date or date.today(), "as_of_date"),
+                passed=False,
+                repaired=False,
+                repair_method="none",
+                checks=tuple(checks),
+                diagnostics=diagnostics,
+                correlation_matrix=((1.0,),),
+            )
+
+        report = self.validate_matrix(
+            empirical_frame,
+            factor_ids=factor_ids,
+            matrix_version=matrix_version,
+            as_of_date=as_of_date,
+            repair=False,
+        )
+        checks = list(checks) + list(report.checks)
+        diagnostics.update(report.diagnostics)
+
+        if expected_matrix is not None:
+            expected_values, expected_ids = self._matrix_and_factor_ids(
+                expected_matrix,
+                factor_ids=tuple(empirical_frame.index),
+            )
+            empirical_values = empirical_frame.loc[list(expected_ids), list(expected_ids)].to_numpy(dtype=float)
+            max_abs_error = float(np.max(np.abs(empirical_values - expected_values)))
+            diagnostics["max_abs_target_correlation_error"] = max_abs_error
+            checks.append(CorrelationMatrixValidationCheck(
+                "CORR-SCENARIO-TARGET",
+                bool(max_abs_error <= self.scenario_correlation_tolerance),
+                "WARNING",
+                "Empirical scenario correlations should reconcile to configured correlations within sampling tolerance.",
+                observed_value=max_abs_error,
+                threshold=self.scenario_correlation_tolerance,
+            ))
+
+        passed = all(check.passed or check.severity != "ERROR" for check in checks)
+        return CorrelationMatrixValidationReport(
+            factor_ids=tuple(empirical_frame.index),
+            matrix_version=matrix_version,
+            as_of_date=_coerce_date(as_of_date or date.today(), "as_of_date"),
+            passed=passed,
+            repaired=False,
+            repair_method="none",
+            checks=tuple(checks),
+            diagnostics=diagnostics,
+            correlation_matrix=self._matrix_tuple(empirical_frame.to_numpy(dtype=float)),
+        )
+
+    def _matrix_and_factor_ids(self, matrix, factor_ids=None):
+        if isinstance(matrix, pd.DataFrame):
+            if factor_ids is None:
+                if list(matrix.index) != list(matrix.columns):
+                    raise ValueError("correlation DataFrame index and columns must match")
+                factor_ids = tuple(str(value) for value in matrix.index)
+            matrix_values = matrix.to_numpy(dtype=float)
+        else:
+            matrix_values = np.asarray(matrix, dtype=float)
+        if matrix_values.ndim != 2 or matrix_values.shape[0] != matrix_values.shape[1]:
+            raise ValueError("correlation matrix must be square")
+        n_factors = matrix_values.shape[0]
+        if factor_ids is None:
+            factor_ids = tuple("FACTOR_{}".format(i + 1) for i in range(n_factors))
+        factor_ids = tuple(_require_text(value, "factor_id").upper() for value in factor_ids)
+        if len(factor_ids) != n_factors:
+            raise ValueError("factor_ids length must match matrix dimensions")
+        if len(set(factor_ids)) != len(factor_ids):
+            raise ValueError("factor_ids must be unique")
+        return matrix_values, factor_ids
+
+    def _base_matrix_checks(self, matrix_values):
+        checks = []
+        diagnostics = {
+            "n_factors": float(matrix_values.shape[0]),
+            "max_abs_value": 0.0,
+            "max_abs_diagonal_error": 0.0,
+            "max_abs_symmetry_error": 0.0,
+            "min_eigenvalue": -1.0,
+        }
+        finite = bool(np.all(np.isfinite(matrix_values)))
+        checks.append(CorrelationMatrixValidationCheck(
+            "CORR-FINITE",
+            finite,
+            "ERROR",
+            "Correlation matrix entries must be finite.",
+            observed_value=float(np.sum(np.isfinite(matrix_values))),
+            threshold=float(matrix_values.size),
+        ))
+        if not finite:
+            return checks, diagnostics
+
+        diagonal_error = np.abs(np.diag(matrix_values) - 1.0)
+        symmetry_error = np.abs(matrix_values - matrix_values.T)
+        max_abs_value = float(np.max(np.abs(matrix_values)))
+        diagnostics.update({
+            "max_abs_value": max_abs_value,
+            "max_abs_diagonal_error": float(np.max(diagonal_error)),
+            "max_abs_symmetry_error": float(np.max(symmetry_error)),
+        })
+        checks.append(CorrelationMatrixValidationCheck(
+            "CORR-DIAGONAL-ONES",
+            bool(np.max(diagonal_error) <= self.diagonal_tolerance),
+            "ERROR",
+            "Correlation matrix diagonal must equal one.",
+            observed_value=diagnostics["max_abs_diagonal_error"],
+            threshold=self.diagonal_tolerance,
+        ))
+        checks.append(CorrelationMatrixValidationCheck(
+            "CORR-SYMMETRIC",
+            bool(np.max(symmetry_error) <= self.symmetry_tolerance),
+            "ERROR",
+            "Correlation matrix must be symmetric.",
+            observed_value=diagnostics["max_abs_symmetry_error"],
+            threshold=self.symmetry_tolerance,
+        ))
+        checks.append(CorrelationMatrixValidationCheck(
+            "CORR-RANGE",
+            bool(max_abs_value <= 1.0 + self.diagonal_tolerance),
+            "ERROR",
+            "Correlation entries must be in [-1, 1].",
+            observed_value=max_abs_value,
+            threshold=1.0,
+        ))
+
+        symmetric_matrix = 0.5 * (matrix_values + matrix_values.T)
+        eigenvalues = np.linalg.eigvalsh(symmetric_matrix)
+        diagnostics["min_eigenvalue"] = float(np.min(eigenvalues))
+        checks.append(CorrelationMatrixValidationCheck(
+            "CORR-PSD",
+            bool(diagnostics["min_eigenvalue"] >= -self.eigenvalue_tolerance),
+            "ERROR",
+            "Correlation matrix must be positive semidefinite for Cholesky or equivalent simulation.",
+            observed_value=diagnostics["min_eigenvalue"],
+            threshold=-self.eigenvalue_tolerance,
+        ))
+        return checks, diagnostics
+
+    def _nearest_correlation_matrix(self, matrix_values):
+        symmetric_matrix = 0.5 * (matrix_values + matrix_values.T)
+        eigenvalues, eigenvectors = np.linalg.eigh(symmetric_matrix)
+        floored = np.maximum(eigenvalues, self.eigenvalue_tolerance)
+        repaired = (eigenvectors * floored) @ eigenvectors.T
+        diagonal = np.sqrt(np.maximum(np.diag(repaired), self.eigenvalue_tolerance))
+        repaired = repaired / np.outer(diagonal, diagonal)
+        repaired = np.clip(0.5 * (repaired + repaired.T), -1.0, 1.0)
+        np.fill_diagonal(repaired, 1.0)
+        return repaired
+
+    def _scenario_correlation_frame(self, scenario_data):
+        frame = scenario_data.data if isinstance(scenario_data, ScenarioSet) else pd.DataFrame(scenario_data)
+        checks = []
+        diagnostics = {}
+        required = ("scenario_id", "month", "r_short", "equity_return_1m")
+        missing = [column for column in required if column not in frame.columns]
+        checks.append(CorrelationMatrixValidationCheck(
+            "CORR-SCENARIO-COLUMNS",
+            not missing,
+            "ERROR",
+            "Scenario diagnostics require scenario_id, month, r_short, and equity_return_1m columns.",
+            observed_value=float(len(missing)),
+            threshold=0.0,
+        ))
+        if missing:
+            return None, diagnostics, checks
+
+        sorted_frame = frame.sort_values(["scenario_id", "month"])
+        factor_series = {}
+        rate_grid = sorted_frame.pivot(index="scenario_id", columns="month", values="r_short")
+        rate_changes = rate_grid.diff(axis=1).iloc[:, 1:].stack(dropna=False)
+        rate_changes.index = rate_changes.index.set_names(["scenario_id", "month"])
+        factor_series["RATE_SHORT_CHANGE"] = rate_changes
+
+        for factor_id, column in self.SCENARIO_FACTOR_COLUMNS[1:]:
+            if column not in sorted_frame.columns:
+                continue
+            values = sorted_frame[sorted_frame["month"] > 0].set_index(
+                ["scenario_id", "month"]
+            )[column].sort_index()
+            factor_series[factor_id] = values
+
+        common_index = None
+        for values in factor_series.values():
+            common_index = values.index if common_index is None else common_index.intersection(values.index)
+        if common_index is None or len(common_index) < 3 or len(factor_series) < 2:
+            checks.append(CorrelationMatrixValidationCheck(
+                "CORR-SCENARIO-OBSERVATIONS",
+                False,
+                "ERROR",
+                "Scenario diagnostics require at least two factors and three aligned observations.",
+                observed_value=0.0 if common_index is None else float(len(common_index)),
+                threshold=3.0,
+            ))
+            return None, diagnostics, checks
+
+        aligned = pd.DataFrame({
+            factor_id: values.reindex(common_index).astype(float)
+            for factor_id, values in factor_series.items()
+        }).dropna()
+        diagnostics["scenario_observation_count"] = float(len(aligned))
+        diagnostics["scenario_factor_count"] = float(aligned.shape[1])
+        checks.append(CorrelationMatrixValidationCheck(
+            "CORR-SCENARIO-OBSERVATIONS",
+            bool(len(aligned) >= 3 and aligned.shape[1] >= 2),
+            "ERROR",
+            "Scenario diagnostics require at least two factors and three aligned observations.",
+            observed_value=float(len(aligned)),
+            threshold=3.0,
+        ))
+        if len(aligned) < 3 or aligned.shape[1] < 2:
+            return None, diagnostics, checks
+
+        empirical = aligned.corr()
+        diagnostics["scenario_max_abs_empirical_correlation"] = float(
+            np.max(np.abs(empirical.to_numpy(dtype=float)))
+        )
+        return empirical, diagnostics, checks
+
+    @staticmethod
+    def _matrix_tuple(matrix_values):
+        return tuple(
+            tuple(float(value) for value in row)
+            for row in np.asarray(matrix_values, dtype=float)
+        )
+
+
 # ---------------------------------------------------------------------------
 # 1b. Phase 6 Scenario Metadata and Parameter Snapshot Dataclasses
 # ---------------------------------------------------------------------------
@@ -2880,6 +3356,10 @@ __all__ = [
     "starter_fx_factor",
     "fx_factor_for_translation",
     "default_phase8_fx_factors",
+    "phase8_rate_equity_fx_correlation_matrix",
+    "CorrelationMatrixValidationCheck",
+    "CorrelationMatrixValidationReport",
+    "CorrelationMatrixValidator",
     "HullWhiteRateProcess",
     "G2PlusRateProcess",
     "GBMEquityProcess",

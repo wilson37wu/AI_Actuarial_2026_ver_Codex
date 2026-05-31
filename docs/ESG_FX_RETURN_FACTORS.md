@@ -72,8 +72,9 @@ assumption source.
 - The starter factors are single-pair GBM placeholders, not calibrated time
   series models.
 - The current `ScenarioSet` supports one optional FX factor at a time.
-- Currency basis, interest-rate parity calibration, central-bank regimes, pegged
-  currency break risk, and multi-FX correlation matrices are deferred to later
-  Phase 8 correlation diagnostics and future calibration work.
+- Rate/equity/FX correlation validation and empirical scenario diagnostics are
+  implemented in `docs/ESG_CORRELATION_VALIDATION.md`; currency basis,
+  interest-rate parity calibration, central-bank regimes, pegged-currency break
+  risk, and multi-FX basket correlation remain future calibration work.
 - Translation effects are exposed as separate columns; asset cashflow and market
   value roll-forward consumers will integrate them in Phase 9 and Phase 11.

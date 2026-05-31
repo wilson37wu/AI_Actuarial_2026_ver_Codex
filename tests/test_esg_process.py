@@ -21,6 +21,7 @@ from par_model_v2.stochastic.esg_process import (
     CalibrationDataInterface,
     CalibrationFieldSpec,
     CalibrationSource,
+    CorrelationMatrixValidator,
     ConsumerOutputMapping,
     FXSpotProcess,
     G2PlusParams,
@@ -46,6 +47,7 @@ from par_model_v2.stochastic.esg_process import (
     available_starter_fx_pairs,
     fx_factor_for_translation,
     phase6_consumer_mapping,
+    phase8_rate_equity_fx_correlation_matrix,
     starter_equity_factor,
     starter_fx_factor,
     starter_risk_free_curve,
@@ -671,6 +673,107 @@ class TestPhase8FXReturnFactors:
             "fx_rate",
         ].iloc[0] == pytest.approx(fx_factor.params.initial_spot_rate)
         assert set(scenarios.data["fx_pair"]) == {"JPYHKD"}
+
+
+class TestPhase8CorrelationValidation:
+    def test_implied_rate_equity_fx_matrix_passes_validation(self):
+        equity_factor = starter_equity_factor("JP", valuation_date=date(2026, 5, 30))
+        fx_factor = starter_fx_factor("JPYHKD", valuation_date=date(2026, 5, 30))
+        matrix = phase8_rate_equity_fx_correlation_matrix(
+            equity_factor.params,
+            fx_factor.params,
+        )
+
+        report = CorrelationMatrixValidator().validate_matrix(
+            matrix,
+            matrix_version="PHASE8-JPYHKD",
+            as_of_date=date(2026, 5, 30),
+        )
+
+        assert report.passed is True
+        assert report.repaired is False
+        assert report.factor_ids == (
+            "RATE_SHORT_CHANGE",
+            "EQUITY_RETURN_1M",
+            "FX_RETURN_1M",
+        )
+        assert report.diagnostics["min_eigenvalue"] >= -1.0e-10
+        assert report.to_dict()["matrix_version"] == "PHASE8-JPYHKD"
+
+    def test_non_psd_matrix_is_rejected_without_repair(self):
+        bad_matrix = np.array([
+            [1.0, 0.90, 0.90],
+            [0.90, 1.0, -0.90],
+            [0.90, -0.90, 1.0],
+        ])
+        validator = CorrelationMatrixValidator()
+
+        report = validator.validate_matrix(
+            bad_matrix,
+            factor_ids=("RATE", "EQUITY", "FX"),
+            as_of_date=date(2026, 5, 30),
+        )
+
+        assert report.passed is False
+        assert "CORR-PSD" in {check.check_id for check in report.failed_checks()}
+        with pytest.raises(ValueError, match="CORR-PSD"):
+            validator.reject_invalid(
+                bad_matrix,
+                factor_ids=("RATE", "EQUITY", "FX"),
+                as_of_date=date(2026, 5, 30),
+            )
+
+    def test_non_psd_matrix_can_be_repaired_for_review(self):
+        bad_matrix = np.array([
+            [1.0, 0.90, 0.90],
+            [0.90, 1.0, -0.90],
+            [0.90, -0.90, 1.0],
+        ])
+
+        report = CorrelationMatrixValidator().validate_matrix(
+            bad_matrix,
+            factor_ids=("RATE", "EQUITY", "FX"),
+            as_of_date=date(2026, 5, 30),
+            repair=True,
+        )
+
+        assert report.passed is True
+        assert report.repaired is True
+        assert report.repaired_matrix is not None
+        repaired = np.asarray(report.repaired_matrix, dtype=float)
+        assert np.allclose(np.diag(repaired), 1.0)
+        assert np.min(np.linalg.eigvalsh(repaired)) >= -1.0e-8
+
+    def test_scenario_diagnostics_compare_empirical_to_configured_matrix(self):
+        equity_factor = starter_equity_factor("JP", valuation_date=date(2026, 5, 30))
+        fx_factor = starter_fx_factor("JPYHKD", valuation_date=date(2026, 5, 30))
+        scenarios = ScenarioSet.generate(
+            900,
+            36,
+            Measure.P,
+            equity_factor=equity_factor,
+            fx_factor=fx_factor,
+            base_currency="HKD",
+            valuation_date=date(2026, 5, 30),
+            seed=59,
+        )
+        expected = phase8_rate_equity_fx_correlation_matrix(
+            equity_factor.params,
+            fx_factor.params,
+        )
+
+        report = CorrelationMatrixValidator(
+            scenario_correlation_tolerance=0.35,
+        ).validate_scenario_diagnostics(
+            scenarios,
+            expected_matrix=expected,
+            as_of_date=date(2026, 5, 30),
+        )
+
+        assert report.passed is True
+        assert report.diagnostics["scenario_factor_count"] == 3.0
+        assert report.diagnostics["scenario_observation_count"] == pytest.approx(900 * 36)
+        assert report.diagnostics["max_abs_target_correlation_error"] <= 0.35
 
 
 class TestScenarioSetGenerate:

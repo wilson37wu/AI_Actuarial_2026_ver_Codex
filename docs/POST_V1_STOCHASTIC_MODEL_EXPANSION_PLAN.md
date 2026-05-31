@@ -144,6 +144,10 @@ Current implementation notes:
 - Task 2 is implemented for HKD reporting through `FXReturnFactor` fixtures,
   `fx_factor_for_translation(...)`, and optional `fx_rate` / `fx_return_1m`
   scenario columns.
+- Task 3 is implemented through `CorrelationMatrixValidator`,
+  `phase8_rate_equity_fx_correlation_matrix(...)`, PSD repair / rejection
+  evidence, and empirical scenario diagnostics documented in
+  `docs/ESG_CORRELATION_VALIDATION.md`.
 
 Exit criteria:
 

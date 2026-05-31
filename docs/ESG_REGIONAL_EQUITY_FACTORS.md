@@ -44,8 +44,10 @@ Under Q-measure, drift is `r(t) - dividend_yield`. Under P-measure, drift is
 `r(t) + equity_risk_premium - dividend_yield`.
 
 The regional factor selects the GBM parameter set. It does not yet create a
-multi-equity vector in one scenario set; that is reserved for the later
-correlation matrix task.
+multi-equity vector in one scenario set. The Phase 8 correlation validator now
+checks the rate/equity/FX matrix used by the v1-compatible generator and records
+empirical scenario diagnostics; full multi-equity vector generation remains a
+future extension.
 
 ## Traceability
 
@@ -67,5 +69,6 @@ regional equity assumption basis.
   volatility, jumps, regime changes, or volatility skew.
 - Regional equity factors are generated one at a time through the v1 wide
   equity columns.
-- Cross-equity and rate/equity correlation matrix validation is a later
-  Phase 8 task.
+- Rate/equity/FX correlation validation is implemented in
+  `docs/ESG_CORRELATION_VALIDATION.md`; cross-equity matrix calibration remains
+  a future extension.
