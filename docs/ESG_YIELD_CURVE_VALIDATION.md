@@ -92,8 +92,9 @@ For all positive tenors, the validator requires:
 - `discount_factor(down_shift) > discount_factor(base)`.
 
 This is a deterministic curve-mechanics check. It does not replace stochastic
-convergence testing or Q-measure martingale validation, which remain separate
-Phase 7 work items.
+convergence testing. Q-measure martingale evidence is handled separately by
+`QMeasureMartingaleValidator`; see
+`docs/ESG_Q_MEASURE_MARTINGALE_EVIDENCE.md`.
 
 ---
 
@@ -105,4 +106,3 @@ Phase 7 work items.
   v1 compatibility views hide above-par discount-factor evidence.
 - Forward smoothness warnings require actuarial review if they arise from real
   market curves rather than deliberately stressed fixtures.
-

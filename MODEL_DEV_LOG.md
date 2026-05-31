@@ -3840,3 +3840,50 @@ parameter files or fixtures.
 - Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`, `docs/MODEL_USER_MANUAL.md`, and `tests/test_schema_compatibility.py` were left untouched.
 
 ---
+
+## Run 2026-05-31T00:08:38Z - Phase 7: Interest Rate and Yield Curve ESG
+
+**Task Completed:** Add Q-measure martingale evidence for discount factors.
+
+**Accomplishments:**
+- Added `QMeasureMartingaleValidator`, `MartingaleEvidenceReport`, and
+  `MartingaleEvidenceCheck` for JSON-ready Q-measure evidence that
+  discounted `zcb_1y` and `zcb_10y` outputs reconcile to the supplied initial
+  risk-free curve.
+- Added structural checks for Q-only scenarios, complete scenario/month grids,
+  finite short rates, positive zero-coupon prices, sampling-error diagnostics,
+  and tolerance-based martingale pass/fail evidence.
+- Exported the validator through `par_model_v2.stochastic`.
+- Added targeted acceptance tests for passing Q-measure evidence, P-measure
+  rejection, and intentionally distorted discount-factor failure.
+- Created `docs/ESG_Q_MEASURE_MARTINGALE_EVIDENCE.md` and linked it from the
+  ESG process and yield-curve validation documentation.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to complete Phase 7 and advance
+  Phase 8 to regional equity factor implementation.
+
+**Validation:**
+- `git diff --check` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_esg_process.py -q` remains blocked with `No module named pytest`.
+- No accessible `python`, `py`, or `pytest` executable was available on PATH in
+  this sandbox.
+
+**Next Step:** Add US, Europe, Hong Kong / China, Japan, and Asia ex-Japan equity factors.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3, 3.4, and 3.5: Added governed Q-measure
+  discount-factor martingale diagnostics with curve, scenario, tolerance, and
+  sampling-error evidence.
+- IA TAS M Sections 3.5 and 3.6: Added audit-ready evidence records and
+  documentation linking model assumptions, parameter snapshots, and validation
+  limitations.
+
+**Delivery:**
+- Local commit pending at log-write time.
+- `git push origin main` not attempted because network access is restricted in
+  the sandbox.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, and `tests/test_schema_compatibility.py` were
+  left untouched.
+
+---

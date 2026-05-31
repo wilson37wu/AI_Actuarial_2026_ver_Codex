@@ -146,6 +146,11 @@ parallel up/down rate stresses, generated path discount factors, and optional
 negative-rate evidence using uncapped above-par discount factors. See
 `docs/ESG_YIELD_CURVE_VALIDATION.md`.
 
+**Phase 7 Q-measure martingale evidence:** `QMeasureMartingaleValidator`
+checks that discounted Q-measure `zcb_1y` and `zcb_10y` outputs reconcile to
+the initial risk-free curve within a documented development tolerance. See
+`docs/ESG_Q_MEASURE_MARTINGALE_EVIDENCE.md`.
+
 ### 3.2b G2++ Two-Factor Prototype
 
 Phase 7 Task 2 adds `G2PlusRateProcess` as an educational two-factor Gaussian

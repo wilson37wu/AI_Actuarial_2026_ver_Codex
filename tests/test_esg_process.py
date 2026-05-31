@@ -30,6 +30,7 @@ from par_model_v2.stochastic.esg_process import (
     HullWhiteRateProcess,
     Measure,
     ParameterSnapshot,
+    QMeasureMartingaleValidator,
     RiskFreeCurve,
     ScenarioSet,
     ScenarioMetadata,
@@ -300,6 +301,102 @@ class TestYieldCurveValidator:
 
         assert report.passed is False
         assert "YC-PATH-NEGATIVE-RATE-EVIDENCE" in {
+            check.check_id for check in report.failed_checks()
+        }
+
+
+class TestQMeasureMartingaleValidator:
+    def test_q_measure_discount_factor_martingale_evidence_passes(self):
+        curve = RiskFreeCurve.flat(
+            0.020,
+            currency="USD",
+            market="US",
+            valuation_date=date(2026, 5, 30),
+        )
+        params = HullWhiteParams(
+            initial_short_rate=curve.instantaneous_forward(0.0),
+            short_rate_vol=0.0001,
+            short_rate_floor=None,
+            short_rate_ceiling=None,
+        )
+        scenarios = ScenarioSet.generate(
+            200,
+            24,
+            Measure.Q,
+            hw_params=params,
+            initial_curve=curve,
+            base_currency="USD",
+            valuation_date=date(2026, 5, 30),
+            seed=81,
+            cap_zcb_at_par=False,
+        )
+
+        report = QMeasureMartingaleValidator(
+            relative_tolerance=0.01,
+            absolute_tolerance=0.001,
+        ).validate(curve, scenarios.data)
+
+        assert report.passed is True
+        assert report.diagnostics["zcb_1y_max_absolute_error"] < 0.001
+        assert report.diagnostics["zcb_10y_max_relative_error"] < 0.01
+        assert report.to_dict()["measure"] == "Q"
+
+    def test_martingale_evidence_rejects_p_measure_paths(self):
+        curve = RiskFreeCurve.flat(
+            0.020,
+            currency="USD",
+            market="US",
+            valuation_date=date(2026, 5, 30),
+        )
+        scenarios = ScenarioSet.generate(
+            4,
+            3,
+            Measure.P,
+            initial_curve=curve,
+            base_currency="USD",
+            valuation_date=date(2026, 5, 30),
+            seed=82,
+        )
+
+        report = QMeasureMartingaleValidator().validate(curve, scenarios.data)
+
+        assert report.passed is False
+        assert "QME-MEASURE-Q" in {check.check_id for check in report.failed_checks()}
+
+    def test_martingale_evidence_flags_distorted_discount_factors(self):
+        curve = RiskFreeCurve.flat(
+            0.020,
+            currency="USD",
+            market="US",
+            valuation_date=date(2026, 5, 30),
+        )
+        params = HullWhiteParams(
+            initial_short_rate=curve.instantaneous_forward(0.0),
+            short_rate_vol=0.0001,
+            short_rate_floor=None,
+            short_rate_ceiling=None,
+        )
+        scenarios = ScenarioSet.generate(
+            50,
+            6,
+            Measure.Q,
+            hw_params=params,
+            initial_curve=curve,
+            base_currency="USD",
+            valuation_date=date(2026, 5, 30),
+            seed=83,
+            cap_zcb_at_par=False,
+        )
+        distorted = scenarios.data.copy()
+        distorted["zcb_1y"] = distorted["zcb_1y"] * 0.90
+
+        report = QMeasureMartingaleValidator(
+            relative_tolerance=0.01,
+            absolute_tolerance=0.001,
+        ).validate(curve, distorted)
+
+        assert report.passed is False
+        assert "QME-MARTINGALE-ZCB_1Y" in {
             check.check_id for check in report.failed_checks()
         }
 

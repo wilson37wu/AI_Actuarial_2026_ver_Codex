@@ -673,6 +673,279 @@ class YieldCurveValidator:
         return tuple(checks), diagnostics
 
 
+@dataclass(frozen=True)
+class MartingaleEvidenceCheck:
+    """Single Q-measure martingale evidence check result."""
+
+    check_id: str
+    passed: bool
+    severity: str
+    message: str
+    observed_value: Optional[float] = None
+    threshold: Optional[float] = None
+
+    def __post_init__(self):
+        object.__setattr__(self, "check_id", _require_text(self.check_id, "check_id"))
+        object.__setattr__(self, "severity", _require_text(self.severity, "severity").upper())
+        object.__setattr__(self, "message", _require_text(self.message, "message"))
+        if self.observed_value is not None and not np.isfinite(float(self.observed_value)):
+            raise ValueError("observed_value must be finite")
+        if self.threshold is not None and not np.isfinite(float(self.threshold)):
+            raise ValueError("threshold must be finite")
+
+    def to_dict(self):
+        return {
+            "check_id": self.check_id,
+            "passed": bool(self.passed),
+            "severity": self.severity,
+            "message": self.message,
+            "observed_value": self.observed_value,
+            "threshold": self.threshold,
+        }
+
+
+@dataclass(frozen=True)
+class MartingaleEvidenceReport:
+    """JSON-ready Q-measure martingale evidence report for discount factors."""
+
+    curve_id: str
+    currency: str
+    valuation_date: date
+    measure: Measure
+    passed: bool
+    checks: Tuple[MartingaleEvidenceCheck, ...]
+    diagnostics: Dict[str, float]
+
+    def __post_init__(self):
+        object.__setattr__(self, "curve_id", _require_text(self.curve_id, "curve_id"))
+        object.__setattr__(self, "currency", _validate_currency_code(self.currency, "currency"))
+        object.__setattr__(self, "valuation_date", _coerce_date(self.valuation_date, "valuation_date"))
+        object.__setattr__(self, "measure", _coerce_measure(self.measure))
+        if not self.checks:
+            raise ValueError("checks must not be empty")
+        for key, value in self.diagnostics.items():
+            if not str(key).strip():
+                raise ValueError("diagnostic keys must be non-empty")
+            if not np.isfinite(float(value)):
+                raise ValueError("diagnostic {!r} must be finite".format(key))
+
+    def failed_checks(self):
+        return tuple(check for check in self.checks if not check.passed)
+
+    def to_dict(self):
+        return {
+            "curve_id": self.curve_id,
+            "currency": self.currency,
+            "valuation_date": self.valuation_date.isoformat(),
+            "measure": self.measure.value,
+            "passed": bool(self.passed),
+            "checks": [check.to_dict() for check in self.checks],
+            "diagnostics": dict(self.diagnostics),
+        }
+
+
+class QMeasureMartingaleValidator:
+    """Validate Q-measure discount-factor martingale evidence.
+
+    For each supported zero-coupon output P(t,T), the validator checks that
+    the cross-scenario average of D(0,t) * P(t,T) reconciles to P(0,T), where
+    D(0,t) is approximated from monthly short-rate paths.
+    """
+
+    REQUIRED_COLUMNS = ("scenario_id", "month", "r_short", "measure")
+    DEFAULT_TENOR_COLUMNS = (("zcb_1y", 1.0), ("zcb_10y", 10.0))
+
+    def __init__(
+        self,
+        relative_tolerance=0.035,
+        absolute_tolerance=0.003,
+        max_standard_error=0.020,
+    ):
+        self.relative_tolerance = float(relative_tolerance)
+        self.absolute_tolerance = float(absolute_tolerance)
+        self.max_standard_error = float(max_standard_error)
+        for name, value in (
+            ("relative_tolerance", self.relative_tolerance),
+            ("absolute_tolerance", self.absolute_tolerance),
+            ("max_standard_error", self.max_standard_error),
+        ):
+            if not np.isfinite(value) or value <= 0.0:
+                raise ValueError("{} must be finite and positive".format(name))
+
+    def validate(self, curve, scenario_data, tenor_columns=None):
+        """Return evidence that Q-measure discounted bond prices are martingales."""
+        if not isinstance(curve, RiskFreeCurve):
+            raise TypeError("curve must be a RiskFreeCurve")
+
+        frame = pd.DataFrame(scenario_data)
+        tenor_columns = tenor_columns or self.DEFAULT_TENOR_COLUMNS
+        checks = []
+        diagnostics = {}
+
+        required = tuple(self.REQUIRED_COLUMNS) + tuple(column for column, _ in tenor_columns)
+        missing = [column for column in required if column not in frame.columns]
+        checks.append(MartingaleEvidenceCheck(
+            "QME-COLUMNS",
+            not missing,
+            "ERROR",
+            "Scenario data must include identifiers, measure, rates, and ZCB columns.",
+            observed_value=float(len(missing)),
+            threshold=0.0,
+        ))
+        if missing:
+            return self._report(curve, Measure.Q, checks, diagnostics)
+
+        checks.append(MartingaleEvidenceCheck(
+            "QME-NONEMPTY",
+            not frame.empty,
+            "ERROR",
+            "Scenario data must contain at least one path row.",
+            observed_value=float(len(frame)),
+            threshold=1.0,
+        ))
+        if frame.empty:
+            return self._report(curve, Measure.Q, checks, diagnostics)
+
+        try:
+            measures = {
+                _coerce_measure(value)
+                for value in frame["measure"].dropna().unique()
+            }
+        except ValueError:
+            measures = set()
+        measure_passed = measures == {Measure.Q}
+        checks.append(MartingaleEvidenceCheck(
+            "QME-MEASURE-Q",
+            measure_passed,
+            "ERROR",
+            "Martingale evidence must be generated from Q-measure scenarios only.",
+            observed_value=float(len(measures)),
+            threshold=1.0,
+        ))
+
+        duplicate_count = int(frame.duplicated(["scenario_id", "month"]).sum())
+        checks.append(MartingaleEvidenceCheck(
+            "QME-UNIQUE-PATH-GRID",
+            duplicate_count == 0,
+            "ERROR",
+            "Scenario data must contain one row per scenario and month.",
+            observed_value=float(duplicate_count),
+            threshold=0.0,
+        ))
+        if not measure_passed or duplicate_count:
+            return self._report(curve, Measure.Q, checks, diagnostics)
+
+        months = np.asarray(sorted(frame["month"].astype(int).unique()), dtype=int)
+        expected_months = np.arange(int(months[-1]) + 1, dtype=int)
+        month_grid_ok = bool(np.array_equal(months, expected_months))
+        diagnostics["horizon_months"] = float(months[-1])
+        diagnostics["n_scenarios"] = float(frame["scenario_id"].nunique())
+        checks.append(MartingaleEvidenceCheck(
+            "QME-COMPLETE-MONTH-GRID",
+            month_grid_ok,
+            "ERROR",
+            "Scenario months must be contiguous and start at zero.",
+            observed_value=float(len(months)),
+            threshold=float(len(expected_months)),
+        ))
+        if not month_grid_ok:
+            return self._report(curve, Measure.Q, checks, diagnostics)
+
+        rates = frame.pivot(index="scenario_id", columns="month", values="r_short")
+        rates = rates.reindex(columns=expected_months).to_numpy(dtype=float)
+        complete_grid = bool(np.all(np.isfinite(rates)))
+        checks.append(MartingaleEvidenceCheck(
+            "QME-FINITE-RATE-GRID",
+            complete_grid,
+            "ERROR",
+            "Scenario short-rate grid must be complete and finite.",
+            observed_value=float(np.sum(np.isfinite(rates))),
+            threshold=float(rates.size),
+        ))
+        if not complete_grid:
+            return self._report(curve, Measure.Q, checks, diagnostics)
+
+        dt = 1.0 / 12.0
+        money_market_discount = np.ones_like(rates)
+        if rates.shape[1] > 1:
+            money_market_discount[:, 1:] = np.exp(
+                -np.cumsum(rates[:, :-1] * dt, axis=1)
+            )
+
+        for column, tenor in tenor_columns:
+            zcb_values = frame.pivot(index="scenario_id", columns="month", values=column)
+            zcb_values = zcb_values.reindex(columns=expected_months).to_numpy(dtype=float)
+            finite_zcbs = bool(np.all(np.isfinite(zcb_values)) and np.all(zcb_values > 0.0))
+            checks.append(MartingaleEvidenceCheck(
+                "QME-{}-FINITE".format(column.upper()),
+                finite_zcbs,
+                "ERROR",
+                "{} values must be complete, finite, and positive.".format(column),
+                observed_value=float(np.min(zcb_values)) if np.all(np.isfinite(zcb_values)) else 0.0,
+                threshold=0.0,
+            ))
+            if not finite_zcbs:
+                continue
+
+            discounted_bond_prices = money_market_discount * zcb_values
+            target_prices = np.asarray(
+                [
+                    curve.discount_factor(month / 12.0 + float(tenor))
+                    for month in expected_months
+                ],
+                dtype=float,
+            )
+            sample_mean = np.mean(discounted_bond_prices, axis=0)
+            if discounted_bond_prices.shape[0] > 1:
+                standard_error = np.std(discounted_bond_prices, axis=0, ddof=1) / np.sqrt(
+                    discounted_bond_prices.shape[0]
+                )
+            else:
+                standard_error = np.full_like(sample_mean, self.max_standard_error * 2.0)
+            absolute_error = np.abs(sample_mean - target_prices)
+            relative_error = absolute_error / np.maximum(target_prices, 1.0e-12)
+            tolerance = np.maximum(
+                self.absolute_tolerance,
+                self.relative_tolerance * target_prices,
+            )
+
+            label = column.upper()
+            diagnostics["{}_max_absolute_error".format(column)] = float(np.max(absolute_error))
+            diagnostics["{}_max_relative_error".format(column)] = float(np.max(relative_error))
+            diagnostics["{}_max_standard_error".format(column)] = float(np.max(standard_error))
+            diagnostics["{}_max_tolerance".format(column)] = float(np.max(tolerance))
+            checks.append(MartingaleEvidenceCheck(
+                "QME-MARTINGALE-{}".format(label),
+                bool(np.all(absolute_error <= tolerance)),
+                "ERROR",
+                "Average discounted {} prices must reconcile to the initial curve.".format(column),
+                observed_value=float(np.max(absolute_error)),
+                threshold=float(np.max(tolerance)),
+            ))
+            checks.append(MartingaleEvidenceCheck(
+                "QME-SAMPLING-ERROR-{}".format(label),
+                bool(np.max(standard_error) <= self.max_standard_error),
+                "WARNING",
+                "{} sampling error should be small enough for reviewable evidence.".format(column),
+                observed_value=float(np.max(standard_error)),
+                threshold=self.max_standard_error,
+            ))
+
+        return self._report(curve, Measure.Q, checks, diagnostics)
+
+    def _report(self, curve, measure, checks, diagnostics):
+        passed = all(check.passed or check.severity != "ERROR" for check in checks)
+        return MartingaleEvidenceReport(
+            curve_id=curve.curve_id,
+            currency=curve.currency,
+            valuation_date=curve.valuation_date,
+            measure=measure,
+            passed=passed,
+            checks=tuple(checks),
+            diagnostics=diagnostics,
+        )
+
+
 @dataclass
 class GBMParams:
     """Parameters for the GBM equity index process.
@@ -2149,6 +2422,9 @@ __all__ = [
     "HullWhiteParams",
     "G2PlusParams",
     "RiskFreeCurve",
+    "MartingaleEvidenceCheck",
+    "MartingaleEvidenceReport",
+    "QMeasureMartingaleValidator",
     "YieldCurveValidationCheck",
     "YieldCurveValidationReport",
     "YieldCurveValidator",
