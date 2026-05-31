@@ -4,6 +4,53 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-05-31T03:30:00Z - Phase 8: Equity, FX, and Correlation ESG
+
+**Task Completed:** Add US, Europe, Hong Kong / China, Japan, and Asia ex-Japan equity factors.
+
+**Accomplishments:**
+- Added governed `RegionalEquityFactor` fixtures for US, Europe, Hong Kong /
+  China, Japan, and Asia ex-Japan with market, currency, index, source, and
+  GBM parameter metadata.
+- Added loader helpers `available_starter_equity_markets()`,
+  `starter_equity_factor(...)`, and `default_phase8_equity_factors(...)`.
+- Extended `ScenarioSet.generate(..., equity_factor=...)` and
+  `ParameterSnapshot.from_process_params(...)` so selected regional equity
+  sources and market-qualified GBM parameters propagate into scenario audit
+  metadata while preserving the v1 `equity_index` / `equity_return_1m` schema.
+- Added targeted Phase 8 equity tests and created
+  `docs/ESG_REGIONAL_EQUITY_FACTORS.md`.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 8 to FX return
+  factors.
+
+**Validation:**
+- `git diff --check` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_esg_process.py -q` remains blocked with `No module named pytest`.
+- Direct smoke execution is blocked because the reachable embedded Python lacks
+  `numpy`; no `python` or `pytest` executable is available on PATH in this
+  sandbox.
+
+**Next Step:** Add FX return factors where currency translation is needed.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3 and 3.4: Regional equity process assumptions now
+  have explicit factor IDs, index proxies, placeholder parameters, and source
+  traceability.
+- IA TAS M Sections 3.5 and 3.6: Scenario snapshots now preserve regional
+  equity assumption lineage for audit reconstruction.
+
+**Delivery:**
+- Local commit created: `c392b0f8168b261b1aee669241687c6571605126`.
+- `git push origin main` not attempted because network access is restricted in
+  the sandbox.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-05-29T18:10:10Z - Phase 6: ESG Scope and Architecture
 
 **Task Completed:** Map ESG outputs to existing TVOG, VaR/ES, ALM, and reporting consumers

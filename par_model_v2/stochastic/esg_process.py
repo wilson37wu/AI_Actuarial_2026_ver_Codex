@@ -982,6 +982,123 @@ class GBMParams:
         return True
 
 
+@dataclass(frozen=True)
+class RegionalEquityFactor:
+    """Phase 8 regional equity factor definition backed by GBM parameters."""
+
+    market: str
+    region: str
+    currency: str
+    index_name: str
+    factor_id: str
+    source_id: str
+    valuation_date: date
+    params: GBMParams
+    notes: str = ""
+
+    def __post_init__(self):
+        object.__setattr__(self, "market", _require_text(self.market, "market").upper())
+        object.__setattr__(self, "region", _require_text(self.region, "region"))
+        object.__setattr__(self, "currency", _validate_currency_code(self.currency, "currency"))
+        object.__setattr__(self, "index_name", _require_text(self.index_name, "index_name"))
+        object.__setattr__(self, "factor_id", _require_text(self.factor_id, "factor_id").upper())
+        object.__setattr__(self, "source_id", _require_text(self.source_id, "source_id"))
+        object.__setattr__(self, "valuation_date", _coerce_date(self.valuation_date, "valuation_date"))
+        if not isinstance(self.params, GBMParams):
+            raise TypeError("params must be a GBMParams instance")
+
+    @property
+    def is_placeholder(self):
+        return True
+
+    def to_dict(self):
+        return {
+            "market": self.market,
+            "region": self.region,
+            "currency": self.currency,
+            "index_name": self.index_name,
+            "factor_id": self.factor_id,
+            "source_id": self.source_id,
+            "valuation_date": self.valuation_date.isoformat(),
+            "params": asdict(self.params),
+            "notes": self.notes,
+            "is_placeholder": self.is_placeholder,
+        }
+
+
+_STARTER_EQUITY_FIXTURE_PATH = Path(__file__).with_name("fixtures").joinpath(
+    "regional_equity_factors.json"
+)
+_STARTER_EQUITY_RECORDS = None
+
+
+def _normalize_equity_market(value):
+    return _require_text(value, "market").upper().replace("-", "_").replace(" ", "_")
+
+
+def _load_starter_equity_records():
+    global _STARTER_EQUITY_RECORDS
+    if _STARTER_EQUITY_RECORDS is None:
+        with _STARTER_EQUITY_FIXTURE_PATH.open("r", encoding="utf-8") as fixture_file:
+            raw_records = json.load(fixture_file)
+        _STARTER_EQUITY_RECORDS = {
+            _normalize_equity_market(record["market"]): record
+            for record in raw_records["factors"]
+        }
+    return _STARTER_EQUITY_RECORDS
+
+
+def available_starter_equity_markets():
+    """Return markets covered by the Phase 8 starter regional equity factors."""
+    return tuple(sorted(_load_starter_equity_records()))
+
+
+def starter_equity_factor(market, valuation_date=None):
+    """Return an illustrative Phase 8 regional equity factor fixture.
+
+    The fixture produces a `RegionalEquityFactor` plus the `GBMParams` needed
+    by existing v1-compatible equity scenario consumers.
+    """
+    market = _normalize_equity_market(market)
+    records = _load_starter_equity_records()
+    if market not in records:
+        raise KeyError(
+            "no Phase 8 starter equity factor for {}; available markets are {}".format(
+                market,
+                ", ".join(available_starter_equity_markets()),
+            )
+        )
+    record = records[market]
+    return RegionalEquityFactor(
+        market=record["market"],
+        region=record["region"],
+        currency=record["currency"],
+        index_name=record["index_name"],
+        factor_id=record["factor_id"],
+        source_id=record["source_id"],
+        valuation_date=_coerce_date(
+            valuation_date or record["valuation_date"],
+            "valuation_date",
+        ),
+        params=GBMParams(
+            equity_vol=record["equity_vol"],
+            dividend_yield=record["dividend_yield"],
+            equity_risk_premium=record["equity_risk_premium"],
+            rate_equity_correlation=record["rate_equity_correlation"],
+            initial_index_level=record["initial_index_level"],
+        ),
+        notes=record.get("notes", ""),
+    )
+
+
+def default_phase8_equity_factors(valuation_date=None):
+    """Return all Phase 8 starter regional equity factors keyed by market."""
+    return {
+        market: starter_equity_factor(market, valuation_date=valuation_date)
+        for market in available_starter_equity_markets()
+    }
+
+
 # ---------------------------------------------------------------------------
 # 1b. Phase 6 Scenario Metadata and Parameter Snapshot Dataclasses
 # ---------------------------------------------------------------------------
@@ -1413,6 +1530,7 @@ class ParameterSnapshot:
         hw_params=None,
         gbm_params=None,
         initial_curve=None,
+        equity_factor=None,
         snapshot_id=None,
     ):
         """Create a Phase 6 snapshot from current HW1F and GBM parameter dataclasses."""
@@ -1420,6 +1538,11 @@ class ParameterSnapshot:
         base_currency = _validate_currency_code(base_currency, "base_currency")
         calibration_date = _coerce_date(calibration_date or date.today(), "calibration_date")
         hw_params = hw_params if hw_params is not None else HullWhiteParams()
+        if equity_factor is not None:
+            if not isinstance(equity_factor, RegionalEquityFactor):
+                raise TypeError("equity_factor must be a RegionalEquityFactor")
+            if gbm_params is None:
+                gbm_params = equity_factor.params
         gbm_params = gbm_params if gbm_params is not None else GBMParams()
         initial_curve = initial_curve if initial_curve is not None else RiskFreeCurve.flat(
             hw_params.initial_short_rate,
@@ -1453,6 +1576,18 @@ class ParameterSnapshot:
             version=initial_curve.compounding,
             notes="Explicit Phase 7 initial curve input for HW1F generation.",
         )
+        sources = [source, curve_source]
+        if equity_factor is not None:
+            sources.append(CalibrationSource(
+                source_id=equity_factor.source_id,
+                source_type="equity_index",
+                market=equity_factor.market,
+                currency=equity_factor.currency,
+                as_of_date=equity_factor.valuation_date,
+                provider="par_model_v2 Phase 8 starter equity fixture",
+                dataset_name=equity_factor.index_name,
+                notes=equity_factor.notes,
+            ))
         parameters = {
             "rate.hw1f.mean_reversion_speed": hw_params.mean_reversion_speed,
             "rate.hw1f.short_rate_vol": hw_params.short_rate_vol,
@@ -1474,15 +1609,28 @@ class ParameterSnapshot:
             "rate.curve.zero_rate_{}y".format("{:g}".format(tenor)): rate
             for tenor, rate in zip(initial_curve.tenors_years, initial_curve.zero_rates)
         })
+        if equity_factor is not None:
+            prefix = "equity.gbm.{}.".format(equity_factor.market)
+            parameters.update({
+                prefix + "equity_vol": gbm_params.equity_vol,
+                prefix + "dividend_yield": gbm_params.dividend_yield,
+                prefix + "equity_risk_premium": gbm_params.equity_risk_premium,
+                prefix + "rate_equity_correlation": gbm_params.rate_equity_correlation,
+                prefix + "initial_index_level": gbm_params.initial_index_level,
+            })
         return cls(
             snapshot_id=snapshot_id,
             calibration_date=calibration_date,
             measure=measure,
             base_currency=base_currency,
             parameters=parameters,
-            sources=(source, curve_source),
+            sources=tuple(sources),
             calibration_interfaces=default_phase6_calibration_interfaces(),
-            is_placeholder=bool(hw_params.is_placeholder or gbm_params.is_placeholder),
+            is_placeholder=bool(
+                hw_params.is_placeholder
+                or gbm_params.is_placeholder
+                or (equity_factor is not None and equity_factor.is_placeholder)
+            ),
         )
 
     def to_dict(self):
@@ -2287,6 +2435,7 @@ class ScenarioSet:
         hw_params=None,
         gbm_params=None,
         initial_curve=None,
+        equity_factor=None,
         seed=42,
         scenario_set_id=None,
         model_version="v1.0.0-dev",
@@ -2315,6 +2464,9 @@ class ScenarioSet:
         initial_curve : RiskFreeCurve, optional
             Explicit initial risk-free curve for Q-measure HW1F fitting and
             zero-coupon bond pricing. If omitted, a flat curve at r(0) is used.
+        equity_factor : RegionalEquityFactor, optional
+            Phase 8 regional equity fixture. If supplied without gbm_params,
+            its GBM parameters drive the v1-compatible equity columns.
         seed : int, optional
         scenario_set_id : str, optional
             Stable metadata identifier for this generated scenario package.
@@ -2339,6 +2491,12 @@ class ScenarioSet:
         n = int(n)
         T_months = int(T_months)
 
+        if equity_factor is not None:
+            if not isinstance(equity_factor, RegionalEquityFactor):
+                raise TypeError("equity_factor must be a RegionalEquityFactor")
+            if gbm_params is None:
+                gbm_params = equity_factor.params
+
         hw_process = HullWhiteRateProcess(hw_params, initial_curve=initial_curve)
         gbm_process = GBMEquityProcess(gbm_params, rate_process=hw_process)
         if parameter_snapshot is None:
@@ -2349,6 +2507,7 @@ class ScenarioSet:
                 hw_params=hw_process.params,
                 gbm_params=gbm_process.params,
                 initial_curve=hw_process.initial_curve,
+                equity_factor=equity_factor,
             )
 
         rng = np.random.default_rng(seed)
@@ -2432,6 +2591,10 @@ __all__ = [
     "starter_risk_free_curve",
     "default_phase7_starter_curves",
     "GBMParams",
+    "RegionalEquityFactor",
+    "available_starter_equity_markets",
+    "starter_equity_factor",
+    "default_phase8_equity_factors",
     "HullWhiteRateProcess",
     "G2PlusRateProcess",
     "GBMEquityProcess",

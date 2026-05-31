@@ -1,0 +1,81 @@
+{
+  "fixture_id": "PHASE8_STARTER_REGIONAL_EQUITY_FACTORS",
+  "description": "Illustrative Phase 8 regional equity GBM inputs for educational ESG development. These are placeholders, not production calibration data.",
+  "factors": [
+    {
+      "market": "US",
+      "region": "United States",
+      "currency": "USD",
+      "index_name": "S&P 500 total-return proxy",
+      "factor_id": "EQUITY_US",
+      "source_id": "SRC-STARTER-EQUITY-US",
+      "valuation_date": "2026-05-30",
+      "initial_index_level": 100.0,
+      "equity_vol": 0.185,
+      "dividend_yield": 0.016,
+      "equity_risk_premium": 0.045,
+      "rate_equity_correlation": -0.20,
+      "notes": "Large-cap US equity placeholder for P/Q measure development."
+    },
+    {
+      "market": "EU",
+      "region": "Europe",
+      "currency": "EUR",
+      "index_name": "Euro Stoxx broad-market total-return proxy",
+      "factor_id": "EQUITY_EU",
+      "source_id": "SRC-STARTER-EQUITY-EU",
+      "valuation_date": "2026-05-30",
+      "initial_index_level": 100.0,
+      "equity_vol": 0.205,
+      "dividend_yield": 0.028,
+      "equity_risk_premium": 0.042,
+      "rate_equity_correlation": -0.18,
+      "notes": "Europe equity placeholder with higher dividend yield than US."
+    },
+    {
+      "market": "HK_CN",
+      "region": "Hong Kong / China",
+      "currency": "HKD",
+      "index_name": "Hang Seng / China equity blend proxy",
+      "factor_id": "EQUITY_HK_CN",
+      "source_id": "SRC-STARTER-EQUITY-HK-CN",
+      "valuation_date": "2026-05-30",
+      "initial_index_level": 100.0,
+      "equity_vol": 0.260,
+      "dividend_yield": 0.035,
+      "equity_risk_premium": 0.050,
+      "rate_equity_correlation": -0.12,
+      "notes": "Hong Kong / China placeholder for PAR fund asset-share examples."
+    },
+    {
+      "market": "JP",
+      "region": "Japan",
+      "currency": "JPY",
+      "index_name": "TOPIX total-return proxy",
+      "factor_id": "EQUITY_JP",
+      "source_id": "SRC-STARTER-EQUITY-JP",
+      "valuation_date": "2026-05-30",
+      "initial_index_level": 100.0,
+      "equity_vol": 0.215,
+      "dividend_yield": 0.022,
+      "equity_risk_premium": 0.040,
+      "rate_equity_correlation": -0.10,
+      "notes": "Japan equity placeholder compatible with low-rate JPY examples."
+    },
+    {
+      "market": "ASIA_EX_JP",
+      "region": "Asia ex-Japan",
+      "currency": "USD",
+      "index_name": "MSCI Asia ex-Japan total-return proxy",
+      "factor_id": "EQUITY_ASIA_EX_JP",
+      "source_id": "SRC-STARTER-EQUITY-ASIA-EX-JP",
+      "valuation_date": "2026-05-30",
+      "initial_index_level": 100.0,
+      "equity_vol": 0.240,
+      "dividend_yield": 0.026,
+      "equity_risk_premium": 0.048,
+      "rate_equity_correlation": -0.14,
+      "notes": "Broad Asia ex-Japan placeholder for regional diversification examples."
+    }
+  ]
+}

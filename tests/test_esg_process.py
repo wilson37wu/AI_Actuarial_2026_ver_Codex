@@ -37,9 +37,12 @@ from par_model_v2.stochastic.esg_process import (
     YieldCurveValidator,
     default_phase6_calibration_interfaces,
     default_phase6_consumer_mappings,
+    available_starter_equity_markets,
     available_starter_curve_currencies,
     default_phase7_starter_curves,
+    default_phase8_equity_factors,
     phase6_consumer_mapping,
+    starter_equity_factor,
     starter_risk_free_curve,
 )
 
@@ -544,6 +547,61 @@ class TestGBMEquityProcess:
         p_mean = p_df[p_df["month"] == 120]["equity_index"].mean()
         q_mean = q_df[q_df["month"] == 120]["equity_index"].mean()
         assert p_mean > q_mean * 1.30
+
+
+class TestPhase8RegionalEquityFactors:
+    def test_starter_equity_fixtures_cover_required_markets(self):
+        assert available_starter_equity_markets() == (
+            "ASIA_EX_JP",
+            "EU",
+            "HK_CN",
+            "JP",
+            "US",
+        )
+
+        factors = default_phase8_equity_factors(valuation_date=date(2026, 5, 30))
+        assert set(factors) == {"US", "EU", "HK_CN", "JP", "ASIA_EX_JP"}
+        for market, factor in factors.items():
+            assert factor.market == market
+            assert factor.factor_id.startswith("EQUITY_")
+            assert factor.valuation_date == date(2026, 5, 30)
+            assert factor.params.initial_index_level == 100.0
+            assert 0.0 < factor.params.equity_vol < 1.0
+            assert factor.to_dict()["params"]["equity_vol"] == factor.params.equity_vol
+
+    def test_unknown_starter_equity_market_is_rejected(self):
+        with pytest.raises(KeyError, match="available markets"):
+            starter_equity_factor("LATAM")
+
+    def test_gbm_process_accepts_regional_equity_factor_params(self):
+        factor = starter_equity_factor("HK-CN", valuation_date=date(2026, 5, 30))
+        process = GBMEquityProcess(factor.params)
+        df = process.simulate(6, 12, Measure.P, seed=55)
+
+        assert (df["equity_index"] > 0.0).all()
+        assert df.loc[df["month"] == 0, "equity_index"].iloc[0] == pytest.approx(100.0)
+
+    def test_scenario_generation_records_regional_equity_source(self):
+        factor = starter_equity_factor("ASIA_EX_JP", valuation_date=date(2026, 5, 30))
+        scenarios = ScenarioSet.generate(
+            5,
+            2,
+            Measure.P,
+            equity_factor=factor,
+            base_currency=factor.currency,
+            valuation_date=date(2026, 5, 30),
+            seed=56,
+        )
+
+        source_ids = {source.source_id for source in scenarios.parameter_snapshot.sources}
+        assert "SRC-STARTER-EQUITY-ASIA-EX-JP" in source_ids
+        assert scenarios.parameter_snapshot.parameters[
+            "equity.gbm.ASIA_EX_JP.equity_vol"
+        ] == pytest.approx(factor.params.equity_vol)
+        assert scenarios.data.loc[
+            scenarios.data["month"] == 0,
+            "equity_index",
+        ].iloc[0] == pytest.approx(factor.params.initial_index_level)
 
 
 class TestScenarioSetGenerate:

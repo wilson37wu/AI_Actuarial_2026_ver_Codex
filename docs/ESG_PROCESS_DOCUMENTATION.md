@@ -218,6 +218,13 @@ S(t+Δt) = S(t) · exp[(μ_S − σ_S²/2)·Δt + σ_S·√Δt · Z_S]
 ```
 where `Z_S ~ N(0,1)` correlated with `Z_r` via correlation `ρ_{r,S}`.
 
+**Phase 8 regional equity factors:** Starter GBM factor fixtures now cover US,
+Europe, Hong Kong / China, Japan, and Asia ex-Japan. The v1 scenario schema
+still exposes one `equity_index` and `equity_return_1m` pair at a time, but
+`ScenarioSet.generate(..., equity_factor=...)` records the selected regional
+equity source and market-qualified GBM parameters in the `ParameterSnapshot`.
+See `docs/ESG_REGIONAL_EQUITY_FACTORS.md`.
+
 ### 4.2 Correlated Brownian Motions (Cholesky Decomposition)
 
 The interest rate and equity Wiener processes are correlated. Simulate via:
