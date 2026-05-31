@@ -4,6 +4,56 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-05-31T12:09:23Z - Phase 8: Equity, FX, and Correlation ESG
+
+**Task Completed:** Add FX return factors where currency translation is needed.
+
+**Accomplishments:**
+- Added governed Phase 8 starter FX fixtures for `USDHKD`, `EURHKD`,
+  `CNYHKD`, and `JPYHKD` under
+  `par_model_v2/stochastic/fixtures/fx_return_factors.json`.
+- Added `FXParams`, `FXReturnFactor`, `FXSpotProcess`, fixture loaders, and
+  `fx_factor_for_translation(...)` for HKD reporting examples.
+- Extended `ScenarioSet.generate(..., fx_factor=...)` to emit optional
+  `fx_rate`, `fx_return_1m`, and `fx_pair` columns without changing the v1
+  rate/equity contract.
+- Extended `ParameterSnapshot` traceability to record FX calibration sources
+  and pair-qualified parameter keys such as `fx.gbm.JPYHKD.fx_vol`.
+- Added targeted Phase 8 FX tests and documentation covering quotation
+  convention, placeholder limitations, consumer compatibility, and audit trail.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 8 to correlation
+  matrix validation and scenario diagnostics.
+
+**Validation:**
+- `git diff --check` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts` completed successfully.
+- PowerShell JSON fixture parsing confirmed four HKD translation pairs.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_esg_process.py -q`
+  remains blocked with `No module named pytest`.
+- No accessible local `python`, `py`, `pytest`, or `.venv` runtime was available
+  in this sandbox.
+
+**Next Step:** Implement correlation matrix validation, positive-semidefinite
+repair or rejection, and scenario diagnostics.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3 and 3.4: Added explicit FX process assumptions,
+  quotation convention, placeholder calibration basis, and source traceability.
+- IA TAS M Sections 3.5 and 3.6: Added audit-ready FX assumption records in
+  `ParameterSnapshot` plus documented limitations and consumer-use restrictions.
+
+**Delivery:**
+- Local implementation commit created:
+  `f07fd094e7a437783e1faf7a0bd47981087ffb51`.
+- `git push origin main` not attempted because network access is restricted in
+  the sandbox.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-05-31T03:30:00Z - Phase 8: Equity, FX, and Correlation ESG
 
 **Task Completed:** Add US, Europe, Hong Kong / China, Japan, and Asia ex-Japan equity factors.
