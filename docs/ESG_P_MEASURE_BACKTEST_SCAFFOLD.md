@@ -81,3 +81,6 @@ factor IDs. The current factor IDs are:
   goodness-of-fit tests, drawdown backtests, or exceptions analysis.
 - Historical data source approval, cleaning, survivorship-bias controls, and
   benchmark selection remain required before production use.
+- The limitations that determine whether to retain GBM or upgrade to stochastic
+  volatility, jump diffusion, or regime-aware correlation models are governed in
+  `docs/ESG_MODEL_LIMITATIONS_AND_UPGRADE_PATH.md`.

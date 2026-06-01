@@ -72,3 +72,6 @@ regional equity assumption basis.
 - Rate/equity/FX correlation validation is implemented in
   `docs/ESG_CORRELATION_VALIDATION.md`; cross-equity matrix calibration remains
   a future extension.
+- The governed limitation register and upgrade path to stochastic volatility,
+  jump diffusion, and regime-aware equity models is documented in
+  `docs/ESG_MODEL_LIMITATIONS_AND_UPGRADE_PATH.md`.

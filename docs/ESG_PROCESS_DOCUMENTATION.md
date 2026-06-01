@@ -244,6 +244,13 @@ evidence against configured or historical/reference inputs. It rejects
 non-P-measure scenarios and produces JSON-ready warning evidence for model-owner
 review. See `docs/ESG_P_MEASURE_BACKTEST_SCAFFOLD.md`.
 
+**Phase 8 limitations and upgrade path:** The current regional equity, FX, and
+correlation implementation remains a transparent GBM / lognormal educational
+starter model. Its governed limitations, production-use restrictions, and
+upgrade path to stochastic volatility, jump diffusion, and regime-aware
+correlation models are documented in
+`docs/ESG_MODEL_LIMITATIONS_AND_UPGRADE_PATH.md`.
+
 ### 4.2 Correlated Brownian Motions (Cholesky Decomposition)
 
 The interest rate and equity Wiener processes are correlated. Simulate via:
@@ -276,6 +283,9 @@ dW_S = Z2
 - **Constant volatility:** GBM assumes constant σ_S. In practice, equity volatility is stochastic and exhibits mean-reversion (volatility clustering). A Heston stochastic volatility model may be warranted if PAR bonus guarantees are materially sensitive to vol-of-vol. This is flagged for Phase 5 review.
 - **No jump component:** Tail events (crashes) are underrepresented under GBM. For ERM stress testing, discrete jump scenarios should supplement the GBM distribution.
 - **Lognormal asset returns:** The model assumes log-normally distributed equity returns. Fat tails (excess kurtosis) are not captured.
+- **Phase 8 upgrade path:** Use `docs/ESG_MODEL_LIMITATIONS_AND_UPGRADE_PATH.md`
+  as the governing decision record before replacing GBM / lognormal dynamics
+  with stochastic volatility, jump diffusion, regime, or tail-dependence models.
 
 ---
 
@@ -437,6 +447,7 @@ Per SOA ASOP 56 §3.6 and IA TAS M §3.7 (disclosure requirements):
 | L5 | Moody's ESG calibration parameters unavailable | 🔴 Critical | Phase 2 internal ESG (this module) removes this dependency for testing |
 | L6 | Placeholder parameters — not yet market-calibrated | 🔴 Critical | Production use prohibited until Phase 4 calibration complete |
 | L7 | Dynamic lapse not modelled (lapse independent of rates) | 🔴 Critical | Understates TVOG by est. 15–30%; Phase 2 priority |
+| L8 | Phase 8 regional equity / FX dynamics use GBM or lognormal starter models with static correlations | High | See `docs/ESG_MODEL_LIMITATIONS_AND_UPGRADE_PATH.md` for limitations, validation gates, and upgrade path |
 
 **⚠️ Production Use Restriction:** This ESG module uses placeholder parameters (Section 3.2, 4.3). It must not be used for regulatory reporting, pricing decisions, or external disclosure until Phase 4 calibration is complete and signed off by the Assumption Owner per docs/IA_GOVERNANCE_REQUIREMENTS.md.
 

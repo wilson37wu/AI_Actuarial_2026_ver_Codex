@@ -151,6 +151,9 @@ Current implementation notes:
 - Task 4 is implemented through `PMeasureBacktestValidator`, distribution
   diagnostics, expected / historical correlation stability checks, and the
   report contract documented in `docs/ESG_P_MEASURE_BACKTEST_SCAFFOLD.md`.
+- Task 5 is implemented through the governed limitation register and staged
+  upgrade path documented in
+  `docs/ESG_MODEL_LIMITATIONS_AND_UPGRADE_PATH.md`.
 
 Exit criteria:
 

@@ -78,3 +78,6 @@ assumption source.
   risk, and multi-FX basket correlation remain future calibration work.
 - Translation effects are exposed as separate columns; asset cashflow and market
   value roll-forward consumers will integrate them in Phase 9 and Phase 11.
+- The broader Phase 8 limitation register and upgrade path for stochastic FX,
+  jump, regime, and correlation extensions is documented in
+  `docs/ESG_MODEL_LIMITATIONS_AND_UPGRADE_PATH.md`.

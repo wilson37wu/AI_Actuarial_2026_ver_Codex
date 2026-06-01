@@ -102,3 +102,6 @@ the configured `GBMParams` and optional `FXParams`.
   Phase 8 task added `PMeasureBacktestValidator`; see
   `docs/ESG_P_MEASURE_BACKTEST_SCAFFOLD.md` for the real-world equity
   distribution and correlation stability scaffold.
+- The Phase 8 limitation register and decision gates for regime-aware,
+  stochastic-volatility, jump, and tail-dependence upgrades are documented in
+  `docs/ESG_MODEL_LIMITATIONS_AND_UPGRADE_PATH.md`.
