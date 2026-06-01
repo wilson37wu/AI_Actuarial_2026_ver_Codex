@@ -1746,6 +1746,496 @@ class CorrelationMatrixValidator:
         )
 
 
+@dataclass(frozen=True)
+class PMeasureBacktestCheck:
+    """Single Phase 8 P-measure backtest scaffold check result."""
+
+    check_id: str
+    passed: bool
+    severity: str
+    message: str
+    observed_value: Optional[float] = None
+    threshold: Optional[float] = None
+
+    def __post_init__(self):
+        object.__setattr__(self, "check_id", _require_text(self.check_id, "check_id"))
+        object.__setattr__(self, "severity", _require_text(self.severity, "severity").upper())
+        object.__setattr__(self, "message", _require_text(self.message, "message"))
+        if self.observed_value is not None and not np.isfinite(float(self.observed_value)):
+            raise ValueError("observed_value must be finite")
+        if self.threshold is not None and not np.isfinite(float(self.threshold)):
+            raise ValueError("threshold must be finite")
+
+    def to_dict(self):
+        return {
+            "check_id": self.check_id,
+            "passed": bool(self.passed),
+            "severity": self.severity,
+            "message": self.message,
+            "observed_value": self.observed_value,
+            "threshold": self.threshold,
+        }
+
+
+@dataclass(frozen=True)
+class PMeasureBacktestReport:
+    """JSON-ready scaffold report for P-measure equity and correlation backtests."""
+
+    market: str
+    as_of_date: date
+    passed: bool
+    checks: Tuple[PMeasureBacktestCheck, ...]
+    diagnostics: Dict[str, float]
+    scenario_distribution: Dict[str, float]
+    historical_distribution: Optional[Dict[str, float]] = None
+    scenario_correlation_matrix: Optional[Tuple[Tuple[float, ...], ...]] = None
+    historical_correlation_matrix: Optional[Tuple[Tuple[float, ...], ...]] = None
+    factor_ids: Tuple[str, ...] = field(default_factory=tuple)
+
+    def __post_init__(self):
+        object.__setattr__(self, "market", _require_text(self.market, "market").upper())
+        object.__setattr__(self, "as_of_date", _coerce_date(self.as_of_date, "as_of_date"))
+        if not self.checks:
+            raise ValueError("checks must not be empty")
+        for mapping_name, mapping in (
+            ("diagnostics", self.diagnostics),
+            ("scenario_distribution", self.scenario_distribution),
+            ("historical_distribution", self.historical_distribution or {}),
+        ):
+            for key, value in mapping.items():
+                if not str(key).strip():
+                    raise ValueError("{} keys must be non-empty".format(mapping_name))
+                if not np.isfinite(float(value)):
+                    raise ValueError("{} {!r} must be finite".format(mapping_name, key))
+        factor_ids = tuple(_require_text(value, "factor_id").upper() for value in self.factor_ids)
+        object.__setattr__(self, "factor_ids", factor_ids)
+
+    def failed_checks(self):
+        return tuple(check for check in self.checks if not check.passed)
+
+    def to_dict(self):
+        return {
+            "market": self.market,
+            "as_of_date": self.as_of_date.isoformat(),
+            "passed": bool(self.passed),
+            "checks": [check.to_dict() for check in self.checks],
+            "diagnostics": dict(self.diagnostics),
+            "scenario_distribution": dict(self.scenario_distribution),
+            "historical_distribution": (
+                None if self.historical_distribution is None
+                else dict(self.historical_distribution)
+            ),
+            "factor_ids": list(self.factor_ids),
+            "scenario_correlation_matrix": (
+                None if self.scenario_correlation_matrix is None
+                else [list(row) for row in self.scenario_correlation_matrix]
+            ),
+            "historical_correlation_matrix": (
+                None if self.historical_correlation_matrix is None
+                else [list(row) for row in self.historical_correlation_matrix]
+            ),
+        }
+
+
+class PMeasureBacktestValidator:
+    """Phase 8 scaffold for real-world equity distribution and correlation evidence.
+
+    The scaffold does not source market history itself.  Callers pass generated
+    P-measure scenarios and, when available, a prepared historical/reference
+    return table with `equity_return_1m` plus optional rate / FX return columns.
+    """
+
+    SCENARIO_REQUIRED_COLUMNS = ("scenario_id", "month", "equity_return_1m", "measure")
+    FACTOR_COLUMN_ALIASES = (
+        ("RATE_SHORT_CHANGE", ("rate_short_change", "r_short_change")),
+        ("EQUITY_RETURN_1M", ("equity_return_1m",)),
+        ("FX_RETURN_1M", ("fx_return_1m",)),
+    )
+
+    def __init__(
+        self,
+        min_scenario_observations=36,
+        min_historical_observations=24,
+        monthly_mean_tolerance=0.015,
+        volatility_relative_tolerance=0.35,
+        quantile_abs_tolerance=0.06,
+        expected_correlation_tolerance=0.35,
+        historical_correlation_tolerance=0.35,
+    ):
+        self.min_scenario_observations = int(min_scenario_observations)
+        self.min_historical_observations = int(min_historical_observations)
+        self.monthly_mean_tolerance = float(monthly_mean_tolerance)
+        self.volatility_relative_tolerance = float(volatility_relative_tolerance)
+        self.quantile_abs_tolerance = float(quantile_abs_tolerance)
+        self.expected_correlation_tolerance = float(expected_correlation_tolerance)
+        self.historical_correlation_tolerance = float(historical_correlation_tolerance)
+        if self.min_scenario_observations < 3:
+            raise ValueError("min_scenario_observations must be at least 3")
+        if self.min_historical_observations < 3:
+            raise ValueError("min_historical_observations must be at least 3")
+        for name, value in (
+            ("monthly_mean_tolerance", self.monthly_mean_tolerance),
+            ("volatility_relative_tolerance", self.volatility_relative_tolerance),
+            ("quantile_abs_tolerance", self.quantile_abs_tolerance),
+            ("expected_correlation_tolerance", self.expected_correlation_tolerance),
+            ("historical_correlation_tolerance", self.historical_correlation_tolerance),
+        ):
+            if not np.isfinite(value) or value < 0.0:
+                raise ValueError("{} must be finite and non-negative".format(name))
+
+    def validate(
+        self,
+        scenario_data,
+        historical_data=None,
+        expected_matrix=None,
+        market="MULTI",
+        as_of_date=None,
+    ):
+        """Return scaffold evidence for P-measure equity returns and correlations."""
+        frame = scenario_data.data if isinstance(scenario_data, ScenarioSet) else pd.DataFrame(scenario_data)
+        as_of_date = _coerce_date(as_of_date or date.today(), "as_of_date")
+        checks = []
+        diagnostics = {}
+        scenario_distribution = {}
+        historical_distribution = None
+        factor_ids = tuple()
+        scenario_correlation_matrix = None
+        historical_correlation_matrix = None
+
+        missing = [column for column in self.SCENARIO_REQUIRED_COLUMNS if column not in frame.columns]
+        checks.append(PMeasureBacktestCheck(
+            "PMB-SCENARIO-COLUMNS",
+            not missing,
+            "ERROR",
+            "P-measure backtest scenarios require scenario_id, month, equity_return_1m, and measure columns.",
+            observed_value=float(len(missing)),
+            threshold=0.0,
+        ))
+        if missing:
+            return self._report(
+                market,
+                as_of_date,
+                checks,
+                diagnostics,
+                scenario_distribution,
+                historical_distribution,
+                scenario_correlation_matrix,
+                historical_correlation_matrix,
+                factor_ids,
+            )
+
+        measures = {_coerce_measure(value) for value in frame["measure"].dropna().unique()}
+        p_measure_only = measures == {Measure.P}
+        checks.append(PMeasureBacktestCheck(
+            "PMB-MEASURE-P",
+            p_measure_only,
+            "ERROR",
+            "Equity distribution backtests must use real-world P-measure scenarios only.",
+            observed_value=float(len(measures)),
+            threshold=1.0,
+        ))
+        scenario_returns = frame.loc[frame["month"].astype(int) > 0, "equity_return_1m"].astype(float)
+        diagnostics["scenario_observation_count"] = float(len(scenario_returns))
+        checks.append(PMeasureBacktestCheck(
+            "PMB-SCENARIO-OBSERVATIONS",
+            bool(len(scenario_returns) >= self.min_scenario_observations),
+            "ERROR",
+            "Scenario backtest needs enough non-zero-month equity return observations.",
+            observed_value=float(len(scenario_returns)),
+            threshold=float(self.min_scenario_observations),
+        ))
+        finite_returns = bool(np.all(np.isfinite(scenario_returns.to_numpy(dtype=float))))
+        checks.append(PMeasureBacktestCheck(
+            "PMB-SCENARIO-RETURNS-FINITE",
+            finite_returns,
+            "ERROR",
+            "Scenario equity returns must be finite.",
+            observed_value=float(np.sum(np.isfinite(scenario_returns.to_numpy(dtype=float)))),
+            threshold=float(len(scenario_returns)),
+        ))
+        checks.append(PMeasureBacktestCheck(
+            "PMB-SCENARIO-RETURN-FLOOR",
+            bool(finite_returns and np.min(scenario_returns.to_numpy(dtype=float)) > -1.0),
+            "ERROR",
+            "Monthly equity returns must stay above -100%.",
+            observed_value=(
+                float(np.min(scenario_returns.to_numpy(dtype=float)))
+                if len(scenario_returns) else None
+            ),
+            threshold=-1.0,
+        ))
+        if len(scenario_returns) and finite_returns:
+            scenario_distribution = self._return_distribution(scenario_returns)
+            diagnostics.update({
+                "scenario_monthly_mean": scenario_distribution["monthly_mean"],
+                "scenario_monthly_volatility": scenario_distribution["monthly_volatility"],
+                "scenario_annualized_mean": scenario_distribution["annualized_mean"],
+                "scenario_annualized_volatility": scenario_distribution["annualized_volatility"],
+                "scenario_p01": scenario_distribution["p01"],
+                "scenario_p99": scenario_distribution["p99"],
+            })
+
+        if historical_data is not None:
+            historical_frame = pd.DataFrame(historical_data)
+            hist_checks, historical_distribution = self._validate_historical_distribution(
+                historical_frame,
+                scenario_distribution,
+            )
+            checks.extend(hist_checks)
+            if historical_distribution is not None:
+                diagnostics.update({
+                    "historical_observation_count": historical_distribution["observation_count"],
+                    "historical_monthly_mean": historical_distribution["monthly_mean"],
+                    "historical_monthly_volatility": historical_distribution["monthly_volatility"],
+                    "distribution_mean_abs_error": abs(
+                        scenario_distribution["monthly_mean"] - historical_distribution["monthly_mean"]
+                    ),
+                    "distribution_volatility_relative_error": self._relative_error(
+                        scenario_distribution["monthly_volatility"],
+                        historical_distribution["monthly_volatility"],
+                    ),
+                    "distribution_p05_abs_error": abs(
+                        scenario_distribution["p05"] - historical_distribution["p05"]
+                    ),
+                    "distribution_p95_abs_error": abs(
+                        scenario_distribution["p95"] - historical_distribution["p95"]
+                    ),
+                })
+
+            correlation_result = self._historical_correlation_check(frame, historical_frame)
+            if correlation_result is not None:
+                correlation_checks, factor_ids, scenario_correlation_matrix, historical_correlation_matrix, drift = correlation_result
+                checks.extend(correlation_checks)
+                diagnostics["historical_correlation_max_abs_drift"] = drift
+
+        if expected_matrix is not None:
+            correlation_report = CorrelationMatrixValidator(
+                scenario_correlation_tolerance=self.expected_correlation_tolerance,
+            ).validate_scenario_diagnostics(
+                frame,
+                expected_matrix=expected_matrix,
+                as_of_date=as_of_date,
+            )
+            expected_error = correlation_report.diagnostics.get(
+                "max_abs_target_correlation_error",
+                0.0,
+            )
+            checks.append(PMeasureBacktestCheck(
+                "PMB-EXPECTED-CORRELATION-STABILITY",
+                bool(correlation_report.passed and expected_error <= self.expected_correlation_tolerance),
+                "WARNING",
+                "Scenario empirical correlations should reconcile to configured P-measure correlations.",
+                observed_value=expected_error,
+                threshold=self.expected_correlation_tolerance,
+            ))
+            diagnostics["expected_correlation_max_abs_error"] = expected_error
+            diagnostics["scenario_correlation_observation_count"] = correlation_report.diagnostics.get(
+                "scenario_observation_count",
+                0.0,
+            )
+            if scenario_correlation_matrix is None:
+                scenario_correlation_matrix = correlation_report.correlation_matrix
+                factor_ids = correlation_report.factor_ids
+
+        return self._report(
+            market,
+            as_of_date,
+            checks,
+            diagnostics,
+            scenario_distribution,
+            historical_distribution,
+            scenario_correlation_matrix,
+            historical_correlation_matrix,
+            factor_ids,
+        )
+
+    def _validate_historical_distribution(self, historical_frame, scenario_distribution):
+        checks = []
+        if "equity_return_1m" not in historical_frame.columns:
+            checks.append(PMeasureBacktestCheck(
+                "PMB-HISTORICAL-COLUMNS",
+                False,
+                "ERROR",
+                "Historical/reference data must include equity_return_1m.",
+                observed_value=1.0,
+                threshold=0.0,
+            ))
+            return checks, None
+
+        hist_returns = historical_frame["equity_return_1m"].astype(float).dropna()
+        checks.append(PMeasureBacktestCheck(
+            "PMB-HISTORICAL-OBSERVATIONS",
+            bool(len(hist_returns) >= self.min_historical_observations),
+            "ERROR",
+            "Historical/reference data needs enough monthly equity return observations.",
+            observed_value=float(len(hist_returns)),
+            threshold=float(self.min_historical_observations),
+        ))
+        finite = bool(np.all(np.isfinite(hist_returns.to_numpy(dtype=float))))
+        checks.append(PMeasureBacktestCheck(
+            "PMB-HISTORICAL-RETURNS-FINITE",
+            finite,
+            "ERROR",
+            "Historical/reference equity returns must be finite.",
+            observed_value=float(np.sum(np.isfinite(hist_returns.to_numpy(dtype=float)))),
+            threshold=float(len(hist_returns)),
+        ))
+        if len(hist_returns) < self.min_historical_observations or not finite or not scenario_distribution:
+            return checks, None
+
+        historical_distribution = self._return_distribution(hist_returns)
+        mean_error = abs(scenario_distribution["monthly_mean"] - historical_distribution["monthly_mean"])
+        vol_error = self._relative_error(
+            scenario_distribution["monthly_volatility"],
+            historical_distribution["monthly_volatility"],
+        )
+        p05_error = abs(scenario_distribution["p05"] - historical_distribution["p05"])
+        p95_error = abs(scenario_distribution["p95"] - historical_distribution["p95"])
+        checks.extend((
+            PMeasureBacktestCheck(
+                "PMB-DISTRIBUTION-MEAN",
+                bool(mean_error <= self.monthly_mean_tolerance),
+                "WARNING",
+                "Scenario monthly mean should be close to the historical/reference mean.",
+                observed_value=mean_error,
+                threshold=self.monthly_mean_tolerance,
+            ),
+            PMeasureBacktestCheck(
+                "PMB-DISTRIBUTION-VOLATILITY",
+                bool(vol_error <= self.volatility_relative_tolerance),
+                "WARNING",
+                "Scenario monthly volatility should be close to the historical/reference volatility.",
+                observed_value=vol_error,
+                threshold=self.volatility_relative_tolerance,
+            ),
+            PMeasureBacktestCheck(
+                "PMB-DISTRIBUTION-TAILS",
+                bool(max(p05_error, p95_error) <= self.quantile_abs_tolerance),
+                "WARNING",
+                "Scenario 5th and 95th percentiles should be close to historical/reference tails.",
+                observed_value=max(p05_error, p95_error),
+                threshold=self.quantile_abs_tolerance,
+            ),
+        ))
+        return checks, historical_distribution
+
+    def _historical_correlation_check(self, scenario_frame, historical_frame):
+        scenario_factors = self._scenario_factor_frame(scenario_frame)
+        historical_factors = self._historical_factor_frame(historical_frame)
+        common = [factor for factor in scenario_factors.columns if factor in historical_factors.columns]
+        if len(common) < 2 or len(scenario_factors) < 3 or len(historical_factors) < 3:
+            return None
+        scenario_corr = scenario_factors[common].corr().to_numpy(dtype=float)
+        historical_corr = historical_factors[common].corr().to_numpy(dtype=float)
+        drift = float(np.max(np.abs(scenario_corr - historical_corr)))
+        check = PMeasureBacktestCheck(
+            "PMB-HISTORICAL-CORRELATION-STABILITY",
+            bool(drift <= self.historical_correlation_tolerance),
+            "WARNING",
+            "Scenario factor correlations should remain close to historical/reference correlations.",
+            observed_value=drift,
+            threshold=self.historical_correlation_tolerance,
+        )
+        return (
+            (check,),
+            tuple(common),
+            CorrelationMatrixValidator._matrix_tuple(scenario_corr),
+            CorrelationMatrixValidator._matrix_tuple(historical_corr),
+            drift,
+        )
+
+    def _scenario_factor_frame(self, scenario_frame):
+        sorted_frame = scenario_frame.sort_values(["scenario_id", "month"])
+        factor_series = {}
+        rate_grid = sorted_frame.pivot(index="scenario_id", columns="month", values="r_short")
+        rate_changes = rate_grid.diff(axis=1).iloc[:, 1:].stack(dropna=False)
+        rate_changes.index = rate_changes.index.set_names(["scenario_id", "month"])
+        factor_series["RATE_SHORT_CHANGE"] = rate_changes
+        for factor_id, column in (
+            ("EQUITY_RETURN_1M", "equity_return_1m"),
+            ("FX_RETURN_1M", "fx_return_1m"),
+        ):
+            if column in sorted_frame.columns:
+                values = sorted_frame[sorted_frame["month"] > 0].set_index(
+                    ["scenario_id", "month"]
+                )[column].sort_index()
+                factor_series[factor_id] = values
+        common_index = None
+        for values in factor_series.values():
+            common_index = values.index if common_index is None else common_index.intersection(values.index)
+        return pd.DataFrame({
+            factor_id: values.reindex(common_index).astype(float)
+            for factor_id, values in factor_series.items()
+        }).dropna()
+
+    def _historical_factor_frame(self, historical_frame):
+        result = {}
+        for factor_id, aliases in self.FACTOR_COLUMN_ALIASES:
+            for alias in aliases:
+                if alias in historical_frame.columns:
+                    result[factor_id] = historical_frame[alias].astype(float).to_numpy()
+                    break
+        if "RATE_SHORT_CHANGE" not in result and "r_short" in historical_frame.columns:
+            result["RATE_SHORT_CHANGE"] = historical_frame["r_short"].astype(float).diff().to_numpy()
+        length = min(len(values) for values in result.values()) if result else 0
+        return pd.DataFrame({
+            factor_id: np.asarray(values[-length:], dtype=float)
+            for factor_id, values in result.items()
+        }).dropna()
+
+    @staticmethod
+    def _return_distribution(returns):
+        values = np.asarray(returns, dtype=float)
+        monthly_mean = float(np.mean(values))
+        monthly_vol = float(np.std(values, ddof=1)) if len(values) > 1 else 0.0
+        return {
+            "observation_count": float(len(values)),
+            "monthly_mean": monthly_mean,
+            "monthly_volatility": monthly_vol,
+            "annualized_mean": float((1.0 + monthly_mean) ** 12 - 1.0),
+            "annualized_volatility": float(monthly_vol * np.sqrt(12.0)),
+            "p01": float(np.quantile(values, 0.01)),
+            "p05": float(np.quantile(values, 0.05)),
+            "p50": float(np.quantile(values, 0.50)),
+            "p95": float(np.quantile(values, 0.95)),
+            "p99": float(np.quantile(values, 0.99)),
+            "min": float(np.min(values)),
+            "max": float(np.max(values)),
+        }
+
+    @staticmethod
+    def _relative_error(actual, expected):
+        if abs(float(expected)) < 1.0e-12:
+            return abs(float(actual) - float(expected))
+        return abs(float(actual) - float(expected)) / abs(float(expected))
+
+    @staticmethod
+    def _report(
+        market,
+        as_of_date,
+        checks,
+        diagnostics,
+        scenario_distribution,
+        historical_distribution,
+        scenario_correlation_matrix,
+        historical_correlation_matrix,
+        factor_ids,
+    ):
+        passed = all(check.passed or check.severity != "ERROR" for check in checks)
+        return PMeasureBacktestReport(
+            market=market,
+            as_of_date=as_of_date,
+            passed=passed,
+            checks=tuple(checks),
+            diagnostics=diagnostics,
+            scenario_distribution=scenario_distribution,
+            historical_distribution=historical_distribution,
+            scenario_correlation_matrix=scenario_correlation_matrix,
+            historical_correlation_matrix=historical_correlation_matrix,
+            factor_ids=tuple(factor_ids),
+        )
+
+
 # ---------------------------------------------------------------------------
 # 1b. Phase 6 Scenario Metadata and Parameter Snapshot Dataclasses
 # ---------------------------------------------------------------------------
@@ -3360,6 +3850,9 @@ __all__ = [
     "CorrelationMatrixValidationCheck",
     "CorrelationMatrixValidationReport",
     "CorrelationMatrixValidator",
+    "PMeasureBacktestCheck",
+    "PMeasureBacktestReport",
+    "PMeasureBacktestValidator",
     "HullWhiteRateProcess",
     "G2PlusRateProcess",
     "GBMEquityProcess",

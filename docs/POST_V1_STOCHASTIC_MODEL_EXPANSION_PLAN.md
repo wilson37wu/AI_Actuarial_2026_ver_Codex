@@ -148,6 +148,9 @@ Current implementation notes:
   `phase8_rate_equity_fx_correlation_matrix(...)`, PSD repair / rejection
   evidence, and empirical scenario diagnostics documented in
   `docs/ESG_CORRELATION_VALIDATION.md`.
+- Task 4 is implemented through `PMeasureBacktestValidator`, distribution
+  diagnostics, expected / historical correlation stability checks, and the
+  report contract documented in `docs/ESG_P_MEASURE_BACKTEST_SCAFFOLD.md`.
 
 Exit criteria:
 

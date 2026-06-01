@@ -32,6 +32,7 @@ from par_model_v2.stochastic.esg_process import (
     HullWhiteRateProcess,
     Measure,
     ParameterSnapshot,
+    PMeasureBacktestValidator,
     QMeasureMartingaleValidator,
     RiskFreeCurve,
     ScenarioSet,
@@ -774,6 +775,90 @@ class TestPhase8CorrelationValidation:
         assert report.diagnostics["scenario_factor_count"] == 3.0
         assert report.diagnostics["scenario_observation_count"] == pytest.approx(900 * 36)
         assert report.diagnostics["max_abs_target_correlation_error"] <= 0.35
+
+
+class TestPhase8PMeasureBacktestValidator:
+    def test_p_measure_backtest_scaffold_records_distribution_and_correlation(self):
+        equity_factor = starter_equity_factor("JP", valuation_date=date(2026, 6, 1))
+        fx_factor = starter_fx_factor("JPYHKD", valuation_date=date(2026, 6, 1))
+        scenarios = ScenarioSet.generate(
+            500,
+            36,
+            Measure.P,
+            equity_factor=equity_factor,
+            fx_factor=fx_factor,
+            base_currency="HKD",
+            valuation_date=date(2026, 6, 1),
+            seed=60,
+        )
+        sorted_data = scenarios.data.sort_values(["scenario_id", "month"])
+        rate_changes = (
+            sorted_data.pivot(index="scenario_id", columns="month", values="r_short")
+            .diff(axis=1)
+            .iloc[:, 1:]
+            .stack(dropna=False)
+            .to_numpy()
+        )
+        nonzero_months = sorted_data[sorted_data["month"] > 0]
+        historical = pd.DataFrame({
+            "rate_short_change": rate_changes,
+            "equity_return_1m": nonzero_months["equity_return_1m"].to_numpy(),
+            "fx_return_1m": nonzero_months["fx_return_1m"].to_numpy(),
+        })
+        expected = phase8_rate_equity_fx_correlation_matrix(
+            equity_factor.params,
+            fx_factor.params,
+        )
+
+        report = PMeasureBacktestValidator(
+            min_scenario_observations=500,
+            min_historical_observations=500,
+        ).validate(
+            scenarios,
+            historical_data=historical,
+            expected_matrix=expected,
+            market=equity_factor.market,
+            as_of_date=date(2026, 6, 1),
+        )
+
+        assert report.passed is True
+        assert report.market == "JP"
+        assert report.scenario_distribution["annualized_volatility"] > 0.0
+        assert report.historical_distribution["observation_count"] == pytest.approx(500 * 36)
+        assert report.factor_ids == (
+            "RATE_SHORT_CHANGE",
+            "EQUITY_RETURN_1M",
+            "FX_RETURN_1M",
+        )
+        assert report.diagnostics["historical_correlation_max_abs_drift"] == pytest.approx(0.0)
+        assert report.to_dict()["scenario_correlation_matrix"] is not None
+
+    def test_p_measure_backtest_rejects_q_measure_scenarios(self):
+        scenarios = ScenarioSet.generate(20, 12, Measure.Q, seed=61)
+
+        report = PMeasureBacktestValidator().validate(
+            scenarios,
+            market="US",
+            as_of_date=date(2026, 6, 1),
+        )
+
+        assert report.passed is False
+        assert "PMB-MEASURE-P" in {check.check_id for check in report.failed_checks()}
+
+    def test_p_measure_backtest_requires_historical_equity_return_column(self):
+        scenarios = ScenarioSet.generate(20, 12, Measure.P, seed=62)
+
+        report = PMeasureBacktestValidator().validate(
+            scenarios,
+            historical_data=pd.DataFrame({"not_equity_return": [0.01] * 24}),
+            market="US",
+            as_of_date=date(2026, 6, 1),
+        )
+
+        assert report.passed is False
+        assert "PMB-HISTORICAL-COLUMNS" in {
+            check.check_id for check in report.failed_checks()
+        }
 
 
 class TestScenarioSetGenerate:

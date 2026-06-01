@@ -238,6 +238,12 @@ symmetry, range, and positive-semidefinite status. It can reject invalid inputs,
 produce an eigenvalue-floor repair for model-owner review, and compute empirical
 rate/equity/FX scenario diagnostics. See `docs/ESG_CORRELATION_VALIDATION.md`.
 
+**Phase 8 P-measure backtest scaffold:** `PMeasureBacktestValidator` records
+real-world equity return distribution diagnostics and correlation stability
+evidence against configured or historical/reference inputs. It rejects
+non-P-measure scenarios and produces JSON-ready warning evidence for model-owner
+review. See `docs/ESG_P_MEASURE_BACKTEST_SCAFFOLD.md`.
+
 ### 4.2 Correlated Brownian Motions (Cholesky Decomposition)
 
 The interest rate and equity Wiener processes are correlated. Simulate via:

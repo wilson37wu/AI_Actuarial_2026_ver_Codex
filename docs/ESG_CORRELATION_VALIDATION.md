@@ -99,5 +99,6 @@ the configured `GBMParams` and optional `FXParams`.
 - The current generator uses static correlations; time-varying, regime-switching,
   stochastic-volatility, and jump-correlation models remain future upgrades.
 - Empirical scenario diagnostics do not replace historical backtesting. The next
-  Phase 8 task adds the P-measure backtest scaffold for equity distribution and
-  correlation stability.
+  Phase 8 task added `PMeasureBacktestValidator`; see
+  `docs/ESG_P_MEASURE_BACKTEST_SCAFFOLD.md` for the real-world equity
+  distribution and correlation stability scaffold.
