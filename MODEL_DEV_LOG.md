@@ -52,7 +52,8 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 **Delivery:**
 - Local commit created: `2105b14acc666f643077a2422becb314623dfd78`.
-- `git push origin main` not attempted yet in this run.
+- `git push origin main` failed because the sandbox could not connect to
+  `github.com` on port 443.
 - Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`,
   `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
   `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
