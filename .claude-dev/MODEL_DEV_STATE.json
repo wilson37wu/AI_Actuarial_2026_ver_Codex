@@ -1,8 +1,8 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-05-31T18:13:44Z",
-  "last_run_duration_minutes": 47,
+  "last_run": "2026-06-01T00:10:10Z",
+  "last_run_duration_minutes": 38,
   "current_phase": "Phase 8: Equity, FX, and Correlation ESG",
   "overall_status": "active_post_v1_expansion",
   "phases": {
@@ -149,12 +149,13 @@
       "completed": [
         "Add US, Europe, Hong Kong / China, Japan, and Asia ex-Japan equity factors",
         "Add FX return factors where currency translation is needed",
-        "Implement correlation matrix validation, positive-semidefinite repair or rejection, and scenario diagnostics"
-      ],
-      "in_progress": [
+        "Implement correlation matrix validation, positive-semidefinite repair or rejection, and scenario diagnostics",
         "Add P-measure backtest scaffold for equity return distribution and correlation stability"
       ],
-      "next": "Document model limitations and upgrade path to stochastic volatility or jump diffusion"
+      "in_progress": [
+        "Document model limitations and upgrade path to stochastic volatility or jump diffusion"
+      ],
+      "next": null
     },
     "Phase 9: Asset Class and Derivative Library": {
       "status": "planned",
@@ -216,17 +217,17 @@
   "repository_info": {
     "url": "https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex",
     "branch": "main",
-    "last_commit_sha": "0c35b9d15a95a612dbef1584d2bab23bc918e2ff",
-    "last_commit_message": "[Phase 8] Add correlation validation diagnostics",
-    "commits_this_session": 38
+    "last_commit_sha": "181fffe5db5d4103e49e2b6cc8702bd9ee0fda36",
+    "last_commit_message": "[Phase 8] Add P-measure backtest scaffold",
+    "commits_this_session": 39
   },
   "progress_metrics": {
     "total_tasks": 66,
-    "tasks_completed": 47,
+    "tasks_completed": 48,
     "phases_completed": 7,
-    "estimated_completion_pct": 71,
+    "estimated_completion_pct": 73,
     "average_cycle_duration_minutes": 52,
-    "cycles_run": 95
+    "cycles_run": 96
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",
@@ -245,6 +246,7 @@
       "RegionalEquityFactor + regional_equity_factors.json (par_model_v2/stochastic -- US/EU/HK_CN/JP/ASIA_EX_JP starter equity factors; PHASE 8 TASK 1)",
       "FXReturnFactor + FXSpotProcess + fx_return_factors.json (par_model_v2/stochastic -- USDHKD/EURHKD/CNYHKD/JPYHKD starter FX translation factors; PHASE 8 TASK 2)",
       "CorrelationMatrixValidator + phase8_rate_equity_fx_correlation_matrix (par_model_v2/stochastic/esg_process.py -- correlation matrix validation, PSD repair/rejection, and scenario diagnostics; PHASE 8 TASK 3)",
+      "PMeasureBacktestValidator (par_model_v2/stochastic/esg_process.py -- P-measure equity distribution and correlation stability scaffold; PHASE 8 TASK 4)",
       "TVOGEngine (par_model_v2/projection/tvog.py -- Q-measure TVOG; PHASE 4 TASK 2)",
       "HullWhiteCalibrator + GBMCalibrator (par_model_v2/calibration/calibration_framework.py -- PHASE 4 TASK 3)",
       "BacktestEngine + BacktestReport (par_model_v2/calibration/backtesting.py + backtest_reporting.py -- PHASE 4 TASKS 4-5)",

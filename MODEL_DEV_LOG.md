@@ -4,6 +4,57 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-01T00:10:10Z - Phase 8: Equity, FX, and Correlation ESG
+
+**Task Completed:** Add P-measure backtest scaffold for equity return distribution and correlation stability.
+
+**Accomplishments:**
+- Added `PMeasureBacktestValidator`, `PMeasureBacktestReport`, and
+  `PMeasureBacktestCheck` for JSON-ready real-world scenario backtest evidence.
+- Added P-measure-only checks, scenario observation and finite-return checks,
+  distribution diagnostics, and impossible return rejection below -100%.
+- Added optional historical/reference distribution comparisons for monthly
+  mean, volatility, 5th percentile, and 95th percentile review evidence.
+- Added expected-matrix and historical/reference correlation stability checks
+  covering short-rate changes, equity returns, and optional FX returns.
+- Created `docs/ESG_P_MEASURE_BACKTEST_SCAFFOLD.md` and linked it from the ESG
+  process, correlation validation, and post-v1 roadmap documentation.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 8 to the model
+  limitations and stochastic-volatility / jump-diffusion upgrade-path task.
+
+**Validation:**
+- `git diff --check` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_esg_process.py -q`
+  remains blocked with `No module named pytest`.
+- `python`, `py`, and `pytest` were not available on PATH; the user-site
+  `pytest.exe` exists but failed with Windows `Access is denied`.
+- `pip show pytest numpy pandas scipy` on the embedded Python reports the
+  packages are not installed.
+
+**Next Step:** Document model limitations and upgrade path to stochastic volatility or jump diffusion.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3 and 3.5: Added explicit real-world distribution
+  diagnostics, empirical correlation stability evidence, and sampling-count
+  disclosure for P-measure scenarios.
+- IA TAS M Sections 3.5 and 3.6: Added audit-ready report structures for
+  historical/reference backtest evidence and model-owner review warnings.
+
+**Delivery:**
+- Local implementation commit created:
+  `181fffe5db5d4103e49e2b6cc8702bd9ee0fda36`.
+- `git push origin main` failed because the sandbox could not connect to
+  `github.com` on port 443.
+- Gmail draft `r-2947324722712094360` was created for manual review.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-05-31T18:13:44Z - Phase 8: Equity, FX, and Correlation ESG
 
 **Task Completed:** Implement correlation matrix validation, positive-semidefinite repair or rejection, and scenario diagnostics.
