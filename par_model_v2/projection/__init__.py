@@ -20,6 +20,15 @@ from par_model_v2.projection.fixed_income import (
     fixed_income_market_value_after_shock,
     project_fixed_income_cashflows,
 )
+from par_model_v2.projection.private_assets import (
+    InfrastructureAsset,
+    PrivateAsset,
+    PrivateAssetProjectionResult,
+    PrivateCreditAsset,
+    PrivateEquityAsset,
+    default_phase9_private_assets,
+    project_private_asset_cashflows,
+)
 from par_model_v2.projection.hybrid_grid import (
     HybridGrid,
     HybridGridError,
@@ -36,4 +45,7 @@ __all__ = [
     "FixedIncomeInstrument", "FixedIncomeProjectionResult",
     "default_phase9_fixed_income_instruments",
     "fixed_income_market_value_after_shock", "project_fixed_income_cashflows",
+    "InfrastructureAsset", "PrivateAsset", "PrivateAssetProjectionResult",
+    "PrivateCreditAsset", "PrivateEquityAsset",
+    "default_phase9_private_assets", "project_private_asset_cashflows",
 ]
