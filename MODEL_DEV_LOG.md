@@ -4,6 +4,61 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-01T12:08:09Z - Phase 9: Asset Class and Derivative Library
+
+**Task Completed:** Add fixed-income instruments with coupon, duration, spread, downgrade, and default loss fields.
+
+**Accomplishments:**
+- Added `FixedIncomeInstrument` and `FixedIncomeProjectionResult` for governed
+  instrument-level fixed-income holdings with coupon, duration, spread,
+  downgrade-notch, default-probability, recovery, source, and limitation fields.
+- Added `project_fixed_income_cashflows(...)` to emit monthly coupon income,
+  spread carry, expected default loss, net income, bullet principal repayment,
+  discounted net income, market-value roll-forward, instrument records, and
+  class summaries.
+- Added `fixed_income_market_value_after_shock(...)` for transparent
+  duration-based rate / spread / downgrade repricing, plus starter Phase 9
+  government and corporate bond fixtures.
+- Created `docs/FIXED_INCOME_INSTRUMENT_LIBRARY.md` and updated the post-v1
+  roadmap to mark Phase 9 task 1 as implemented.
+- Added targeted tests in `tests/test_fixed_income_projection.py`.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 9 to private
+  credit, private equity, and infrastructure educational asset models.
+
+**Validation:**
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `git diff --check` completed successfully; Git emitted line-ending warnings
+  for existing Windows working-copy normalization only.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_fixed_income_projection.py -q`
+  remains blocked with `No module named pytest`.
+- Direct runtime smoke execution is also blocked because the reachable embedded
+  Python cannot import `numpy`; `python` and `pytest` are not on PATH, and
+  direct user-site `pytest.exe` execution fails with Windows `Access is denied`.
+
+**Next Step:** Add private credit, private equity, and infrastructure educational asset models.
+
+**Industry Standards Progress:**
+- SOA ASOP 7 / ASOP 56: Asset assumptions now expose coupon, duration, spread,
+  downgrade, and expected default-loss drivers separately for fixed-income
+  holdings.
+- IA TAS M: Fixed-income records include source and limitation identifiers and
+  produce reconstructable monthly audit evidence.
+- ERM: Added first-order rate / spread / downgrade stress mechanics and
+  explicit default-loss diagnostics, with limitations documented.
+
+**Delivery:**
+- Local implementation commit created:
+  `e4d18cdf5f17a129ca55fc45ac476da0e09e355a`.
+- `git push origin main` not attempted because network access is restricted in
+  the sandbox.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-06-01T06:03:00Z - Phase 8: Equity, FX, and Correlation ESG
 
 **Task Completed:** Document model limitations and upgrade path to stochastic volatility or jump diffusion.
