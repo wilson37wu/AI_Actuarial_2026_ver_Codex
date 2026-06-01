@@ -4,6 +4,49 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-01T06:03:00Z - Phase 8: Equity, FX, and Correlation ESG
+
+**Task Completed:** Document model limitations and upgrade path to stochastic volatility or jump diffusion.
+
+**Accomplishments:**
+- Created `docs/ESG_MODEL_LIMITATIONS_AND_UPGRADE_PATH.md` with a governed
+  Phase 8 limitation register for regional equity, FX, static correlation,
+  backtest, calibration, and measure-specific market-consistency risks.
+- Defined staged upgrade gates for calibration readiness, Heston-style
+  stochastic volatility, Merton-style jump diffusion, regime-aware correlation,
+  and downstream TVOG / VaR / ES / ALM / reporting integration.
+- Linked the limitation record from the ESG process, regional equity, FX,
+  correlation validation, P-measure backtest, and post-v1 roadmap documents.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to complete Phase 8 and advance
+  Phase 9 to fixed-income instrument coverage.
+
+**Validation:**
+- `git diff --check` completed successfully; Git emitted line-ending warnings
+  for existing Windows working-copy normalization only.
+- Documentation link search confirmed references to
+  `docs/ESG_MODEL_LIMITATIONS_AND_UPGRADE_PATH.md` across the Phase 8 ESG docs.
+
+**Next Step:** Add fixed-income instruments with coupon, duration, spread, downgrade, and default loss fields.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3, 3.5, and 3.6: Added explicit limitation
+  disclosure, unsuitable-use controls, and validation gates for richer equity,
+  FX, jump, stochastic-volatility, and dependency models.
+- IA TAS M Sections 3.5 and 3.6: Added owner-review decision gates, data lineage
+  prerequisites, and documentation update requirements for future upgrades.
+
+**Delivery:**
+- Local implementation commit created:
+  `f3488b023b8094c2600b38e9f7d6cbe353caf1b6`.
+- `git push origin main` pending at log-write time; network access has been
+  restricted in prior automation runs.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-06-01T00:10:10Z - Phase 8: Equity, FX, and Correlation ESG
 
 **Task Completed:** Add P-measure backtest scaffold for equity return distribution and correlation stability.
