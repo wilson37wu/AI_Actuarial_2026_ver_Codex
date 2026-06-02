@@ -102,6 +102,7 @@ Targeted tests in `tests/test_asset_rollforward_reporting.py` cover:
 
 ## Next Phase 9 Task
 
-The next task is to add asset class stress tests and governance notes.  That
-task should reuse this reporting view as the attribution target for stressed
-rate, spread, default, private-asset, liquidity, and derivative scenarios.
+The follow-on Phase 9 task is implemented in
+`docs/ASSET_CLASS_STRESS_TESTS_AND_GOVERNANCE.md`.  It adds deterministic rate,
+spread, default, private-asset, infrastructure, and derivative stress
+attribution with scenario-level governance notes.

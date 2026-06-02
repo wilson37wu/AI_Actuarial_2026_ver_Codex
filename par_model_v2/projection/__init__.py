@@ -45,6 +45,12 @@ from par_model_v2.projection.asset_reporting import (
     aggregate_asset_rollforward,
     project_phase9_asset_rollforward,
 )
+from par_model_v2.projection.asset_stress import (
+    AssetStressReport,
+    AssetStressScenario,
+    default_phase9_asset_stress_scenarios,
+    run_asset_class_stress_tests,
+)
 from par_model_v2.projection.hybrid_grid import (
     HybridGrid,
     HybridGridError,
@@ -70,4 +76,6 @@ __all__ = [
     "value_bond_forward", "value_derivative_portfolio", "value_interest_rate_swap",
     "AssetRollForwardReport", "aggregate_asset_rollforward",
     "project_phase9_asset_rollforward",
+    "AssetStressReport", "AssetStressScenario",
+    "default_phase9_asset_stress_scenarios", "run_asset_class_stress_tests",
 ]

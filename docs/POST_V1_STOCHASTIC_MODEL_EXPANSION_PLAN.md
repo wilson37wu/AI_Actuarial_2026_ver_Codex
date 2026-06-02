@@ -171,7 +171,7 @@ Tasks:
 2. Add private credit, private equity, and infrastructure educational asset models. **Implemented through `PrivateCreditAsset`, `PrivateEquityAsset`, `InfrastructureAsset`, `project_private_asset_cashflows(...)`, and `docs/PRIVATE_ASSET_MODELS.md`.**
 3. Add interest rate swap valuation and bond forward valuation examples. **Implemented through `InterestRateSwapContract`, `BondForwardContract`, `value_derivative_portfolio(...)`, and `docs/DERIVATIVE_VALUATION_EXAMPLES.md`.**
 4. Add asset cashflow aggregation and market value roll-forward reporting. **Implemented through `AssetRollForwardReport`, `aggregate_asset_rollforward(...)`, `project_phase9_asset_rollforward(...)`, and `docs/ASSET_ROLLFORWARD_REPORTING.md`.**
-5. Add asset class stress tests and governance notes.
+5. Add asset class stress tests and governance notes. **Implemented through `AssetStressScenario`, `run_asset_class_stress_tests(...)`, `default_phase9_asset_stress_scenarios()`, and `docs/ASSET_CLASS_STRESS_TESTS_AND_GOVERNANCE.md`.**
 
 Exit criteria:
 
