@@ -1,0 +1,51 @@
+{
+  "fixture_id": "PHASE10-HK-CASH-DIVIDEND-POLICIES-2026",
+  "description": "Educational Hong Kong participating cash dividend sample policies for Phase 10 development.",
+  "policies": [
+    {
+      "policy_id": "HKCD000001",
+      "product_code": "HKCD_PAR_2026",
+      "issue_age": 35,
+      "gender": "M",
+      "term_years": 10,
+      "sum_assured": 500000.0,
+      "annual_premium": 43000.0,
+      "policy_year": 1,
+      "inforce_count": 1.0,
+      "premium_mode": "ANNUAL",
+      "dividend_option": "CASH",
+      "distribution_channel": "AGENCY",
+      "source_id": "PHASE10-HK-CASH-DIVIDEND-SAMPLE"
+    },
+    {
+      "policy_id": "HKCD000002",
+      "product_code": "HKCD_PAR_2026",
+      "issue_age": 42,
+      "gender": "F",
+      "term_years": 20,
+      "sum_assured": 800000.0,
+      "annual_premium": 38500.0,
+      "policy_year": 5,
+      "inforce_count": 1.0,
+      "premium_mode": "ANNUAL",
+      "dividend_option": "CASH",
+      "distribution_channel": "BROKER",
+      "source_id": "PHASE10-HK-CASH-DIVIDEND-SAMPLE"
+    },
+    {
+      "policy_id": "HKCD000003",
+      "product_code": "HKCD_PAR_2026",
+      "issue_age": 55,
+      "gender": "M",
+      "term_years": 5,
+      "sum_assured": 300000.0,
+      "annual_premium": 58500.0,
+      "policy_year": 3,
+      "inforce_count": 1.0,
+      "premium_mode": "ANNUAL",
+      "dividend_option": "CASH",
+      "distribution_channel": "BANCASSURANCE",
+      "source_id": "PHASE10-HK-CASH-DIVIDEND-SAMPLE"
+    }
+  ]
+}

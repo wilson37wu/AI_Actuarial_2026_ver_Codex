@@ -186,6 +186,8 @@ Exit criteria:
 Tasks:
 
 1. Define Hong Kong cash dividend product mechanics and sample policy data.
+   Implemented in `par_model_v2/projection/hk_participating.py` with sample
+   fixtures and documentation in `docs/HK_CASH_DIVIDEND_PRODUCT_MECHANICS.md`.
 2. Define reversionary bonus mechanics, including vested bonus, terminal bonus, and guarantee split.
 3. Implement dividend / bonus declaration assumptions and sensitivity hooks.
 4. Add asset-share support tests for cash dividend and reversionary bonus variants.
