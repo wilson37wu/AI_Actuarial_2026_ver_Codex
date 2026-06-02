@@ -4,6 +4,61 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-02T00:30:00Z - Phase 9: Asset Class and Derivative Library
+
+**Task Completed:** Add interest rate swap valuation and bond forward valuation examples
+
+**Accomplishments:**
+- Added `InterestRateSwapContract` and `BondForwardContract` for governed
+  educational derivative examples with valuation measure, discount curve source,
+  collateral / settlement basis, source IDs, and limitation IDs.
+- Added curve-based swap valuation exposing fixed-leg PV, floating-leg PV,
+  fair fixed rate, pay-fixed / receive-fixed directionality, and payment
+  schedule rows.
+- Added bond-forward cost-of-carry valuation exposing coupon carry before
+  delivery, fair forward price, delivery discount factor, long / short
+  directionality, and settlement schedule rows.
+- Added `value_derivative_portfolio(...)` plus starter HKD swap and government
+  bond-forward examples.
+- Created `docs/DERIVATIVE_VALUATION_EXAMPLES.md`, linked the Phase 9 roadmap,
+  and added targeted derivative valuation tests.
+- Updated Phase 9 state to advance to asset cashflow aggregation and market
+  value roll-forward reporting.
+
+**Validation:**
+- `git diff --check` completed successfully; Git emitted line-ending warnings
+  for existing Windows working-copy normalization only.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_derivative_valuation.py -q`
+  remains blocked with `No module named pytest`.
+- Direct runtime smoke import remains blocked because the reachable embedded
+  Python lacks `numpy`; no `python`, `py`, `pytest`, or `.venv` runtime is
+  available on PATH in this sandbox.
+
+**Next Step:** Add asset cashflow aggregation and market value roll-forward reporting.
+
+**Industry Standards Progress:**
+- SOA ASOP 7 / ASOP 56: Derivative valuation examples now disclose valuation
+  measure, curve source, fixed/floating leg mechanics, coupon carry, and
+  settlement timing.
+- IA TAS M Sections 3.5 and 3.6: Each derivative record carries source and
+  limitation identifiers, with valuation records reconstructable from contract
+  terms plus the discount curve.
+- ERM: Swap and bond-forward limitations are documented, including omitted
+  multi-curve CSA discounting, day-count calendars, reset lag, convexity,
+  margining, collateral liquidity, CVA, and enforceability analysis.
+
+**Delivery:**
+- Local implementation commit pending at log-write time.
+- `git push origin main` not attempted before local commit validation.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-06-01T18:07:58Z - Phase 9: Asset Class and Derivative Library
 
 **Task Completed:** Add private credit, private equity, and infrastructure educational asset models

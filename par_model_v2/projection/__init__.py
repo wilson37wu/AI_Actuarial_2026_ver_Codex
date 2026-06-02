@@ -29,6 +29,17 @@ from par_model_v2.projection.private_assets import (
     default_phase9_private_assets,
     project_private_asset_cashflows,
 )
+from par_model_v2.projection.derivatives import (
+    BondForwardContract,
+    DerivativeValuationResult,
+    InterestRateSwapContract,
+    bond_forward_cashflow_schedule,
+    default_phase9_derivative_examples,
+    interest_rate_swap_cashflow_schedule,
+    value_bond_forward,
+    value_derivative_portfolio,
+    value_interest_rate_swap,
+)
 from par_model_v2.projection.hybrid_grid import (
     HybridGrid,
     HybridGridError,
@@ -48,4 +59,8 @@ __all__ = [
     "InfrastructureAsset", "PrivateAsset", "PrivateAssetProjectionResult",
     "PrivateCreditAsset", "PrivateEquityAsset",
     "default_phase9_private_assets", "project_private_asset_cashflows",
+    "BondForwardContract", "DerivativeValuationResult",
+    "InterestRateSwapContract", "bond_forward_cashflow_schedule",
+    "default_phase9_derivative_examples", "interest_rate_swap_cashflow_schedule",
+    "value_bond_forward", "value_derivative_portfolio", "value_interest_rate_swap",
 ]
