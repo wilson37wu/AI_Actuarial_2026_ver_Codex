@@ -1,8 +1,8 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-02T00:30:00Z",
-  "last_run_duration_minutes": 42,
+  "last_run": "2026-06-02T06:08:00Z",
+  "last_run_duration_minutes": 38,
   "current_phase": "Phase 9: Asset Class and Derivative Library",
   "overall_status": "active_post_v1_expansion",
   "phases": {
@@ -169,12 +169,13 @@
       "completed": [
         "Add fixed-income instruments with coupon, duration, spread, downgrade, and default loss fields",
         "Add private credit, private equity, and infrastructure educational asset models",
-        "Add interest rate swap valuation and bond forward valuation examples"
-      ],
-      "in_progress": [
+        "Add interest rate swap valuation and bond forward valuation examples",
         "Add asset cashflow aggregation and market value roll-forward reporting"
       ],
-      "next": "Add asset class stress tests and governance notes"
+      "in_progress": [
+        "Add asset class stress tests and governance notes"
+      ],
+      "next": null
     },
     "Phase 10: Hong Kong Participating Liability Products": {
       "status": "planned",
@@ -228,11 +229,11 @@
   },
   "progress_metrics": {
     "total_tasks": 66,
-    "tasks_completed": 52,
+    "tasks_completed": 53,
     "phases_completed": 8,
-    "estimated_completion_pct": 79,
+    "estimated_completion_pct": 80,
     "average_cycle_duration_minutes": 52,
-    "cycles_run": 100
+    "cycles_run": 101
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",
@@ -255,6 +256,7 @@
       "FixedIncomeInstrument + project_fixed_income_cashflows (par_model_v2/projection/fixed_income.py -- coupon, duration, spread, downgrade, and default-loss instrument projection; PHASE 9 TASK 1)",
       "PrivateCreditAsset + PrivateEquityAsset + InfrastructureAsset + project_private_asset_cashflows (par_model_v2/projection/private_assets.py -- private asset income, loss, capital-call, distribution, inflation-linkage, and valuation-smoothing projection; PHASE 9 TASK 2)",
       "InterestRateSwapContract + BondForwardContract + value_derivative_portfolio (par_model_v2/projection/derivatives.py -- educational swap and bond-forward curve valuation examples; PHASE 9 TASK 3)",
+      "AssetRollForwardReport + aggregate_asset_rollforward + project_phase9_asset_rollforward (par_model_v2/projection/asset_reporting.py -- asset cashflow aggregation and market value roll-forward reporting; PHASE 9 TASK 4)",
       "TVOGEngine (par_model_v2/projection/tvog.py -- Q-measure TVOG; PHASE 4 TASK 2)",
       "HullWhiteCalibrator + GBMCalibrator (par_model_v2/calibration/calibration_framework.py -- PHASE 4 TASK 3)",
       "BacktestEngine + BacktestReport (par_model_v2/calibration/backtesting.py + backtest_reporting.py -- PHASE 4 TASKS 4-5)",

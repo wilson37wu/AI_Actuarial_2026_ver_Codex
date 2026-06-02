@@ -4,6 +4,59 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-02T06:08:00Z - Phase 9: Asset Class and Derivative Library
+
+**Task Completed:** Add asset cashflow aggregation and market value roll-forward reporting
+
+**Accomplishments:**
+- Added `AssetRollForwardReport`, `aggregate_asset_rollforward(...)`, and
+  `project_phase9_asset_rollforward(...)` in
+  `par_model_v2/projection/asset_reporting.py`.
+- Normalized fixed-income, private-asset, and derivative outputs into a monthly
+  roll-forward with income, spread, default loss, capital calls, distributions,
+  principal repayments, derivative settlements, valuation movement, and
+  reported NAV fields.
+- Added class-level attribution and source-level summaries with an explicit
+  deterministic roll-forward identity.
+- Exported the reporting API through `par_model_v2.projection`.
+- Added `docs/ASSET_ROLLFORWARD_REPORTING.md` and linked Phase 9 roadmap /
+  derivative documentation to the new reporting layer.
+- Added targeted tests in `tests/test_asset_rollforward_reporting.py`.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 9 to asset class
+  stress tests and governance notes.
+
+**Validation:**
+- `git diff --check` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_asset_rollforward_reporting.py tests\test_fixed_income_projection.py tests\test_private_asset_projection.py tests\test_derivative_valuation.py -q`
+  is blocked because the reachable embedded Python has no `pytest`.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pip show pytest numpy pandas scipy`
+  reports those packages not found, and no `python`, `py`, or `pytest`
+  executable is available on PATH in this sandbox.
+
+**Next Step:** Add asset class stress tests and governance notes.
+
+**Industry Standards Progress:**
+- SOA ASOP 7 / ASOP 56: Asset reporting now separates income, principal,
+  losses, capital activity, derivative settlements, and valuation movement for
+  transparent ALM attribution.
+- IA TAS M: Reporting rows preserve `source_type`, `instrument_id`, and
+  `asset_class` traceability from source projection outputs to class summaries.
+- ERM: Deterministic roll-forward limitations are documented; stress-specific
+  governance notes remain the next Phase 9 task.
+
+**Delivery:**
+- Local commit pending at log-write time.
+- `git push origin main` not attempted because network access is restricted in
+  the sandbox.
+- Pre-existing dirty files `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-06-02T00:30:00Z - Phase 9: Asset Class and Derivative Library
 
 **Task Completed:** Add interest rate swap valuation and bond forward valuation examples

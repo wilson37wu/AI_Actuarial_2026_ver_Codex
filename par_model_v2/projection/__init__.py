@@ -40,6 +40,11 @@ from par_model_v2.projection.derivatives import (
     value_derivative_portfolio,
     value_interest_rate_swap,
 )
+from par_model_v2.projection.asset_reporting import (
+    AssetRollForwardReport,
+    aggregate_asset_rollforward,
+    project_phase9_asset_rollforward,
+)
 from par_model_v2.projection.hybrid_grid import (
     HybridGrid,
     HybridGridError,
@@ -63,4 +68,6 @@ __all__ = [
     "InterestRateSwapContract", "bond_forward_cashflow_schedule",
     "default_phase9_derivative_examples", "interest_rate_swap_cashflow_schedule",
     "value_bond_forward", "value_derivative_portfolio", "value_interest_rate_swap",
+    "AssetRollForwardReport", "aggregate_asset_rollforward",
+    "project_phase9_asset_rollforward",
 ]

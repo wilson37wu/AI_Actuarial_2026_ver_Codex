@@ -123,9 +123,10 @@ Targeted tests in `tests/test_derivative_valuation.py` cover:
 - input validation for notional, dates, prices, and maturity ordering;
 - starter fixture coverage and portfolio-level market value aggregation.
 
-## Next Phase 9 Task
+## Downstream Reporting
 
-The next task is to add asset cashflow aggregation and market value roll-forward
-reporting.  That task should combine fixed income, private assets, and
-derivative valuation records into an asset-class attribution view suitable for
-ALM reporting.
+The derivative valuation records now feed
+`aggregate_asset_rollforward(...)` in `par_model_v2/projection/asset_reporting.py`.
+That report maps swap and bond-forward scheduled settlements into monthly
+asset-class attribution while keeping derivative market value separate from
+cash settlement activity.
