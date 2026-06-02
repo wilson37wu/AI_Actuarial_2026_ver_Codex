@@ -4,6 +4,56 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-02T18:10:18Z - Phase 10: Hong Kong Participating Liability Products
+
+**Task Completed:** Define Hong Kong cash dividend product mechanics and sample policy data.
+
+**Accomplishments:**
+- Added `HKCashDividendMechanics` and `HKCashDividendPolicy` in
+  `par_model_v2/projection/hk_participating.py` for educational Hong Kong cash
+  dividend participating endowment mechanics.
+- Added governed sample policy fixtures in
+  `par_model_v2/projection/fixtures/hk_cash_dividend_policies.json` covering
+  5-year, 10-year, and 20-year HKD cash-dividend policies.
+- Added loaders, table validation, annual non-guaranteed cash dividend
+  schedules, and conversion to the existing deterministic
+  `ParEndowmentProduct` guaranteed-base contract.
+- Exported the Phase 10 liability APIs through `par_model_v2.projection`.
+- Created `docs/HK_CASH_DIVIDEND_PRODUCT_MECHANICS.md` and linked the Phase 10
+  roadmap entry.
+- Added targeted tests in `tests/test_hk_participating_products.py`.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 10 to
+  reversionary bonus mechanics.
+
+**Validation:**
+- `git diff --check` completed successfully; Git emitted line-ending warnings
+  for existing Windows working-copy normalization only.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_hk_participating_products.py -q`
+  remains blocked because the reachable embedded Python has no `pytest`.
+
+**Next Step:** Define reversionary bonus mechanics including vested bonus, terminal bonus, and guarantee split.
+
+**Industry Standards Progress:**
+- SOA ASOP 56: Product mechanics, placeholder dividend rate, and unsupported
+  production use are disclosed explicitly rather than embedded as undocumented
+  projection constants.
+- IA TAS M: Policy fixtures preserve product code, policy ID, source ID, and
+  limitation ID for audit reconstruction.
+- ERM: Cash dividends are separately identified as non-guaranteed educational
+  illustrations pending declaration, supportability, and sensitivity hooks.
+
+**Delivery:**
+- Local task commit created: `57874fbd4ee04c742e31585da4ef908674cc7897`.
+- `git push origin main` not yet attempted at log-write time.
+- Pre-existing dirty files `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-06-02T12:07:40Z - Phase 9: Asset Class and Derivative Library
 
 **Task Completed:** Add asset class stress tests and governance notes

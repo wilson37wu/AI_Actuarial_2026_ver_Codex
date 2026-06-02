@@ -1,8 +1,8 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-02T12:07:40Z",
-  "last_run_duration_minutes": 34,
+  "last_run": "2026-06-02T18:10:18Z",
+  "last_run_duration_minutes": 31,
   "current_phase": "Phase 10: Hong Kong Participating Liability Products",
   "overall_status": "active_post_v1_expansion",
   "phases": {
@@ -186,11 +186,13 @@
         "Add asset-share support tests for cash dividend and reversionary bonus variants",
         "Add liability reporting views for reserves, TVOG, bonus supportability, and management summaries"
       ],
-      "completed": [],
-      "in_progress": [
+      "completed": [
         "Define Hong Kong cash dividend product mechanics and sample policy data"
       ],
-      "next": "Define reversionary bonus mechanics including vested bonus, terminal bonus, and guarantee split"
+      "in_progress": [
+        "Define reversionary bonus mechanics including vested bonus, terminal bonus, and guarantee split"
+      ],
+      "next": "Implement dividend and bonus declaration assumptions and sensitivity hooks"
     },
     "Phase 11: 100,000-Policy Processing and Reporting Cycle": {
       "status": "planned",
@@ -224,17 +226,17 @@
   "repository_info": {
     "url": "https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex",
     "branch": "main",
-    "last_commit_sha": "d1468e0ffad49c12f37bd805c740c80b29d6f751",
-    "last_commit_message": "[Phase 9] Add asset class stress tests and governance notes",
-    "commits_this_session": 45
+    "last_commit_sha": "57874fbd4ee04c742e31585da4ef908674cc7897",
+    "last_commit_message": "[Phase 10] Define HK cash dividend mechanics and sample data",
+    "commits_this_session": 46
   },
   "progress_metrics": {
     "total_tasks": 66,
-    "tasks_completed": 54,
+    "tasks_completed": 55,
     "phases_completed": 9,
-    "estimated_completion_pct": 82,
+    "estimated_completion_pct": 83,
     "average_cycle_duration_minutes": 52,
-    "cycles_run": 102
+    "cycles_run": 103
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",
@@ -262,7 +264,8 @@
       "HullWhiteCalibrator + GBMCalibrator (par_model_v2/calibration/calibration_framework.py -- PHASE 4 TASK 3)",
       "BacktestEngine + BacktestReport (par_model_v2/calibration/backtesting.py + backtest_reporting.py -- PHASE 4 TASKS 4-5)",
       "SensitivityEngine (par_model_v2/analysis/sensitivity.py -- 18-shock grid VR-SE01..SE04 -- PHASE 4 TASK 6)",
-      "AssetStressScenario + run_asset_class_stress_tests (par_model_v2/projection/asset_stress.py -- deterministic asset class stress tests and governance notes; PHASE 9 TASK 5)"
+      "AssetStressScenario + run_asset_class_stress_tests (par_model_v2/projection/asset_stress.py -- deterministic asset class stress tests and governance notes; PHASE 9 TASK 5)",
+      "HKCashDividendMechanics + HKCashDividendPolicy + hk_cash_dividend_policies.json (par_model_v2/projection -- Hong Kong cash dividend mechanics and sample policy fixtures; PHASE 10 TASK 1)"
     ]
   },
   "completion_summary": {
