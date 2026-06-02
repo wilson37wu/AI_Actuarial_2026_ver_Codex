@@ -1,9 +1,9 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-02T06:08:00Z",
-  "last_run_duration_minutes": 38,
-  "current_phase": "Phase 9: Asset Class and Derivative Library",
+  "last_run": "2026-06-02T12:07:40Z",
+  "last_run_duration_minutes": 34,
+  "current_phase": "Phase 10: Hong Kong Participating Liability Products",
   "overall_status": "active_post_v1_expansion",
   "phases": {
     "Phase 1: Model Review & Documentation": {
@@ -157,7 +157,7 @@
       "next": null
     },
     "Phase 9: Asset Class and Derivative Library": {
-      "status": "in_progress",
+      "status": "completed",
       "description": "Expand asset coverage to richer fixed income, public equity, private credit, private equity, infrastructure, interest rate swaps, and bond forwards",
       "tasks": [
         "Add fixed-income instruments with coupon, duration, spread, downgrade, and default loss fields",
@@ -170,15 +170,14 @@
         "Add fixed-income instruments with coupon, duration, spread, downgrade, and default loss fields",
         "Add private credit, private equity, and infrastructure educational asset models",
         "Add interest rate swap valuation and bond forward valuation examples",
-        "Add asset cashflow aggregation and market value roll-forward reporting"
-      ],
-      "in_progress": [
+        "Add asset cashflow aggregation and market value roll-forward reporting",
         "Add asset class stress tests and governance notes"
       ],
+      "in_progress": [],
       "next": null
     },
     "Phase 10: Hong Kong Participating Liability Products": {
-      "status": "planned",
+      "status": "in_progress",
       "description": "Enrich liability modelling for Hong Kong participating products, starting with cash dividend and reversionary bonus mechanics",
       "tasks": [
         "Define Hong Kong cash dividend product mechanics and sample policy data",
@@ -188,8 +187,10 @@
         "Add liability reporting views for reserves, TVOG, bonus supportability, and management summaries"
       ],
       "completed": [],
-      "in_progress": [],
-      "next": "Define Hong Kong cash dividend product mechanics and sample policy data"
+      "in_progress": [
+        "Define Hong Kong cash dividend product mechanics and sample policy data"
+      ],
+      "next": "Define reversionary bonus mechanics including vested bonus, terminal bonus, and guarantee split"
     },
     "Phase 11: 100,000-Policy Processing and Reporting Cycle": {
       "status": "planned",
@@ -223,17 +224,17 @@
   "repository_info": {
     "url": "https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex",
     "branch": "main",
-    "last_commit_sha": "c3f3bf5f0bf65557ef0ac7522e1511cc76f7c755",
-    "last_commit_message": "[Phase 9] Add asset roll-forward reporting",
-    "commits_this_session": 44
+    "last_commit_sha": "d1468e0ffad49c12f37bd805c740c80b29d6f751",
+    "last_commit_message": "[Phase 9] Add asset class stress tests and governance notes",
+    "commits_this_session": 45
   },
   "progress_metrics": {
     "total_tasks": 66,
-    "tasks_completed": 53,
-    "phases_completed": 8,
-    "estimated_completion_pct": 80,
+    "tasks_completed": 54,
+    "phases_completed": 9,
+    "estimated_completion_pct": 82,
     "average_cycle_duration_minutes": 52,
-    "cycles_run": 101
+    "cycles_run": 102
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",
@@ -260,7 +261,8 @@
       "TVOGEngine (par_model_v2/projection/tvog.py -- Q-measure TVOG; PHASE 4 TASK 2)",
       "HullWhiteCalibrator + GBMCalibrator (par_model_v2/calibration/calibration_framework.py -- PHASE 4 TASK 3)",
       "BacktestEngine + BacktestReport (par_model_v2/calibration/backtesting.py + backtest_reporting.py -- PHASE 4 TASKS 4-5)",
-      "SensitivityEngine (par_model_v2/analysis/sensitivity.py -- 18-shock grid VR-SE01..SE04 -- PHASE 4 TASK 6)"
+      "SensitivityEngine (par_model_v2/analysis/sensitivity.py -- 18-shock grid VR-SE01..SE04 -- PHASE 4 TASK 6)",
+      "AssetStressScenario + run_asset_class_stress_tests (par_model_v2/projection/asset_stress.py -- deterministic asset class stress tests and governance notes; PHASE 9 TASK 5)"
     ]
   },
   "completion_summary": {

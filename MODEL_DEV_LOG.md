@@ -4,6 +4,64 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-02T12:07:40Z - Phase 9: Asset Class and Derivative Library
+
+**Task Completed:** Add asset class stress tests and governance notes
+
+**Accomplishments:**
+- Added `AssetStressScenario`, `AssetStressReport`, and
+  `run_asset_class_stress_tests(...)` in
+  `par_model_v2/projection/asset_stress.py`.
+- Added a default Phase 9 stress pack covering HKD rate-up, credit spread /
+  default pressure, private-market liquidity stress, and infrastructure
+  inflation / revenue downside stress.
+- Reported stress attribution by scenario, source type, instrument ID, asset
+  class, base market value, stressed market value, impact, driver, and
+  governance note.
+- Reused existing fixed-income duration repricing, private-asset valuation
+  fields, and derivative curve valuation examples for deterministic stress
+  evidence.
+- Exported the stress API through `par_model_v2.projection`.
+- Added `docs/ASSET_CLASS_STRESS_TESTS_AND_GOVERNANCE.md` and linked Phase 9
+  roadmap / roll-forward documentation to the completed stress layer.
+- Added targeted tests in `tests/test_asset_class_stress.py`.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to complete Phase 9 and advance
+  Phase 10 to Hong Kong cash dividend mechanics.
+
+**Validation:**
+- `git diff --check` completed successfully; Git emitted line-ending warnings
+  for existing Windows working-copy normalization only.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_asset_class_stress.py tests\test_asset_rollforward_reporting.py -q`
+  remains blocked because the reachable embedded Python has no `pytest`.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pip show pytest numpy pandas scipy`
+  reports those packages not found, and no `python`, `py`, or `pytest`
+  executable is available on PATH in this sandbox.
+
+**Next Step:** Define Hong Kong cash dividend product mechanics and sample policy data.
+
+**Industry Standards Progress:**
+- SOA ASOP 56: Stress definitions disclose rate, spread, default,
+  private-asset, infrastructure, and derivative valuation drivers separately.
+- IA TAS M: Stress rows preserve scenario, source, asset class, instrument, and
+  governance-note traceability for audit reconstruction.
+- ERM: Stress outputs separate rate, credit, private-market, infrastructure,
+  and derivative impacts, with explicit deterministic educational-use
+  limitations.
+
+**Delivery:**
+- Local task commit created: `d1468e0ffad49c12f37bd805c740c80b29d6f751`.
+- `git push origin main` failed because the sandbox could not connect to
+  `github.com` on port 443.
+- Gmail draft `r-6396610385396313207` was created for manual review.
+- Pre-existing dirty files `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-06-02T06:08:00Z - Phase 9: Asset Class and Derivative Library
 
 **Task Completed:** Add asset cashflow aggregation and market value roll-forward reporting
