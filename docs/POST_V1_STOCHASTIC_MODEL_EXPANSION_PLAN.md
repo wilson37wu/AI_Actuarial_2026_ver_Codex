@@ -197,6 +197,11 @@ Tasks:
    and declaration-aware cash dividend / reversionary bonus schedules; see
    `docs/HK_DECLARATION_ASSUMPTIONS_AND_SENSITIVITIES.md`.
 4. Add asset-share support tests for cash dividend and reversionary bonus variants.
+   Implemented through `HKAssetShareSupportReport`,
+   `default_hk_asset_share_fund_positions()`,
+   `hk_cash_dividend_asset_share_support_test(...)`,
+   `hk_reversionary_bonus_asset_share_support_test(...)`, and
+   `docs/HK_ASSET_SHARE_SUPPORT_TESTS.md`.
 5. Add liability reporting views for reserves, TVOG, bonus supportability, and management summaries.
 
 Exit criteria:

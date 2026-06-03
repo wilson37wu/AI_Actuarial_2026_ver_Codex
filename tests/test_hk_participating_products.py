@@ -15,10 +15,13 @@ from par_model_v2.projection import (
     annual_reversionary_bonus_schedule,
     available_hk_cash_dividend_policy_ids,
     available_hk_reversionary_bonus_policy_ids,
+    default_hk_asset_share_fund_positions,
     default_hk_cash_dividend_mechanics,
     default_hk_declaration_assumption,
     default_hk_reversionary_bonus_mechanics,
+    hk_cash_dividend_asset_share_support_test,
     hk_declaration_sensitivity,
+    hk_reversionary_bonus_asset_share_support_test,
     reversionary_bonus_guarantee_split,
     sample_hk_cash_dividend_policies,
     sample_hk_cash_dividend_policy_table,
@@ -126,6 +129,51 @@ class TestHKCashDividendTablesAndSchedules:
         assert list(schedule["month"]) == [12, 24, 36, 48, 60, 72, 84, 96, 108, 120]
         assert set(schedule["guarantee_status"]) == {"NON_GUARANTEED"}
         assert schedule["cash_dividend"].sum() == pytest.approx(6_000.0 * policy.term_years)
+
+
+class TestHKCashDividendAssetShareSupport:
+    def test_default_fund_positions_have_governed_asset_mix(self) -> None:
+        positions = default_hk_asset_share_fund_positions()
+
+        assert [position.asset_class for position in positions] == [
+            "Govt",
+            "Credit_A",
+            "Equity",
+            "Cash",
+        ]
+        assert sum(position.market_value for position in positions) > 0.0
+
+    def test_cash_dividend_support_report_tracks_cumulative_dividends(self) -> None:
+        policy = sample_hk_cash_dividend_policies(["HKCD000001"])[0]
+        report = hk_cash_dividend_asset_share_support_test(policy)
+
+        assert report.product_variant == "CASH_DIVIDEND"
+        assert len(report.support_tests) == policy.term_years
+        assert set(report.support_tests["support_test_type"]) == {"CUMULATIVE_CASH_DIVIDEND"}
+        assert report.support_tests["support_obligation"].iloc[-1] == pytest.approx(
+            annual_cash_dividend_schedule(policy)["cash_dividend"].sum()
+        )
+        assert report.to_record()["policy_id"] == policy.policy_id
+        assert report.final_support_margin == pytest.approx(
+            report.support_tests["support_margin"].iloc[-1]
+        )
+
+    def test_cash_dividend_down_sensitivity_improves_support_margin(self) -> None:
+        policy = sample_hk_cash_dividend_policies(["HKCD000001"])[0]
+        base_report = hk_cash_dividend_asset_share_support_test(policy)
+        down_report = hk_cash_dividend_asset_share_support_test(
+            policy,
+            declaration_assumption=hk_declaration_sensitivity(
+                "DIV_DOWN_50",
+                cash_dividend_rate_multiplier=0.50,
+            ),
+        )
+
+        assert down_report.sensitivity_label == "DIV_DOWN_50"
+        assert down_report.support_tests["support_obligation"].iloc[-1] == pytest.approx(
+            base_report.support_tests["support_obligation"].iloc[-1] * 0.50
+        )
+        assert down_report.final_support_margin > base_report.final_support_margin
 
 
 class TestHKDeclarationAssumptions:
@@ -302,3 +350,44 @@ class TestHKReversionaryBonusTablesAndSchedules:
         assert split["total_guaranteed_maturity_benefit"] == pytest.approx(428_750.0)
         assert split["terminal_bonus_pct"] == pytest.approx(0.35)
         assert split["terminal_bonus_guarantee_status"] == "NON_GUARANTEED"
+
+
+class TestHKReversionaryBonusAssetShareSupport:
+    def test_reversionary_bonus_support_report_tracks_vested_and_terminal_bonus(self) -> None:
+        policy = sample_hk_reversionary_bonus_policies(["HKRB000001"])[0]
+        report = hk_reversionary_bonus_asset_share_support_test(policy)
+
+        assert report.product_variant == "REVERSIONARY_BONUS"
+        assert len(report.support_tests) == policy.term_years
+        assert set(report.support_tests["support_test_type"]) == {
+            "VESTED_RB_PLUS_MATURITY_TERMINAL_BONUS"
+        }
+        assert report.support_tests["terminal_bonus_support_target"].iloc[:-1].sum() == pytest.approx(0.0)
+        assert report.support_tests["terminal_bonus_support_target"].iloc[-1] > 0.0
+        assert report.support_tests["support_obligation"].iloc[-1] > (
+            report.support_tests["vested_bonus_balance"].iloc[-1]
+        )
+        assert report.to_record()["declaration_assumption_id"].startswith(
+            "PHASE10-HK-DECLARATION-BASE"
+        )
+
+    def test_reversionary_bonus_down_sensitivity_improves_support_margin(self) -> None:
+        policy = sample_hk_reversionary_bonus_policies(["HKRB000001"])[0]
+        base_report = hk_reversionary_bonus_asset_share_support_test(policy)
+        down_report = hk_reversionary_bonus_asset_share_support_test(
+            policy,
+            declaration_assumption=hk_declaration_sensitivity(
+                "BONUS_DOWN",
+                reversionary_bonus_rate_multiplier=0.80,
+                terminal_bonus_pct_multiplier=0.50,
+            ),
+        )
+
+        assert down_report.sensitivity_label == "BONUS_DOWN"
+        assert down_report.support_tests["vested_bonus_balance"].iloc[-1] == pytest.approx(
+            base_report.support_tests["vested_bonus_balance"].iloc[-1] * 0.80
+        )
+        assert down_report.support_tests["terminal_bonus_support_target"].iloc[-1] < (
+            base_report.support_tests["terminal_bonus_support_target"].iloc[-1]
+        )
+        assert down_report.final_support_margin > base_report.final_support_margin

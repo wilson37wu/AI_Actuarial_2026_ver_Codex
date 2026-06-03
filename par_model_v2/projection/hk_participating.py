@@ -19,8 +19,10 @@ import numpy as np
 import pandas as pd
 
 from par_model_v2.projection.monthly_projection import (
+    AssetPosition,
     ParEndowmentProduct,
     VALID_TERMS,
+    run_full_projection,
 )
 
 
@@ -565,6 +567,145 @@ def annual_cash_dividend_schedule(
 
 
 @dataclass(frozen=True)
+class HKAssetShareSupportReport:
+    """Deterministic asset-share support evidence for a Phase 10 HK product."""
+
+    product_variant: str
+    policy_id: str
+    support_basis_id: str
+    declaration_assumption_id: str
+    sensitivity_label: str
+    support_tests: pd.DataFrame
+    projection_summary: dict
+    min_support_ratio: float
+    min_support_margin: float
+    limitation_id: str = "LIM-P10-ASSET-SHARE-SUPPORT-PLACEHOLDER"
+
+    @property
+    def final_support_margin(self) -> float:
+        return float(self.support_tests["support_margin"].iloc[-1])
+
+    @property
+    def final_support_ratio(self) -> float:
+        return float(self.support_tests["support_ratio"].iloc[-1])
+
+    @property
+    def is_supported(self) -> bool:
+        passed = self.support_tests["support_status"] == "SUPPORTED"
+        return bool(passed.all())
+
+    def to_record(self) -> dict:
+        return {
+            "product_variant": self.product_variant,
+            "policy_id": self.policy_id,
+            "support_basis_id": self.support_basis_id,
+            "declaration_assumption_id": self.declaration_assumption_id,
+            "sensitivity_label": self.sensitivity_label,
+            "final_support_margin": self.final_support_margin,
+            "final_support_ratio": self.final_support_ratio,
+            "is_supported": self.is_supported,
+            "min_support_ratio": self.min_support_ratio,
+            "min_support_margin": self.min_support_margin,
+            "limitation_id": self.limitation_id,
+        }
+
+
+def default_hk_asset_share_fund_positions(scale: float = 0.01) -> List[AssetPosition]:
+    """Return the starter deterministic ALM fund mix for Phase 10 support tests."""
+    scale = _require_finite(scale, "scale")
+    if scale <= 0.0:
+        raise ValueError("scale must be positive")
+    return [
+        AssetPosition("Govt", 900_000.0 * scale, 880_000.0 * scale, 8.5, 0.032, 0.0, 8.5, ""),
+        AssetPosition("Credit_A", 575_000.0 * scale, 570_000.0 * scale, 6.2, 0.038, 0.0, 6.2, "A"),
+        AssetPosition("Equity", 700_000.0 * scale, 700_000.0 * scale, 0.0, 0.025, 0.06, 0.0, ""),
+        AssetPosition("Cash", 125_000.0 * scale, 125_000.0 * scale, 0.0, 0.020, 0.0, 0.0, ""),
+    ]
+
+
+def _annual_asset_share_view(asset_share_projection: pd.DataFrame) -> pd.DataFrame:
+    return asset_share_projection.loc[
+        asset_share_projection["month"] % 12 == 0,
+        [
+            "policy_year",
+            "month",
+            "asset_share_eom",
+            "investment_return",
+            "policyholder_dist",
+            "shareholder_dist",
+        ],
+    ].copy()
+
+
+def _support_ratio(asset_share: pd.Series, obligation: pd.Series) -> pd.Series:
+    return pd.Series(
+        np.where(obligation > 0.0, asset_share / obligation, np.inf),
+        index=asset_share.index,
+    )
+
+
+def _apply_support_status(
+    table: pd.DataFrame,
+    min_support_ratio: float,
+    min_support_margin: float,
+) -> pd.DataFrame:
+    min_support_ratio = _require_finite(min_support_ratio, "min_support_ratio")
+    min_support_margin = _require_finite(min_support_margin, "min_support_margin")
+    table["support_margin"] = table["asset_share_eom"] - table["support_obligation"]
+    table["support_ratio"] = _support_ratio(table["asset_share_eom"], table["support_obligation"])
+    supported = (
+        (table["support_margin"] >= min_support_margin)
+        & (table["support_ratio"] >= min_support_ratio)
+    )
+    table["support_status"] = np.where(supported, "SUPPORTED", "NOT_SUPPORTED")
+    return table
+
+
+def hk_cash_dividend_asset_share_support_test(
+    policy: HKCashDividendPolicy,
+    mechanics: Optional[HKCashDividendMechanics] = None,
+    declaration_assumption: Optional[HKDeclarationAssumption] = None,
+    fund_positions: Optional[Sequence[AssetPosition]] = None,
+    min_support_ratio: float = 1.0,
+    min_support_margin: float = 0.0,
+) -> HKAssetShareSupportReport:
+    """Test deterministic asset-share support for declared cash dividends."""
+    mechanics = mechanics or default_hk_cash_dividend_mechanics()
+    declaration_assumption = declaration_assumption or default_hk_declaration_assumption()
+    fund_positions = list(fund_positions or default_hk_asset_share_fund_positions())
+    policy.validate_against(mechanics)
+
+    projection = run_full_projection(policy.to_projection_product(mechanics), fund_positions)
+    schedule = annual_cash_dividend_schedule(policy, mechanics, declaration_assumption)
+    support_tests = schedule.merge(
+        _annual_asset_share_view(projection.asset_share.projection),
+        on=["policy_year", "month"],
+        how="left",
+    )
+    support_tests["support_test_type"] = "CUMULATIVE_CASH_DIVIDEND"
+    support_tests["support_obligation"] = support_tests["cash_dividend"].cumsum()
+    support_tests = _apply_support_status(
+        support_tests,
+        min_support_ratio=min_support_ratio,
+        min_support_margin=min_support_margin,
+    )
+    support_tests["product_variant"] = "CASH_DIVIDEND"
+    support_tests["support_basis_id"] = "PHASE10-HK-ASSET-SHARE-SUPPORT-BASE-2026"
+
+    return HKAssetShareSupportReport(
+        product_variant="CASH_DIVIDEND",
+        policy_id=policy.policy_id,
+        support_basis_id="PHASE10-HK-ASSET-SHARE-SUPPORT-BASE-2026",
+        declaration_assumption_id=declaration_assumption.assumption_id,
+        sensitivity_label=declaration_assumption.sensitivity_label,
+        support_tests=support_tests,
+        projection_summary=projection.summary(),
+        min_support_ratio=min_support_ratio,
+        min_support_margin=min_support_margin,
+    )
+
+
+@dataclass(frozen=True)
 class HKReversionaryBonusMechanics:
     """Contract mechanics for an educational Hong Kong reversionary bonus product.
 
@@ -948,3 +1089,61 @@ def validate_hk_reversionary_bonus_policy_table(
         policy = HKReversionaryBonusPolicy(**record)
         policy.validate_against(mechanics)
     return True
+
+
+def hk_reversionary_bonus_asset_share_support_test(
+    policy: HKReversionaryBonusPolicy,
+    mechanics: Optional[HKReversionaryBonusMechanics] = None,
+    declaration_assumption: Optional[HKDeclarationAssumption] = None,
+    fund_positions: Optional[Sequence[AssetPosition]] = None,
+    min_support_ratio: float = 1.0,
+    min_support_margin: float = 0.0,
+) -> HKAssetShareSupportReport:
+    """Test deterministic asset-share support for vested and terminal bonuses."""
+    mechanics = mechanics or default_hk_reversionary_bonus_mechanics()
+    declaration_assumption = declaration_assumption or default_hk_declaration_assumption()
+    fund_positions = list(fund_positions or default_hk_asset_share_fund_positions())
+    policy.validate_against(mechanics)
+
+    projection_product = replace(
+        policy.to_projection_product(mechanics),
+        rb_rate_annual=declaration_assumption.declared_reversionary_bonus_rate(mechanics),
+        terminal_bonus_pct=declaration_assumption.declared_terminal_bonus_pct(mechanics),
+    )
+    projection = run_full_projection(projection_product, fund_positions)
+    schedule = annual_reversionary_bonus_schedule(policy, mechanics, declaration_assumption)
+    support_tests = schedule.merge(
+        _annual_asset_share_view(projection.asset_share.projection),
+        on=["policy_year", "month"],
+        how="left",
+    )
+    final_month = policy.term_years * 12
+    support_tests["support_test_type"] = "VESTED_RB_PLUS_MATURITY_TERMINAL_BONUS"
+    support_tests["terminal_bonus_support_target"] = np.where(
+        support_tests["month"] == final_month,
+        support_tests["asset_share_eom"] * support_tests["terminal_bonus_pct"],
+        0.0,
+    )
+    support_tests["support_obligation"] = (
+        support_tests["vested_bonus_balance"]
+        + support_tests["terminal_bonus_support_target"]
+    )
+    support_tests = _apply_support_status(
+        support_tests,
+        min_support_ratio=min_support_ratio,
+        min_support_margin=min_support_margin,
+    )
+    support_tests["product_variant"] = "REVERSIONARY_BONUS"
+    support_tests["support_basis_id"] = "PHASE10-HK-ASSET-SHARE-SUPPORT-BASE-2026"
+
+    return HKAssetShareSupportReport(
+        product_variant="REVERSIONARY_BONUS",
+        policy_id=policy.policy_id,
+        support_basis_id="PHASE10-HK-ASSET-SHARE-SUPPORT-BASE-2026",
+        declaration_assumption_id=declaration_assumption.assumption_id,
+        sensitivity_label=declaration_assumption.sensitivity_label,
+        support_tests=support_tests,
+        projection_summary=projection.summary(),
+        min_support_ratio=min_support_ratio,
+        min_support_margin=min_support_margin,
+    )
