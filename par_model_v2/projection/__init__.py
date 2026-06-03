@@ -83,6 +83,20 @@ from par_model_v2.projection.hk_participating import (
     validate_hk_cash_dividend_policy_table,
     validate_hk_reversionary_bonus_policy_table,
 )
+from par_model_v2.projection.chunked_processor import (  # noqa: F401
+    ChunkRecord,
+    ChunkStatus,
+    ChunkedPortfolioProcessor,
+    CheckpointStore,
+    ProcessingPlan,
+    ReconciliationCheck,
+    ReconciliationReport,
+    REQUIRED_CHUNK_RESULT_KEYS,
+    build_chunk_plan,
+    default_chunk_fn,
+    failed_chunk_audit_report,
+    reconcile_portfolio,
+)
 from par_model_v2.projection.portfolio_generator import (
     PortfolioGenerationConfig,
     PortfolioGenerationResult,
@@ -149,4 +163,11 @@ __all__ = [
     "generate_hk_par_portfolio", "iter_policy_chunks", "load_portfolio",
     "portfolio_digest", "portfolio_summary", "validate_portfolio",
     "write_metadata", "write_portfolio",
+    # Phase 11 Task 2: chunked processing, checkpoint restart, reconciliation
+    "ChunkRecord", "ChunkStatus", "ChunkedPortfolioProcessor",
+    "CheckpointStore", "ProcessingPlan",
+    "ReconciliationCheck", "ReconciliationReport",
+    "REQUIRED_CHUNK_RESULT_KEYS",
+    "build_chunk_plan", "default_chunk_fn",
+    "failed_chunk_audit_report", "reconcile_portfolio",
 ]
