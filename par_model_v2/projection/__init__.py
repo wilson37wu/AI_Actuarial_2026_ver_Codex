@@ -83,6 +83,20 @@ from par_model_v2.projection.hk_participating import (
     validate_hk_cash_dividend_policy_table,
     validate_hk_reversionary_bonus_policy_table,
 )
+from par_model_v2.projection.portfolio_generator import (
+    PortfolioGenerationConfig,
+    PortfolioGenerationResult,
+    PRODUCT_LINE_CASH,
+    PRODUCT_LINE_RB,
+    generate_hk_par_portfolio,
+    iter_policy_chunks,
+    load_portfolio,
+    portfolio_digest,
+    portfolio_summary,
+    validate_portfolio,
+    write_metadata,
+    write_portfolio,
+)
 from par_model_v2.projection.hybrid_grid import (
     HybridGrid,
     HybridGridError,
@@ -130,4 +144,9 @@ __all__ = [
     "sample_hk_cash_dividend_policy_table", "sample_hk_reversionary_bonus_policies",
     "sample_hk_reversionary_bonus_policy_table", "validate_hk_cash_dividend_policy_table",
     "validate_hk_reversionary_bonus_policy_table",
+    "PortfolioGenerationConfig", "PortfolioGenerationResult",
+    "PRODUCT_LINE_CASH", "PRODUCT_LINE_RB",
+    "generate_hk_par_portfolio", "iter_policy_chunks", "load_portfolio",
+    "portfolio_digest", "portfolio_summary", "validate_portfolio",
+    "write_metadata", "write_portfolio",
 ]

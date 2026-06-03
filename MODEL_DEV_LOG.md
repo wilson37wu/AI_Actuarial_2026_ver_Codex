@@ -4669,3 +4669,37 @@ failed, so no new model work was performed.
 - `git push origin main` — BLOCKED (no GitHub credentials). Awaiting intervention.
 
 ---
+
+## Run 2026-06-03T20:05:22Z — Phase 11: 100,000-Policy Processing and Reporting Cycle
+
+**Task Completed:** Generate or ingest a 100,000-policy synthetic Hong Kong PAR portfolio.
+
+**Context:** GitHub push was restored on 2026-06-03 (PAT embedded in remote URL; backlog cleared, local == origin/main). Push capability re-verified at start of this run (`git push --dry-run origin main` → "Everything up-to-date"), so development resumed.
+
+**Accomplishments:**
+- Added `par_model_v2/projection/portfolio_generator.py`: a reproducible, vectorised generator for a 100,000-policy synthetic Hong Kong PAR portfolio mixing the Phase 10 cash dividend (`HKCD_PAR_2026`) and reversionary bonus (`HKRB_PAR_2026`) product lines.
+- `PortfolioGenerationConfig` (seeded, validated) controls product mix, issue-age / term / sum-assured / channel distributions, premium loading, and duration decay; ranges are auto-clamped to the Phase 10 product mechanics so every record is admissible.
+- Output is a unified policy table (`UNIFIED_COLUMNS`) with both product lines; line-specific fields (`dividend_option` / `bonus_option` / `initial_vested_bonus`) carry neutral defaults where they do not apply.
+- Reproducibility: all randomness flows from one `numpy` seed; `portfolio_digest` returns a SHA-256 over the canonical ordering as evidence. Default-config digest `321f50d8…` recorded in `docs/PHASE11_PORTFOLIO_METADATA.json`.
+- `validate_portfolio` reuses the existing Phase 10 `validate_hk_cash_dividend_policy_table` / `validate_hk_reversionary_bonus_policy_table` validators (full or deterministic-sampled); all 100k records pass full validation (~5s).
+- `iter_policy_chunks` provides deterministic, order-stable, non-overlapping slices to seed the next Phase 11 task (chunking / checkpoint restart).
+- Persistence helpers (`write_portfolio` CSV/Parquet, `write_metadata`, `load_portfolio`), a build script (`scripts/build_phase11_portfolio.py`), and docs (`docs/PHASE11_SYNTHETIC_PORTFOLIO.md`).
+- Wired exports through `par_model_v2/projection/__init__.py`.
+
+**Validation:**
+- New suite `tests/test_portfolio_generator.py`: 25 tests, all passing (reproducibility, schema constraints, product-line fields, validator rejection paths, chunking, digest, CSV round-trip, metadata, config guards, mechanics clamping).
+- Regression sweep this cycle (847 tests green): hk_participating / schema_compatibility / integration_e2e / monthly_projection (164); data_validator / governance / model_health / ia_validation / audit_trail_wiring (256); hybrid_grid / fixed_income / derivative / private_asset / asset_rollforward / dynamic_alm / risk_metrics (204); esg_adapter / asset_class_stress / stress_testing / calibration (198).
+- Full collection of all 1079 tests succeeds with no import errors, confirming the additive `__init__` change breaks nothing.
+- Heavy Monte Carlo suites (tvog, esg_process, sensitivity, backtesting, distributed_executor) were NOT re-run to completion this cycle: each exceeds the sandbox's 45-second per-command limit. They are unaffected by this additive change (they do not import the new module).
+
+**Next Step:** Add grouping, chunking, checkpoint restart, failed-chunk audit, and reconciliation.
+
+**Industry Standards Progress:**
+- SOA ASOP 56: reproducibility (seeded + digest-evidenced), documented data assumptions and limitations, explicit model-use restriction (educational, uncalibrated).
+- IA TAS M / TAS 100: traceability from assumption source (config) to run metadata (digest + summary); synthetic-data limitations disclosed.
+- ERM: provenance tagging (`source_id`) and synthetic-data disclosure support governance/audit of the educational reporting cycle.
+
+**Delivery:**
+- Commit + `git push origin main` attempted at end of run (see commit SHA in repo log).
+
+---

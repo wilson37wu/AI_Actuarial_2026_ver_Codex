@@ -1,0 +1,37 @@
+{
+  "digest_sha256": "321f50d82e0c41bcfa5c0dde78a9cbb5c749466c038857df227b5eb80c570c1e",
+  "generated_at": "2026-06-03T19:57:30Z",
+  "n_policies": 100000,
+  "seed": 20260604,
+  "source_id": "PHASE11-HK-PAR-SYNTHETIC-100K",
+  "summary": {
+    "channel_mix": {
+      "AGENCY": 45125,
+      "BANCASSURANCE": 21927,
+      "BROKER": 25035,
+      "DIRECT": 7913
+    },
+    "gender_mix": {
+      "F": 50097,
+      "M": 49903
+    },
+    "issue_age_max": 65,
+    "issue_age_min": 18,
+    "mean_annual_premium": 57497.988,
+    "mean_issue_age": 40.03696,
+    "mean_sum_assured": 598291.41,
+    "n_cash_dividend": 49993,
+    "n_policies": 100000,
+    "n_reversionary_bonus": 50007,
+    "sum_assured_max": 7457000.0,
+    "sum_assured_min": 50000.0,
+    "term_mix": {
+      "5": 20180,
+      "10": 45188,
+      "20": 34632
+    },
+    "total_annual_premium": 5749798800.0,
+    "total_initial_vested_bonus": 3012847100.0,
+    "total_sum_assured": 59829141000.0
+  }
+}
