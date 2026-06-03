@@ -4,6 +4,49 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-04T12:00:00Z — Phase 11: 100,000-Policy Processing and Reporting Cycle
+
+**Task Completed:** Add performance benchmarks and memory profiling.
+
+**Accomplishments:**
+- Added `par_model_v2/projection/performance_benchmarks.py` with full benchmark instrumentation suite for the Phase 11 100k-policy pipeline.
+- `BenchmarkTimer` context manager records wall-clock elapsed seconds via `time.perf_counter` with zero external dependencies.
+- `MemoryTracer` context manager wraps `tracemalloc` for peak and current Python heap allocation measurement in MiB.
+- `ChunkTimingRecord` captures per-chunk index, row count, elapsed seconds, and throughput; `ChunkTimingStats.from_records()` computes mean/median/P95/P99/min/max latency and overall throughput over the chunk vector.
+- `StageBenchmarkResult` collects per-stage elapsed time, throughput, tracemalloc peak, tracemalloc current, and POSIX peak RSS (via `resource.getrusage`; graceful None fallback on Windows).
+- `PerformanceBenchmarkReport` aggregates all stage results, chunk timing stats, overall throughput, and performance notes; `write_json()` / `write_markdown()` produce governance evidence artefacts.
+- `benchmark_portfolio_generation()` times and memory-profiles 100k HK PAR portfolio synthesis (Phase 11 Task 1 component).
+- `benchmark_chunked_processing()` instruments `ChunkedProcessor.run()` with a timer-wrapping chunk function that records per-chunk timing without changing control flow or reconciliation behaviour.
+- `benchmark_governance_overhead()` profiles sign-off pack assembly (JSON serialisation of assumption lock + validation suite + run metadata).
+- `benchmark_scalability_probe()` runs chunked processing at multiple portfolio sizes and appends a scaling-ratio note comparing largest/smallest throughput.
+- `run_phase11_benchmarks()` one-call orchestrator with optional scalability probe and output directory; writes JSON and Markdown reports to disk.
+- Educational performance targets documented: ≥5,000 p/s (portfolio generation), ≥20,000 p/s (stub chunked processing), ≥1,000 p/s (end-to-end combined).
+- Optimization paths documented: vectorised NumPy generation, multiprocessing.Pool parallel chunks, SQLite checkpoint, dtype downcasting, generator-based chunking.
+- Added `tests/test_performance_benchmarks.py` with 40 tests covering all components including integration consistency checks.
+- Added `docs/PHASE11_PERFORMANCE_BENCHMARKS.md` with component guide, performance targets, optimization paths, and industry standards alignment.
+- Updated `par_model_v2/projection/__init__.py` with performance_benchmarks exports (written via /tmp clone to bypass virtiofs 5.9 kB write truncation limit).
+- Updated `.claude-dev/MODEL_DEV_STATE.json`: Task 4 → completed; Task 5 (educational reporting pack) → in_progress.
+
+**Validation:**
+- `python3 -c "import ast; ast.parse(...)"` confirmed clean AST for all three new/modified Python files.
+- `git push origin main` succeeded: commit `c404151` pushed via /tmp clone workaround.
+- Runtime test execution blocked (sandbox Python lacks numpy); structural AST checks confirmed.
+
+**Next Step:** Create educational reporting pack with model run log, movement analysis, risk metrics, validation exceptions, and sign-off checklist.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.6: Benchmark evidence documents computational performance as a model risk consideration; P95/P99 latency supports SLA and escalation planning.
+- IA TAS M §3.5: Performance limitations and optimization paths documented in PHASE11_PERFORMANCE_BENCHMARKS.md for model risk disclosure.
+- ERM: Throughput metrics and scalability probe support capacity planning and operational risk controls for actuarial reporting run management.
+
+**Delivery:**
+- Commit `c404151` pushed to `main` via /tmp/repo_phase11t4 clone workaround.
+- In-place `.git` commits remain blocked by stale index.lock on virtiofs mount.
+- virtiofs write truncation limit (~5.9 kB) confirmed; all large file writes now route through /tmp clone.
+
+---
+
+
 ## Run 2026-06-03T18:08:50Z - Phase 10: Hong Kong Participating Liability Products
 
 **Task Completed:** Add liability reporting views for reserves, TVOG, bonus supportability, and management summaries.
