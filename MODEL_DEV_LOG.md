@@ -4633,3 +4633,39 @@ parameter files or fixtures.
   left untouched.
 
 ---
+
+## Run 2026-06-03T19:06Z — Phase 11 — ⛔ PAUSED (GitHub push blocker)
+
+**Task Completed:** None — run halted by push gate before development.
+
+**Reason:** Task prompt rule — "if at any instance you cannot push the change to
+GitHub, pause the next run until I intervene." A push-capability check at startup
+failed, so no new model work was performed.
+
+**Push diagnosis:**
+- Anonymous read works: `git ls-remote origin` returns remote HEAD `04d8afa`.
+- Authenticated push fails: `git push --dry-run origin main` →
+  `fatal: could not read Username for 'https://github.com': No such device or address`.
+- No credentials available in sandbox: no `GITHUB_TOKEN`/`GH_TOKEN`/`GIT_*` env
+  vars, no `~/.git-credentials`, no `gh` CLI auth, no `credential.helper`
+  (global/system), no token in remote URL, empty `user.name`/`user.email`.
+- Backlog: 46 local commits ahead of `origin/main`
+  (`a4355d4` 2026-05-30 → `d72333b` 2026-06-04). Local HEAD fast-forwards over
+  remote `04d8afa`, so a plain push will succeed once auth is fixed.
+
+**Actions taken:**
+- Created `GITHUB_PUSH_BLOCKER.md` at repo root with full diagnosis and
+  resolution options (PAT via credential file / token in URL / SSH).
+- Disabled the scheduled task `auto_actuarial_stochastic_model` to stop further
+  unpushable cycles until credentials are restored.
+- No source/model files were modified this run.
+
+**Next Step (after user fixes credentials & re-enables task):** Resume Phase 11 —
+"Generate or ingest a 100,000-policy synthetic Hong Kong PAR portfolio".
+
+**Industry Standards Progress:** No change (no development this run).
+
+**Delivery:**
+- `git push origin main` — BLOCKED (no GitHub credentials). Awaiting intervention.
+
+---
