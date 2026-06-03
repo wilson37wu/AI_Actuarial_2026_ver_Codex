@@ -155,13 +155,17 @@ class TestRunValidationSuite:
         )
 
     def _make_recon(self, *, passed: bool = True, n_failed: int = 0, n_chunks: int = 1) -> object:
-        from par_model_v2.projection.chunked_processor import ReconciliationReport
+        from par_model_v2.projection.chunk_processor import ReconciliationReport
         return ReconciliationReport(
-            overall_passed=passed,
-            n_chunks=n_chunks,
+            run_id="TEST-RUN",
+            generated_at="2026-06-04T00:00:00Z",
+            source_n_policies=1000,
+            processed_n_policies=1000 - n_failed * 100,
+            n_chunks_total=n_chunks,
             n_chunks_done=n_chunks - n_failed,
             n_chunks_failed=n_failed,
-            portfolio_digest="abc",
+            n_chunks_pending=0,
+            overall_passed=passed,
             exceptions=["recon failed"] if not passed else [],
         )
 
@@ -250,7 +254,7 @@ class TestRunValidationSuite:
 
 class TestOutputReviewRecord:
     def _build_review(self, tiny_portfolio) -> OutputReviewRecord:
-        from par_model_v2.projection.chunked_processor import ReconciliationReport
+        from par_model_v2.projection.chunk_processor import ReconciliationReport
         lock = AssumptionLock.create(default_projection_assumptions())
         run = ModelRunRecord(
             run_id="RUN-X",
@@ -261,8 +265,11 @@ class TestOutputReviewRecord:
             reconciliation_passed=True,
         )
         recon = ReconciliationReport(
-            overall_passed=True, n_chunks=1, n_chunks_done=1,
-            n_chunks_failed=0, portfolio_digest="x", exceptions=[],
+            run_id="TEST-RUN", generated_at="2026-06-04T00:00:00Z",
+            source_n_policies=1000, processed_n_policies=1000,
+            n_chunks_total=1, n_chunks_done=1,
+            n_chunks_failed=0, n_chunks_pending=0,
+            overall_passed=True, exceptions=[],
         )
         suite = run_validation_suite(tiny_portfolio, recon, run)
         return build_output_review(tiny_portfolio, lock, run, suite)
@@ -298,7 +305,7 @@ class TestOutputReviewRecord:
 
 class TestSignOffPack:
     def _build_pack(self, tiny_portfolio, *, approved: bool) -> SignOffPack:
-        from par_model_v2.projection.chunked_processor import ReconciliationReport
+        from par_model_v2.projection.chunk_processor import ReconciliationReport
         lock = AssumptionLock.create(default_projection_assumptions())
         run = ModelRunRecord(
             run_id="RUN-X",
@@ -309,8 +316,11 @@ class TestSignOffPack:
             reconciliation_passed=True,
         )
         recon = ReconciliationReport(
-            overall_passed=True, n_chunks=1, n_chunks_done=1,
-            n_chunks_failed=0, portfolio_digest="x", exceptions=[],
+            run_id="TEST-RUN", generated_at="2026-06-04T00:00:00Z",
+            source_n_policies=1000, processed_n_policies=1000,
+            n_chunks_total=1, n_chunks_done=1,
+            n_chunks_failed=0, n_chunks_pending=0,
+            overall_passed=True, exceptions=[],
         )
         suite = run_validation_suite(tiny_portfolio, recon, run)
         review = build_output_review(tiny_portfolio, lock, run, suite)

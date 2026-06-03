@@ -786,7 +786,7 @@ def benchmark_scalability_probe(
     for n in sizes:
         cfg = PortfolioGenerationConfig(n_policies=n, seed=seed)
         gen_result = generate_hk_par_portfolio(cfg)
-        table = gen_result.portfolio
+        table = gen_result.policies
 
         stage, _, _ = benchmark_chunked_processing(
             table, chunk_size=min(chunk_size, n)
@@ -866,7 +866,7 @@ def run_phase11_benchmarks(
     # Use generated table for processing benchmark
     cfg = PortfolioGenerationConfig(n_policies=n_policies, seed=seed)
     gen_result = generate_hk_par_portfolio(cfg)
-    table = gen_result.portfolio
+    table = gen_result.policies
 
     # -- Stage 2: chunked processing
     proc_stage, chunk_records, recon = benchmark_chunked_processing(

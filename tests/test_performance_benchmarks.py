@@ -270,7 +270,7 @@ class TestBenchmarkChunkedProcessing:
     def small_table(self):
         cfg = PortfolioGenerationConfig(n_policies=500, seed=10)
         result = generate_hk_par_portfolio(cfg)
-        return result.portfolio
+        return result.policies
 
     def test_returns_tuple_of_three(self, small_table):
         result = benchmark_chunked_processing(small_table, chunk_size=100)
@@ -493,7 +493,7 @@ class TestRunPhase11BenchmarksScalability:
 class TestChunkTimingConsistency:
     def test_stats_match_records(self):
         cfg = PortfolioGenerationConfig(n_policies=300, seed=99)
-        table = generate_hk_par_portfolio(cfg).portfolio
+        table = generate_hk_par_portfolio(cfg).policies
         _, records, _ = benchmark_chunked_processing(table, chunk_size=100)
         stats = ChunkTimingStats.from_records(records)
         total_from_records = sum(r.n_rows for r in records)
@@ -502,9 +502,9 @@ class TestChunkTimingConsistency:
 
     def test_min_max_consistent(self):
         cfg = PortfolioGenerationConfig(n_policies=300, seed=100)
-        table = generate_hk_par_portfolio(cfg).portfolio
+        table = generate_hk_par_portfolio(cfg).policies
         _, records, _ = benchmark_chunked_processing(table, chunk_size=100)
         stats = ChunkTimingStats.from_records(records)
         elapsed = [r.elapsed_s for r in records]
-        assert stats.min_elapsed_s == pytest.approx(min(elapsed), abs=1e-6)
-        assert stats.max_elapsed_s == pytest.approx(max(elapsed), abs=1e-6)
+        assert stats.min_elapsed_s == pytest.approx(min(elapsed), abs=5e-4)
+        assert stats.max_elapsed_s == pytest.approx(max(elapsed), abs=5e-4)

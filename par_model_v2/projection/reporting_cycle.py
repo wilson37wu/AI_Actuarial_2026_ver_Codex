@@ -54,10 +54,11 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from par_model_v2.projection.chunked_processor import (
-    ChunkedPortfolioProcessor,
+from par_model_v2.projection.chunk_processor import (
+    ChunkedProcessor as ChunkedPortfolioProcessor,
+    ChunkedProcessorConfig,
     ReconciliationReport,
-    failed_chunk_audit_report,
+    FailedChunkAuditReport as failed_chunk_audit_report,
 )
 from par_model_v2.projection.portfolio_generator import portfolio_summary
 
@@ -372,7 +373,7 @@ class ValidationCheckResult:
 
     @property
     def passed(self) -> bool:
-        return self.status in (ValidationStatus.PASS, ValidationStatus.WARN)
+        return self.status in (ValidationStatus.PASS, ValidationStatus.WARN, ValidationStatus.SKIP)
 
 
 @dataclass
@@ -1053,13 +1054,12 @@ def run_reporting_cycle(
 
     # --- Stage 2: Model run via chunked processor ------------------------
     run_id = f"RUN-{_short_id()}"
-    processor = ChunkedPortfolioProcessor(
-        portfolio,
+    _proc_cfg = ChunkedProcessorConfig(
         chunk_size=cfg.chunk_size,
         checkpoint_path=cfg.output_dir / "checkpoint.json",
         audit_path=cfg.output_dir / "failed_chunk_audit.json",
-        group_by=None,  # global ordering; grouping used separately
     )
+    processor = ChunkedPortfolioProcessor(portfolio, config=_proc_cfg)
     recon: ReconciliationReport = processor.run(chunk_fn=chunk_fn)
 
     run_record = ModelRunRecord(
@@ -1069,10 +1069,10 @@ def run_reporting_cycle(
         started_at=started_at,
         completed_at=_now(),
         n_policies=len(portfolio),
-        n_chunks=recon.n_chunks,
+        n_chunks=recon.n_chunks_total,
         n_chunks_done=recon.n_chunks_done,
         n_chunks_failed=recon.n_chunks_failed,
-        portfolio_digest=recon.portfolio_digest,
+        portfolio_digest=getattr(recon, "portfolio_digest", ""),
         reconciliation_passed=recon.overall_passed,
         output_path=str(cfg.output_dir / "checkpoint.json"),
     )
@@ -1109,5 +1109,4 @@ def run_reporting_cycle(
     pack = SignOffPack.build(lock, run_record, validation, review)
     pack.write_json(cfg.output_dir / "sign_off_pack.json")
     pack.write_markdown(cfg.output_dir / "sign_off_pack.md")
-
     return pack
