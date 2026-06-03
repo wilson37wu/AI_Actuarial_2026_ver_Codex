@@ -123,3 +123,20 @@ After a successful push, re-enable the scheduled task
 - Phases 1–10 marked complete in `.claude-dev/MODEL_DEV_STATE.json`.
 
 No development was done this run by design — the push gate must clear first.
+
+---
+
+## Update 2026-06-04 — push working via clone-to-/tmp; in-place .git commits blocked by mount
+
+**Status:** GitHub push SUCCEEDED this run (`5348fef..60dee68 main -> main`). No pause required.
+
+**New environment constraint discovered:** The repo is mounted via virtiofs FUSE
+with `default_permissions` and **deletes/renames are forbidden** — `rm` returns
+"Operation not permitted" even on a freshly created file, in both the worktree
+and `.git/`. Two stale 0-byte lock files left from the 2026-06-03 resolution run
+(`.git/index.lock` @19:39, `.git/HEAD.lock` @19:09) therefore cannot be removed,
+so any **in-place** `git add` / `git commit` fails ("Unable to create
+'.git/index.lock': File exists" / "cannot lock ref 'HEAD'").
+
+**Working push pattern (use this in future automated runs until the mount is
+fixed or the st

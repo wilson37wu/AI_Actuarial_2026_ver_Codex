@@ -232,7 +232,7 @@
   "repository_info": {
     "url": "https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex",
     "branch": "main",
-    "last_commit_sha": "15696545b91b43bcd2e788570c7cde90cc3f7fbd",
+    "last_commit_sha": "60dee68f4c58b87e96c41207e0fa1398af417ab0",
     "last_commit_message": "[Phase 11] Add 100k synthetic HK PAR portfolio generator",
     "commits_this_session": 53
   },
@@ -299,7 +299,7 @@
     "current_decision": "Phase 11 Task 1 complete (synthetic 100k portfolio). Next: chunking, checkpoint restart, failed-chunk audit, and reconciliation over the generated portfolio."
   },
   "notes_last_intervention": {
-    "resolved": "2026-06-03T19:30:00Z",
-    "detail": "GitHub push restored via PAT embedded in remote URL (.git/config). 47-commit backlog pushed; remote main=c12096c. Repaired truncated .git/config line. Sandbox push verified."
+    "resolved": "2026-06-04",
+    "detail": "Push delivered via clone-to-/tmp workaround (5348fef..60dee68). In-place .git commits blocked by no-delete virtiofs mount (stale index.lock/HEAD.lock unremovable); see GITHUB_PUSH_BLOCKER.md. Credentials/network healthy."
   }
 }
