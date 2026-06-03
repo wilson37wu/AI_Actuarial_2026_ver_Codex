@@ -4,6 +4,41 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-03T12:11:34Z - Phase 10: Hong Kong Participating Liability Products
+
+**Task Completed:** Add asset-share support tests for cash dividend and reversionary bonus variants.
+
+**Accomplishments:**
+- Added `HKAssetShareSupportReport` with final margin, support ratio, pass/fail status, support basis ID, declaration assumption ID, sensitivity label, and limitation ID.
+- Added `default_hk_asset_share_fund_positions()` as the starter deterministic ALM mix for Phase 10 support diagnostics.
+- Added `hk_cash_dividend_asset_share_support_test(...)` to compare annual asset-share outputs with cumulative declared cash dividends.
+- Added `hk_reversionary_bonus_asset_share_support_test(...)` to compare annual asset-share outputs with vested reversionary bonus and maturity terminal-bonus support targets.
+- Exported the support-test API through `par_model_v2.projection`.
+- Added targeted tests for fund mix construction, cash dividend support obligations, reversionary bonus terminal support targets, and declaration down-sensitivity margin improvement.
+- Created `docs/HK_ASSET_SHARE_SUPPORT_TESTS.md` and linked the Phase 10 roadmap entry.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 10 to liability reporting views.
+
+**Validation:**
+- `git diff --check` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_hk_participating_products.py -q` remains blocked with `No module named pytest`.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pip show pytest numpy pandas scipy` reports those packages not found.
+
+**Next Step:** Add liability reporting views for reserves, TVOG, bonus supportability, and management summaries.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3 and 3.5: Product declaration support diagnostics now tie deterministic asset-share outputs to explicit assumptions and validation thresholds.
+- IA TAS M Sections 3.5 and 3.6: Support rows preserve policy ID, product code, assumption ID, sensitivity label, source ID, and limitation ID for audit reconstruction.
+- ERM: Cash dividend and reversionary bonus declarations now have first-order supportability margins and ratios, with deterministic educational limitations disclosed.
+
+**Delivery:**
+- Local task commit created: `8c695f4ef75a122b6177610223c8740e2b1fc0ff`.
+- `git push origin main` failed because the sandbox could not connect to `github.com` on port 443.
+- Gmail draft `r-3261662996799513056` was created for manual review.
+- Pre-existing dirty files in `docs/MODEL_USAGE_GUIDE.md`, `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`, `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left untouched.
+
+---
+
 ## Run 2026-06-03T06:09:03Z - Phase 10: Hong Kong Participating Liability Products
 
 **Task Completed:** Implement dividend and bonus declaration assumptions and sensitivity hooks.
