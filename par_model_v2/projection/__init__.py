@@ -170,4 +170,10 @@ __all__ = [
     "REQUIRED_CHUNK_RESULT_KEYS",
     "build_chunk_plan", "default_chunk_fn",
     "failed_chunk_audit_report", "reconcile_portfolio",
+    # Phase 11 Task 3: reporting-cycle workflow
+    "AssumptionLock", "ModelRunRecord", "OutputReviewRecord",
+    "ProjectionAssumption", "ReportingCycleConfig", "SignOffPack",
+    "ValidationCheckResult", "ValidationStatus", "ValidationSuiteResult",
+    "build_output_review", "default_projection_assumptions",
+    "run_reporting_cycle", "run_validation_suite",
 ]
