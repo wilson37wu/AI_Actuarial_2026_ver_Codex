@@ -192,6 +192,10 @@ Tasks:
    Implemented in `par_model_v2/projection/hk_participating.py` with sample
    fixtures and documentation in `docs/HK_REVERSIONARY_BONUS_PRODUCT_MECHANICS.md`.
 3. Implement dividend / bonus declaration assumptions and sensitivity hooks.
+   Implemented through `HKDeclarationAssumption`,
+   `default_hk_declaration_assumption()`, `hk_declaration_sensitivity(...)`,
+   and declaration-aware cash dividend / reversionary bonus schedules; see
+   `docs/HK_DECLARATION_ASSUMPTIONS_AND_SENSITIVITIES.md`.
 4. Add asset-share support tests for cash dividend and reversionary bonus variants.
 5. Add liability reporting views for reserves, TVOG, bonus supportability, and management summaries.
 

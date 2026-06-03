@@ -126,9 +126,9 @@ Targeted tests in `tests/test_hk_participating_products.py` cover:
 - annual vested bonus schedule construction;
 - maturity guarantee split across base, vested bonus, and terminal bonus.
 
-## Next Phase 10 Task
+## Declaration Assumptions
 
-The next task is to implement dividend and bonus declaration assumptions and
-sensitivity hooks.  That should connect cash dividends and reversionary bonus
-declarations to explicit assumption records before the later asset-share
-supportability and reporting tasks consume them.
+Dividend and bonus declaration assumptions are implemented in
+`docs/HK_DECLARATION_ASSUMPTIONS_AND_SENSITIVITIES.md`.  The next Phase 10 task
+is to add asset-share support tests for cash dividend and reversionary bonus
+variants.

@@ -4,6 +4,38 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-03T06:09:03Z - Phase 10: Hong Kong Participating Liability Products
+
+**Task Completed:** Implement dividend and bonus declaration assumptions and sensitivity hooks.
+
+**Accomplishments:**
+- Added `HKDeclarationAssumption` with governed assumption IDs, sensitivity labels, multiplier / shift hooks, declaration floors and caps, source IDs, and limitation IDs.
+- Added `default_hk_declaration_assumption()` and `hk_declaration_sensitivity(...)` so cash dividend, reversionary bonus, and terminal bonus stresses can be applied without mutating product mechanics.
+- Wired declaration assumptions into cash dividend schedules, reversionary bonus schedules, guarantee splits, and sample policy tables with declared-rate and assumption-traceability columns.
+- Added targeted tests for base declaration preservation, invalid sensitivity rejection, and stressed cash dividend / reversionary bonus schedule outputs.
+- Created `docs/HK_DECLARATION_ASSUMPTIONS_AND_SENSITIVITIES.md` and updated Phase 10 product mechanics docs plus the post-v1 expansion plan.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 10 to asset-share support tests.
+
+**Validation:**
+- `git diff --check` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_hk_participating_products.py -q` remains blocked with `No module named pytest`.
+- Direct smoke import is blocked in the only reachable interpreter because it lacks `numpy`.
+
+**Next Step:** Add asset-share support tests for cash dividend and reversionary bonus variants.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.1.3 and 3.4: Declaration assumptions are now explicit, bounded, source-tagged, and separated from product mechanics.
+- IA TAS M Sections 3.5 and 3.6: Schedule outputs now preserve assumption ID, source ID, sensitivity label, and limitation ID for audit reconstruction.
+- ERM: Cash dividend, reversionary bonus, and terminal bonus stresses now have controlled hooks for later supportability and reporting analysis.
+
+**Delivery:**
+- Local commit pending at log-write time.
+- `git push origin main` not attempted because network access is restricted in the sandbox.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`, `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`, `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left untouched.
+
+---
+
 ## Run 2026-06-03T00:08:28Z - Phase 10: Hong Kong Participating Liability Products
 
 **Task Completed:** Define reversionary bonus mechanics including vested bonus, terminal bonus, and guarantee split.

@@ -72,8 +72,8 @@ remain separate from reversionary bonus and terminal bonus fields.
 `annual_cash_dividend_schedule(...)` returns annual non-guaranteed cash
 dividend rows by policy year and month.  The schedule is intentionally separate
 from the existing liability cash-flow engine until the Phase 10 declaration and
-asset-share supportability tasks add explicit dividend payment and sensitivity
-hooks.
+asset-share supportability tasks consume the explicit declaration assumption
+record and sensitivity hooks.
 
 ## Governance Notes
 
@@ -99,7 +99,6 @@ Targeted tests in `tests/test_hk_participating_products.py` cover:
 
 ## Next Phase 10 Task
 
-The next task is to define reversionary bonus mechanics including vested bonus,
-terminal bonus, and guarantee split.  That task should keep cash dividends and
-vested bonuses separated because they create different guarantee, TVOG, and
-supportability treatments.
+The declaration assumption task is implemented in
+`docs/HK_DECLARATION_ASSUMPTIONS_AND_SENSITIVITIES.md`.  The next task is to
+add asset-share support tests for cash dividend and reversionary bonus variants.

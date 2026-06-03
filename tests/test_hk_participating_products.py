@@ -7,6 +7,7 @@ import pytest
 from par_model_v2.projection import (
     HKCashDividendMechanics,
     HKCashDividendPolicy,
+    HKDeclarationAssumption,
     HKReversionaryBonusMechanics,
     HKReversionaryBonusPolicy,
     ParEndowmentProduct,
@@ -15,7 +16,9 @@ from par_model_v2.projection import (
     available_hk_cash_dividend_policy_ids,
     available_hk_reversionary_bonus_policy_ids,
     default_hk_cash_dividend_mechanics,
+    default_hk_declaration_assumption,
     default_hk_reversionary_bonus_mechanics,
+    hk_declaration_sensitivity,
     reversionary_bonus_guarantee_split,
     sample_hk_cash_dividend_policies,
     sample_hk_cash_dividend_policy_table,
@@ -123,6 +126,66 @@ class TestHKCashDividendTablesAndSchedules:
         assert list(schedule["month"]) == [12, 24, 36, 48, 60, 72, 84, 96, 108, 120]
         assert set(schedule["guarantee_status"]) == {"NON_GUARANTEED"}
         assert schedule["cash_dividend"].sum() == pytest.approx(6_000.0 * policy.term_years)
+
+
+class TestHKDeclarationAssumptions:
+    def test_default_declaration_basis_preserves_mechanics_rates(self) -> None:
+        assumption = default_hk_declaration_assumption()
+
+        assert assumption.declared_cash_dividend_rate(default_hk_cash_dividend_mechanics()) == pytest.approx(0.012)
+        assert assumption.declared_reversionary_bonus_rate(
+            default_hk_reversionary_bonus_mechanics()
+        ) == pytest.approx(0.025)
+        assert assumption.declared_terminal_bonus_pct(
+            default_hk_reversionary_bonus_mechanics()
+        ) == pytest.approx(0.35)
+        assert assumption.to_record()["is_placeholder"] is True
+
+    def test_negative_sensitivity_multiplier_is_rejected(self) -> None:
+        with pytest.raises(ValueError, match="non-negative"):
+            HKDeclarationAssumption(cash_dividend_rate_multiplier=-0.1)
+
+    def test_cash_dividend_sensitivity_flows_to_schedule_and_table(self) -> None:
+        assumption = hk_declaration_sensitivity(
+            "DIV_DOWN_50",
+            cash_dividend_rate_multiplier=0.50,
+        )
+        policy = sample_hk_cash_dividend_policies(["HKCD000001"])[0]
+        schedule = annual_cash_dividend_schedule(
+            policy,
+            declaration_assumption=assumption,
+        )
+        table = sample_hk_cash_dividend_policy_table(
+            ["HKCD000001"],
+            declaration_assumption=assumption,
+        )
+
+        assert set(schedule["sensitivity_label"]) == {"DIV_DOWN_50"}
+        assert schedule["declared_cash_dividend_rate"].iloc[0] == pytest.approx(0.006)
+        assert schedule["cash_dividend"].sum() == pytest.approx(3_000.0 * policy.term_years)
+        assert table["illustrated_annual_cash_dividend"].iloc[0] == pytest.approx(3_000.0)
+
+    def test_reversionary_bonus_sensitivity_flows_to_schedule_and_split(self) -> None:
+        assumption = hk_declaration_sensitivity(
+            "BONUS_DOWN",
+            reversionary_bonus_rate_multiplier=0.80,
+            terminal_bonus_pct_multiplier=0.50,
+        )
+        policy = sample_hk_reversionary_bonus_policies(["HKRB000001"])[0]
+        schedule = annual_reversionary_bonus_schedule(
+            policy,
+            declaration_assumption=assumption,
+        )
+        split = reversionary_bonus_guarantee_split(
+            policy,
+            declaration_assumption=assumption,
+        )
+
+        assert schedule["declared_reversionary_bonus_rate"].iloc[0] == pytest.approx(0.020)
+        assert schedule["terminal_bonus_pct"].iloc[-1] == pytest.approx(0.175)
+        assert schedule["vested_bonus_balance"].iloc[-1] == pytest.approx(120_000.0)
+        assert split["total_guaranteed_maturity_benefit"] == pytest.approx(720_000.0)
+        assert split["terminal_bonus_pct"] == pytest.approx(0.175)
 
 
 class TestHKReversionaryBonusMechanics:

@@ -11,7 +11,7 @@ in later Phase 10 tasks.
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 from typing import Iterable, List, Optional, Sequence
 
@@ -53,6 +53,182 @@ def _require_probability(value: float, field_name: str) -> float:
     if numeric < 0.0 or numeric > 1.0:
         raise ValueError(f"{field_name} must be in [0, 1]")
     return numeric
+
+
+@dataclass(frozen=True)
+class HKDeclarationAssumption:
+    """Governed declaration basis and sensitivity hook for HK PAR products.
+
+    The mechanics classes define illustrated product rates.  This assumption
+    record controls what is actually declared in a run and makes sensitivity
+    shifts explicit for later supportability and TVOG consumers.
+    """
+
+    assumption_id: str = "PHASE10-HK-DECLARATION-BASE-2026"
+    basis_name: str = "Educational board declaration basis"
+    sensitivity_label: str = "BASE"
+    cash_dividend_rate_multiplier: float = 1.0
+    cash_dividend_rate_shift: float = 0.0
+    reversionary_bonus_rate_multiplier: float = 1.0
+    reversionary_bonus_rate_shift: float = 0.0
+    terminal_bonus_pct_multiplier: float = 1.0
+    terminal_bonus_pct_shift: float = 0.0
+    min_declared_rate: float = 0.0
+    max_declared_rate: float = 0.20
+    min_terminal_bonus_pct: float = 0.0
+    max_terminal_bonus_pct: float = 1.0
+    source_id: str = "PHASE10-HK-DECLARATION-ASSUMPTION-EDU-2026"
+    limitation_id: str = "LIM-P10-DECLARATION-PLACEHOLDER"
+    notes: str = (
+        "Educational declaration basis only; not a PRE policy, board minute, "
+        "insurer filing, supportability result, or calibrated management action."
+    )
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "assumption_id", _require_text(self.assumption_id, "assumption_id"))
+        object.__setattr__(self, "basis_name", _require_text(self.basis_name, "basis_name"))
+        object.__setattr__(
+            self,
+            "sensitivity_label",
+            _require_text(self.sensitivity_label, "sensitivity_label").upper(),
+        )
+        object.__setattr__(self, "source_id", _require_text(self.source_id, "source_id"))
+        object.__setattr__(self, "limitation_id", _require_text(self.limitation_id, "limitation_id"))
+        for field_name in (
+            "cash_dividend_rate_multiplier",
+            "reversionary_bonus_rate_multiplier",
+            "terminal_bonus_pct_multiplier",
+        ):
+            value = _require_finite(getattr(self, field_name), field_name)
+            if value < 0.0:
+                raise ValueError(f"{field_name} must be non-negative")
+            object.__setattr__(self, field_name, value)
+        for field_name in (
+            "cash_dividend_rate_shift",
+            "reversionary_bonus_rate_shift",
+            "terminal_bonus_pct_shift",
+        ):
+            object.__setattr__(self, field_name, _require_finite(getattr(self, field_name), field_name))
+        rate_floor = _require_probability(self.min_declared_rate, "min_declared_rate")
+        rate_cap = _require_probability(self.max_declared_rate, "max_declared_rate")
+        terminal_floor = _require_probability(self.min_terminal_bonus_pct, "min_terminal_bonus_pct")
+        terminal_cap = _require_probability(self.max_terminal_bonus_pct, "max_terminal_bonus_pct")
+        if rate_cap < rate_floor:
+            raise ValueError("max_declared_rate must be greater than or equal to min_declared_rate")
+        if terminal_cap < terminal_floor:
+            raise ValueError(
+                "max_terminal_bonus_pct must be greater than or equal to min_terminal_bonus_pct"
+            )
+        object.__setattr__(self, "min_declared_rate", rate_floor)
+        object.__setattr__(self, "max_declared_rate", rate_cap)
+        object.__setattr__(self, "min_terminal_bonus_pct", terminal_floor)
+        object.__setattr__(self, "max_terminal_bonus_pct", terminal_cap)
+
+    def _bounded_rate(
+        self,
+        base_rate: float,
+        multiplier: float,
+        shift: float,
+        floor: float,
+        cap: float,
+        field_name: str,
+    ) -> float:
+        base_rate = _require_probability(base_rate, field_name)
+        declared_rate = base_rate * multiplier + shift
+        return min(max(declared_rate, floor), cap)
+
+    def declared_cash_dividend_rate(self, mechanics: HKCashDividendMechanics) -> float:
+        """Return the run-level cash dividend declaration rate."""
+        return self._bounded_rate(
+            mechanics.annual_cash_dividend_rate,
+            self.cash_dividend_rate_multiplier,
+            self.cash_dividend_rate_shift,
+            self.min_declared_rate,
+            self.max_declared_rate,
+            "annual_cash_dividend_rate",
+        )
+
+    def declared_reversionary_bonus_rate(self, mechanics: HKReversionaryBonusMechanics) -> float:
+        """Return the run-level annual vested reversionary bonus rate."""
+        return self._bounded_rate(
+            mechanics.annual_reversionary_bonus_rate,
+            self.reversionary_bonus_rate_multiplier,
+            self.reversionary_bonus_rate_shift,
+            self.min_declared_rate,
+            self.max_declared_rate,
+            "annual_reversionary_bonus_rate",
+        )
+
+    def declared_terminal_bonus_pct(self, mechanics: HKReversionaryBonusMechanics) -> float:
+        """Return the run-level terminal bonus declaration percentage."""
+        return self._bounded_rate(
+            mechanics.terminal_bonus_pct,
+            self.terminal_bonus_pct_multiplier,
+            self.terminal_bonus_pct_shift,
+            self.min_terminal_bonus_pct,
+            self.max_terminal_bonus_pct,
+            "terminal_bonus_pct",
+        )
+
+    def with_sensitivity(
+        self,
+        sensitivity_label: str,
+        cash_dividend_rate_multiplier: Optional[float] = None,
+        cash_dividend_rate_shift: Optional[float] = None,
+        reversionary_bonus_rate_multiplier: Optional[float] = None,
+        reversionary_bonus_rate_shift: Optional[float] = None,
+        terminal_bonus_pct_multiplier: Optional[float] = None,
+        terminal_bonus_pct_shift: Optional[float] = None,
+    ) -> "HKDeclarationAssumption":
+        """Return a copy with explicit sensitivity multipliers or shifts."""
+        label = _require_text(sensitivity_label, "sensitivity_label").upper()
+        updates = {
+            "assumption_id": f"{self.assumption_id}-{label}",
+            "sensitivity_label": label,
+        }
+        optional_updates = {
+            "cash_dividend_rate_multiplier": cash_dividend_rate_multiplier,
+            "cash_dividend_rate_shift": cash_dividend_rate_shift,
+            "reversionary_bonus_rate_multiplier": reversionary_bonus_rate_multiplier,
+            "reversionary_bonus_rate_shift": reversionary_bonus_rate_shift,
+            "terminal_bonus_pct_multiplier": terminal_bonus_pct_multiplier,
+            "terminal_bonus_pct_shift": terminal_bonus_pct_shift,
+        }
+        updates.update({key: value for key, value in optional_updates.items() if value is not None})
+        return replace(self, **updates)
+
+    def to_record(self) -> dict:
+        record = asdict(self)
+        record["is_placeholder"] = True
+        return record
+
+
+def default_hk_declaration_assumption() -> HKDeclarationAssumption:
+    """Return the base Phase 10 declaration basis."""
+    return HKDeclarationAssumption()
+
+
+def hk_declaration_sensitivity(
+    sensitivity_label: str,
+    base: Optional[HKDeclarationAssumption] = None,
+    cash_dividend_rate_multiplier: Optional[float] = None,
+    cash_dividend_rate_shift: Optional[float] = None,
+    reversionary_bonus_rate_multiplier: Optional[float] = None,
+    reversionary_bonus_rate_shift: Optional[float] = None,
+    terminal_bonus_pct_multiplier: Optional[float] = None,
+    terminal_bonus_pct_shift: Optional[float] = None,
+) -> HKDeclarationAssumption:
+    """Build a named declaration sensitivity from the base assumption."""
+    base = base or default_hk_declaration_assumption()
+    return base.with_sensitivity(
+        sensitivity_label=sensitivity_label,
+        cash_dividend_rate_multiplier=cash_dividend_rate_multiplier,
+        cash_dividend_rate_shift=cash_dividend_rate_shift,
+        reversionary_bonus_rate_multiplier=reversionary_bonus_rate_multiplier,
+        reversionary_bonus_rate_shift=reversionary_bonus_rate_shift,
+        terminal_bonus_pct_multiplier=terminal_bonus_pct_multiplier,
+        terminal_bonus_pct_shift=terminal_bonus_pct_shift,
+    )
 
 
 @dataclass(frozen=True)
@@ -289,20 +465,28 @@ def sample_hk_cash_dividend_policies(
 def sample_hk_cash_dividend_policy_table(
     policy_ids: Optional[Iterable[str]] = None,
     mechanics: Optional[HKCashDividendMechanics] = None,
+    declaration_assumption: Optional[HKDeclarationAssumption] = None,
 ) -> pd.DataFrame:
     """Return the sample policy fixtures as a DataFrame with dividend fields."""
     mechanics = mechanics or default_hk_cash_dividend_mechanics()
+    declaration_assumption = declaration_assumption or default_hk_declaration_assumption()
+    declared_rate = declaration_assumption.declared_cash_dividend_rate(mechanics)
     rows = []
     for policy in sample_hk_cash_dividend_policies(policy_ids, mechanics):
         record = policy.to_record()
         record["market"] = mechanics.market
         record["currency"] = mechanics.currency
         record["annual_cash_dividend_rate"] = mechanics.annual_cash_dividend_rate
+        record["declared_cash_dividend_rate"] = declared_rate
         record["illustrated_annual_cash_dividend"] = (
-            mechanics.annual_cash_dividend_amount(policy.sum_assured) * policy.inforce_count
+            policy.sum_assured * declared_rate * policy.inforce_count
         )
+        record["declaration_assumption_id"] = declaration_assumption.assumption_id
+        record["declaration_basis_name"] = declaration_assumption.basis_name
+        record["sensitivity_label"] = declaration_assumption.sensitivity_label
         record["guarantee_status"] = "GUARANTEED_BASE_PLUS_NON_GUARANTEED_CASH_DIVIDEND"
         record["mechanics_source_id"] = mechanics.source_id
+        record["declaration_source_id"] = declaration_assumption.source_id
         record["limitation_id"] = mechanics.limitation_id
         rows.append(record)
     return pd.DataFrame(rows)
@@ -349,11 +533,14 @@ def validate_hk_cash_dividend_policy_table(
 def annual_cash_dividend_schedule(
     policy: HKCashDividendPolicy,
     mechanics: Optional[HKCashDividendMechanics] = None,
+    declaration_assumption: Optional[HKDeclarationAssumption] = None,
 ) -> pd.DataFrame:
     """Return annual non-guaranteed cash dividend payment dates and amounts."""
     mechanics = mechanics or default_hk_cash_dividend_mechanics()
+    declaration_assumption = declaration_assumption or default_hk_declaration_assumption()
     policy.validate_against(mechanics)
-    annual_amount = mechanics.annual_cash_dividend_amount(policy.sum_assured) * policy.inforce_count
+    declared_rate = declaration_assumption.declared_cash_dividend_rate(mechanics)
+    annual_amount = policy.sum_assured * declared_rate * policy.inforce_count
     rows = []
     for policy_year in range(1, policy.term_years + 1):
         rows.append(
@@ -362,10 +549,15 @@ def annual_cash_dividend_schedule(
                 "product_code": policy.product_code,
                 "policy_year": policy_year,
                 "month": policy_year * 12,
+                "declared_cash_dividend_rate": declared_rate,
                 "cash_dividend": annual_amount,
                 "guarantee_status": "NON_GUARANTEED",
                 "dividend_option": mechanics.dividend_option,
+                "declaration_assumption_id": declaration_assumption.assumption_id,
+                "declaration_basis_name": declaration_assumption.basis_name,
+                "sensitivity_label": declaration_assumption.sensitivity_label,
                 "source_id": mechanics.source_id,
+                "declaration_source_id": declaration_assumption.source_id,
                 "limitation_id": mechanics.limitation_id,
             }
         )
@@ -617,11 +809,15 @@ def sample_hk_reversionary_bonus_policies(
 def annual_reversionary_bonus_schedule(
     policy: HKReversionaryBonusPolicy,
     mechanics: Optional[HKReversionaryBonusMechanics] = None,
+    declaration_assumption: Optional[HKDeclarationAssumption] = None,
 ) -> pd.DataFrame:
     """Return annual vested-bonus additions and the guaranteed benefit split."""
     mechanics = mechanics or default_hk_reversionary_bonus_mechanics()
+    declaration_assumption = declaration_assumption or default_hk_declaration_assumption()
     policy.validate_against(mechanics)
-    annual_addition = mechanics.annual_vested_bonus_addition(policy.sum_assured) * policy.inforce_count
+    declared_rate = declaration_assumption.declared_reversionary_bonus_rate(mechanics)
+    declared_terminal_bonus_pct = declaration_assumption.declared_terminal_bonus_pct(mechanics)
+    annual_addition = policy.sum_assured * declared_rate * policy.inforce_count
     base_guarantee = policy.sum_assured * mechanics.guaranteed_base_multiple * policy.inforce_count
     vested_balance = policy.initial_vested_bonus * policy.inforce_count
     rows = []
@@ -640,10 +836,15 @@ def annual_reversionary_bonus_schedule(
                 "guaranteed_base_benefit": base_guarantee,
                 "guaranteed_death_benefit": base_guarantee + death_vested,
                 "guaranteed_maturity_benefit": base_guarantee + maturity_vested,
-                "terminal_bonus_pct": mechanics.terminal_bonus_pct,
+                "declared_reversionary_bonus_rate": declared_rate,
+                "terminal_bonus_pct": declared_terminal_bonus_pct,
                 "terminal_bonus_guarantee_status": "NON_GUARANTEED",
                 "vested_bonus_guarantee_status": "GUARANTEED_AFTER_DECLARATION",
+                "declaration_assumption_id": declaration_assumption.assumption_id,
+                "declaration_basis_name": declaration_assumption.basis_name,
+                "sensitivity_label": declaration_assumption.sensitivity_label,
                 "source_id": mechanics.source_id,
+                "declaration_source_id": declaration_assumption.source_id,
                 "limitation_id": mechanics.limitation_id,
             }
         )
@@ -653,10 +854,12 @@ def annual_reversionary_bonus_schedule(
 def reversionary_bonus_guarantee_split(
     policy: HKReversionaryBonusPolicy,
     mechanics: Optional[HKReversionaryBonusMechanics] = None,
+    declaration_assumption: Optional[HKDeclarationAssumption] = None,
 ) -> dict:
     """Return the maturity guarantee split for a sample reversionary bonus policy."""
     mechanics = mechanics or default_hk_reversionary_bonus_mechanics()
-    schedule = annual_reversionary_bonus_schedule(policy, mechanics)
+    declaration_assumption = declaration_assumption or default_hk_declaration_assumption()
+    schedule = annual_reversionary_bonus_schedule(policy, mechanics, declaration_assumption)
     final_row = schedule.iloc[-1]
     base_guarantee = float(final_row["guaranteed_base_benefit"])
     vested_bonus = float(final_row["vested_bonus_balance"]) * mechanics.maturity_vested_bonus_multiple
@@ -666,9 +869,12 @@ def reversionary_bonus_guarantee_split(
         "guaranteed_base_benefit": base_guarantee,
         "vested_reversionary_bonus": vested_bonus,
         "total_guaranteed_maturity_benefit": base_guarantee + vested_bonus,
-        "terminal_bonus_pct": mechanics.terminal_bonus_pct,
+        "terminal_bonus_pct": declaration_assumption.declared_terminal_bonus_pct(mechanics),
         "terminal_bonus_guarantee_status": "NON_GUARANTEED",
+        "declaration_assumption_id": declaration_assumption.assumption_id,
+        "sensitivity_label": declaration_assumption.sensitivity_label,
         "source_id": mechanics.source_id,
+        "declaration_source_id": declaration_assumption.source_id,
         "limitation_id": mechanics.limitation_id,
     }
 
@@ -676,21 +882,30 @@ def reversionary_bonus_guarantee_split(
 def sample_hk_reversionary_bonus_policy_table(
     policy_ids: Optional[Iterable[str]] = None,
     mechanics: Optional[HKReversionaryBonusMechanics] = None,
+    declaration_assumption: Optional[HKDeclarationAssumption] = None,
 ) -> pd.DataFrame:
     """Return sample reversionary bonus policy fixtures with guarantee-split fields."""
     mechanics = mechanics or default_hk_reversionary_bonus_mechanics()
+    declaration_assumption = declaration_assumption or default_hk_declaration_assumption()
+    declared_reversionary_bonus_rate = declaration_assumption.declared_reversionary_bonus_rate(mechanics)
+    declared_terminal_bonus_pct = declaration_assumption.declared_terminal_bonus_pct(mechanics)
     rows = []
     for policy in sample_hk_reversionary_bonus_policies(policy_ids, mechanics):
         record = policy.to_record()
-        split = reversionary_bonus_guarantee_split(policy, mechanics)
+        split = reversionary_bonus_guarantee_split(policy, mechanics, declaration_assumption)
         record["market"] = mechanics.market
         record["currency"] = mechanics.currency
         record["annual_reversionary_bonus_rate"] = mechanics.annual_reversionary_bonus_rate
-        record["terminal_bonus_pct"] = mechanics.terminal_bonus_pct
+        record["declared_reversionary_bonus_rate"] = declared_reversionary_bonus_rate
+        record["terminal_bonus_pct"] = declared_terminal_bonus_pct
         record["projected_vested_reversionary_bonus"] = split["vested_reversionary_bonus"]
         record["total_guaranteed_maturity_benefit"] = split["total_guaranteed_maturity_benefit"]
+        record["declaration_assumption_id"] = declaration_assumption.assumption_id
+        record["declaration_basis_name"] = declaration_assumption.basis_name
+        record["sensitivity_label"] = declaration_assumption.sensitivity_label
         record["guarantee_status"] = "BASE_PLUS_VESTED_RB_GUARANTEED_TERMINAL_BONUS_NON_GUARANTEED"
         record["mechanics_source_id"] = mechanics.source_id
+        record["declaration_source_id"] = declaration_assumption.source_id
         record["limitation_id"] = mechanics.limitation_id
         rows.append(record)
     return pd.DataFrame(rows)
