@@ -11,7 +11,7 @@ in later Phase 10 tasks.
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass, replace
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Iterable, List, Optional, Sequence
 
@@ -1146,4 +1146,291 @@ def hk_reversionary_bonus_asset_share_support_test(
         projection_summary=projection.summary(),
         min_support_ratio=min_support_ratio,
         min_support_margin=min_support_margin,
+    )
+
+
+@dataclass(frozen=True)
+class HKLiabilityReportingPack:
+    """Portfolio-level liability reporting views for Phase 10 HK PAR products."""
+
+    reserve_view: pd.DataFrame
+    tvog_view: pd.DataFrame
+    bonus_supportability_view: pd.DataFrame
+    management_summary: pd.DataFrame
+    support_reports: List[HKAssetShareSupportReport]
+    reporting_basis_id: str
+    declaration_assumption_id: str
+    sensitivity_label: str
+    limitation_id: str = "LIM-P10-LIABILITY-REPORTING-PLACEHOLDER"
+    governance_notes: List[str] = field(
+        default_factory=lambda: [
+            "SOA ASOP 56: reserve, option-value, and supportability rows retain policy, product, declaration, and source lineage.",
+            "IA TAS M: management summaries are reproducible from policy-level views and do not replace actuarial sign-off.",
+            "ERM limitation: TVOG rows require supplied Q-measure stochastic results; deterministic reserve views are educational only.",
+        ]
+    )
+
+    def to_record(self) -> dict:
+        return {
+            "reporting_basis_id": self.reporting_basis_id,
+            "declaration_assumption_id": self.declaration_assumption_id,
+            "sensitivity_label": self.sensitivity_label,
+            "policy_count": int(len(self.reserve_view)),
+            "product_variants": sorted(self.reserve_view["product_variant"].unique().tolist()),
+            "total_deterministic_reserve": float(
+                self.reserve_view["deterministic_reserve"].sum()
+            ),
+            "supported_policy_count": int(
+                (self.bonus_supportability_view["is_supported"] == True).sum()
+            ),
+            "tvog_reported_count": int(
+                (self.tvog_view["tvog_status"] == "SUPPLIED_Q_MEASURE_TVOG").sum()
+            ),
+            "limitation_id": self.limitation_id,
+            "governance_notes": list(self.governance_notes),
+        }
+
+
+def hk_liability_reserve_view(
+    support_reports: Sequence[HKAssetShareSupportReport],
+) -> pd.DataFrame:
+    """Return policy-level deterministic reserve reporting rows."""
+    rows = []
+    for report in support_reports:
+        summary = report.projection_summary
+        first_row = report.support_tests.iloc[0]
+        rows.append(
+            {
+                "policy_id": report.policy_id,
+                "product_variant": report.product_variant,
+                "product_code": first_row["product_code"],
+                "currency": "HKD",
+                "term_years": int(summary["term_years"]),
+                "sum_assured": float(summary["sum_assured"]),
+                "annual_premium": float(summary["annual_premium"]),
+                "pv_premiums": float(summary["pv_premiums"]),
+                "pv_guaranteed_benefits": float(summary["pv_guaranteed_benefits"]),
+                "pv_non_guaranteed_benefits": float(
+                    summary["pv_non_guaranteed_benefits"]
+                ),
+                "pv_expenses": float(summary["pv_expenses"]),
+                "deterministic_reserve": float(summary["pv_net_liability"]),
+                "asset_share_at_maturity": float(summary["asset_share_at_maturity"]),
+                "declaration_assumption_id": report.declaration_assumption_id,
+                "sensitivity_label": report.sensitivity_label,
+                "support_basis_id": report.support_basis_id,
+                "reserve_basis": "DETERMINISTIC_EDUCATIONAL_PROJECTION",
+                "limitation_id": report.limitation_id,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _tvog_attr(result, field_name: str, default=np.nan):
+    if result is None:
+        return default
+    if isinstance(result, dict):
+        return result.get(field_name, default)
+    return getattr(result, field_name, default)
+
+
+def _is_finite_number(value) -> bool:
+    try:
+        return bool(np.isfinite(value))
+    except (TypeError, ValueError):
+        return False
+
+
+def hk_liability_tvog_view(
+    support_reports: Sequence[HKAssetShareSupportReport],
+    tvog_results: Optional[dict] = None,
+) -> pd.DataFrame:
+    """Return policy-level TVOG reporting rows, using supplied Q-measure results."""
+    tvog_results = tvog_results or {}
+    rows = []
+    for report in support_reports:
+        summary = report.projection_summary
+        result = tvog_results.get(report.policy_id)
+        tvog_amount = _tvog_attr(result, "tvog")
+        status = (
+            "SUPPLIED_Q_MEASURE_TVOG"
+            if _is_finite_number(tvog_amount)
+            else "NOT_RUN_Q_MEASURE_REQUIRED"
+        )
+        rows.append(
+            {
+                "policy_id": report.policy_id,
+                "product_variant": report.product_variant,
+                "product_code": report.support_tests["product_code"].iloc[0],
+                "currency": "HKD",
+                "deterministic_guaranteed_pv": float(summary["pv_guaranteed_benefits"]),
+                "q_measure_stochastic_guaranteed_pv": _tvog_attr(
+                    result,
+                    "pv_guaranteed_stochastic_mean",
+                ),
+                "tvog_amount": tvog_amount,
+                "pv_p5": _tvog_attr(result, "pv_p5"),
+                "pv_p95": _tvog_attr(result, "pv_p95"),
+                "n_scenarios": _tvog_attr(result, "n_scenarios"),
+                "tvog_run_id": _tvog_attr(result, "run_id", ""),
+                "tvog_status": status,
+                "measure_requirement": "Q",
+                "declaration_assumption_id": report.declaration_assumption_id,
+                "sensitivity_label": report.sensitivity_label,
+                "limitation_id": "LIM-P10-TVOG-Q-MEASURE-REQUIRED",
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def hk_bonus_supportability_view(
+    support_reports: Sequence[HKAssetShareSupportReport],
+) -> pd.DataFrame:
+    """Return final-period bonus supportability rows from support reports."""
+    rows = []
+    for report in support_reports:
+        final_row = report.support_tests.iloc[-1]
+        rows.append(
+            {
+                "policy_id": report.policy_id,
+                "product_variant": report.product_variant,
+                "product_code": final_row["product_code"],
+                "support_basis_id": report.support_basis_id,
+                "support_test_type": final_row["support_test_type"],
+                "final_asset_share": float(final_row["asset_share_eom"]),
+                "final_support_obligation": float(final_row["support_obligation"]),
+                "final_support_margin": report.final_support_margin,
+                "final_support_ratio": report.final_support_ratio,
+                "support_status": final_row["support_status"],
+                "is_supported": report.is_supported,
+                "min_support_ratio": report.min_support_ratio,
+                "min_support_margin": report.min_support_margin,
+                "declaration_assumption_id": report.declaration_assumption_id,
+                "sensitivity_label": report.sensitivity_label,
+                "limitation_id": report.limitation_id,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def hk_liability_management_summary(
+    reserve_view: pd.DataFrame,
+    tvog_view: pd.DataFrame,
+    bonus_supportability_view: pd.DataFrame,
+) -> pd.DataFrame:
+    """Return product-variant management summary rows."""
+    rows = []
+    for product_variant, reserve_group in reserve_view.groupby("product_variant", sort=True):
+        tvog_group = tvog_view[tvog_view["product_variant"] == product_variant]
+        support_group = bonus_supportability_view[
+            bonus_supportability_view["product_variant"] == product_variant
+        ]
+        supported_count = int((support_group["is_supported"] == True).sum())
+        missing_tvog_count = int(
+            (tvog_group["tvog_status"] != "SUPPLIED_Q_MEASURE_TVOG").sum()
+        )
+        not_supported_count = int(len(support_group) - supported_count)
+        rows.append(
+            {
+                "product_variant": product_variant,
+                "policy_count": int(len(reserve_group)),
+                "total_sum_assured": float(reserve_group["sum_assured"].sum()),
+                "total_annual_premium": float(reserve_group["annual_premium"].sum()),
+                "total_deterministic_reserve": float(
+                    reserve_group["deterministic_reserve"].sum()
+                ),
+                "total_pv_guaranteed_benefits": float(
+                    reserve_group["pv_guaranteed_benefits"].sum()
+                ),
+                "total_reported_tvog": float(
+                    tvog_group.loc[
+                        tvog_group["tvog_status"] == "SUPPLIED_Q_MEASURE_TVOG",
+                        "tvog_amount",
+                    ].sum()
+                ),
+                "q_measure_tvog_missing_count": missing_tvog_count,
+                "supported_policy_count": supported_count,
+                "not_supported_policy_count": not_supported_count,
+                "minimum_support_margin": float(support_group["final_support_margin"].min()),
+                "minimum_support_ratio": float(support_group["final_support_ratio"].min()),
+                "management_status": (
+                    "REVIEW_REQUIRED"
+                    if missing_tvog_count > 0 or not_supported_count > 0
+                    else "READY_FOR_MANAGEMENT_REVIEW"
+                ),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def build_hk_liability_reporting_pack(
+    cash_dividend_policies: Optional[Iterable[HKCashDividendPolicy]] = None,
+    reversionary_bonus_policies: Optional[Iterable[HKReversionaryBonusPolicy]] = None,
+    cash_dividend_mechanics: Optional[HKCashDividendMechanics] = None,
+    reversionary_bonus_mechanics: Optional[HKReversionaryBonusMechanics] = None,
+    declaration_assumption: Optional[HKDeclarationAssumption] = None,
+    fund_positions: Optional[Sequence[AssetPosition]] = None,
+    tvog_results: Optional[dict] = None,
+    min_support_ratio: float = 1.0,
+    min_support_margin: float = 0.0,
+) -> HKLiabilityReportingPack:
+    """Build the starter Phase 10 HK liability reporting pack."""
+    cash_dividend_mechanics = cash_dividend_mechanics or default_hk_cash_dividend_mechanics()
+    reversionary_bonus_mechanics = (
+        reversionary_bonus_mechanics or default_hk_reversionary_bonus_mechanics()
+    )
+    declaration_assumption = declaration_assumption or default_hk_declaration_assumption()
+    fund_positions = list(fund_positions or default_hk_asset_share_fund_positions())
+    cash_dividend_policies = list(
+        cash_dividend_policies
+        if cash_dividend_policies is not None
+        else sample_hk_cash_dividend_policies(mechanics=cash_dividend_mechanics)
+    )
+    reversionary_bonus_policies = list(
+        reversionary_bonus_policies
+        if reversionary_bonus_policies is not None
+        else sample_hk_reversionary_bonus_policies(mechanics=reversionary_bonus_mechanics)
+    )
+
+    support_reports: List[HKAssetShareSupportReport] = []
+    for policy in cash_dividend_policies:
+        support_reports.append(
+            hk_cash_dividend_asset_share_support_test(
+                policy,
+                mechanics=cash_dividend_mechanics,
+                declaration_assumption=declaration_assumption,
+                fund_positions=fund_positions,
+                min_support_ratio=min_support_ratio,
+                min_support_margin=min_support_margin,
+            )
+        )
+    for policy in reversionary_bonus_policies:
+        support_reports.append(
+            hk_reversionary_bonus_asset_share_support_test(
+                policy,
+                mechanics=reversionary_bonus_mechanics,
+                declaration_assumption=declaration_assumption,
+                fund_positions=fund_positions,
+                min_support_ratio=min_support_ratio,
+                min_support_margin=min_support_margin,
+            )
+        )
+
+    reserve_view = hk_liability_reserve_view(support_reports)
+    tvog_view = hk_liability_tvog_view(support_reports, tvog_results=tvog_results)
+    supportability_view = hk_bonus_supportability_view(support_reports)
+    management_summary = hk_liability_management_summary(
+        reserve_view,
+        tvog_view,
+        supportability_view,
+    )
+    return HKLiabilityReportingPack(
+        reserve_view=reserve_view,
+        tvog_view=tvog_view,
+        bonus_supportability_view=supportability_view,
+        management_summary=management_summary,
+        support_reports=support_reports,
+        reporting_basis_id="PHASE10-HK-LIABILITY-REPORTING-BASE-2026",
+        declaration_assumption_id=declaration_assumption.assumption_id,
+        sensitivity_label=declaration_assumption.sensitivity_label,
     )

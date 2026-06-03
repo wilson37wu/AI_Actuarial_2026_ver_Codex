@@ -4,6 +4,36 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-03T18:08:50Z - Phase 10: Hong Kong Participating Liability Products
+
+**Task Completed:** Add liability reporting views for reserves, TVOG, bonus supportability, and management summaries.
+
+**Accomplishments:**
+- Added `HKLiabilityReportingPack` plus reserve, TVOG, supportability, and management-summary view builders for the Hong Kong cash dividend and reversionary bonus variants.
+- Kept bonus supportability reporting tied to `HKAssetShareSupportReport` final rows rather than recalculating margins.
+- Added explicit TVOG status handling: supplied Q-measure results are reported, while missing stochastic evidence is marked `NOT_RUN_Q_MEASURE_REQUIRED`.
+- Exported the reporting API through `par_model_v2.projection`, added targeted tests, and created `docs/HK_LIABILITY_REPORTING_VIEWS.md`.
+- Updated Phase 10 state to completed and advanced Phase 11 to synthetic 100,000-policy portfolio generation.
+
+**Validation:**
+- `git diff --check` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts` completed successfully.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_hk_participating_products.py -q` remains blocked with `No module named pytest`.
+- Direct runtime smoke import remains blocked because the reachable embedded Python lacks `numpy`.
+
+**Next Step:** Generate or ingest a 100,000-policy synthetic Hong Kong PAR portfolio.
+
+**Industry Standards Progress:**
+- SOA ASOP 56: Liability reporting now preserves deterministic reserve basis, explicit Q-measure TVOG requirement, policy-level support evidence, and product/declaration lineage.
+- IA TAS M: Management summaries are reproducible from policy-level reporting views with assumption IDs, support basis IDs, and limitation disclosures.
+
+**Delivery:**
+- Local commit pending at log-write time.
+- `git push origin main` not attempted because network access is restricted in the sandbox.
+- Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`, `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`, `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left untouched.
+
+---
+
 ## Run 2026-06-03T12:11:34Z - Phase 10: Hong Kong Participating Liability Products
 
 **Task Completed:** Add asset-share support tests for cash dividend and reversionary bonus variants.

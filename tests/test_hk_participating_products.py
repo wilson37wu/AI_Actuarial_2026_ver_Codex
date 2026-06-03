@@ -8,6 +8,7 @@ from par_model_v2.projection import (
     HKCashDividendMechanics,
     HKCashDividendPolicy,
     HKDeclarationAssumption,
+    HKLiabilityReportingPack,
     HKReversionaryBonusMechanics,
     HKReversionaryBonusPolicy,
     ParEndowmentProduct,
@@ -15,12 +16,15 @@ from par_model_v2.projection import (
     annual_reversionary_bonus_schedule,
     available_hk_cash_dividend_policy_ids,
     available_hk_reversionary_bonus_policy_ids,
+    build_hk_liability_reporting_pack,
     default_hk_asset_share_fund_positions,
     default_hk_cash_dividend_mechanics,
     default_hk_declaration_assumption,
     default_hk_reversionary_bonus_mechanics,
+    hk_bonus_supportability_view,
     hk_cash_dividend_asset_share_support_test,
     hk_declaration_sensitivity,
+    hk_liability_tvog_view,
     hk_reversionary_bonus_asset_share_support_test,
     reversionary_bonus_guarantee_split,
     sample_hk_cash_dividend_policies,
@@ -391,3 +395,59 @@ class TestHKReversionaryBonusAssetShareSupport:
             base_report.support_tests["terminal_bonus_support_target"].iloc[-1]
         )
         assert down_report.final_support_margin > base_report.final_support_margin
+
+
+class TestHKLiabilityReportingViews:
+    def test_default_reporting_pack_contains_reserve_tvog_support_and_summary_views(self) -> None:
+        pack = build_hk_liability_reporting_pack()
+
+        assert isinstance(pack, HKLiabilityReportingPack)
+        assert len(pack.reserve_view) == 6
+        assert len(pack.tvog_view) == 6
+        assert len(pack.bonus_supportability_view) == 6
+        assert set(pack.management_summary["product_variant"]) == {
+            "CASH_DIVIDEND",
+            "REVERSIONARY_BONUS",
+        }
+        assert set(pack.tvog_view["tvog_status"]) == {"NOT_RUN_Q_MEASURE_REQUIRED"}
+        assert set(pack.management_summary["management_status"]) == {"REVIEW_REQUIRED"}
+        assert pack.to_record()["policy_count"] == 6
+        assert pack.reserve_view["deterministic_reserve"].notna().all()
+
+    def test_bonus_supportability_view_reuses_support_report_final_values(self) -> None:
+        policy = sample_hk_cash_dividend_policies(["HKCD000001"])[0]
+        report = hk_cash_dividend_asset_share_support_test(policy)
+        supportability = hk_bonus_supportability_view([report])
+
+        assert supportability["policy_id"].iloc[0] == policy.policy_id
+        assert supportability["final_support_margin"].iloc[0] == pytest.approx(
+            report.final_support_margin
+        )
+        assert supportability["final_support_ratio"].iloc[0] == pytest.approx(
+            report.final_support_ratio
+        )
+        assert supportability["is_supported"].iloc[0] == report.is_supported
+
+    def test_tvog_view_accepts_supplied_q_measure_result(self) -> None:
+        policy = sample_hk_cash_dividend_policies(["HKCD000001"])[0]
+        report = hk_cash_dividend_asset_share_support_test(policy)
+        tvog = hk_liability_tvog_view(
+            [report],
+            tvog_results={
+                policy.policy_id: {
+                    "tvog": 1234.5,
+                    "pv_guaranteed_stochastic_mean": 101_234.5,
+                    "pv_p5": 98_000.0,
+                    "pv_p95": 105_000.0,
+                    "n_scenarios": 1000,
+                    "run_id": "TVOG-RUN-1",
+                }
+            },
+        )
+
+        assert tvog["tvog_status"].iloc[0] == "SUPPLIED_Q_MEASURE_TVOG"
+        assert tvog["tvog_amount"].iloc[0] == pytest.approx(1234.5)
+        assert tvog["q_measure_stochastic_guaranteed_pv"].iloc[0] == pytest.approx(
+            101_234.5
+        )
+        assert tvog["measure_requirement"].iloc[0] == "Q"

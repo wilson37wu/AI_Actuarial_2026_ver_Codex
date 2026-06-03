@@ -98,8 +98,9 @@ Targeted tests in `tests/test_hk_participating_products.py` cover:
   terminal bonus target;
 - reversionary bonus down-sensitivity improving support margin.
 
-## Next Phase 10 Task
+## Follow-on Reporting Views
 
-The next task is to add liability reporting views for reserves, TVOG, bonus
-supportability, and management summaries.  Those views should consume
+The liability reporting views for reserves, TVOG, bonus supportability, and
+management summaries are documented in
+`docs/HK_LIABILITY_REPORTING_VIEWS.md`.  They consume
 `HKAssetShareSupportReport` rather than recalculating support margins.

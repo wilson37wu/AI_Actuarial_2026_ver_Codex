@@ -1,9 +1,9 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-03T12:11:34Z",
+  "last_run": "2026-06-03T18:08:50Z",
   "last_run_duration_minutes": 45,
-  "current_phase": "Phase 10: Hong Kong Participating Liability Products",
+  "current_phase": "Phase 11: 100,000-Policy Processing and Reporting Cycle",
   "overall_status": "active_post_v1_expansion",
   "phases": {
     "Phase 1: Model Review & Documentation": {
@@ -177,7 +177,7 @@
       "next": null
     },
     "Phase 10: Hong Kong Participating Liability Products": {
-      "status": "in_progress",
+      "status": "completed",
       "description": "Enrich liability modelling for Hong Kong participating products, starting with cash dividend and reversionary bonus mechanics",
       "tasks": [
         "Define Hong Kong cash dividend product mechanics and sample policy data",
@@ -190,15 +190,14 @@
         "Define Hong Kong cash dividend product mechanics and sample policy data",
         "Define reversionary bonus mechanics including vested bonus, terminal bonus, and guarantee split",
         "Implement dividend and bonus declaration assumptions and sensitivity hooks",
-        "Add asset-share support tests for cash dividend and reversionary bonus variants"
-      ],
-      "in_progress": [
+        "Add asset-share support tests for cash dividend and reversionary bonus variants",
         "Add liability reporting views for reserves, TVOG, bonus supportability, and management summaries"
       ],
-      "next": "Generate or ingest a 100,000-policy synthetic Hong Kong PAR portfolio"
+      "in_progress": [],
+      "next": null
     },
     "Phase 11: 100,000-Policy Processing and Reporting Cycle": {
-      "status": "planned",
+      "status": "in_progress",
       "description": "Demonstrate a realistic educational actuarial reporting cycle with 100,000 synthetic policies, chunked processing, checkpoints, reconciliation, validation, and reporting packs",
       "tasks": [
         "Generate or ingest a 100,000-policy synthetic Hong Kong PAR portfolio",
@@ -208,8 +207,10 @@
         "Create educational reporting pack with model run log, movement analysis, risk metrics, validation exceptions, and sign-off checklist"
       ],
       "completed": [],
-      "in_progress": [],
-      "next": "Generate or ingest a 100,000-policy synthetic Hong Kong PAR portfolio"
+      "in_progress": [
+        "Generate or ingest a 100,000-policy synthetic Hong Kong PAR portfolio"
+      ],
+      "next": "Add grouping, chunking, checkpoint restart, failed-chunk audit, and reconciliation"
     },
     "Phase 12: Governance, Calibration, and Educational Packaging": {
       "status": "planned",
@@ -229,17 +230,17 @@
   "repository_info": {
     "url": "https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex",
     "branch": "main",
-    "last_commit_sha": "8c695f4ef75a122b6177610223c8740e2b1fc0ff",
-    "last_commit_message": "[Phase 10] Add HK asset-share support tests",
-    "commits_this_session": 51
+    "last_commit_sha": "6dcf6b7e77a1f677e35285c0158c9ebb8f8cf9e9",
+    "last_commit_message": "[Phase 10] Add HK liability reporting views",
+    "commits_this_session": 52
   },
   "progress_metrics": {
     "total_tasks": 66,
-    "tasks_completed": 58,
-    "phases_completed": 9,
-    "estimated_completion_pct": 88,
+    "tasks_completed": 59,
+    "phases_completed": 10,
+    "estimated_completion_pct": 89,
     "average_cycle_duration_minutes": 52,
-    "cycles_run": 106
+    "cycles_run": 107
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",
@@ -271,7 +272,8 @@
       "HKCashDividendMechanics + HKCashDividendPolicy + hk_cash_dividend_policies.json (par_model_v2/projection -- Hong Kong cash dividend mechanics and sample policy fixtures; PHASE 10 TASK 1)",
       "HKReversionaryBonusMechanics + HKReversionaryBonusPolicy + hk_reversionary_bonus_policies.json (par_model_v2/projection -- Hong Kong reversionary bonus mechanics, vested bonus schedules, terminal bonus treatment, and guarantee split; PHASE 10 TASK 2)",
       "HKDeclarationAssumption + hk_declaration_sensitivity (par_model_v2/projection -- dividend and bonus declaration assumptions with sensitivity hooks; PHASE 10 TASK 3)",
-      "HKAssetShareSupportReport + hk_cash_dividend_asset_share_support_test + hk_reversionary_bonus_asset_share_support_test (par_model_v2/projection -- deterministic asset-share support tests for HK cash dividend and reversionary bonus variants; PHASE 10 TASK 4)"
+      "HKAssetShareSupportReport + hk_cash_dividend_asset_share_support_test + hk_reversionary_bonus_asset_share_support_test (par_model_v2/projection -- deterministic asset-share support tests for HK cash dividend and reversionary bonus variants; PHASE 10 TASK 4)",
+      "HKLiabilityReportingPack + build_hk_liability_reporting_pack (par_model_v2/projection -- reserve, TVOG status, bonus supportability, and management summary views for HK participating liabilities; PHASE 10 TASK 5)"
     ]
   },
   "completion_summary": {
