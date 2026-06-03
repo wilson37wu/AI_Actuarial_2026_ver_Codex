@@ -30,7 +30,7 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 - ERM: Cash dividend, reversionary bonus, and terminal bonus stresses now have controlled hooks for later supportability and reporting analysis.
 
 **Delivery:**
-- Local commit pending at log-write time.
+- Local task commit created: `8aa761e`.
 - `git push origin main` not attempted because network access is restricted in the sandbox.
 - Pre-existing unstaged changes in `docs/MODEL_USAGE_GUIDE.md`, `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`, `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left untouched.
 
