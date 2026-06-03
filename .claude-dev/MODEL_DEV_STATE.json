@@ -4,7 +4,7 @@
   "last_run": "2026-06-03T19:06:00Z",
   "last_run_duration_minutes": 8,
   "current_phase": "Phase 11: 100,000-Policy Processing and Reporting Cycle",
-  "overall_status": "paused_github_push_blocked",
+  "overall_status": "active_post_v1_expansion",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -295,14 +295,8 @@
     "scope_control": "Complete one task per cycle; user may adjust scope after each phase based on development progress and outcome",
     "current_decision": "Begin with Phase 6 design before implementing additional generators or liability features"
   },
-  "blocker": {
-    "type": "github_push_auth",
-    "detected": "2026-06-03T19:06:00Z",
-    "detail": "git push fails: 'could not read Username for https://github.com'. No PAT/SSH credentials in sandbox (no GITHUB_TOKEN, no ~/.git-credentials, no gh auth, no credential.helper).",
-    "unpushed_commits": 46,
-    "remote_head": "04d8afa19c28c29d57c082248c44aebf9ae2cb22",
-    "local_is_fast_forward": true,
-    "resolution_doc": "GITHUB_PUSH_BLOCKER.md",
-    "action": "Paused per task rule. No development performed. Awaiting credential fix + manual re-run."
+  "notes_last_intervention": {
+    "resolved": "2026-06-03T19:30:00Z",
+    "detail": "GitHub push restored via PAT embedded in remote URL (.git/config). 47-commit backlog pushed; remote main=c12096c. Repaired truncated .git/config line. Sandbox push verified."
   }
 }

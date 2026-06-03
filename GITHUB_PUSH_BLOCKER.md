@@ -1,8 +1,22 @@
-# 🚫 GitHub Push Blocker — Automation Paused
+# ✅ GitHub Push Blocker — RESOLVED
 
-**Status:** BLOCKED — scheduled task paused, awaiting manual intervention
-**Detected:** 2026-06-03T19:06Z (run for Phase 11)
+**Status:** RESOLVED 2026-06-03T19:30Z — push restored, backlog cleared, automation can resume.
+**Originally detected:** 2026-06-03T19:06Z (run for Phase 11)
 **Blocking rule:** Task prompt — "if at any instance you cannot push the change to GitHub, pause the next run until I intervene."
+
+---
+
+## Resolution (2026-06-03)
+
+- A GitHub Personal Access Token (classic, `repo` scope) was created and embedded in the remote URL (`.git/config`), per Option A/B below.
+- The 47-commit backlog was pushed: remote `main` advanced `04d8afa..c12096c`; local and remote are now in sync (ahead 0 / behind 0).
+- A truncated `[us…` fragment in `.git/config` (from an interrupted config write) was repaired so git works in the automation sandbox.
+- Sandbox push capability verified (`git push --dry-run` → "Everything up-to-date"), so future scheduled runs can push autonomously.
+- State file `overall_status` reset to `active_post_v1_expansion`.
+
+The historical diagnosis below is retained for the audit trail.
+
+---
 
 ---
 
