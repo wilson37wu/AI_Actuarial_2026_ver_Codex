@@ -4,6 +4,63 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-03T00:08:28Z - Phase 10: Hong Kong Participating Liability Products
+
+**Task Completed:** Define reversionary bonus mechanics including vested bonus, terminal bonus, and guarantee split.
+
+**Accomplishments:**
+- Added `HKReversionaryBonusMechanics` and `HKReversionaryBonusPolicy` in
+  `par_model_v2/projection/hk_participating.py` for educational Hong Kong
+  reversionary bonus participating endowment mechanics.
+- Added governed sample policy fixtures in
+  `par_model_v2/projection/fixtures/hk_reversionary_bonus_policies.json`
+  covering 5-year, 10-year, and 20-year HKD reversionary bonus policies.
+- Added loaders, table validation, deterministic projection conversion, annual
+  vested-bonus schedules, terminal bonus status, and maturity guarantee-split
+  helpers.
+- Exported the Phase 10 reversionary bonus APIs through `par_model_v2.projection`.
+- Created `docs/HK_REVERSIONARY_BONUS_PRODUCT_MECHANICS.md` and linked the
+  Phase 10 roadmap entry.
+- Extended targeted tests in `tests/test_hk_participating_products.py`.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to advance Phase 10 to
+  declaration assumptions and sensitivity hooks.
+
+**Validation:**
+- `git diff --check` completed successfully; Git emitted line-ending warnings
+  for existing Windows working-copy normalization only.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts`
+  completed successfully.
+- PowerShell JSON fixture inspection confirmed three reversionary bonus policy
+  records and total projected vested bonus of 791,250.
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m pytest tests\test_hk_participating_products.py -q`
+  remains blocked because the reachable embedded Python has no `pytest`.
+- Direct import smoke validation remains blocked because the reachable embedded
+  Python lacks `numpy`, which is imported by the projection package before the
+  Phase 10 module loads.
+
+**Next Step:** Implement dividend and bonus declaration assumptions and sensitivity hooks.
+
+**Industry Standards Progress:**
+- SOA ASOP 56: Reversionary bonus mechanics now disclose placeholder declared
+  bonus rates, terminal bonus status, guarantee treatment, source IDs, and
+  model-use limitations.
+- IA TAS M: Policy fixtures preserve product code, policy ID, source ID,
+  limitation ID, initial vested bonus, and reconstructable guarantee-split
+  fields for audit reconstruction.
+- ERM: Vested declared bonus is separated from non-guaranteed terminal bonus,
+  supporting later supportability, TVOG, and management-action reporting.
+
+**Delivery:**
+- Local implementation commit pending at log-write time.
+- `git push origin main` not attempted at log-write time; network access is
+  restricted in this sandbox.
+- Pre-existing dirty files `docs/MODEL_USAGE_GUIDE.md`,
+  `docs/MODEL_USER_MANUAL.md`, `tests/test_schema_compatibility.py`,
+  `outputs/`, and `scripts/build_hk_insurance_briefing.mjs` were left
+  untouched.
+
+---
+
 ## Run 2026-06-02T18:10:18Z - Phase 10: Hong Kong Participating Liability Products
 
 **Task Completed:** Define Hong Kong cash dividend product mechanics and sample policy data.

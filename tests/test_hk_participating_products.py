@@ -7,13 +7,22 @@ import pytest
 from par_model_v2.projection import (
     HKCashDividendMechanics,
     HKCashDividendPolicy,
+    HKReversionaryBonusMechanics,
+    HKReversionaryBonusPolicy,
     ParEndowmentProduct,
     annual_cash_dividend_schedule,
+    annual_reversionary_bonus_schedule,
     available_hk_cash_dividend_policy_ids,
+    available_hk_reversionary_bonus_policy_ids,
     default_hk_cash_dividend_mechanics,
+    default_hk_reversionary_bonus_mechanics,
+    reversionary_bonus_guarantee_split,
     sample_hk_cash_dividend_policies,
     sample_hk_cash_dividend_policy_table,
+    sample_hk_reversionary_bonus_policies,
+    sample_hk_reversionary_bonus_policy_table,
     validate_hk_cash_dividend_policy_table,
+    validate_hk_reversionary_bonus_policy_table,
 )
 
 
@@ -114,3 +123,119 @@ class TestHKCashDividendTablesAndSchedules:
         assert list(schedule["month"]) == [12, 24, 36, 48, 60, 72, 84, 96, 108, 120]
         assert set(schedule["guarantee_status"]) == {"NON_GUARANTEED"}
         assert schedule["cash_dividend"].sum() == pytest.approx(6_000.0 * policy.term_years)
+
+
+class TestHKReversionaryBonusMechanics:
+    def test_default_mechanics_identifies_vested_bonus_terms(self) -> None:
+        mechanics = default_hk_reversionary_bonus_mechanics()
+
+        assert mechanics.market == "HK"
+        assert mechanics.currency == "HKD"
+        assert mechanics.bonus_option == "VESTED_REVERSIONARY"
+        assert mechanics.annual_reversionary_bonus_rate == pytest.approx(0.025)
+        assert mechanics.terminal_bonus_pct == pytest.approx(0.35)
+        assert mechanics.to_record()["is_placeholder"] is True
+
+    def test_invalid_terminal_bonus_pct_is_rejected(self) -> None:
+        with pytest.raises(ValueError, match="terminal_bonus_pct"):
+            HKReversionaryBonusMechanics(
+                product_code="BAD",
+                product_name="bad terminal bonus",
+                terminal_bonus_pct=1.5,
+            )
+
+    def test_annual_vested_bonus_addition_uses_sum_assured_rate(self) -> None:
+        mechanics = default_hk_reversionary_bonus_mechanics()
+
+        assert mechanics.annual_vested_bonus_addition(600_000.0) == pytest.approx(15_000.0)
+
+
+class TestHKReversionaryBonusPolicies:
+    def test_fixture_policy_ids_are_stable(self) -> None:
+        assert available_hk_reversionary_bonus_policy_ids() == (
+            "HKRB000001",
+            "HKRB000002",
+            "HKRB000003",
+        )
+
+    def test_sample_policies_validate_against_mechanics(self) -> None:
+        policies = sample_hk_reversionary_bonus_policies()
+        mechanics = default_hk_reversionary_bonus_mechanics()
+
+        assert len(policies) == 3
+        for policy in policies:
+            policy.validate_against(mechanics)
+            assert policy.product_code == mechanics.product_code
+
+    def test_unknown_policy_fixture_is_rejected(self) -> None:
+        with pytest.raises(KeyError, match="available policy IDs"):
+            sample_hk_reversionary_bonus_policies(["UNKNOWN"])
+
+    def test_policy_converts_to_current_projection_contract(self) -> None:
+        policy = sample_hk_reversionary_bonus_policies(["HKRB000002"])[0]
+        projection_product = policy.to_projection_product()
+
+        assert isinstance(projection_product, ParEndowmentProduct)
+        assert projection_product.rb_rate_annual == pytest.approx(0.025)
+        assert projection_product.terminal_bonus_pct == pytest.approx(0.35)
+        assert projection_product.initial_rb_accum == pytest.approx(112_500.0)
+
+    def test_invalid_policy_bonus_option_is_rejected_by_mechanics(self) -> None:
+        policy = HKReversionaryBonusPolicy(
+            policy_id="BADBONUS",
+            product_code="HKRB_PAR_2026",
+            issue_age=40,
+            gender="M",
+            term_years=10,
+            sum_assured=500_000.0,
+            annual_premium=40_000.0,
+            policy_year=1,
+            bonus_option="CASH",
+        )
+
+        with pytest.raises(ValueError, match="bonus_option"):
+            policy.validate_against(default_hk_reversionary_bonus_mechanics())
+
+
+class TestHKReversionaryBonusTablesAndSchedules:
+    def test_sample_policy_table_contains_governance_and_guarantee_split_fields(self) -> None:
+        table = sample_hk_reversionary_bonus_policy_table()
+
+        assert validate_hk_reversionary_bonus_policy_table(table)
+        assert set(table["currency"]) == {"HKD"}
+        assert table["projected_vested_reversionary_bonus"].sum() == pytest.approx(
+            (600_000.0 * 0.025 * 10)
+            + (112_500.0 + 900_000.0 * 0.025 * 20)
+            + (35_000.0 + 350_000.0 * 0.025 * 5)
+        )
+        assert table["total_guaranteed_maturity_benefit"].min() > table["sum_assured"].min()
+        assert table["mechanics_source_id"].str.len().min() > 0
+        assert table["limitation_id"].str.len().min() > 0
+
+    def test_policy_table_rejects_duplicate_policy_id(self) -> None:
+        table = sample_hk_reversionary_bonus_policy_table()
+        table.loc[1, "policy_id"] = table.loc[0, "policy_id"]
+
+        with pytest.raises(ValueError, match="unique"):
+            validate_hk_reversionary_bonus_policy_table(table)
+
+    def test_annual_bonus_schedule_vests_into_guaranteed_split(self) -> None:
+        policy = sample_hk_reversionary_bonus_policies(["HKRB000001"])[0]
+        schedule = annual_reversionary_bonus_schedule(policy)
+
+        assert len(schedule) == policy.term_years
+        assert list(schedule["month"]) == [12, 24, 36, 48, 60, 72, 84, 96, 108, 120]
+        assert set(schedule["vested_bonus_guarantee_status"]) == {"GUARANTEED_AFTER_DECLARATION"}
+        assert set(schedule["terminal_bonus_guarantee_status"]) == {"NON_GUARANTEED"}
+        assert schedule["vested_bonus_balance"].iloc[-1] == pytest.approx(150_000.0)
+        assert schedule["guaranteed_maturity_benefit"].iloc[-1] == pytest.approx(750_000.0)
+
+    def test_guarantee_split_separates_base_vested_and_terminal_bonus(self) -> None:
+        policy = sample_hk_reversionary_bonus_policies(["HKRB000003"])[0]
+        split = reversionary_bonus_guarantee_split(policy)
+
+        assert split["guaranteed_base_benefit"] == pytest.approx(350_000.0)
+        assert split["vested_reversionary_bonus"] == pytest.approx(78_750.0)
+        assert split["total_guaranteed_maturity_benefit"] == pytest.approx(428_750.0)
+        assert split["terminal_bonus_pct"] == pytest.approx(0.35)
+        assert split["terminal_bonus_guarantee_status"] == "NON_GUARANTEED"
