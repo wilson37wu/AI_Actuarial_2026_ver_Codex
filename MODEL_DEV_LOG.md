@@ -4780,3 +4780,31 @@ failed, so no new model work was performed.
 - `git push origin main` — SUCCESS (via /tmp clone workaround)
 
 ---
+
+## Run 2026-06-03T23:23:05Z — Phase 11 → Phase 12
+
+**Task Completed:** Create educational reporting pack with model run log, movement analysis, risk metrics, validation exceptions, and sign-off checklist
+
+**Accomplishments:**
+- Added `par_model_v2/projection/educational_reporting_pack.py` (1,132 lines) with five-section pack:
+  - Section 1: `ModelRunLog` + `build_model_run_log()` — timestamped stage log for all 5 pipeline stages
+  - Section 2: `MovementAnalysis` + `build_movement_analysis()` — policy-count and sum-assured roll-forward with opening/NB/lapses/deaths/maturities/closing
+  - Section 3: `RiskMetricsSummary` + `build_risk_metrics_summary()` — VaR-95, ES-95, total SA, mortality stress, lapse stress (normal approximation)
+  - Section 4: `ValidationExceptionsReport` + `build_validation_exceptions_report()` — FAIL/WARN filter with recommended actions per check ID
+  - Section 5: `SignOffChecklist` + `build_sign_off_checklist()` — 9-item governance checklist with evidence references and reviewer attribution
+  - Orchestrator: `EducationalReportingPack` + `build_educational_reporting_pack()` — single-call assembly with JSON + Markdown output
+- Added `tests/test_educational_reporting_pack.py` (459 lines, 50 tests) covering all components and integration
+- Fixed pre-existing bugs across 6 files: reporting_cycle.py truncation, chunked_processor import aliases, ReconciliationReport field names, ValidationCheckResult.passed for SKIP, gen_result.portfolio → .policies, null bytes
+- Total Phase 11 tests: 230 passed
+
+**Phase 11 Status:** COMPLETE (all 5 tasks done)
+
+**Next Phase:** Phase 12: Governance, Calibration, and Educational Packaging
+**Next Task:** Add calibration notebooks or scripts for curves, equity, credit, and liability assumptions
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.3: Model outputs documented in run log and sign-off checklist ✅
+- IA TAS M §3.6: Assumption-to-output traceability via lock_id + run_id in every section ✅
+- ERM: VaR-95 and ES-95 tail-risk metrics computed and reported ✅
+
+---

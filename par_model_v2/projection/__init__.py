@@ -168,3 +168,20 @@ __all__ = [
     "build_hk_liability_reporting_pack", "hk_bonus_supportability_view",
     "sample_hk_cash_dividend_policies",
     "default_hk_reversionary_bonus_mechanics"
+    "default_hk_reversionary_bonus_mechanics",
+]
+
+from par_model_v2.projection.educational_reporting_pack import (
+    EducationalReportingPack,
+    ModelRunLog,
+    MovementAnalysis,
+    RiskMetricsSummary,
+    SignOffChecklist,
+    ValidationExceptionsReport,
+    build_educational_reporting_pack,
+    build_model_run_log,
+    build_movement_analysis,
+    build_risk_metrics_summary,
+    build_sign_off_checklist,
+    build_validation_exceptions_report,
+)

@@ -1,0 +1,39 @@
+{
+  "control_total_results": [
+    {
+      "column": "sum_assured",
+      "difference": 0.0,
+      "passed": true,
+      "processed_total": 592313000.0,
+      "source_total": 592313000.0,
+      "tolerance": 0.01
+    },
+    {
+      "column": "annual_premium",
+      "difference": 0.0,
+      "passed": true,
+      "processed_total": 55789200.0,
+      "source_total": 55789200.0,
+      "tolerance": 0.01
+    },
+    {
+      "column": "initial_vested_bonus",
+      "difference": 0.0,
+      "passed": true,
+      "processed_total": 29267800.0,
+      "source_total": 29267800.0,
+      "tolerance": 0.01
+    }
+  ],
+  "exceptions": [],
+  "generated_at": "2026-06-03T23:22:37Z",
+  "limitation_id": "PHASE11-T2-RECON",
+  "n_chunks_done": 5,
+  "n_chunks_failed": 0,
+  "n_chunks_pending": 0,
+  "n_chunks_total": 5,
+  "overall_passed": true,
+  "processed_n_policies": 1000,
+  "run_id": "4f89ac57-2edf-48d9-8930-daf23b3158b3",
+  "source_n_policies": 1000
+}
