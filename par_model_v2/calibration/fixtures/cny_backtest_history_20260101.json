@@ -1,0 +1,43 @@
+{
+  "fixture_id": "CNY_BT_HIST_2026",
+  "description": "Annual realised CNY 1-year China Government Bond (CGB) yield and CSI 300 total-return history, 2014-2025, used to drive the Phase 13 Task 5 out-of-sample backtest (Gate G-09). This is an EDUCATIONAL PROXY series approximating published ChinaBond / CSI / Wind levels; it is NOT a credentialled vendor feed and must be replaced with a licensed market-data extract before any regulatory or capital-adequacy use.",
+  "market": "CNY",
+  "currency": "CNY",
+  "as_of_date": "2026-01-01",
+  "base_equity_index": 100.0,
+  "deterministic_discount_rate": 0.030,
+  "guarantee_notional": 1000000.0,
+  "equity_weight": 0.35,
+  "duration_years": 5.0,
+  "source_type": "educational_historical_proxy",
+  "source_detail": "ChinaBond 1Y CGB year-end yield + CSI 300 calendar-year total return (educational proxy series, vendor feed not yet credentialled)",
+  "in_sample_years": [2014, 2015, 2016, 2017, 2018, 2019, 2020],
+  "out_of_sample_years": [2021, 2022, 2023, 2024, 2025],
+  "data_lineage": {
+    "provenance": "educational_historical_proxy",
+    "approved_by": "ModelGovernance_Phase13",
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "version": "1.0.0",
+    "checksum_sha256": "educational_fixture_no_checksum",
+    "primary_sources": [
+      "ChinaBond China Government Bond yield curve (1Y point), annual year-end snapshots",
+      "CSI 300 Index calendar-year total return"
+    ],
+    "production_restriction": "Proxy levels only. Replace with licensed ChinaBond/CSI/Wind extracts and re-run sign-off before regulatory or capital-adequacy use."
+  },
+  "annual_records": [
+    {"year": 2014, "start_short_rate": 0.0420, "end_short_rate": 0.0356, "equity_return": 0.517},
+    {"year": 2015, "start_short_rate": 0.0356, "end_short_rate": 0.0234, "equity_return": 0.056},
+    {"year": 2016, "start_short_rate": 0.0234, "end_short_rate": 0.0265, "equity_return": -0.113},
+    {"year": 2017, "start_short_rate": 0.0265, "end_short_rate": 0.0380, "equity_return": 0.218},
+    {"year": 2018, "start_short_rate": 0.0380, "end_short_rate": 0.0260, "equity_return": -0.253},
+    {"year": 2019, "start_short_rate": 0.0260, "end_short_rate": 0.0236, "equity_return": 0.361},
+    {"year": 2020, "start_short_rate": 0.0236, "end_short_rate": 0.0258, "equity_return": 0.272},
+    {"year": 2021, "start_short_rate": 0.0258, "end_short_rate": 0.0224, "equity_return": -0.052},
+    {"year": 2022, "start_short_rate": 0.0224, "end_short_rate": 0.0210, "equity_return": -0.216},
+    {"year": 2023, "start_short_rate": 0.0210, "end_short_rate": 0.0208, "equity_return": -0.114},
+    {"year": 2024, "start_short_rate": 0.0208, "end_short_rate": 0.0145, "equity_return": 0.147},
+    {"year": 2025, "start_short_rate": 0.0145, "end_short_rate": 0.0135, "equity_return": 0.050}
+  ],
+  "notes": "12 annual observations (>= 10 required by G-09 criterion 1). Calibration uses the 7-year in-sample window (2014-2020); the 5-year out-of-sample holdout (2021-2025) is used for genuine out-of-sample band/VaR validation. Educational proxy - not a credentialled vendor feed."
+}

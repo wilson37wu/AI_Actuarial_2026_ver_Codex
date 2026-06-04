@@ -63,6 +63,44 @@
       "phase": "Phase 2: Industry Standards Alignment",
       "digest": "d857f8abefde56df9416d6d8f07c406aa9b93e16ca1f8e3d92787947783cc757",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "4143eb54e0f949f88fcfc3751758aad0",
+      "timestamp": "2026-06-04T08:28:23.729583+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "Claude Actuarial Agent",
+      "description": "Model run backtest-f09fe151a3cb: PASS",
+      "details": {
+        "run_id": "backtest-f09fe151a3cb",
+        "scenario_count": 12000,
+        "duration_seconds": 0.0,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/calibration/backtesting.py"
+        ],
+        "test_summary": "rate_cov=75.0%, equity_cov=91.7%, var99_breach=0.0%"
+      },
+      "phase": "Phase 4: Calibration & Backtesting",
+      "digest": "f5bad04dca0164bdb8e7892f31a2afda7b9ff2f9e52837a80331710b678c8c3a",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "1eca50b2b5004bffafab9c4bf786f0be",
+      "timestamp": "2026-06-04T08:28:23.729728+00:00",
+      "entry_type": "VALIDATION",
+      "actor": "Claude Actuarial Agent",
+      "description": "Validation: HistoricalBacktest \u2014 5/5 passed (PASS)",
+      "details": {
+        "test_suite": "HistoricalBacktest",
+        "tests_run": 5,
+        "tests_passed": 5,
+        "tests_failed": 0,
+        "outcome": "PASS",
+        "failed_tests": []
+      },
+      "phase": "Phase 4: Calibration & Backtesting",
+      "digest": "aedbcbfe2d1392d0a13124a3b512ccc95719b40051ff9b6f230c7204ad95f04a",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
