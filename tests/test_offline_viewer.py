@@ -4,6 +4,8 @@ Task 1 covered the base schema, governance, and offline-safety.
 Task 2 adds the loss-distribution section (histogram + pre-computed
 confidence/percentile/seed sweeps) and the interactive capital/tail dashboards,
 plus the model-side loss-distribution emitter.
+Task 3 adds the proxy overfit-gap chart and the diversification-benefit
+waterfall (standalone -> var-cov -> nested) aggregation view.
 """
 from __future__ import annotations
 
@@ -140,8 +142,75 @@ def test_template_has_task2_charts():
         assert token in tpl, "missing Task 2 viewer element: " + token
 
 
+# ---------------------------------------------------------------- Task 3 proxy + aggregation
+def test_template_has_task3_views():
+    tpl = open(_TEMPLATE).read()
+    for token in ["function waterfallChart", "function viewAggregation",
+                  "Overfit gap", '["agg","Aggregation",viewAggregation]',
+                  "Diversification-benefit waterfall"]:
+        assert token in tpl, "missing Task 3 viewer element: " + token
+
+
+def test_aggregation_data_supports_waterfall(data):
+    c = data["capital"]
+    for k in ("standalone_sum", "correlated_scr", "nested_scr",
+              "diversification_benefit_formula", "esg_rate_equity_correlation",
+              "component_loss_correlation"):
+        assert isinstance(c.get(k), (int, float)), k
+    # waterfall ordering: var-cov sits below the standalone sum (a diversification reduction)
+    assert c["correlated_scr"] < c["standalone_sum"]
+
+
 def test_loss_emitter_is_calculation_side_only():
     # The viewer template must not import or run the model; all numbers are pre-computed.
     tpl = open(_TEMPLATE).read().lower()
     for forbidden in ["math.random", "numpy", "fetch(", "xmlhttprequest", "import("]:
         assert forbidden not in tpl, "viewer must not compute/fetch: " + forbidden
+
+
+# ---------------------------------------------------------------- Task 4 governance panel
+def test_governance_deployment_gates(data):
+    gates = data["governance"]["deployment_gates"]
+    assert len(gates) == 12, "expected 12 deployment gates"
+    ids = {g["gate_id"] for g in gates}
+    assert {"G-01", "G-10", "G-11", "G-12"} <= ids
+    for g in gates:
+        for k in ("gate_id", "description", "status", "level", "blocking", "cleared"):
+            assert k in g, k
+    assert sum(1 for g in gates if g["cleared"]) == 12, "all 12 gates cleared (educational)"
+
+
+def test_governance_audit_integrity_is_computed(data):
+    g = data["governance"]
+    # the badge must be a *computed* digest-recomputation result, not a hard-coded flag
+    assert g["audit_integrity_ok"] is True
+    assert g["audit_verified"] == g["audit_entries"] >= 28
+    assert g["audit_failed"] == 0
+
+
+def test_governance_change_record_timeline_fields(data):
+    crs = data["governance"]["change_records"]
+    assert crs and all("created_at" in c for c in crs)
+    for c in crs:
+        assert isinstance(c.get("sign_off_history"), list)
+    # at least one record carries a multi-step sign-off history (peer -> owner)
+    assert any(len(c["sign_off_history"]) >= 2 for c in crs)
+
+
+def test_governance_risk_register_enriched(data):
+    rr = data["governance"]["risk_register"]
+    assert rr
+    for r in rr:
+        for k in ("risk_id", "title", "overall_rating", "mitigation_status",
+                  "category", "owner", "description", "mitigation"):
+            assert k in r, k
+    mr011 = next(r for r in rr if r["risk_id"] == "MR-011")
+    assert mr011["description"] and mr011["mitigation"]
+
+
+def test_template_has_task4_views():
+    tpl = open(_TEMPLATE, encoding="utf-8").read()
+    for token in ["Deployment-gate checklist", 'id="rrStatus"', 'id="rrRating"',
+                  'class="timeline"', "digests verified", "function viewGov",
+                  "Change-record timeline"]:
+        assert token in tpl, "missing Task 4 viewer element: " + token

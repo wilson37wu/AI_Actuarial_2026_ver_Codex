@@ -5732,3 +5732,66 @@ use the /tmp-clone pattern.
 **Milestone:** All 85 documented model tasks complete; Phase 16 (offline UI) Task 1 + Task 2 COMPLETE.
 
 ---
+
+## Run 2026-06-05 — Phase 16: Offline Result-Viewer UI (Task 3)
+
+**Task Completed:** Task 3 — proxy-validation & aggregation views in the offline viewer.
+
+**Accomplishments:**
+- Added a dependency-free `waterfallChart()` SVG primitive (floating bars between
+  start/end, `<title>` tooltips, dashed step connectors) to `par_model_v2/viewer/viewer_template.html`.
+- New **Aggregation** tab (`viewAggregation`) renders the diversification-benefit
+  waterfall standalone → var-cov → nested (Σ standalone 44,477 → var-cov 29,031 with
+  the governed ESG ρ=−0.15 → nested benchmark 43,251), with a key-finding callout that the
+  raw ESG factor correlation understates diversified capital by 32.9% (realised loss
+  correlation +0.55) → MR-010 MITIGATED. Pure look-up from `capital` schema; no UI calculation.
+- Enhanced the **Proxy Validation** tab: added an overfit-gap (in-sample − OOS R²) bar
+  chart with green ≤ onset / red ≥ onset colouring, an "Overfit gap" table column, the
+  selected-degree gap KPI, and an "onset" pill on the onset degree. Extended `barChart()`
+  with an optional `vfmt` value-formatter so small R²-gap fractions render correctly.
+- Added 2 viewer tests (`test_template_has_task3_views`, `test_aggregation_data_supports_waterfall`);
+  `tests/test_offline_viewer.py` 14/14 PASS.
+
+**Verification:**
+- Rebuilt `model_result_viewer.html` via `scripts/build_offline_viewer.py` (47,998 bytes;
+  embedded snapshot, token replaced).
+- `node --check` on the embedded JS → SYNTAX OK.
+- Headless jsdom render: 4 tabs (Capital & Tail | Proxy Validation | Aggregation | Governance);
+  Aggregation waterfall SVG + MR-010 finding present; Proxy view shows 2 SVGs incl. the
+  overfit-gap chart; **0 JS errors, 0 network calls**.
+
+**Next Step:** Phase 16 Task 4 — governance panel (risk-register filter, ChangeRecord timeline,
+audit-integrity badge, deployment-gate checklist) from GOVERNANCE_STORE.json.
+
+**Industry Standards Progress:**
+- IA TAS M §3.6 / SOA ASOP 56 §3.5: overfit-gap visualisation makes the proxy-model
+  generalisation evidence directly inspectable offline.
+- SOA ASOP 56 §3.5 / ASOP 25 §3.3 / IA TAS M §3.2: the diversification waterfall exposes
+  the var-cov-vs-nested capital gap and the MR-010 model-error disclosure in the UI.
+
+---
+
+## Run 2026-06-04T23:25:03Z — Phase 16 (Offline Result-Viewer UI)
+
+**Task Completed:** Task 4 — governance panel.
+
+**Accomplishments:**
+- Extended `scripts/build_offline_viewer.py` governance schema: the audit-integrity badge is now a **computed** result — `_verify_audit_integrity()` recomputes every audit-entry SHA-256 digest (entry_id+timestamp+description+json.dumps(details,sort_keys=True), matching `AuditEntry.verify_digest`) and reports verified/failed counts (28/28 verified, 0 failed). No longer a hard-coded flag.
+- Added `_parse_deployment_gates()`: parses the gate summary table in `docs/DEPLOYMENT_READINESS_CHECKLIST.md` (`| G-NN | desc | status | blocking |`), first-match-wins so the summary table beats the later sign-off table, and merges in G-11/G-12 (grounded in the Phase 13 dynamic-lapse / HW1F reports). Result: 12/12 gates cleared (educational).
+- Enriched `risk_register` (description, mitigation, owner, category, likelihood/impact, related_standard) and `change_records` (record_id, phase, author, peer_reviewer, standard_references, full sign_off_history) in the viewer schema.
+- Rewrote `viewGov()` + `fillRiskRegister()` in `par_model_v2/viewer/viewer_template.html` (dependency-free, no CDN/network): deployment-gate checklist with pass/fail icons and a "12/12 cleared" pill; risk register with **two** filters (mitigation status AND overall rating) and click-to-expand description/mitigation detail rows; a vertical **change-record timeline** showing each record's sign-off history (peer→owner→approval); and a computed audit-integrity badge ("integrity OK · 28/28 digests verified").
+- Rebuilt `model_result_viewer.html` (73,985 B) + `viewer_data.json`.
+
+**Verification:**
+- `tests/test_offline_viewer.py` 19/19 PASS (5 new Task 4 tests: deployment gates, computed audit integrity, change-record timeline fields, enriched risk register, template Task-4 elements).
+- Headless jsdom render of the rebuilt HTML: Governance tab renders 12 gates, "12/12 cleared", both filters, 11 risk rows, 14-item timeline, integrity-OK badge, 28/28 digests verified, MR-011 present; rating filter HIGH→5 rows; row click expands detail; **0 JS errors, 0 network requests**. `node --check` JS OK; `py_compile` clean.
+- Governance/audit regression: 158 PASS. (3 pre-existing collection errors + 1 pre-existing `test_guided_examples` failure are in unrelated modules I did not touch — repo carries staged churn from prior cycles in the validation package.)
+
+**Next Step:** Task 5 — polish + offline packaging (file-picker/drag-drop loader already present; add responsive layout, export-to-PNG via canvas, and an offline self-test asserting zero network).
+
+**Industry Standards Progress:**
+- IA TAS M §3.7 (change traceability): change-record timeline + sign-off history surfaced in the offline viewer. Addressed.
+- IA TAS M §3.6 / SOA ASOP 56 §3.5 (audit integrity): audit-integrity badge is now a verifiable SHA-256 digest recomputation, not a static claim. Addressed.
+- Model-limitation disclosure: deployment-gate checklist explicitly states "cleared (educational)" + production residual (credentialled data + independent APS X2). Addressed.
+
+---

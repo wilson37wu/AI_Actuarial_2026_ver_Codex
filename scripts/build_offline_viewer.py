@@ -13,14 +13,17 @@ Outputs (repo root):  viewer_data.json , model_result_viewer.html
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
-from typing import Any, Dict, List, Optional
+import re
+from typing import Any, Dict, List, Optional, Tuple
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
 GOV_PATH = os.path.join(REPO, ".claude-dev", "GOVERNANCE_STORE.json")
 STATE_PATH = os.path.join(REPO, ".claude-dev", "MODEL_DEV_STATE.json")
+GATES_MD = os.path.join(REPO, "docs", "DEPLOYMENT_READINESS_CHECKLIST.md")
 TEMPLATE = os.path.join(REPO, "par_model_v2", "viewer", "viewer_template.html")
 OUT_JSON = os.path.join(REPO, "viewer_data.json")
 OUT_HTML = os.path.join(REPO, "model_result_viewer.html")
@@ -34,6 +37,80 @@ def _load(path: str) -> Optional[dict]:
             return json.load(fh)
     except (OSError, ValueError):
         return None
+
+
+def _verify_audit_integrity(gov: dict) -> Tuple[bool, int, int]:
+    """Recompute every audit-entry digest (same scheme as
+    ``AuditEntry.verify_digest``: sha256(entry_id + timestamp + description +
+    json.dumps(details, sort_keys=True))) and report the tally.
+
+    Returns (all_ok, n_verified, n_failed). This makes the viewer's
+    audit-integrity badge a *computed* result rather than a hard-coded flag
+    (IA TAS M section 3.7 traceability; SOA ASOP 56 section 3.5).
+    """
+    entries = (gov or {}).get("audit_trail", [])
+    n_ok = 0
+    n_bad = 0
+    for e in entries:
+        try:
+            raw = (e["entry_id"] + e["timestamp"] + e["description"]
+                   + json.dumps(e.get("details", {}), sort_keys=True))
+            if hashlib.sha256(raw.encode()).hexdigest() == e.get("digest"):
+                n_ok += 1
+            else:
+                n_bad += 1
+        except (KeyError, TypeError):
+            n_bad += 1
+    return (n_bad == 0 and n_ok > 0), n_ok, n_bad
+
+
+# Gates G-11/G-12 are not given dedicated rows in the checklist table; their
+# status is grounded in docs/PHASE13_DYNAMIC_LAPSE_REPORT.* (G-11) and
+# docs/PHASE13_HW1F_CALIBRATION_REPORT.* (G-12), both PASS (educational).
+_EXTRA_GATES = [
+    {"gate_id": "G-11", "description": "Dynamic lapse calibrated to experience study",
+     "status": "CLEARED (educational)", "blocking": "Pricing, MCEV"},
+    {"gate_id": "G-12", "description": "Calibration data lineage documented (HW1F)",
+     "status": "CLEARED (educational)", "blocking": "Capital adequacy"},
+]
+
+
+def _parse_deployment_gates() -> List[Dict[str, Any]]:
+    """Parse the gate summary table from DEPLOYMENT_READINESS_CHECKLIST.md
+    (rows ``| G-NN | description | status | blocking |``) and merge in the two
+    extra gates (G-11/G-12). Each gate is normalised to
+    {gate_id, description, status, level, blocking, cleared}."""
+    gates: Dict[str, Dict[str, Any]] = {}
+    try:
+        with open(GATES_MD, encoding="utf-8") as fh:
+            text = fh.read()
+    except OSError:
+        text = ""
+    row = re.compile(r"^\|\s*(G-\d{2})\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*$")
+    for line in text.splitlines():
+        m = row.match(line)
+        if not m:
+            continue
+        gid, desc, status, blocking = (s.strip() for s in m.groups())
+        if gid in gates:
+            continue  # first match wins (the summary table precedes the sign-off table)
+        status_clean = re.sub(r"[✅❌]", "", status).strip()
+        gates[gid] = {
+            "gate_id": gid,
+            "description": desc,
+            "status": status_clean,
+            "level": "educational" if "educational" in status_clean.lower() else "production",
+            "blocking": blocking,
+            "cleared": ("cleared" in status_clean.lower() or "pass" in status_clean.lower()),
+        }
+    for g in _EXTRA_GATES:
+        if g["gate_id"] not in gates:
+            gates[g["gate_id"]] = {
+                "gate_id": g["gate_id"], "description": g["description"],
+                "status": g["status"], "level": "educational",
+                "blocking": g["blocking"], "cleared": True,
+            }
+    return [gates[k] for k in sorted(gates)]
 
 
 def build_viewer_data() -> Dict[str, Any]:
@@ -183,19 +260,36 @@ def build_viewer_data() -> Dict[str, Any]:
     # ---- governance -----------------------------------------------------
     if gov:
         at = gov.get("audit_trail", [])
+        integrity_ok, n_ok, n_bad = _verify_audit_integrity(gov)
         data["governance"] = {
             "audit_entries": len(at),
-            "audit_integrity_ok": True,  # verified at build time by tests/governance
+            "audit_integrity_ok": integrity_ok,  # COMPUTED: digest recomputation at build time
+            "audit_verified": n_ok,
+            "audit_failed": n_bad,
             "change_records": [
-                {"title": r.get("title"), "status": r.get("status"),
-                 "change_type": r.get("change_type"), "created_at": r.get("created_at")}
+                {"record_id": r.get("record_id"), "title": r.get("title"),
+                 "status": r.get("status"), "change_type": r.get("change_type"),
+                 "created_at": r.get("created_at"), "phase": r.get("phase"),
+                 "author": r.get("author"), "peer_reviewer": r.get("peer_reviewer"),
+                 "standard_references": r.get("standard_references", []),
+                 "sign_off_history": [
+                     {"timestamp": s.get("timestamp"), "actor": s.get("actor"),
+                      "status": s.get("status"), "comments": s.get("comments")}
+                     for s in (r.get("sign_off_history") or [])
+                 ]}
                 for r in gov.get("change_records", [])
             ],
+            "deployment_gates": _parse_deployment_gates(),
             "risk_register": [
                 {"risk_id": r.get("risk_id"), "title": r.get("title"),
                  "overall_rating": r.get("overall_rating"),
                  "mitigation_status": r.get("mitigation_status"),
-                 "category": r.get("category")}
+                 "category": r.get("category"), "owner": r.get("owner"),
+                 "likelihood": r.get("likelihood"), "impact": r.get("impact"),
+                 "description": r.get("description"),
+                 "mitigation": r.get("mitigation"),
+                 "related_standard": r.get("related_standard"),
+                 "updated_at": r.get("updated_at")}
                 for r in gov.get("risk_register", [])
             ],
         }
@@ -203,7 +297,7 @@ def build_viewer_data() -> Dict[str, Any]:
 
 
 def render_html(data: Dict[str, Any]) -> str:
-    with open(TEMPLATE) as fh:
+    with open(TEMPLATE, encoding="utf-8") as fh:
         tpl = fh.read()
     if DATA_TOKEN not in tpl:
         raise RuntimeError("data token not found in template")
@@ -213,15 +307,19 @@ def render_html(data: Dict[str, Any]) -> str:
 
 def main() -> Dict[str, Any]:
     data = build_viewer_data()
-    with open(OUT_JSON, "w") as fh:
+    with open(OUT_JSON, "w", encoding="utf-8") as fh:
         json.dump(data, fh, indent=2, ensure_ascii=False)
     html = render_html(data)
-    with open(OUT_HTML, "w") as fh:
+    with open(OUT_HTML, "w", encoding="utf-8") as fh:
         fh.write(html)
     print("sources:", ", ".join(data["meta"]["source_files"]) or "(none)")
+    g = data.get("governance", {})
     print("verdicts:", len(data["verdicts"]),
-          "| risks:", len(data.get("governance", {}).get("risk_register", [])),
-          "| change records:", len(data.get("governance", {}).get("change_records", [])),
+          "| risks:", len(g.get("risk_register", [])),
+          "| change records:", len(g.get("change_records", [])),
+          "| gates:", len(g.get("deployment_gates", [])),
+          "| audit integrity:", ("OK" if g.get("audit_integrity_ok") else "FAIL"),
+          "({}/{} verified)".format(g.get("audit_verified"), g.get("audit_entries")),
           "| loss seeds:", len(data.get("loss", {}).get("seeds", [])))
     print("wrote:", os.path.relpath(OUT_JSON, REPO), "+", os.path.relpath(OUT_HTML, REPO),
           "({} bytes)".format(len(html)))

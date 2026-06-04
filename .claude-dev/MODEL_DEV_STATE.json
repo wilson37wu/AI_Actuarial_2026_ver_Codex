@@ -1,9 +1,9 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-04T21:23:36.168363+00:00",
-  "last_run_duration_minutes": 55,
-  "current_phase": "Phase 16: Offline Result-Viewer UI — Task 2 COMPLETE; next Task 3 (proxy/aggregation views)",
+  "last_run": "2026-06-04T23:24:41.682660+00:00",
+  "last_run_duration_minutes": 50,
+  "current_phase": "Phase 16: Offline Result-Viewer UI — Task 4 COMPLETE (governance panel); next Task 5 (polish + offline packaging)",
   "overall_status": "documented_tasks_complete_building_offline_ui",
   "phases": {
     "Phase 1: Model Review & Documentation": {
@@ -306,7 +306,7 @@
     "phases_completed": 15,
     "estimated_completion_pct": 100.0,
     "average_cycle_duration_minutes": 53,
-    "cycles_run": 129,
+    "cycles_run": 130,
     "tasks_total": 85
   },
   "technical_notes": {
@@ -359,7 +359,7 @@
   },
   "completion_summary": {
     "version": "v1.0.0-dev",
-    "milestone": "ALL DOCUMENTED MODEL TASKS COMPLETE (85/85, 15 phases); POST-DOC offline viewer: Phase 16 Task 1 + Task 2 DONE",
+    "milestone": "ALL DOCUMENTED MODEL TASKS COMPLETE (85/85, 15 phases); POST-DOC offline viewer: Phase 16 Tasks 1-4 DONE (Task 4 = governance panel)",
     "release_date": "2026-05-23",
     "production_status": "NOT CLEARED FOR PRODUCTION",
     "production_gates_cleared": 12,
@@ -374,5 +374,18 @@
     "roadmap_document": "docs/POST_V1_STOCHASTIC_MODEL_EXPANSION_PLAN.md",
     "scope": "Multi-market ESG, negative-rate-capable interest rates, regional equity / FX / correlation, broader asset classes, Hong Kong participating liabilities, 100,000-policy processing, governance/calibration packaging, and Phase 13 production-readiness / live-market integration.",
     "note": "post_v1_expansion_summary reconstructed 2026-06-04 after detecting truncation of the remote state file copy."
+  },
+  "phase16_offline_viewer": {
+    "description": "Offline self-contained result viewer (no CDN/server/install); consumes model-output JSON only.",
+    "completed": [
+      "Task 1: data-contract + bundler (build_offline_viewer.py, viewer_data.json schema, template)",
+      "Task 2: capital & tail dashboards (SVG bars, loss histogram, convergence + bootstrap-CI)",
+      "Task 3: proxy-validation overfit-gap chart + diversification-benefit waterfall (standalone->var-cov->nested) Aggregation tab",
+      "Task 4: governance panel — deployment-gate checklist (12/12 educational, parsed from DEPLOYMENT_READINESS_CHECKLIST.md), risk register with status+rating filters and click-to-expand description/mitigation, change-record timeline with sign-off history, and a COMPUTED audit-integrity badge (SHA-256 digest recomputation, 28/28 verified)"
+    ],
+    "in_progress": [
+      "Task 5: polish + offline packaging (drag-drop loader, responsive layout, export-to-PNG, offline self-test)"
+    ],
+    "next": null
   }
 }
