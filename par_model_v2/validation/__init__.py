@@ -61,3 +61,29 @@ __all__ += [
     "ModelHealthChecker",
     "run_health_checks",
 ]
+
+from .validation_dashboard import (
+    ValidationDashboard,
+    HealthPanel,
+    IAValidationPanel,
+    LimitationCardPanel,
+    CalibrationPanel,
+    SuitePanel,
+    PhaseTrackerPanel,
+    ReadinessVerdict,
+    build_validation_dashboard,
+    write_validation_dashboard,
+)
+
+__all__ += [
+    "ValidationDashboard",
+    "HealthPanel",
+    "IAValidationPanel",
+    "LimitationCardPanel",
+    "CalibrationPanel",
+    "SuitePanel",
+    "PhaseTrackerPanel",
+    "ReadinessVerdict",
+    "build_validation_dashboard",
+    "write_validation_dashboard",
+]

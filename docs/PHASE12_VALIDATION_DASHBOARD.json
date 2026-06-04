@@ -1,0 +1,349 @@
+{
+  "report_id": "6b4cdafb-b83d-4185-ae51-f30a5c3c9a00",
+  "generated_at": "2026-06-04T02:16:31Z",
+  "model_version": "2.0.0",
+  "report_version": "1.0.0",
+  "source_id": "PHASE12-T4-VALIDATION-DASHBOARD",
+  "sections": {
+    "1_health_checks": {
+      "total": 10,
+      "passed": 10,
+      "warned": 0,
+      "failed": 0,
+      "skipped": 0,
+      "overall_status": "PASS",
+      "pass_rate_pct": 100.0,
+      "results": [
+        {
+          "check_id": "VR-H01",
+          "name": "Module imports",
+          "status": "PASS",
+          "message": "All 12 submodules import cleanly"
+        },
+        {
+          "check_id": "VR-H02",
+          "name": "HybridGrid smoke test",
+          "status": "PASS",
+          "message": "HybridGrid: shape, read/write, interp, boundary-clamp, degenerate-input all OK"
+        },
+        {
+          "check_id": "VR-H03",
+          "name": "DynamicALMEngine smoke test",
+          "status": "PASS",
+          "message": "DynamicALMEngine: 3-period run (final MV=1010) and 100%-cash regression OK"
+        },
+        {
+          "check_id": "VR-H04",
+          "name": "DistributedExecutor sequential",
+          "status": "PASS",
+          "message": "DistributedExecutor: sequential map [0..4]^2=[0,1,4,9,16] correct"
+        },
+        {
+          "check_id": "VR-H05",
+          "name": "DataValidator pipeline",
+          "status": "PASS",
+          "message": "All 4 DataValidators pass on minimal valid inputs"
+        },
+        {
+          "check_id": "VR-H06",
+          "name": "VaR/ES computation",
+          "status": "PASS",
+          "message": "VaR/ES: VaR_95=132.3, ES_95=141.3, VaR_99=147.5, ES_99=153.7"
+        },
+        {
+          "check_id": "VR-H07",
+          "name": "GovernanceStore round-trip",
+          "status": "PASS",
+          "message": "GovernanceStore: 1 AuditEntry survives JSON round-trip with SHA-256 integrity intact"
+        },
+        {
+          "check_id": "VR-H08",
+          "name": "IA validation registry",
+          "status": "PASS",
+          "message": "IA registry: 31 requirements, all 7 categories covered"
+        },
+        {
+          "check_id": "VR-H09",
+          "name": "Monthly projection wiring",
+          "status": "PASS",
+          "message": "Monthly projection: 5y term, pv_net_liability=49,756, 2 audit entries"
+        },
+        {
+          "check_id": "VR-H10",
+          "name": "ESGAdapter schema validation",
+          "status": "PASS",
+          "message": "ESGAdapter: loaded 1500 rows, 500 scenarios, schema valid"
+        }
+      ]
+    },
+    "2_ia_validation": {
+      "total": 31,
+      "passed": 0,
+      "failed": 0,
+      "partial": 0,
+      "not_run": 31,
+      "waived": 0,
+      "compliance_pct": 0.0,
+      "overall_status": "PARTIAL",
+      "layer_summary": {
+        "Unit": {
+          "NOT_RUN": 7
+        },
+        "Integration": {
+          "NOT_RUN": 4
+        },
+        "Stochastic": {
+          "NOT_RUN": 5
+        },
+        "Sensitivity": {
+          "NOT_RUN": 4
+        },
+        "Backtest": {
+          "NOT_RUN": 3
+        },
+        "Governance": {
+          "NOT_RUN": 5
+        },
+        "Data": {
+          "NOT_RUN": 3
+        }
+      },
+      "critical_failures": [
+        "VR-U01 [NOT_RUN] \u2014 Monthly Projection Unit Tests \u2014 100% Pass",
+        "VR-U02 [NOT_RUN] \u2014 ALM Engine Unit Tests \u2014 Rebalancing Bug Fixed",
+        "VR-I01 [NOT_RUN] \u2014 End-to-End Projection Integration Test",
+        "VR-I02 [NOT_RUN] \u2014 Distributed Executor Integration Test",
+        "VR-S01 [NOT_RUN] \u2014 Scenario Convergence Test \u2014 TVOG Stability",
+        "VR-S02 [NOT_RUN] \u2014 Martingale Test \u2014 Risk-Neutral Scenario Adequacy",
+        "VR-S04 [NOT_RUN] \u2014 P / Q Measure Segregation Test",
+        "VR-SE02 [NOT_RUN] \u2014 Lapse Rate Sensitivity \u2014 Dynamic Lapse Impact",
+        "VR-G01 [NOT_RUN] \u2014 AuditTrail \u2014 All Production Runs Logged",
+        "VR-G05 [NOT_RUN] \u2014 Validation Report \u2014 Final Sign-Off Before Production Use"
+      ]
+    },
+    "3_limitation_cards": {
+      "total": 11,
+      "open_count": 11,
+      "mitigated_count": 0,
+      "critical_count": 2,
+      "high_count": 8,
+      "medium_count": 1,
+      "low_count": 0,
+      "area_summary": {
+        "ESG": 6,
+        "Liability": 5
+      },
+      "critical_open": [
+        "ESG-LC-001",
+        "HK-LC-003"
+      ]
+    },
+    "4_calibration": {
+      "all_converged": true,
+      "modules": [
+        {
+          "module": "Interest Rate Curves (HW1F)",
+          "markets": [
+            "USD",
+            "EUR",
+            "HKD",
+            "CNY",
+            "JPY"
+          ],
+          "method": "L-BFGS-B minimisation of ATM swaption normal-vol errors",
+          "status": "CONVERGED",
+          "rmse_bps": {
+            "USD": 10.96,
+            "EUR": 8.61,
+            "HKD": 10.02,
+            "CNY": 6.15,
+            "JPY": 2.25
+          },
+          "standards": [
+            "SOA ASOP 56 \u00a73.4",
+            "SOA ASOP 25 \u00a73.3"
+          ],
+          "notes": "Synthetic swaption grid; placeholder parameters for educational use."
+        },
+        {
+          "module": "Equity (GBM)",
+          "markets": [
+            "US",
+            "EU",
+            "HK/CN",
+            "JP",
+            "Asia ex-JP"
+          ],
+          "method": "60/40 implied-vol / historical-vol credibility blend",
+          "status": "CONVERGED",
+          "rmse_bps": {},
+          "standards": [
+            "SOA ASOP 25 \u00a73.3"
+          ],
+          "notes": "0.7% survivorship-bias ERP adjustment applied; synthetic quotes."
+        },
+        {
+          "module": "Credit Spreads (Nelson-Siegel)",
+          "markets": [
+            "IG (AAA\u2013BBB)",
+            "HY (BB\u2013CCC)"
+          ],
+          "method": "scipy least_squares, TRF method on OAS grids",
+          "status": "CONVERGED",
+          "rmse_bps": {
+            "IG_AAA": 0.11,
+            "IG_BBB": 0.68,
+            "HY_BB": 2.31,
+            "HY_CCC": 70.0
+          },
+          "standards": [
+            "ERM credit stress scenarios CS01\u2013CS03"
+          ],
+          "notes": "HY_CCC RMSE elevated; acceptable for illiquid segment."
+        },
+        {
+          "module": "Liabilities \u2014 Mortality & Lapse",
+          "markets": [
+            "HK (HKML 2016)"
+          ],
+          "method": "HKML 2016 improvement + 60/40 credibility; exponential lapse decay",
+          "status": "CONVERGED",
+          "rmse_bps": {},
+          "standards": [
+            "IA(HK) GL16",
+            "SOA ASOP 25 \u00a73.3"
+          ],
+          "notes": "Bonus/dividend supportability test with 0.30% regulatory margin."
+        }
+      ]
+    },
+    "5_test_suite": {
+      "total_tests": 1079,
+      "area_counts": {
+        "HK Participating Products (Phase 10)": 164,
+        "Data Validator / Governance / Model Health / IA Validation / Audit Trail": 256,
+        "Hybrid Grid / Fixed Income / Derivative / Private Asset / ALM / Risk Metrics": 204,
+        "ESG Adapter / Asset Stress / Stress Testing / Calibration": 198,
+        "Portfolio Generator (Phase 11 Task 1)": 25,
+        "Chunked Processor (Phase 11 Task 2)": 46,
+        "Educational Reporting Pack (Phase 11 Task 5)": 50,
+        "Guided Examples (Phase 12 Task 3)": 45,
+        "Other (Phase 1\u20139 suites)": 91
+      },
+      "heavy_suites_excluded": [
+        "test_tvog.py \u2014 Monte Carlo TVOG (>500 scenarios)",
+        "test_esg_process.py \u2014 Full stochastic ESG convergence suite",
+        "test_sensitivity.py \u2014 18-shock sensitivity grid",
+        "test_backtesting.py (heavy) \u2014 Full out-of-sample backtest",
+        "test_distributed_executor.py (multiprocessing) \u2014 Parallel chunk execution"
+      ]
+    },
+    "6_phase_tracker": {
+      "completion_pct": 98.5,
+      "phases_complete": 11,
+      "total_tasks": 68,
+      "done_tasks": 67,
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Model Review & Documentation",
+          "status": "completed",
+          "tasks": 6,
+          "done": 6
+        },
+        {
+          "phase": 2,
+          "name": "Industry Standards Alignment",
+          "status": "completed",
+          "tasks": 6,
+          "done": 6
+        },
+        {
+          "phase": 3,
+          "name": "Model Validation & Testing",
+          "status": "completed",
+          "tasks": 8,
+          "done": 8
+        },
+        {
+          "phase": 4,
+          "name": "Calibration & Backtesting",
+          "status": "completed",
+          "tasks": 7,
+          "done": 7
+        },
+        {
+          "phase": 5,
+          "name": "Documentation & Delivery",
+          "status": "completed",
+          "tasks": 6,
+          "done": 6
+        },
+        {
+          "phase": 6,
+          "name": "ESG Scope and Architecture",
+          "status": "completed",
+          "tasks": 5,
+          "done": 5
+        },
+        {
+          "phase": 7,
+          "name": "Interest Rate and Yield Curve ESG",
+          "status": "completed",
+          "tasks": 5,
+          "done": 5
+        },
+        {
+          "phase": 8,
+          "name": "Equity, FX, and Correlation ESG",
+          "status": "completed",
+          "tasks": 5,
+          "done": 5
+        },
+        {
+          "phase": 9,
+          "name": "Asset Class and Derivative Library",
+          "status": "completed",
+          "tasks": 5,
+          "done": 5
+        },
+        {
+          "phase": 10,
+          "name": "Hong Kong Participating Liability Products",
+          "status": "completed",
+          "tasks": 5,
+          "done": 5
+        },
+        {
+          "phase": 11,
+          "name": "100,000-Policy Processing and Reporting",
+          "status": "completed",
+          "tasks": 5,
+          "done": 5
+        },
+        {
+          "phase": 12,
+          "name": "Governance, Calibration, Educational Pack",
+          "status": "in_progress",
+          "tasks": 5,
+          "done": 4
+        }
+      ]
+    },
+    "7_readiness": {
+      "verdict": "READY_FOR_EDUCATIONAL_USE",
+      "gates_met": [
+        "All 10 health checks PASS (VR-H01..VR-H10)",
+        "All calibration modules converged (curves, equity, credit, liabilities)",
+        "11 limitation cards documented (2 CRITICAL \u2014 disclosed, expected for educational model)",
+        "Phase completion at 98.5% (67/68 tasks)",
+        "Test suite: 1,079 tests collected (heavy Monte Carlo suites excluded)"
+      ],
+      "gates_not_met": [
+        "IA TAS M validation requirements: 31/31 NOT_RUN (automated stubs \u2014 manual validation required for production)"
+      ],
+      "production_cleared": false,
+      "summary": "The model meets all automated quality gates for educational publication. IA TAS M validation requirements remain as stubs (NOT_RUN) by design \u2014 they require calibrated production data and independent review before a production validation sign-off can be issued."
+    }
+  }
+}
