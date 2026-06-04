@@ -418,15 +418,22 @@ Tasks for Phase 14 (one per cycle, in order):
    RiskFreeCurve/FixedIncomeInstrument/TVOG/HK-liability/correlation/reporting-cycle APIs;
    `tests/test_guided_examples.py` 64/64 PASS; MR-009 → CLOSED (VERY_LOW) with IMPLEMENTED ChangeRecord
    + GOVERNANCE/CORRECTION audit entries. (IA TAS M §3.6; SOA ASOP 56 §3.5/3.2)
-4. Re-run G-06 IA TAS M §3.6 suite re-scoring VR-B01/B02/B03/S05 against the
-   Phase 13 Task 5 out-of-sample backtest evidence; target ≥ 90% PASS.
+4. ✅ DONE (2026-06-04) Re-validate G-06 — bound executable check_fns to VR-B01/B02/B03/S05 consuming the
+   Phase 13 Task 5 OOS backtest + rolling-window HW1F calibration + dynamic-lapse A/E
+   (par_model_v2/validation/phase14_ia_revalidation.py). VR-B01 → PASS (OOS coverage 100%/100%, martingale
+   consistent, n=12 obs); VR-B03/S05/B02 honest PARTIAL on MEASURED criteria (Kupiec passes but daily bands/250d
+   unmet by annual proxy; rolling alpha CV=54% & outside [0.02,0.30]; lapse A/E=100.1% on SYNTHETIC experience).
+   G-06 PASS 80.6%→83.9% (26/31); gate (≥80%) holds. **Phase 14 90% stretch NOT met** — residual VR-B02/B03/S05 +
+   VR-G03/G05 is the documented credentialled-data + independent-reviewer production residual, NOT a code gap.
+   ChangeRecord OWNER_REVIEW (APPROVED withheld pending independent APS X2). 16 new tests PASS; regression 217 PASS;
+   compileall clean. (IA TAS M §3.6/3.6.4/3.6.5; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3; ASOP 7 §3.3)
 5. ESG sophistication: add an optional stochastic-volatility (Heston) or
    jump-diffusion equity process behind a feature flag, with Q-measure martingale
    tests (Phase 8 upgrade path). (SOA ESG standards; IA TAS M §3.6)
 6. Nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and
    reproducibility diagnostics; document model-use restrictions.
 
-**Current milestone:** Phase 14 in progress | 77/80 tasks done | Phase 14 Task 3 COMPLETE (MR-009 CLOSED — guided_examples.py migrated to current RiskFreeCurve/FixedIncomeInstrument/TVOG/HK-liability/correlation/reporting-cycle APIs; tests/test_guided_examples.py 64/64 PASS; IMPLEMENTED ChangeRecord CR-MR009-CLOSE-20260604 + 2 audit entries, audit integrity verified; governance regression 79/79 PASS, compileall clean). Open model risks 2 → 1; mitigated/closed 7 → 8. **All 12 educational deployment gates remain cleared.** Production residuals remaining: credentialled live market-data feeds (G-02/G-03/G-09 proxies) and a genuine human APS X2 reviewer. Next: Phase 14 Task 4 (re-run G-06 IA TAS M §3.6 suite; target ≥ 90% PASS).
+**Current milestone:** Phase 14 in progress | 78/80 tasks done | Phase 14 Task 4 COMPLETE (G-06 re-validated against the Phase 13 Task 5 OOS backtest: VR-B01 → PASS; VR-B02/B03/S05 honest PARTIAL on measured annual-frequency/synthetic-data criteria; G-06 80.6%→83.9%, 26/31, gate ≥80% holds). **Phase 14 ≥90% stretch target NOT met** — the residual gap (VR-B02 historical inforce, VR-B03 daily P&L, VR-S05 sub-annual rates, VR-G03/G05 independent human reviewer) is the documented credentialled-data + human-reviewer production residual, not a code gap. Open model risks 1; mitigated/closed 8. **All 12 educational deployment gates remain cleared.** Next: Phase 14 Task 5 (ESG sophistication — optional Heston / jump-diffusion equity process behind a feature flag with Q-measure martingale tests).
 
 ---
 

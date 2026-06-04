@@ -5458,3 +5458,31 @@ against the Phase 13 Task 5 out-of-sample backtest evidence; target ≥ 90% PASS
 - SOA ASOP 56 §3.5 (educational example coverage / reproducibility): example suite restored to green.
 
 ---
+
+## Run 2026-06-04T13:29Z — Phase 14 Task 4 (G-06 re-validation against OOS backtest)
+
+**Task Completed:** Re-run G-06 IA TAS M §3.6 suite re-scoring VR-B01/B02/B03/S05 against the Phase 13 Task 5 out-of-sample backtest evidence.
+
+**Accomplishments:**
+- New module `par_model_v2/validation/phase14_ia_revalidation.py`: binds executable `check_fn` callables to the four backtest/calibration-dependent requirements that Phase 13 Task 4 had left forced (NOT_RUN/PARTIAL), consuming three real evidence sources — the Phase 13 Task 5 OOS backtest (run in-process, deterministic), a rolling-window HW1F calibration from the CNY annual fixture, and the calibrated dynamic-lapse experience study.
+- **Measured (not forced) re-score:**
+  - **VR-B01 → PASS.** OOS coverage equity=100% / rate=100% (≥80% band), n=12 obs (2014–2025), Kupiec p95=0.474/p99=0.751, martingale all-pass, no recalibration triggered. Named deliverable `docs/validation/backtest_asset_returns.md` produced.
+  - **VR-B03 → PARTIAL (honest).** The governing Kupiec POF test passes (exception frequency binomially consistent), but the literal daily criteria (4–6% / 0.5–1.5% exception bands, ≥250 trading days) are not satisfiable with 12 annual educational-proxy observations.
+  - **VR-S05 → PARTIAL (honest).** Rolling-window σ_r stable and in [0.001,0.020], but mean-reversion α is poorly identified from annual data: rolling CV=54.3%, mean≈0.69 (outside [0.02,0.30], pinned at the 1.0 clamp). Documented identification limitation; needs credentialled sub-annual rates.
+  - **VR-B02 → PARTIAL (honest).** Lapse A/E=100.1% (R²=0.9999) vs the calibrated dynamic-lapse model, but on SYNTHETIC experience; historical inforce data and mortality A/E are unavailable.
+- **G-06 verdict:** PASS — 26/31 = 83.9% (up from 80.6%); gate threshold ≥80% holds.
+- **Phase 14 stretch target ≥90%: NOT MET (83.9%).** Residual = VR-B02/B03/S05 + VR-G03/G05. This maps onto the already-documented production residuals (credentialled live data feeds + an independent human APS X2 reviewer), not a model-code gap. No PASS was fabricated to hit the number.
+- Governance: ChangeRecord logged (governance_change, status OWNER_REVIEW); final APPROVED intentionally withheld pending the independent APS X2 review (VR-G03). GovernanceStore persisted (change_records 7→8).
+- Reports written: `docs/validation/PHASE14_IA_TASM_REVALIDATION_REPORT.md`/`.json`, `docs/validation/backtest_asset_returns.md`.
+- Tests: `tests/test_phase14_ia_revalidation.py` 16/16 PASS; regression governance+audit-wiring 95, IA 64, phase13-IA+measure 41, independent-review 17 — all PASS; `compileall` clean.
+
+**Next Step:** Phase 14 Task 5 — ESG sophistication: add an optional stochastic-volatility (Heston) or jump-diffusion equity process behind a feature flag, with Q-measure martingale tests.
+
+**Industry Standards Progress:**
+- IA TAS M §3.6 / §3.6.4 (validation, backtesting): VR-B01 backtest now executed and PASSing against genuine out-of-sample evidence; remaining backtests honestly PARTIAL with documented data limits.
+- IA TAS M §3.6.5 / APS X2 §3 (independent review): final approval withheld — independent human reviewer remains a tracked residual.
+- SOA ASOP 56 §3.5 (model validation/backtesting), ASOP 25 §3.3 (lapse/credibility), ASOP 7 §3.3 (VaR/ES exception): addressed via the re-scoring evidence and per-criterion disclosure.
+
+**Blockers / Manual Review Needed:** None blocking automation. To close the ≥90% stretch and the final two governance requirements, credentialled data feeds (sub-annual CNY rates, daily P&L, historical PAR inforce) and a human APS X2 reviewer are required — both are pre-existing, documented production residuals.
+
+---
