@@ -242,3 +242,194 @@ Full gate-by-gate procedures, verification criteria, and sign-off record sheets:
 ---
 
 *End of Release Notes v1.0.0-dev — PAR Endowment Stochastic ALM & TVOG Model*
+
+---
+
+# Release Notes — v2.0.0
+## PAR Endowment Stochastic ALM, TVOG & Multi-Market ESG Model
+
+**Release date:** 2026-06-04  
+**Release type:** Major expansion — Post-V1 Educational Enhancement  
+**Supersedes:** v1.0.0-dev (2026-05-23)  
+**Status:** Educational release — NOT cleared for production use  
+**Commit:** f51446c (Phase 12 Task 4); Phase 12 Task 5 to follow
+
+---
+
+## 1. Overview
+
+v2.0.0 extends the Phase 1–5 V1 foundation with seven additional development phases (6–12),
+delivering a comprehensive multi-market economic scenario generator, Hong Kong participating
+liability products, a 100,000-policy educational processing pipeline, and a full governance
+and educational packaging layer.
+
+**Total development cycles:** 113  
+**Total commits:** 59+  
+**Tasks completed:** 67 / 68 (Phase 12 Task 5 in progress)  
+**Test suite:** 1,079 tests (up from 743 in v1.0.0-dev)  
+**Health checks:** 10 / 10 PASS  
+**Overall readiness:** READY_FOR_EDUCATIONAL_USE (see validation dashboard)
+
+---
+
+## 2. What's New in v2.0.0
+
+### Phase 6 — ESG Scope and Architecture
+
+- Multi-market ESG scenario schema with P/Q measure metadata
+- Calibration data interfaces for rates, equity, FX, credit, and correlations
+- ESG consumer mapping to existing TVOG, VaR/ES, ALM, and reporting modules
+- Schema compatibility tests wired
+
+### Phase 7 — Interest Rate and Yield Curve ESG
+
+- `RiskFreeCurve` with explicit initial curve input and negative-rate support
+- `HullWhiteRateProcess` enhanced: negative-rate-capable, explicit curve bootstrapping
+- `G2PlusRateProcess` — two-factor Gaussian short-rate prototype
+- Starter curves for USD, EUR, HKD, CNY, JPY (`par_model_v2/stochastic/risk_free_curves.json`)
+- `YieldCurveValidator`: discount factor, forward, stress, and negative-rate path validation
+- `QMeasureMartingaleValidator`: Q-measure discount-factor martingale evidence
+
+### Phase 8 — Equity, FX, and Correlation ESG
+
+- `RegionalEquityFactor` for US, EU, HK/CN, JP, Asia ex-JP (`regional_equity_factors.json`)
+- `FXReturnFactor` + `FXSpotProcess` for USDHKD, EURHKD, CNYHKD, JPYHKD (`fx_return_factors.json`)
+- `CorrelationMatrixValidator`: PSD validation, automatic Higham repair, scenario diagnostics
+- `PMeasureBacktestValidator`: equity return distribution and correlation stability scaffold
+
+### Phase 9 — Asset Class and Derivative Library
+
+- `FixedIncomeInstrument`: coupon, duration, spread, downgrade, default-loss projection
+- `PrivateCreditAsset`, `PrivateEquityAsset`, `InfrastructureAsset`: income, loss, capital calls, distributions
+- `InterestRateSwapContract` + `BondForwardContract`: educational curve valuation examples
+- `AssetRollForwardReport`: cashflow aggregation and market value roll-forward
+- `AssetStressScenario`: 5 asset-class stress scenarios with governance notes
+
+### Phase 10 — Hong Kong Participating Liability Products
+
+- `HKCashDividendMechanics` + `HKCashDividendPolicy`: annual dividend declaration and projection
+- `HKReversionaryBonusMechanics` + `HKReversionaryBonusPolicy`: vested bonus, terminal bonus, guarantee split
+- `HKDeclarationAssumption` + `hk_declaration_sensitivity`: declaration assumptions with sensitivity hooks
+- `HKAssetShareSupportReport`: asset-share support tests per IA(HK) GL16
+- `HKLiabilityReportingPack`: reserve, TVOG status, bonus supportability, management summary views
+
+### Phase 11 — 100,000-Policy Processing and Reporting Cycle
+
+- `PortfolioGenerationConfig` + `generate_hk_par_portfolio`: reproducible 100k-policy synthetic portfolio; SHA-256 digest reproducibility evidence
+- `ChunkedPortfolioProcessor` + `CheckpointStore`: deterministic chunking, atomic JSON checkpoint restart, failed-chunk audit, 7-check reconciliation
+- `ReportingCycleWorkflow`: assumption lock, model run, validation checks, output review, sign-off pack workflow
+- `PerformanceBenchmarkReport`: wall-clock, tracemalloc, P95/P99 per-chunk latency, throughput, scalability probe
+- `EducationalReportingPack`: five-section educational pack (model run log, movement analysis, risk metrics, validation exceptions, sign-off checklist)
+
+### Phase 12 — Governance, Calibration, and Educational Packaging
+
+- `scripts/calibration/`: four calibration scripts (HW1F, GBM, Nelson-Siegel, HKML) + orchestrator + guide
+- `ModelLimitationCard` + `LimitationCardReport`: 11 component-level limitation cards (ESG + HK liability)
+- `par_model_v2/examples/guided_examples.py`: six runnable educational walkthroughs (pricing, HK valuation, TVOG, ALM, stress, reporting close)
+- `ValidationDashboard`: seven-section validation dashboard (health, IA requirements, limitation cards, calibration, tests, phases, readiness)
+- `docs/PHASE12_VALIDATION_DASHBOARD.md` + `.json`: static reference copy
+- Updated `docs/MODEL_RISK_CARD.md` (v2.0): v2.0 scope, MR-009/010/011/012, G-11/G-12
+- Repaired `par_model_v2/governance/__init__.py` truncation (bug introduced by prior automated write)
+
+---
+
+## 3. Breaking Changes from v1.0.0-dev
+
+None — v2.0.0 is fully additive.  All v1.0 modules, tests, and configurations are preserved.
+
+---
+
+## 4. Bug Fixes
+
+| Fix | File | Impact |
+|-----|------|--------|
+| `governance/__init__.py` truncated `__all__` (SyntaxError) | `par_model_v2/governance/__init__.py` | VR-H07 and VR-H09 health checks now PASS (were ERROR) |
+| `reporting_cycle.py` truncated body | `par_model_v2/projection/reporting_cycle.py` | Phase 11 reporting cycle workflow functional |
+| `chunked_processor.py` import aliases | `par_model_v2/projection/chunked_processor.py` | Phase 11 chunked processor tests pass cleanly |
+| `ReconciliationReport` field names | `par_model_v2/projection/chunked_processor.py` | Reconciliation report dict keys consistent |
+| `ValidationCheckResult.passed` for SKIP | `par_model_v2/projection/reporting_cycle.py` | SKIP results handled without KeyError |
+
+---
+
+## 5. Test Suite Summary
+
+| Module Area | Tests | Status |
+|-------------|-------|--------|
+| HK Participating Products (Phase 10) | 164 | ✅ PASS |
+| Data Validator / Governance / Health / IA Validation / Audit | 256 | ✅ PASS |
+| Hybrid Grid / Fixed Income / Derivative / Private Asset / ALM / Risk | 204 | ✅ PASS |
+| ESG Adapter / Asset Stress / Stress Testing / Calibration | 198 | ✅ PASS |
+| Portfolio Generator | 25 | ✅ PASS |
+| Chunked Processor | 46 | ✅ PASS |
+| Educational Reporting Pack | 50 | ✅ PASS |
+| Guided Examples | 45 | ✅ PASS |
+| Validation Dashboard | 50 | ✅ PASS |
+| Other (Phases 1–9) | 41 | ✅ PASS |
+| **Total** | **1,079** | ✅ PASS |
+
+Heavy Monte Carlo suites (TVOG, ESG convergence, sensitivity, backtesting, distributed) excluded
+from automated regression sweep due to sandbox 45-second per-command limit.
+
+---
+
+## 6. Document Map — v2.0.0
+
+| Document | Path | Description |
+|----------|------|-------------|
+| Model Risk Card v2.0 | `docs/MODEL_RISK_CARD.md` | ASOP 56 §3.6 risk disclosure — updated for v2.0 scope |
+| Validation Dashboard | `docs/PHASE12_VALIDATION_DASHBOARD.md` | Seven-section validation status |
+| Limitation Cards | `docs/PHASE12_MODEL_LIMITATION_CARDS.md` | 11 component limitation disclosures |
+| Guided Examples | `docs/PHASE12_GUIDED_EXAMPLES.md` | Six educational walkthroughs |
+| Calibration Guide | `docs/CALIBRATION_SCRIPTS_GUIDE.md` | Calibration methodology and governance |
+| HK Liability Reporting | `docs/HK_LIABILITY_REPORTING_VIEWS.md` | HK PAR reporting views |
+| Phase 11 Portfolio | `docs/PHASE11_SYNTHETIC_PORTFOLIO.md` | 100k-policy portfolio documentation |
+| Phase 11 Chunked | `docs/PHASE11_CHUNKED_PROCESSOR.md` | Chunked processor design and workflow |
+| ESG Yield Curve | `docs/ESG_YIELD_CURVE_VALIDATION.md` | Yield curve validation evidence |
+| ESG Correlation | `docs/ESG_CORRELATION_VALIDATION.md` | Correlation validation evidence |
+| Final Validation Report | `docs/FINAL_VALIDATION_REPORT.md` | SOA/IA comprehensive validation (v1.0 baseline; v2.0 addendum below) |
+| Release Notes | `docs/RELEASE_NOTES.md` | This document |
+| Development Log | `MODEL_DEV_LOG.md` | Automated cycle-by-cycle audit trail |
+
+---
+
+## 7. Known Open Items
+
+1. **Phase 12 Task 5** (this document) — final docs refresh; to be committed at end of this cycle.
+2. **Live market data** — ESG calibration scripts written but not yet run against Bloomberg/Wind/HKMA live data.
+3. **IA TAS M validation requirements** — 31/31 NOT_RUN (stubs); require dependency-complete environment and independent review.
+4. **Production gates** — 12 gates defined; 0 cleared.  Estimated remediation: 10–16 weeks.
+
+---
+
+## 8. Governance Record — v2.0.0
+
+| Item | Value |
+|------|-------|
+| Development framework | Claude Automated Actuarial Model Dev (12-hour cycles) |
+| v2.0 development period | 2026-05-23 to 2026-06-04 |
+| Additional cycles (v1→v2) | 80 (total: 113) |
+| Additional tasks completed | 34 (Phases 6–12; total: 67/68) |
+| Additional commits | 32+ (total: 59+) |
+| v2.0 test additions | +336 (total: 1,079) |
+| State file | `.claude-dev/MODEL_DEV_STATE.json` |
+| Governance store | `.claude-dev/GOVERNANCE_STORE.json` |
+| Validation dashboard | `docs/PHASE12_VALIDATION_DASHBOARD.md` |
+
+---
+
+## 9. Sign-off
+
+| Role | Name | Date | Signature |
+|------|------|------|-----------|
+| Model Developer | [Claude Automated Agent] | 2026-06-04 | *Automated* |
+| Model Owner | _________________ | __________ | _________ |
+| Peer Reviewer | _________________ | __________ | _________ |
+| Chief Actuary | _________________ | __________ | _________ |
+
+*Human sign-offs required before any production, regulatory, or external use.
+See `docs/MODEL_RISK_CARD.md §6` for full sign-off gate requirements.*
+
+---
+
+*End of Release Notes v2.0.0 — PAR Endowment Stochastic ALM, TVOG & Multi-Market ESG Model*
+*Document ID: RN-PAR-2026-v2.0 | Generated: 2026-06-04 | Source: PHASE12-T5-FINAL-DOCS*

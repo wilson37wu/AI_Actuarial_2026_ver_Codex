@@ -527,3 +527,42 @@ All deviations from the above standards are disclosed in this report and in the 
 *This document was generated autonomously by Claude Actuarial Agent under the 12-hour automated development cycle protocol. It constitutes a DRAFT for human actuarial review. No automated signature or machine-generated content constitutes a formal actuarial sign-off for regulatory or external reporting purposes. All sign-off fields in Section 9 require human completion before this document has legal or regulatory effect.*
 
 *Next automated cycle will complete: **Phase 5, Task 6 — Archive model version and release notes.***
+
+---
+
+## Addendum — Phase 12 Completion (2026-06-04)
+
+**Addendum ID:** FVR-PAR-2026-v2.0-addendum  
+**Prepared by:** Claude Actuarial Agent (Phase 12, Task 5)  
+
+### Development Status at v2.0.0
+
+| Metric | v1.0.0-dev (2026-05-23) | v2.0.0 (2026-06-04) |
+|--------|------------------------|----------------------|
+| Phases complete | 5 | 11 (Phase 12 in progress) |
+| Tasks completed | 33 | 67 / 68 |
+| Test suite | 743 tests | 1,079 tests |
+| Health checks | N/A | 10 / 10 PASS |
+| ESG markets | CNY only | USD, EUR, HKD, CNY, JPY (rates); 5 equity regions |
+| Liability products | Stylised PAR endowment | HK cash dividend PAR + reversionary bonus PAR |
+| Policy portfolio | Model points only | 100,000-policy synthetic educational portfolio |
+| Calibration | Stubs | Full scripts (HW1F, GBM, NS credit, HKML); converged on synthetic data |
+| Governance | Audit trail, risk register | + Limitation cards, validation dashboard, guided examples |
+| Validation dashboard | None | 7-section consolidated dashboard (health, IA reqs, limitations, calibration, tests, phases, readiness) |
+
+### Validation Dashboard Summary (2026-06-04)
+
+- **Section 1 Health:** ✅ PASS — 10/10 health checks (VR-H01..VR-H10)
+- **Section 2 IA Requirements:** ⚠️ PARTIAL — 31/31 NOT_RUN (stubs; expected for educational model)
+- **Section 3 Limitation Cards:** 11 cards (2 CRITICAL open — ESG-LC-001, HK-LC-003)
+- **Section 4 Calibration:** ✅ All 4 modules converged (synthetic data; live data pending)
+- **Section 5 Test Suite:** 1,079 tests collected
+- **Section 6 Phase Tracker:** 98.5% complete (67/68 tasks)
+- **Section 7 Readiness:** ✅ READY_FOR_EDUCATIONAL_USE | ❌ Production cleared: No
+
+### Production Restriction Unchanged
+
+All production use restrictions from FVR-PAR-2026-v1.0 remain in force.
+12 production gates remain OPEN (10 original + G-11 HK liability calibration + G-12 ESG live validation).
+No human sign-offs have been obtained.
+
