@@ -1,4 +1,4 @@
-"""Phase 16 Task 1 — offline result-viewer bundler.
+"""Phase 16 — offline result-viewer bundler.
 
 Scans the model's already-produced output artifacts (no model calculation is done
 here), normalises them into a single ``viewer_data.json`` schema, and emits a
@@ -54,9 +54,12 @@ def build_viewer_data() -> Dict[str, Any]:
                 _load(os.path.join(VAL, "PHASE15_PROXY_VALIDATION_REPORT.json")))
     capev = src(os.path.join(VAL, "PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json"),
                 _load(os.path.join(VAL, "PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json")))
+    lossd = src(os.path.join(VAL, "PHASE16_LOSS_DISTRIBUTION.json"),
+                _load(os.path.join(VAL, "PHASE16_LOSS_DISTRIBUTION.json")))
 
     data: Dict[str, Any] = {"meta": {}, "verdicts": [], "summary": {},
-                            "capital": {}, "tail": {}, "proxy": {}, "governance": {}}
+                            "capital": {}, "tail": {}, "proxy": {},
+                            "loss": {}, "governance": {}}
 
     # ---- meta + summary -------------------------------------------------
     data["meta"] = {
@@ -64,7 +67,7 @@ def build_viewer_data() -> Dict[str, Any]:
         "model_version": (gov or {}).get("model_version", "0.2.0"),
         "generated_utc": (capev or {}).get("generated_utc"),
         "source_files": sources,
-        "classification": "EDUCATIONAL ONLY — NOT a regulatory capital model",
+        "classification": "EDUCATIONAL ONLY -- NOT a regulatory capital model",
     }
     if state:
         m = state.get("progress_metrics", {})
@@ -155,6 +158,28 @@ def build_viewer_data() -> Dict[str, Any]:
             "es_rel_error": cc.get("es_rel_error"),
         }
 
+    # ---- loss distribution (Phase 16 Task 2; viewer-consumed, pre-computed) ---
+    if lossd:
+        lm = lossd.get("meta", {})
+        data["loss"] = {
+            "confidence_level": lm.get("confidence_level"),
+            "horizon_months": lm.get("horizon_months"),
+            "measure": lm.get("measure"),
+            "n_outer": lm.get("n_outer"),
+            "n_fit": lm.get("n_fit"),
+            "fit_r2": lm.get("fit_r2"),
+            "seed_base": lm.get("seed_base"),
+            "reproducibility_digest": lm.get("reproducibility_digest"),
+            "mean_liability": lossd.get("mean_liability"),
+            "histogram": lossd.get("histogram"),
+            "confidence_sweep": lossd.get("confidence_sweep"),
+            "percentiles": lossd.get("percentiles"),
+            "var995": lossd.get("var995"),
+            "es995": lossd.get("es995"),
+            "scr995": lossd.get("scr995"),
+            "seeds": lossd.get("seeds", []),
+        }
+
     # ---- governance -----------------------------------------------------
     if gov:
         at = gov.get("audit_trail", [])
@@ -196,7 +221,8 @@ def main() -> Dict[str, Any]:
     print("sources:", ", ".join(data["meta"]["source_files"]) or "(none)")
     print("verdicts:", len(data["verdicts"]),
           "| risks:", len(data.get("governance", {}).get("risk_register", [])),
-          "| change records:", len(data.get("governance", {}).get("change_records", [])))
+          "| change records:", len(data.get("governance", {}).get("change_records", [])),
+          "| loss seeds:", len(data.get("loss", {}).get("seeds", [])))
     print("wrote:", os.path.relpath(OUT_JSON, REPO), "+", os.path.relpath(OUT_HTML, REPO),
           "({} bytes)".format(len(html)))
     return data

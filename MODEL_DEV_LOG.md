@@ -5706,3 +5706,29 @@ use the /tmp-clone pattern.
 **Milestone:** All 85 documented model tasks complete; Phase 16 (offline UI) Task 1 scaffolded.
 
 ---
+
+## Run 2026-06-05 — Phase 16 Task 2 (Offline viewer — capital & tail dashboards)
+
+**Task Completed:** Phase 16 Task 2 — capital & tail dashboards for the offline result viewer (SVG VaR/ES bars + loss-distribution histogram + outer-convergence line + bootstrap-CI band + interactive seed/percentile/confidence selectors driven purely by pre-computed model output).
+
+**Design principle (per directive):** the UI performs NO actuarial calculation — it only displays model output. To honour this for the loss-distribution histogram and the interactive selectors, all numerics are produced **model-side** and embedded as plain JSON; the browser does a pure look-up.
+
+**Accomplishments:**
+- **Model-side emitter** `scripts/build_phase16_loss_distribution.py` (NOT the UI; reads/runs the model): fits the Phase 15 (rate + equity) LSMC capital surface **once** via `MultiDriverTailDiagnostics._fit_surface`, then evaluates the governed outer-state liability distribution `L_hat`. Emits `docs/validation/PHASE16_LOSS_DISTRIBUTION.json`: a 40-bin histogram of the 1y outer liability distribution, a **pre-computed confidence sweep** (VaR/ES/SCR-proxy at 90/95/99/99.5/99.9%), a percentile table, and the same recomputed under 4 **independent outer-sampling seeds** (42/101/202/303 — only the outer seed varies; the surface is fitted once, so per-seed sweeps are cheap polynomial evals). SHA-256 reproducibility digest; bit-identical on re-run.
+- **Bundler** `scripts/build_offline_viewer.py`: added a new `loss` schema section that ingests the emitter output (histogram, confidence_sweep, percentiles, seeds, fit_r2, digest) into `viewer_data.json` + the embedded `model_result_viewer.html`.
+- **Viewer** `par_model_v2/viewer/viewer_template.html`: added two dependency-free SVG primitives — `histChart` (histogram with movable VaR/ES/mean/percentile threshold lines) and `ciBar` (horizontal point + 95%-CI band). The Capital & Tail tab now renders: economic-capital bars (rate/equity/Σ-standalone/var-cov/nested), an **interactive loss-distribution histogram** with seed + confidence + percentile selectors (pure look-up via `renderLossPanel`), the outer-count convergence line chart with a **bootstrap-95%-CI shaded band**, and a VaR/ES bootstrap-CI bar with Sobol(7.1×)/antithetic variance-reduction read-outs. Refactored the risk-register fill into `fillRiskRegister` wired from `buildTabs`.
+- **Evidence (seed 42, n_fit=500 / n_outer=5000, fit R²=0.231):** VaR99.5 148,903 / ES99.5 155,728 / SCR-proxy 41,040 — consistent with the Phase 15 tail report (VaR ≈ 149,616) and capital evidence; histogram counts sum to n_outer; confidence sweep monotone; per-seed VaR995 ∈ [148,903, 151,187].
+- **Tests:** `tests/test_offline_viewer.py` **12/12 PASS** (base schema + governance/MR-011 + offline-safety from Task 1, plus Task 2: histogram self-consistency `edges=counts+1` & `Σcounts=n_outer`, monotone confidence sweep with `ES≥VaR` and `SCR=VaR−mean`, non-decreasing percentile losses, multi-seed distinctness, `histChart`/`ciBar`/`renderLossPanel` + selector elements present, and a "viewer must not compute/fetch" assertion barring `math.random`/`numpy`/`fetch`/`XMLHttpRequest`/`import()`). Headless **jsdom render PASS** — 3 tabs, 5 cards, 5 SVGs, seed/confidence selectors re-render correctly, risk filter works — with **ZERO JS errors and ZERO network requests**. `py_compile` clean on all touched files; `tests/test_phase15_tail_diagnostics.py` 36/36 still PASS (engine untouched — only `_var_es`/`_fit_surface`/`_outer_liabilities` imported).
+
+**Offline guarantee:** `model_result_viewer.html` (≈42 KB) contains the embedded snapshot; offline-safety test confirms no `http(s)://`, `cdn`, `<script src`, `<link`, `@import`, or font-CDN references. Double-click opens with data pre-loaded; drag-and-drop / file-picker still loads any `viewer_data.json`.
+
+**Next Step:** Phase 16 Task 3 — proxy-validation & aggregation views: degree-sweep in-sample-vs-OOS R² chart (largely present in viewProxy; add overfit-gap series) + a diversification-benefit waterfall (standalone → var-cov → nested) with tooltips.
+
+**Industry Standards Progress:**
+- IA TAS M §3.6: the viewer transparently surfaces the 99.5% capital distribution, VaR/ES uncertainty (bootstrap CI band), and model-use restrictions from governed output.
+- SOA ASOP 56 §3.5: scenario-count convergence and Monte-Carlo uncertainty are now visually presented to the reviewer.
+- Offline / no-dependency / no-calculation-in-UI requirement satisfied (test-asserted).
+
+**Milestone:** All 85 documented model tasks complete; Phase 16 (offline UI) Task 1 + Task 2 COMPLETE.
+
+---

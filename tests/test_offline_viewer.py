@@ -1,4 +1,10 @@
-"""Phase 16 Task 1 — offline result-viewer bundler + schema + offline-safety tests."""
+"""Phase 16 — offline result-viewer bundler + schema + offline-safety tests.
+
+Task 1 covered the base schema, governance, and offline-safety.
+Task 2 adds the loss-distribution section (histogram + pre-computed
+confidence/percentile/seed sweeps) and the interactive capital/tail dashboards,
+plus the model-side loss-distribution emitter.
+"""
 from __future__ import annotations
 
 import json
@@ -11,6 +17,7 @@ import pytest
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _SCRIPT = os.path.join(_REPO, "scripts", "build_offline_viewer.py")
 _TEMPLATE = os.path.join(_REPO, "par_model_v2", "viewer", "viewer_template.html")
+_LOSS_JSON = os.path.join(_REPO, "docs", "validation", "PHASE16_LOSS_DISTRIBUTION.json")
 
 
 def _mod():
@@ -25,8 +32,9 @@ def data():
     return _mod().build_viewer_data()
 
 
+# ---------------------------------------------------------------- Task 1 schema
 def test_schema_sections_present(data):
-    for k in ["meta", "verdicts", "summary", "capital", "tail", "proxy", "governance"]:
+    for k in ["meta", "verdicts", "summary", "capital", "tail", "proxy", "loss", "governance"]:
         assert k in data, k
     assert data["meta"]["model_name"]
     assert "EDUCATIONAL" in data["meta"]["classification"]
@@ -79,3 +87,61 @@ def test_template_has_token():
     tpl = open(_TEMPLATE).read()
     assert "/*__VIEWER_DATA__*/null" in tpl
     assert "<!DOCTYPE html>" in tpl
+
+
+# ---------------------------------------------------------------- Task 2 loss
+@pytest.mark.skipif(not os.path.exists(_LOSS_JSON),
+                    reason="loss-distribution artifact not yet produced by the model")
+def test_loss_section_present(data):
+    L = data["loss"]
+    assert L, "loss section empty (run scripts/build_phase16_loss_distribution.py)"
+    h = L["histogram"]
+    # histogram is self-consistent: edges = counts + 1, counts sum to n_outer
+    assert len(h["bin_edges"]) == len(h["counts"]) + 1
+    assert sum(h["counts"]) == h["n_outer"] == L["n_outer"]
+    assert h["min"] <= h["max"]
+
+
+@pytest.mark.skipif(not os.path.exists(_LOSS_JSON),
+                    reason="loss-distribution artifact not yet produced by the model")
+def test_loss_confidence_sweep_monotonic(data):
+    sweep = data["loss"]["confidence_sweep"]
+    assert len(sweep) >= 3
+    cls = [r["cl"] for r in sweep]
+    vars_ = [r["var"] for r in sweep]
+    # VaR is non-decreasing in the confidence level; ES >= VaR; SCR == VaR - mean
+    assert cls == sorted(cls)
+    assert vars_ == sorted(vars_)
+    mean = data["loss"]["mean_liability"]
+    for r in sweep:
+        assert r["es"] >= r["var"] - 1e-6
+        assert abs(r["scr"] - (r["var"] - mean)) < 1.0
+
+
+@pytest.mark.skipif(not os.path.exists(_LOSS_JSON),
+                    reason="loss-distribution artifact not yet produced by the model")
+def test_loss_percentiles_and_seeds(data):
+    L = data["loss"]
+    pcts = L["percentiles"]
+    losses = [r["loss"] for r in pcts]
+    assert losses == sorted(losses), "percentile losses must be non-decreasing"
+    seeds = L["seeds"]
+    assert len(seeds) >= 2, "need multiple seeds for the interactive seed selector"
+    assert len({s["seed"] for s in seeds}) == len(seeds), "seeds must be distinct"
+    for s in seeds:
+        assert s["histogram"]["bin_edges"] and s["confidence_sweep"] and s["percentiles"]
+        assert abs(s["scr995"] - (s["var995"] - s["mean_liability"])) < 1.0
+
+
+def test_template_has_task2_charts():
+    tpl = open(_TEMPLATE).read()
+    for token in ["function histChart", "function ciBar", "function renderLossPanel",
+                  'id="lossSeed"', 'id="lossCl"', 'id="lossPct"', 'id="lossChart"']:
+        assert token in tpl, "missing Task 2 viewer element: " + token
+
+
+def test_loss_emitter_is_calculation_side_only():
+    # The viewer template must not import or run the model; all numbers are pre-computed.
+    tpl = open(_TEMPLATE).read().lower()
+    for forbidden in ["math.random", "numpy", "fetch(", "xmlhttprequest", "import("]:
+        assert forbidden not in tpl, "viewer must not compute/fetch: " + forbidden

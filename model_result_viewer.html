@@ -45,6 +45,7 @@
   @media(max-width:780px){.row{grid-template-columns:1fr}}
   select,button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:6px 10px;font-size:13px}
   button{cursor:pointer}
+  label.kk{color:var(--muted);font-size:12px}
   .pill{font-size:11px;padding:1px 8px;border-radius:999px;font-weight:600}
   .drop{border:1.5px dashed var(--line);border-radius:10px;padding:10px 14px;color:var(--muted);font-size:12.5px}
   .drop.over{border-color:var(--accent);color:var(--ink)}
@@ -73,7 +74,7 @@
 
 <script>
 "use strict";
-const EMBEDDED = {"meta": {"model_name": "PAR Fund Stochastic ALM & TVOG", "model_version": "0.2.0", "generated_utc": "2026-06-04T16:24:41.348190+00:00", "source_files": [".claude-dev/GOVERNANCE_STORE.json", ".claude-dev/MODEL_DEV_STATE.json", "docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.json", "docs/validation/PHASE15_RISK_AGGREGATION_REPORT.json", "docs/validation/PHASE15_PROXY_VALIDATION_REPORT.json", "docs/validation/PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json"], "classification": "EDUCATIONAL ONLY — NOT a regulatory capital model"}, "verdicts": [{"key": "proxy", "label": "Out-of-sample proxy validation", "verdict": "PASS — selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"}, {"key": "aggregation", "label": "Correlated risk aggregation", "verdict": "PASS - correlated aggregation reconciles to nested diversified capital"}, {"key": "tail", "label": "Tail convergence & stability", "verdict": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"}], "summary": {"tasks_completed": 85, "tasks_total": 85, "phases_completed": 15, "estimated_completion_pct": 100.0, "gates_cleared": 12, "gates_total": 12, "risks_open": 1, "risks_mitigated": 9, "production_status": "NOT CLEARED FOR PRODUCTION"}, "capital": {"confidence_level": 0.995, "horizon_months": 12, "rate_scr": 21285.4523, "equity_scr": 23191.312, "standalone_sum": 44476.764372, "correlated_scr": 29031.296302, "nested_scr": 43250.6194, "diversification_benefit_formula": 15445.46807, "diversification_benefit_nested": 1226.14502, "component_loss_correlation": 0.546361, "formula_vs_nested_rel_error": 0.328766, "esg_rate_equity_correlation": -0.15, "var": 149615.9089, "es": 155356.539}, "tail": {"verdict": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction", "converged": true, "recommended_n_outer": 2000, "outer_grid": [1000, 2000, 4000], "var_path": [149974.358, 149100.9773, 149615.9089], "es_path": [153476.3711, 155621.3301, 155356.539], "final_var": 149615.9089, "final_es": 155356.539, "var_ci": [149402.0883, 154390.5036], "es_ci": [152499.911, 157861.4479], "var_point": 150632.1993, "es_point": 155454.674, "var_se": 1486.3423, "es_se": 1382.3618, "sobol_ratio": 7.1032, "antithetic_ratio": 0.8121}, "proxy": {"verdict": "PASS — selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)", "selected_degree": 1, "overfit_onset_degree": 2, "selection_metric": "oos_rmse", "degree_rows": [{"degree": 1, "in_sample_r2": 0.972137, "oos_r2": 0.970446, "oos_max_abs_rel_error": 0.042468, "n_basis_terms": 3}, {"degree": 2, "in_sample_r2": 0.959426, "oos_r2": 0.939167, "oos_max_abs_rel_error": 0.116966, "n_basis_terms": 6}, {"degree": 3, "in_sample_r2": 0.953002, "oos_r2": 0.879285, "oos_max_abs_rel_error": 0.258098, "n_basis_terms": 10}, {"degree": 4, "in_sample_r2": 0.94678, "oos_r2": 0.854342, "oos_max_abs_rel_error": 0.250122, "n_basis_terms": 15}], "var_rel_error": 0.032109, "es_rel_error": 0.026036}, "governance": {"audit_entries": 28, "audit_integrity_ok": true, "change_records": [{"title": "MR-003: Static lapse table replaced by calibrated dynamic lapse", "status": "APPROVED", "change_type": "assumption_change", "created_at": "2026-06-04T04:27:17.838737+00:00"}, {"title": "MR-001: Default discount rate reduced 3.5% -> 3.0% (CBIRC cap)", "status": "APPROVED", "change_type": "assumption_change", "created_at": "2026-06-04T05:28:13.392804+00:00"}, {"title": "Phase 13 Task 4: IA TAS M §3.6 validation suite executed (G-06)", "status": "APPROVED", "change_type": "governance_change", "created_at": "2026-06-04T07:42:31.873044+00:00"}, {"title": "APS X2 Independent Model Review (educational) — Phase 13 Task 6 (G-08)", "status": "APPROVED", "change_type": "governance_change", "created_at": "2026-06-04T09:16:43.835696+00:00"}, {"title": "Runtime P/Q measure enforcement in all simulation paths (G-05 / MR-004) — Phase 14 Task 1", "status": "IMPLEMENTED", "change_type": "MODEL_CODE_CONTROL", "created_at": "2026-06-04T10:30:44+00:00"}, {"title": "MR-002: GBM equity parameters calibrated to market data (CNY + HK)", "status": "APPROVED", "change_type": "assumption_change", "created_at": "2026-06-04T11:24:19.650862+00:00"}, {"title": "Close MR-009 — migrate educational guided_examples.py to current model APIs", "status": "IMPLEMENTED", "change_type": "CORRECTION", "created_at": "2026-06-04T12:37:49.737472+00:00"}, {"title": "Phase 14 Task 4: IA TAS M §3.6 re-validation against Phase 13 Task 5 backtest (G-06)", "status": "OWNER_REVIEW", "change_type": "governance_change", "created_at": "2026-06-04T13:27:04.938789+00:00"}, {"title": "Phase 14 Task 5: Optional Merton jump-diffusion equity process behind feature flag", "status": "OWNER_REVIEW", "change_type": "code_change", "created_at": "2026-06-04T14:30:49.448065+00:00"}, {"title": "Phase 14 Task 6 — Nested-stochastic / LSMC TVOG capital proxy", "status": "OWNER_REVIEW", "change_type": "methodology_change", "created_at": "2026-06-04T15:27:41.800519+00:00"}, {"title": "Phase 15 Task 1 — Two-driver (rates+equity) nested/LSMC capital proxy", "status": "OWNER_REVIEW", "change_type": "code_change", "created_at": "2026-06-04T16:26:28.886561+00:00"}, {"title": "Phase 15 Task 3 — Correlated risk aggregation (rates + equity guarantee)", "status": "OWNER_REVIEW", "change_type": "methodology_change", "created_at": "2026-06-04T18:28:37.351932+00:00"}, {"title": "Phase 15 Task 4 - tail-convergence & stability diagnostics for the 99.5% capital metric", "status": "OWNER_REVIEW", "change_type": "methodology_change", "created_at": "2026-06-04T19:41:52.056687+00:00"}, {"title": "Phase 15 Task 5 - multi-driver economic-capital proxy governance refresh", "status": "OWNER_REVIEW", "change_type": "governance_change", "created_at": "2026-06-04T20:15:59.122947+00:00"}], "risk_register": [{"risk_id": "MR-001", "title": "Discount rate exceeds CBIRC regulatory cap", "overall_rating": "CRITICAL", "mitigation_status": "MITIGATED", "category": "assumption_error"}, {"risk_id": "MR-002", "title": "Investment return assumptions overstated vs CNY market", "overall_rating": "HIGH", "mitigation_status": "MITIGATED", "category": "assumption_error"}, {"risk_id": "MR-003", "title": "Dynamic lapse assumption absent", "overall_rating": "CRITICAL", "mitigation_status": "IN_PROGRESS", "category": "model_error"}, {"risk_id": "MR-004", "title": "P/Q measure not enforced at runtime", "overall_rating": "LOW", "mitigation_status": "MITIGATED", "category": "model_error"}, {"risk_id": "MR-005", "title": "Distributed executor pickling failure", "overall_rating": "HIGH", "mitigation_status": "CLOSED", "category": "process_risk"}, {"risk_id": "MR-006", "title": "Model validation readiness below production threshold", "overall_rating": "CRITICAL", "mitigation_status": "IN_PROGRESS", "category": "governance_risk"}, {"risk_id": "MR-007", "title": "No assumption change control process", "overall_rating": "HIGH", "mitigation_status": "IN_PROGRESS", "category": "governance_risk"}, {"risk_id": "MR-008", "title": "HW1F calibration not yet executed", "overall_rating": "CRITICAL", "mitigation_status": "OPEN", "category": "model_error"}, {"risk_id": "MR-009", "title": "Educational guided-examples wrapper drifted from model API", "overall_rating": "VERY_LOW", "mitigation_status": "CLOSED", "category": "operational_risk"}, {"risk_id": "MR-010", "title": "Variance-covariance aggregation understates diversified capital", "overall_rating": "HIGH", "mitigation_status": "MITIGATED", "category": "model_error"}, {"risk_id": "MR-011", "title": "Multi-driver economic-capital proxy is educational, not production capital", "overall_rating": "HIGH", "mitigation_status": "IN_PROGRESS", "category": "model_error"}]}};
+const EMBEDDED = {"meta": {"model_name": "PAR Fund Stochastic ALM & TVOG", "model_version": "0.2.0", "generated_utc": "2026-06-04T16:24:41.348190+00:00", "source_files": [".claude-dev/GOVERNANCE_STORE.json", ".claude-dev/MODEL_DEV_STATE.json", "docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.json", "docs/validation/PHASE15_RISK_AGGREGATION_REPORT.json", "docs/validation/PHASE15_PROXY_VALIDATION_REPORT.json", "docs/validation/PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json", "docs/validation/PHASE16_LOSS_DISTRIBUTION.json"], "classification": "EDUCATIONAL ONLY -- NOT a regulatory capital model"}, "verdicts": [{"key": "proxy", "label": "Out-of-sample proxy validation", "verdict": "PASS — selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"}, {"key": "aggregation", "label": "Correlated risk aggregation", "verdict": "PASS - correlated aggregation reconciles to nested diversified capital"}, {"key": "tail", "label": "Tail convergence & stability", "verdict": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"}], "summary": {"tasks_completed": 85, "tasks_total": 85, "phases_completed": 15, "estimated_completion_pct": 100.0, "gates_cleared": 12, "gates_total": 12, "risks_open": 1, "risks_mitigated": 9, "production_status": "NOT CLEARED FOR PRODUCTION"}, "capital": {"confidence_level": 0.995, "horizon_months": 12, "rate_scr": 21285.4523, "equity_scr": 23191.312, "standalone_sum": 44476.764372, "correlated_scr": 29031.296302, "nested_scr": 43250.6194, "diversification_benefit_formula": 15445.46807, "diversification_benefit_nested": 1226.14502, "component_loss_correlation": 0.546361, "formula_vs_nested_rel_error": 0.328766, "esg_rate_equity_correlation": -0.15, "var": 149615.9089, "es": 155356.539}, "tail": {"verdict": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction", "converged": true, "recommended_n_outer": 2000, "outer_grid": [1000, 2000, 4000], "var_path": [149974.358, 149100.9773, 149615.9089], "es_path": [153476.3711, 155621.3301, 155356.539], "final_var": 149615.9089, "final_es": 155356.539, "var_ci": [149402.0883, 154390.5036], "es_ci": [152499.911, 157861.4479], "var_point": 150632.1993, "es_point": 155454.674, "var_se": 1486.3423, "es_se": 1382.3618, "sobol_ratio": 7.1032, "antithetic_ratio": 0.8121}, "proxy": {"verdict": "PASS — selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)", "selected_degree": 1, "overfit_onset_degree": 2, "selection_metric": "oos_rmse", "degree_rows": [{"degree": 1, "in_sample_r2": 0.972137, "oos_r2": 0.970446, "oos_max_abs_rel_error": 0.042468, "n_basis_terms": 3}, {"degree": 2, "in_sample_r2": 0.959426, "oos_r2": 0.939167, "oos_max_abs_rel_error": 0.116966, "n_basis_terms": 6}, {"degree": 3, "in_sample_r2": 0.953002, "oos_r2": 0.879285, "oos_max_abs_rel_error": 0.258098, "n_basis_terms": 10}, {"degree": 4, "in_sample_r2": 0.94678, "oos_r2": 0.854342, "oos_max_abs_rel_error": 0.250122, "n_basis_terms": 15}], "var_rel_error": 0.032109, "es_rel_error": 0.026036}, "loss": {"confidence_level": 0.995, "horizon_months": 12, "measure": "P", "n_outer": 5000, "n_fit": 500, "fit_r2": 0.230935, "seed_base": 42, "reproducibility_digest": "6bc9a7ada7732f8679a76c28a8740a49a9d1918983f79ea8004e83f2020f8494", "mean_liability": 107863.4534, "histogram": {"bin_edges": [65313.1027, 67783.8303, 70254.5578, 72725.2853, 75196.0129, 77666.7404, 80137.4679, 82608.1954, 85078.923, 87549.6505, 90020.378, 92491.1055, 94961.8331, 97432.5606, 99903.2881, 102374.0157, 104844.7432, 107315.4707, 109786.1982, 112256.9258, 114727.6533, 117198.3808, 119669.1084, 122139.8359, 124610.5634, 127081.2909, 129552.0185, 132022.746, 134493.4735, 136964.201, 139434.9286, 141905.6561, 144376.3836, 146847.1112, 149317.8387, 151788.5662, 154259.2937, 156730.0213, 159200.7488, 161671.4763, 164142.2039], "counts": [2, 9, 7, 12, 26, 51, 82, 95, 122, 165, 201, 223, 272, 281, 300, 359, 318, 316, 332, 305, 241, 232, 197, 176, 136, 126, 97, 75, 63, 56, 37, 34, 19, 9, 5, 5, 6, 2, 0, 6], "n_bins": 40, "n_outer": 5000, "min": 65313.1027, "max": 164142.2039}, "confidence_sweep": [{"cl": 0.9, "var": 127763.5271, "es": 135869.5318, "scr": 19900.0738}, {"cl": 0.95, "var": 134163.5579, "es": 141064.2511, "scr": 26300.1045}, {"cl": 0.99, "var": 144615.5516, "es": 151136.0805, "scr": 36752.0982}, {"cl": 0.995, "var": 148903.2745, "es": 155728.1367, "scr": 41039.8211}, {"cl": 0.999, "var": 162581.2798, "es": 163657.9851, "scr": 54717.8265}], "percentiles": [{"p": 0.5, "loss": 107159.2854}, {"p": 0.75, "loss": 117539.3429}, {"p": 0.9, "loss": 127763.5271}, {"p": 0.95, "loss": 134163.5579}, {"p": 0.975, "loss": 139134.1171}, {"p": 0.99, "loss": 144615.5516}, {"p": 0.995, "loss": 148903.2745}, {"p": 0.999, "loss": 162581.2798}], "var995": 148903.2745, "es995": 155728.1367, "scr995": 41039.8211, "seeds": [{"seed": 42, "mean_liability": 107863.4534, "var995": 148903.2745, "es995": 155728.1367, "scr995": 41039.8211, "histogram": {"bin_edges": [65313.1027, 67783.8303, 70254.5578, 72725.2853, 75196.0129, 77666.7404, 80137.4679, 82608.1954, 85078.923, 87549.6505, 90020.378, 92491.1055, 94961.8331, 97432.5606, 99903.2881, 102374.0157, 104844.7432, 107315.4707, 109786.1982, 112256.9258, 114727.6533, 117198.3808, 119669.1084, 122139.8359, 124610.5634, 127081.2909, 129552.0185, 132022.746, 134493.4735, 136964.201, 139434.9286, 141905.6561, 144376.3836, 146847.1112, 149317.8387, 151788.5662, 154259.2937, 156730.0213, 159200.7488, 161671.4763, 164142.2039], "counts": [2, 9, 7, 12, 26, 51, 82, 95, 122, 165, 201, 223, 272, 281, 300, 359, 318, 316, 332, 305, 241, 232, 197, 176, 136, 126, 97, 75, 63, 56, 37, 34, 19, 9, 5, 5, 6, 2, 0, 6], "n_bins": 40, "n_outer": 5000, "min": 65313.1027, "max": 164142.2039}, "confidence_sweep": [{"cl": 0.9, "var": 127763.5271, "es": 135869.5318, "scr": 19900.0738}, {"cl": 0.95, "var": 134163.5579, "es": 141064.2511, "scr": 26300.1045}, {"cl": 0.99, "var": 144615.5516, "es": 151136.0805, "scr": 36752.0982}, {"cl": 0.995, "var": 148903.2745, "es": 155728.1367, "scr": 41039.8211}, {"cl": 0.999, "var": 162581.2798, "es": 163657.9851, "scr": 54717.8265}], "percentiles": [{"p": 0.5, "loss": 107159.2854}, {"p": 0.75, "loss": 117539.3429}, {"p": 0.9, "loss": 127763.5271}, {"p": 0.95, "loss": 134163.5579}, {"p": 0.975, "loss": 139134.1171}, {"p": 0.99, "loss": 144615.5516}, {"p": 0.995, "loss": 148903.2745}, {"p": 0.999, "loss": 162581.2798}]}, {"seed": 101, "mean_liability": 107893.5302, "var995": 151186.9801, "es995": 158295.4878, "scr995": 43293.4499, "histogram": {"bin_edges": [62514.2333, 65242.9525, 67971.6718, 70700.391, 73429.1103, 76157.8295, 78886.5487, 81615.268, 84343.9872, 87072.7065, 89801.4257, 92530.145, 95258.8642, 97987.5834, 100716.3027, 103445.0219, 106173.7412, 108902.4604, 111631.1796, 114359.8989, 117088.6181, 119817.3374, 122546.0566, 125274.7758, 128003.4951, 130732.2143, 133460.9336, 136189.6528, 138918.372, 141647.0913, 144375.8105, 147104.5298, 149833.249, 152561.9682, 155290.6875, 158019.4067, 160748.126, 163476.8452, 166205.5644, 168934.2837, 171663.0029], "counts": [3, 6, 10, 10, 23, 48, 71, 100, 129, 168, 191, 276, 274, 329, 359, 382, 362, 345, 333, 307, 235, 213, 185, 147, 115, 98, 70, 62, 37, 37, 26, 21, 6, 6, 4, 5, 3, 1, 1, 2], "n_bins": 40, "n_outer": 5000, "min": 62514.2333, "max": 171663.0029}, "confidence_sweep": [{"cl": 0.9, "var": 127840.6039, "es": 136712.3541, "scr": 19947.0738}, {"cl": 0.95, "var": 134487.4595, "es": 142360.9821, "scr": 26593.9293}, {"cl": 0.99, "var": 146692.3365, "es": 153467.0989, "scr": 38798.8063}, {"cl": 0.995, "var": 151186.9801, "es": 158295.4878, "scr": 43293.4499}, {"cl": 0.999, "var": 161451.7173, "es": 166831.4529, "scr": 53558.1871}], "percentiles": [{"p": 0.5, "loss": 107050.688}, {"p": 0.75, "loss": 117414.5799}, {"p": 0.9, "loss": 127840.6039}, {"p": 0.95, "loss": 134487.4595}, {"p": 0.975, "loss": 140389.0318}, {"p": 0.99, "loss": 146692.3365}, {"p": 0.995, "loss": 151186.9801}, {"p": 0.999, "loss": 161451.7173}]}, {"seed": 202, "mean_liability": 107837.9389, "var995": 149254.0316, "es995": 155036.4633, "scr995": 41416.0927, "histogram": {"bin_edges": [60801.569, 63453.1928, 66104.8166, 68756.4404, 71408.0642, 74059.688, 76711.3118, 79362.9356, 82014.5593, 84666.1831, 87317.8069, 89969.4307, 92621.0545, 95272.6783, 97924.3021, 100575.9259, 103227.5497, 105879.1735, 108530.7973, 111182.4211, 113834.0449, 116485.6687, 119137.2925, 121788.9163, 124440.5401, 127092.1639, 129743.7876, 132395.4114, 135047.0352, 137698.659, 140350.2828, 143001.9066, 145653.5304, 148305.1542, 150956.778, 153608.4018, 156260.0256, 158911.6494, 161563.2732, 164214.897, 166866.5208], "counts": [1, 1, 4, 6, 12, 28, 42, 51, 119, 127, 170, 217, 262, 276, 303, 332, 360, 390, 351, 312, 293, 225, 244, 185, 155, 133, 110, 72, 74, 55, 29, 19, 11, 10, 9, 5, 2, 0, 3, 2], "n_bins": 40, "n_outer": 5000, "min": 60801.569, "max": 166866.5208}, "confidence_sweep": [{"cl": 0.9, "var": 127798.0651, "es": 135513.4714, "scr": 19960.1261}, {"cl": 0.95, "var": 133972.6414, "es": 140491.9153, "scr": 26134.7025}, {"cl": 0.99, "var": 143860.0868, "es": 150826.9314, "scr": 36022.1479}, {"cl": 0.995, "var": 149254.0316, "es": 155036.4633, "scr": 41416.0927}, {"cl": 0.999, "var": 157210.8886, "es": 164202.9807, "scr": 49372.9497}], "percentiles": [{"p": 0.5, "loss": 107049.1389}, {"p": 0.75, "loss": 117642.5276}, {"p": 0.9, "loss": 127798.0651}, {"p": 0.95, "loss": 133972.6414}, {"p": 0.975, "loss": 138280.4981}, {"p": 0.99, "loss": 143860.0868}, {"p": 0.995, "loss": 149254.0316}, {"p": 0.999, "loss": 157210.8886}]}, {"seed": 303, "mean_liability": 107874.8479, "var995": 149683.4863, "es995": 153582.1362, "scr995": 41808.6384, "histogram": {"bin_edges": [66328.718, 68658.548, 70988.378, 73318.2081, 75648.0381, 77977.8681, 80307.6982, 82637.5282, 84967.3582, 87297.1882, 89627.0183, 91956.8483, 94286.6783, 96616.5084, 98946.3384, 101276.1684, 103605.9985, 105935.8285, 108265.6585, 110595.4886, 112925.3186, 115255.1486, 117584.9787, 119914.8087, 122244.6387, 124574.4687, 126904.2988, 129234.1288, 131563.9588, 133893.7889, 136223.6189, 138553.4489, 140883.279, 143213.109, 145542.939, 147872.7691, 150202.5991, 152532.4291, 154862.2592, 157192.0892, 159521.9192], "counts": [1, 5, 11, 20, 23, 43, 59, 94, 120, 150, 172, 218, 259, 261, 285, 301, 312, 328, 272, 305, 278, 232, 209, 193, 178, 130, 132, 86, 90, 66, 48, 28, 29, 17, 12, 10, 9, 7, 5, 2], "n_bins": 40, "n_outer": 5000, "min": 66328.718, "max": 159521.9192}, "confidence_sweep": [{"cl": 0.9, "var": 127555.168, "es": 135217.722, "scr": 19680.3201}, {"cl": 0.95, "var": 133359.8351, "es": 140190.8678, "scr": 25484.9871}, {"cl": 0.99, "var": 145131.035, "es": 150450.1425, "scr": 37256.1871}, {"cl": 0.995, "var": 149683.4863, "es": 153582.1362, "scr": 41808.6384}, {"cl": 0.999, "var": 155755.7953, "es": 157713.8096, "scr": 47880.9474}], "percentiles": [{"p": 0.5, "loss": 107065.2958}, {"p": 0.75, "loss": 117609.1695}, {"p": 0.9, "loss": 127555.168}, {"p": 0.95, "loss": 133359.8351}, {"p": 0.975, "loss": 138058.9234}, {"p": 0.99, "loss": 145131.035}, {"p": 0.995, "loss": 149683.4863}, {"p": 0.999, "loss": 155755.7953}]}]}, "governance": {"audit_entries": 28, "audit_integrity_ok": true, "change_records": [{"title": "MR-003: Static lapse table replaced by calibrated dynamic lapse", "status": "APPROVED", "change_type": "assumption_change", "created_at": "2026-06-04T04:27:17.838737+00:00"}, {"title": "MR-001: Default discount rate reduced 3.5% -> 3.0% (CBIRC cap)", "status": "APPROVED", "change_type": "assumption_change", "created_at": "2026-06-04T05:28:13.392804+00:00"}, {"title": "Phase 13 Task 4: IA TAS M §3.6 validation suite executed (G-06)", "status": "APPROVED", "change_type": "governance_change", "created_at": "2026-06-04T07:42:31.873044+00:00"}, {"title": "APS X2 Independent Model Review (educational) — Phase 13 Task 6 (G-08)", "status": "APPROVED", "change_type": "governance_change", "created_at": "2026-06-04T09:16:43.835696+00:00"}, {"title": "Runtime P/Q measure enforcement in all simulation paths (G-05 / MR-004) — Phase 14 Task 1", "status": "IMPLEMENTED", "change_type": "MODEL_CODE_CONTROL", "created_at": "2026-06-04T10:30:44+00:00"}, {"title": "MR-002: GBM equity parameters calibrated to market data (CNY + HK)", "status": "APPROVED", "change_type": "assumption_change", "created_at": "2026-06-04T11:24:19.650862+00:00"}, {"title": "Close MR-009 — migrate educational guided_examples.py to current model APIs", "status": "IMPLEMENTED", "change_type": "CORRECTION", "created_at": "2026-06-04T12:37:49.737472+00:00"}, {"title": "Phase 14 Task 4: IA TAS M §3.6 re-validation against Phase 13 Task 5 backtest (G-06)", "status": "OWNER_REVIEW", "change_type": "governance_change", "created_at": "2026-06-04T13:27:04.938789+00:00"}, {"title": "Phase 14 Task 5: Optional Merton jump-diffusion equity process behind feature flag", "status": "OWNER_REVIEW", "change_type": "code_change", "created_at": "2026-06-04T14:30:49.448065+00:00"}, {"title": "Phase 14 Task 6 — Nested-stochastic / LSMC TVOG capital proxy", "status": "OWNER_REVIEW", "change_type": "methodology_change", "created_at": "2026-06-04T15:27:41.800519+00:00"}, {"title": "Phase 15 Task 1 — Two-driver (rates+equity) nested/LSMC capital proxy", "status": "OWNER_REVIEW", "change_type": "code_change", "created_at": "2026-06-04T16:26:28.886561+00:00"}, {"title": "Phase 15 Task 3 — Correlated risk aggregation (rates + equity guarantee)", "status": "OWNER_REVIEW", "change_type": "methodology_change", "created_at": "2026-06-04T18:28:37.351932+00:00"}, {"title": "Phase 15 Task 4 - tail-convergence & stability diagnostics for the 99.5% capital metric", "status": "OWNER_REVIEW", "change_type": "methodology_change", "created_at": "2026-06-04T19:41:52.056687+00:00"}, {"title": "Phase 15 Task 5 - multi-driver economic-capital proxy governance refresh", "status": "OWNER_REVIEW", "change_type": "governance_change", "created_at": "2026-06-04T20:15:59.122947+00:00"}], "risk_register": [{"risk_id": "MR-001", "title": "Discount rate exceeds CBIRC regulatory cap", "overall_rating": "CRITICAL", "mitigation_status": "MITIGATED", "category": "assumption_error"}, {"risk_id": "MR-002", "title": "Investment return assumptions overstated vs CNY market", "overall_rating": "HIGH", "mitigation_status": "MITIGATED", "category": "assumption_error"}, {"risk_id": "MR-003", "title": "Dynamic lapse assumption absent", "overall_rating": "CRITICAL", "mitigation_status": "IN_PROGRESS", "category": "model_error"}, {"risk_id": "MR-004", "title": "P/Q measure not enforced at runtime", "overall_rating": "LOW", "mitigation_status": "MITIGATED", "category": "model_error"}, {"risk_id": "MR-005", "title": "Distributed executor pickling failure", "overall_rating": "HIGH", "mitigation_status": "CLOSED", "category": "process_risk"}, {"risk_id": "MR-006", "title": "Model validation readiness below production threshold", "overall_rating": "CRITICAL", "mitigation_status": "IN_PROGRESS", "category": "governance_risk"}, {"risk_id": "MR-007", "title": "No assumption change control process", "overall_rating": "HIGH", "mitigation_status": "IN_PROGRESS", "category": "governance_risk"}, {"risk_id": "MR-008", "title": "HW1F calibration not yet executed", "overall_rating": "CRITICAL", "mitigation_status": "OPEN", "category": "model_error"}, {"risk_id": "MR-009", "title": "Educational guided-examples wrapper drifted from model API", "overall_rating": "VERY_LOW", "mitigation_status": "CLOSED", "category": "operational_risk"}, {"risk_id": "MR-010", "title": "Variance-covariance aggregation understates diversified capital", "overall_rating": "HIGH", "mitigation_status": "MITIGATED", "category": "model_error"}, {"risk_id": "MR-011", "title": "Multi-driver economic-capital proxy is educational, not production capital", "overall_rating": "HIGH", "mitigation_status": "IN_PROGRESS", "category": "model_error"}]}};
 
 // ---------- formatting ----------
 const fmt = (x,d=0)=> (x==null||isNaN(x))?"—":Number(x).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
@@ -100,6 +101,7 @@ function lineChart(series, xlabels, opt={}){
   const W=opt.w||520,H=opt.h||240,pad={l:50,r:14,t:14,b:46};
   const all=series.flatMap(s=>s.vals).filter(v=>v!=null&&!isNaN(v));
   let lo=opt.min!=null?opt.min:Math.min(...all), hi=opt.max!=null?opt.max:Math.max(...all);
+  if(opt.band){opt.band.forEach(arr=>arr.forEach(v=>{if(v!=null&&!isNaN(v)){lo=Math.min(lo,v);hi=Math.max(hi,v);}}));}
   if(lo===hi){hi=lo+1;lo=lo-1;} const rng=hi-lo;
   const iw=W-pad.l-pad.r, ih=H-pad.t-pad.b, n=xlabels.length;
   const X=i=> pad.l + (n<=1?iw/2:iw*i/(n-1));
@@ -121,6 +123,51 @@ function lineChart(series, xlabels, opt={}){
   return s+`</svg>`;
 }
 function legend(items){return `<div class="legend">`+items.map(i=>`<span><i style="background:${i.c}"></i>${esc(i.t)}</span>`).join("")+`</div>`;}
+
+// loss-distribution histogram with vertical threshold markers (no dependency)
+function histChart(hist, markers, opt={}){
+  const W=opt.w||560,H=opt.h||260,pad={l:48,r:14,t:14,b:46};
+  const edges=(hist&&hist.bin_edges)||[], counts=(hist&&hist.counts)||[];
+  if(edges.length<2||!counts.length) return '<div class="empty">No loss-distribution data loaded.</div>';
+  const lo=edges[0], hi=edges[edges.length-1], rng=(hi-lo)||1;
+  const maxc=Math.max(1,...counts);
+  const iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+  const X=v=> pad.l + iw*(v-lo)/rng;
+  const Yc=c=> pad.t + ih*(1-c/maxc);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  for(let g=0;g<=4;g++){const y=pad.t+ih*g/4;const val=maxc*(1-g/4);
+    s+=`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="#2b3b4f"/>`;
+    s+=`<text x="${pad.l-6}" y="${y+3}" fill="#9fb1c4" font-size="10" text-anchor="end">${fmt(val)}</text>`;}
+  counts.forEach((c,i)=>{const x0=X(edges[i]),x1=X(edges[i+1]);const y=Yc(c);
+    s+=`<rect x="${x0}" y="${y}" width="${Math.max(0.5,x1-x0-0.6)}" height="${pad.t+ih-y}" fill="#3b6ea5" opacity="0.85"><title>[${fmt(edges[i])}, ${fmt(edges[i+1])}): ${fmt(c)}</title></rect>`;});
+  for(let g=0;g<=5;g++){const v=lo+rng*g/5;const x=X(v);
+    s+=`<text x="${x}" y="${H-pad.b+16}" fill="#9fb1c4" font-size="10" text-anchor="middle">${fmt(v)}</text>`;}
+  (markers||[]).forEach(mk=>{if(mk.x==null||isNaN(mk.x))return;const x=X(mk.x);
+    s+=`<line x1="${x}" y1="${pad.t}" x2="${x}" y2="${pad.t+ih}" stroke="${mk.color}" stroke-width="2" ${mk.dashed?'stroke-dasharray="5 4"':''}><title>${esc(mk.label)}: ${fmt(mk.x)}</title></line>`;
+    s+=`<text x="${x>W-90?x-4:x+4}" y="${pad.t+10}" fill="${mk.color}" font-size="10" text-anchor="${x>W-90?'end':'start'}">${esc(mk.tag||'')}</text>`;});
+  return s+`</svg>`;
+}
+// horizontal point + CI band rows (bootstrap CI)
+function ciBar(rows, opt={}){
+  const W=opt.w||520,H=opt.h||140,pad={l:60,r:20,t:18,b:34};
+  const all=rows.flatMap(r=>[r.lo,r.hi,r.point]).filter(v=>v!=null&&!isNaN(v));
+  if(!all.length) return '<div class="empty">No bootstrap-CI data loaded.</div>';
+  let lo=Math.min(...all), hi=Math.max(...all); const pdg=(hi-lo)*0.12||1; lo-=pdg; hi+=pdg; const rng=hi-lo;
+  const iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+  const X=v=> pad.l+iw*(v-lo)/rng;
+  const rh=ih/rows.length;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  for(let g=0;g<=4;g++){const v=lo+rng*g/4;const x=X(v);
+    s+=`<line x1="${x}" y1="${pad.t}" x2="${x}" y2="${pad.t+ih}" stroke="#2b3b4f"/>`;
+    s+=`<text x="${x}" y="${H-pad.b+16}" fill="#9fb1c4" font-size="10" text-anchor="middle">${fmt(v)}</text>`;}
+  rows.forEach((r,i)=>{const cy=pad.t+rh*(i+0.5);const c=r.color||'#3498db';
+    s+=`<text x="${pad.l-8}" y="${cy+4}" fill="#e8eef5" font-size="12" text-anchor="end">${esc(r.label)}</text>`;
+    if(r.lo!=null&&r.hi!=null){s+=`<rect x="${X(r.lo)}" y="${cy-7}" width="${Math.max(1,X(r.hi)-X(r.lo))}" height="14" rx="3" fill="${c}" opacity="0.22"/>`;
+      s+=`<line x1="${X(r.lo)}" y1="${cy-7}" x2="${X(r.lo)}" y2="${cy+7}" stroke="${c}"/><line x1="${X(r.hi)}" y1="${cy-7}" x2="${X(r.hi)}" y2="${cy+7}" stroke="${c}"/>`;}
+    if(r.point!=null){s+=`<circle cx="${X(r.point)}" cy="${cy}" r="4" fill="${c}"><title>${esc(r.label)} ${fmt(r.point)} (95% CI [${fmt(r.lo)}, ${fmt(r.hi)}])</title></circle>`;}
+  });
+  return s+`</svg>`;
+}
 
 // ---------- verdict helpers ----------
 function vClass(v){const t=String(v||"").toUpperCase();
@@ -180,6 +227,7 @@ function buildTabs(d){
     const v=document.createElement('div'); v.className='view'+(i===0?' active':''); v.id='view-'+t[0];
     v.innerHTML=t[2](d); viewsEl.appendChild(v);
   });
+  setTimeout(()=>{renderLossPanel(DATA); fillRiskRegister(DATA);},0);
 }
 
 function viewCapital(d){
@@ -200,26 +248,72 @@ function viewCapital(d){
       <span class="kk">Component loss correlation</span><span>${fmt(c.component_loss_correlation,3)}</span>
       <span class="kk">Var-cov vs nested rel. error</span><span>${pct(c.formula_vs_nested_rel_error,1)}</span>
     </div></div>`;
-  // tail convergence
+  // interactive loss-distribution histogram (Phase 16 Task 2; pre-computed look-up)
+  const L=d.loss||{};
+  if(L.histogram&&L.histogram.counts&&L.histogram.counts.length){
+    const seeds=(L.seeds&&L.seeds.length)?L.seeds:[{seed:L.seed_base,histogram:L.histogram,confidence_sweep:L.confidence_sweep,percentiles:L.percentiles,mean_liability:L.mean_liability}];
+    const seedOpts=seeds.map((s,i)=>`<option value="${i}">seed ${s.seed}</option>`).join("");
+    const clOpts=(L.confidence_sweep||[]).map((r,i)=>`<option value="${i}" ${Math.abs(r.cl-0.995)<1e-9?'selected':''}>${pct(r.cl,1)}</option>`).join("");
+    const pOpts=(L.percentiles||[]).map((r,i)=>`<option value="${i}" ${Math.abs(r.p-0.995)<1e-9?'selected':''}>${pct(r.p,1)}</option>`).join("");
+    html+=`<div class="panel"><h3>Loss distribution & risk thresholds (1y outer liability)</h3>
+      <div class="desc">Pre-computed by the model from the fitted LSMC surface (n=${fmt(L.n_outer)} outer states, fit R² ${fmt(L.fit_r2,3)}). The viewer performs no calculation — every VaR/ES/SCR is a look-up. Use the selectors to move the markers.</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+        <label class="kk">Seed <select id="lossSeed">${seedOpts}</select></label>
+        <label class="kk">Confidence (VaR/ES) <select id="lossCl">${clOpts}</select></label>
+        <label class="kk">Percentile marker <select id="lossPct">${pOpts}</select></label>
+      </div>
+      <div id="lossChart"></div>
+      ${legend([{c:'#e74c3c',t:'VaR'},{c:'#f39c12',t:'ES'},{c:'#9fb1c4',t:'mean'},{c:'#3498db',t:'percentile'}])}
+      <div class="kvs" id="lossKvs" style="margin-top:12px"></div></div>`;
+  }
+  // tail convergence + bootstrap CI band
   if(t.var_path&&t.var_path.length){
     const xl=(t.outer_grid||t.var_path.map((_,i)=>i+1)).map(String);
+    const vlo=t.var_ci&&t.var_ci[0], vhi=t.var_ci&&t.var_ci[1];
+    const band=(vlo!=null&&vhi!=null)?[t.var_path.map(()=>vlo),t.var_path.map(()=>vhi)]:null;
     html+=`<div class="row">
       <div class="panel"><h3>Outer-count convergence</h3>
-        <div class="desc">99.5% VaR / ES as the outer scenario count grows. Converged: <span class="pill ${t.converged?'b-pass':'b-warn'}">${t.converged?'YES':'NO'}</span> · recommended N≥${fmt(t.recommended_n_outer)}.</div>
-        ${lineChart([{name:'VaR',color:'#3498db',vals:t.var_path},{name:'ES',color:'#2ecc71',vals:t.es_path}],xl,{w:520,h:230})}
-        ${legend([{c:'#3498db',t:'VaR 99.5%'},{c:'#2ecc71',t:'ES 99.5%'}])}</div>
-      <div class="panel"><h3>Bootstrap CI & variance reduction</h3>
-        <div class="kvs">
-          <span class="kk">VaR point</span><span>${fmt(t.var_point||t.final_var)}</span>
-          <span class="kk">VaR 95% CI</span><span>[${fmt(t.var_ci&&t.var_ci[0])}, ${fmt(t.var_ci&&t.var_ci[1])}]</span>
+        <div class="desc">99.5% VaR / ES as the outer scenario count grows; shaded band is the bootstrap 95% CI on VaR. Converged: <span class="pill ${t.converged?'b-pass':'b-warn'}">${t.converged?'YES':'NO'}</span> · recommended N≥${fmt(t.recommended_n_outer)}.</div>
+        ${lineChart([{name:'VaR',color:'#3498db',vals:t.var_path},{name:'ES',color:'#2ecc71',vals:t.es_path}],xl,{w:520,h:230,band:band,bandColor:'#3498db'})}
+        ${legend([{c:'#3498db',t:'VaR 99.5%'},{c:'#2ecc71',t:'ES 99.5%'},{c:'#3498db',t:'VaR 95% CI band'}])}</div>
+      <div class="panel"><h3>Bootstrap 95% CI & variance reduction</h3>
+        ${ciBar([{label:'VaR',point:t.var_point||t.final_var,lo:vlo,hi:vhi,color:'#3498db'},{label:'ES',point:t.es_point||t.final_es,lo:t.es_ci&&t.es_ci[0],hi:t.es_ci&&t.es_ci[1],color:'#2ecc71'}],{w:500,h:130})}
+        <div class="kvs" style="margin-top:8px">
           <span class="kk">VaR std error</span><span>${fmt(t.var_se)}</span>
-          <span class="kk">ES point</span><span>${fmt(t.es_point||t.final_es)}</span>
-          <span class="kk">ES 95% CI</span><span>[${fmt(t.es_ci&&t.es_ci[0])}, ${fmt(t.es_ci&&t.es_ci[1])}]</span>
           <span class="kk">Sobol QMC var-reduction</span><span>${t.sobol_ratio?fmt(t.sobol_ratio,2)+"×":"—"}</span>
           <span class="kk">Antithetic var-reduction</span><span>${t.antithetic_ratio?fmt(t.antithetic_ratio,2)+"×":"—"}</span>
         </div></div></div>`;
   }
   return html;
+}
+
+function renderLossPanel(d){
+  const L=(d&&d.loss)||{}; const chart=document.getElementById('lossChart'); if(!chart)return;
+  const seeds=(L.seeds&&L.seeds.length)?L.seeds:[{seed:L.seed_base,histogram:L.histogram,confidence_sweep:L.confidence_sweep,percentiles:L.percentiles,mean_liability:L.mean_liability}];
+  const elS=document.getElementById('lossSeed'),elC=document.getElementById('lossCl'),elP=document.getElementById('lossPct');
+  const draw=()=>{
+    const sb=seeds[Math.max(0,+((elS&&elS.value)||0))]||seeds[0];
+    const sweep=sb.confidence_sweep||L.confidence_sweep||[];
+    const pcts=sb.percentiles||L.percentiles||[];
+    const cr=sweep[Math.max(0,+((elC&&elC.value)||0))]||sweep[sweep.length-1]||{};
+    const pr=pcts[Math.max(0,+((elP&&elP.value)||0))]||{};
+    const mean=sb.mean_liability!=null?sb.mean_liability:L.mean_liability;
+    const markers=[
+      {x:mean,color:'#9fb1c4',label:'mean',tag:'mean'},
+      {x:cr.var,color:'#e74c3c',label:'VaR '+pct(cr.cl,1),tag:'VaR'},
+      {x:cr.es,color:'#f39c12',dashed:true,label:'ES '+pct(cr.cl,1),tag:'ES'},
+      {x:pr.loss,color:'#3498db',dashed:true,label:'p'+pct(pr.p,1),tag:'p'+pct(pr.p,1)},
+    ];
+    chart.innerHTML=histChart(sb.histogram||L.histogram,markers,{w:580,h:270});
+    const kv=document.getElementById('lossKvs');
+    if(kv)kv.innerHTML=`
+      <span class="kk">Mean liability</span><span>${fmt(mean)}</span>
+      <span class="kk">VaR @ ${pct(cr.cl,1)}</span><span>${fmt(cr.var)}</span>
+      <span class="kk">ES @ ${pct(cr.cl,1)}</span><span>${fmt(cr.es)}</span>
+      <span class="kk">SCR-proxy @ ${pct(cr.cl,1)}</span><span>${fmt(cr.scr)}</span>
+      <span class="kk">Loss @ ${pct(pr.p,1)} percentile</span><span>${fmt(pr.loss)}</span>`;
+  };
+  [elS,elC,elP].forEach(e=>e&&(e.onchange=draw)); draw();
 }
 
 function viewProxy(d){
@@ -241,23 +335,23 @@ function viewProxy(d){
 
 function viewGov(d){
   const g=d.governance||{};
-  const rr=g.risk_register||[], cr=g.change_records||[];
+  const cr=g.change_records||[];
   let filterOpts=['ALL','OPEN','IN_PROGRESS','MITIGATED','CLOSED','ACCEPTED'].map(o=>`<option>${o}</option>`).join("");
-  let html=`<div class="panel"><h3>Model risk register</h3>
+  return `<div class="panel"><h3>Model risk register</h3>
     <div class="desc">Audit entries: ${fmt(g.audit_entries)} <span class="pill ${g.audit_integrity_ok?'b-pass':'b-bad'}">integrity ${g.audit_integrity_ok?'OK':'FAIL'}</span> &nbsp; Filter: <select id="rrFilter">${filterOpts}</select></div>
     <table id="rrTable"><thead><tr><th>ID</th><th>Title</th><th>Rating</th><th>Status</th></tr></thead><tbody></tbody></table></div>
     <div class="panel"><h3>Change-record log (IA TAS M §3.7)</h3>
     ${cr.length?`<table><thead><tr><th>Created</th><th>Title</th><th>Type</th><th>Status</th></tr></thead><tbody>${cr.map(r=>`<tr><td>${esc((r.created_at||'').slice(0,10))}</td><td>${esc(r.title)}</td><td>${esc(r.change_type)}</td><td><span class="pill ${vClass(r.status==='APPROVED'?'PASS':r.status==='OWNER_REVIEW'?'PARTIAL':'')}">${esc(r.status)}</span></td></tr>`).join("")}</tbody></table>`:'<div class="empty">No change records loaded.</div>'}</div>`;
-  // defer table fill to after insertion
-  setTimeout(()=>{
-    const tb=document.querySelector('#rrTable tbody'), sel=document.getElementById('rrFilter');
-    if(!tb||!sel)return;
-    const fill=()=>{const f=sel.value;tb.innerHTML=rr.filter(r=>f==='ALL'||r.mitigation_status===f).map(r=>
-      `<tr><td>${esc(r.risk_id)}</td><td>${esc(r.title)}</td><td><span class="pill ${ratingClass(r.overall_rating)}">${esc(r.overall_rating)}</span></td><td><span class="pill ${statusClass(r.mitigation_status)}">${esc(r.mitigation_status)}</span></td></tr>`).join("")
-      ||`<tr><td colspan="4" class="empty">No risks with status ${esc(f)}.</td></tr>`;};
-    sel.onchange=fill; fill();
-  },0);
-  return html;
+}
+
+function fillRiskRegister(d){
+  const g=(d&&d.governance)||{}; const rr=g.risk_register||[];
+  const tb=document.querySelector('#rrTable tbody'), sel=document.getElementById('rrFilter');
+  if(!tb||!sel)return;
+  const fill=()=>{const f=sel.value;tb.innerHTML=rr.filter(r=>f==='ALL'||r.mitigation_status===f).map(r=>
+    `<tr><td>${esc(r.risk_id)}</td><td>${esc(r.title)}</td><td><span class="pill ${ratingClass(r.overall_rating)}">${esc(r.overall_rating)}</span></td><td><span class="pill ${statusClass(r.mitigation_status)}">${esc(r.mitigation_status)}</span></td></tr>`).join("")
+    ||`<tr><td colspan="4" class="empty">No risks with status ${esc(f)}.</td></tr>`;};
+  sel.onchange=fill; fill();
 }
 
 // ---------- loader (offline file load) ----------
