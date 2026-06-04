@@ -489,6 +489,26 @@
       "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation",
       "digest": "3bcb767b2b4ff5a956589cdd883ff31b82b45e890bd830add045f4788b25bfd9",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "82d3c3efa1be4eda8cf30d0cd5fa596c",
+      "timestamp": "2026-06-04T19:41:52.055554+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "MultiDriverTailDiagnostics",
+      "description": "Model run md-tail-7a52688d: PASS",
+      "details": {
+        "run_id": "md-tail-7a52688d",
+        "scenario_count": 252260,
+        "duration_seconds": 25.3043,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/multi_driver_tail_diagnostics.py"
+        ],
+        "test_summary": "VaR99.5%=149615.9; converged=True; rec_N>=2000; CI=[149402.1,154390.5]; SE=1486.3; anti_ratio=0.81; sobol_ratio=7.10"
+      },
+      "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation",
+      "digest": "0f29976bee9b69b8d08ad2a803df2f5b1b7e984a20d3da4f72bf8208c30775d8",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -1201,6 +1221,60 @@
           "actor": "APS X2 independent reviewer (PENDING)",
           "status": "OWNER_REVIEW",
           "comments": "Educational sign-off; production review withheld pending credentialled data + independent APS X2."
+        }
+      ],
+      "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation"
+    },
+    {
+      "record_id": "820c6fe4707a48f28772eaad4753ab8b",
+      "created_at": "2026-06-04T19:41:52.056687+00:00",
+      "title": "Phase 15 Task 4 - tail-convergence & stability diagnostics for the 99.5% capital metric",
+      "description": "Added par_model_v2/projection/multi_driver_tail_diagnostics.py (additive): outer-count convergence, a non-parametric bootstrap CI, and a crude/antithetic/Sobol variance-reduction comparison for the multi-driver (rate+equity) 99.5% VaR/ES capital metric, built on the once-fitted Phase 15 Task 1 LSMC surface. Verdict PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_tail_diagnostics.py",
+        "tests/test_phase15_tail_diagnostics.py",
+        "scripts/build_phase15_task4_evidence.py",
+        "docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.{json,md}",
+        "docs/MULTI_DRIVER_TAIL_DIAGNOSTICS_CARD.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 \u00a73.5",
+        "SOA ASOP 56 \u00a73.1.3",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.6",
+        "L'Ecuyer (2018) RQMC",
+        "Glasserman (2003) \u00a74"
+      ],
+      "before_snapshot": {
+        "tail_diagnostics": "absent \u2014 99.5% capital cited without convergence/CI/variance-reduction evidence"
+      },
+      "after_snapshot": {
+        "final_var": 149615.91,
+        "converged": true,
+        "recommended_n_outer": 2000,
+        "var_bootstrap_se": 1486.34,
+        "sobol_var_ratio": 7.103,
+        "antithetic_var_ratio": 0.812
+      },
+      "impact_assessment": "99.5% VaR converges (recommended N_outer>=2000); bootstrap 95% CI [149402,154391] SE 1486; Sobol QMC variance-reduction ratio 7.1x; antithetic ineffective on the tail quantile (theory-consistent). Educational; placeholder params; independent APS X2 review pending.",
+      "quantitative_impact": "VaR SE 1486; Sobol VR 7.1x",
+      "status": "OWNER_REVIEW",
+      "author": "MultiDriverTailDiagnostics",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-04T19:41:52.056714+00:00",
+          "actor": "MultiDriverTailDiagnostics",
+          "status": "PEER_REVIEW",
+          "comments": "Additive tail-diagnostics module; 36 unit tests PASS; compileall clean."
+        },
+        {
+          "timestamp": "2026-06-04T19:41:52.056727+00:00",
+          "actor": "MultiDriverTailDiagnostics",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: educational placeholder params; independent APS X2 review pending."
         }
       ],
       "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation"
