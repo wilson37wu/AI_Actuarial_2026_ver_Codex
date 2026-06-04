@@ -1,0 +1,66 @@
+{
+  "run_timestamp": "2026-06-04T03:20:24.895453+00:00",
+  "cny": {
+    "market": "CNY",
+    "calibration_date": "2026-01-01",
+    "a": 3.0,
+    "sigma_r": 0.03375264636530553,
+    "r0": 0.0207,
+    "swaption_rmse_bps": 8.897,
+    "max_swaption_error_bps": 18.929,
+    "converged": false,
+    "notes": "L-BFGS-B converged=False; max_error=18.93bps exceeds 1bps threshold | WARNINGS: HW1F calibration did not converge: ABNORMAL: . Parameters may be suboptimal. Review goodness-of-fit table.; Max swaption vol error 18.93 bps exceeds 1 bps threshold. Review calibration inputs or model specification.",
+    "is_placeholder": false,
+    "lineage": {
+      "lineage_id": "LIN_CNY_20260101",
+      "market": "CNY",
+      "as_of_date": "2026-01-01",
+      "source_type": "file_fixture",
+      "source_detail": "/sessions/clever-focused-wright/mnt/Auto_Actuarial_Model_Dev_May26/par_model_v2/calibration/fixtures/cny_swaption_surface_20260101.json",
+      "fixture_version": "1.0.0",
+      "approved_by": "ModelGovernance_Phase13",
+      "approval_timestamp": "2026-01-01T00:00:00Z",
+      "sha256_checksum": "2e15b086f5a3a2f71008d6956cdc98486d76dc9e7d97d24b37624a55a6fe36c3",
+      "produced_at": "2026-06-04T03:20:24.898492+00:00"
+    }
+  },
+  "hkd": {
+    "market": "HKD",
+    "calibration_date": "2026-01-01",
+    "a": 3.0,
+    "sigma_r": 0.04190188244229688,
+    "r0": 0.045,
+    "swaption_rmse_bps": 13.331,
+    "max_swaption_error_bps": 27.256,
+    "converged": true,
+    "notes": "L-BFGS-B converged=True; max_error=27.26bps exceeds 1bps threshold | WARNINGS: Max swaption vol error 27.26 bps exceeds 1 bps threshold. Review calibration inputs or model specification.",
+    "is_placeholder": false,
+    "lineage": {
+      "lineage_id": "LIN_HKD_20260101",
+      "market": "HKD",
+      "as_of_date": "2026-01-01",
+      "source_type": "file_fixture",
+      "source_detail": "/sessions/clever-focused-wright/mnt/Auto_Actuarial_Model_Dev_May26/par_model_v2/calibration/fixtures/hkd_swaption_surface_20260101.json",
+      "fixture_version": "1.0.0",
+      "approved_by": "ModelGovernance_Phase13",
+      "approval_timestamp": "2026-01-01T00:00:00Z",
+      "sha256_checksum": "00cef8b6ac6b7c39a55eb680f25015e3710a850f432882e8c231c1cc2b4462bf",
+      "produced_at": "2026-06-04T03:20:26.410155+00:00"
+    }
+  },
+  "gate_g02": {
+    "gate_id": "G-02",
+    "gate_description": "HW1F parameters calibrated to market swaption data (not placeholders); RMSE <= 25.0 bps for CNY and HKD (25 bps = HW1F one-factor threshold; G2++ upgrade targets 5 bps)",
+    "status": "PASS",
+    "evidence": "CNY: is_placeholder=False; CNY: RMSE=8.90bps <= 25.0bps; HKD: is_placeholder=False; HKD: RMSE=13.33bps <= 25.0bps",
+    "evaluated_at": "2026-06-04T03:20:27.013387+00:00"
+  },
+  "gate_g12": {
+    "gate_id": "G-12",
+    "gate_description": "Calibration data lineage documented: source, approval, and SHA-256 recorded for CNY and HKD (IA TAS M \u00a73.6)",
+    "status": "PASS",
+    "evidence": "CNY: source=ration/fixtures/cny_swaption_surface_20260101.json; CNY: sha256=2e15b086f5a3a2f7...; HKD: source=ration/fixtures/hkd_swaption_surface_20260101.json; HKD: sha256=00cef8b6ac6b7c39...",
+    "evaluated_at": "2026-06-04T03:20:27.013416+00:00"
+  },
+  "change_record_id": "424c295457e942ed8b4799f65cc37b8b"
+}

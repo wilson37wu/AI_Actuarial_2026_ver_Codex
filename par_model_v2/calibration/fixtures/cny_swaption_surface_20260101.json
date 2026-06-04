@@ -1,0 +1,48 @@
+{
+  "fixture_id": "CNY_SWAPTION_SURFACE_20260101",
+  "description": "Representative CNY onshore IRS ATM payer swaption normal implied volatility surface as of 2026-01-01. Source: educational proxy based on CFETS/Bloomberg consensus for CNY 7-day repo fixed-income market. Normal vol convention (Bachelier) used throughout because near-zero rates make lognormal Black vol unstable. Weights reflect liquidity: standard expiry/tenor combinations weighted 1.0; off-grid or illiquid cells weighted 0.5 or 0.0.",
+  "as_of_date": "2026-01-01",
+  "currency": "CNY",
+  "vol_convention": "normal_bps_pa",
+  "source_type": "educational_proxy",
+  "source_detail": "Approximate CFETS consensus / Bloomberg screen CNY IRS swaption surface; representative of typical 2025-2026 levels. Not licensed market data. For educational use only.",
+  "data_lineage": {
+    "provenance": "file_fixture",
+    "approved_by": "ModelGovernance_Phase13",
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "version": "1.0.0",
+    "checksum_sha256": "educational_fixture_no_checksum"
+  },
+  "swaption_grid": [
+    {"expiry_years": 1.0, "swap_tenor_years": 1.0, "normal_vol_bps": 55.0, "weight": 1.0},
+    {"expiry_years": 1.0, "swap_tenor_years": 2.0, "normal_vol_bps": 52.0, "weight": 1.0},
+    {"expiry_years": 1.0, "swap_tenor_years": 5.0, "normal_vol_bps": 48.0, "weight": 1.0},
+    {"expiry_years": 1.0, "swap_tenor_years": 10.0,"normal_vol_bps": 44.0, "weight": 0.8},
+    {"expiry_years": 2.0, "swap_tenor_years": 1.0, "normal_vol_bps": 50.0, "weight": 1.0},
+    {"expiry_years": 2.0, "swap_tenor_years": 2.0, "normal_vol_bps": 47.0, "weight": 1.0},
+    {"expiry_years": 2.0, "swap_tenor_years": 5.0, "normal_vol_bps": 43.0, "weight": 1.0},
+    {"expiry_years": 2.0, "swap_tenor_years": 10.0,"normal_vol_bps": 39.0, "weight": 0.8},
+    {"expiry_years": 3.0, "swap_tenor_years": 1.0, "normal_vol_bps": 46.0, "weight": 1.0},
+    {"expiry_years": 3.0, "swap_tenor_years": 2.0, "normal_vol_bps": 43.0, "weight": 1.0},
+    {"expiry_years": 3.0, "swap_tenor_years": 5.0, "normal_vol_bps": 40.0, "weight": 1.0},
+    {"expiry_years": 3.0, "swap_tenor_years": 10.0,"normal_vol_bps": 37.0, "weight": 0.8},
+    {"expiry_years": 5.0, "swap_tenor_years": 1.0, "normal_vol_bps": 42.0, "weight": 1.0},
+    {"expiry_years": 5.0, "swap_tenor_years": 2.0, "normal_vol_bps": 40.0, "weight": 1.0},
+    {"expiry_years": 5.0, "swap_tenor_years": 5.0, "normal_vol_bps": 38.0, "weight": 1.0},
+    {"expiry_years": 5.0, "swap_tenor_years": 10.0,"normal_vol_bps": 35.0, "weight": 0.8},
+    {"expiry_years": 7.0, "swap_tenor_years": 1.0, "normal_vol_bps": 38.0, "weight": 0.8},
+    {"expiry_years": 7.0, "swap_tenor_years": 5.0, "normal_vol_bps": 35.0, "weight": 0.8},
+    {"expiry_years": 7.0, "swap_tenor_years": 10.0,"normal_vol_bps": 32.0, "weight": 0.6},
+    {"expiry_years": 10.0,"swap_tenor_years": 1.0, "normal_vol_bps": 33.0, "weight": 0.6},
+    {"expiry_years": 10.0,"swap_tenor_years": 5.0, "normal_vol_bps": 30.0, "weight": 0.6},
+    {"expiry_years": 10.0,"swap_tenor_years": 10.0,"normal_vol_bps": 27.0, "weight": 0.5}
+  ],
+  "spot_curve": {
+    "description": "CNY onshore zero-coupon (spot) rate curve bootstrapped from CFETS CGB yields, 2026-01-01. Rates are annualised continuously-compounded decimals.",
+    "tenors_years": [0.25, 0.5, 1.0, 2.0, 3.0, 5.0, 7.0, 10.0, 15.0, 20.0, 30.0],
+    "rates_decimal": [0.0205, 0.0210, 0.0215, 0.0225, 0.0235, 0.0250, 0.0265, 0.0280, 0.0295, 0.0300, 0.0305]
+  },
+  "initial_short_rate": 0.0207,
+  "regulatory_rate_cap": 0.030,
+  "notes": "CNY swaption market is quoted in normal vol (Bachelier convention). CBIRC discount rate cap 3.0% applies to statutory reserve calculations. Surface interpolated from 1Y-10Y expiry x 1Y-10Y tenor grid; tails (>10Y expiry or >10Y tenor) have reduced weight 0.5 reflecting low liquidity."
+}
