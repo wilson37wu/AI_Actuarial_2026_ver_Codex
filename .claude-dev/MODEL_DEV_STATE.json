@@ -1,8 +1,8 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-03T23:22:48Z",
-  "last_run_duration_minutes": 65,
+  "last_run": "2026-06-04T00:20:09Z",
+  "last_run_duration_minutes": 70,
   "current_phase": "Phase 12: Governance, Calibration, and Educational Packaging",
   "overall_status": "active_post_v1_expansion",
   "phases": {
@@ -226,25 +226,27 @@
         "Add validation dashboards or markdown reports",
         "Refresh final documentation, release notes, and model risk card"
       ],
-      "completed": [],
-      "in_progress": [
+      "completed": [
         "Add calibration notebooks or scripts for curves, equity, credit, and liability assumptions"
       ],
-      "next": "Add calibration notebooks or scripts for curves, equity, credit, and liability assumptions"
+      "in_progress": [
+        "Add model limitation cards for every ESG and liability module"
+      ],
+      "next": "Add guided examples for pricing, valuation, TVOG, ALM, stress, and reporting close"
     }
   },
   "repository_info": {
     "url": "https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex",
     "branch": "main",
     "last_commit_sha": "60dee68f4c58b87e96c41207e0fa1398af417ab0",
-    "last_commit_message": "[Phase 11] Add reporting-cycle workflow \u2014 assumption lock, model run, validation, output review, sign-off pack",
+    "last_commit_message": "[Phase 12] Add calibration scripts for curves, equity, credit, and liability assumptions",
     "commits_this_session": 56
   },
   "progress_metrics": {
     "total_tasks": 66,
-    "tasks_completed": 66,
+    "tasks_completed": 67,
     "phases_completed": 11,
-    "estimated_completion_pct": 97,
+    "estimated_completion_pct": 98,
     "average_cycle_duration_minutes": 52,
     "cycles_run": 110
   },

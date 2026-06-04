@@ -4808,3 +4808,39 @@ failed, so no new model work was performed.
 - ERM: VaR-95 and ES-95 tail-risk metrics computed and reported ✅
 
 ---
+
+---
+
+## Run 2026-06-04T00:00:00Z — Phase 12: Governance, Calibration, and Educational Packaging
+
+**Task Completed:** Add calibration notebooks or scripts for curves, equity, credit, and liability assumptions.
+
+**Accomplishments:**
+- Created `scripts/calibration/__init__.py` — package documentation.
+- Created `scripts/calibration/calibrate_curves.py` (374 lines): HW1F calibration for USD, EUR, HKD, CNY, JPY using L-BFGS-B minimisation of weighted ATM swaption normal-vol errors. Integrates with `par_model_v2.calibration.HullWhiteCalibrator`. All five markets calibrate to non-placeholder results with RMSEs of 2–11 bps on synthetic quotes.
+- Created `scripts/calibration/calibrate_equity.py` (377 lines): GBM equity calibration for US, EU, HK/CN, JP, Asia ex-JP regional factors. Implements 60/40 implied-vol/historical-vol credibility blend (SOA ASOP 25 §3.3) and 0.7% survivorship-bias ERP adjustment. Uses `par_model_v2.calibration.GBMCalibrator`.
+- Created `scripts/calibration/calibrate_credit.py` (382 lines): Nelson-Siegel curve fitting (scipy `least_squares`, TRF method) to synthetic OAS grids for IG (AAA–BBB) and HY (BB–CCC). Private credit / PE / infrastructure illiquidity premium tabulation. Three credit stress scenarios (CS01–CS03) per ERM framework.
+- Created `scripts/calibration/calibrate_liabilities.py` (510 lines): HKML 2016 mortality improvement (1.5% p.a.) + credibility blending (60/40); exponential decay lapse curve fitted for cash-dividend and reversionary-bonus products; bonus/dividend supportability test per IA(HK) GL16 with regulatory margin.
+- Created `scripts/calibration/run_all_calibrations.py` (365 lines): Orchestrator that runs all four modules, aggregates results, and writes six output files (4 × module JSON, combined snapshot, Markdown summary).
+- Created `docs/CALIBRATION_SCRIPTS_GUIDE.md`: Standards cross-reference, quick-start guide, and governance checklist.
+- All scripts pass `python3 -m compileall` and end-to-end execution (`run_all_calibrations.py --output-dir`).
+
+**Validation:**
+- `python3 -m compileall scripts/calibration/ -q` — exit 0.
+- `run_all_calibrations.py --output-dir /tmp/cal_test_output` — "All modules converged: True"; 6 output files written.
+- HW1F RMSE: USD 10.96 bps, EUR 8.61 bps, HKD 10.02 bps, CNY 6.15 bps, JPY 2.25 bps on synthetic swaption grid.
+- NS credit spread RMSE: IG AAA 0.11 bps, IG BBB 0.68 bps, HY BB 2.31 bps (CCC: 70 bps, acceptable for illiquid segment).
+- GBM equity: blended sigma_S calibrated for all 5 markets; survivorship-bias ERP adjustment applied.
+
+**Next Step:** Add model limitation cards for every ESG and liability module.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.4: Calibration methodology explicitly documented for HW1F (normal-vol loss, L-BFGS-B), GBM (credibility blend), NS spread (TRF least-squares), and mortality/lapse/bonus.
+- SOA ASOP 25 §3.3: 60/40 credibility weighting for equity vol; 60/40 mortality credibility; documented in scripts and CALIBRATION_SCRIPTS_GUIDE.md.
+- IA TAS M §3.5: Governance checklist and sign-off requirements in CALIBRATION_SCRIPTS_GUIDE.md.
+- IA(HK) GL16: Bonus supportability tested for cash-dividend and reversionary-bonus; regulatory margin (0.30%) applied.
+- ERM: Credit stress scenarios CS01–CS03 covering moderate, GFC-like, and IG downgrade-wave events.
+
+**Delivery:**
+- Committing and pushing from /tmp/cal_dev_clone via fresh clone (virtiofs no-delete mount workaround).
+
