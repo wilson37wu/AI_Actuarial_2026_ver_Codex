@@ -217,18 +217,19 @@ ChangeRecord `assumption="dynamic_lapse"` in APPROVED state (mitigates MR-003).
 #### 4.1.1 Current Implementation
 
 ```python
-# project_liability_cashflows() — default parameter
-discount_rate_annual: float = 0.035  # 3.5% flat, applied to all maturities
-# Monthly: v_m = (1 + 0.035)^(-1/12) = 0.99713
+# project_liability_cashflows() — default parameter (MR-001 remediated, Phase 13 Task 3)
+discount_rate_annual: float = DEFAULT_RESERVING_DISCOUNT_RATE  # = 0.030 (3.0%, CBIRC cap)
+# Monthly: v_m = (1 + 0.030)^(-1/12) = 0.99753
+# Legacy non-compliant default (3.5%) retained only as _LEGACY_DISCOUNT_RATE_ANNUAL
 ```
 
-**Term structure:** Flat 3.5%. No term structure is applied. The same rate discounts near-term and long-term cashflows.
+**Term structure:** Flat 3.0% (post-MR-001). No term structure is applied; the same rate discounts near-term and long-term cashflows. A bootstrapped CNY sovereign term structure remains a production residual (cross-ref G-02/G-12).
 
 **Source file:** `data/assumptions/discount_curve.csv` (131 rows, 2-dim: tenor × rate). The maximum rate in this file is 5.0% (long end), which is the legacy system rate.
 
 #### 4.1.2 Assumption Basis
 
-**Current rate:** 3.5% (code default). File maximum: 5.0%.
+**Current rate:** 3.0% (code default, CBIRC-compliant since Phase 13 Task 3). Legacy code default was 3.5% (non-compliant); CSV file maximum: 5.0% (legacy, superseded).
 
 **Market reference (CNY, May 2026):**
 
@@ -240,7 +241,7 @@ discount_rate_annual: float = 0.035  # 3.5% flat, applied to all maturities
 | CNY Interest Rate Swap (IRS) | 5Y | ~2.1–2.4% |
 | CBIRC Required Assumption Rate | All | ≤3.0% (regulatory cap) |
 
-**Assessment:** The 3.5% code default is **above the CBIRC regulatory cap of 3.0%** (effective 2023). The legacy file rate of 5.0% is materially overstated — approximately 220–280bps above market. This creates a systematic understatement of liabilities.
+**Assessment (updated 2026-06-04):** The code default is now **3.0%, at the CBIRC regulatory cap** (effective 2023). The prior 3.5% default breached the cap and systematically understated liabilities — critical model risk **MR-001**, now **MITIGATED** via an APPROVED GovernanceStore ChangeRecord (assumption="discount_rate_annual"; see `phase13_mr001_discount_rate.py` and `docs/PHASE13_MR001_DISCOUNT_RATE_REPORT.md`). The legacy CSV file rate of 5.0% remains superseded.
 
 **Materiality:** For a 20-year endowment with SA=100,000, reducing the discount rate from 3.5% to 2.5% increases PV of guaranteed liabilities by approximately 15–20%. This is a material pricing and reserving error.
 
@@ -248,9 +249,9 @@ discount_rate_annual: float = 0.035  # 3.5% flat, applied to all maturities
 
 | ASOP | Section | Requirement | Status | Gap |
 |------|---------|-------------|--------|-----|
-| ASOP 56 | §3.4 | Parameter calibration | 🔴 Critical | No market calibration; above regulatory cap |
+| ASOP 56 | §3.4 | Parameter calibration | 🟡 Partial | Default now at CBIRC cap (3.0%); live CNY bootstrap pending (G-02/G-12) |
 | ASOP 7 | §3.3.3 | Investment return consistency | 🔴 Non-compliant | Discount rate not calibrated to asset portfolio |
-| ASOP 25 | §3.3 | Relevant data | 🔴 Non-compliant | No market data reference |
+| ASOP 25 | §3.3 | Relevant data | 🟡 Partial | CBIRC cap applied; market-data bootstrap is production residual |
 
 **Recommended action (Phase 4):** Implement CNY sovereign curve calibration using bootstrapping from published bond yields; apply CBIRC cap of 3.0% for regulatory reserves; use risk-free curve for TVOG (risk-neutral pricing).
 

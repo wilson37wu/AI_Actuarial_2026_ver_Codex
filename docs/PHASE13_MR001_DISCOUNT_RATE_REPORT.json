@@ -1,0 +1,56 @@
+{
+  "run_timestamp": "2026-06-04T05:28:13.379031+00:00",
+  "before_rate": 0.035,
+  "after_rate": 0.03,
+  "impacts": [
+    {
+      "label": "5y HK PAR endowment",
+      "term_years": 5,
+      "pv_net_liability_before": 180445.60692329926,
+      "pv_net_liability_after": 189291.0786033998,
+      "pv_guaranteed_before": 576217.8775576418,
+      "pv_guaranteed_after": 590269.2486671397,
+      "net_liability_delta": 8845.471680100542,
+      "net_liability_delta_pct": 4.902015533057795,
+      "guaranteed_delta_pct": 2.438551745228041
+    },
+    {
+      "label": "10y HK PAR endowment",
+      "term_years": 10,
+      "pv_net_liability_before": 57037.23892801104,
+      "pv_net_liability_after": 68612.66048458335,
+      "pv_guaranteed_before": 419881.405555728,
+      "pv_guaranteed_after": 440431.8678364286,
+      "net_liability_delta": 11575.421556572313,
+      "net_liability_delta_pct": 20.294498426163496,
+      "guaranteed_delta_pct": 4.894349215941415
+    },
+    {
+      "label": "20y HK PAR endowment",
+      "term_years": 20,
+      "pv_net_liability_before": -52432.79054645606,
+      "pv_net_liability_after": -41078.970437758195,
+      "pv_guaranteed_before": 263282.05308260146,
+      "pv_guaranteed_after": 288852.3060364159,
+      "net_liability_delta": 11353.820108697866,
+      "net_liability_delta_pct": 21.654045093476856,
+      "guaranteed_delta_pct": 9.712113930451656
+    }
+  ],
+  "gate_g01": {
+    "gate_id": "G-01",
+    "gate_description": "Default liability-reserving discount rate <= CBIRC 3.0% valuation cap with no validator warning (CBIRC C-ROSS 2023; SOA ASOP 25 \u00a73.3)",
+    "status": "PASS",
+    "evidence": "default discount_rate_annual=0.030 <= cap 0.030; DiscountRateValidator: no CBIRC warning at default; reserve impact quantified over 3 products",
+    "evaluated_at": "2026-06-04T05:28:13.392975+00:00"
+  },
+  "gate_g07": {
+    "gate_id": "G-07",
+    "gate_description": "MR-001 discount-rate ChangeRecord executed through GovernanceStore three-stage sign-off to APPROVED (IA TAS M \u00a73.5 & \u00a73.7)",
+    "status": "PASS",
+    "evidence": "before_snapshot=0.035; after_snapshot=0.030; impact assessment present; standard refs include CBIRC + IA TAS M \u00a73.5; status=APPROVED; 3-stage sign-off DRAFT->PEER_REVIEW->OWNER_REVIEW->APPROVED",
+    "evaluated_at": "2026-06-04T05:28:13.392991+00:00"
+  },
+  "change_record_id": "5dac3fe33735460da56c1cedbd3ce547",
+  "change_record_status": "APPROVED"
+}

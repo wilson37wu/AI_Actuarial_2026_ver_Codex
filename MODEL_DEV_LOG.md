@@ -5119,3 +5119,67 @@ independent review).
 - `git push origin main` — see commit recorded below.
 
 ---
+
+## Run 2026-06-04T05:30Z — Phase 13 Task 3: MR-001 Discount-Rate Change via GovernanceStore (G-01, G-07)
+
+**Task Completed:** Execute MR-001 assumption change through GovernanceStore ChangeRecord workflow (G-01, G-07)
+
+**Context:** Developed in a `/tmp` clone of `origin/main` (HEAD `3a2f015`). The mounted
+worktree still carries truncated `par_model_v2/.../__init__.py` files, and the no-delete
+virtiofs mount corrupts in-place file-tool edits (an Edit to `monthly_projection.py` produced
+a truncated line on disk), so all source edits were applied in the clean clone via scripted
+string replacement and verified with `py_compile`. Full NumPy/Pandas/SciPy/pytest stack
+installed; tests executed.
+
+**Accomplishments:**
+- Reduced the default liability-reserving discount rate **3.5% → 3.0%** to comply with the
+  CBIRC 2023 valuation cap (resolves critical model risk **MR-001**):
+  * Added `CBIRC_RESERVING_DISCOUNT_RATE_CAP = 0.030`, `DEFAULT_RESERVING_DISCOUNT_RATE`,
+    and `_LEGACY_DISCOUNT_RATE_ANNUAL = 0.035` constants to
+    `par_model_v2/projection/monthly_projection.py` with standards commentary.
+  * `project_liability_cashflows` and `run_full_projection` defaults now reference
+    `DEFAULT_RESERVING_DISCOUNT_RATE` (0.030). TVOG/sensitivity/backtesting keep their own
+    explicit pricing-basis rates (out of MR-001 scope; documented).
+- Added `par_model_v2/calibration/phase13_mr001_discount_rate.py` (~495 lines):
+  * `run_discount_rate_impact_grid()` — static reserve-impact grid (5/10/20y HK PAR endowment)
+    at 3.5% vs 3.0%. Reserves rise with the lower rate, more so at longer duration:
+    PV net liability **+4.90% / +20.29% / +21.65%**; PV guaranteed **+2.44% / +4.89% / +9.71%**.
+  * `build_mr001_change_record()` — `assumption="discount_rate_annual"` ChangeRecord;
+    before `{0.035}`, after `{0.030}`; refs CBIRC C-ROSS (2023), IA TAS M §3.5 & §3.7,
+    SOA ASOP 25 §3.3, ASOP 56 §3.5; quantified impact.
+  * `approve_mr001_change_record()` — drives DRAFT → PEER_REVIEW → OWNER_REVIEW → **APPROVED**.
+  * `evaluate_g01_gate()` / `evaluate_g07_gate()` → both **PASS**.
+  * `run_phase13_mr001_discount_rate(write_report=True)` → `docs/PHASE13_MR001_DISCOUNT_RATE_REPORT.md` + `.json`.
+- Added `tests/test_phase13_mr001_discount_rate.py` — **22 tests, 22/22 PASS** (constants,
+  live default change, validator behaviour at 3.0% vs 3.5%, impact monotonicity in term,
+  ChangeRecord snapshots/refs/lifecycle, 3 distinct sign-off actors, gate PASS/FAIL, full
+  pipeline persistence, report write/roundtrip).
+- Persisted the APPROVED ChangeRecord into `.claude-dev/GOVERNANCE_STORE.json` (now 2 change
+  records) and moved risk **MR-001** `IN_PROGRESS → MITIGATED`; `audit_trail.verify_all() = True`.
+- Updated `docs/DEPLOYMENT_READINESS_CHECKLIST.md` (G-01 & G-07 → ✅ CLEARED with all
+  verification-criteria evidence filled) and `docs/SOA_ASSUMPTIONS_DOCUMENT.md` §3.4
+  (3.0% reserving default; MR-001 mitigation note; ASOP statuses upgraded to Partial).
+
+**Validation:**
+- `pytest tests/test_phase13_mr001_discount_rate.py` → 22 passed.
+- Regression: `test_monthly_projection`, `test_dynamic_lapse`, `test_data_validator` (151),
+  `test_integration_e2e` + `test_stress_testing` (112), `test_governance` (54) all PASS.
+  TVOG/calibration/backtesting/sensitivity do not consume the changed defaults (verified) and
+  were green at the cloned baseline.
+
+**Gates this run:** G-01 ✅ PASS (educational), G-07 ✅ PASS. Production gates cleared: 6
+(G-01, G-02, G-04, G-07, G-11, G-12 — all educational pending live data / independent review).
+
+**Next Step:** Run full IA TAS M validation suite against live-calibrated model; target ≥ 80% PASS (G-06).
+
+**Industry Standards Progress:**
+- CBIRC C-ROSS (2023): reserving discount default now within the 3.0% cap ✅
+- SOA ASOP 25 §3.3 / ASOP 56 §3.5: discount assumption basis documented; cap applied ✅
+- IA TAS M §3.5 & §3.7: highest-priority assumption change executed through the three-stage
+  sign-off workflow (operational proof of the change-control framework) ✅
+- IFoA APS X2 §4.2: independent-review step represented (genuine review = production residual) ⚠️
+
+**Delivery:**
+- `git push origin main` — see commit recorded below.
+
+---

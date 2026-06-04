@@ -46,6 +46,24 @@ from par_model_v2.projection.dynamic_lapse import (
 
 VALID_TERMS = (5, 10, 20)
 
+# Regulatory discount-rate basis (MR-001 / Phase 13 Task 3 -- G-01).
+#
+# The CBIRC 2023 reserve-valuation circular caps the guaranteed valuation rate
+# for CNY participating business at 3.0%.  The pre-Phase-13 model default of
+# 3.5% (``_LEGACY_DISCOUNT_RATE_ANNUAL``) breached that cap and was flagged as
+# critical model risk MR-001.  The default liability-reserving discount rate is
+# therefore set to ``CBIRC_RESERVING_DISCOUNT_RATE_CAP`` (3.0%).  This change was
+# executed through the GovernanceStore ChangeRecord workflow
+# (assumption="discount_rate_annual", DRAFT -> APPROVED) -- see
+# ``par_model_v2/calibration/phase13_mr001_discount_rate.py`` and
+# ``.claude-dev/GOVERNANCE_STORE.json``.
+#
+# Standards: CBIRC C-ROSS reserve valuation (2023); SOA ASOP 25 3.3;
+# IA TAS M 3.5 (material assumption sign-off).
+CBIRC_RESERVING_DISCOUNT_RATE_CAP = 0.030   # 3.0% -- regulatory valuation cap
+DEFAULT_RESERVING_DISCOUNT_RATE   = CBIRC_RESERVING_DISCOUNT_RATE_CAP
+_LEGACY_DISCOUNT_RATE_ANNUAL      = 0.035   # pre-MR-001 default (non-compliant)
+
 
 # ---------------------------------------------------------------------------
 # 1. PRODUCT DEFINITION
@@ -163,7 +181,7 @@ class LiabilityProjectionResult:
 
 def project_liability_cashflows(
     product: ParEndowmentProduct,
-    discount_rate_annual: float = 0.035,
+    discount_rate_annual: float = DEFAULT_RESERVING_DISCOUNT_RATE,
     acquisition_expense_pct: float = 0.08,
     renewal_expense_pct: float = 0.04,
     renewal_expense_fixed_monthly: float = 12.50,
@@ -648,7 +666,7 @@ class FullProjectionResult:
 def run_full_projection(
     product: ParEndowmentProduct,
     fund_positions: List[AssetPosition],
-    discount_rate_annual: float = 0.035,
+    discount_rate_annual: float = DEFAULT_RESERVING_DISCOUNT_RATE,
     acquisition_expense_pct: float = 0.08,
     renewal_expense_pct: float = 0.04,
     renewal_expense_fixed_monthly: float = 12.50,
