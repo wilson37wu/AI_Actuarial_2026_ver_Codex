@@ -400,7 +400,7 @@ IA TAS M §3.6 validation suite (G-06 PASS 80.6%), produced an out-of-sample bac
 (G-09), closed MR-005 (G-10), and recorded the APS X2 independent review (G-08).
 All 10 deployment-checklist gates cleared at **educational** level; 6/6 tasks done.
 
-**Phase 14: Production Residual Closure and Model Sophistication** ⭐ NEXT  
+**Phase 14: Production Residual Closure and Model Sophistication** ✅ COMPLETE (2026-06-04)  
 Close the production residuals carried out of Phase 13 and raise model
 sophistication toward production grade. Verdict target: clear G-03 and G-05 at
 educational level, drive the IA TAS M suite above 90% PASS, and add at least one
@@ -436,10 +436,34 @@ Tasks for Phase 14 (one per cycle, in order):
    Q-measure martingale evidence constant-rate 0.64% / stochastic-HW1F 0.53% max rel err (both PASS).
    ChangeRecord OWNER_REVIEW (production sign-off withheld — jump params educational placeholders pending
    calibration + independent review). Audit chain intact (13->17). (SOA ASOP 56 §3.1.3/§3.4/§3.5; IA TAS M §3.6)
-6. Nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and
-   reproducibility diagnostics; document model-use restrictions.
+6. ✅ DONE (2026-06-04) Nested-stochastic / LSMC TVOG proxy — added par_model_v2/projection/nested_stochastic_tvog.py
+   (NestedStochasticTVOGEngine ground truth + Longstaff-Schwartz LSMCProxyEngine + NestedStochasticDiagnostics).
+   VaR/ES/SCR-proxy at a 1y horizon. Evidence (seed=42): LSMC vs nested R^2=0.9932, max abs rel err 2.47% on the
+   state grid; SCR gap 7.2%; 128x fewer inner valuations. Inner SE ~1/sqrt(n) (1644->750->359->175); same-seed
+   bit-identical. 23 tests PASS; compileall clean; additive-only. ChangeRecord 916e5522 OWNER_REVIEW (sign-off
+   withheld — single-factor educational proxy, placeholder params, pending APS X2). docs/NESTED_STOCHASTIC_LSMC_TVOG_CARD.md.
+   (SOA ASOP 56 §3.1.3/§3.5; ASOP 25 §3.3; IA TAS M §3.2/§3.6; IFoA MCEV §7; Longstaff-Schwartz 2001)
 
-**Current milestone:** Phase 14 in progress | 79/80 tasks done | Phase 14 Task 5 COMPLETE (optional Merton jump-diffusion equity process added behind the PAR_ESG_EQUITY_MODEL feature flag; GBM remains the default and is byte-for-byte unchanged). Q-measure martingale preserved exactly by the jump compensator; 43 new tests PASS; martingale evidence constant-rate 0.64% / stochastic-HW1F 0.53% max rel err (both PASS). ChangeRecord at OWNER_REVIEW — production sign-off of the jump model withheld pending calibration of jump parameters (educational placeholders) and APS X2 independent review; the GBM default carries no such residual. Open model risks 1; mitigated/closed 8. **All 12 educational deployment gates remain cleared.** Next: Phase 14 Task 6 (nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and reproducibility diagnostics; document model-use restrictions).
+**Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation** ⭐ NEXT
+Generalise the single-factor (rates) nested/LSMC capital proxy to multiple correlated risk drivers, add risk
+aggregation, and a formal out-of-sample proxy-model validation. Verdict target: a multi-driver L_hat surface with
+documented in-sample/out-of-sample fit, correlated capital aggregation with diversification evidence, and a proxy
+validation report meeting IA TAS M §3.6 and SOA ASOP 56 §3.5.
+
+Tasks for Phase 15 (one per cycle, in order):
+1. ⭐ NEXT Extend the LSMC surface to two correlated drivers (short rate r_H + equity level S_H) with a multivariate
+   polynomial basis; condition the inner Q nest on (r,S); add multi-driver nested ground truth. (Directly closes the
+   documented single-risk-driver limitation of Phase 14 Task 6.)
+2. Out-of-sample proxy validation — hold-out fit/validation split, basis-degree selection by OOS RMSE/R^2, and
+   leakage/overfit diagnostics; produce a proxy-validation report.
+3. Correlated risk aggregation — combine standalone rate and equity capital via the ESG correlation matrix; compare
+   to fully-diversified multi-driver nested capital (diversification benefit evidence).
+4. Tail-convergence and stability diagnostics for the 99.5% capital metric (outer-count convergence, bootstrap CI on
+   VaR/ES, antithetic / quasi-MC variance reduction).
+5. Refresh governance — limitation card, ChangeRecord, MR register update for the multi-driver proxy; document
+   model-use restrictions and the remaining credentialled-data / independent-review residual.
+
+**Current milestone:** Phase 15 starting | 80/85 tasks done | **PHASE 14 COMPLETE** (6/6). Phase 14 Task 6 added the nested-stochastic / LSMC TVOG capital proxy (par_model_v2/projection/nested_stochastic_tvog.py): NestedStochasticTVOGEngine ground truth + Longstaff-Schwartz LSMCProxyEngine + diagnostics, producing VaR/ES/SCR-proxy at a 1y horizon. LSMC recovers the nested conditional expectation R^2=0.9932 (max abs rel err 2.47%) at 128x fewer inner valuations; inner SE decays ~1/sqrt(n); same-seed runs bit-identical. 23 new tests PASS; compileall clean. ChangeRecord at OWNER_REVIEW (single-factor educational proxy, placeholder params, pending APS X2). Open model risks 1; mitigated/closed 8. **All 12 educational deployment gates remain cleared.** Next: Phase 15 Task 1 — extend the LSMC surface to two correlated drivers (rates + equity) with multivariate basis and multi-driver nested ground truth.
 
 ---
 

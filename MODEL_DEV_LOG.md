@@ -5509,3 +5509,29 @@ against the Phase 13 Task 5 out-of-sample backtest evidence; target ≥ 90% PASS
 - IA TAS M §3.6: addressed — model variant added with traceable parameter snapshot, reviewable martingale evidence, and change record.
 
 ---
+
+
+## Run 2026-06-04T15:29Z — Phase 14 Task 6 (PHASE 14 COMPLETE)
+
+**Task Completed:** Nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and reproducibility diagnostics; document model-use restrictions.
+
+**Accomplishments:**
+- Added `par_model_v2/projection/nested_stochastic_tvog.py` (additive-only; no existing file modified):
+  - `NestedStochasticTVOGEngine` — brute-force ground truth: outer real-world (P) scenarios projected to a 1y capital horizon, fresh inner Q nest per node conditioned on the node's short rate, residual guarantee re-valued, VaR/ES/SCR-proxy on the upper tail.
+  - `LSMCProxyEngine` — Longstaff-Schwartz least-squares Monte-Carlo: fits a polynomial conditional-expectation surface `L_hat(x)` to N_fit noisy single-inner-path samples, then evaluates cheaply across a large outer set.
+  - `NestedStochasticDiagnostics` — inner-SE convergence, seed-reproducibility SHA-256, proxy-vs-nested grid agreement.
+  - Vectorised residual valuation (precomputed mortality cashflow vector @ vectorised discount factors) — numerically identical to the per-month loop (<1e-6), ~100x faster, making the nested ground truth tractable in the sandbox.
+- **Evidence (seed=42, 10y / age 40M / SA 100k):** LSMC recovers nested conditional expectation R^2=0.9932, max abs rel err 2.47% on the state grid; SCR-proxy gap LSMC-vs-nested 7.2%; 128x fewer inner valuations (128,000 -> 1,000). Inner SE 1644->750->359->175 over 64/256/1024/4096 paths (~1/sqrt(n), ASOP 56 3.5); same-seed runs bit-identical.
+- 23 new tests PASS (`tests/test_phase14_nested_stochastic_tvog.py`); compileall clean; Task 5 jump-diffusion suite (43) still PASS.
+- Governance: ChangeRecord `916e5522` at OWNER_REVIEW (production sign-off withheld — single-factor educational proxy, placeholder HW1F params, pending independent APS X2 review); audit chain 17->20, integrity verified; model-limitation card `docs/NESTED_STOCHASTIC_LSMC_TVOG_CARD.md`.
+
+**Next Step:** Phase 15 Task 1 — extend the LSMC surface to two correlated drivers (short rate r_H + equity level S_H) with a multivariate polynomial basis; condition the inner Q nest on (r,S); add multi-driver nested ground truth. This directly addresses the documented single-risk-driver limitation of the Task 6 proxy.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 3.1.3/3.5: addressed — stochastic capital documentation + convergence diagnostics (inner SE ~1/sqrt(n), outer N>=2000 guidance).
+- IA TAS M 3.6: addressed — model validation (proxy-vs-nested R^2), reproducibility (seed-determinism), documented model-use restrictions.
+- IFoA MCEV Principles 7 / Longstaff-Schwartz 2001: methodology basis for the TVOG capital proxy.
+
+**Milestone:** Phase 14 COMPLETE (6/6 tasks). 80/85 tasks, 14 phases complete (~94%). All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 8.
+
+---

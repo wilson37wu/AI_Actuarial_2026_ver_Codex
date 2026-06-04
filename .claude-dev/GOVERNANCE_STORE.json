@@ -340,6 +340,60 @@
       "phase": "Phase 14: Production Residual Closure and Model Sophistication",
       "digest": "a7da6543a2e2dc84efc05c25a51a12b6534c695d4bd436d641b211a638fd7ce3",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "8aa046c8b3114a93a0d3e489c236277f",
+      "timestamp": "2026-06-04T15:27:41.800621+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "NestedStochasticTVOGEngine",
+      "description": "Model run nested-e419406a: PASS",
+      "details": {
+        "run_id": "nested-e419406a",
+        "scenario_count": 128000,
+        "duration_seconds": 2.7322,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/nested_stochastic_tvog.py"
+        ],
+        "test_summary": "nested VaR99.5%=104201; ES=105648; SCR_proxy=19934; N_outer=500; n_inner=256"
+      },
+      "phase": "Phase 14: Production Residual Closure and Model Sophistication",
+      "digest": "87ff8fa7e3c52a59323cbc140b39ce189ea2212c141615959be418e57a5e7490",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "c5e179fec02b409e8b8c2af5acbc2c20",
+      "timestamp": "2026-06-04T15:27:41.800857+00:00",
+      "entry_type": "VALIDATION",
+      "actor": "NestedStochasticDiagnostics",
+      "description": "Validation: tests/test_phase14_nested_stochastic_tvog.py + convergence/reproducibility diagnostics \u2014 23/23 passed (PASS)",
+      "details": {
+        "test_suite": "tests/test_phase14_nested_stochastic_tvog.py + convergence/reproducibility diagnostics",
+        "tests_run": 23,
+        "tests_passed": 23,
+        "tests_failed": 0,
+        "outcome": "PASS",
+        "failed_tests": []
+      },
+      "phase": "Phase 14: Production Residual Closure and Model Sophistication",
+      "digest": "977fe4a8f1e479249c8618ef5882d3759a08225a76d934d333dda27ce771104f",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "d59dfa26c16448a499d6c6338f3cb91a",
+      "timestamp": "2026-06-04T15:27:41.800979+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "model-owner",
+      "description": "Governance event: ChangeRecord 916e5522 -> OWNER_REVIEW (Phase 14 Task 6 nested/LSMC capital proxy); production sign-off withheld pending independent APS X2 review",
+      "details": {
+        "lsmc_r2_vs_nested": 0.9932,
+        "inner_se_decays": true,
+        "reproducible_same_seed": true,
+        "classification": "EDUCATIONAL single-factor capital proxy; not a regulatory SCR"
+      },
+      "phase": "Phase 14: Production Residual Closure and Model Sophistication",
+      "digest": "ca09a35ac973dea3d4fb289ac9b6ec5b416d8a5230f9296a74065a045b6727ec",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -836,6 +890,110 @@
           "actor": "Claude Actuarial Agent",
           "status": "OWNER_REVIEW",
           "comments": "Default unchanged; jump params are educational placeholders."
+        }
+      ],
+      "phase": "Phase 14: Production Residual Closure and Model Sophistication"
+    },
+    {
+      "record_id": "916e55220ddd42eca3f43ccb95b6b536",
+      "created_at": "2026-06-04T15:27:41.800519+00:00",
+      "title": "Phase 14 Task 6 \u2014 Nested-stochastic / LSMC TVOG capital proxy",
+      "description": "Add a capital-metric layer over the Phase 4 TVOGEngine: a brute-force nested-stochastic engine (outer real-world scenarios x inner Q revaluation) and a Longstaff-Schwartz LSMC polynomial proxy that recovers the conditional-expectation surface L_hat(x) from N_fit noisy single-path samples. Produces VaR/ES/SCR-proxy capital metrics with convergence (inner SE ~1/sqrt(n)) and reproducibility (seed-determinism SHA-256) diagnostics, plus documented model-use restrictions.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/nested_stochastic_tvog.py",
+        "tests/test_phase14_nested_stochastic_tvog.py"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 \u00a73.1.3",
+        "SOA ASOP 56 \u00a73.5",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.2",
+        "IA TAS M \u00a73.6",
+        "IFoA MCEV Principles \u00a77"
+      ],
+      "before_snapshot": {
+        "capital_metrics_engine": "none (TVOG mean only, no nested capital layer)"
+      },
+      "after_snapshot": {
+        "capital_metrics_engine": "NestedStochasticTVOGEngine + LSMCProxyEngine",
+        "evidence": {
+          "nested": {
+            "capital": {
+              "confidence_level": 0.995,
+              "mean_liability": 84266.5451,
+              "var_liability": 104200.7923,
+              "es_liability": 105648.0472,
+              "scr_proxy": 19934.2473,
+              "n_outer": 500,
+              "capital_horizon_months": 12
+            },
+            "n_outer": 500,
+            "n_inner": 256,
+            "total_inner_valuations": 128000,
+            "mean_inner_se": 666.074788,
+            "run_id": "nested-e419406a",
+            "duration_seconds": 2.7322
+          },
+          "lsmc": {
+            "capital": {
+              "confidence_level": 0.995,
+              "mean_liability": 84438.3303,
+              "var_liability": 102930.9583,
+              "es_liability": 104657.627,
+              "scr_proxy": 18492.628,
+              "n_outer": 5000,
+              "capital_horizon_months": 12
+            },
+            "degree": 3,
+            "fit_r2": 0.363278,
+            "n_fit": 1000,
+            "n_outer_eval": 5000,
+            "beta": [
+              84387.815372,
+              -8203.158381,
+              50.45661,
+              133.628121
+            ],
+            "run_id": "lsmc-7be5efcb",
+            "duration_seconds": 12.7757
+          },
+          "convergence_se": {
+            "64": 1644.521,
+            "256": 750.329,
+            "1024": 358.783,
+            "4096": 174.642
+          },
+          "se_decays": true,
+          "proxy_vs_nested": {
+            "r2": 0.9932,
+            "max_abs_rel_error": 0.0247
+          },
+          "scr_proxy_rel_gap_lsmc_vs_nested": 0.0723,
+          "reproducible_same_seed": true,
+          "nested_inner_valuations": 128000,
+          "lsmc_inner_valuations": 1000,
+          "cost_reduction_x": 128.0
+        }
+      },
+      "impact_assessment": "LSMC proxy recovers nested conditional expectation with R^2=0.9932 and max abs rel error 2.47% on the state grid, at a 128x reduction in inner valuations (128000 -> 1000). Inner SE decays ~1/sqrt(n); same-seed runs are bit-identical. EDUCATIONAL: single risk driver (rates), placeholder HW1F params; not a regulatory SCR.",
+      "quantitative_impact": "nested VaR99.5%=104201, SCR_proxy=19934; LSMC SCR_proxy=18493 (rel gap 7.2%); 23 new tests PASS",
+      "status": "OWNER_REVIEW",
+      "author": "LSMCProxyEngine (automated Phase 14 Task 6)",
+      "peer_reviewer": "automated-regression",
+      "assumption_owner": "model-owner (pending independent APS X2 review)",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-04T15:27:41.800560+00:00",
+          "actor": "automated-regression",
+          "status": "PEER_REVIEW",
+          "comments": "23 new tests PASS; compileall clean; additive module"
+        },
+        {
+          "timestamp": "2026-06-04T15:27:41.800576+00:00",
+          "actor": "automated-regression",
+          "status": "OWNER_REVIEW",
+          "comments": "Convergence + reproducibility + proxy-vs-nested evidence attached"
         }
       ],
       "phase": "Phase 14: Production Residual Closure and Model Sophistication"

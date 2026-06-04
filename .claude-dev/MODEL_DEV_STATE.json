@@ -1,10 +1,10 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-04T14:31:06.992890+00:00",
+  "last_run": "2026-06-04T15:29:05.301361+00:00",
   "last_run_duration_minutes": 60,
-  "current_phase": "Phase 14: Production Residual Closure and Model Sophistication",
-  "overall_status": "active_phase14_production_residual_closure",
+  "current_phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation",
+  "overall_status": "active_phase15_multirisk_capital",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -259,36 +259,51 @@
       "next": null
     },
     "Phase 14: Production Residual Closure and Model Sophistication": {
-      "status": "in_progress",
+      "status": "completed",
       "description": "Close production residuals from Phase 13 and raise model sophistication toward production grade. Targets: clear G-03 and G-05 at educational level, drive IA TAS M suite >90% PASS, add an ESG sophistication upgrade with martingale evidence.",
       "completed": [
         "Close G-05 \u2014 runtime P/Q measure enforcement in every simulate()/generate() path; _enforce_simulation_measure + _assert_output_measure guards; SUPPORTED_MEASURES contract per generator; 30 runtime tests PASS; MR-004 -> MITIGATED (SOA ASOP 56 ss3.1.3; IA TAS M ss3.4)",
         "Close G-03 \u2014 calibrated GBM equity sigma_S/ERP/dividend/rho to educational-proxy CSI 300 (CNY) and Hang Seng (HK) daily history via GBMCalibrator (CNY sigma_S=0.216 ERP=0.0327 rho=-0.197; HK sigma_S=0.252 ERP=0.0171 rho=-0.149); APPROVED ChangeRecord + 2 PARAM_CHANGE audit entries; G-03 PASS (6/6 criteria); MR-002 -> MITIGATED. Also repaired the canonical GOVERNANCE_STORE.json round-trip (added SignOffStatus.IMPLEMENTED + RiskRating.VERY_LOW/VERY_HIGH so the prior-cycle store loads). (SOA ASOP 56 ss3.4; SOA ASOP 25 ss3.3; IA TAS M ss3.5/3.6/3.7)",
         "Remediate MR-009 \u2014 migrated examples/guided_examples.py to current APIs (RiskFreeCurve.discount_factor/valuation_date; Phase 9 FixedIncomeInstrument + fixed_income_market_value_after_shock; TVOGResult.pv_guaranteed_*; HK sample_* policy APIs + fund_positions=; CorrelationMatrixValidator.validate_matrix(); run_reporting_cycle orchestrator). tests/test_guided_examples.py now 64/64 PASS; MR-009 -> CLOSED (VERY_LOW) with APPROVED/IMPLEMENTED ChangeRecord + 2 audit entries. (IA TAS M \u00a73.6; SOA ASOP 56 \u00a73.5/3.2)",
         "Re-validate G-06 (Phase 14 Task 4) \u2014 bound executable check_fns to VR-B01/B02/B03/S05 consuming the Phase 13 Task 5 OOS backtest + rolling-window HW1F calibration + dynamic-lapse experience. VR-B01 -> PASS (OOS equity/rate coverage 100%/100%, martingale consistent, no recalibration, n=12 obs 2014-2025, backtest_asset_returns.md produced). VR-B03/S05/B02 remain PARTIAL on MEASURED criteria (honest, not forced): B03 Kupiec POF p95=0.474/p99=0.751 pass but daily 4-6%/250-day bands unmet by annual proxy; S05 sigma_r stable & in-range but rolling alpha CV=54% & outside [0.02,0.30] (annual-data identification limit); B02 lapse A/E=100.1% (R^2=0.9999) on SYNTHETIC experience, historical inforce + mortality A/E unavailable. G-06 PASS 80.6% -> 83.9% (26/31); gate (>=80%) holds. Phase 14 stretch target >=90% NOT met \u2014 residual VR-B02/B03/S05 + VR-G03/G05 is the documented credentialled-data + independent-reviewer production residual, not a code gap. ChangeRecord logged (OWNER_REVIEW; final APPROVED withheld pending independent APS X2 review). 16 new Phase 14 Task 4 tests PASS; governance+IA+measure+independent-review regression 217 PASS; compileall clean. (IA TAS M \u00a73.6/3.6.4/3.6.5; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3; ASOP 7 \u00a73.3)",
-        "ESG sophistication (Task 5) \u2014 added optional Merton jump-diffusion equity process (JumpDiffusionParams/JumpDiffusionEquityProcess) behind the PAR_ESG_EQUITY_MODEL feature flag (default 'gbm'; GBM path byte-for-byte unchanged, verified by frame-equality regression). Q-measure jump compensator -lambda*kappa applied under P and Q so the risk-neutral forward is preserved exactly. Wired equity_model into ScenarioSet.generate + build_equity_process/registry; jump params recorded in ParameterSnapshot. Added EquityForwardMartingaleValidator + 43 new tests (tests/test_phase14_jump_diffusion.py) ALL PASS; Q-measure martingale evidence: constant-rate max rel err 0.64%, stochastic HW1F max rel err 0.53% (both PASS). ChangeRecord OWNER_REVIEW (production sign-off withheld \u2014 jump params are educational placeholders pending calibration + independent review). Governance audit chain intact (13->17 entries). (SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5; IA TAS M \u00a73.6)"
+        "ESG sophistication (Task 5) \u2014 added optional Merton jump-diffusion equity process (JumpDiffusionParams/JumpDiffusionEquityProcess) behind the PAR_ESG_EQUITY_MODEL feature flag (default 'gbm'; GBM path byte-for-byte unchanged, verified by frame-equality regression). Q-measure jump compensator -lambda*kappa applied under P and Q so the risk-neutral forward is preserved exactly. Wired equity_model into ScenarioSet.generate + build_equity_process/registry; jump params recorded in ParameterSnapshot. Added EquityForwardMartingaleValidator + 43 new tests (tests/test_phase14_jump_diffusion.py) ALL PASS; Q-measure martingale evidence: constant-rate max rel err 0.64%, stochastic HW1F max rel err 0.53% (both PASS). ChangeRecord OWNER_REVIEW (production sign-off withheld \u2014 jump params are educational placeholders pending calibration + independent review). Governance audit chain intact (13->17 entries). (SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5; IA TAS M \u00a73.6)",
+        "Nested-stochastic / LSMC TVOG proxy (Task 6) \u2014 added par_model_v2/projection/nested_stochastic_tvog.py: NestedStochasticTVOGEngine (outer real-world x inner Q revaluation, the ground truth) + LSMCProxyEngine (Longstaff-Schwartz polynomial conditional-expectation surface L_hat(x) fitted to noisy single-path samples) + NestedStochasticDiagnostics. Produces VaR/ES/SCR-proxy capital metrics at a 1y horizon. Evidence (seed=42): LSMC recovers nested conditional expectation R^2=0.9932, max abs rel err 2.47% on the state grid; SCR-proxy gap LSMC-vs-nested 7.2%; 128x fewer inner valuations (128,000 -> 1,000). Inner SE decays ~1/sqrt(n) (1644->750->359->175 over 64/256/1024/4096 paths); same-seed runs bit-identical (SHA-256). Vectorised residual valuation numerically identical to the per-month loop (<1e-6). Model-use restrictions documented (docs/NESTED_STOCHASTIC_LSMC_TVOG_CARD.md + model_use_restrictions()). 23 new tests PASS (tests/test_phase14_nested_stochastic_tvog.py); compileall clean; additive-only (no existing file modified). ChangeRecord at OWNER_REVIEW (production sign-off withheld \u2014 single-factor educational proxy, placeholder HW1F params, pending independent APS X2 review). Audit chain 17->20 intact. (SOA ASOP 56 ss3.1.3/3.5; ASOP 25 ss3.3; IA TAS M ss3.2/3.6; IFoA MCEV Principles ss7; Longstaff-Schwartz 2001)"
       ],
-      "in_progress": [
-        "Nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and reproducibility diagnostics; document model-use restrictions"
-      ],
+      "in_progress": [],
       "next": null
+    },
+    "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation": {
+      "status": "in_progress",
+      "description": "Generalise the Phase 14 single-factor (rates) nested/LSMC capital proxy to multiple correlated risk drivers (rates + equity, including the Task 5 jump-diffusion process), add risk aggregation and a formal proxy-model validation / out-of-sample backtest, and document residual model risk. Targets: multi-driver L_hat surface with documented in-sample/out-of-sample fit, correlated capital aggregation, and a proxy validation report meeting IA TAS M 3.6 and SOA ASOP 56 3.5.",
+      "tasks": [
+        "Task 1: Extend the LSMC surface to two correlated drivers (short rate r_H + equity level S_H) with a multivariate polynomial basis; condition the inner Q nest on (r,S); add multi-driver nested ground truth.",
+        "Task 2: Out-of-sample proxy validation \u2014 hold-out fitting/validation split, basis-degree selection by out-of-sample RMSE/R^2, and leakage/overfit diagnostics; produce a proxy-validation report.",
+        "Task 3: Correlated risk aggregation \u2014 combine standalone rate and equity capital with the ESG correlation matrix; compare to the fully-diversified multi-driver nested capital (diversification benefit evidence).",
+        "Task 4: Tail-convergence and stability diagnostics for the 99.5% capital metric (outer-count convergence, bootstrap confidence interval on VaR/ES, antithetic/quasi-MC variance reduction).",
+        "Task 5: Refresh governance \u2014 model-limitation card, ChangeRecord, MR register update for multi-driver proxy; document model-use restrictions and the remaining credentialled-data / independent-review residual."
+      ],
+      "completed": [],
+      "in_progress": [
+        "Task 1: Extend the LSMC surface to two correlated drivers (short rate r_H + equity level S_H) with a multivariate polynomial basis; condition the inner Q nest on (r,S); add multi-driver nested ground truth."
+      ],
+      "next": "Task 2: Out-of-sample proxy validation"
     }
   },
   "repository_info": {
     "url": "https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex",
     "branch": "main",
     "last_commit_sha": "pending-this-run",
-    "last_commit_message": "[Phase 14] Task 4: Re-validate G-06 against OOS backtest \u2014 VR-B01 PASS, G-06 80.6%->83.9%; 90% stretch a documented data residual",
-    "commits_this_session": 68
+    "last_commit_message": "[Phase 14] Task 6: Nested-stochastic / LSMC TVOG capital proxy \u2014 PHASE 14 COMPLETE",
+    "commits_this_session": 69
   },
   "progress_metrics": {
-    "total_tasks": 80,
-    "tasks_completed": 79,
-    "phases_completed": 13,
-    "estimated_completion_pct": 98.8,
+    "total_tasks": 85,
+    "tasks_completed": 80,
+    "phases_completed": 14,
+    "estimated_completion_pct": 94.1,
     "average_cycle_duration_minutes": 53,
-    "cycles_run": 123,
-    "tasks_total": 80
+    "cycles_run": 124,
+    "tasks_total": 85
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",
@@ -334,7 +349,8 @@
       "FileBasedEquitySource + EquityDataLoader + synthesize_equity_history + evaluate_g03_gate (par_model_v2/calibration/equity_market_data_source.py -- deterministic educational-proxy CSI 300/HSI daily-series synthesis from documented annual stats, GBMCalibrationInputs loader, and the six-criterion G-03 gate; PHASE 14 TASK 2)",
       "run_phase14_gbm_calibration + build_g03_change_record + Phase14GBMReport (par_model_v2/calibration/phase14_gbm_calibration.py -- calibrates CNY+HK GBM equity params, records APPROVED ChangeRecord + per-market PARAM_CHANGE audit entries, evaluates G-03 PASS, moves MR-002 -> MITIGATED, persists GOVERNANCE_STORE.json; PHASE 14 TASK 2, G-03) + cny/hk_equity_history_20260101.json fixtures",
       "guided_examples.py (par_model_v2/examples -- MR-009 remediation: six educational walkthroughs re-aligned to current RiskFreeCurve/FixedIncomeInstrument/TVOG/HK-liability/correlation/reporting-cycle APIs; driven by run_reporting_cycle orchestrator; tests/test_guided_examples.py 64/64 PASS; PHASE 14 TASK 3)",
-      "run_phase14_ia_revalidation + build_phase14_registry + gather_backtest_evidence + Phase14RevalidationReport + evaluate_stretch_target (par_model_v2/validation/phase14_ia_revalidation.py -- Phase 14 Task 4: re-scores VR-B01/B02/B03/S05 against the Phase 13 Task 5 OOS backtest + rolling-window HW1F calibration + dynamic-lapse A/E; VR-B01 PASS, others honest PARTIAL; G-06 80.6%->83.9% (26/31); 90% stretch documented as data/reviewer residual; tests/test_phase14_ia_revalidation.py 16/16 PASS; PHASE14 Task 4, G-06)"
+      "run_phase14_ia_revalidation + build_phase14_registry + gather_backtest_evidence + Phase14RevalidationReport + evaluate_stretch_target (par_model_v2/validation/phase14_ia_revalidation.py -- Phase 14 Task 4: re-scores VR-B01/B02/B03/S05 against the Phase 13 Task 5 OOS backtest + rolling-window HW1F calibration + dynamic-lapse A/E; VR-B01 PASS, others honest PARTIAL; G-06 80.6%->83.9% (26/31); 90% stretch documented as data/reviewer residual; tests/test_phase14_ia_revalidation.py 16/16 PASS; PHASE14 Task 4, G-06)",
+      "NestedStochasticTVOGEngine + LSMCProxyEngine + NestedStochasticDiagnostics + CapitalMetrics (par_model_v2/projection/nested_stochastic_tvog.py -- nested-stochastic ground truth + Longstaff-Schwartz LSMC polynomial capital proxy for VaR/ES/SCR-proxy at a 1y horizon, with inner SE ~1/sqrt(n) convergence, seed-determinism reproducibility, and proxy-vs-nested agreement diagnostics; R^2=0.9932 vs nested, 128x cost reduction; PHASE 14 TASK 6)"
     ]
   },
   "completion_summary": {
@@ -345,7 +361,7 @@
     "production_gates_cleared": 12,
     "production_gates_total": 12,
     "estimated_remediation_weeks": "8-12",
-    "test_suite": "1593+ tests collected (16 new Phase 14 Task 4 IA re-validation tests: 16/16 PASS; governance+audit-wiring 95 PASS; IA 64 PASS; phase13-IA+measure 41 PASS; independent-review 17 PASS). compileall clean.",
+    "test_suite": "1616+ tests (23 new Phase 14 Task 6 nested/LSMC capital tests: 23/23 PASS). compileall clean.",
     "documents_produced": 25,
     "model_risks_open": 1,
     "model_risks_mitigated": 8
