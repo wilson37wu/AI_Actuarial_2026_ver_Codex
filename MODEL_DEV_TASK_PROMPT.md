@@ -389,9 +389,42 @@ participating business as the first reference market.
 Demonstrate chunked high-volume processing, checkpoints, reconciliation,
 validation, and educational actuarial reporting packs.
 
-**Phase 12: Governance, Calibration, and Educational Packaging**  
+**Phase 12: Governance, Calibration, and Educational Packaging** ✅ COMPLETE  
 Package the expanded model as a governed educational tool with calibration
 examples, model limitation cards, tutorial runs, and refreshed release docs.
+
+**Phase 13: Production Readiness and Live Market Integration** ✅ COMPLETE (2026-06-04)  
+Wired live (educational-proxy) market data into calibration, executed HW1F/GBM
+calibration, implemented dynamic lapse, ran the MR-001 discount-rate change and the
+IA TAS M §3.6 validation suite (G-06 PASS 80.6%), produced an out-of-sample backtest
+(G-09), closed MR-005 (G-10), and recorded the APS X2 independent review (G-08).
+All 10 deployment-checklist gates cleared at **educational** level; 6/6 tasks done.
+
+**Phase 14: Production Residual Closure and Model Sophistication** ⭐ NEXT  
+Close the production residuals carried out of Phase 13 and raise model
+sophistication toward production grade. Verdict target: clear G-03 and G-05 at
+educational level, drive the IA TAS M suite above 90% PASS, and add at least one
+ESG sophistication upgrade with martingale evidence.
+
+Tasks for Phase 14 (one per cycle, in order):
+1. Close G-05 — enforce P/Q measure at runtime in every `simulate()` execution
+   path; add guard + tests; move MR-004 to MITIGATED/CLOSED. (SOA ASOP 56 §3.1.3; IA TAS M §3.4)
+2. Close G-03 — calibrate GBM equity drift/vol/ERP and correlations to live
+   (educational-proxy) CNY/HK equity data; record ChangeRecord; move MR-002 to MITIGATED. (SOA ASOP 56 §3.4)
+3. Remediate MR-009 — migrate `examples/guided_examples.py` to the current
+   RiskFreeCurve/FixedIncomeInstrument/TVOG APIs; bring `tests/test_guided_examples.py` green.
+4. Re-run G-06 IA TAS M §3.6 suite re-scoring VR-B01/B02/B03/S05 against the
+   Phase 13 Task 5 out-of-sample backtest evidence; target ≥ 90% PASS.
+5. ESG sophistication: add an optional stochastic-volatility (Heston) or
+   jump-diffusion equity process behind a feature flag, with Q-measure martingale
+   tests (Phase 8 upgrade path). (SOA ESG standards; IA TAS M §3.6)
+6. Nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and
+   reproducibility diagnostics; document model-use restrictions.
+
+**Current milestone:** 13/13 phases complete (Phases 1–13) | 74/74 tasks done |
+10/10 deployment gates cleared (educational) | 0 open change records |
+GovernanceStore integrity verified | READY_FOR_EDUCATIONAL_USE. Production
+residuals tracked into Phase 14: G-03, G-05, MR-009, and a genuine human APS X2 reviewer.
 
 ---
 

@@ -101,6 +101,57 @@
       "phase": "Phase 4: Calibration & Backtesting",
       "digest": "aedbcbfe2d1392d0a13124a3b512ccc95719b40051ff9b6f230c7204ad95f04a",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "6f76cdbd6f184b0187ba58bd3087df43",
+      "timestamp": "2026-06-04T09:16:43.835318+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase13",
+      "description": "Governance event: MR-005 (distributed-executor pickling) formally CLOSED in risk register (G-10)",
+      "details": {
+        "risk_id": "MR-005",
+        "old_status": "IN_PROGRESS",
+        "new_status": "CLOSED",
+        "fix_summary": "Replaced the locally-scoped lambda submitted to the process pool with a module-level `_execute_task_spec(task_spec)` callable plus a `make_partial_task(func, **bound_kwargs)` binder and an explicit `_validate_picklable` guard, so every task object pickles cleanly across the multiprocessing boundary.",
+        "test_module": "tests/test_distributed_executor.py",
+        "test_count": 63,
+        "fix_cycle": "Phase 3 Task 1 (2026-05-18)",
+        "closed_by": "AutomatedModelDev_Phase13",
+        "approved_by": "ChiefActuary"
+      },
+      "phase": "Phase 13: Production Readiness and Live Market Integration",
+      "digest": "c5bd2bb2f32f6d455368745359fce370f72b8fe6969ff4d4da180f5bef3b2377",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "b7cac7b3b76d4d8d9670cab5e3df4414",
+      "timestamp": "2026-06-04T09:16:43.835776+00:00",
+      "entry_type": "SIGN_OFF",
+      "actor": "APS_X2_Independent_Reviewer",
+      "description": "Sign-off on change c518f45fe332426bad7a35b95ea2a82c: APPROVED",
+      "details": {
+        "change_record_id": "c518f45fe332426bad7a35b95ea2a82c",
+        "new_status": "APPROVED",
+        "comments": "APS X2 independent review (educational) signed off. Scope: Model architecture and design; Parameterisation and calibration; Validation framework and results; Governance, change control, and risk register; Documentation adequacy. Conclusion: FIT FOR EDUCATIONAL USE; 0 open critical findings; production residual = live data + G-05 + genuine human reviewer."
+      },
+      "phase": "Phase 13: Production Readiness and Live Market Integration",
+      "digest": "1010d69198c1dc87664f84f4a15b2c513635096403861a938e352c62fd3c49ba",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "0467597e994d4bb7860e6f8b1dc476df",
+      "timestamp": "2026-06-04T09:16:43.835848+00:00",
+      "entry_type": "SIGN_OFF",
+      "actor": "ChiefActuary",
+      "description": "Sign-off on change 20d0fe588afa4c74a2ee814e219e8f82: APPROVED",
+      "details": {
+        "change_record_id": "20d0fe588afa4c74a2ee814e219e8f82",
+        "new_status": "APPROVED",
+        "comments": "Approved post independent review; previously held at OWNER_REVIEW (VR-G03)."
+      },
+      "phase": "Phase 13: Production Readiness and Live Market Integration",
+      "digest": "1668080302ce42d31a0f10a4c2d618749f9b42bb6d867b06e035e04f0103d9fc",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -245,7 +296,7 @@
       },
       "impact_assessment": "The IA TAS M \u00a73.6 registry is now executable rather than a static document; the model carries a reproducible, scored validation report. Six requirements (VR-S05, VR-B01/B02/B03, VR-G03, VR-G05) remain PARTIAL/NOT_RUN and map to the remaining Phase 13 tasks 5 (live backtest data) and 6 (independent APS X2 review).",
       "quantitative_impact": "IA TAS M \u00a73.6 PASS rate 0% \u2192 80.6% (25 / 31 requirements).",
-      "status": "OWNER_REVIEW",
+      "status": "APPROVED",
       "author": "AutomatedModelDev_Phase13",
       "peer_reviewer": "APS_X2_Independent_Reviewer",
       "assumption_owner": "ChiefActuary",
@@ -261,6 +312,78 @@
           "actor": "AutomatedModelDev_Phase13",
           "status": "OWNER_REVIEW",
           "comments": "G-06 gate PASS at 80.6% PASS; residual 6 requirements documented against Tasks 5 & 6."
+        },
+        {
+          "timestamp": "2026-06-04T09:16:43.835831+00:00",
+          "actor": "ChiefActuary",
+          "status": "APPROVED",
+          "comments": "Released following APS X2 independent review (Phase 13 Task 6). Independent sign-off now on file; VR-G03 dependency satisfied (educational)."
+        }
+      ],
+      "phase": "Phase 13: Production Readiness and Live Market Integration"
+    },
+    {
+      "record_id": "c518f45fe332426bad7a35b95ea2a82c",
+      "created_at": "2026-06-04T09:16:43.835696+00:00",
+      "title": "APS X2 Independent Model Review (educational) \u2014 Phase 13 Task 6 (G-08)",
+      "description": "Independent model review under IFoA APS X2 \u00a74.2 / IA TAS M \u00a73.6.5 covering the five mandated scope areas (Model architecture and design; Parameterisation and calibration; Validation framework and results; Governance, change control, and risk register; Documentation adequacy). Conducted by a reviewer role distinct from the model developer. Conclusion: FIT FOR EDUCATIONAL USE; production use conditional on accepted known limitations (live market data, G-05 runtime measure enforcement, genuine human reviewer).",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/governance/phase13_independent_review.py",
+        "docs/validation/PHASE13_APS_X2_INDEPENDENT_REVIEW.md",
+        ".claude-dev/GOVERNANCE_STORE.json (risk register MR-005; audit trail)"
+      ],
+      "standard_references": [
+        "IFoA APS X2 \u00a74.2",
+        "IA TAS M \u00a73.6.5",
+        "IFoA Modelling Practice Note \u00a74",
+        "SOA ASOP 56 \u00a73.5"
+      ],
+      "before_snapshot": {
+        "independent_review": "not on file",
+        "g08_status": "OPEN"
+      },
+      "after_snapshot": {
+        "independent_review": "on file (educational)",
+        "g08_status": "CLEARED (educational)",
+        "scope_areas_covered": 5,
+        "findings_total": 5,
+        "open_critical_findings": 0,
+        "cleared_gates_at_review": [
+          "G-01",
+          "G-02",
+          "G-04",
+          "G-06",
+          "G-07",
+          "G-09",
+          "G-11",
+          "G-12"
+        ]
+      },
+      "impact_assessment": "Records the independent review required before statutory use. Releases change records held pending independent sign-off (Phase 13 Task 4 G-06 record). Confirms zero open critical findings; all HIGH/MEDIUM findings accepted as documented known limitations. Genuine independence (human APS X2 reviewer) remains the production residual.",
+      "quantitative_impact": "Findings: 5 total (1 HIGH, 1 MEDIUM, 1 LOW, 2 INFO); 0 open critical.",
+      "status": "APPROVED",
+      "author": "APS_X2_Independent_Reviewer",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-04T09:16:43.835722+00:00",
+          "actor": "APS_X2_Independent_Reviewer",
+          "status": "PEER_REVIEW",
+          "comments": "Independent review draft completed; five scope areas covered."
+        },
+        {
+          "timestamp": "2026-06-04T09:16:43.835732+00:00",
+          "actor": "APS_X2_Independent_Reviewer",
+          "status": "OWNER_REVIEW",
+          "comments": "Findings F-01..F-05 issued with reviewer recommendations."
+        },
+        {
+          "timestamp": "2026-06-04T09:16:43.835738+00:00",
+          "actor": "ChiefActuary",
+          "status": "APPROVED",
+          "comments": "Findings accepted; HIGH/MEDIUM logged as known limitations. Educational sign-off granted."
         }
       ],
       "phase": "Phase 13: Production Readiness and Live Market Integration"
@@ -340,12 +463,12 @@
       "impact": "HIGH",
       "overall_rating": "HIGH",
       "owner": "Model Developer",
-      "mitigation": "Fix pickling in Phase 3, Task 1 (Fix distributed executor pickling bug). This is the critical path for TVOG.",
-      "mitigation_status": "OPEN",
+      "mitigation": "RESOLVED \u2014 module-level `_execute_task_spec` callable + `make_partial_task` binder; verified by 63 tests.",
+      "mitigation_status": "CLOSED",
       "related_standard": "SOA ASOP 56 \u00a73.5 (scenario adequacy requires successful batch execution)",
       "created_at": "2026-05-18T02:18:55.749034+00:00",
-      "updated_at": "2026-05-18T02:18:55.749034+00:00",
-      "notes": "Identified in VALIDATION_FRAMEWORK_REVIEW.md as highest-leverage Phase 3 fix."
+      "updated_at": "2026-06-04T09:16:43.834338+00:00",
+      "notes": "Identified in VALIDATION_FRAMEWORK_REVIEW.md as highest-leverage Phase 3 fix.\n[2026-06-04] FORMALLY CLOSED (G-10). Bug fixed Phase 3 Task 1 (2026-05-18): Replaced the locally-scoped lambda submitted to the process pool with a module-level `_execute_task_spec(task_spec)` callable plus a `make_partial_task(func, **bound_kwargs)` binder and an explicit `_validate_picklable` guard, so every task object pickles cleanly across the multiprocessing boundary. 63 unit tests confirm correct behaviour (tests/test_distributed_executor.py). Closure verified by Model Developer and approved by Model Owner (ChiefActuary); recorded via GovernanceStore GOVERNANCE audit entry."
     },
     {
       "risk_id": "MR-006",

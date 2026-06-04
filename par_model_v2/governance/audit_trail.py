@@ -103,6 +103,7 @@ class MitigationStatus(str, enum.Enum):
     IN_PROGRESS = "IN_PROGRESS"
     MITIGATED  = "MITIGATED"
     ACCEPTED   = "ACCEPTED"     # Risk accepted without mitigation (requires Assumption Owner sign-off)
+    CLOSED     = "CLOSED"       # Formally closed: mitigation verified + signed off (terminal state)
 
 
 # ---------------------------------------------------------------------------

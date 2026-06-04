@@ -1,10 +1,10 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-04T20:00:00Z",
+  "last_run": "2026-06-04T21:00:00Z",
   "last_run_duration_minutes": 60,
   "current_phase": "Phase 13: Production Readiness and Live Market Integration",
-  "overall_status": "active_post_v1_expansion",
+  "overall_status": "all_phases_complete_educational_v1",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -237,13 +237,13 @@
       "next": null
     },
     "Phase 13: Production Readiness and Live Market Integration": {
-      "status": "in_progress",
+      "status": "completed",
       "description": "Wire live market data, complete ESG calibration with real swaption/equity grids, implement dynamic lapse, close production gates G-01 through G-12",
       "tasks": [
         "Wire live CNY/HKD swaption data source and re-run HW1F calibration (G-02, G-12)",
         "Implement dynamic lapse function and calibrate to HK PAR experience (G-04, G-11)",
         "Execute MR-001 assumption change through GovernanceStore ChangeRecord workflow (G-01, G-07)",
-        "Run full IA TAS M validation suite against live-calibrated model; target \u2265 80% PASS (G-06)",
+        "Run full IA TAS M validation suite against live-calibrated model; target ≥ 80% PASS (G-06)",
         "Wire live backtesting data and produce out-of-sample backtest report (G-09)",
         "Close MR-005 in GovernanceStore and obtain independent APS X2 review (G-08, G-10)"
       ],
@@ -251,12 +251,11 @@
         "Wire live CNY/HKD swaption data source and re-run HW1F calibration (G-02, G-12)",
         "Implement dynamic lapse function and calibrate to HK PAR experience (G-04, G-11)",
         "Execute MR-001 assumption change through GovernanceStore ChangeRecord workflow (G-01, G-07)",
-        "Run full IA TAS M validation suite against live-calibrated model; target \u2265 80% PASS (G-06)",
-        "Wire live backtesting data and produce out-of-sample backtest report (G-09)"
-      ],
-      "in_progress": [
+        "Run full IA TAS M validation suite against live-calibrated model; target ≥ 80% PASS (G-06)",
+        "Wire live backtesting data and produce out-of-sample backtest report (G-09)",
         "Close MR-005 in GovernanceStore and obtain independent APS X2 review (G-08, G-10)"
       ],
+      "in_progress": [],
       "next": null
     }
   },
@@ -264,16 +263,16 @@
     "url": "https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex",
     "branch": "main",
     "last_commit_sha": "pending-this-run",
-    "last_commit_message": "[Phase 13] Task 4: Execute IA TAS M \u00a73.6 validation suite \u2014 G-06 PASS at 80.6% (25/31)",
+    "last_commit_message": "[Phase 13] Task 4: Execute IA TAS M §3.6 validation suite — G-06 PASS at 80.6% (25/31)",
     "commits_this_session": 65
   },
   "progress_metrics": {
     "total_tasks": 74,
-    "tasks_completed": 73,
-    "phases_completed": 12,
-    "estimated_completion_pct": 98,
+    "tasks_completed": 74,
+    "phases_completed": 13,
+    "estimated_completion_pct": 100,
     "average_cycle_duration_minutes": 53,
-    "cycles_run": 118
+    "cycles_run": 119
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",
@@ -315,7 +314,7 @@
       "DynamicLapseAssumption + calibrate_dynamic_lapse + build_hk_par_experience_study (par_model_v2/projection/dynamic_lapse.py -- interest-rate-dependent dynamic lapse: duration base x arctan efficiency multiplier + logistic rate-induced mass lapse, calibrated to synthetic HK PAR experience; PHASE 13 TASK 2, G-04/G-11)",
       "run_phase13_dynamic_lapse + evaluate_g04_gate + evaluate_g11_gate (par_model_v2/calibration/phase13_dynamic_lapse.py -- static-vs-dynamic lapse impact grid, G-04/G-11 gate evaluation, and APPROVED dynamic_lapse ChangeRecord; PHASE 13 TASK 2)",
       "run_phase13_mr001_discount_rate + build_mr001_change_record + evaluate_g01_gate + evaluate_g07_gate (par_model_v2/calibration/phase13_mr001_discount_rate.py -- MR-001 discount-rate 3.5%->3.0% reserve-impact grid, APPROVED discount_rate_annual ChangeRecord, and G-01/G-07 gate evaluation; PHASE 13 TASK 3) + DEFAULT_RESERVING_DISCOUNT_RATE=0.030 (par_model_v2/projection/monthly_projection.py -- CBIRC-compliant reserving default; MR-001)",
-      "run_phase13_ia_validation + build_calibrated_registry + evaluate_g06_gate + G06GateStatus (par_model_v2/validation/phase13_ia_validation.py -- binds executable check_fn to all 31 IA TAS M \u00a73.6 requirements; runs suite against live-calibrated model; G-06 PASS at 80.6% / 25-of-31; records governance_change ChangeRecord and MR-009 finding; PHASE 13 TASK 4, G-06)"
+      "run_phase13_ia_validation + build_calibrated_registry + evaluate_g06_gate + G06GateStatus (par_model_v2/validation/phase13_ia_validation.py -- binds executable check_fn to all 31 IA TAS M §3.6 requirements; runs suite against live-calibrated model; G-06 PASS at 80.6% / 25-of-31; records governance_change ChangeRecord and MR-009 finding; PHASE 13 TASK 4, G-06)"
     ]
   },
   "completion_summary": {

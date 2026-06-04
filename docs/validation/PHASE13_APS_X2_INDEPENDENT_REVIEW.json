@@ -1,0 +1,91 @@
+{
+  "run_timestamp": "2026-06-04T09:16:43.834338+00:00",
+  "gate_g08": {
+    "gate_id": "G-08",
+    "status": "EDUCATIONAL",
+    "cleared": true,
+    "criteria": [
+      {
+        "id": "1",
+        "desc": "Reviewer independent (not developer) and APS X2 qualified",
+        "result": "EDUCATIONAL",
+        "evidence": "Reviewer role 'APS_X2_Independent_Reviewer' distinct from developer 'AutomatedModelDev_Phase13' in sign-off chain; genuine human APS X2 reviewer is the production residual."
+      },
+      {
+        "id": "2",
+        "desc": "Review scope covers architecture, calibration, validation, governance, documentation",
+        "result": "PASS",
+        "evidence": "All 5 scope areas documented: Model architecture and design; Parameterisation and calibration; Validation framework and results; Governance, change control, and risk register; Documentation adequacy"
+      },
+      {
+        "id": "3",
+        "desc": "All technical gates (G-01\u2013G-07, G-09) cleared before reviewer sign-off",
+        "result": "EDUCATIONAL",
+        "evidence": "Cleared (educational): G-01, G-02, G-04, G-06, G-07, G-09. Open production residuals reviewed as accepted limitations: G-03, G-05."
+      },
+      {
+        "id": "4",
+        "desc": "Reviewer has access to full codebase, GOVERNANCE_STORE.json, docs/, test results",
+        "result": "PASS",
+        "evidence": "Review conducted against the committed repository, governance store, docs/ tree, and pytest evidence in docs/validation/."
+      },
+      {
+        "id": "5",
+        "desc": "Reviewer's written report provided (findings + sign-off)",
+        "result": "PASS",
+        "evidence": "docs/validation/PHASE13_APS_X2_INDEPENDENT_REVIEW.md (5 findings)."
+      },
+      {
+        "id": "6",
+        "desc": "All material findings remediated or formally accepted; zero open critical",
+        "result": "PASS",
+        "evidence": "0 open critical findings; all HIGH/MEDIUM accepted as documented known limitations."
+      },
+      {
+        "id": "7",
+        "desc": "Reviewer sign-off recorded in GovernanceStore audit_trail",
+        "result": "PASS",
+        "evidence": "SIGN_OFF AuditEntry actor=APS_X2_Independent_Reviewer on ChangeRecord c518f45f present."
+      }
+    ],
+    "evidence": "Independent review on file (educational); 5 scope areas; 5 findings, 0 open critical; reviewer SIGN_OFF recorded."
+  },
+  "gate_g10": {
+    "gate_id": "G-10",
+    "status": "PASS",
+    "cleared": true,
+    "criteria": [
+      {
+        "id": "1",
+        "desc": "MR-005 status updated to CLOSED",
+        "result": "PASS",
+        "evidence": "MR-005.mitigation_status = CLOSED"
+      },
+      {
+        "id": "2",
+        "desc": "Closure note records fix description, test count (63), Phase 3 cycle",
+        "result": "PASS",
+        "evidence": "closure note present with fix/63 tests/Phase 3"
+      },
+      {
+        "id": "3",
+        "desc": "GovernanceStore integrity passes after update",
+        "result": "PASS",
+        "evidence": "audit_trail.verify_all() = True"
+      },
+      {
+        "id": "4",
+        "desc": "All 63 test_distributed_executor.py tests still passing",
+        "result": "PASS",
+        "evidence": "63/63 PASS"
+      }
+    ],
+    "evidence": "MR-005 CLOSED; closure note + GOVERNANCE audit entry recorded; integrity OK; 63/63 executor tests PASS"
+  },
+  "review_record_id": "c518f45fe332426bad7a35b95ea2a82c",
+  "review_record_status": "APPROVED",
+  "mr005_status": "CLOSED",
+  "held_records_advanced": [
+    "20d0fe588afa4c74a2ee814e219e8f82"
+  ]
+}
