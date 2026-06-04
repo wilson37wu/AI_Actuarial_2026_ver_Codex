@@ -5686,3 +5686,23 @@ use the /tmp-clone pattern.
 **Milestone:** **PHASE 15 COMPLETE. 85/85 tasks, 15 phases.** Open model risks 1; mitigated/closed 10 (incl. MR-011 IN_PROGRESS as the documented production residual). All 12 educational deployment gates remain cleared.
 
 ---
+
+## Run 2026-06-05 — Phase 16 Task 1 (Offline result-viewer — scaffold)
+
+**Task Started:** Phase 16 Task 1 — offline result-viewer data-contract + bundler (per scheduled-task directive: build an offline UI that consumes ONLY model output).
+
+**Accomplishments:**
+- Added `scripts/build_offline_viewer.py` (no model calculation; reads already-produced artifacts only): scans `docs/validation/*.json` + `.claude-dev/GOVERNANCE_STORE.json` + `MODEL_DEV_STATE.json`, normalises them into one `viewer_data.json` schema (meta, verdicts, summary, capital, tail, proxy, governance), and emits a data-embedded standalone `model_result_viewer.html`.
+- Added `par_model_v2/viewer/viewer_template.html` — a fully self-contained viewer: vanilla JS + inline CSS + **hand-rendered inline-SVG charts** (bar + line), tabbed UI (Capital & Tail / Proxy Validation / Governance), summary cards, verdict badges, a filterable risk register, and a change-record log. **No CDN, no npm, no server, no build step** — opens offline by double-click. Also supports runtime drag-and-drop / file-picker load of any `viewer_data.json`.
+- Generated `model_result_viewer.html` (data-embedded, 26.5 KB) + `viewer_data.json` from the current run: 3 verdicts, 11 risks (incl. MR-011), 14 change records; capital rate 21,285 / equity 23,191 / Σ standalone 44,477 / var-cov 29,031 / nested 43,251.
+- Tests: `tests/test_offline_viewer.py` **7/7 PASS** (schema sections, capital fields + diversification ordering, tail/proxy presence, MR-011 in register, embedded JSON parseable, **offline-safety: zero http/cdn/external refs**, template token). `compileall` clean.
+
+**Next Step:** Phase 16 Task 2 — capital & tail SVG dashboards refinement (loss-distribution histogram, bootstrap-CI band, interactive percentile/confidence selectors); see MODEL_DEV_TASK_PROMPT.md Phase 16 roadmap.
+
+**Industry Standards Progress:**
+- IA TAS M §3.6: viewer surfaces model-use restrictions, validation verdicts, and the risk register transparently from governed output.
+- Offline / no-dependency requirement satisfied (test-asserted no network references).
+
+**Milestone:** All 85 documented model tasks complete; Phase 16 (offline UI) Task 1 scaffolded.
+
+---

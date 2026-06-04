@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAR Stochastic Model — Result Viewer (offline)</title>
+<style>
+  :root{
+    --bg:#0f1720; --panel:#172230; --panel2:#1e2c3d; --ink:#e8eef5; --muted:#9fb1c4;
+    --line:#2b3b4f; --accent:#2ecc71; --accent2:#3498db; --warn:#f39c12; --bad:#e74c3c;
+    --rate:#3498db; --equity:#9b59b6; --nested:#2ecc71; --formula:#f39c12;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.5;font-size:14px}
+  header{padding:18px 24px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#13202e,#0f1720)}
+  h1{margin:0;font-size:19px;letter-spacing:.2px}
+  .sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;vertical-align:middle}
+  .b-edu{background:#3a2e0c;color:#ffd567;border:1px solid #6b5410}
+  .b-pass{background:#10331f;color:#67e29a;border:1px solid #1c5e38}
+  .b-warn{background:#3a2a0c;color:#ffc266;border:1px solid #6b4d10}
+  .b-bad{background:#3a1212;color:#ff8a80;border:1px solid #6b1f1f}
+  .wrap{max-width:1180px;margin:0 auto;padding:18px 24px 60px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .card .k{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.5px}
+  .card .v{font-size:22px;font-weight:700;margin-top:4px}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:8px;flex-wrap:wrap}
+  .tab{padding:9px 15px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;font-weight:600}
+  .tab.active{color:var(--ink);border-bottom-color:var(--accent)}
+  .view{display:none;padding-top:18px}
+  .view.active{display:block}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+  .panel h3{margin:0 0 4px;font-size:15px}
+  .panel .desc{color:var(--muted);font-size:12.5px;margin-bottom:12px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+  tr:hover td{background:var(--panel2)}
+  svg{display:block;max-width:100%}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:middle}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:780px){.row{grid-template-columns:1fr}}
+  select,button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:6px 10px;font-size:13px}
+  button{cursor:pointer}
+  .pill{font-size:11px;padding:1px 8px;border-radius:999px;font-weight:600}
+  .drop{border:1.5px dashed var(--line);border-radius:10px;padding:10px 14px;color:var(--muted);font-size:12.5px}
+  .drop.over{border-color:var(--accent);color:var(--ink)}
+  .kvs{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:13px}
+  .kvs .kk{color:var(--muted)}
+  code{background:#0c1622;padding:1px 5px;border-radius:4px;color:#9ad0ff}
+  .empty{color:var(--muted);font-style:italic;padding:8px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>PAR Stochastic Model — Result Viewer <span id="hdrClass" class="badge b-edu">EDUCATIONAL</span></h1>
+  <div class="sub" id="hdrSub">offline viewer · no network required</div>
+</header>
+<div class="wrap">
+  <div class="drop" id="drop">
+    Showing embedded snapshot. Drag a <code>viewer_data.json</code> here or
+    <button id="pick" type="button">choose file</button> to load another run.
+    <input type="file" id="file" accept="application/json,.json" style="display:none">
+  </div>
+  <div class="cards" id="cards"></div>
+  <div id="verdicts"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="views"></div>
+</div>
+
+<script>
+"use strict";
+const EMBEDDED = /*__VIEWER_DATA__*/null;
+
+// ---------- formatting ----------
+const fmt = (x,d=0)=> (x==null||isNaN(x))?"—":Number(x).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
+const pct = (x,d=1)=> (x==null||isNaN(x))?"—":(100*Number(x)).toFixed(d)+"%";
+const esc = s => String(s==null?"":s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+// ---------- tiny SVG charts (no dependency) ----------
+function barChart(items, opt={}){
+  const W=opt.w||520,H=opt.h||230,pad={l:48,r:14,t:14,b:54};
+  const max=Math.max(1,...items.map(d=>d.v||0));
+  const iw=W-pad.l-pad.r, ih=H-pad.t-pad.b, bw=iw/items.length;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  for(let g=0;g<=4;g++){const y=pad.t+ih*g/4;const val=max*(1-g/4);
+    s+=`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="#2b3b4f" stroke-width="1"/>`;
+    s+=`<text x="${pad.l-6}" y="${y+3}" fill="#9fb1c4" font-size="10" text-anchor="end">${fmt(val)}</text>`;}
+  items.forEach((d,i)=>{const h=ih*(d.v||0)/max;const x=pad.l+i*bw+bw*0.18;const y=pad.t+ih-h;const w=bw*0.64;
+    s+=`<rect x="${x}" y="${y}" width="${w}" height="${Math.max(0,h)}" rx="3" fill="${d.c||'#3498db'}"><title>${esc(d.label)}: ${fmt(d.v)}</title></rect>`;
+    s+=`<text x="${x+w/2}" y="${y-5}" fill="#e8eef5" font-size="10.5" text-anchor="middle">${fmt(d.v)}</text>`;
+    s+=`<text x="${x+w/2}" y="${H-pad.b+15}" fill="#9fb1c4" font-size="10.5" text-anchor="middle">${esc(d.label)}</text>`;});
+  return s+`</svg>`;
+}
+function lineChart(series, xlabels, opt={}){
+  // series: [{name,color,vals:[..],dashed?}]
+  const W=opt.w||520,H=opt.h||240,pad={l:50,r:14,t:14,b:46};
+  const all=series.flatMap(s=>s.vals).filter(v=>v!=null&&!isNaN(v));
+  let lo=opt.min!=null?opt.min:Math.min(...all), hi=opt.max!=null?opt.max:Math.max(...all);
+  if(lo===hi){hi=lo+1;lo=lo-1;} const rng=hi-lo;
+  const iw=W-pad.l-pad.r, ih=H-pad.t-pad.b, n=xlabels.length;
+  const X=i=> pad.l + (n<=1?iw/2:iw*i/(n-1));
+  const Y=v=> pad.t + ih*(1-(v-lo)/rng);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  for(let g=0;g<=4;g++){const y=pad.t+ih*g/4;const val=hi-rng*g/4;
+    s+=`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="#2b3b4f"/>`;
+    s+=`<text x="${pad.l-6}" y="${y+3}" fill="#9fb1c4" font-size="10" text-anchor="end">${opt.yfmt?opt.yfmt(val):fmt(val)}</text>`;}
+  xlabels.forEach((lb,i)=> s+=`<text x="${X(i)}" y="${H-pad.b+16}" fill="#9fb1c4" font-size="10.5" text-anchor="middle">${esc(lb)}</text>`);
+  if(opt.band){ // [loArr,hiArr]
+    const [bl,bh]=opt.band; let up="",dn="";
+    bl.forEach((v,i)=>up+=`${i?'L':'M'}${X(i)},${Y(bh[i])} `); for(let i=bl.length-1;i>=0;i--)dn+=`L${X(i)},${Y(bl[i])} `;
+    s+=`<path d="${up}${dn}Z" fill="${opt.bandColor||'#3498db'}" opacity="0.15"/>`;
+  }
+  series.forEach(se=>{let p="";se.vals.forEach((v,i)=>{if(v==null||isNaN(v))return;p+=`${p?'L':'M'}${X(i)},${Y(v)} `;});
+    s+=`<path d="${p}" fill="none" stroke="${se.color}" stroke-width="2.2" ${se.dashed?'stroke-dasharray="5 4"':''}/>`;
+    se.vals.forEach((v,i)=>{if(v==null||isNaN(v))return;s+=`<circle cx="${X(i)}" cy="${Y(v)}" r="3" fill="${se.color}"><title>${esc(se.name)} @ ${esc(xlabels[i])}: ${opt.yfmt?opt.yfmt(v):fmt(v,4)}</title></circle>`;});
+  });
+  return s+`</svg>`;
+}
+function legend(items){return `<div class="legend">`+items.map(i=>`<span><i style="background:${i.c}"></i>${esc(i.t)}</span>`).join("")+`</div>`;}
+
+// ---------- verdict helpers ----------
+function vClass(v){const t=String(v||"").toUpperCase();
+  if(t.startsWith("PASS"))return"b-pass"; if(t.includes("PARTIAL"))return"b-warn";
+  if(t.includes("FAIL")||t.includes("BLOCK"))return"b-bad"; return"b-edu";}
+function ratingClass(r){r=String(r||"").toUpperCase();
+  if(r.includes("VERY_LOW")||r==="LOW")return"b-pass"; if(r==="MEDIUM"||r==="HIGH"||r==="VERY_HIGH")return"b-warn";
+  if(r==="CRITICAL")return"b-bad"; return"b-edu";}
+function statusClass(s){s=String(s||"").toUpperCase();
+  if(s==="CLOSED"||s==="MITIGATED")return"b-pass"; if(s==="IN_PROGRESS"||s==="ACCEPTED")return"b-warn";
+  if(s==="OPEN")return"b-bad"; return"b-edu";}
+
+// ---------- render ----------
+let DATA=null;
+function render(d){
+  DATA=d;
+  const cls=(d.meta&&d.meta.classification)||"";
+  document.getElementById('hdrClass').textContent = cls.includes("EDUCATIONAL")?"EDUCATIONAL":"—";
+  const m=d.meta||{};
+  document.getElementById('hdrSub').textContent =
+    `${m.model_name||""} v${m.model_version||""}  ·  ${m.generated_utc?("generated "+m.generated_utc.slice(0,10)):"offline viewer"}  ·  no network required`;
+
+  // summary cards
+  const su=d.summary||{};
+  const cards=[
+    ["Completion", su.estimated_completion_pct!=null?su.estimated_completion_pct+"%":"—"],
+    ["Tasks", (su.tasks_completed!=null?su.tasks_completed:"—")+" / "+(su.tasks_total!=null?su.tasks_total:"—")],
+    ["Phases", su.phases_completed!=null?su.phases_completed:"—"],
+    ["Deploy gates", (su.gates_cleared!=null?su.gates_cleared:"—")+" / "+(su.gates_total!=null?su.gates_total:"—")],
+    ["Risks open / mitigated", (su.risks_open!=null?su.risks_open:"—")+" / "+(su.risks_mitigated!=null?su.risks_mitigated:"—")],
+  ];
+  document.getElementById('cards').innerHTML = cards.map(c=>`<div class="card"><div class="k">${c[0]}</div><div class="v">${c[1]}</div></div>`).join("");
+
+  // verdict badges
+  document.getElementById('verdicts').innerHTML = (d.verdicts&&d.verdicts.length)
+    ? `<div class="panel"><h3>Validation verdicts</h3>`+d.verdicts.map(v=>
+        `<div style="margin:6px 0"><span class="badge ${vClass(v.verdict)}">${esc(String(v.verdict).split(/[—-]/)[0].trim())}</span> <strong>${esc(v.label)}</strong><div class="sub" style="margin-left:2px">${esc(v.verdict)}</div></div>`).join("")+`</div>`
+    : "";
+
+  buildTabs(d);
+}
+
+function buildTabs(d){
+  const defs=[
+    ["capital","Capital & Tail",viewCapital],
+    ["proxy","Proxy Validation",viewProxy],
+    ["gov","Governance",viewGov],
+  ];
+  const tabsEl=document.getElementById('tabs'), viewsEl=document.getElementById('views');
+  tabsEl.innerHTML=""; viewsEl.innerHTML="";
+  defs.forEach((t,i)=>{
+    const tab=document.createElement('div'); tab.className='tab'+(i===0?' active':''); tab.textContent=t[1]; tab.dataset.k=t[0];
+    tab.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+      tab.classList.add('active'); document.getElementById('view-'+t[0]).classList.add('active');};
+    tabsEl.appendChild(tab);
+    const v=document.createElement('div'); v.className='view'+(i===0?' active':''); v.id='view-'+t[0];
+    v.innerHTML=t[2](d); viewsEl.appendChild(v);
+  });
+}
+
+function viewCapital(d){
+  const c=d.capital||{}, t=d.tail||{};
+  const bars=[
+    {label:"Rate",v:c.rate_scr,c:'var(--rate)'},
+    {label:"Equity",v:c.equity_scr,c:'var(--equity)'},
+    {label:"Σ standalone",v:c.standalone_sum,c:'#7f8c8d'},
+    {label:"Var-cov",v:c.correlated_scr,c:'var(--formula)'},
+    {label:"Nested",v:c.nested_scr,c:'var(--nested)'},
+  ].filter(b=>b.v!=null);
+  let html=`<div class="panel"><h3>Economic capital — standalone vs aggregated (99.5%)</h3>
+    <div class="desc">Standalone rate and equity-guarantee SCR, the variance–covariance aggregate, and the fully-diversified nested benchmark. Confidence ${pct(c.confidence_level,1)}, horizon ${fmt(c.horizon_months)} months.</div>
+    ${bars.length?barChart(bars,{w:560,h:240}):'<div class="empty">No aggregation data loaded.</div>'}
+    <div class="kvs" style="margin-top:12px">
+      <span class="kk">Diversification benefit (formula)</span><span>${fmt(c.diversification_benefit_formula)}</span>
+      <span class="kk">Diversification benefit (nested)</span><span>${fmt(c.diversification_benefit_nested)}</span>
+      <span class="kk">Component loss correlation</span><span>${fmt(c.component_loss_correlation,3)}</span>
+      <span class="kk">Var-cov vs nested rel. error</span><span>${pct(c.formula_vs_nested_rel_error,1)}</span>
+    </div></div>`;
+  // tail convergence
+  if(t.var_path&&t.var_path.length){
+    const xl=(t.outer_grid||t.var_path.map((_,i)=>i+1)).map(String);
+    html+=`<div class="row">
+      <div class="panel"><h3>Outer-count convergence</h3>
+        <div class="desc">99.5% VaR / ES as the outer scenario count grows. Converged: <span class="pill ${t.converged?'b-pass':'b-warn'}">${t.converged?'YES':'NO'}</span> · recommended N≥${fmt(t.recommended_n_outer)}.</div>
+        ${lineChart([{name:'VaR',color:'#3498db',vals:t.var_path},{name:'ES',color:'#2ecc71',vals:t.es_path}],xl,{w:520,h:230})}
+        ${legend([{c:'#3498db',t:'VaR 99.5%'},{c:'#2ecc71',t:'ES 99.5%'}])}</div>
+      <div class="panel"><h3>Bootstrap CI & variance reduction</h3>
+        <div class="kvs">
+          <span class="kk">VaR point</span><span>${fmt(t.var_point||t.final_var)}</span>
+          <span class="kk">VaR 95% CI</span><span>[${fmt(t.var_ci&&t.var_ci[0])}, ${fmt(t.var_ci&&t.var_ci[1])}]</span>
+          <span class="kk">VaR std error</span><span>${fmt(t.var_se)}</span>
+          <span class="kk">ES point</span><span>${fmt(t.es_point||t.final_es)}</span>
+          <span class="kk">ES 95% CI</span><span>[${fmt(t.es_ci&&t.es_ci[0])}, ${fmt(t.es_ci&&t.es_ci[1])}]</span>
+          <span class="kk">Sobol QMC var-reduction</span><span>${t.sobol_ratio?fmt(t.sobol_ratio,2)+"×":"—"}</span>
+          <span class="kk">Antithetic var-reduction</span><span>${t.antithetic_ratio?fmt(t.antithetic_ratio,2)+"×":"—"}</span>
+        </div></div></div>`;
+  }
+  return html;
+}
+
+function viewProxy(d){
+  const p=d.proxy||{};
+  if(!p.degree_rows||!p.degree_rows.length) return `<div class="panel"><div class="empty">No proxy-validation data loaded.</div></div>`;
+  const xl=p.degree_rows.map(r=>"deg "+r.degree);
+  const inS=p.degree_rows.map(r=>r.in_sample_r2), oos=p.degree_rows.map(r=>r.oos_r2);
+  return `<div class="panel"><h3>Out-of-sample proxy fit — basis-degree sweep</h3>
+    <div class="desc">In-sample (heavy) vs out-of-sample R² across polynomial degrees. Selected degree <strong>${fmt(p.selected_degree)}</strong> (by ${esc(p.selection_metric||'OOS error')}); overfit onset at degree ${fmt(p.overfit_onset_degree)}. Higher in-sample with falling OOS is the overfit signature.</div>
+    ${lineChart([{name:'in-sample R²',color:'#f39c12',vals:inS},{name:'OOS R²',color:'#2ecc71',vals:oos}],xl,{w:560,h:240,min:Math.min(0.8,...oos.filter(x=>x!=null))-0.02,max:1.0,yfmt:v=>v.toFixed(2)})}
+    ${legend([{c:'#f39c12',t:'in-sample R² (heavy)'},{c:'#2ecc71',t:'out-of-sample R²'}])}
+    <div class="kvs" style="margin-top:12px">
+      <span class="kk">Selected-degree VaR rel. error</span><span>${pct(p.var_rel_error,2)}</span>
+      <span class="kk">Selected-degree ES rel. error</span><span>${pct(p.es_rel_error,2)}</span>
+    </div>
+    <table style="margin-top:14px"><thead><tr><th>Degree</th><th>Basis terms</th><th>In-sample R²</th><th>OOS R²</th><th>OOS max abs rel err</th></tr></thead>
+    <tbody>${p.degree_rows.map(r=>`<tr><td>${fmt(r.degree)}${r.degree===p.selected_degree?' <span class="pill b-pass">selected</span>':''}</td><td>${fmt(r.n_basis_terms)}</td><td>${r.in_sample_r2!=null?r.in_sample_r2.toFixed(4):'—'}</td><td>${r.oos_r2!=null?r.oos_r2.toFixed(4):'—'}</td><td>${pct(r.oos_max_abs_rel_error,2)}</td></tr>`).join("")}</tbody></table></div>`;
+}
+
+function viewGov(d){
+  const g=d.governance||{};
+  const rr=g.risk_register||[], cr=g.change_records||[];
+  let filterOpts=['ALL','OPEN','IN_PROGRESS','MITIGATED','CLOSED','ACCEPTED'].map(o=>`<option>${o}</option>`).join("");
+  let html=`<div class="panel"><h3>Model risk register</h3>
+    <div class="desc">Audit entries: ${fmt(g.audit_entries)} <span class="pill ${g.audit_integrity_ok?'b-pass':'b-bad'}">integrity ${g.audit_integrity_ok?'OK':'FAIL'}</span> &nbsp; Filter: <select id="rrFilter">${filterOpts}</select></div>
+    <table id="rrTable"><thead><tr><th>ID</th><th>Title</th><th>Rating</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+    <div class="panel"><h3>Change-record log (IA TAS M §3.7)</h3>
+    ${cr.length?`<table><thead><tr><th>Created</th><th>Title</th><th>Type</th><th>Status</th></tr></thead><tbody>${cr.map(r=>`<tr><td>${esc((r.created_at||'').slice(0,10))}</td><td>${esc(r.title)}</td><td>${esc(r.change_type)}</td><td><span class="pill ${vClass(r.status==='APPROVED'?'PASS':r.status==='OWNER_REVIEW'?'PARTIAL':'')}">${esc(r.status)}</span></td></tr>`).join("")}</tbody></table>`:'<div class="empty">No change records loaded.</div>'}</div>`;
+  // defer table fill to after insertion
+  setTimeout(()=>{
+    const tb=document.querySelector('#rrTable tbody'), sel=document.getElementById('rrFilter');
+    if(!tb||!sel)return;
+    const fill=()=>{const f=sel.value;tb.innerHTML=rr.filter(r=>f==='ALL'||r.mitigation_status===f).map(r=>
+      `<tr><td>${esc(r.risk_id)}</td><td>${esc(r.title)}</td><td><span class="pill ${ratingClass(r.overall_rating)}">${esc(r.overall_rating)}</span></td><td><span class="pill ${statusClass(r.mitigation_status)}">${esc(r.mitigation_status)}</span></td></tr>`).join("")
+      ||`<tr><td colspan="4" class="empty">No risks with status ${esc(f)}.</td></tr>`;};
+    sel.onchange=fill; fill();
+  },0);
+  return html;
+}
+
+// ---------- loader (offline file load) ----------
+function loadFile(file){const r=new FileReader();r.onload=()=>{try{render(JSON.parse(r.result));
+  document.getElementById('drop').innerHTML="Loaded <code>"+esc(file.name)+"</code>.";}catch(e){alert("Invalid JSON: "+e.message);}};r.readAsText(file);}
+document.getElementById('pick').onclick=()=>document.getElementById('file').click();
+document.getElementById('file').onchange=e=>{if(e.target.files[0])loadFile(e.target.files[0]);};
+const drop=document.getElementById('drop');
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>{if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0]);});
+
+// ---------- boot ----------
+if(EMBEDDED){render(EMBEDDED);} else {
+  document.getElementById('drop').innerHTML="No embedded snapshot. Drag a <code>viewer_data.json</code> here or <button id='pick2'>choose file</button> to load.";
+  document.getElementById('pick2')&&(document.getElementById('pick2').onclick=()=>document.getElementById('file').click());
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+{
+  "meta": {
+    "model_name": "PAR Fund Stochastic ALM & TVOG",
+    "model_version": "0.2.0",
+    "generated_utc": "2026-06-04T16:24:41.348190+00:00",
+    "source_files": [
+      ".claude-dev/GOVERNANCE_STORE.json",
+      ".claude-dev/MODEL_DEV_STATE.json",
+      "docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.json",
+      "docs/validation/PHASE15_RISK_AGGREGATION_REPORT.json",
+      "docs/validation/PHASE15_PROXY_VALIDATION_REPORT.json",
+      "docs/validation/PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json"
+    ],
+    "classification": "EDUCATIONAL ONLY — NOT a regulatory capital model"
+  },
+  "verdicts": [
+    {
+      "key": "proxy",
+      "label": "Out-of-sample proxy validation",
+      "verdict": "PASS — selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"
+    },
+    {
+      "key": "aggregation",
+      "label": "Correlated risk aggregation",
+      "verdict": "PASS - correlated aggregation reconciles to nested diversified capital"
+    },
+    {
+      "key": "tail",
+      "label": "Tail convergence & stability",
+      "verdict": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
+    }
+  ],
+  "summary": {
+    "tasks_completed": 85,
+    "tasks_total": 85,
+    "phases_completed": 15,
+    "estimated_completion_pct": 100.0,
+    "gates_cleared": 12,
+    "gates_total": 12,
+    "risks_open": 1,
+    "risks_mitigated": 9,
+    "production_status": "NOT CLEARED FOR PRODUCTION"
+  },
+  "capital": {
+    "confidence_level": 0.995,
+    "horizon_months": 12,
+    "rate_scr": 21285.4523,
+    "equity_scr": 23191.312,
+    "standalone_sum": 44476.764372,
+    "correlated_scr": 29031.296302,
+    "nested_scr": 43250.6194,
+    "diversification_benefit_formula": 15445.46807,
+    "diversification_benefit_nested": 1226.14502,
+    "component_loss_correlation": 0.546361,
+    "formula_vs_nested_rel_error": 0.328766,
+    "esg_rate_equity_correlation": -0.15,
+    "var": 149615.9089,
+    "es": 155356.539
+  },
+  "tail": {
+    "verdict": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction",
+    "converged": true,
+    "recommended_n_outer": 2000,
+    "outer_grid": [
+      1000,
+      2000,
+      4000
+    ],
+    "var_path": [
+      149974.358,
+      149100.9773,
+      149615.9089
+    ],
+    "es_path": [
+      153476.3711,
+      155621.3301,
+      155356.539
+    ],
+    "final_var": 149615.9089,
+    "final_es": 155356.539,
+    "var_ci": [
+      149402.0883,
+      154390.5036
+    ],
+    "es_ci": [
+      152499.911,
+      157861.4479
+    ],
+    "var_point": 150632.1993,
+    "es_point": 155454.674,
+    "var_se": 1486.3423,
+    "es_se": 1382.3618,
+    "sobol_ratio": 7.1032,
+    "antithetic_ratio": 0.8121
+  },
+  "proxy": {
+    "verdict": "PASS — selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)",
+    "selected_degree": 1,
+    "overfit_onset_degree": 2,
+    "selection_metric": "oos_rmse",
+    "degree_rows": [
+      {
+        "degree": 1,
+        "in_sample_r2": 0.972137,
+        "oos_r2": 0.970446,
+        "oos_max_abs_rel_error": 0.042468,
+        "n_basis_terms": 3
+      },
+      {
+        "degree": 2,
+        "in_sample_r2": 0.959426,
+        "oos_r2": 0.939167,
+        "oos_max_abs_rel_error": 0.116966,
+        "n_basis_terms": 6
+      },
+      {
+        "degree": 3,
+        "in_sample_r2": 0.953002,
+        "oos_r2": 0.879285,
+        "oos_max_abs_rel_error": 0.258098,
+        "n_basis_terms": 10
+      },
+      {
+        "degree": 4,
+        "in_sample_r2": 0.94678,
+        "oos_r2": 0.854342,
+        "oos_max_abs_rel_error": 0.250122,
+        "n_basis_terms": 15
+      }
+    ],
+    "var_rel_error": 0.032109,
+    "es_rel_error": 0.026036
+  },
+  "governance": {
+    "audit_entries": 28,
+    "audit_integrity_ok": true,
+    "change_records": [
+      {
+        "title": "MR-003: Static lapse table replaced by calibrated dynamic lapse",
+        "status": "APPROVED",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-04T04:27:17.838737+00:00"
+      },
+      {
+        "title": "MR-001: Default discount rate reduced 3.5% -> 3.0% (CBIRC cap)",
+        "status": "APPROVED",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-04T05:28:13.392804+00:00"
+      },
+      {
+        "title": "Phase 13 Task 4: IA TAS M §3.6 validation suite executed (G-06)",
+        "status": "APPROVED",
+        "change_type": "governance_change",
+        "created_at": "2026-06-04T07:42:31.873044+00:00"
+      },
+      {
+        "title": "APS X2 Independent Model Review (educational) — Phase 13 Task 6 (G-08)",
+        "status": "APPROVED",
+        "change_type": "governance_change",
+        "created_at": "2026-06-04T09:16:43.835696+00:00"
+      },
+      {
+        "title": "Runtime P/Q measure enforcement in all simulation paths (G-05 / MR-004) — Phase 14 Task 1",
+        "status": "IMPLEMENTED",
+        "change_type": "MODEL_CODE_CONTROL",
+        "created_at": "2026-06-04T10:30:44+00:00"
+      },
+      {
+        "title": "MR-002: GBM equity parameters calibrated to market data (CNY + HK)",
+        "status": "APPROVED",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-04T11:24:19.650862+00:00"
+      },
+      {
+        "title": "Close MR-009 — migrate educational guided_examples.py to current model APIs",
+        "status": "IMPLEMENTED",
+        "change_type": "CORRECTION",
+        "created_at": "2026-06-04T12:37:49.737472+00:00"
+      },
+      {
+        "title": "Phase 14 Task 4: IA TAS M §3.6 re-validation against Phase 13 Task 5 backtest (G-06)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-04T13:27:04.938789+00:00"
+      },
+      {
+        "title": "Phase 14 Task 5: Optional Merton jump-diffusion equity process behind feature flag",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-04T14:30:49.448065+00:00"
+      },
+      {
+        "title": "Phase 14 Task 6 — Nested-stochastic / LSMC TVOG capital proxy",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-04T15:27:41.800519+00:00"
+      },
+      {
+        "title": "Phase 15 Task 1 — Two-driver (rates+equity) nested/LSMC capital proxy",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-04T16:26:28.886561+00:00"
+      },
+      {
+        "title": "Phase 15 Task 3 — Correlated risk aggregation (rates + equity guarantee)",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-04T18:28:37.351932+00:00"
+      },
+      {
+        "title": "Phase 15 Task 4 - tail-convergence & stability diagnostics for the 99.5% capital metric",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-04T19:41:52.056687+00:00"
+      },
+      {
+        "title": "Phase 15 Task 5 - multi-driver economic-capital proxy governance refresh",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-04T20:15:59.122947+00:00"
+      }
+    ],
+    "risk_register": [
+      {
+        "risk_id": "MR-001",
+        "title": "Discount rate exceeds CBIRC regulatory cap",
+        "overall_rating": "CRITICAL",
+        "mitigation_status": "MITIGATED",
+        "category": "assumption_error"
+      },
+      {
+        "risk_id": "MR-002",
+        "title": "Investment return assumptions overstated vs CNY market",
+        "overall_rating": "HIGH",
+        "mitigation_status": "MITIGATED",
+        "category": "assumption_error"
+      },
+      {
+        "risk_id": "MR-003",
+        "title": "Dynamic lapse assumption absent",
+        "overall_rating": "CRITICAL",
+        "mitigation_status": "IN_PROGRESS",
+        "category": "model_error"
+      },
+      {
+        "risk_id": "MR-004",
+        "title": "P/Q measure not enforced at runtime",
+        "overall_rating": "LOW",
+        "mitigation_status": "MITIGATED",
+        "category": "model_error"
+      },
+      {
+        "risk_id": "MR-005",
+        "title": "Distributed executor pickling failure",
+        "overall_rating": "HIGH",
+        "mitigation_status": "CLOSED",
+        "category": "process_risk"
+      },
+      {
+        "risk_id": "MR-006",
+        "title": "Model validation readiness below production threshold",
+        "overall_rating": "CRITICAL",
+        "mitigation_status": "IN_PROGRESS",
+        "category": "governance_risk"
+      },
+      {
+        "risk_id": "MR-007",
+        "title": "No assumption change control process",
+        "overall_rating": "HIGH",
+        "mitigation_status": "IN_PROGRESS",
+        "category": "governance_risk"
+      },
+      {
+        "risk_id": "MR-008",
+        "title": "HW1F calibration not yet executed",
+        "overall_rating": "CRITICAL",
+        "mitigation_status": "OPEN",
+        "category": "model_error"
+      },
+      {
+        "risk_id": "MR-009",
+        "title": "Educational guided-examples wrapper drifted from model API",
+        "overall_rating": "VERY_LOW",
+        "mitigation_status": "CLOSED",
+        "category": "operational_risk"
+      },
+      {
+        "risk_id": "MR-010",
+        "title": "Variance-covariance aggregation understates diversified capital",
+        "overall_rating": "HIGH",
+        "mitigation_status": "MITIGATED",
+        "category": "model_error"
+      },
+      {
+        "risk_id": "MR-011",
+        "title": "Multi-driver economic-capital proxy is educational, not production capital",
+        "overall_rating": "HIGH",
+        "mitigation_status": "IN_PROGRESS",
+        "category": "model_error"
+      }
+    ]
+  }
+}
