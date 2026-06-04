@@ -482,7 +482,34 @@ Tasks for Phase 15 (one per cycle, in order):
    tail quantile (theory-consistent, documented). 36 tests PASS; compileall clean; siblings unchanged.
    ChangeRecord 820c6fe4 OWNER_REVIEW; audit chain 25->26. docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.{json,md};
    docs/MULTI_DRIVER_TAIL_DIAGNOSTICS_CARD.md. (SOA ASOP 56 3.5/3.1.3; ASOP 25 3.3; IA TAS M 3.6; LEcuyer 2018 RQMC)
-5. Refresh governance — limitation card, ChangeRecord, MR register update for the multi-driver proxy; document
-   model-use restrictions and the remaining credentialled-data / independent-review residual.
+5. ✅ DONE (2026-06-05) Refresh governance for the multi-driver economic-capital proxy. Added
+   scripts/build_phase15_task5_governance.py (idempotent): opened MR-011 (multi-driver capital proxy is EDUCATIONAL,
+   not production; model_error; HIGH; IN_PROGRESS) linking MR-006/008/010; created a consolidated governance_change
+   ChangeRecord at OWNER_REVIEW (sign-off withheld); appended 2 GOVERNANCE audit entries (verify_all True; store 26->28
+   audit / 13->14 change / 10->11 risk). Added docs/MULTI_DRIVER_PROXY_LIMITATION_CARD.md (consolidated Tasks 1-4:
+   scope, limitations, model-use restrictions, residual table) + docs/validation/PHASE15_TASK5_GOVERNANCE_REFRESH.{json,md}.
+   8/8 Task 5 tests PASS; governance regression 96 PASS; compileall clean; Task 1-4 modules untouched.
+   (IA TAS M §3.6/3.7; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3; IFoA Modelling PN §4) **PHASE 15 COMPLETE.**
 
-**Current milestone:** Phase 15 in progress | 84/85 tasks done | **PHASE 15 TASK 4 COMPLETE** (2026-06-05) -- added par_model_v2/projection/multi_driver_tail_diagnostics.py (tail-convergence, bootstrap CI, antithetic/Sobol-QMC variance reduction on the 99.5% capital metric; VERDICT PASS; Sobol VR ~7.1x; 36 tests PASS; ChangeRecord 820c6fe4 OWNER_REVIEW; audit 25->26). Next: Phase 15 Task 5 -- refresh governance (limitation card, MR register) for the multi-driver proxy. ||| PRIOR: **PHASE 15 TASK 3 COMPLETE** (2026-06-05). Added par_model_v2/projection/multi_driver_risk_aggregation.py: correlated risk aggregation that combines standalone rate capital (full residual liability with the equity guarantee switched OFF) and standalone equity-guarantee capital (CRN-isolated via L_full−L_rate) using the governed ESG rate/equity correlation and the validated 2×2 ESG correlation matrix (phase8_rate_equity_fx_correlation_matrix + CorrelationMatrixValidator), then benchmarks the variance-covariance formula against the fully-diversified two-driver nested capital. Recovered a prior cycle's broken/uncommitted module (DataFrame-iteration ValueError) and repaire
+**Current milestone:** **ALL DOCUMENTED TASKS COMPLETE — 85/85 tasks, 15 phases.** Phase 15 closed 2026-06-05 with Task 5 (multi-driver proxy governance refresh: MR-011 opened, consolidated limitation card, OWNER_REVIEW ChangeRecord, audit 26->28; 8/8 Task 5 tests + 96 governance regression PASS). All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 10. Production sign-off still withheld — the residual is credentialled-data calibration + independent APS X2 review, NOT a code gap.
+
+---
+
+## Phase 16: Offline Result-Viewer UI (POST-MODEL — per scheduled-task directive)
+
+**Directive (verbatim intent):** Once all documented model-development tasks are complete, build a user interface for **offline** use. It must NOT depend on any pre-installation requirement: the stochastic model completes the calculation, then the UI consumes ONLY the model output to display the results graphically and interactively.
+
+**Design constraints (hard):**
+- A single self-contained `.html` file (HTML + CSS + vanilla JS inline). **No CDN, no npm, no Python server, no build step.** The user double-clicks the file and it works offline.
+- Charts hand-rendered as inline SVG (no Chart.js/Plotly/D3 dependency) so there is zero network requirement.
+- Reads model output that is **already produced** by the Python model — the JSON artifacts under `docs/validation/` and `outputs/` (e.g. PHASE15_*_REPORT.json, GOVERNANCE_STORE.json, TVOG/backtest/sensitivity outputs). The UI performs NO actuarial calculation itself.
+- Data ingestion without a server: support (a) drag-and-drop / file-picker load of one or more output JSON files, and (b) an optional `python3 scripts/build_offline_viewer.py` step that embeds a bundled snapshot into a standalone HTML so it opens with data pre-loaded.
+
+**Tasks for Phase 16 (one per cycle, in order):**
+1. Data-contract + bundler: write `scripts/build_offline_viewer.py` that scans `docs/validation/*.json` + `.claude-dev/GOVERNANCE_STORE.json`, normalises them into one `viewer_data.json` schema (capital metrics, proxy-validation, risk-aggregation, tail-diagnostics, governance/risk-register, deployment gates), and emits both the JSON and a data-embedded `model_result_viewer.html`. Add tests for the schema + bundler. (STARTED 2026-06-05 — v1 scaffold `model_result_viewer.html` + bundler committed; see log.)
+2. Capital & tail dashboards: SVG VaR/ES bar + loss-distribution histogram, outer-convergence line chart, bootstrap-CI band; interactive seed/percentile/confidence selectors driven purely by the loaded output.
+3. Proxy-validation & aggregation views: degree-sweep in-sample-vs-OOS R² chart, overfit-gap, diversification-benefit waterfall (standalone -> var-cov -> nested) with tooltips.
+4. Governance panel: risk register table (filter by status/rating), ChangeRecord timeline, audit-integrity badge, deployment-gate checklist — all from GOVERNANCE_STORE.json.
+5. Polish + offline packaging: file-picker + drag-and-drop loader, responsive layout, print/export-to-PNG of any chart via canvas, and an offline self-test that asserts the HTML renders with the bundled snapshot and with zero network calls.
+
+**What counts as complete each cycle:** the viewer opens offline (no network) and renders the targeted view from real model-output JSON; bundler/schema tests PASS; committed + pushed; state/log/prompt updated.

@@ -5661,3 +5661,28 @@ use the /tmp-clone pattern.
 **Milestone:** Phase 15 Task 4 COMPLETE. 84/85 tasks (~98.8%), 14 phases complete; Phase 15 4/5 tasks done. All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 9.
 
 ---
+
+## Run 2026-06-05 — Phase 15 Task 5 (Multi-driver proxy governance refresh) — PHASE 15 COMPLETE
+
+**Task Completed:** Task 5 — Refresh governance for the multi-driver economic-capital proxy (model-limitation card, ChangeRecord, MR-register update; model-use restrictions + residual). **This completes Phase 15 and all 85 documented tasks across 15 phases.**
+
+**Accomplishments:**
+- Added `scripts/build_phase15_task5_governance.py` (idempotent; reusable `apply_phase15_task5_governance(store)` + `main(--governance)`):
+  - Opened **MR-011** "Multi-driver economic-capital proxy is educational, not production capital" (model_error; MEDIUM×HIGH → **HIGH**; **IN_PROGRESS**) — formalises placeholder calibration, omitted risk drivers (lapse/mortality/credit/FX/liquidity/management action), and the no-independent-review residual; links MR-006/MR-008/MR-010.
+  - Created a consolidated **governance_change ChangeRecord** walked DRAFT→PEER_REVIEW→**OWNER_REVIEW** (production sign-off withheld), before/after snapshots, no-numeric-impact assessment.
+  - Appended 2 GOVERNANCE audit entries; `verify_all()` → True; canonical `.claude-dev/GOVERNANCE_STORE.json` persisted (audit 26→28, change records 13→14, risk register 10→11).
+- Added consolidated limitation card `docs/MULTI_DRIVER_PROXY_LIMITATION_CARD.md` (Tasks 1–4): validated scope/evidence table, limitations, **model-use restrictions**, residual-risk table.
+- Added `docs/validation/PHASE15_TASK5_GOVERNANCE_REFRESH.{json,md}`.
+- Tests: `tests/test_phase15_task5_governance.py` **8/8 PASS** (MR-011 rating/status, OWNER_REVIEW ChangeRecord, idempotency, audit integrity + JSON round-trip, +2 audit entries, residual documents APS X2, canonical-store consistency, limitation-card completeness). Governance regression (`test_governance` + `test_audit_trail_wiring` + Task 5 + risk_aggregation) **96 PASS**; `compileall` clean across `par_model_v2`, `scripts`, `tests`. Task 1–4 modules untouched (governance-only).
+
+**Next Step (post-documented-roadmap):** Per the scheduled-task directive — all documented tasks complete — begin the **offline result-viewer UI**: a single self-contained HTML file (no install, no server, no CDN) that loads the model's existing JSON output artifacts and displays them graphically/interactively. Scaffolded this cycle; roadmap recorded in MODEL_DEV_TASK_PROMPT.md.
+
+**Industry Standards Progress:**
+- IA TAS M §3.6/§3.7: addressed — model-use restrictions + change log; consolidated limitation card.
+- APS X2 §3: addressed (residual documented) — independent review pending; production sign-off withheld.
+- SOA ASOP 56 §3.5 / ASOP 25 §3.3 / IFoA Modelling PN §4: addressed — limitations, risk register entry, governance traceability.
+- Residual: credentialled-data calibration + independent APS X2 review still pending (educational classification retained).
+
+**Milestone:** **PHASE 15 COMPLETE. 85/85 tasks, 15 phases.** Open model risks 1; mitigated/closed 10 (incl. MR-011 IN_PROGRESS as the documented production residual). All 12 educational deployment gates remain cleared.
+
+---
