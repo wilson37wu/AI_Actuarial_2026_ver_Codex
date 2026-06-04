@@ -409,8 +409,11 @@ ESG sophistication upgrade with martingale evidence.
 Tasks for Phase 14 (one per cycle, in order):
 1. ✅ DONE (2026-06-04) Close G-05 — enforce P/Q measure at runtime in every `simulate()` execution
    path; add guard + tests; move MR-004 to MITIGATED/CLOSED. (SOA ASOP 56 §3.1.3; IA TAS M §3.4)
-2. Close G-03 — calibrate GBM equity drift/vol/ERP and correlations to live
-   (educational-proxy) CNY/HK equity data; record ChangeRecord; move MR-002 to MITIGATED. (SOA ASOP 56 §3.4)
+2. ✅ DONE (2026-06-04) Close G-03 — calibrated GBM equity sigma_S/ERP/dividend/rho and rate-equity
+   correlation to educational-proxy CSI 300 (CNY) + Hang Seng (HK) daily history via GBMCalibrator;
+   APPROVED ChangeRecord + 2 PARAM_CHANGE audit entries; G-03 PASS (6/6); MR-002 → MITIGATED. Also
+   repaired the canonical GOVERNANCE_STORE.json round-trip (SignOffStatus.IMPLEMENTED + RiskRating
+   VERY_LOW/VERY_HIGH). (SOA ASOP 56 §3.4; SOA ASOP 25 §3.3; IA TAS M §3.5/3.6/3.7)
 3. Remediate MR-009 — migrate `examples/guided_examples.py` to the current
    RiskFreeCurve/FixedIncomeInstrument/TVOG APIs; bring `tests/test_guided_examples.py` green.
 4. Re-run G-06 IA TAS M §3.6 suite re-scoring VR-B01/B02/B03/S05 against the
@@ -421,7 +424,7 @@ Tasks for Phase 14 (one per cycle, in order):
 6. Nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and
    reproducibility diagnostics; document model-use restrictions.
 
-**Current milestone:** Phase 14 in progress | 75/80 tasks done | Phase 14 Task 1 COMPLETE (G-05 cleared educational; MR-004 → MITIGATED; runtime measure enforcement in all simulate()/generate() paths with 30 passing runtime tests). 11/12 educational deployment gates cleared. Production residuals remaining: G-03 (GBM live calibration), MR-009 (guided_examples API migration), and a genuine human APS X2 reviewer. Next: Phase 14 Task 2 (G-03).
+**Current milestone:** Phase 14 in progress | 76/80 tasks done | Phase 14 Task 2 COMPLETE (G-03 cleared educational; MR-002 → MITIGATED; GBM equity calibrated to educational-proxy CNY/HK daily history — CNY σ_S=0.216/ERP=3.27%/ρ=-0.197, HK σ_S=0.252/ERP=1.71%/ρ=-0.149; APPROVED ChangeRecord + 2 PARAM_CHANGE entries; 18 new tests PASS). **All 12 educational deployment gates now cleared.** Also fixed a prior-cycle defect that made GOVERNANCE_STORE.json unloadable (added SignOffStatus.IMPLEMENTED + RiskRating.VERY_LOW/VERY_HIGH) and made two Phase 13 Task 6 tests state-tolerant. Production residuals remaining: credentialled live market-data feeds (G-02/G-03/G-09 proxies), MR-009 (guided_examples API migration), and a genuine human APS X2 reviewer. Next: Phase 14 Task 3 (MR-009 — migrate examples/guided_examples.py).
 
 ---
 

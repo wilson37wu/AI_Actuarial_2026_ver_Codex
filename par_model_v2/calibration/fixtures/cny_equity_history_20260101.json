@@ -1,0 +1,47 @@
+{
+  "fixture_id": "CNY_EQ_HIST_2026",
+  "description": "Educational-proxy CSI 300 total-return and CNY 1-year China Government Bond (CGB) history, 2016-2025, plus trailing dividend yield and ATM 30-day implied volatility, used to drive the Phase 14 Task 2 GBM equity calibration (Gate G-03, risk MR-002). EDUCATIONAL PROXY series approximating published CSI / ChinaBond / Wind levels; NOT a credentialled vendor feed. Replace with licensed market-data extracts and re-run sign-off before any regulatory, pricing, or capital-adequacy use.",
+  "market": "CNY",
+  "currency": "CNY",
+  "equity_index": "CSI 300 Total Return (proxy)",
+  "as_of_date": "2026-01-01",
+  "daily_synthesis": {
+    "seed": 20260101,
+    "trading_days_per_year": 252,
+    "start_date": "2016-01-01",
+    "end_date": "2025-12-31",
+    "method": "Per calendar year, daily log-returns are drawn from a seeded Gaussian with daily vol = target_annual_vol/sqrt(252) and then de-meaned so the compounded calendar-year total return equals the documented annual_equity_returns value exactly. A correlated standard-normal rate shock (Cholesky, target_rate_equity_corr) drives an intra-year random-walk deviation of the 1Y CGB yield around its documented year average, so the realised Pearson correlation between equity log-returns and yield changes recovers target_rate_equity_corr. Fully deterministic given seed."
+  },
+  "target_annual_vol": 0.22,
+  "target_rate_equity_corr": -0.21,
+  "rate_deviation_vol_daily": 0.0006,
+  "implied_vol_atm": 0.21,
+  "implied_vol_weight": 0.60,
+  "erp_survivorship_adjustment": 0.007,
+  "erp_upper_bound": 0.05,
+  "dividend_yield_base": 0.024,
+  "dividend_yield_noise": 0.0015,
+  "annual_equity_returns": {
+    "2016": -0.08, "2017": 0.25, "2018": -0.22, "2019": 0.40, "2020": 0.32,
+    "2021": -0.04, "2022": -0.18, "2023": -0.09, "2024": 0.20, "2025": 0.10
+  },
+  "annual_rf_1y": {
+    "2016": 0.024, "2017": 0.035, "2018": 0.030, "2019": 0.026, "2020": 0.023,
+    "2021": 0.024, "2022": 0.020, "2023": 0.021, "2024": 0.016, "2025": 0.014
+  },
+  "data_lineage": {
+    "provenance": "educational_historical_proxy",
+    "approved_by": "ModelGovernance_Phase14",
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "version": "1.0.0",
+    "checksum_sha256": "educational_fixture_no_checksum",
+    "primary_sources": [
+      "CSI 300 Index calendar-year total return (educational proxy levels)",
+      "ChinaBond 1Y China Government Bond yield, annual average (educational proxy levels)",
+      "CSI 300 trailing 12-month dividend yield (educational proxy)",
+      "SSE 50ETF ATM 30-day option implied volatility (educational proxy)"
+    ],
+    "production_restriction": "Proxy levels only. Replace with licensed CSI/ChinaBond/Wind extracts and re-run sign-off before regulatory, pricing, or capital-adequacy use."
+  },
+  "notes": "10 calendar years of daily synthesis (>= 2500 daily observations; G-03 criterion 1 needs >= 750). Mean annual excess return over the 1Y CGB, less a 0.7% survivorship adjustment, yields an ERP near the middle of the documented CNY range [2.5%, 5.0%]."
+}

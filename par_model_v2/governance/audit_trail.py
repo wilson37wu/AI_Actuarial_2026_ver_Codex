@@ -87,13 +87,22 @@ class SignOffStatus(str, enum.Enum):
     APPROVED       = "APPROVED"        # Fully signed off
     REJECTED       = "REJECTED"        # Returned with comments
     SUPERSEDED     = "SUPERSEDED"      # Replaced by newer change record
+    IMPLEMENTED    = "IMPLEMENTED"     # Code-control change deployed; pending independent review
+                                       # (treated as OPEN by open_change_records until APPROVED)
 
 
 class RiskRating(str, enum.Enum):
-    """Model risk register entry rating per IFoA Modelling Practice Note §4."""
+    """Model risk register entry rating per IFoA Modelling Practice Note §4.
+
+    Supports a five-point likelihood/impact scale; VERY_LOW / VERY_HIGH are used
+    for fine-grained likelihood gradations (e.g. a residual risk downgraded to
+    VERY_LOW after mitigation) alongside the core LOW..CRITICAL ratings.
+    """
+    VERY_LOW = "VERY_LOW"
     LOW      = "LOW"
     MEDIUM   = "MEDIUM"
     HIGH     = "HIGH"
+    VERY_HIGH = "VERY_HIGH"
     CRITICAL = "CRITICAL"
 
 

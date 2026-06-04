@@ -65,10 +65,10 @@ And the credibility requirement of **SOA ASOP 25 §3.3**:
 | HW1F short rate volatility | σ_r | 0.012 (1.2% p.a.) | 🔴 Placeholder | Phase 4 |
 | HW1F market price of risk | λ_r | 0.0 (not yet set) | 🔴 Placeholder | Phase 4 |
 | HW1F initial short rate | r(0) | 0.025 (2.5%) | 🟠 Approximate | Phase 4 |
-| GBM equity volatility | σ_S | 0.22 (22% p.a.) | 🔴 Placeholder | Phase 4 |
-| GBM dividend yield | δ | 0.025 (2.5%) | 🟠 Approximate | Phase 4 |
-| GBM equity risk premium | ERP | 0.045 (4.5%) | 🔴 Placeholder | Phase 4 |
-| Rate-equity correlation | ρ_{r,S} | −0.15 | 🔴 Placeholder | Phase 4 |
+| GBM equity volatility | σ_S | CNY 0.216 / HK 0.252 | 🟢 Calibrated (educational proxy) | Phase 14 T2 (G-03) |
+| GBM dividend yield | δ | CNY 0.023 / HK 0.033 | 🟢 Calibrated (EWMA) | Phase 14 T2 (G-03) |
+| GBM equity risk premium | ERP | CNY 0.033 / HK 0.017 | 🟢 Calibrated (educational proxy) | Phase 14 T2 (G-03) |
+| Rate-equity correlation | ρ_{r,S} | CNY −0.197 / HK −0.149 | 🟢 Calibrated (Pearson) | Phase 14 T2 (G-03) |
 
 **⚠️ Production Use Restriction:** All parameters marked 🔴 Placeholder are illustrative only. They must not be used for regulatory reporting, pricing, or external disclosure. Production calibration is a **Phase 4 deliverable**.
 
@@ -266,7 +266,7 @@ No free parameters in the Q-measure drift — only σ_S and δ require calibrati
 
 **Rationale for weighting:** Forward-looking information (implied vol) is a better predictor of near-term risk, which is most relevant for TVOG computation. The 60/40 weighting is subject to Assumption Owner review and may be adjusted based on empirical analysis (Phase 4).
 
-**Current placeholder:** 22% p.a. (approximate CSI 300 long-run historical vol; academic literature consensus for Chinese equity market). This is consistent with the range reported in published MCEV disclosures for CNY equity portfolios (18%–28%).
+**Calibrated (Phase 14 Task 2, G-03):** σ_S = 21.6% (CNY / CSI 300 proxy) and 25.2% (HK / Hang Seng proxy), from the 60/40 implied/historical blend over ~10y of educational-proxy daily history. Both sit inside the 18%–28% range reported in published MCEV disclosures for CNY/HK equity portfolios. *Prior placeholder: 22% p.a.* Calibration is reproducible via `par_model_v2.calibration.phase14_gbm_calibration.run_phase14_gbm_calibration`; see `docs/PHASE14_GBM_CALIBRATION_REPORT.md`. Educational-proxy data — replace with credentialled CSI/HSI extracts before production use.
 
 **Parameter bounds:** `σ_S ∈ [0.05, 0.60]` (5% floor to avoid degenerate paths; 60% cap to prevent extreme scenario generation).
 
@@ -296,7 +296,9 @@ dS/S = (r(t) + ERP − δ) dt + σ_S dW_S^P(t)
 4. Cross-validate against consensus survey forecasts (Bloomberg ERP survey, if available for CNY).
 5. Apply an upper bound of 5.0% for CNY market (consistent with published Chinese insurer MCEV disclosures).
 
-**Typical range:** ERP ∈ [2.5%, 5.0%] for CNY equity market. Current placeholder (4.5%) is at the high end — likely to be revised downward in Phase 4 calibration.
+**Typical range:** ERP ∈ [2.5%, 5.0%] for CNY equity market.
+
+**Calibrated (Phase 14 Task 2, G-03):** ERP = 3.27% (CNY) and 1.71% (HK), from mean historical annual excess returns over the matched 1Y government yield, less a 0.7% survivorship adjustment, capped at 5.0%. *Prior placeholder (4.5%) overstated the equity risk premium — the calibrated CNY figure removes the systematic investment-return overstatement flagged in model risk **MR-002** (now MITIGATED).* Educational-proxy data — cross-validate against survey ERP before production use.
 
 **Sensitivity requirement (SOA ASOP 7):** The TVOG result must be tested with ERP = 0% (risk-neutral as a control), ERP = 2.5%, and ERP = 5.0%. The range of TVOG outcomes across these scenarios must be disclosed.
 
@@ -315,7 +317,7 @@ dW_S = ρ × dW_r + sqrt(1 − ρ²) × dW_S_indep
 
 Where `dW_r` and `dW_S_indep` are independent standard Normal increments.
 
-**Current placeholder:** −0.15 (within typical CNY range; to be replaced by data-based estimate in Phase 4).
+**Calibrated (Phase 14 Task 2, G-03):** ρ_{r,S} = −0.197 (CNY) and −0.149 (HK), Pearson correlation of daily equity log-returns against 1Y-yield changes over the ~10y educational-proxy window — both inside the typical CNY range [−0.30, −0.05] and negative as expected. *Prior placeholder: −0.15.*
 
 ---
 

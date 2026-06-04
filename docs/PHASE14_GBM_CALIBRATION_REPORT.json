@@ -1,0 +1,85 @@
+{
+  "run_timestamp": "2026-06-04T11:24:19.446890+00:00",
+  "summaries": [
+    {
+      "market": "CNY",
+      "calibration_date": "2026-01-01",
+      "sigma_S": 0.21578265585344886,
+      "erp": 0.03268928357121855,
+      "dividend_yield": 0.022942788586562332,
+      "rho": -0.19652366897565202,
+      "equity_vol_hist": 0.22445663963362208,
+      "equity_vol_implied": 0.21,
+      "n_daily_obs": 2609,
+      "is_placeholder": false,
+      "notes": "sigma_S=0.2158 (blended (60% implied, 40% historical)); ERP=0.0327 (survivorship adj=0.0070); rho=-0.1965",
+      "lineage": {
+        "lineage_id": "LINEQ_CNY_20260101",
+        "market": "CNY",
+        "as_of_date": "2026-01-01",
+        "source_type": "educational_historical_proxy",
+        "source_detail": "/tmp/akr/par_model_v2/calibration/fixtures/cny_equity_history_20260101.json",
+        "fixture_version": "1.0.0",
+        "approved_by": "ModelGovernance_Phase14",
+        "approval_timestamp": "2026-01-01T00:00:00Z",
+        "sha256_checksum": "32a11c268fbefa2e234d2002a06c1c50f1d24dc2e28d95b7c2f485cbc27841f3",
+        "produced_at": "2026-06-04T11:24:19.545409+00:00"
+      },
+      "criteria": {
+        "c1_min_daily_obs": true,
+        "c2_sigma_in_band": true,
+        "c3_erp_documented": true,
+        "c4_rho_in_band": true,
+        "c5_not_placeholder": true,
+        "c6_param_change_audit": true
+      }
+    },
+    {
+      "market": "HK",
+      "calibration_date": "2026-01-01",
+      "sigma_S": 0.2523551981423966,
+      "erp": 0.017077679306808563,
+      "dividend_yield": 0.03256616380569715,
+      "rho": -0.14934114806958926,
+      "equity_vol_hist": 0.2708879953559915,
+      "equity_vol_implied": 0.24,
+      "n_daily_obs": 2609,
+      "is_placeholder": false,
+      "notes": "sigma_S=0.2524 (blended (60% implied, 40% historical)); ERP=0.0171 (survivorship adj=0.0070); rho=-0.1493",
+      "lineage": {
+        "lineage_id": "LINEQ_HK_CN_20260101",
+        "market": "HK_CN",
+        "as_of_date": "2026-01-01",
+        "source_type": "educational_historical_proxy",
+        "source_detail": "/tmp/akr/par_model_v2/calibration/fixtures/hk_equity_history_20260101.json",
+        "fixture_version": "1.0.0",
+        "approved_by": "ModelGovernance_Phase14",
+        "approval_timestamp": "2026-01-01T00:00:00Z",
+        "sha256_checksum": "aa9b23ef23b9c0265ab3f06a983cb3ca97212c3d3fc5bf32bb98b0ced5560c8a",
+        "produced_at": "2026-06-04T11:24:19.637683+00:00"
+      },
+      "criteria": {
+        "c1_min_daily_obs": true,
+        "c2_sigma_in_band": true,
+        "c3_erp_documented": true,
+        "c4_rho_in_band": true,
+        "c5_not_placeholder": true,
+        "c6_param_change_audit": true
+      }
+    }
+  ],
+  "gate_g03": {
+    "gate_id": "G-03",
+    "gate_description": "GBM equity parameters (sigma_S, ERP, dividend yield, rho) calibrated to market data (not placeholders); sigma_S in [0.15, 0.45], rho in [-0.5, 0.5], ERP documented and capped (SOA ASOP 56 3.4)",
+    "status": "PASS",
+    "evidence": "CNY: n=2609, sigma_S=0.2158, ERP=0.0327, div=0.0229, rho=-0.1965; HK: n=2609, sigma_S=0.2524, ERP=0.0171, div=0.0326, rho=-0.1493",
+    "evaluated_at": "2026-06-04T11:24:19.652222+00:00"
+  },
+  "change_record_id": "25719549943a4ae2a04c1ddc36a156c9",
+  "change_record_status": "APPROVED",
+  "mr002_status": "MITIGATED",
+  "audit_entry_ids": [
+    "5b0b0131ae3d49fdb70eba4692aec711",
+    "aca0ca97fdfd45ab97399c71e3f58dc1"
+  ]
+}

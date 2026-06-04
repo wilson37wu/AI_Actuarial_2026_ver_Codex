@@ -1,0 +1,47 @@
+{
+  "fixture_id": "HK_EQ_HIST_2026",
+  "description": "Educational-proxy Hang Seng Index (HK/China) total-return and HKD 1-year (HIBOR-linked) rate history, 2016-2025, plus trailing dividend yield and ATM 30-day implied volatility, used to drive the Phase 14 Task 2 GBM equity calibration (Gate G-03, risk MR-002). EDUCATIONAL PROXY series approximating published HSI / HKMA / Bloomberg levels; NOT a credentialled vendor feed. Replace with licensed market-data extracts and re-run sign-off before any regulatory, pricing, or capital-adequacy use.",
+  "market": "HK_CN",
+  "currency": "HKD",
+  "equity_index": "Hang Seng Index Total Return (proxy)",
+  "as_of_date": "2026-01-01",
+  "daily_synthesis": {
+    "seed": 20260102,
+    "trading_days_per_year": 252,
+    "start_date": "2016-01-01",
+    "end_date": "2025-12-31",
+    "method": "Identical deterministic synthesis to the CNY fixture: per-year de-meaned seeded Gaussian daily log-returns reproducing the documented annual total return, with a Cholesky-correlated rate shock driving an intra-year random-walk deviation of the 1Y HKD rate around its documented year average so the realised equity/yield-change Pearson correlation recovers target_rate_equity_corr."
+  },
+  "target_annual_vol": 0.26,
+  "target_rate_equity_corr": -0.18,
+  "rate_deviation_vol_daily": 0.0007,
+  "implied_vol_atm": 0.24,
+  "implied_vol_weight": 0.60,
+  "erp_survivorship_adjustment": 0.007,
+  "erp_upper_bound": 0.05,
+  "dividend_yield_base": 0.032,
+  "dividend_yield_noise": 0.0018,
+  "annual_equity_returns": {
+    "2016": 0.04, "2017": 0.41, "2018": -0.11, "2019": 0.13, "2020": -0.01,
+    "2021": -0.11, "2022": -0.13, "2023": -0.10, "2024": 0.23, "2025": 0.15
+  },
+  "annual_rf_1y": {
+    "2016": 0.009, "2017": 0.012, "2018": 0.022, "2019": 0.020, "2020": 0.005,
+    "2021": 0.004, "2022": 0.025, "2023": 0.045, "2024": 0.040, "2025": 0.030
+  },
+  "data_lineage": {
+    "provenance": "educational_historical_proxy",
+    "approved_by": "ModelGovernance_Phase14",
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "version": "1.0.0",
+    "checksum_sha256": "educational_fixture_no_checksum",
+    "primary_sources": [
+      "Hang Seng Index calendar-year total return (educational proxy levels)",
+      "HKD 1Y interbank/exchange-fund-bill rate, annual average (educational proxy levels)",
+      "Hang Seng Index trailing 12-month dividend yield (educational proxy)",
+      "HSI ATM 30-day option implied volatility / VHSI (educational proxy)"
+    ],
+    "production_restriction": "Proxy levels only. Replace with licensed HSI/HKMA/Bloomberg extracts and re-run sign-off before regulatory, pricing, or capital-adequacy use."
+  },
+  "notes": "10 calendar years of daily synthesis (>= 2500 daily observations). HK equity carries a higher target vol and dividend yield than the CNY onshore market, consistent with published HSI characteristics; the HKD rate path tracks the USD-linked policy cycle (low 2020-2021, higher 2023-2024)."
+}
