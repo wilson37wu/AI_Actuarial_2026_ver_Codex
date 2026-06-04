@@ -2834,6 +2834,13 @@ class ParameterSnapshot:
             "equity.gbm.rate_equity_correlation": gbm_params.rate_equity_correlation,
             "equity.gbm.initial_index_level": gbm_params.initial_index_level,
         }
+        if isinstance(gbm_params, JumpDiffusionParams):
+            parameters.update({
+                "equity.jumpdiffusion.jump_intensity": gbm_params.jump_intensity,
+                "equity.jumpdiffusion.jump_mean": gbm_params.jump_mean,
+                "equity.jumpdiffusion.jump_vol": gbm_params.jump_vol,
+                "equity.jumpdiffusion.jump_compensator": gbm_params.jump_compensator,
+            })
         if hw_params.short_rate_floor is not None:
             parameters["rate.hw1f.short_rate_floor"] = hw_params.short_rate_floor
         if hw_params.short_rate_ceiling is not None:
@@ -3590,6 +3597,442 @@ class GBMEquityProcess:
 
 
 # ---------------------------------------------------------------------------
+# 3b. Merton Jump-Diffusion Equity Process (Phase 14 Task 5 — ESG sophistication)
+# ---------------------------------------------------------------------------
+#
+# Optional higher-sophistication equity process selected behind a feature flag
+# (see ``build_equity_process`` / ``EQUITY_PROCESS_REGISTRY`` below). The GBM
+# process remains the default so all existing Phase 4/8 behaviour is unchanged.
+#
+# Merton (1976) jump-diffusion under measure m:
+#
+#   dS/S = (mu_m(t) - lambda*kappa) dt + sigma_S dW_S + (e^J - 1) dN
+#
+# where N is a Poisson process with intensity lambda (annual), each jump size
+# J ~ Normal(mu_J, sigma_J^2), and kappa = E[e^J - 1] = exp(mu_J + 0.5 sigma_J^2) - 1
+# is the Q-measure jump compensator. Continuous drift:
+#   Q: mu_Q(t) = r(t) - q_S            (TVOG / market-consistent)
+#   P: mu_P(t) = r(t) + ERP - q_S      (ALM / ERM / real-world)
+#
+# The -lambda*kappa compensator is applied under BOTH measures so that, under Q,
+# the ex-dividend discounted index E[D(0,t) S(t) e^{q t}] reconciles to S(0):
+#   E[S(t+dt)/S(t)] = exp(mu_m(t) dt) exactly, independent of (sigma, lambda,
+#   mu_J, sigma_J). This is the closed-form basis for the Q-measure martingale
+#   tests (QME-EQUITY-FORWARD). SOA ASOP 56 §3.1.3, §3.5; IA TAS M §3.6.
+
+
+@dataclass
+class JumpDiffusionParams:
+    """Parameters for the Merton jump-diffusion equity index process.
+
+    Continuous part matches :class:`GBMParams`; the jump part adds a compound
+    Poisson process with lognormally distributed jump sizes.
+
+      jump_intensity (lambda) : expected number of jumps per YEAR (>= 0)
+      jump_mean      (mu_J)   : mean of the log-jump size
+      jump_vol       (sigma_J): std-dev of the log-jump size (>= 0)
+
+    Q-measure compensator: kappa = exp(mu_J + 0.5 sigma_J^2) - 1, applied under
+    both P and Q so the risk-neutral forward is preserved.
+
+    All values are PLACEHOLDERS pending calibration. Educational use only.
+    SOA ASOP 56 §3.1.3, §3.4.
+    """
+
+    equity_vol: float = 0.22
+    dividend_yield: float = 0.025
+    equity_risk_premium: float = 0.045
+    rate_equity_correlation: float = -0.15
+    initial_index_level: float = 100.0
+    jump_intensity: float = 0.25
+    jump_mean: float = -0.10
+    jump_vol: float = 0.15
+
+    def __post_init__(self):
+        if not (0 < self.equity_vol < 2.0):
+            raise ValueError(
+                "equity_vol out of plausible range (0, 2.0); got {}".format(self.equity_vol)
+            )
+        if not (-1.0 < self.rate_equity_correlation < 1.0):
+            raise ValueError(
+                "rate_equity_correlation must be in (-1, 1); got {}".format(
+                    self.rate_equity_correlation
+                )
+            )
+        if self.jump_intensity < 0.0:
+            raise ValueError(
+                "jump_intensity (lambda) must be >= 0; got {}".format(self.jump_intensity)
+            )
+        if self.jump_vol < 0.0:
+            raise ValueError(
+                "jump_vol (sigma_J) must be >= 0; got {}".format(self.jump_vol)
+            )
+        if not (-2.0 < self.jump_mean < 2.0):
+            raise ValueError(
+                "jump_mean (mu_J) out of plausible range (-2, 2); got {}".format(self.jump_mean)
+            )
+
+    @property
+    def jump_compensator(self):
+        """Q-measure compensator kappa = E[e^J - 1] for a lognormal jump."""
+        return float(np.exp(self.jump_mean + 0.5 * self.jump_vol ** 2) - 1.0)
+
+    @property
+    def is_placeholder(self):
+        return True
+
+    @classmethod
+    def from_gbm_params(cls, gbm, jump_intensity=0.25, jump_mean=-0.10, jump_vol=0.15):
+        """Build jump-diffusion params from a calibrated :class:`GBMParams`.
+
+        The continuous block (vol, dividend, ERP, correlation, initial level) is
+        inherited from the GBM calibration so the jump overlay is an additive
+        sophistication layer over the existing Phase 14 Task 2 calibration.
+        """
+        if not isinstance(gbm, GBMParams):
+            raise TypeError("gbm must be a GBMParams instance")
+        return cls(
+            equity_vol=gbm.equity_vol,
+            dividend_yield=gbm.dividend_yield,
+            equity_risk_premium=gbm.equity_risk_premium,
+            rate_equity_correlation=gbm.rate_equity_correlation,
+            initial_index_level=gbm.initial_index_level,
+            jump_intensity=float(jump_intensity),
+            jump_mean=float(jump_mean),
+            jump_vol=float(jump_vol),
+        )
+
+
+class JumpDiffusionEquityProcess:
+    """Merton jump-diffusion equity index process (optional, feature-flagged).
+
+    Drop-in compatible with :class:`GBMEquityProcess`: same constructor shape,
+    same ``simulate`` signature, and the same output columns
+    (scenario_id, month, equity_index, equity_return_1m, measure) plus an
+    additional ``equity_jump_count`` diagnostic column.
+
+    Measure.Q: continuous drift = r(t) - q_S      (TVOG use)
+    Measure.P: continuous drift = r(t) + ERP - q_S  (ALM/ERM use)
+    The Q-measure jump compensator -lambda*kappa is applied under both measures.
+    """
+
+    #: Measures this process is permitted to simulate under (G-05 / MR-004).
+    SUPPORTED_MEASURES = (Measure.P, Measure.Q)
+
+    def __init__(self, params=None, rate_process=None):
+        if params is None:
+            params = JumpDiffusionParams()
+        elif isinstance(params, GBMParams):
+            params = JumpDiffusionParams.from_gbm_params(params)
+        elif not isinstance(params, JumpDiffusionParams):
+            raise TypeError(
+                "params must be a JumpDiffusionParams or GBMParams; got {!r}".format(
+                    type(params).__name__
+                )
+            )
+        self.params = params
+        self.rate_process = rate_process if rate_process is not None else HullWhiteRateProcess()
+
+    def _simulate_array(self, n_scenarios, T_months, measure, rate_paths, shocks, rng=None):
+        """Simulate equity paths. Returns (equity, returns, jump_counts) ndarrays.
+
+        ``shocks`` are the diffusion normals (shape (n, T)); ``rng`` supplies the
+        Poisson jump counts and lognormal jump sizes. A dedicated ``rng`` keeps
+        jump draws reproducible and independent of the diffusion shocks.
+        """
+        expected_shape = (n_scenarios, T_months)
+        if shocks.shape != expected_shape:
+            raise ValueError(
+                "equity shocks must have shape {}; got {}".format(expected_shape, shocks.shape)
+            )
+        rate_shape = (n_scenarios, T_months + 1)
+        if rate_paths.shape != rate_shape:
+            raise ValueError(
+                "rate_paths must have shape {}; got {}".format(rate_shape, rate_paths.shape)
+            )
+        if rng is None:
+            rng = np.random.default_rng(0)
+
+        dt = 1.0 / 12.0
+        sqrt_dt = np.sqrt(dt)
+        p = self.params
+        kappa = p.jump_compensator
+
+        equity = np.empty((n_scenarios, T_months + 1), dtype=float)
+        returns = np.zeros((n_scenarios, T_months + 1), dtype=float)
+        jump_counts = np.zeros((n_scenarios, T_months + 1), dtype=float)
+        equity[:, 0] = p.initial_index_level
+
+        for month in range(T_months):
+            drift = rate_paths[:, month] - p.dividend_yield
+            if measure == Measure.P:
+                drift = drift + p.equity_risk_premium
+
+            # Compound-Poisson jump increment over [t, t+dt]:
+            counts = rng.poisson(p.jump_intensity * dt, size=n_scenarios)
+            jump_counts[:, month + 1] = counts
+            # Aggregate jump sum has mean counts*mu_J and var counts*sigma_J^2.
+            jump_mean_total = counts * p.jump_mean
+            jump_std_total = np.sqrt(counts.astype(float)) * p.jump_vol
+            jump_sum = jump_mean_total + jump_std_total * rng.standard_normal(n_scenarios)
+
+            log_return = (
+                (drift - 0.5 * p.equity_vol ** 2 - p.jump_intensity * kappa) * dt
+                + p.equity_vol * sqrt_dt * shocks[:, month]
+                + jump_sum
+            )
+            gross_return = np.exp(log_return)
+            equity[:, month + 1] = equity[:, month] * gross_return
+            returns[:, month + 1] = gross_return - 1.0
+
+        return equity, returns, jump_counts
+
+    def simulate(self, n_scenarios, T_months, measure, rate_paths=None, seed=42):
+        """Simulate monthly equity-index paths as a DataFrame.
+
+        Columns: scenario_id, month, equity_index, equity_return_1m,
+                 equity_jump_count, measure.
+        Shape: n_scenarios * (T_months + 1) rows.
+
+        SOA ASOP 56 §3.1.3, §3.4.
+        """
+        measure = _enforce_simulation_measure(self, measure)
+        _validate_simulation_dimensions(n_scenarios, T_months)
+        n_scenarios = int(n_scenarios)
+        T_months = int(T_months)
+
+        if rate_paths is None:
+            rate_paths_array = np.full(
+                (n_scenarios, T_months + 1),
+                self.rate_process.params.initial_short_rate,
+                dtype=float,
+            )
+        else:
+            rate_paths_array = np.asarray(rate_paths, dtype=float)
+
+        rng = np.random.default_rng(seed)
+        shocks = _antithetic_normals(rng, n_scenarios, T_months)
+        # Separate, deterministic sub-stream for jumps (reproducible, independent).
+        jump_rng = np.random.default_rng(np.random.SeedSequence(seed).spawn(1)[0])
+        equity, returns, jump_counts = self._simulate_array(
+            n_scenarios, T_months, measure, rate_paths_array, shocks, rng=jump_rng
+        )
+
+        scenario_ids, months = _month_grid(n_scenarios, T_months)
+        frame = pd.DataFrame({
+            "scenario_id": scenario_ids,
+            "month": months,
+            "equity_index": equity.reshape(-1),
+            "equity_return_1m": returns.reshape(-1),
+            "equity_jump_count": jump_counts.reshape(-1),
+            "measure": measure.value,
+        })
+        return _assert_output_measure(frame, measure, type(self).__name__)
+
+
+# ---------------------------------------------------------------------------
+# 3c. Equity-process feature flag / registry (Phase 14 Task 5)
+# ---------------------------------------------------------------------------
+#
+# The equity model is selectable behind a feature flag without disturbing the
+# GBM default. Resolution order for the active model:
+#   1. explicit `model=` argument to build_equity_process / ScenarioSet.generate
+#   2. environment variable PAR_ESG_EQUITY_MODEL
+#   3. DEFAULT_EQUITY_MODEL ("gbm")
+# Existing callers that pass nothing keep GBM, so all prior behaviour is intact.
+
+DEFAULT_EQUITY_MODEL = "gbm"
+_EQUITY_MODEL_ENV_VAR = "PAR_ESG_EQUITY_MODEL"
+
+#: Registry mapping feature-flag label -> (process_class, default_params_class).
+EQUITY_PROCESS_REGISTRY = {
+    "gbm": (GBMEquityProcess, GBMParams),
+    "jump_diffusion": (JumpDiffusionEquityProcess, JumpDiffusionParams),
+    "merton": (JumpDiffusionEquityProcess, JumpDiffusionParams),
+}
+
+
+def available_equity_models():
+    """Return the sorted set of canonical equity-model feature-flag labels."""
+    return tuple(sorted({"gbm", "jump_diffusion"}))
+
+
+def resolve_equity_model(model=None):
+    """Resolve the active equity-model label from arg, env var, then default."""
+    import os
+
+    if model is None:
+        model = os.environ.get(_EQUITY_MODEL_ENV_VAR) or DEFAULT_EQUITY_MODEL
+    label = str(model).strip().lower()
+    if label not in EQUITY_PROCESS_REGISTRY:
+        raise ValueError(
+            "unknown equity model {!r}; available: {}".format(
+                model, ", ".join(available_equity_models())
+            )
+        )
+    return label
+
+
+def build_equity_process(model=None, params=None, rate_process=None):
+    """Construct the configured equity process behind the feature flag.
+
+    Parameters
+    ----------
+    model : str or None
+        Feature-flag label ("gbm", "jump_diffusion"/"merton"). If None, falls
+        back to the PAR_ESG_EQUITY_MODEL env var then DEFAULT_EQUITY_MODEL.
+    params : GBMParams or JumpDiffusionParams, optional
+        Process parameters. A GBMParams passed to the jump-diffusion model is
+        promoted via JumpDiffusionParams.from_gbm_params so a calibrated GBM
+        block carries through as the continuous part of the jump model.
+    rate_process : rate process, optional
+        Short-rate process supplying stochastic drift.
+
+    SOA ASOP 56 §3.1.3 (process documentation); IA TAS M §3.6 (model variants).
+    """
+    label = resolve_equity_model(model)
+    process_cls, _ = EQUITY_PROCESS_REGISTRY[label]
+    return process_cls(params, rate_process=rate_process)
+
+
+class EquityForwardMartingaleValidator:
+    """Validate the Q-measure equity-forward martingale property.
+
+    Under Q, the ex-dividend discounted equity index is a martingale:
+
+        E[ D(0,t) * S(t) * exp(q_S * t) ] = S(0)   for all t,
+
+    where D(0,t) = exp(-integral_0^t r(u) du) is the stochastic money-market
+    discount built from the scenario short-rate path and q_S is the (deterministic)
+    dividend yield. This holds for GBM and, by construction of the jump
+    compensator, for the Merton jump-diffusion process — independent of vol,
+    jump intensity, jump mean, or jump vol. Provides governance evidence for the
+    Phase 14 Task 5 sophistication upgrade.
+
+    SOA ASOP 56 §3.5 (convergence / martingale evidence); IA TAS M §3.6.
+    """
+
+    REQUIRED_COLUMNS = ("scenario_id", "month", "r_short", "equity_index", "measure")
+
+    def __init__(self, dividend_yield=0.0, relative_tolerance=0.04,
+                 absolute_tolerance=0.5, max_standard_error=1.5):
+        self.dividend_yield = float(dividend_yield)
+        self.relative_tolerance = float(relative_tolerance)
+        self.absolute_tolerance = float(absolute_tolerance)
+        self.max_standard_error = float(max_standard_error)
+        for name, value in (
+            ("relative_tolerance", self.relative_tolerance),
+            ("absolute_tolerance", self.absolute_tolerance),
+            ("max_standard_error", self.max_standard_error),
+        ):
+            if not np.isfinite(value) or value <= 0.0:
+                raise ValueError("{} must be finite and positive".format(name))
+
+    def validate(self, scenario_data, curve_id="EQUITY-FWD", currency="CNY",
+                 valuation_date=None):
+        frame = pd.DataFrame(scenario_data)
+        checks = []
+        diagnostics = {}
+
+        missing = [c for c in self.REQUIRED_COLUMNS if c not in frame.columns]
+        checks.append(MartingaleEvidenceCheck(
+            "QME-EQUITY-COLUMNS", not missing, "ERROR",
+            "Scenario data must include identifiers, measure, rates, and equity_index.",
+            observed_value=float(len(missing)), threshold=0.0,
+        ))
+        if missing:
+            return self._report(curve_id, currency, valuation_date, checks, diagnostics)
+
+        try:
+            measures = {_coerce_measure(v) for v in frame["measure"].dropna().unique()}
+        except ValueError:
+            measures = set()
+        measure_q = measures == {Measure.Q}
+        checks.append(MartingaleEvidenceCheck(
+            "QME-EQUITY-MEASURE-Q", measure_q, "ERROR",
+            "Equity martingale evidence must use Q-measure scenarios only.",
+            observed_value=float(len(measures)), threshold=1.0,
+        ))
+        dup = int(frame.duplicated(["scenario_id", "month"]).sum())
+        checks.append(MartingaleEvidenceCheck(
+            "QME-EQUITY-UNIQUE-GRID", dup == 0, "ERROR",
+            "Scenario data must contain one row per scenario and month.",
+            observed_value=float(dup), threshold=0.0,
+        ))
+        if not measure_q or dup:
+            return self._report(curve_id, currency, valuation_date, checks, diagnostics)
+
+        months = np.asarray(sorted(frame["month"].astype(int).unique()), dtype=int)
+        expected = np.arange(int(months[-1]) + 1, dtype=int)
+        grid_ok = bool(np.array_equal(months, expected))
+        diagnostics["horizon_months"] = float(months[-1])
+        diagnostics["n_scenarios"] = float(frame["scenario_id"].nunique())
+        checks.append(MartingaleEvidenceCheck(
+            "QME-EQUITY-COMPLETE-GRID", grid_ok, "ERROR",
+            "Scenario months must be contiguous and start at zero.",
+            observed_value=float(len(months)), threshold=float(len(expected)),
+        ))
+        if not grid_ok:
+            return self._report(curve_id, currency, valuation_date, checks, diagnostics)
+
+        rates = frame.pivot(index="scenario_id", columns="month", values="r_short")
+        rates = rates.reindex(columns=expected).to_numpy(dtype=float)
+        equity = frame.pivot(index="scenario_id", columns="month", values="equity_index")
+        equity = equity.reindex(columns=expected).to_numpy(dtype=float)
+        finite = bool(np.all(np.isfinite(rates)) and np.all(np.isfinite(equity)))
+        checks.append(MartingaleEvidenceCheck(
+            "QME-EQUITY-FINITE-GRID", finite, "ERROR",
+            "Scenario rate and equity grids must be complete and finite.",
+            observed_value=float(np.sum(np.isfinite(equity))), threshold=float(equity.size),
+        ))
+        if not finite:
+            return self._report(curve_id, currency, valuation_date, checks, diagnostics)
+
+        dt = 1.0 / 12.0
+        discount = np.ones_like(rates)
+        if rates.shape[1] > 1:
+            discount[:, 1:] = np.exp(-np.cumsum(rates[:, :-1] * dt, axis=1))
+        div_adj = np.exp(self.dividend_yield * expected.astype(float) * dt)
+        discounted_fwd = discount * equity * div_adj  # shape (n_scen, n_months)
+
+        s0 = float(np.mean(equity[:, 0]))
+        sample_mean = np.mean(discounted_fwd, axis=0)
+        if discounted_fwd.shape[0] > 1:
+            standard_error = np.std(discounted_fwd, axis=0, ddof=1) / np.sqrt(discounted_fwd.shape[0])
+        else:
+            standard_error = np.full_like(sample_mean, self.max_standard_error * 2.0)
+        abs_err = np.abs(sample_mean - s0)
+        rel_err = abs_err / max(s0, 1.0e-12)
+        tolerance = max(self.absolute_tolerance, self.relative_tolerance * s0)
+
+        diagnostics["initial_index_level"] = s0
+        diagnostics["max_absolute_error"] = float(np.max(abs_err))
+        diagnostics["max_relative_error"] = float(np.max(rel_err))
+        diagnostics["max_standard_error"] = float(np.max(standard_error))
+        diagnostics["tolerance"] = float(tolerance)
+        checks.append(MartingaleEvidenceCheck(
+            "QME-EQUITY-FORWARD", bool(np.max(abs_err) <= tolerance), "ERROR",
+            "Average discounted ex-dividend equity must reconcile to S(0).",
+            observed_value=float(np.max(abs_err)), threshold=float(tolerance),
+        ))
+        checks.append(MartingaleEvidenceCheck(
+            "QME-EQUITY-SAMPLING-ERROR", bool(np.max(standard_error) <= self.max_standard_error),
+            "WARNING", "Equity sampling error should be small enough for reviewable evidence.",
+            observed_value=float(np.max(standard_error)), threshold=self.max_standard_error,
+        ))
+        return self._report(curve_id, currency, valuation_date, checks, diagnostics)
+
+    def _report(self, curve_id, currency, valuation_date, checks, diagnostics):
+        passed = all(c.passed or c.severity != "ERROR" for c in checks)
+        return MartingaleEvidenceReport(
+            curve_id=curve_id, currency=currency,
+            valuation_date=valuation_date or date.today(),
+            measure=Measure.Q, passed=passed,
+            checks=tuple(checks), diagnostics=diagnostics,
+        )
+
+
+# ---------------------------------------------------------------------------
 # 4. FX Spot Process
 # ---------------------------------------------------------------------------
 
@@ -3762,6 +4205,7 @@ class ScenarioSet:
         initial_curve=None,
         equity_factor=None,
         fx_factor=None,
+        equity_model=None,
         seed=42,
         scenario_set_id=None,
         model_version="v1.0.0-dev",
@@ -3829,7 +4273,10 @@ class ScenarioSet:
             raise TypeError("fx_factor must be an FXReturnFactor")
 
         hw_process = HullWhiteRateProcess(hw_params, initial_curve=initial_curve)
-        gbm_process = GBMEquityProcess(gbm_params, rate_process=hw_process)
+        equity_model_label = resolve_equity_model(equity_model)
+        gbm_process = build_equity_process(
+            equity_model_label, gbm_params, rate_process=hw_process
+        )
         fx_process = FXSpotProcess(fx_factor.params) if fx_factor is not None else None
         if parameter_snapshot is None:
             parameter_snapshot = ParameterSnapshot.from_process_params(
@@ -3851,9 +4298,17 @@ class ScenarioSet:
         z_equity = rho * z_rate + np.sqrt(1.0 - rho ** 2) * z_independent
 
         rate_paths = hw_process._simulate_array(n, T_months, measure, z_rate)
-        equity_paths, equity_returns = gbm_process._simulate_array(
-            n, T_months, measure, rate_paths, z_equity
-        )
+        if isinstance(gbm_process, JumpDiffusionEquityProcess):
+            jump_rng = np.random.default_rng(
+                np.random.SeedSequence(seed).spawn(1)[0]
+            )
+            equity_paths, equity_returns, _equity_jumps = gbm_process._simulate_array(
+                n, T_months, measure, rate_paths, z_equity, rng=jump_rng
+            )
+        else:
+            equity_paths, equity_returns = gbm_process._simulate_array(
+                n, T_months, measure, rate_paths, z_equity
+            )
         fx_paths = None
         fx_returns = None
         if fx_process is not None:
@@ -3959,6 +4414,14 @@ __all__ = [
     "HullWhiteRateProcess",
     "G2PlusRateProcess",
     "GBMEquityProcess",
+    "JumpDiffusionParams",
+    "JumpDiffusionEquityProcess",
+    "build_equity_process",
+    "resolve_equity_model",
+    "available_equity_models",
+    "EQUITY_PROCESS_REGISTRY",
+    "DEFAULT_EQUITY_MODEL",
+    "EquityForwardMartingaleValidator",
     "FXSpotProcess",
     "ScenarioSet",
     "_coerce_measure",

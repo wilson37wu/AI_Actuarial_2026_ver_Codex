@@ -427,13 +427,19 @@ Tasks for Phase 14 (one per cycle, in order):
    VR-G03/G05 is the documented credentialled-data + independent-reviewer production residual, NOT a code gap.
    ChangeRecord OWNER_REVIEW (APPROVED withheld pending independent APS X2). 16 new tests PASS; regression 217 PASS;
    compileall clean. (IA TAS M §3.6/3.6.4/3.6.5; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3; ASOP 7 §3.3)
-5. ESG sophistication: add an optional stochastic-volatility (Heston) or
-   jump-diffusion equity process behind a feature flag, with Q-measure martingale
-   tests (Phase 8 upgrade path). (SOA ESG standards; IA TAS M §3.6)
+5. ✅ DONE (2026-06-04) ESG sophistication — added optional Merton jump-diffusion equity process
+   (JumpDiffusionParams/JumpDiffusionEquityProcess) behind the PAR_ESG_EQUITY_MODEL feature flag
+   (default 'gbm'; GBM path byte-for-byte unchanged). Q-measure jump compensator -lambda*kappa applied
+   under P and Q so the risk-neutral forward is preserved exactly. Wired equity_model into
+   ScenarioSet.generate + build_equity_process/EQUITY_PROCESS_REGISTRY; jump params in ParameterSnapshot.
+   Added EquityForwardMartingaleValidator + 43 tests (tests/test_phase14_jump_diffusion.py) ALL PASS;
+   Q-measure martingale evidence constant-rate 0.64% / stochastic-HW1F 0.53% max rel err (both PASS).
+   ChangeRecord OWNER_REVIEW (production sign-off withheld — jump params educational placeholders pending
+   calibration + independent review). Audit chain intact (13->17). (SOA ASOP 56 §3.1.3/§3.4/§3.5; IA TAS M §3.6)
 6. Nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and
    reproducibility diagnostics; document model-use restrictions.
 
-**Current milestone:** Phase 14 in progress | 78/80 tasks done | Phase 14 Task 4 COMPLETE (G-06 re-validated against the Phase 13 Task 5 OOS backtest: VR-B01 → PASS; VR-B02/B03/S05 honest PARTIAL on measured annual-frequency/synthetic-data criteria; G-06 80.6%→83.9%, 26/31, gate ≥80% holds). **Phase 14 ≥90% stretch target NOT met** — the residual gap (VR-B02 historical inforce, VR-B03 daily P&L, VR-S05 sub-annual rates, VR-G03/G05 independent human reviewer) is the documented credentialled-data + human-reviewer production residual, not a code gap. Open model risks 1; mitigated/closed 8. **All 12 educational deployment gates remain cleared.** Next: Phase 14 Task 5 (ESG sophistication — optional Heston / jump-diffusion equity process behind a feature flag with Q-measure martingale tests).
+**Current milestone:** Phase 14 in progress | 79/80 tasks done | Phase 14 Task 5 COMPLETE (optional Merton jump-diffusion equity process added behind the PAR_ESG_EQUITY_MODEL feature flag; GBM remains the default and is byte-for-byte unchanged). Q-measure martingale preserved exactly by the jump compensator; 43 new tests PASS; martingale evidence constant-rate 0.64% / stochastic-HW1F 0.53% max rel err (both PASS). ChangeRecord at OWNER_REVIEW — production sign-off of the jump model withheld pending calibration of jump parameters (educational placeholders) and APS X2 independent review; the GBM default carries no such residual. Open model risks 1; mitigated/closed 8. **All 12 educational deployment gates remain cleared.** Next: Phase 14 Task 6 (nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and reproducibility diagnostics; document model-use restrictions).
 
 ---
 

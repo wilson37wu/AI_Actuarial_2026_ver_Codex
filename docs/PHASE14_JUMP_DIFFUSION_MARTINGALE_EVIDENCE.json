@@ -1,0 +1,37 @@
+{
+  "generated_at": "2026-06-04T14:30:36.666410+00:00",
+  "process": "JumpDiffusionEquityProcess (Merton jump-diffusion)",
+  "feature_flag": "PAR_ESG_EQUITY_MODEL=jump_diffusion (default gbm)",
+  "constant_rate_test": {
+    "passed": true,
+    "n_scenarios": 15000,
+    "horizon_months": 48,
+    "short_rate": 0.02,
+    "analytic_forward_E_S_T": 108.3287,
+    "empirical_E_S_T": 108.8842,
+    "diagnostics": {
+      "horizon_months": 48.0,
+      "n_scenarios": 15000.0,
+      "initial_index_level": 100.0,
+      "max_absolute_error": 0.6350339984010276,
+      "max_relative_error": 0.006350339984010276,
+      "max_standard_error": 0.4359563126880804,
+      "tolerance": 4.0
+    }
+  },
+  "stochastic_hw1f_test": {
+    "passed": true,
+    "n_scenarios": 3000,
+    "horizon_months": 36,
+    "dividend_yield": 0.025,
+    "diagnostics": {
+      "horizon_months": 36.0,
+      "n_scenarios": 3000.0,
+      "initial_index_level": 100.0,
+      "max_absolute_error": 0.5304548555226489,
+      "max_relative_error": 0.005304548555226489,
+      "max_standard_error": 0.7672366721168442,
+      "tolerance": 5.0
+    }
+  }
+}

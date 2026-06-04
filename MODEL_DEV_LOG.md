@@ -5486,3 +5486,26 @@ against the Phase 13 Task 5 out-of-sample backtest evidence; target ≥ 90% PASS
 **Blockers / Manual Review Needed:** None blocking automation. To close the ≥90% stretch and the final two governance requirements, credentialled data feeds (sub-annual CNY rates, daily P&L, historical PAR inforce) and a human APS X2 reviewer are required — both are pre-existing, documented production residuals.
 
 ---
+
+## Run 2026-06-04T14:30Z — Phase 14 Task 5 — Optional Merton jump-diffusion equity process (ESG sophistication)
+
+**Task Completed:** ESG sophistication — add an optional stochastic-volatility / jump-diffusion equity process behind a feature flag, with Q-measure martingale tests.
+
+**Accomplishments:**
+- Added `JumpDiffusionParams` and `JumpDiffusionEquityProcess` (Merton 1976 compound-Poisson jump-diffusion) to `par_model_v2/stochastic/esg_process.py`. Continuous block matches `GBMParams`; jump overlay adds compound-Poisson lognormal jumps (lambda, mu_J, sigma_J). `JumpDiffusionParams.from_gbm_params` promotes a calibrated GBM block into the jump model.
+- **Q-measure jump compensator** `-lambda*kappa`, `kappa = exp(mu_J + 0.5*sigma_J^2) - 1`, applied under BOTH P and Q so the risk-neutral forward `E[S(t+dt)/S(t)] = exp((r - q)dt)` is preserved **exactly**, independent of (sigma, lambda, mu_J, sigma_J). This is the closed-form basis for non-flaky martingale tests.
+- **Feature flag**: `PAR_ESG_EQUITY_MODEL` env var + explicit `equity_model=` arg, resolved via `resolve_equity_model` / `build_equity_process` / `EQUITY_PROCESS_REGISTRY`. Default `"gbm"`, so all existing Phase 4/8 behaviour is byte-for-byte unchanged (verified by `assert_frame_equal` regression). Wired `equity_model` into `ScenarioSet.generate`; jump params recorded in `ParameterSnapshot` for traceability.
+- Added `EquityForwardMartingaleValidator` producing reviewable Q-measure equity-forward martingale evidence (`E[D(0,t) S(t) exp(q t)] = S(0)`), reusing the existing `MartingaleEvidenceReport` dataclass.
+- **Tests**: `tests/test_phase14_jump_diffusion.py` — 43 tests, ALL PASS (params validation, output contract, measure enforcement, feature-flag resolution, GBM-default regression, snapshot traceability, and Q-measure martingale evidence on constant-rate and stochastic HW1F paths).
+- **Martingale evidence** (`docs/PHASE14_JUMP_DIFFUSION_MARTINGALE_EVIDENCE.json`): constant-rate Q forward max rel err 0.64% (empirical E[S(T)] reconciles to analytic forward); stochastic HW1F Q forward max rel err 0.53%. Both PASS.
+- **Governance**: `ChangeRecord` (code_change) → OWNER_REVIEW; production sign-off of the jump model withheld pending calibration to option-implied / historical jump data + APS X2 independent review (jump params are educational PLACEHOLDERS). 4 audit entries appended (governance + validation + martingale evidence + sign-off); audit hash chain integrity verified (13 → 17 entries).
+
+**Regression:** new JD suite 43 PASS; measure-enforcement 30 PASS; esg_process core (GBM, ScenarioSet.generate, QMeasure, RiskFreeCurve, FX, correlation, P-backtest, snapshot, regional equity, G2++) PASS; esg_adapter + phase14_gbm_calibration 95 PASS; IA revalidation 16 PASS; governance + independent review 71 PASS. `compileall` clean. (HullWhite class untouched; not re-run here due to sandbox time budget.)
+
+**Next Step:** Phase 14 Task 6 — Nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and reproducibility diagnostics; document model-use restrictions.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.1.3/§3.4/§3.5: addressed — new stochastic process documented (process equations, measure drift, compensator), convergence/martingale evidence produced.
+- IA TAS M §3.6: addressed — model variant added with traceable parameter snapshot, reviewable martingale evidence, and change record.
+
+---
