@@ -4,6 +4,55 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-04T00:58:00Z - Phase 12: Governance, Calibration, and Educational Packaging
+
+**Task Completed:** Add model limitation cards for every ESG and liability module.
+
+**Context:** The latest local state already had Phase 12 Task 1 marked complete
+and untracked calibration scripts present under `scripts/calibration/`, so this
+cycle continued with Phase 12 Task 2.
+
+**Accomplishments:**
+- Added `par_model_v2/governance/limitation_cards.py` with `ModelLimitationCard`
+  and `LimitationCardReport` for structured component-level limitation
+  disclosure.
+- Covered 6 ESG components: HW1F, G2++, regional equity GBM, FX translation,
+  static correlation, and P-measure backtest scaffold.
+- Covered 5 Hong Kong liability components: cash dividend mechanics,
+  reversionary bonus mechanics, declaration hooks, asset-share support tests,
+  and liability reporting views.
+- Added JSON/Markdown report writers and area/severity filtering.
+- Exported the limitation-card API through `par_model_v2.governance`.
+- Added `tests/test_limitation_cards.py` and
+  `docs/PHASE12_MODEL_LIMITATION_CARDS.md`.
+- Updated `.claude-dev/MODEL_DEV_STATE.json`: Task 2 -> completed; Task 3
+  (guided examples) -> in_progress.
+
+**Validation:**
+- `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts` completed successfully.
+- Direct smoke import for `build_limitation_card_report()` passed: 6 ESG cards,
+  5 liability cards, 2 open critical limitations.
+- `pytest` remains unavailable in the reachable embedded Python, and the same
+  interpreter lacks `numpy`; full runtime tests remain blocked in this sandbox.
+
+**Next Step:** Add guided examples for pricing, valuation, TVOG, ALM, stress,
+and reporting close.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 Sections 3.5-3.6: component-level limitations and unsuitable uses
+  are explicit.
+- IA TAS M Sections 3.5-3.6: every card carries owner role, mitigation, and
+  required upgrade for sign-off traceability.
+- ERM: critical ESG calibration and declaration limitations remain visible as
+  open governance items.
+
+**Delivery:**
+- Local workspace updated. In-place git commit remains blocked by stale
+  `.git/index.lock` / `.git/HEAD.lock` mount issue; use the documented `/tmp`
+  clone push pattern once this mixed local/remote worktree is reconciled.
+
+---
+
 ## Run 2026-06-04T12:00:00Z — Phase 11: 100,000-Policy Processing and Reporting Cycle
 
 **Task Completed:** Add performance benchmarks and memory profiling.
@@ -4844,3 +4893,31 @@ failed, so no new model work was performed.
 **Delivery:**
 - Committing and pushing from /tmp/cal_dev_clone via fresh clone (virtiofs no-delete mount workaround).
 
+---
+
+## Run 2026-06-04T06:00Z — Phase 12: Governance, Calibration, and Educational Packaging
+
+**Task Completed:** Add guided examples for pricing, valuation, TVOG, ALM, stress, and reporting close
+
+**Context:** Git state resolved at startup: remote (GitHub) was 2 commits ahead of local
+(Phase 12 Task 2 limitation cards were local-only). Pushed limitation cards first via
+/tmp clone workaround (commit 6890984), then proceeded to Phase 12 Task 3.
+
+**Accomplishments:**
+
+- Created `par_model_v2/examples/` package with `guided_examples.py` (750 lines):
+  - **Section 1: `example_fixed_income_pricing()`** — USD RiskFreeCurve (Phase 7 starter),
+    FixedIncomeInstrument pricing (Phase 9), modified duration, +100 bps rate shock, convexity
+    cross-check vs duration approximation, liability annuity-certain PV
+  - **Section 2: `example_hk_liability_valuation()`** — HK cash dividend annual schedule, HK
+    reversionary bonus schedule and guarantee split (guaranteed%), asset-share support test for
+    both product lines (Phase 10)
+  - **Section 3: `example_tvog_computation()`** — 1,000 Q-measure ScenarioSet generation, TVOG
+    computation at 3.5% and 3.0% deterministic rate (−50 bps sensitivity), 500 vs 1,000
+    scenario convergence evidence (ASOP 56 §3.5)
+  - **Section 4: `example_alm_projection()`** — SAA 40% Govt/25% Credit/25% Equity/10% Cash,
+    100%-Cash starting portfolio (VR-U02 bug-fix verification), 12-month DynamicALMEngine
+    simulation, per-period weight table and transaction costs
+  - **Section 5: `example_stress_testing()`** — Phase 9 asset-class stress scenarios, worst-case
+    scenario drill-down with top-5 instruments, Phase 8 multi-market correlation PSD validation
+  - **Section 6: `example_reportin
