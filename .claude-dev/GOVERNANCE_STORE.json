@@ -387,6 +387,46 @@
         }
       ],
       "phase": "Phase 13: Production Readiness and Live Market Integration"
+    },
+    {
+      "record_id": "592109f8874f461d8137611cb7e14bba",
+      "created_at": "2026-06-04T10:30:44+00:00",
+      "title": "Runtime P/Q measure enforcement in all simulation paths (G-05 / MR-004) \u2014 Phase 14 Task 1",
+      "description": "Added a runtime measure-enforcement guard (_enforce_simulation_measure) invoked at the entry of every scenario-generation execution path \u2014 HullWhiteRateProcess.simulate, G2PlusRateProcess.simulate, GBMEquityProcess.simulate, FXSpotProcess.simulate, and ScenarioSet.generate \u2014 plus a post-condition (_assert_output_measure) verifying the output measure stamp. Each generator now declares an explicit SUPPORTED_MEASURES contract. A new MeasureEnforcementError (ValueError subclass) is raised on unsupported or mismatched measures. Closes G-05 at educational level and moves MR-004 to MITIGATED.",
+      "change_type": "MODEL_CODE_CONTROL",
+      "affected_components": [
+        "par_model_v2/stochastic/esg_process.py",
+        "tests/test_measure_enforcement.py"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 \u00a73.1.3",
+        "IA TAS M \u00a73.4"
+      ],
+      "before_snapshot": {
+        "measure_enforcement": "Soft coercion (_coerce_measure) at simulate() entry; hard guards only at consumers (RiskMetrics=P, TVOGEngine=Q). No producer-side runtime execution evidence (env lacked numpy/scipy/pandas/pytest)."
+      },
+      "after_snapshot": {
+        "measure_enforcement": "Runtime guard + SUPPORTED_MEASURES contract + output-stamp post-condition in all 5 generation paths; 30 dedicated runtime tests PASS with genuine execution evidence."
+      },
+      "impact_assessment": "Eliminates the residual risk of running a generator under an unintended measure and of silent output mis-stamping. No change to numerical results for valid P/Q requests (reproducibility preserved; verified by existing seed-stability tests).",
+      "quantitative_impact": {
+        "valid_path_results": "unchanged",
+        "new_runtime_tests": 30,
+        "tests_passing": true
+      },
+      "status": "IMPLEMENTED",
+      "author": "Automated model-dev cycle (Claude)",
+      "peer_reviewer": "PENDING_INDEPENDENT_REVIEW",
+      "assumption_owner": "Model Developer",
+      "sign_off_history": [
+        {
+          "role": "Model Developer",
+          "decision": "IMPLEMENTED",
+          "at": "2026-06-04T10:30:44+00:00",
+          "note": "Runtime execution evidence: docs/G05_RUNTIME_EVIDENCE_2026-06-04T103044Z.json (30 passed)."
+        }
+      ],
+      "phase": "Phase 14: Production Residual Closure and Model Sophistication"
     }
   ],
   "risk_register": [
@@ -443,16 +483,16 @@
       "title": "P/Q measure not enforced at runtime",
       "description": "Prior to Phase 2, the codebase did not enforce or document the distinction between real-world (P) and risk-neutral (Q) scenario sets. Mixing measures is a critical actuarial error that invalidates both VaR/ES and TVOG outputs.",
       "category": "model_error",
-      "likelihood": "LOW",
+      "likelihood": "VERY_LOW",
       "impact": "CRITICAL",
-      "overall_rating": "CRITICAL",
+      "overall_rating": "LOW",
       "owner": "Model Developer",
-      "mitigation": "Measure enum implemented in esg_process.py (Phase 2, Task 1). LossDistribution enforces Measure.P for VaR/ES (risk_metrics.py). Remaining gap: simulate() stubs do not yet validate measure at execution.",
-      "mitigation_status": "IN_PROGRESS",
+      "mitigation": "Measure enum implemented in esg_process.py (Phase 2). LossDistribution enforces Measure.P for VaR/ES (risk_metrics.py); TVOGEngine enforces Measure.Q (tvog.py). Phase 14 Task 1: runtime guard _enforce_simulation_measure() now validates the requested measure against each generator's declared SUPPORTED_MEASURES in every simulate()/generate() execution path (HullWhite, G2++, GBM, FX, ScenarioSet), and _assert_output_measure() verifies the output measure stamp. 30 dedicated runtime tests (tests/test_measure_enforcement.py) PASS with genuine runtime execution evidence (numpy/scipy/pandas/pytest available in automation sandbox).",
+      "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.1.3; IA TAS M \u00a73.4",
       "created_at": "2026-05-18T02:18:55.749025+00:00",
-      "updated_at": "2026-05-18T02:18:55.749025+00:00",
-      "notes": "Critical Deviation D-04 in MODEL_AUDIT_REPORT.md. Partially remediated."
+      "updated_at": "2026-06-04T10:30:44+00:00",
+      "notes": "Critical Deviation D-04 in MODEL_AUDIT_REPORT.md. Partially remediated. | Phase 14 Task 1 (G-05): runtime measure enforcement added to all simulate()/generate() paths; runtime execution evidence attached (docs/G05_RUNTIME_EVIDENCE_2026-06-04T103044Z.json). Residual: production sign-off requires an independent reviewer to confirm consumer coverage, hence MITIGATED not fully CLOSED."
     },
     {
       "risk_id": "MR-005",

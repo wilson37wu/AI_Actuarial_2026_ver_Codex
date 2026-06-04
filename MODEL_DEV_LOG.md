@@ -5342,3 +5342,34 @@ genuinely independent human APS X2 reviewer.
 **Delivery:** `git push origin main` — see commit recorded below.
 
 ---
+
+## Run 2026-06-04T10:30Z — Phase 14 Task 1
+
+**Task Completed:** Close G-05 — enforce P/Q measure at runtime in every `simulate()` execution path
+
+**Accomplishments:**
+- Added `MeasureEnforcementError` plus runtime guard `_enforce_simulation_measure()` and
+  post-condition `_assert_output_measure()` in `par_model_v2/stochastic/esg_process.py`.
+- Declared an explicit `SUPPORTED_MEASURES` contract on `HullWhiteRateProcess`,
+  `G2PlusRateProcess`, `GBMEquityProcess`, `FXSpotProcess`, and `ScenarioSet`.
+- Wired the guard into all five generation paths (4 process `simulate()` + `ScenarioSet.generate`),
+  with the output-stamp post-condition verifying every returned frame.
+- Added `tests/test_measure_enforcement.py` (30 tests) — **30 passed**. This is the first genuine
+  **runtime execution** evidence for G-05; the historical blocker (no numpy/pandas/scipy/pytest in
+  the reachable interpreter) does not apply in the automation sandbox.
+- Regression: esg_process (79), tvog (28, incl. VR-T01 P-rejection), risk_metrics (46),
+  schema_compatibility / integration_e2e / esg_adapter, governance / ia_validation /
+  phase13_ia_validation (129) — all PASS. Static `verify_measure_guards.py` — PASS.
+- Governance: MR-004 → **MITIGATED**; ChangeRecord `592109f8` (IMPLEMENTED) added;
+  deployment checklist G-05 → **CLEARED (educational)**.
+- Evidence: `docs/G05_RUNTIME_ENFORCEMENT_PHASE14.md`, `docs/G05_RUNTIME_EVIDENCE_2026-06-04T103044Z.json`.
+
+**Next Step:** Phase 14 Task 2 — close G-03 (calibrate GBM equity drift/vol/ERP and correlations
+to live educational-proxy CNY/HK equity data; record ChangeRecord; move MR-002 → MITIGATED).
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.1.3 (measure appropriateness): addressed — runtime enforcement in all producer paths.
+- IA TAS M §3.4 (segregation of bases): addressed — P/Q cannot be mixed or mis-stamped at runtime.
+- Validation framework: 30 new runtime tests; full regression green.
+
+---

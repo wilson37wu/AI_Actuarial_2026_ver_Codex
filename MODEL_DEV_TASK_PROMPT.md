@@ -407,7 +407,7 @@ educational level, drive the IA TAS M suite above 90% PASS, and add at least one
 ESG sophistication upgrade with martingale evidence.
 
 Tasks for Phase 14 (one per cycle, in order):
-1. Close G-05 — enforce P/Q measure at runtime in every `simulate()` execution
+1. ✅ DONE (2026-06-04) Close G-05 — enforce P/Q measure at runtime in every `simulate()` execution
    path; add guard + tests; move MR-004 to MITIGATED/CLOSED. (SOA ASOP 56 §3.1.3; IA TAS M §3.4)
 2. Close G-03 — calibrate GBM equity drift/vol/ERP and correlations to live
    (educational-proxy) CNY/HK equity data; record ChangeRecord; move MR-002 to MITIGATED. (SOA ASOP 56 §3.4)
@@ -421,10 +421,7 @@ Tasks for Phase 14 (one per cycle, in order):
 6. Nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and
    reproducibility diagnostics; document model-use restrictions.
 
-**Current milestone:** 13/13 phases complete (Phases 1–13) | 74/74 tasks done |
-10/10 deployment gates cleared (educational) | 0 open change records |
-GovernanceStore integrity verified | READY_FOR_EDUCATIONAL_USE. Production
-residuals tracked into Phase 14: G-03, G-05, MR-009, and a genuine human APS X2 reviewer.
+**Current milestone:** Phase 14 in progress | 75/80 tasks done | Phase 14 Task 1 COMPLETE (G-05 cleared educational; MR-004 → MITIGATED; runtime measure enforcement in all simulate()/generate() paths with 30 passing runtime tests). 11/12 educational deployment gates cleared. Production residuals remaining: G-03 (GBM live calibration), MR-009 (guided_examples API migration), and a genuine human APS X2 reviewer. Next: Phase 14 Task 2 (G-03).
 
 ---
 

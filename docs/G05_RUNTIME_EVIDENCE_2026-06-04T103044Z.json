@@ -1,0 +1,20 @@
+{
+  "gate": "G-05",
+  "risk": "MR-004",
+  "phase": "Phase 14 Task 1",
+  "evidence_type": "RUNTIME_EXECUTION",
+  "generated_at_utc": "2026-06-04T10:30:46.219077+00:00",
+  "interpreter": "3.10.12",
+  "platform": "Linux-6.8.0-106-generic-x86_64-with-glibc2.35",
+  "dependencies": {
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "pandas": "2.3.3",
+    "pytest": "9.0.3"
+  },
+  "test_module": "tests/test_measure_enforcement.py",
+  "pytest_returncode": 0,
+  "pytest_summary": "30 passed in 3.96s",
+  "status": "PASS",
+  "note": "First genuine runtime execution evidence for G-05. Prior runs were blocked because the reachable interpreter lacked numpy/pandas/scipy/pytest; this Linux automation sandbox provides them, so the runtime measure guards (_enforce_simulation_measure / _assert_output_measure) are now executed and verified."
+}

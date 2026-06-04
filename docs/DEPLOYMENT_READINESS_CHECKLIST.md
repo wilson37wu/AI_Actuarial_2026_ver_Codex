@@ -85,14 +85,14 @@ Gates are listed in dependency order. Completing them out of sequence risks rewo
 | G-02 | HW1F calibrated to CNY swaption surface | ✅ CLEARED (educational) | All regulatory use cases |
 | G-03 | GBM parameters calibrated to CNY market | ❌ OPEN | Pricing, capital |
 | G-04 | Dynamic lapse implemented and calibrated | ✅ CLEARED (educational) | Pricing, MCEV |
-| G-05 | P/Q measure runtime enforcement verified | ⚠️ IN PROGRESS | Capital, MCEV |
+| G-05 | P/Q measure runtime enforcement verified | ✅ CLEARED (educational) | Capital, MCEV |
 | G-06 | IA validation suite ≥ 80% PASS | ✅ CLEARED (educational, 80.6%) | All regulatory use cases |
 | G-07 | MR-001 ChangeRecord signed off | ✅ CLEARED (educational) | Regulatory reserve |
 | G-08 | Independent model review (APS X2) | ✅ CLEARED (educational) | Regulatory reserve, pricing, MCEV |
 | G-09 | Backtesting with live CNY market data | ✅ CLEARED (educational) | Capital adequacy |
 | G-10 | MR-005 formally closed in risk register | ✅ CLEARED | — (admin only) |
 
-**Gates cleared (educational):** G-01, G-02, G-04, G-06, G-07, G-08, G-09, G-10, G-11, G-12 — see MODEL_DEV_STATE.json for the authoritative tally. **Remaining production residuals:** G-03 (GBM live calibration), G-05 (P/Q runtime enforcement), and a genuinely independent human APS X2 reviewer.  
+**Gates cleared (educational):** G-01, G-02, G-04, G-06, G-07, G-08, G-09, G-10, G-11, G-12 — see MODEL_DEV_STATE.json for the authoritative tally. **Remaining production residuals:** G-03 (GBM live calibration) and a genuinely independent human APS X2 reviewer. G-05 cleared at educational level on 2026-06-04 (Phase 14 Task 1).  
 **Estimated effort to full clearance:** 6–10 weeks (assuming parallel work streams on G-02 / G-03 / G-04)
 
 ### Critical Path Summary
@@ -318,7 +318,7 @@ Option B is recommended as it captures the most economically relevant lapse driv
 
 ### G-05 — P/Q Measure Runtime Enforcement
 
-**Status:** ⚠️ IN PROGRESS  
+**Status:** ✅ CLEARED (educational) — Phase 14 Task 1, 2026-06-04  
 **Blocking Risk:** MR-004 (CRITICAL)  
 **Standard:** SOA ASOP 56 §3.1.3; PARAMETER_CALIBRATION_METHODOLOGY.md §2  
 **Responsible Owner:** Model Developer  
@@ -329,6 +329,10 @@ Option B is recommended as it captures the most economically relevant lapse driv
 #### Problem Statement
 
 The core runtime guards are now implemented at the two material consumers: `TVOGEngine` rejects non-`Q` scenario sets and `RiskMetrics` rejects non-`P` loss distributions. Static governance evidence was captured on 2026-05-24 via [`docs/G05_MEASURE_GUARD_EVIDENCE.md`](./G05_MEASURE_GUARD_EVIDENCE.md) and `scripts/verify_measure_guards.py`. Follow-up runtime attempts confirmed that Python is reachable in this workspace, but the only reachable interpreter still lacks `numpy`, `pandas`, `scipy`, and `pytest`, so no fresh runtime execution evidence has been attached to G-05 yet. To reduce ambiguity in later maintenance runs, the repository now also includes `scripts/check_validation_environment.py` and archived probe artifacts through `docs/G05_ENVIRONMENT_PROBE_2026-05-26T053325Z.json`. The latest probe confirms `pip` is available in the reachable interpreter, but no workspace offline wheelhouse is present. The repository root still carries `requirements.txt` and `requirements-dev.txt` as the dependency contract for the next validation-enabled environment.
+
+#### Closure Note (2026-06-04, Phase 14 Task 1)
+
+Runtime enforcement is now applied at the **producer** side in addition to the consumers. `_enforce_simulation_measure()` validates the requested measure against each generator's declared `SUPPORTED_MEASURES` contract at the entry of every `simulate()` / `generate()` path (HullWhite, G2++, GBM, FX, ScenarioSet), and `_assert_output_measure()` verifies the output measure stamp; unsupported or mismatched measures raise `MeasureEnforcementError`. The historical blocker (reachable interpreter lacked numpy/pandas/scipy/pytest) no longer applies in the automation sandbox: 30 dedicated runtime tests in `tests/test_measure_enforcement.py` execute and **PASS**, captured as genuine runtime execution evidence in `docs/G05_RUNTIME_EVIDENCE_2026-06-04T103044Z.json`. MR-004 moved to **MITIGATED**. Residual for full production closure: independent reviewer confirmation of complete consumer coverage.
 
 #### Verification Criteria (all must pass)
 

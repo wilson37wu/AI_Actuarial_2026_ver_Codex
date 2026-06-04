@@ -48,6 +48,88 @@ def _coerce_measure(measure):
         ) from exc
 
 
+class MeasureEnforcementError(ValueError):
+    """Raised when a simulation path is asked to run under an unsupported measure.
+
+    Enforces the P (real-world) / Q (risk-neutral) segregation contract at
+    runtime. Mixing measures is a critical actuarial error that invalidates both
+    VaR/ES (P) and TVOG/MCEV (Q) outputs. Closes governance gate G-05 / risk
+    MR-004.
+
+    SOA ASOP 56 ss3.1.3 (measure appropriateness for model purpose);
+    IA TAS M ss3.4 (consistency and segregation of bases).
+    """
+
+
+def _enforce_simulation_measure(process, measure):
+    """Runtime guard: coerce and enforce the measure for a simulation path.
+
+    Unlike the soft ``_coerce_measure`` helper -- which only checks that the
+    value is a member of the Measure enum -- this guard additionally validates
+    the requested measure against the measures the calling process is permitted
+    to run under (its ``SUPPORTED_MEASURES``). It is the single runtime
+    entry-point used by every ``simulate()`` / ``generate()`` path, so the P/Q
+    contract cannot be silently bypassed.
+
+    ``process`` may be an instance, a class (for classmethods), or a string
+    label.
+
+    SOA ASOP 56 ss3.1.3; IA TAS M ss3.4.
+    """
+    if isinstance(process, type):
+        label = process.__name__
+        supported = getattr(process, "SUPPORTED_MEASURES", (Measure.P, Measure.Q))
+    elif isinstance(process, str):
+        label = process
+        supported = (Measure.P, Measure.Q)
+    else:
+        label = type(process).__name__
+        supported = getattr(process, "SUPPORTED_MEASURES", (Measure.P, Measure.Q))
+
+    measure = _coerce_measure(measure)
+    supported = tuple(_coerce_measure(m) for m in supported)
+    if not supported:
+        raise MeasureEnforcementError(
+            "{}: no supported measures are declared; cannot run simulation "
+            "(SOA ASOP 56 ss3.1.3; IA TAS M ss3.4).".format(label)
+        )
+    if measure not in supported:
+        raise MeasureEnforcementError(
+            "{}: measure {!r} is not permitted; supported measures are {}. "
+            "Mixing P (real-world) and Q (risk-neutral) bases invalidates "
+            "VaR/ES and TVOG/MCEV outputs "
+            "(SOA ASOP 56 ss3.1.3; IA TAS M ss3.4).".format(
+                label, measure.value, [m.value for m in supported]
+            )
+        )
+    return measure
+
+
+def _assert_output_measure(frame, measure, process_label):
+    """Runtime post-condition: every output row must carry the requested measure.
+
+    Guards against silent mis-stamping inside a simulation path. Returns the
+    frame unchanged when the stamp is uniform and matches ``measure``.
+
+    SOA ASOP 56 ss3.1.3; IA TAS M ss3.4.
+    """
+    measure = _coerce_measure(measure)
+    if "measure" not in getattr(frame, "columns", ()):
+        raise MeasureEnforcementError(
+            "{}: simulation output is missing the 'measure' column "
+            "(SOA ASOP 56 ss3.1.3; IA TAS M ss3.4).".format(process_label)
+        )
+    stamped = set(frame["measure"].dropna().unique())
+    if stamped != {measure.value}:
+        raise MeasureEnforcementError(
+            "{}: output measure stamp {} does not match the requested measure "
+            "{!r} (SOA ASOP 56 ss3.1.3; IA TAS M ss3.4).".format(
+                process_label, sorted(stamped), measure.value
+            )
+        )
+    return frame
+
+
 def _validate_simulation_dimensions(n_scenarios, T_months):
     """Validate common scenario generation dimensions."""
     if int(n_scenarios) != n_scenarios or n_scenarios <= 0:
@@ -3156,6 +3238,9 @@ class HullWhiteRateProcess:
     Use Measure.P for ALM/VaR; Measure.Q for TVOG/MCEV.
     """
 
+    #: Measures this process is permitted to simulate under (G-05 / MR-004).
+    SUPPORTED_MEASURES = (Measure.P, Measure.Q)
+
     def __init__(self, params=None, initial_curve=None):
         self.params = params if params is not None else HullWhiteParams()
         self.initial_curve = (
@@ -3233,7 +3318,7 @@ class HullWhiteRateProcess:
 
         SOA ASOP 56 ss3.1.3, ss3.4.
         """
-        measure = _coerce_measure(measure)
+        measure = _enforce_simulation_measure(self, measure)
         _validate_simulation_dimensions(n_scenarios, T_months)
         n_scenarios = int(n_scenarios)
         T_months = int(T_months)
@@ -3255,7 +3340,7 @@ class HullWhiteRateProcess:
             zcb_1y = np.minimum(zcb_1y, 1.0)
             zcb_10y = np.minimum(zcb_10y, 1.0)
 
-        return pd.DataFrame({
+        frame = pd.DataFrame({
             "scenario_id": scenario_ids,
             "month": months,
             "r_short": flat_rates,
@@ -3263,6 +3348,7 @@ class HullWhiteRateProcess:
             "zcb_10y": zcb_10y,
             "measure": measure.value,
         })
+        return _assert_output_measure(frame, measure, type(self).__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -3278,6 +3364,9 @@ class G2PlusRateProcess:
     rates. Under P-measure, the same two factors mean-revert around an
     educational long-run rate with placeholder market-price-of-risk terms.
     """
+    #: Measures this process is permitted to simulate under (G-05 / MR-004).
+    SUPPORTED_MEASURES = (Measure.P, Measure.Q)
+
 
     def __init__(self, params=None, initial_curve=None):
         self.params = params if params is not None else G2PlusParams()
@@ -3364,7 +3453,7 @@ class G2PlusRateProcess:
 
     def simulate(self, n_scenarios, T_months, measure, seed=42, cap_zcb_at_par=True):
         """Simulate v1-compatible short-rate paths plus G2++ factor diagnostics."""
-        measure = _coerce_measure(measure)
+        measure = _enforce_simulation_measure(self, measure)
         _validate_simulation_dimensions(n_scenarios, T_months)
         n_scenarios = int(n_scenarios)
         T_months = int(T_months)
@@ -3395,7 +3484,7 @@ class G2PlusRateProcess:
             zcb_1y = np.minimum(zcb_1y, 1.0)
             zcb_10y = np.minimum(zcb_10y, 1.0)
 
-        return pd.DataFrame({
+        frame = pd.DataFrame({
             "scenario_id": scenario_ids,
             "month": months,
             "r_short": flat_rates,
@@ -3405,6 +3494,7 @@ class G2PlusRateProcess:
             "g2pp_y": flat_y,
             "measure": measure.value,
         })
+        return _assert_output_measure(frame, measure, type(self).__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -3417,6 +3507,9 @@ class GBMEquityProcess:
     Measure.Q: drift = r(t) - q_S  (TVOG use)
     Measure.P: drift = r(t) + ERP - q_S  (ALM/ERM use)
     """
+    #: Measures this process is permitted to simulate under (G-05 / MR-004).
+    SUPPORTED_MEASURES = (Measure.P, Measure.Q)
+
 
     def __init__(self, params=None, rate_process=None):
         self.params = params if params is not None else GBMParams()
@@ -3465,7 +3558,7 @@ class GBMEquityProcess:
 
         SOA ASOP 56 ss3.1.3, ss3.4.
         """
-        measure = _coerce_measure(measure)
+        measure = _enforce_simulation_measure(self, measure)
         _validate_simulation_dimensions(n_scenarios, T_months)
         n_scenarios = int(n_scenarios)
         T_months = int(T_months)
@@ -3486,13 +3579,14 @@ class GBMEquityProcess:
         )
 
         scenario_ids, months = _month_grid(n_scenarios, T_months)
-        return pd.DataFrame({
+        frame = pd.DataFrame({
             "scenario_id": scenario_ids,
             "month": months,
             "equity_index": equity.reshape(-1),
             "equity_return_1m": returns.reshape(-1),
             "measure": measure.value,
         })
+        return _assert_output_measure(frame, measure, type(self).__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -3501,6 +3595,9 @@ class GBMEquityProcess:
 
 class FXSpotProcess:
     """Lognormal FX spot process for Phase 8 currency translation."""
+    #: Measures this process is permitted to simulate under (G-05 / MR-004).
+    SUPPORTED_MEASURES = (Measure.P, Measure.Q)
+
 
     def __init__(self, params=None):
         self.params = params if params is not None else FXParams()
@@ -3538,7 +3635,7 @@ class FXSpotProcess:
 
     def simulate(self, n_scenarios, T_months, measure, seed=42):
         """Simulate monthly FX spot paths as a DataFrame."""
-        measure = _coerce_measure(measure)
+        measure = _enforce_simulation_measure(self, measure)
         _validate_simulation_dimensions(n_scenarios, T_months)
         n_scenarios = int(n_scenarios)
         T_months = int(T_months)
@@ -3548,13 +3645,14 @@ class FXSpotProcess:
         spot, returns = self._simulate_array(n_scenarios, T_months, measure, shocks)
 
         scenario_ids, months = _month_grid(n_scenarios, T_months)
-        return pd.DataFrame({
+        frame = pd.DataFrame({
             "scenario_id": scenario_ids,
             "month": months,
             "fx_rate": spot.reshape(-1),
             "fx_return_1m": returns.reshape(-1),
             "measure": measure.value,
         })
+        return _assert_output_measure(frame, measure, type(self).__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -3584,6 +3682,9 @@ class ScenarioSet:
     SOA ASOP 56 ss3.5 -- scenario count adequacy and convergence.
     ESG_PROCESS_DOCUMENTATION.md ss6 -- specification.
     """
+    #: Measures this process is permitted to simulate under (G-05 / MR-004).
+    SUPPORTED_MEASURES = (Measure.P, Measure.Q)
+
 
     data: pd.DataFrame
     n_scenarios: int
@@ -3714,7 +3815,7 @@ class ScenarioSet:
 
         SOA ASOP 56 ss3.5 -- convergence validation.
         """
-        measure = _coerce_measure(measure)
+        measure = _enforce_simulation_measure(cls, measure)
         _validate_simulation_dimensions(n, T_months)
         n = int(n)
         T_months = int(T_months)
@@ -3789,6 +3890,7 @@ class ScenarioSet:
             data["fx_rate"] = fx_paths.reshape(-1)
             data["fx_return_1m"] = fx_returns.reshape(-1)
             data["fx_pair"] = fx_factor.pair
+        _assert_output_measure(data, measure, "ScenarioSet")
         metadata = ScenarioMetadata.from_generation(
             n_scenarios=n,
             T_months=T_months,
@@ -3814,6 +3916,7 @@ class ScenarioSet:
 
 __all__ = [
     "Measure",
+    "MeasureEnforcementError",
     "CalibrationSource",
     "CalibrationFieldSpec",
     "CalibrationDataInterface",
