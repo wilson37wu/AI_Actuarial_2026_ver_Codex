@@ -140,3 +140,10 @@ so any **in-place** `git add` / `git commit` fails ("Unable to create
 
 **Working push pattern (use this in future automated runs until the mount is
 fixed or the st
+## Update 2026-06-04T05:30Z — push healthy (Phase 13 Task 3)
+
+GitHub push SUCCEEDED this run via the /tmp-clone pattern: `3a2f015..5fcea8e main -> main`
+(Phase 13 Task 3 — MR-001 discount-rate change, G-01/G-07). No pause required. In-place edits
+in the mounted worktree remain blocked by the no-delete virtiofs mount, and a file-tool Edit to
+`monthly_projection.py` corrupted a line on disk this run, so source edits were made in the clone
+and `cp`-synced back to the mounted worktree (cp preserves integrity; the in-place editor does not).
