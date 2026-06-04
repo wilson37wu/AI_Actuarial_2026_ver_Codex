@@ -47,7 +47,7 @@ ASOP 25 governs the use of credible data in setting actuarial assumptions. Full 
 | Assumption | Data Source Documented | Credibility Assessed | Blending Method | Expert Judgment Documented | Status |
 |------------|----------------------|---------------------|-----------------|--------------------------|--------|
 | Mortality | ❌ Absent | ❌ Absent | ❌ Absent | ❌ Absent | 🔴 Non-compliant |
-| Lapse | ❌ Absent | ❌ Absent | ❌ Absent | ❌ Absent | 🔴 Non-compliant |
+| Lapse | ✅ Implemented | 🟠 Synthetic study | ✅ Documented | ✅ Non-FLAT | 🟢 Compliant (educational) |
 | Expense | ❌ Absent | N/A | N/A | ❌ Absent | 🟠 Partial |
 | Bonus rates | ❌ Absent | N/A | N/A | ❌ Absent | 🟠 Partial |
 | Mortality improvement | ❌ Not in model | ❌ Not in model | ❌ Not in model | ❌ Not in model | 🔴 Non-compliant |
@@ -166,19 +166,35 @@ def _base_annual_lapse(policy_year: int) -> float:
 
 **Assessment:** Values are broadly plausible for Chinese life insurance market but entirely undocumented.
 
-#### 3.2.3 Dynamic Lapse — Critical Gap
+#### 3.2.3 Dynamic Lapse — Implemented (Phase 13, G-04)
 
-**Current state:** No dynamic lapse function is implemented. Lapse rates are fixed regardless of economic environment.
+**Current state (2026-06):** A calibrated dynamic lapse function is **implemented**
+in `par_model_v2/projection/dynamic_lapse.py` and wired into the projection engine
+(`monthly_projection.dynamic_annual_lapse` and the `dynamic_lapse=` /`market_rate=`
+arguments of `project_liability_cashflows`). The legacy static table is retained as
+the duration *base* and remains the default; dynamic lapse is opt-in and reduces to
+the static behaviour when `market_rate = credited_rate`.
 
 **Why this matters for TVOG:** The TVOG (Time Value of Options and Guarantees) calculation is specifically sensitive to dynamic lapse. When interest rates rise, guaranteed-rate policies become less attractive and policyholders lapse at higher rates. When rates fall, guaranteed policies become more valuable and lapses decline. Ignoring this creates a systematic understatement of TVOG.
 
-**Industry standard:** For TVOG-producing models, a dynamic lapse overlay is required. Standard form:
+**Implemented functional form** (blends Options A+B+C of the G-04 design note;
+`s = market_rate - credited_rate`):
 
 ```
-lapse_dynamic(t) = lapse_base * exp(β * (guaranteed_rate - market_rate))
+base(t)     = duration base annual lapse (legacy static schedule)      [Opt C]
+mult(s)     = 1 + beta * (2/pi) * arctan(s / kappa)                    [Opt A]
+shock(s)    = shock_max / (1 + exp(-(s - tau) / width))                [Opt B]
+lapse(t, s) = clip(base(t) * mult(s) + shock(s), floor, cap)
 ```
 
-where β is typically calibrated to 0.5–2.0 depending on product.
+**Calibration basis (G-11):** parameters `(beta, kappa, shock_max, tau)` are fitted
+by exposure-weighted non-linear least squares to a **synthetic HK PAR endowment lapse
+experience study** (`build_hk_par_experience_study`; educational reference table — a
+credible company/industry experience study must be substituted before production use).
+Calibrated values: beta ≈ 0.65, kappa ≈ 0.025, shock_max ≈ 0.18, tau ≈ 0.030,
+width = 0.010 (fixed); fit R² ≈ 0.9999, RMSE ≈ 0.0006. Full diagnostics in
+`docs/PHASE13_DYNAMIC_LAPSE_REPORT.md`. Sign-off recorded as GovernanceStore
+ChangeRecord `assumption="dynamic_lapse"` in APPROVED state (mitigates MR-003).
 
 **ASOP 7 §3.4 (Cash Flow Analysis):** "The actuary should consider the sensitivity of the results to the assumptions." For a TVOG model, dynamic lapse sensitivity is mandatory disclosure.
 
@@ -186,11 +202,11 @@ where β is typically calibrated to 0.5–2.0 depending on product.
 
 | ASOP | Section | Requirement | Status | Gap |
 |------|---------|-------------|--------|-----|
-| ASOP 56 | §3.1.3 | Assumption documentation | 🟠 Partial | Values exist in code; basis absent |
-| ASOP 25 | §3.3 | Relevant and reliable data | 🔴 Non-compliant | No experience study cited |
-| ASOP 7 | §3.4 | Sensitivity analysis | 🔴 Non-compliant | Dynamic lapse absent; TVOG sensitivity unstated |
+| ASOP 56 | §3.1.3 | Assumption documentation | 🟢 Compliant | Functional form + calibration documented (Phase 13) |
+| ASOP 25 | §3.3 | Relevant and reliable data | 🟠 Partial | Synthetic experience study cited; credible study required for production |
+| ASOP 7 | §3.4 | Sensitivity analysis | 🟢 Compliant | Dynamic lapse non-FLAT; scenario grid in PHASE13_DYNAMIC_LAPSE_REPORT |
 
-**Recommended action (Phase 2):** (1) Document assumption basis; (2) implement dynamic lapse overlay with β parameter; (3) run sensitivity analysis showing TVOG change per ±100bp parallel rate shift.
+**Status (Phase 13):** ✅ Implemented and calibrated. Remaining production action: substitute a credible HK PAR lapse experience study for the synthetic calibration table and obtain genuine independent APS X2 review before pricing/regulatory use.
 
 ---
 

@@ -34,6 +34,11 @@ import pandas as pd
 if TYPE_CHECKING:
     from par_model_v2.governance.audit_trail import GovernanceStore
 
+from par_model_v2.projection.dynamic_lapse import (
+    DynamicLapseAssumption,
+    default_hk_par_dynamic_lapse,
+)
+
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -119,6 +124,26 @@ def _base_annual_lapse(policy_year: int) -> float:
     else:                  return 0.015
 
 
+def dynamic_annual_lapse(
+    policy_year: int,
+    market_rate: float,
+    credited_rate: float = 0.025,
+    assumption: Optional["DynamicLapseAssumption"] = None,
+) -> float:
+    """Interest-rate-dependent annual lapse rate (Phase 13, G-04).
+
+    Unlike :func:`_base_annual_lapse`, this function accepts economic inputs
+    (``market_rate`` level and ``policy_year`` duration) and returns a lapse
+    rate that rises as market rates exceed the credited rate and falls when
+    the guarantee is in-the-money.  See
+    :mod:`par_model_v2.projection.dynamic_lapse` for the functional form and
+    calibration.
+    """
+    if assumption is None:
+        assumption = default_hk_par_dynamic_lapse(credited_rate)
+    return assumption.annual_rate(policy_year, market_rate, credited_rate)
+
+
 # ---------------------------------------------------------------------------
 # 3. LIABILITY CASHFLOW PROJECTION
 # ---------------------------------------------------------------------------
@@ -144,6 +169,8 @@ def project_liability_cashflows(
     renewal_expense_fixed_monthly: float = 12.50,
     annual_lapse_fn: Optional[Callable] = None,
     annual_qx_fn: Optional[Callable] = None,
+    dynamic_lapse: Optional["DynamicLapseAssumption"] = None,
+    market_rate: Optional[object] = None,
 ) -> LiabilityProjectionResult:
     """
     Monthly liability projection for a PAR endowment.
@@ -192,7 +219,16 @@ def project_liability_cashflows(
         age        = product.issue_age + m / 12.0
 
         qx_ann    = annual_qx_fn(int(age), product.gender)
-        lapse_ann = annual_lapse_fn(policy_year)
+        if dynamic_lapse is not None:
+            if callable(market_rate):
+                _mr = float(market_rate(policy_year))
+            elif market_rate is not None:
+                _mr = float(market_rate)
+            else:
+                _mr = dynamic_lapse.credited_rate
+            lapse_ann = dynamic_lapse.annual_rate(policy_year, _mr)
+        else:
+            lapse_ann = annual_lapse_fn(policy_year)
         qx_m      = monthly_mortality_qx(qx_ann)
         lapse_m   = lapse_ann / 12.0
         monthly_qx_arr[m]    = qx_m

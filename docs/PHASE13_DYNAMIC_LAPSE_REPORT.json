@@ -1,0 +1,120 @@
+{
+  "run_timestamp": "2026-06-04T04:27:17.791399+00:00",
+  "assumption": {
+    "credited_rate": 0.025,
+    "beta": 0.6458343530211399,
+    "kappa": 0.024588416770428643,
+    "shock_max": 0.17671830186861437,
+    "tau": 0.029713435833897118,
+    "width": 0.01,
+    "lapse_floor": 0.0,
+    "lapse_cap": 1.0,
+    "methodology": "Blended duration base (Opt C) x bounded arctan efficiency multiplier (Opt A) + logistic rate-induced mass lapse (Opt B)",
+    "calibration_basis": "Synthetic HK PAR endowment lapse experience study",
+    "calibration_date": "2026-06-04",
+    "standard_references": [
+      "SOA ASOP 7 \u00a73.3",
+      "SOA ASOP 25 \u00a73.3",
+      "SOA ASOP 56 \u00a73.1",
+      "IA TAS M \u00a73.5",
+      "IA TAS M \u00a73.6",
+      "IFoA APS X2 \u00a74.2"
+    ]
+  },
+  "diagnostics": {
+    "n_points": 48,
+    "rmse": 0.000623934804465031,
+    "weighted_rmse": 0.0006327195062885637,
+    "r_squared": 0.9999435861808671,
+    "max_abs_residual": 0.0017775459050771714,
+    "fitted_params": {
+      "beta": 0.6458343530211399,
+      "kappa": 0.024588416770428643,
+      "shock_max": 0.17671830186861437,
+      "tau": 0.029713435833897118,
+      "width": 0.01
+    },
+    "optimizer": "scipy.optimize.least_squares (trf)",
+    "converged": true,
+    "calibration_date": "2026-06-04T04:27:17.799148+00:00",
+    "experience_basis": "Synthetic HK PAR endowment lapse experience study",
+    "standard_references": [
+      "SOA ASOP 25 \u00a73.3",
+      "IA TAS M \u00a73.5",
+      "IA TAS M \u00a73.6"
+    ]
+  },
+  "impacts": [
+    {
+      "scenario": "ITM -200bps",
+      "market_rate": 0.005000000000000001,
+      "spread_bps": -200.0,
+      "pv_net_liability_static": -52432.79054645606,
+      "pv_net_liability_dynamic": -28861.050549166685,
+      "pv_surrender_static": 80029.5607496779,
+      "pv_surrender_dynamic": 74533.25125604845,
+      "net_liability_delta": 23571.739997289376,
+      "net_liability_delta_pct": 44.9561042844068
+    },
+    {
+      "scenario": "Base (mkt=credited)",
+      "market_rate": 0.025,
+      "spread_bps": 0.0,
+      "pv_net_liability_static": -52432.79054645606,
+      "pv_net_liability_dynamic": -70166.14964613429,
+      "pv_surrender_static": 80029.5607496779,
+      "pv_surrender_dynamic": 96237.47806635078,
+      "net_liability_delta": -17733.35909967823,
+      "net_liability_delta_pct": -33.82112398531653
+    },
+    {
+      "scenario": "OTM +100bps",
+      "market_rate": 0.035,
+      "spread_bps": 100.0,
+      "pv_net_liability_static": -52432.79054645606,
+      "pv_net_liability_dynamic": -95273.29575467002,
+      "pv_surrender_static": 80029.5607496779,
+      "pv_surrender_dynamic": 107925.97719377602,
+      "net_liability_delta": -42840.50520821396,
+      "net_liability_delta_pct": -81.70556013084365
+    },
+    {
+      "scenario": "OTM +200bps",
+      "market_rate": 0.045,
+      "spread_bps": 200.0,
+      "pv_net_liability_static": -52432.79054645606,
+      "pv_net_liability_dynamic": -112772.40429258964,
+      "pv_surrender_static": 80029.5607496779,
+      "pv_surrender_dynamic": 110521.8287013088,
+      "net_liability_delta": -60339.613746133575,
+      "net_liability_delta_pct": -115.0799206322463
+    },
+    {
+      "scenario": "Shock +400bps",
+      "market_rate": 0.065,
+      "spread_bps": 400.0,
+      "pv_net_liability_static": -52432.79054645606,
+      "pv_net_liability_dynamic": -102639.64472731487,
+      "pv_surrender_static": 80029.5607496779,
+      "pv_surrender_dynamic": 85810.53368860736,
+      "net_liability_delta": -50206.854180858805,
+      "net_liability_delta_pct": -95.75468644258969
+    }
+  ],
+  "gate_g04": {
+    "gate_id": "G-04",
+    "gate_description": "Dynamic lapse implemented in projection engine and calibrated to HK PAR experience; lapse sensitivity non-FLAT under rate stress (SOA ASOP 7 \u00a73.3; IA TAS M \u00a73.5)",
+    "status": "PASS",
+    "evidence": "calibration converged (scipy.optimize.least_squares (trf)); R\u00b2=0.9999 >= 0.90; response NON-FLAT: max |\u0394NL|=115.080% > 0.50%",
+    "evaluated_at": "2026-06-04T04:27:17.838496+00:00"
+  },
+  "gate_g11": {
+    "gate_id": "G-11",
+    "gate_description": "HK participating liability behaviour (dynamic lapse) calibrated to experience study with documented goodness-of-fit (IA TAS M \u00a73.5; SOA ASOP 25 \u00a73.3)",
+    "status": "PASS",
+    "evidence": "RMSE=0.00062 <= 0.010; experience basis: Synthetic HK PAR endowment lapse experience study; n_points=48",
+    "evaluated_at": "2026-06-04T04:27:17.838646+00:00"
+  },
+  "change_record_id": "ee0906eb2b0f4f6db81249b4efc41d5b",
+  "change_record_status": "APPROVED"
+}

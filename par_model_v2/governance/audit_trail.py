@@ -989,10 +989,10 @@ def seed_initial_risk_register(store: GovernanceStore) -> None:
         likelihood=RiskRating.MEDIUM,
         impact=RiskRating.CRITICAL,
         owner="Model Developer",
-        mitigation="Implement dynamic lapse function in Phase 3/4; document functional form and calibration basis.",
+        mitigation="Dynamic lapse implemented and calibrated (Phase 13 Task 2); functional form + calibration documented; ChangeRecord assumption=\"dynamic_lapse\" APPROVED.",
         related_standard="SOA ASOP 7 §3.3; IA TAS M §3.5",
-        notes="Identified in Phase 1 audit; no implementation yet.",
-        mitigation_status=MitigationStatus.OPEN,
+        notes="Phase 13: dynamic_lapse.py implemented, G-04/G-11 PASS (educational). Production residual: substitute credible experience study + genuine independent APS X2 review.",
+        mitigation_status=MitigationStatus.IN_PROGRESS,
     )
 
     rr.add(

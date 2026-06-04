@@ -10,8 +10,18 @@ from par_model_v2.projection.monthly_projection import (
     VALID_TERMS,
     project_asset_cashflows,
     project_asset_share,
+    dynamic_annual_lapse,
     project_liability_cashflows,
     run_full_projection,
+)
+from par_model_v2.projection.dynamic_lapse import (
+    DynamicLapseAssumption,
+    LapseCalibrationDiagnostics,
+    LapseExperiencePoint,
+    base_annual_lapse,
+    build_hk_par_experience_study,
+    calibrate_dynamic_lapse,
+    default_hk_par_dynamic_lapse,
 )
 from par_model_v2.projection.fixed_income import (
     FixedIncomeInstrument,
@@ -138,6 +148,11 @@ from par_model_v2.projection.performance_benchmarks import (
 __all__ = [
     "ParEndowmentProduct", "VALID_TERMS",
     "LiabilityProjectionResult", "project_liability_cashflows",
+    "dynamic_annual_lapse",
+    "DynamicLapseAssumption", "default_hk_par_dynamic_lapse",
+    "LapseExperiencePoint", "build_hk_par_experience_study",
+    "LapseCalibrationDiagnostics", "calibrate_dynamic_lapse",
+    "base_annual_lapse",
     "AssetPosition", "AssetCashflowResult", "project_asset_cashflows",
     "AssetShareResult", "project_asset_share",
     "FullProjectionResult", "run_full_projection",
