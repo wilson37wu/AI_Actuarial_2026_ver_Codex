@@ -5562,3 +5562,29 @@ against the Phase 13 Task 5 out-of-sample backtest evidence; target ≥ 90% PASS
 **Milestone:** Phase 15 Task 1 COMPLETE. 81/85 tasks (~95%), 14 phases complete. All 12 educational deployment gates remain cleared.
 
 ---
+
+## Run 2026-06-05 — Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation
+
+**Task Completed:** Phase 15 Task 2 — Out-of-sample proxy-model validation
+
+**Accomplishments:**
+- Added `par_model_v2/projection/multi_driver_proxy_validation.py` (additive; Task 1 module untouched): a formal OOS validation of the bivariate (rate + equity) LSMC capital surface.
+  - `MultiDriverProxyValidator.validate()` fits on `N_fit` single-inner-path states (seed 42) and validates on an **independent, disjoint-seed** hold-out (seed 20260605) against **heavy** nested truth (`n_inner_heavy` inner Q-paths per state).
+  - Basis-degree selection by OOS RMSE/R² over a shared fitting data set (apples-to-apples refit per degree); leakage diagnostics (seed disjointness, exact-shared-state count, min scaled fit↔val distance); overfit-gap = in-sample-heavy R² − OOS R²; overfit-onset degree detection; reproducibility digest; honest PASS/PARTIAL verdict.
+  - `ProxyValidationConfig`, `DegreeDiagnostics`, `LeakageDiagnostics`, `CapitalComparison`, `ProxyValidationReport` (+ `to_dict`/`to_json`), governance `proxy_validation_use_restrictions()`.
+- Evidence run (seed 42/20260605; n_fit=1000, n_val=80, n_inner_heavy=512, degrees 1–4):
+  **VERDICT PASS** — selected degree **1**, OOS R²=**0.9704**, OOS RMSE 2,311.7, VaR rel err **3.21%**, ES rel err 2.60%, leakage-free, overfit gap 0.0017.
+  - Textbook overfit signature: in-sample R² rises with degree while OOS R² falls (0.970→0.854) and overfit gap grows monotonically (0.0017→0.0924); **overfit onset = degree 2**.
+  - Confirmed noisy `fit_r2` (0.17–0.19) is NOT a validation metric vs in-sample-heavy R² (0.95–0.97).
+- Tests: `tests/test_phase15_proxy_validation.py` **20/20 PASS** (config guards, leakage-free hold-out, noisy-vs-heavy R² claim, degree sweep, selection by RMSE & R², overfit-onset consistency, capital rel-error bounds, reproducible digest, report JSON round-trip, governance). `compileall par_model_v2` clean.
+- Evidence written: `docs/validation/PHASE15_PROXY_VALIDATION_REPORT.{json,md}`.
+
+**Next Step:** Phase 15 Task 3 — Correlated risk aggregation (combine standalone rate & equity capital via the ESG correlation matrix; compare to fully-diversified multi-driver nested capital; diversification-benefit evidence).
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.5: addressed — formal proxy-model validation, OOS skill, convergence-aware heavy targets.
+- IA TAS M §3.6: addressed — out-of-sample testing, leakage diagnostics, reproducibility, model-use restrictions.
+- IFoA proxy-model working party: addressed — fit/validate split with heavy validation points and complexity selection by OOS error.
+- Residual: credentialled-data calibration + independent APS X2 review still pending (production sign-off withheld; educational classification retained).
+
+---

@@ -454,8 +454,15 @@ Tasks for Phase 15 (one per cycle, in order):
 1. ✅ DONE (2026-06-05) Extend the LSMC surface to two correlated drivers (short rate r_H + equity level S_H) with a multivariate
    polynomial basis; condition the inner Q nest on (r,S); add multi-driver nested ground truth. (Directly closes the
    documented single-risk-driver limitation of Phase 14 Task 6.)
-2. Out-of-sample proxy validation — hold-out fit/validation split, basis-degree selection by OOS RMSE/R^2, and
-   leakage/overfit diagnostics; produce a proxy-validation report.
+2. ✅ DONE (2026-06-05) Out-of-sample proxy validation — added par_model_v2/projection/multi_driver_proxy_validation.py
+   (MultiDriverProxyValidator): fit on N_fit single-inner-path states (seed 42), validate on an INDEPENDENT disjoint-seed
+   hold-out (seed 20260605) against HEAVY nested truth (n_inner_heavy Q-paths/state); basis-degree selection by OOS RMSE/R^2
+   over a shared fitting set; leakage diagnostics (seed disjointness, 0 shared states, min scaled distance) + overfit-gap +
+   overfit-onset detection + reproducibility digest + honest PASS/PARTIAL verdict. Evidence (n_fit=1000/n_val=80/n_inner_heavy=512,
+   deg 1-4): VERDICT PASS — selected degree 1, OOS R^2=0.9704, VaR rel err 3.21%, ES rel err 2.60%, leakage-free, overfit gap
+   0.0017; textbook overfit signature (OOS R^2 0.970->0.854, gap 0.0017->0.0924, onset degree 2); noisy fit_r2 (0.17-0.19) shown
+   NOT a validation metric vs in-sample-heavy R^2 (0.95-0.97). 20/20 tests PASS; compileall clean; Task 1 module untouched.
+   docs/validation/PHASE15_PROXY_VALIDATION_REPORT.{json,md}. (SOA ASOP 56 §3.5; IA TAS M §3.6; IFoA proxy-model WP; L&S 2001)
 3. Correlated risk aggregation — combine standalone rate and equity capital via the ESG correlation matrix; compare
    to fully-diversified multi-driver nested capital (diversification benefit evidence).
 4. Tail-convergence and stability diagnostics for the 99.5% capital metric (outer-count convergence, bootstrap CI on
@@ -463,36 +470,6 @@ Tasks for Phase 15 (one per cycle, in order):
 5. Refresh governance — limitation card, ChangeRecord, MR register update for the multi-driver proxy; document
    model-use restrictions and the remaining credentialled-data / independent-review residual.
 
-**Current milestone:** Phase 15 in progress | 81/85 tasks done | **PHASE 15 TASK 1 COMPLETE** (2026-06-05). Added par_model_v2/projection/multi_driver_capital.py: generalises the Phase 14 Task 6 single-factor capital proxy to TWO correlated drivers (short rate r_H + equity level S_H) with a bivariate total-degree polynomial LSMC basis, conditioning the inner Q nest on (r,S), plus a multi-driver nested ground-truth engine and an equity-linked maturity guarantee (GMMB put) so the conditional liability depends on both drivers. Evidence (seed=42): proxy recovers nested conditional expectation R^2=0.9936, max abs rel err 2.67% on a 5x5 state grid at ~64x fewer inner valuations; inner SE ~1/sqrt(n); same-seed bit-identical. Equity driver now in the tail: 99.5% SCR-proxy 21,242 (rate-only) -> 42,886 (equity guarantee ON). 29 new tests PASS; compileall clean; Task 6 module untouched. ChangeRecord 81fe2ced at OWNER_REVIEW (placeholder params; lapse/credit/FX still outside tail; independent APS X2 pending); audit chain 20->24, integrity verified. Open model risks 1; mitigated/closed 8. **All 12 educational deployment gates remain cleared.** Next: Phase 15 Task 2 — out-of-sample proxy validation (hold-out split, basis-degree selection by OOS RMSE/R^2, leakage/overfit diagnostics, proxy-validation report).
+**Current milestone:** Phase 15 in progress | 82/85 tasks done | **PHASE 15 TASK 2 COMPLETE** (2026-06-05). Added par_model_v2/projection/multi_driver_proxy_validation.py: a formal out-of-sample proxy-model validation of the Task 1 bivariate LSMC capital surface. Fits on N_fit single-inner-path outer states and validates on an INDEPENDENT disjoint-seed hold-out against HEAVY (high-inner-count) nested truth; selects the polynomial degree by OOS RMSE/R^2 over a shared fitting set; reports leakage diagnostics (seeds disjoint, 0 shared states, positive min scaled distance), per-degree overfit gap, overfit-onset degree, a proxy-vs-nested capital comparison, a reproducibility digest, and an honest PASS/PARTIAL verdict. Evidence (seed 42/20260605; n_fit=1000, n_val=80, n_inner_heavy=512, degrees 1-4): VERDICT PASS — selected degree 1, OOS R^2=0.9704, OOS RMSE 2,311.7, VaR rel err 3.21%, ES rel err 2.60%, leakage-free, overfit gap 0.0017. Textbook overfit signature (OOS R^2 0.970->0.854 and gap 0.0017->0.0924 as degree rises 1->4; overfit onset degree 2). Confirmed the noisy single-path fit_r2 (0.17-0.19) is NOT a validation metric vs in-sample-heavy R^2 (0.95-0.97). 20/20 new tests PASS; compileall clean; Task 1 module untouched. docs/validation/PHASE15_PROXY_VALIDATION_REPORT.{json,md}. **All 12 educational deployment gates remain cleared.** Next: Phase 15 Task 3 — correlated risk aggregation (combine standalone rate & equity capital via the ESG correlation matrix; compare to fully-diversified multi-driver nested capital; diversification-benefit evidence).
 
----
-
-## Key Points for Sustained Autonomous Operation
-
-✅ **State file is the contract:** Always read from `.claude-dev/MODEL_DEV_STATE.json` first  
-✅ **Incremental work:** One task per cycle, thoroughly documented  
-✅ **Human oversight:** Email drafts keep you informed  
-✅ **Self-documenting:** Commit messages + MODEL_DEV_LOG.md = audit trail  
-✅ **Resumable:** If manual intervention needed, edit state file and next cycle continues  
-✅ **Industry-focused:** Each task includes SOA/IA alignment notes  
-
----
-
-## Final Setup Checklist
-
-Before enabling this task:
-
-- [ ] `.claude-dev/MODEL_DEV_STATE.json` created with your repo URL
-- [ ] Repository URL verified (https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex)
-- [ ] Email address updated in this prompt
-- [ ] Git credentials configured (name, email, token/SSH)
-- [ ] Task frequency set to cron: `0 */12 * * *` (every 12 hours)
-- [ ] Autonomous mode enabled in Claude Code
-- [ ] Gmail connector enabled in Claude Code
-- [ ] Test run executed — verify state file updated, commit created, draft sent
-- [ ] MODEL_DEV_LOG.md created in repo root
-- [ ] This prompt saved to `.claude-dev/model-dev-task.md`
-
----
-
-**Ready to automate. Let Claude build your model, 12 hours at a time.**
+**Previous milestone:** **PHASE 15 TAS

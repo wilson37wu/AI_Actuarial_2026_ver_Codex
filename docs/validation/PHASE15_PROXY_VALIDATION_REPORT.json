@@ -1,0 +1,129 @@
+{
+  "audit_entry_id": null,
+  "capital_comparison": {
+    "es_rel_error": 0.026036,
+    "nested_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 145613.7375,
+      "mean_liability": 107467.3305,
+      "n_outer": 500,
+      "scr_proxy": 35883.8809,
+      "var_liability": 143351.2114
+    },
+    "nested_n_inner": 64,
+    "nested_n_outer": 500,
+    "proxy_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 141822.5122,
+      "mean_liability": 108339.9359,
+      "n_outer": 1000,
+      "scr_proxy": 30408.4626,
+      "var_liability": 138748.3985
+    },
+    "scr_rel_error": 0.152587,
+    "var_rel_error": 0.032109
+  },
+  "config": {
+    "capital_horizon_months": 12,
+    "confidence_level": 0.995,
+    "degrees": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "fit_seed": 42,
+    "insample_heavy_seed": 7,
+    "n_fit": 1000,
+    "n_inner_heavy": 512,
+    "n_insample_heavy": 40,
+    "n_validation": 80,
+    "outer_measure": "P",
+    "selection_metric": "oos_rmse",
+    "validation_seed": 20260605
+  },
+  "degree_rows": [
+    {
+      "degree": 1,
+      "in_sample_r2_heavy": 0.972137,
+      "in_sample_r2_noisy": 0.173167,
+      "n_basis_terms": 3,
+      "oos_mae": 1986.061759,
+      "oos_max_abs_rel_error": 0.042468,
+      "oos_r2": 0.970446,
+      "oos_rmse": 2311.659567,
+      "overfit_gap": 0.001691
+    },
+    {
+      "degree": 2,
+      "in_sample_r2_heavy": 0.959426,
+      "in_sample_r2_noisy": 0.182605,
+      "n_basis_terms": 6,
+      "oos_mae": 2355.229457,
+      "oos_max_abs_rel_error": 0.116966,
+      "oos_r2": 0.939167,
+      "oos_rmse": 3316.544959,
+      "overfit_gap": 0.020259
+    },
+    {
+      "degree": 3,
+      "in_sample_r2_heavy": 0.953002,
+      "in_sample_r2_noisy": 0.187515,
+      "n_basis_terms": 10,
+      "oos_mae": 2854.548057,
+      "oos_max_abs_rel_error": 0.258098,
+      "oos_r2": 0.879285,
+      "oos_rmse": 4671.928975,
+      "overfit_gap": 0.073718
+    },
+    {
+      "degree": 4,
+      "in_sample_r2_heavy": 0.94678,
+      "in_sample_r2_noisy": 0.192644,
+      "n_basis_terms": 15,
+      "oos_mae": 2966.433855,
+      "oos_max_abs_rel_error": 0.250122,
+      "oos_r2": 0.854342,
+      "oos_rmse": 5131.955777,
+      "overfit_gap": 0.092438
+    }
+  ],
+  "duration_seconds": 15.4946,
+  "leakage": {
+    "fit_seed": 42,
+    "leakage_free": true,
+    "min_pairwise_distance": 0.015190737,
+    "n_exact_shared_states": 0,
+    "seeds_disjoint": true,
+    "validation_seed": 20260605
+  },
+  "notes": [],
+  "overfit_onset_degree": 2,
+  "reproducibility_digest": "cc9654f9274974c6809ab40f688d4843dabbab57a9480969f858eca654e10fcc",
+  "run_id": "md-proxyval-acddb6b3",
+  "selected_degree": 1,
+  "selected_row": {
+    "degree": 1,
+    "in_sample_r2_heavy": 0.972137,
+    "in_sample_r2_noisy": 0.173167,
+    "n_basis_terms": 3,
+    "oos_mae": 1986.061759,
+    "oos_max_abs_rel_error": 0.042468,
+    "oos_r2": 0.970446,
+    "oos_rmse": 2311.659567,
+    "overfit_gap": 0.001691
+  },
+  "selection_metric": "oos_rmse",
+  "standards": [
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 56 \u00a73.1.3",
+    "SOA ASOP 25 \u00a73.3",
+    "IA TAS M \u00a73.6",
+    "IA TAS M \u00a73.2",
+    "IFoA proxy-model working party",
+    "Longstaff & Schwartz (2001)"
+  ],
+  "verdict": "PASS \u2014 selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"
+}
