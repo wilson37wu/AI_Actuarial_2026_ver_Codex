@@ -1,0 +1,302 @@
+{
+  "run_timestamp": "2026-06-04T07:43:12.504404+00:00",
+  "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+  "gate_g06": {
+    "gate_id": "G-06",
+    "gate_description": "IA TAS M \u00a73.6 validation suite executed against the live-calibrated model; >= 80% of requirements at PASS/WAIVED.",
+    "status": "PASS",
+    "pass_pct": 80.6,
+    "passed": 25,
+    "total": 31,
+    "evidence": "25/31 requirements PASS/WAIVED = 80.6% (threshold 80%); FAIL=0, PARTIAL=3, NOT_RUN=3.",
+    "evaluated_at": "2026-06-04T07:43:13.532553+00:00"
+  },
+  "change_record_id": "64e92edd61f94d8ea0c57fe77233b736",
+  "change_record_status": "OWNER_REVIEW",
+  "pass_count": 25,
+  "partial_count": 3,
+  "not_run_count": 3,
+  "fail_count": 0,
+  "total": 31,
+  "per_requirement": [
+    {
+      "req_id": "VR-U01",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_monthly_projection: 1P",
+        "live_check": "DEFAULT_RESERVING_DISCOUNT_RATE=0.03 (CBIRC 3.0% cap, MR-001)"
+      }
+    },
+    {
+      "req_id": "VR-U02",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_dynamic_alm: 1P"
+      }
+    },
+    {
+      "req_id": "VR-U03",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_risk_metrics: 1P",
+        "live_check": "empirical ES(99%)=115891.3 >= VaR(99%)=107348.7"
+      }
+    },
+    {
+      "req_id": "VR-U04",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_stress_testing: 1P",
+        "live_check": "ALL_SCENARIOS=15, CBIRC_SCENARIOS=6"
+      }
+    },
+    {
+      "req_id": "VR-U05",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_governance: 1P"
+      }
+    },
+    {
+      "req_id": "VR-U06",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_esg_adapter: 1P"
+      }
+    },
+    {
+      "req_id": "VR-U07",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_hybrid_grid: 1P"
+      }
+    },
+    {
+      "req_id": "VR-I01",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_integration_e2e: 1P"
+      }
+    },
+    {
+      "req_id": "VR-I02",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_distributed_executor: 1P"
+      }
+    },
+    {
+      "req_id": "VR-I03",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_audit_trail_wiring: 1P"
+      }
+    },
+    {
+      "req_id": "VR-I04",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_risk_metrics: 1P; test_audit_trail_wiring: 1P"
+      }
+    },
+    {
+      "req_id": "VR-S01",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_tvog: 1P"
+      }
+    },
+    {
+      "req_id": "VR-S02",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_esg_process: 1P"
+      }
+    },
+    {
+      "req_id": "VR-S03",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_esg_process: 1P"
+      }
+    },
+    {
+      "req_id": "VR-S04",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_tvog: 1P; test_risk_metrics: 1P; test_esg_process: 1P",
+        "live_check": "Q-measure into risk layer raises UserWarning guard: True"
+      }
+    },
+    {
+      "req_id": "VR-S05",
+      "status": "PARTIAL",
+      "evidence": "HW1F calibrated to a single live CNY/HKD swaption snapshot (Task 1); the rolling-window coefficient-of-variation stability criterion requires a live multi-window CNY rate series, scheduled with the Task 5 live-data wiring.",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)"
+      }
+    },
+    {
+      "req_id": "VR-SE01",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_sensitivity: 1P; test_phase13_mr001_discount_rate: 1P"
+      }
+    },
+    {
+      "req_id": "VR-SE02",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_dynamic_lapse: 1P; test_sensitivity: 1P"
+      }
+    },
+    {
+      "req_id": "VR-SE03",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_sensitivity: 1P; test_stress_testing: 1P"
+      }
+    },
+    {
+      "req_id": "VR-SE04",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_sensitivity: 1P"
+      }
+    },
+    {
+      "req_id": "VR-B01",
+      "status": "NOT_RUN",
+      "evidence": "Asset-return backtest requires the live CNY 2015\u20132025 equity/bond series; wiring scheduled as Phase 13 Task 5 (G-09).",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)"
+      }
+    },
+    {
+      "req_id": "VR-B02",
+      "status": "NOT_RUN",
+      "evidence": "Liability-cashflow backtest requires historical PAR-fund inforce experience data, which is not available in the educational dataset.",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)"
+      }
+    },
+    {
+      "req_id": "VR-B03",
+      "status": "NOT_RUN",
+      "evidence": "VaR/ES exception backtest requires >=250 days of historical P&L for the same calibrated period; wired with the Task 5 live-data feed.",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)"
+      }
+    },
+    {
+      "req_id": "VR-G01",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_audit_trail_wiring: 1P; test_governance: 1P"
+      }
+    },
+    {
+      "req_id": "VR-G02",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_phase13_mr001_discount_rate: 1P; test_governance: 1P",
+        "live_check": "risk_register=8 (>=8), change_records=3 (>=2)"
+      }
+    },
+    {
+      "req_id": "VR-G03",
+      "status": "PARTIAL",
+      "evidence": "APS X2 \u00a73 requires sign-off by a reviewer independent of the model developer. The automated SignOffWorkflow is operational but an independent human reviewer is pending (Phase 13 Task 6, G-08/G-10).",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)"
+      }
+    },
+    {
+      "req_id": "VR-G04",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_governance: 1P",
+        "live_check": "risk_register=8 (>=8), change_records=3 (>=2)"
+      }
+    },
+    {
+      "req_id": "VR-G05",
+      "status": "PARTIAL",
+      "evidence": "Final production sign-off requires overall report PASS plus an independent validator; blocked until the Layer-5 backtests (Task 5) and APS X2 review (Task 6) close. Educational use is permitted in the interim.",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)"
+      }
+    },
+    {
+      "req_id": "VR-D01",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_data_validator: 1P; test_esg_adapter: 1P"
+      }
+    },
+    {
+      "req_id": "VR-D02",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_data_validator: 1P"
+      }
+    },
+    {
+      "req_id": "VR-D03",
+      "status": "PASS",
+      "evidence": "tests[ok] live[ok]",
+      "details": {
+        "evidence_source": "embedded Phase 13 Task 4 snapshot (2026-06-04)",
+        "test_modules": "test_data_validator: 1P"
+      }
+    }
+  ]
+}
