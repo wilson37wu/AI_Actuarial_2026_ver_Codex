@@ -5633,3 +5633,31 @@ use the /tmp-clone pattern.
   immutable tuple-of-tuples). 9/9 `tests/test_phase15_risk_aggregation.py` PASS; `compileall` clean across
   `par_model_v2`, `scripts`, `tests`.
 - The module computes: standalone **rate** SCR (equity guarantee 
+## Run 2026-06-05 — Phase 15 Task 4 (Tail-convergence & stability diagnostics for the 99.5% capital metric)
+
+**Task Completed:** Task 4 — Tail-convergence and stability diagnostics for the 99.5% capital metric (outer-count convergence, bootstrap CI on VaR/ES, antithetic/quasi-MC variance reduction).
+
+**Accomplishments:**
+- New module `par_model_v2/projection/multi_driver_tail_diagnostics.py` (additive-only; no existing source file modified — confirmed by `git status`). Built on the Phase 15 Task 1 bivariate LSMC capital surface so the diagnostics are computationally feasible (the surface is fitted once at `n_fit` inner valuations, then evaluated for the cost of a polynomial, isolating *outer* sampling error):
+  - `MultiDriverTailDiagnostics.run()` → `TailDiagnosticsReport` with three diagnostics.
+  - **Outer-count convergence** — VaR/ES of `L_hat` over independent outer sets of increasing size; successive relative change + recommended `N_outer` (ASOP 56 §3.5).
+  - **Bootstrap CI** — non-parametric bootstrap of the 99.5% VaR/ES estimators at a fixed large outer set; percentile CI + estimator SE (IA TAS M §3.6 uncertainty disclosure).
+  - **Variance reduction** — crude / antithetic / scrambled-Sobol QMC comparison over a *pilot-anchored Gaussian-copula* outer distribution (governed ESG ρ; empirical pilot order-statistic margins) so the three schemes target an identical distribution and the variance ratio is like-for-like.
+  - `TailDiagnosticsConfig` (validated), result dataclasses (`OuterConvergence`, `BootstrapInterval`, `SchemeVariance`, `VarianceReduction`), `to_dict`/`to_json`/`to_markdown`, and `tail_diagnostics_use_restrictions()`.
+- **Evidence (seed=42, 10y / age 40M / SA 100k; `scripts/build_phase15_task4_evidence.py`):** **VERDICT PASS** — converged True (ΔVaR ≤ 0.58% by N_outer=2,000; recommended N_outer ≥ 2,000); bootstrap 95% CI on VaR [149,402, 154,391], SE ≈ 1,486 (±1.66% of point); **Sobol QMC variance-reduction ratio ≈ 7.1×** on the VaR estimator; antithetic ratio ≈ 0.81× — i.e. antithetic variates are ineffective for an extreme 99.5% quantile (theory-consistent: they decorrelate the mean, not the tail order statistic), documented in the report notes and the verdict logic. Same-seed reproducibility digest bit-identical on re-run.
+- **Tests:** `tests/test_phase15_tail_diagnostics.py` **36/36 PASS** (config guards, `_var_es` upper-tail, sampling-scheme drivers incl. antithetic balance & Sobol uniformity, copula correlation/margin recovery, convergence path alignment, bootstrap ordering/bracketing, ES ≥ VaR, variance-reduction unbiasedness & Sobol gain, reproducible digest, JSON/Markdown round-trip, governance disclosure). `compileall` clean across `par_model_v2`, `scripts`, `tests`; Task 1/2/3 + Task 6 modules import unchanged.
+- **Governance:** ChangeRecord `820c6fe4` at **OWNER_REVIEW** (production sign-off withheld — placeholder HW1F/GBM params; proxy-based outer sampling; independent APS X2 review pending). Audit chain 25→26, `verify_all()` True. Limitation card `docs/MULTI_DRIVER_TAIL_DIAGNOSTICS_CARD.md`; evidence `docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.{json,md}`.
+- **Git:** committed `1117025` and pushed `5485114..1117025 main -> main` via the /tmp-clone pattern (in-place `.git` writes remain blocked by the no-delete virtiofs mount); new files `cp`-synced back to the mounted worktree.
+
+**Next Step:** Phase 15 Task 5 — refresh governance: model-limitation card, ChangeRecord, and MR-register update for the multi-driver proxy; document model-use restrictions and the remaining credentialled-data / independent-review residual. This completes Phase 15.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.5: addressed — scenario-count adequacy (convergence), Monte-Carlo uncertainty (bootstrap CI), and variance reduction (QMC).
+- SOA ASOP 56 §3.1.3 / ASOP 25 §3.3: addressed — stochastic capital documentation; correlated-driver outer generation.
+- IA TAS M §3.6: addressed — convergence, reproducibility (seed-determinism digest), and model-uncertainty disclosure.
+- L'Ecuyer (2018) RQMC / Glasserman (2003) §4: methodology basis for the antithetic / Sobol comparison.
+- Residual: credentialled-data calibration + independent APS X2 review still pending (production sign-off withheld; educational classification retained).
+
+**Milestone:** Phase 15 Task 4 COMPLETE. 84/85 tasks (~98.8%), 14 phases complete; Phase 15 4/5 tasks done. All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 9.
+
+---

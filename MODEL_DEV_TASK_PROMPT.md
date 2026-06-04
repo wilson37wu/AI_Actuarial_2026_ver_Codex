@@ -473,9 +473,16 @@ Tasks for Phase 15 (one per cycle, in order):
    diversified capital by ~33% (realised capital-loss correlation +0.55, not −0.15) → new MR-010 (MITIGATED).
    9/9 tests PASS; compileall clean. ChangeRecord 5e21202b OWNER_REVIEW; audit chain 24→25. (SOA ASOP 56 §3.5;
    ASOP 25 §3.3; IA TAS M §3.2/§3.6)
-4. Tail-convergence and stability diagnostics for the 99.5% capital metric (outer-count convergence, bootstrap CI on
-   VaR/ES, antithetic / quasi-MC variance reduction).
+4. DONE (2026-06-05) Tail-convergence and stability diagnostics for the 99.5% capital metric -- added
+   par_model_v2/projection/multi_driver_tail_diagnostics.py (additive; built on the Task 1 LSMC surface):
+   outer-count convergence, non-parametric bootstrap CI + SE on VaR/ES (governed outer states), and a
+   crude/antithetic/Sobol-QMC variance-reduction comparison over a pilot-anchored Gaussian-copula surrogate.
+   Evidence (seed 42): VERDICT PASS -- converged True (dVaR<=0.58%, rec N_outer>=2000); bootstrap 95% CI VaR
+   [149402,154391] SE~1486 (+/-1.66%); Sobol QMC variance-reduction ratio ~7.1x; antithetic ineffective on the
+   tail quantile (theory-consistent, documented). 36 tests PASS; compileall clean; siblings unchanged.
+   ChangeRecord 820c6fe4 OWNER_REVIEW; audit chain 25->26. docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.{json,md};
+   docs/MULTI_DRIVER_TAIL_DIAGNOSTICS_CARD.md. (SOA ASOP 56 3.5/3.1.3; ASOP 25 3.3; IA TAS M 3.6; LEcuyer 2018 RQMC)
 5. Refresh governance — limitation card, ChangeRecord, MR register update for the multi-driver proxy; document
    model-use restrictions and the remaining credentialled-data / independent-review residual.
 
-**Current milestone:** Phase 15 in progress | 83/85 tasks done | **PHASE 15 TASK 3 COMPLETE** (2026-06-05). Added par_model_v2/projection/multi_driver_risk_aggregation.py: correlated risk aggregation that combines standalone rate capital (full residual liability with the equity guarantee switched OFF) and standalone equity-guarantee capital (CRN-isolated via L_full−L_rate) using the governed ESG rate/equity correlation and the validated 2×2 ESG correlation matrix (phase8_rate_equity_fx_correlation_matrix + CorrelationMatrixValidator), then benchmarks the variance-covariance formula against the fully-diversified two-driver nested capital. Recovered a prior cycle's broken/uncommitted module (DataFrame-iteration ValueError) and repaire
+**Current milestone:** Phase 15 in progress | 84/85 tasks done | **PHASE 15 TASK 4 COMPLETE** (2026-06-05) -- added par_model_v2/projection/multi_driver_tail_diagnostics.py (tail-convergence, bootstrap CI, antithetic/Sobol-QMC variance reduction on the 99.5% capital metric; VERDICT PASS; Sobol VR ~7.1x; 36 tests PASS; ChangeRecord 820c6fe4 OWNER_REVIEW; audit 25->26). Next: Phase 15 Task 5 -- refresh governance (limitation card, MR register) for the multi-driver proxy. ||| PRIOR: **PHASE 15 TASK 3 COMPLETE** (2026-06-05). Added par_model_v2/projection/multi_driver_risk_aggregation.py: correlated risk aggregation that combines standalone rate capital (full residual liability with the equity guarantee switched OFF) and standalone equity-guarantee capital (CRN-isolated via L_full−L_rate) using the governed ESG rate/equity correlation and the validated 2×2 ESG correlation matrix (phase8_rate_equity_fx_correlation_matrix + CorrelationMatrixValidator), then benchmarks the variance-covariance formula against the fully-diversified two-driver nested capital. Recovered a prior cycle's broken/uncommitted module (DataFrame-iteration ValueError) and repaire
