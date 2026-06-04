@@ -451,7 +451,7 @@ documented in-sample/out-of-sample fit, correlated capital aggregation with dive
 validation report meeting IA TAS M §3.6 and SOA ASOP 56 §3.5.
 
 Tasks for Phase 15 (one per cycle, in order):
-1. ⭐ NEXT Extend the LSMC surface to two correlated drivers (short rate r_H + equity level S_H) with a multivariate
+1. ✅ DONE (2026-06-05) Extend the LSMC surface to two correlated drivers (short rate r_H + equity level S_H) with a multivariate
    polynomial basis; condition the inner Q nest on (r,S); add multi-driver nested ground truth. (Directly closes the
    documented single-risk-driver limitation of Phase 14 Task 6.)
 2. Out-of-sample proxy validation — hold-out fit/validation split, basis-degree selection by OOS RMSE/R^2, and
@@ -463,7 +463,7 @@ Tasks for Phase 15 (one per cycle, in order):
 5. Refresh governance — limitation card, ChangeRecord, MR register update for the multi-driver proxy; document
    model-use restrictions and the remaining credentialled-data / independent-review residual.
 
-**Current milestone:** Phase 15 starting | 80/85 tasks done | **PHASE 14 COMPLETE** (6/6). Phase 14 Task 6 added the nested-stochastic / LSMC TVOG capital proxy (par_model_v2/projection/nested_stochastic_tvog.py): NestedStochasticTVOGEngine ground truth + Longstaff-Schwartz LSMCProxyEngine + diagnostics, producing VaR/ES/SCR-proxy at a 1y horizon. LSMC recovers the nested conditional expectation R^2=0.9932 (max abs rel err 2.47%) at 128x fewer inner valuations; inner SE decays ~1/sqrt(n); same-seed runs bit-identical. 23 new tests PASS; compileall clean. ChangeRecord at OWNER_REVIEW (single-factor educational proxy, placeholder params, pending APS X2). Open model risks 1; mitigated/closed 8. **All 12 educational deployment gates remain cleared.** Next: Phase 15 Task 1 — extend the LSMC surface to two correlated drivers (rates + equity) with multivariate basis and multi-driver nested ground truth.
+**Current milestone:** Phase 15 in progress | 81/85 tasks done | **PHASE 15 TASK 1 COMPLETE** (2026-06-05). Added par_model_v2/projection/multi_driver_capital.py: generalises the Phase 14 Task 6 single-factor capital proxy to TWO correlated drivers (short rate r_H + equity level S_H) with a bivariate total-degree polynomial LSMC basis, conditioning the inner Q nest on (r,S), plus a multi-driver nested ground-truth engine and an equity-linked maturity guarantee (GMMB put) so the conditional liability depends on both drivers. Evidence (seed=42): proxy recovers nested conditional expectation R^2=0.9936, max abs rel err 2.67% on a 5x5 state grid at ~64x fewer inner valuations; inner SE ~1/sqrt(n); same-seed bit-identical. Equity driver now in the tail: 99.5% SCR-proxy 21,242 (rate-only) -> 42,886 (equity guarantee ON). 29 new tests PASS; compileall clean; Task 6 module untouched. ChangeRecord 81fe2ced at OWNER_REVIEW (placeholder params; lapse/credit/FX still outside tail; independent APS X2 pending); audit chain 20->24, integrity verified. Open model risks 1; mitigated/closed 8. **All 12 educational deployment gates remain cleared.** Next: Phase 15 Task 2 — out-of-sample proxy validation (hold-out split, basis-degree selection by OOS RMSE/R^2, leakage/overfit diagnostics, proxy-validation report).
 
 ---
 

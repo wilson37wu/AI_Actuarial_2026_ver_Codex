@@ -5535,3 +5535,30 @@ against the Phase 13 Task 5 out-of-sample backtest evidence; target ≥ 90% PASS
 **Milestone:** Phase 14 COMPLETE (6/6 tasks). 80/85 tasks, 14 phases complete (~94%). All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 8.
 
 ---
+
+## Run 2026-06-05 — Phase 15 Task 1 (Two-driver rates+equity nested/LSMC capital proxy)
+
+**Task Completed:** Extend the LSMC capital surface to two correlated drivers (short rate r_H + equity level S_H) with a multivariate polynomial basis; condition the inner Q nest on (r,S); add multi-driver nested ground truth. Directly closes the documented single-risk-driver limitation of Phase 14 Task 6.
+
+**Accomplishments:**
+- New module `par_model_v2/projection/multi_driver_capital.py` (additive-only; Task 6 module untouched):
+  - `EquityGuaranteeSpec` — educational equity-linked maturity guarantee (GMMB / put on the policyholder fund), `payoff = max(G - units*S_T, 0)`.
+  - `_inner_pathwise_pvs_2d` — two-driver inner Q valuation: residual guaranteed death/maturity benefits (rate-driven) + equity-guarantee put (rates+equity), on the SAME correlated inner (rate, equity) paths. Rate-equity correlation rho carried through via the same Cholesky construction as `ScenarioSet.generate` (`z_S = rho z_r + sqrt(1-rho^2) z_indep`). Inner equity conditioned on S_H (initial_index_level = S_H); inner rate conditioned on r_H.
+  - `_outer_states_2d` — correlated outer (r_H, S_H) via the governed `ScenarioSet.generate`.
+  - `_multi_poly_powers` / `_multi_poly_basis` — bivariate total-degree polynomial basis ((deg+1)(deg+2)/2 terms; 6 at deg 2).
+  - `MultiDriverNestedEngine` (ground truth), `MultiDriverLSMCProxyEngine` (bivariate-polynomial proxy), `MultiDriverDiagnostics` (2-D grid proxy-vs-nested, reproducibility).
+- **Evidence (seed=42, 10y / age 40M / SA 100k):** proxy recovers nested conditional expectation **R^2=0.9936, max abs rel err 2.67%** on a 5x5 (r,S) state grid; inner SE 3842->1698->843->426 over 64/256/1024/4096 (~1/sqrt(n)); same-seed runs **bit-identical**; ~64x fewer inner valuations than nested. Equity driver now in the tail: 99.5% SCR-proxy 21,242 (rate-only / guarantee OFF) -> **42,886** (equity guarantee ON), add-on 21,644.
+- **Tests:** `tests/test_phase15_multi_driver_capital.py` **29/29 PASS** (basis, guarantee spec, two-driver sensitivity, guarantee-off reduction, measure handling, reproducibility, nested + LSMC engines, proxy-vs-nested agreement, governance disclosure). `compileall par_model_v2` clean; Phase 14 Task 6 module unmodified (`git diff` empty).
+- **Governance:** ChangeRecord `81fe2ced` at **OWNER_REVIEW** (production sign-off withheld — placeholder HW1F/GBM params; lapse/credit/FX still outside the tail; independent APS X2 pending). Audit chain 20->24, `verify_all()` integrity True. Limitation card `docs/MULTI_DRIVER_CAPITAL_CARD.md`; evidence `docs/validation/PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json`.
+
+**Next Step:** Phase 15 Task 2 — out-of-sample proxy validation: hold-out fitting/validation split, basis-degree selection by OOS RMSE/R^2, leakage/overfit diagnostics, and a proxy-validation report.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.1.3/§3.5: addressed — multi-driver stochastic capital documented; convergence (inner SE ~1/sqrt(n)) + proxy-vs-nested validation.
+- SOA ASOP 25 §3.3: addressed — correlated rate/equity driver generation.
+- IA TAS M §3.2/§3.6: addressed — market-consistent inner Q valuation; proxy-model validation (R^2=0.9936), reproducibility, documented model-use restrictions.
+- IFoA MCEV Principles §7 / Longstaff-Schwartz (2001): methodology basis.
+
+**Milestone:** Phase 15 Task 1 COMPLETE. 81/85 tasks (~95%), 14 phases complete. All 12 educational deployment gates remain cleared.
+
+---
