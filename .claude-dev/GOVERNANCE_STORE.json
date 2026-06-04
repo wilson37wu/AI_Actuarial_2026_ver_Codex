@@ -225,6 +225,55 @@
       "phase": "Phase 14: Production Residual Closure and Model Sophistication",
       "digest": "550d66b735f2a475650da44cecef18d4fc63763b50735f78a4aae20d255e8434",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "2ffd177dfe644f008b3a494c71efc438",
+      "timestamp": "2026-06-04T12:37:49.739712+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Claude Actuarial Agent",
+      "description": "Governance event: MR-009 closed \u2014 guided_examples.py migrated to current APIs",
+      "details": {
+        "risk_id": "MR-009",
+        "before": {
+          "mitigation_status": "OPEN",
+          "overall_rating": "HIGH",
+          "likelihood": "HIGH",
+          "impact": "LOW"
+        },
+        "after": {
+          "mitigation_status": "CLOSED",
+          "overall_rating": "VERY_LOW",
+          "likelihood": "LOW",
+          "impact": "LOW"
+        },
+        "change_record_id": "CR-MR009-CLOSE-20260604",
+        "tests": "64/64 PASS"
+      },
+      "phase": "Phase 14: Production Residual Closure and Model Sophistication",
+      "digest": "1ecfb2e3e97a6d960108b27dff3bd24e75e0b60de86517d5d4c272f05b0e9236",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "b8e25eee5e2b4de1be721e9ed7e5bbaa",
+      "timestamp": "2026-06-04T12:37:49.740104+00:00",
+      "entry_type": "CORRECTION",
+      "actor": "Claude Actuarial Agent",
+      "description": "Correction of entry MR-009: guided_examples.py drift remediated; wrapper realigned with current model APIs",
+      "details": {
+        "reason": "guided_examples.py drift remediated; wrapper realigned with current model APIs",
+        "corrected_details": {
+          "sections_migrated": [
+            "fixed_income_pricing",
+            "hk_liability_valuation",
+            "tvog_computation",
+            "stress_testing",
+            "reporting_close"
+          ]
+        }
+      },
+      "phase": "Phase 14: Production Residual Closure and Model Sophistication",
+      "digest": "17558bfe5c2544dfdfed782717df26260ebae358c368e9edd62d6c4411f6ab4e",
+      "corrects_entry_id": "MR-009"
     }
   ],
   "change_records": [
@@ -568,6 +617,49 @@
         }
       ],
       "phase": "Phase 14: Production Residual Closure and Model Sophistication"
+    },
+    {
+      "record_id": "CR-MR009-CLOSE-20260604",
+      "created_at": "2026-06-04T12:37:49.737472+00:00",
+      "title": "Close MR-009 \u2014 migrate educational guided_examples.py to current model APIs",
+      "description": "Remediated the educational guided-examples wrapper that had drifted from the RiskFreeCurve/FixedIncomeInstrument/TVOG/HK-liability/correlation/reporting-cycle APIs. All six walkthrough sections rewritten; tests/test_guided_examples.py from 3 failed / 46 errors to 64/64 PASS.",
+      "change_type": "CORRECTION",
+      "affected_components": [
+        "par_model_v2/examples/guided_examples.py",
+        "tests/test_guided_examples.py"
+      ],
+      "standard_references": [
+        "IA TAS M \u00a73.6",
+        "SOA ASOP 56 \u00a73.5",
+        "SOA ASOP 56 \u00a73.2"
+      ],
+      "before_snapshot": {
+        "mitigation_status": "OPEN",
+        "overall_rating": "HIGH",
+        "likelihood": "HIGH",
+        "impact": "LOW"
+      },
+      "after_snapshot": {
+        "mitigation_status": "CLOSED",
+        "overall_rating": "VERY_LOW",
+        "likelihood": "LOW",
+        "impact": "LOW"
+      },
+      "impact_assessment": "Educational wrapper only; backs no IA TAS M \u00a73.6 requirement and does not affect the G-06 score or any production reporting output. Restores the tutorial/onboarding path and removes a HIGH-likelihood operational defect.",
+      "quantitative_impact": "test_guided_examples.py: 3 failed / 46 errors -> 64 passed / 0 failed",
+      "status": "IMPLEMENTED",
+      "author": "Claude Actuarial Agent",
+      "peer_reviewer": null,
+      "assumption_owner": "Model Developer",
+      "sign_off_history": [
+        {
+          "status": "IMPLEMENTED",
+          "actor": "Claude Actuarial Agent",
+          "at": "2026-06-04T12:37:49.737472+00:00",
+          "note": "Automated Phase 14 Task 3 remediation; verified by full guided-examples test suite."
+        }
+      ],
+      "phase": "Phase 14: Production Residual Closure and Model Sophistication"
     }
   ],
   "risk_register": [
@@ -704,16 +796,16 @@
       "title": "Educational guided-examples wrapper drifted from model API",
       "description": "par_model_v2/examples/guided_examples.py references attributes removed from RiskFreeCurve (calibration_date/model_label/discount_factors) and FixedIncomeInstrument (term_months/par_value/oas_bps) and an outdated project_fixed_income_cashflows signature; tests/test_guided_examples.py errors (3 failed / 46 errors). Surfaced by the Phase 13 Task 4 IA TAS M \u00a73.6 validation run. Educational wrapper only; backs no IA TAS M \u00a73.6 requirement; production reporting engine (reporting_cycle.py) is tested separately and passes.",
       "category": "operational_risk",
-      "likelihood": "HIGH",
+      "likelihood": "LOW",
       "impact": "LOW",
-      "overall_rating": "HIGH",
+      "overall_rating": "VERY_LOW",
       "owner": "Model Developer",
       "mitigation": "Migrate the fixed-income / TVOG / HK-liability sections of guided_examples.py to the current APIs in a dedicated change-controlled cycle; re-run tests/test_guided_examples.py to green.",
-      "mitigation_status": "OPEN",
+      "mitigation_status": "CLOSED",
       "related_standard": "IA TAS M \u00a73.6; SOA ASOP 56 \u00a73.5",
       "created_at": "2026-06-04T07:43:57.716882+00:00",
-      "updated_at": "2026-06-04T07:43:57.716882+00:00",
-      "notes": "Identified by phase13_ia_validation run; does not affect G-06 score."
+      "updated_at": "2026-06-04T12:37:49.737472+00:00",
+      "notes": "Identified by phase13_ia_validation run; does not affect G-06 score. | CLOSED 2026-06-04 (Phase 14 Task 3): guided_examples.py migrated to current RiskFreeCurve/FixedIncomeInstrument/TVOG/HK-liability/correlation/reporting-cycle APIs; tests/test_guided_examples.py 64/64 PASS."
     }
   ]
 }

@@ -84,69 +84,72 @@ def example_fixed_income_pricing() -> Dict[str, Any]:
     print("=" * 70)
 
     # --- 1a. Build a USD risk-free curve -----------------------------------
+    # API NOTE (MR-009 migration): RiskFreeCurve now exposes valuation_date,
+    # curve_id, source_id, and a discount_factor(tenor_years) method (no longer
+    # a precomputed discount_factors list or calibration_date/model_label attrs).
     print("\n[1a] USD Risk-Free Curve (starter parameters, illustrative)")
     usd_curve = starter_risk_free_curve("USD")
+    usd_curve_label = f"{usd_curve.curve_id} ({usd_curve.compounding} compounding)"
     print(f"     Currency: {usd_curve.currency}")
-    print(f"     Calibration date: {usd_curve.calibration_date}")
-    print(f"     Model: {usd_curve.model_label}")
-    # Sample discount factors at 1, 5, 10 years
+    print(f"     Valuation date: {usd_curve.valuation_date}")
+    print(f"     Curve: {usd_curve_label}")
+    # Sample discount factors at 1, 5, 10 years via the discount_factor() method
     for yr in (1, 5, 10):
-        months = yr * 12
-        if months <= len(usd_curve.discount_factors):
-            df = usd_curve.discount_factors[months - 1]
-            rate_implied = -np.log(df) / yr if df > 0 else float("nan")
-            print(f"       {yr:2d}Y  DF={df:.6f}  implied spot rate={rate_implied*100:.3f}%")
+        df = usd_curve.discount_factor(yr)
+        rate_implied = -np.log(df) / yr if df > 0 else float("nan")
+        print(f"       {yr:2d}Y  DF={df:.6f}  implied spot rate={rate_implied*100:.3f}%")
 
-    # --- 1b. Price a 10-year 4% coupon sovereign bond ----------------------
-    print("\n[1b] 10-Year 4% Coupon Sovereign Bond — Base Pricing")
+    # --- 1b. Price a government coupon bond --------------------------------
+    # API NOTE (MR-009 migration): the Phase 9 FixedIncomeInstrument now carries
+    # market_value / duration_years / spread_bps fields, and pricing is done via
+    # fixed_income_market_value_after_shock(instrument, rate_shift_bps=...).
+    print("\n[1b] Government Coupon Bond — Base Pricing")
     instruments = default_phase9_fixed_income_instruments()
-    # Pick the first long-dated government bond as illustration
-    govt_bond = next((b for b in instruments if b.asset_class == "GovtBond"), instruments[0])
+    govt_bond = next((b for b in instruments if b.asset_class == "Government"), instruments[0])
+    mv_base = fixed_income_market_value_after_shock(govt_bond, rate_shift_bps=0)
+    modified_duration = float(govt_bond.duration_years)
     print(f"     Instrument: {govt_bond.instrument_id}")
     print(f"     Asset class: {govt_bond.asset_class}  Currency: {govt_bond.currency}")
-    print(f"     Coupon: {govt_bond.coupon_rate*100:.2f}%  Term months: {govt_bond.term_months}")
-    print(f"     Par value: {govt_bond.par_value:,.0f}  Spread (OAS): {govt_bond.oas_bps:.0f} bps")
-
-    proj = project_fixed_income_cashflows(govt_bond, usd_curve, valuation_month=0)
-    print(f"     Market value (base): {proj.market_value:>12,.2f}")
-    print(f"     Modified duration:   {proj.modified_duration:>12.4f} years")
-    print(f"     Convexity:           {proj.convexity:>12.4f}")
+    print(f"     Coupon: {govt_bond.coupon_rate*100:.2f}%  Maturity: {govt_bond.maturity_years:.1f}y"
+          f"  Credit rating: {govt_bond.credit_rating}")
+    print(f"     Market value (base): {mv_base:>12,.2f}")
+    print(f"     Modified duration:   {modified_duration:>12.4f} years")
+    print(f"     Spread (OAS):        {govt_bond.spread_bps:>12.0f} bps")
 
     # --- 1c. Rate shock: +100 bps parallel shift ----------------------------
     print("\n[1c] Rate Sensitivity: +100 bps Parallel Shift")
-    mv_shocked = fixed_income_market_value_after_shock(govt_bond, usd_curve, rate_shift_bps=100)
-    dollar_impact = mv_shocked - proj.market_value
-    pct_impact = dollar_impact / proj.market_value * 100 if proj.market_value != 0 else 0.0
+    mv_shocked = fixed_income_market_value_after_shock(govt_bond, rate_shift_bps=100)
+    dollar_impact = mv_shocked - mv_base
+    pct_impact = dollar_impact / mv_base * 100 if mv_base != 0 else 0.0
     print(f"     Market value (+100 bps): {mv_shocked:>12,.2f}")
     print(f"     Dollar impact:           {dollar_impact:>12,.2f}")
     print(f"     % impact:                {pct_impact:>12.3f}%")
     # Duration approximation cross-check
-    approx_impact = -proj.modified_duration * 0.01 * 100  # 100 bps = 1%
+    approx_impact = -modified_duration * 0.01 * 100  # 100 bps = 1%
     print(f"     Duration approx %:       {approx_impact:>12.3f}%  (cross-check)")
-    print("     → Difference from duration approx driven by convexity (should be small for gov bonds)")
+    print("     → +100 bps lowers MV (positive duration); magnitude ≈ duration × shift")
 
     # --- 1d. Liability annuity-certain pricing -------------------------------
     print("\n[1d] Liability Annuity-Certain (10-year, monthly payments of 500)")
     monthly_payment = 500.0
     pv_liability = sum(
-        monthly_payment * usd_curve.discount_factors[m - 1]
+        monthly_payment * usd_curve.discount_factor(m / 12.0)
         for m in range(1, 121)
-        if m - 1 < len(usd_curve.discount_factors)
     )
     print(f"     PV of liability stream: {pv_liability:>12,.2f}")
     print("     (Annuity-certain at USD risk-free; add illiquidity premium for insurance liabilities)")
 
     print("\n[SOA/IA Notes]")
-    print("  SOA ASOP 56 §3.1: Curve calibration date and model label documented above.")
+    print("  SOA ASOP 56 §3.1: Curve valuation date and curve_id documented above.")
     print("  IA TAS M §3.2: Risk-free discount; illiquidity premium adjustment omitted here — add for insurance liabilities.")
     print("  MODEL LIMITATION: Parameters are starter placeholders; recalibrate before any regulatory use.")
 
     return {
         "section": "fixed_income_pricing",
-        "usd_curve_model": usd_curve.model_label,
+        "usd_curve_model": usd_curve_label,
         "govt_bond_id": govt_bond.instrument_id,
-        "market_value_base": round(proj.market_value, 2),
-        "modified_duration": round(proj.modified_duration, 4),
+        "market_value_base": round(mv_base, 2),
+        "modified_duration": round(modified_duration, 4),
         "market_value_shocked_100bps": round(mv_shocked, 2),
         "dollar_impact_100bps": round(dollar_impact, 2),
         "pv_liability_annuity_10yr": round(pv_liability, 2),
@@ -205,7 +208,11 @@ def example_hk_liability_valuation() -> Dict[str, Any]:
     # --- 2a. Cash Dividend product -----------------------------------------
     print("\n[2a] HK Cash Dividend Product (HKCD_PAR_2026)")
     cd_mechanics = default_hk_cash_dividend_mechanics()
-    cd_policies = sample_hk_cash_dividend_policies(n=3)
+    # API NOTE (MR-009 migration): sample_*_policies() no longer takes `n`; it
+    # returns a default set of sample policies. Asset-share support tests now use
+    # the `fund_positions=` kwarg and report `is_supported` / `final_support_ratio`
+    # (the old overall_status / annual_view fields were removed).
+    cd_policies = sample_hk_cash_dividend_policies()
     pol = cd_policies[0]
     print(f"     Policy ID: {pol.policy_id}")
     print(f"     Product:   {pol.product_code}  |  Term: {pol.term_years}yr  |  Issue age: {pol.issue_age}")
@@ -213,47 +220,53 @@ def example_hk_liability_valuation() -> Dict[str, Any]:
     print(f"     Dividend option: {pol.dividend_option}")
 
     sched = annual_cash_dividend_schedule(pol, cd_mechanics, decl)
-    # Display first 5 years
-    display = sched.head(5)[["policy_year", "declared_dividend_rate", "gross_dividend",
-                              "guaranteed_cashflow", "non_guaranteed_cashflow"]].copy()
-    print("\n     Annual Cash Dividend Schedule (first 5 years):")
+    # Display first 5 rows (annual declaration view)
+    display = sched.head(5)[["policy_year", "declared_cash_dividend_rate", "cash_dividend",
+                              "guarantee_status"]].copy()
+    print("\n     Cash Dividend Schedule (first 5 rows):")
     print(display.to_string(index=False))
 
     # Asset-share support test
     from par_model_v2.projection.hk_participating import default_hk_asset_share_fund_positions
     fund_positions = default_hk_asset_share_fund_positions(scale=0.01)
     cd_support = hk_cash_dividend_asset_share_support_test(pol, cd_mechanics, decl,
-                                                            asset_positions=fund_positions)
-    final_ratio = cd_support.annual_view["support_ratio"].iloc[-1] if "support_ratio" in cd_support.annual_view.columns else "N/A"
-    print(f"\n     Asset-share support — final year ratio: {final_ratio}")
-    print(f"     Overall support status: {cd_support.overall_status}")
+                                                            fund_positions=fund_positions)
+    cd_status = "SUPPORTED" if cd_support.is_supported else "UNSUPPORTED"
+    print(f"\n     Asset-share support — final year ratio: {cd_support.final_support_ratio:.4f}")
+    print(f"     Overall support status: {cd_status}")
 
     # --- 2b. Reversionary Bonus product ------------------------------------
     print("\n[2b] HK Reversionary Bonus Product (HKRB_PAR_2026)")
     rb_mechanics = default_hk_reversionary_bonus_mechanics()
-    rb_policies = sample_hk_reversionary_bonus_policies(n=3)
+    rb_policies = sample_hk_reversionary_bonus_policies()
     rb_pol = rb_policies[0]
     print(f"     Policy ID: {rb_pol.policy_id}")
     print(f"     Product:   {rb_pol.product_code}  |  Term: {rb_pol.term_years}yr  |  Issue age: {rb_pol.issue_age}")
     print(f"     Sum Assured: {rb_pol.sum_assured:,.0f}  |  Bonus option: {rb_pol.bonus_option}")
 
     rb_sched = annual_reversionary_bonus_schedule(rb_pol, rb_mechanics, decl)
-    rb_display = rb_sched.head(5)[["policy_year", "vested_bonus_rate", "vested_bonus",
-                                    "cumulative_vested_bonus"]].copy()
-    print("\n     Annual Reversionary Bonus Schedule (first 5 years):")
+    rb_display = rb_sched.head(5)[["policy_year", "declared_reversionary_bonus_rate",
+                                    "annual_vested_bonus_addition", "vested_bonus_balance"]].copy()
+    print("\n     Annual Reversionary Bonus Schedule (first 5 rows):")
     print(rb_display.to_string(index=False))
 
+    # API NOTE (MR-009 migration): reversionary_bonus_guarantee_split now returns a
+    # dict with the guaranteed maturity benefit and a discretionary terminal-bonus
+    # percentage (rather than guaranteed/non_guaranteed benefit columns). The
+    # guaranteed fraction is derived as 1 / (1 + terminal_bonus_pct).
     guar_split = reversionary_bonus_guarantee_split(rb_pol, rb_mechanics, decl)
-    total_guar = guar_split["guaranteed_benefit"].sum()
-    total_nonguar = guar_split["non_guaranteed_benefit"].sum()
-    print(f"\n     Total guaranteed benefit (PV basis unadjusted): {total_guar:>12,.0f}")
-    print(f"     Total non-guaranteed benefit:                   {total_nonguar:>12,.0f}")
+    total_guar = float(guar_split["total_guaranteed_maturity_benefit"])
+    terminal_bonus_pct = float(guar_split["terminal_bonus_pct"])
+    total_nonguar = total_guar * terminal_bonus_pct  # discretionary terminal bonus
+    print(f"\n     Total guaranteed maturity benefit:              {total_guar:>12,.0f}")
+    print(f"     Terminal (non-guaranteed) bonus component:      {total_nonguar:>12,.0f}")
     guar_pct = total_guar / (total_guar + total_nonguar) * 100 if (total_guar + total_nonguar) > 0 else 0
     print(f"     Guaranteed fraction: {guar_pct:.1f}%  (ERM: lower = more discretionary = more ALM risk)")
 
     rb_support = hk_reversionary_bonus_asset_share_support_test(rb_pol, rb_mechanics, decl,
-                                                                  asset_positions=fund_positions)
-    print(f"     RB asset-share support status: {rb_support.overall_status}")
+                                                                  fund_positions=fund_positions)
+    rb_status = "SUPPORTED" if rb_support.is_supported else "UNSUPPORTED"
+    print(f"     RB asset-share support status: {rb_status}")
 
     print("\n[SOA/IA Notes]")
     print("  SOA ASOP 56 §3.1: Product mechanics (guarantee split, declaration rules) documented in hk_participating.py.")
@@ -265,13 +278,13 @@ def example_hk_liability_valuation() -> Dict[str, Any]:
         "cash_dividend": {
             "policy_id": pol.policy_id,
             "product_code": pol.product_code,
-            "overall_support_status": cd_support.overall_status,
+            "overall_support_status": cd_status,
         },
         "reversionary_bonus": {
             "policy_id": rb_pol.policy_id,
             "product_code": rb_pol.product_code,
             "guaranteed_pct": round(guar_pct, 2),
-            "overall_support_status": rb_support.overall_status,
+            "overall_support_status": rb_status,
         },
     }
 
@@ -344,8 +357,10 @@ def example_tvog_computation() -> Dict[str, Any]:
     print("\n[3c] TVOG at base deterministic rate = 3.50%")
     engine_base = TVOGEngine(product, scenarios_q, deterministic_discount_rate=0.035)
     result_base = engine_base.compute(run_label="guided-example-base")
-    print(f"     PV stochastic mean:  {result_base.pv_stochastic_mean:>12,.2f}")
-    print(f"     PV deterministic:    {result_base.pv_deterministic:>12,.2f}")
+    # API NOTE (MR-009 migration): TVOGResult guarantee-PV fields are now
+    # pv_guaranteed_stochastic_mean / pv_guaranteed_deterministic.
+    print(f"     PV stochastic mean:  {result_base.pv_guaranteed_stochastic_mean:>12,.2f}")
+    print(f"     PV deterministic:    {result_base.pv_guaranteed_deterministic:>12,.2f}")
     print(f"     TVOG:                {result_base.tvog:>12,.2f}")
     print(f"     TVOG / SA:           {result_base.tvog / product.sum_assured * 100:>11.3f}%")
     print(f"     PV p5 / p95:         {result_base.pv_p5:>12,.2f}  /  {result_base.pv_p95:>12,.2f}")
@@ -383,8 +398,8 @@ def example_tvog_computation() -> Dict[str, Any]:
         "product_term_years": product.term_years,
         "sum_assured": product.sum_assured,
         "n_scenarios": scenarios_q.n_scenarios,
-        "pv_stochastic_mean": round(result_base.pv_stochastic_mean, 2),
-        "pv_deterministic_3_5pct": round(result_base.pv_deterministic, 2),
+        "pv_stochastic_mean": round(result_base.pv_guaranteed_stochastic_mean, 2),
+        "pv_deterministic_3_5pct": round(result_base.pv_guaranteed_deterministic, 2),
         "tvog_base": round(result_base.tvog, 2),
         "tvog_low_rate_3pct": round(result_low.tvog, 2),
         "tvog_delta_minus50bps": round(tvog_delta, 2),
@@ -569,12 +584,16 @@ def example_stress_testing() -> Dict[str, Any]:
     print("\n[5a] Phase 9 Asset Class Stress Scenarios")
     scenarios = default_phase9_asset_stress_scenarios()
     print(f"     Stress scenarios defined: {len(scenarios)}")
+    # API NOTE (MR-009 migration): AssetStressScenario field is now `description`
+    # (was scenario_description). run_asset_class_stress_tests now returns an
+    # AssetStressReport; the per-instrument detail is on `.stress_results`.
     for s in scenarios:
-        print(f"       {s.scenario_id:<30}  {s.scenario_description}")
+        print(f"       {s.scenario_id:<30}  {s.description}")
 
     # --- 5b. Run stress tests -----------------------------------------------
     print("\n[5b] Running Stress Tests")
-    stress_df = run_asset_class_stress_tests(scenarios)
+    stress_report = run_asset_class_stress_tests(scenarios)
+    stress_df = stress_report.stress_results
     total_rows = len(stress_df)
     print(f"     Stress result rows: {total_rows}")
 
@@ -614,12 +633,22 @@ def example_stress_testing() -> Dict[str, Any]:
     n = corr_matrix.shape[0]
     print(f"     Correlation matrix dimensions: {n}×{n}")
 
-    validator = CorrelationMatrixValidator(corr_matrix)
-    validation = validator.validate()
+    # API NOTE (MR-009 migration): CorrelationMatrixValidator is now constructed
+    # with tolerances and exposes validate_matrix(matrix, repair=...), returning a
+    # CorrelationMatrixValidationReport whose .diagnostics dict holds min_eigenvalue
+    # and whose .repaired flag indicates whether PSD repair was applied.
+    validator = CorrelationMatrixValidator()
+    report = validator.validate_matrix(corr_matrix, repair=True)
+    min_eig = float(report.diagnostics["min_eigenvalue"])
+    validation = {
+        "is_psd": bool(min_eig >= -1e-9),
+        "min_eigenvalue": min_eig,
+        "psd_repair_applied": bool(report.repaired),
+    }
     print(f"     Is positive semi-definite: {validation['is_psd']}")
     print(f"     Min eigenvalue: {validation['min_eigenvalue']:.6f}")
-    if validation.get("psd_repair_applied"):
-        print("     ⚠ PSD repair applied (diagonal bump method) — check repair magnitude")
+    if validation["psd_repair_applied"]:
+        print("     ⚠ PSD repair applied (nearest-PSD method) — check repair magnitude")
     else:
         print("     ✓ No repair needed — matrix is valid for Cholesky decomposition")
 
@@ -667,103 +696,113 @@ def example_reporting_close() -> Dict[str, Any]:
     thresholds are illustrative.  The sign-off pack must not be used as actual
     actuarial sign-off evidence.
     """
+    import tempfile
+    from pathlib import Path
     from par_model_v2.projection.reporting_cycle import (
         default_projection_assumptions,
-        AssumptionLock,
-        run_validation_suite,
-        build_output_review,
-        SignOffPack,
         ReportingCycleConfig,
         run_reporting_cycle,
+    )
+    from par_model_v2.projection.portfolio_generator import (
+        generate_hk_par_portfolio,
+        PortfolioGenerationConfig,
     )
 
     print("\n" + "=" * 70)
     print("SECTION 6: Reporting Close Workflow")
     print("=" * 70)
 
-    # --- 6a. Assumption lock ------------------------------------------------
+    # API NOTE (MR-009 migration): the reporting cycle is now driven by the
+    # high-level orchestrator run_reporting_cycle(portfolio, assumptions, config),
+    # which performs all five stages (lock → chunked run → validation → review →
+    # sign-off pack) and returns a SignOffPack carrying the lock, run_record,
+    # validation, and review sub-objects. The old hand-assembled ModelRunRecord /
+    # run_validation_suite(run_record, lock) / SignOffPack.assemble() API was
+    # removed; ProjectionAssumption no longer has category/unit fields.
+
+    # --- 6a. Assumption snapshot -------------------------------------------
     print("\n[6a] Assumption Lock — Snapshot all projection assumptions")
     assumptions = default_projection_assumptions()
     print(f"     Assumptions defined: {len(assumptions)}")
     for a in assumptions[:5]:
-        print(f"       [{a.category:<12}] {a.name:<35} = {a.value} {a.unit}")
+        print(f"       {a.name:<22} = {a.value}   ({a.label})")
     if len(assumptions) > 5:
         print(f"       ... and {len(assumptions) - 5} more")
 
-    lock = AssumptionLock.create(assumptions, locked_by="guided-example-user")
-    print(f"\n     Lock ID:   {lock.lock_id}")
-    print(f"     Locked by: {lock.locked_by}")
-    print(f"     Locked at: {lock.locked_at}")
-    print(f"     Digest:    {lock.digest[:16]}...  (SHA-256 of assumption snapshot)")
-
-    # --- 6b. Model run record -----------------------------------------------
-    print("\n[6b] Model Run Record — Link run to assumption lock")
-    from par_model_v2.projection.reporting_cycle import ModelRunRecord
-    import uuid as _uuid
-    run_id = "guided-example-" + _uuid.uuid4().hex[:8]
-    run_record = ModelRunRecord(
-        run_id=run_id,
-        assumption_lock_id=lock.lock_id,
-        model_version="v1.0.0-dev",
-        run_by="guided-example-user",
-        portfolio_id="HK_PAR_100k_SYNTHETIC_v1",
-        n_policies=100_000,
-        n_scenarios=1_000,
-        status="COMPLETED",
-        duration_seconds=42.3,
+    # --- 6b. Build a small synthetic HK PAR portfolio ----------------------
+    print("\n[6b] Synthetic HK PAR Portfolio (educational, small for speed)")
+    portfolio_result = generate_hk_par_portfolio(
+        PortfolioGenerationConfig(n_policies=200, seed=2026)
     )
-    print(f"     Run ID:        {run_record.run_id}")
-    print(f"     Lock ID ref:   {run_record.assumption_lock_id}")
-    print(f"     Portfolio:     {run_record.portfolio_id}  ({run_record.n_policies:,} policies)")
-    print(f"     Model version: {run_record.model_version}")
-    print(f"     Status:        {run_record.status}  ({run_record.duration_seconds}s)")
+    portfolio = portfolio_result.policies
+    print(f"     Policies generated: {len(portfolio):,}")
+    print(f"     Portfolio digest:   {portfolio_result.digest[:16]}...  (SHA-256, reproducible)")
 
-    # --- 6c. Validation suite -----------------------------------------------
-    print("\n[6c] Validation Suite — Post-run checks")
-    validation_result = run_validation_suite(run_record, lock)
-    print(f"     Checks run:   {validation_result.n_checks}")
-    print(f"     PASS:         {validation_result.n_pass}")
-    print(f"     FAIL:         {validation_result.n_fail}")
-    print(f"     WARN:         {validation_result.n_warn}")
-    print(f"     SKIP:         {validation_result.n_skip}")
-    print(f"     Overall status: {validation_result.overall_status}")
-    if validation_result.n_fail > 0:
-        fails = [c for c in validation_result.checks if c.status.value == "FAIL"]
+    # --- 6c. Run the full reporting cycle ----------------------------------
+    print("\n[6c] Run Reporting Cycle — lock → run → validation → review → sign-off")
+    cycle_cfg = ReportingCycleConfig(
+        output_dir=Path(tempfile.mkdtemp(prefix="guided_reporting_")),
+        cycle_label="Guided Example Reporting Cycle",
+        locked_by="guided-example-user",
+        reviewer="guided-example-AA",
+        chunk_size=50,
+        auto_approve=True,
+    )
+    pack = run_reporting_cycle(portfolio, assumptions=assumptions, config=cycle_cfg)
+
+    lock = pack.lock
+    run_record = pack.run_record
+    validation = pack.validation
+    review = pack.review
+
+    print(f"     Lock ID:        {lock.lock_id}")
+    print(f"     Locked by:      {lock.locked_by}   at {lock.created_at}")
+    print(f"     Digest:         {lock.digest[:16]}...  (SHA-256 of assumption snapshot)")
+    print(f"     Run ID:         {run_record.run_id}  (refs lock {run_record.lock_id})")
+    print(f"     Reconciliation: {'PASSED' if run_record.reconciliation_passed else 'FAILED'}"
+          f"  ({run_record.n_chunks_done}/{run_record.n_chunks} chunks)")
+
+    # --- 6d. Validation suite results --------------------------------------
+    n_checks = len(validation.checks)
+    overall_status = getattr(validation.overall_status, "value", str(validation.overall_status))
+    print("\n[6d] Validation Suite — Post-run checks")
+    print(f"     Checks run:   {n_checks}")
+    print(f"     PASS:         {validation.n_pass}")
+    print(f"     FAIL:         {validation.n_fail}")
+    print(f"     WARN:         {validation.n_warn}")
+    print(f"     SKIP:         {validation.n_skip}")
+    print(f"     Overall status: {overall_status}")
+    if validation.n_fail > 0:
+        fails = [c for c in validation.checks
+                 if getattr(c.status, "value", str(c.status)) == "FAIL"]
         for f in fails:
             print(f"     ⚠ FAIL: [{f.check_id}] {f.check_name} — {f.message}")
     else:
-        print("     ✓ All checks PASSED or WARNED")
+        print("     ✓ All checks PASSED, WARNED, or SKIPPED")
 
-    # --- 6d. Output review --------------------------------------------------
-    print("\n[6d] Output Review")
-    review = build_output_review(run_record, lock, validation_result, reviewer="guided-example-user")
-    print(f"     Review ID:      {review.review_id}")
-    print(f"     Reviewer:       {review.reviewer}")
-    print(f"     Overall status: {review.overall_status}")
-    print(f"     Validation ref: {review.validation_suite_id}")
-
-    # --- 6e. Sign-off pack --------------------------------------------------
-    print("\n[6e] Sign-Off Pack — Governance evidence")
-    pack = SignOffPack.assemble(lock, run_record, validation_result, review)
+    # --- 6e. Output review + sign-off governance checklist -----------------
+    print("\n[6e] Output Review & Sign-Off Pack — Governance evidence")
+    print(f"     Review ID:      {review.review_id}  (reviewer: {review.reviewer})")
+    print(f"     Approved:       {review.approved}")
     print(f"     Pack ID:        {pack.pack_id}")
-    print(f"     Status:         {pack.status}")
-    checklist = pack.sign_off_checklist
-    n_complete = sum(1 for item in checklist if item.get("complete", False))
-    n_total = len(checklist)
-    print(f"     Checklist:      {n_complete}/{n_total} items complete")
-    for item in checklist[:5]:
-        status_icon = "✓" if item.get("complete") else "○"
-        print(f"       {status_icon} [{item.get('item_id', '?')}] {item.get('description', '')[:60]}")
+    print(f"     Governance cleared: {pack.governance_cleared}  |  Blockers: {len(pack.blockers)}")
 
-    # Write Markdown summary to stdout (abbreviated)
-    md_lines = pack.to_markdown().splitlines()
-    print("\n     Sign-Off Pack (first 15 lines of Markdown):")
-    for line in md_lines[:15]:
-        print(f"     {line}")
-    print("     ...")
+    # Derive a five-gate governance checklist from the cycle outcome.
+    checklist = [
+        ("G1 Assumptions locked",   bool(lock.lock_id)),
+        ("G2 Reconciliation passed", bool(run_record.reconciliation_passed)),
+        ("G3 Validation no failures", validation.n_fail == 0),
+        ("G4 Output review approved", bool(review.approved)),
+        ("G5 Sign-off governance cleared", bool(pack.governance_cleared)),
+    ]
+    n_total = len(checklist)
+    n_complete = sum(1 for _, ok in checklist if ok)
+    print(f"     Sign-off checklist: {n_complete}/{n_total} gates complete")
+    for label, ok in checklist:
+        print(f"       {'✓' if ok else '○'} {label}")
 
     print("\n[SOA/IA Notes]")
-    print("  IA TAS M §3.6: Full chain: lock_id → run_id → validation_id → review_id → pack_id.")
+    print("  IA TAS M §3.6: Full chain: lock_id → run_id → validation → review_id → pack_id.")
     print("  SOA ASOP 56 §3.2: Validation suite must pass before results leave the model.")
     print("  ERM: Sign-off pack is governance evidence; store with version-controlled model outputs.")
 
@@ -772,10 +811,10 @@ def example_reporting_close() -> Dict[str, Any]:
         "lock_id": lock.lock_id,
         "run_id": run_record.run_id,
         "n_assumptions": len(assumptions),
-        "validation_n_checks": validation_result.n_checks,
-        "validation_n_pass": validation_result.n_pass,
-        "validation_n_fail": validation_result.n_fail,
-        "validation_overall_status": validation_result.overall_status,
+        "validation_n_checks": n_checks,
+        "validation_n_pass": validation.n_pass,
+        "validation_n_fail": validation.n_fail,
+        "validation_overall_status": overall_status,
         "sign_off_pack_id": pack.pack_id,
         "checklist_complete": n_complete,
         "checklist_total": n_total,

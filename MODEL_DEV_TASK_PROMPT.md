@@ -414,8 +414,10 @@ Tasks for Phase 14 (one per cycle, in order):
    APPROVED ChangeRecord + 2 PARAM_CHANGE audit entries; G-03 PASS (6/6); MR-002 → MITIGATED. Also
    repaired the canonical GOVERNANCE_STORE.json round-trip (SignOffStatus.IMPLEMENTED + RiskRating
    VERY_LOW/VERY_HIGH). (SOA ASOP 56 §3.4; SOA ASOP 25 §3.3; IA TAS M §3.5/3.6/3.7)
-3. Remediate MR-009 — migrate `examples/guided_examples.py` to the current
-   RiskFreeCurve/FixedIncomeInstrument/TVOG APIs; bring `tests/test_guided_examples.py` green.
+3. ✅ DONE (2026-06-04) Remediate MR-009 — migrated `examples/guided_examples.py` to the current
+   RiskFreeCurve/FixedIncomeInstrument/TVOG/HK-liability/correlation/reporting-cycle APIs;
+   `tests/test_guided_examples.py` 64/64 PASS; MR-009 → CLOSED (VERY_LOW) with IMPLEMENTED ChangeRecord
+   + GOVERNANCE/CORRECTION audit entries. (IA TAS M §3.6; SOA ASOP 56 §3.5/3.2)
 4. Re-run G-06 IA TAS M §3.6 suite re-scoring VR-B01/B02/B03/S05 against the
    Phase 13 Task 5 out-of-sample backtest evidence; target ≥ 90% PASS.
 5. ESG sophistication: add an optional stochastic-volatility (Heston) or
@@ -424,7 +426,7 @@ Tasks for Phase 14 (one per cycle, in order):
 6. Nested-stochastic / LSMC TVOG proxy for capital metrics, with convergence and
    reproducibility diagnostics; document model-use restrictions.
 
-**Current milestone:** Phase 14 in progress | 76/80 tasks done | Phase 14 Task 2 COMPLETE (G-03 cleared educational; MR-002 → MITIGATED; GBM equity calibrated to educational-proxy CNY/HK daily history — CNY σ_S=0.216/ERP=3.27%/ρ=-0.197, HK σ_S=0.252/ERP=1.71%/ρ=-0.149; APPROVED ChangeRecord + 2 PARAM_CHANGE entries; 18 new tests PASS). **All 12 educational deployment gates now cleared.** Also fixed a prior-cycle defect that made GOVERNANCE_STORE.json unloadable (added SignOffStatus.IMPLEMENTED + RiskRating.VERY_LOW/VERY_HIGH) and made two Phase 13 Task 6 tests state-tolerant. Production residuals remaining: credentialled live market-data feeds (G-02/G-03/G-09 proxies), MR-009 (guided_examples API migration), and a genuine human APS X2 reviewer. Next: Phase 14 Task 3 (MR-009 — migrate examples/guided_examples.py).
+**Current milestone:** Phase 14 in progress | 77/80 tasks done | Phase 14 Task 3 COMPLETE (MR-009 CLOSED — guided_examples.py migrated to current RiskFreeCurve/FixedIncomeInstrument/TVOG/HK-liability/correlation/reporting-cycle APIs; tests/test_guided_examples.py 64/64 PASS; IMPLEMENTED ChangeRecord CR-MR009-CLOSE-20260604 + 2 audit entries, audit integrity verified; governance regression 79/79 PASS, compileall clean). Open model risks 2 → 1; mitigated/closed 7 → 8. **All 12 educational deployment gates remain cleared.** Production residuals remaining: credentialled live market-data feeds (G-02/G-03/G-09 proxies) and a genuine human APS X2 reviewer. Next: Phase 14 Task 4 (re-run G-06 IA TAS M §3.6 suite; target ≥ 90% PASS).
 
 ---
 
