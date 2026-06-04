@@ -463,13 +463,19 @@ Tasks for Phase 15 (one per cycle, in order):
    0.0017; textbook overfit signature (OOS R^2 0.970->0.854, gap 0.0017->0.0924, onset degree 2); noisy fit_r2 (0.17-0.19) shown
    NOT a validation metric vs in-sample-heavy R^2 (0.95-0.97). 20/20 tests PASS; compileall clean; Task 1 module untouched.
    docs/validation/PHASE15_PROXY_VALIDATION_REPORT.{json,md}. (SOA ASOP 56 §3.5; IA TAS M §3.6; IFoA proxy-model WP; L&S 2001)
-3. Correlated risk aggregation — combine standalone rate and equity capital via the ESG correlation matrix; compare
-   to fully-diversified multi-driver nested capital (diversification benefit evidence).
+3. ✅ DONE (2026-06-05) Correlated risk aggregation — par_model_v2/projection/multi_driver_risk_aggregation.py:
+   standalone rate SCR (equity guarantee OFF) + standalone equity-guarantee SCR (CRN-isolated via L_full−L_rate),
+   variance-covariance aggregation with the governed ESG rate/equity correlation + validated 2×2 ESG matrix,
+   benchmarked to the fully-diversified two-driver nested capital. Also repaired a DataFrame-iteration bug left by a
+   prior cycle (phase8_rate_equity_fx_correlation_matrix returns a DataFrame). Evidence (seed 42; 99.5%; N_outer=1,000;
+   n_inner=256): rate SCR 21,285; equity SCR 23,191; sum 44,477; ESG-ρ(−0.15) formula SCR 29,031; nested SCR 43,251;
+   rel err 32.9% (<35% tol) → VERDICT PASS; digest 55ca305d. Key finding: raw ESG factor correlation understates
+   diversified capital by ~33% (realised capital-loss correlation +0.55, not −0.15) → new MR-010 (MITIGATED).
+   9/9 tests PASS; compileall clean. ChangeRecord 5e21202b OWNER_REVIEW; audit chain 24→25. (SOA ASOP 56 §3.5;
+   ASOP 25 §3.3; IA TAS M §3.2/§3.6)
 4. Tail-convergence and stability diagnostics for the 99.5% capital metric (outer-count convergence, bootstrap CI on
    VaR/ES, antithetic / quasi-MC variance reduction).
 5. Refresh governance — limitation card, ChangeRecord, MR register update for the multi-driver proxy; document
    model-use restrictions and the remaining credentialled-data / independent-review residual.
 
-**Current milestone:** Phase 15 in progress | 82/85 tasks done | **PHASE 15 TASK 2 COMPLETE** (2026-06-05). Added par_model_v2/projection/multi_driver_proxy_validation.py: a formal out-of-sample proxy-model validation of the Task 1 bivariate LSMC capital surface. Fits on N_fit single-inner-path outer states and validates on an INDEPENDENT disjoint-seed hold-out against HEAVY (high-inner-count) nested truth; selects the polynomial degree by OOS RMSE/R^2 over a shared fitting set; reports leakage diagnostics (seeds disjoint, 0 shared states, positive min scaled distance), per-degree overfit gap, overfit-onset degree, a proxy-vs-nested capital comparison, a reproducibility digest, and an honest PASS/PARTIAL verdict. Evidence (seed 42/20260605; n_fit=1000, n_val=80, n_inner_heavy=512, degrees 1-4): VERDICT PASS — selected degree 1, OOS R^2=0.9704, OOS RMSE 2,311.7, VaR rel err 3.21%, ES rel err 2.60%, leakage-free, overfit gap 0.0017. Textbook overfit signature (OOS R^2 0.970->0.854 and gap 0.0017->0.0924 as degree rises 1->4; overfit onset degree 2). Confirmed the noisy single-path fit_r2 (0.17-0.19) is NOT a validation metric vs in-sample-heavy R^2 (0.95-0.97). 20/20 new tests PASS; compileall clean; Task 1 module untouched. docs/validation/PHASE15_PROXY_VALIDATION_REPORT.{json,md}. **All 12 educational deployment gates remain cleared.** Next: Phase 15 Task 3 — correlated risk aggregation (combine standalone rate & equity capital via the ESG correlation matrix; compare to fully-diversified multi-driver nested capital; diversification-benefit evidence).
-
-**Previous milestone:** **PHASE 15 TAS
+**Current milestone:** Phase 15 in progress | 83/85 tasks done | **PHASE 15 TASK 3 COMPLETE** (2026-06-05). Added par_model_v2/projection/multi_driver_risk_aggregation.py: correlated risk aggregation that combines standalone rate capital (full residual liability with the equity guarantee switched OFF) and standalone equity-guarantee capital (CRN-isolated via L_full−L_rate) using the governed ESG rate/equity correlation and the validated 2×2 ESG correlation matrix (phase8_rate_equity_fx_correlation_matrix + CorrelationMatrixValidator), then benchmarks the variance-covariance formula against the fully-diversified two-driver nested capital. Recovered a prior cycle's broken/uncommitted module (DataFrame-iteration ValueError) and repaire

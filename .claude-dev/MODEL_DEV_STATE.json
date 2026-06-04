@@ -1,8 +1,8 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-04T17:21:50.748000+00:00",
-  "last_run_duration_minutes": 55,
+  "last_run": "2026-06-04T18:29:06.988100+00:00",
+  "last_run_duration_minutes": 58,
   "current_phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation",
   "overall_status": "active_phase15_multirisk_capital",
   "phases": {
@@ -284,12 +284,13 @@
       ],
       "completed": [
         "Task 1: Extend the LSMC surface to two correlated drivers (short rate r_H + equity level S_H) with a multivariate polynomial basis; condition the inner Q nest on (r,S); add multi-driver nested ground truth.",
-        "Task 2: Out-of-sample proxy validation \u2014 hold-out fitting/validation split, basis-degree selection by out-of-sample RMSE/R^2, and leakage/overfit diagnostics; produce a proxy-validation report."
-      ],
-      "in_progress": [
+        "Task 2: Out-of-sample proxy validation \u2014 hold-out fitting/validation split, basis-degree selection by out-of-sample RMSE/R^2, and leakage/overfit diagnostics; produce a proxy-validation report.",
         "Task 3: Correlated risk aggregation \u2014 combine standalone rate and equity capital with the ESG correlation matrix; compare to the fully-diversified multi-driver nested capital (diversification benefit evidence)."
       ],
-      "next": "Task 4: Tail-convergence and stability diagnostics"
+      "in_progress": [
+        "Task 4: Tail-convergence and stability diagnostics for the 99.5% capital metric (outer-count convergence, bootstrap confidence interval on VaR/ES, antithetic/quasi-MC variance reduction)."
+      ],
+      "next": "Task 5: Refresh governance \u2014 model-limitation card, ChangeRecord, MR register update for multi-driver proxy; document model-use restrictions and the remaining credentialled-data / independent-review residual."
     }
   },
   "repository_info": {
@@ -301,11 +302,11 @@
   },
   "progress_metrics": {
     "total_tasks": 85,
-    "tasks_completed": 82,
+    "tasks_completed": 83,
     "phases_completed": 14,
-    "estimated_completion_pct": 96.5,
+    "estimated_completion_pct": 97.6,
     "average_cycle_duration_minutes": 53,
-    "cycles_run": 126,
+    "cycles_run": 127,
     "tasks_total": 85
   },
   "technical_notes": {

@@ -5588,3 +5588,48 @@ against the Phase 13 Task 5 out-of-sample backtest evidence; target ≥ 90% PASS
 - Residual: credentialled-data calibration + independent APS X2 review still pending (production sign-off withheld; educational classification retained).
 
 ---
+
+## Run 2026-06-04T18:17Z — Phase 15 Task 3 (correlated risk aggregation implementation; verification blocked)
+
+**Task In Progress:** Phase 15 Task 3 — Correlated risk aggregation (combine standalone rate and equity capital via the ESG correlation matrix; compare to fully-diversified multi-driver nested capital).
+
+**Accomplishments:**
+- Added `par_model_v2/projection/multi_driver_risk_aggregation.py` as an additive Task 3 module. It reuses the Phase 15 Task 1 valuation primitives to compute rate-only capital, isolated equity-guarantee capital, standalone SCR sum, ESG-correlation square-root aggregation, full two-driver nested capital, diversification benefits, formula-vs-nested gap, reproducibility digest, JSON serialization, and educational-use restrictions.
+- Added `tests/test_phase15_risk_aggregation.py` covering config validation, report generation, exact square-root aggregation formula, diversification evidence, finite component-loss correlation, JSON round-trip, reproducibility digest, and governance restrictions.
+- Added `docs/validation/PHASE15_RISK_AGGREGATION_REPORT.md` documenting the Task 3 method and the current verification blocker.
+- Syntax parsing passed for the new module and test file using the only located Python interpreter.
+
+**Verification Blocker:**
+- `pytest` is not on PATH.
+- `python`, `python3`, and `py` are not on PATH.
+- The only located interpreter is `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe`, but it has no `pytest` module and no `numpy` module, so the model cannot execute in this environment.
+
+**State Decision:** Task 3 remains `in_progress`; it is not marked complete until the new tests and numeric aggregation evidence can run with NumPy/PyTest available.
+
+**Next Step:** Run `tests/test_phase15_risk_aggregation.py`, generate the numeric `PHASE15_RISK_AGGREGATION_REPORT` evidence, then mark Task 3 complete and advance to Task 4.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 section 3.1.3 / 3.5: implementation design added for stochastic aggregation documentation and nested-benchmark validation.
+- SOA ASOP 25 section 3.3: ESG rate/equity correlation matrix wired into the aggregation formula.
+- IA TAS M section 3.6: report structure, reproducibility digest, and use restrictions added; executable evidence pending dependency-capable Python.
+
+---
+
+## Run 2026-06-05 — Phase 15 (Multi-Risk Economic Capital and Proxy-Model Validation)
+
+**Task Completed:** Task 3 — Correlated risk aggregation (rates + equity guarantee)
+
+**Context / recovery:** A prior cycle had created `par_model_v2/projection/multi_driver_risk_aggregation.py`
+and `tests/test_phase15_risk_aggregation.py` but left them uncommitted and **broken** — the module
+crashed in `MultiDriverRiskAggregator.run` because `phase8_rate_equity_fx_correlation_matrix` returns a
+pandas DataFrame and the code iterated it directly (yielding column-label strings, `ValueError: could not
+convert string to float: 'R'`). The git index was also desynced from HEAD (phantom staged deletions of
+already-committed files); a mixed `git reset` was attempted but the virtiofs mount's stale, permission-locked
+`.git/index.lock` (2026-06-03) blocks in-place index writes, per GITHUB_PUSH_BLOCKER.md. Commit/push therefore
+use the /tmp-clone pattern.
+
+**Accomplishments:**
+- Fixed the DataFrame-iteration bug (coerce to `np.asarray(..., dtype=float)` before building the
+  immutable tuple-of-tuples). 9/9 `tests/test_phase15_risk_aggregation.py` PASS; `compileall` clean across
+  `par_model_v2`, `scripts`, `tests`.
+- The module computes: standalone **rate** SCR (equity guarantee 
