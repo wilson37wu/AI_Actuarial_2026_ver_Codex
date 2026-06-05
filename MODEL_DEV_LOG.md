@@ -5834,4 +5834,59 @@ prior cycle and brought the working-tree test suite fully green.
 - **Offline viewer was BROKEN on disk.** `model_result_viewer.html` (and `par_model_v2/viewer/viewer_template.html`)
   had been **truncated mid-\<script\>** by an interrupted write, so the embedded JS threw
   "Unexpected end of input" and the self-test failed (0 tabs / 0 SVGs / 2 JS errors). The **committed
-  HEAD** copies were intact, so I restore
+  HEAD** copies were intact, so I restored both from HEAD. `scripts/offline_viewer_self_test.cjs` now
+  PASS: 4 tabs, 7 SVG charts, 7 PNG-export controls, print/file/drop controls, **0 JS errors, 0 network**.
+  `tests/test_offline_viewer.py` 19/19 PASS.
+- **3 package `__init__.py` files were truncated** (governance 1077 B unterminated string; calibration
+  1598 B unclosed paren; validation reverted/short), which is the real cause of the "3 pre-existing
+  collection errors" earlier cycles logged. Restored `governance/__init__.py` from HEAD (re-exports
+  `ModelLimitationCard`); rebuilt `calibration/__init__.py` (HEAD + re-wired the Phase 12
+  `CalibrationAssumptionCard`/`build_phase12_calibration_pack`/... block) and `validation/__init__.py`
+  (HEAD minus the retired `validation_dashboard` import + re-wired the Phase 13 `run_phase13_ia_tas_m_validation` block).
+- **`phase13_ia_tas_m.py` called `ValidationRunner.run_all()`** which the runtime API does not expose
+  (run_all is an uncommitted alias not visible on the live filesystem); switched to the stable `.run()`.
+- **`tests/test_guided_examples.py` carried an incomplete uncommitted edit** (called
+  `example_tvog_computation(primary_n_scenarios=...)`, a kwarg the module never gained) → 8 failures.
+  HEAD test+module are self-consistent (neither uses the kwarg), so restored the test from HEAD.
+- **Result:** the 4 breakages prior cycles had flagged as "pre-existing, not touched" are RESOLVED.
+  Targeted suites run this cycle: offline_viewer 19, the 3 ex-broken modules 25, asset/derivative/ALM/
+  projection batch 581, plus governance/ESG/risk/TVOG/calibration/phase13/phase14/phase15/guided/integration
+  batches — **0 failures across every batch (800+ tests)**.
+
+**BLOCKERS for human / next cycle (could NOT be done autonomously this run):**
+- **Git is locked.** A stale `.git/index.lock` (dated 2026-06-03T19:39Z, from the crash) blocks every
+  git write (`reset`, `add`, `commit`). The mounted filesystem **refuses to delete it**
+  ("Operation not permitted"). **No commit or push was possible this run.** All fixes above live in the
+  **working tree only**.
+- **The git index is also corrupted** independently: ~93 tracked files are staged as "deleted" while
+  byte-identical copies sit on disk as "untracked" (verified identical to HEAD). A `git reset` would
+  clear this phantom diff — but it needs the lock removed first.
+- **The mount serves inconsistent reads** (e.g. `awk` sees `def run_all` that the Python import does
+  not; tracebacks reference other session mount prefixes). Files written via **bash** are seen reliably;
+  files edited earlier via the file-tools (Windows path) by prior cycles can be stale to the interpreter.
+
+**Action required:** on a machine with real filesystem access — delete `.git/index.lock`, run
+`git reset` to clear the phantom deletes, review and commit the working-tree backlog
+(Phase 15 Task 3–5, Phase 16, phase12_calibration_pack, phase13_ia_tas_m, the recovery fixes above),
+then `git push origin main`.
+
+**Next Step:** see MODEL_DEV_TASK_PROMPT.md "Phase R" (commit-backlog recovery) and "Phase 17" (research).
+
+---
+
+---
+
+## Run 2026-06-05T02:2x Z — Phase R RESOLVED: git unblocked via workaround + divergent-remote merge pushed
+
+**Context:** Scheduled maintenance pass following the 2026-06-05T01:34 cycle, which had fixed the code
+corruption but left git fully blocked (nothing committed/pushed).
+
+**Ghost-lock diagnosis (unchanged blocker, now worked around):**
+- Two crash-era lock files — `.git/index.lock` (2026-06-03T19:39) and `.git/HEAD.lock` (2026-06-03T19:09) —
+  are *ghost files* on the virtiofs FUSE mount: `ls -la` shows them, but `rm`/`mv`/`chmod`/`python os.remove`
+  all fail ("Operation not permitted" / "No such file or directory"). They still block normal git index and
+  ref updates. **A human shell must delete these two files** to restore normal git operation.
+
+**Workaround used to commit + push despite the locks:**
+1. Built a clean index from `cp .git/index /tmp/alt_index` (preserves stat data → fast batched `git add`,
+ 

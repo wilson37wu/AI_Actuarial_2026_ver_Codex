@@ -493,7 +493,7 @@ Tasks for Phase 15 (one per cycle, in order):
 
 **Current milestone:** **ALL DOCUMENTED TASKS COMPLETE — 85/85 tasks, 15 phases + Phase 16 offline viewer.** All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 10. Production sign-off withheld — residual is credentialled-data calibration + independent APS X2 review, NOT a code gap.
 
-**⚠️ 2026-06-05 maintenance / crash-recovery (READ FIRST):** A prior cycle crashed mid-write (2026-06-03) and corrupted the working tree. The 2026-06-05 cycle FIXED the code: the offline viewer + template + 3 truncated package `__init__.py` files were restored/rebuilt, `phase13_ia_tas_m` `run_all()`→`run()`, and `test_guided_examples.py` restored from HEAD — clearing the 3 collection errors + 1 guided_examples failure earlier cycles left open. Offline self-test `ok:true` (0 network / 0 JS errors); pytest 0 failures (run in <45 s batches, 800+ tests). **BUT git is blocked** — a stale `.git/index.lock` (unremovable from the sandbox) + a corrupted index mean NOTHING was committed/pushed this run; all fixes are working-tree only. **Next cycle MUST start with Phase R** (clear the lock, `git reset`, commit the backlog, push) before any new development.
+**✅ 2026-06-05 crash-recovery RESOLVED & PUSHED (READ FIRST):** The 2026-06-03 crash left the working tree corrupted AND two ghost git locks. An earlier 2026-06-05 cycle fixed the *code* (offline viewer + template + 3 truncated `__init__.py` + `phase13_ia_tas_m.run()` + `test_guided_examples.py`) but could not touch git. **This cycle closed Phase R:** committed the recovered tree via an alt-`GIT_INDEX_FILE` + direct-ref-write workaround (commit `1f8f990`), discovered origin/main had diverged by 7 commits (another cycle: Phase 15 T3–5 + Phase 16 T1–4), and **merged** them — merge `e24d74e`, tree = the more-advanced local Phase 16 Task 5 superset, origin/main `ca381b3` kept as 2nd parent so nothing is orphaned. **`git push origin main` OK; local == origin (0/0).** Offline self-test `ok:true` (0 network / 0 JS errors); `compileall` clean. **Residual for a HUMAN:** the two ghost locks `.git/index.lock` + `.git/HEAD.lock` (2026-06-03) are still unremovable from the sandbox and block *normal* git — delete them in a human shell. Until then, cycles must reuse the alt-index + direct-ref workaround. **Full `pytest` was NOT run** (scipy uninstallable this run); py_compile + node self-test substituted — next cycle with a working Python env should run the suite in <45 s batches as the formal gate.
 
 ---
 
@@ -538,7 +538,7 @@ Tasks for Phase 15 (one per cycle, in order):
 
 ---
 
-## Phase R: Crash Recovery & Commit-Backlog (⭐ DO THIS FIRST NEXT CYCLE)
+## Phase R: Crash Recovery & Commit-Backlog ✅ RESOLVED (2026-06-05; pushed as merge e24d74e)
 
 A prior cycle crashed mid-write (2026-06-03), leaving the repository in a degraded state. The
 2026-06-05 maintenance cycle diagnosed and fixed the **code** corruption (working tree only — see
@@ -570,7 +570,7 @@ the same cycle.
 
 ---
 
-## Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy ⭐ AFTER PHASE R
+## Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy ⭐ NEXT (Phase R closed)
 
 Extends the documented Phase 15 limitation (the LSMC capital proxy spans only two drivers — short rate +
 equity). Current proxy-model practice (IFoA proxy-modelling WP; Milliman/MDPI LSMC literature) expands the

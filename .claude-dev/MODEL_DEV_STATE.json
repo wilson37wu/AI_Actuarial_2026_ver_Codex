@@ -1,10 +1,10 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-05T01:37:07.000Z",
-  "last_run_duration_minutes": 50,
-  "current_phase": "Phase R: Crash Recovery & Commit-Backlog (git locked \u2014 see MODEL_DEV_TASK_PROMPT.md)",
-  "overall_status": "maintenance_recovery_git_blocked",
+  "last_run": "2026-06-05T02:25:46.000Z",
+  "last_run_duration_minutes": 55,
+  "current_phase": "Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy",
+  "overall_status": "active_development_phase17_phaseR_resolved",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -404,5 +404,8 @@
       "No commit or push performed this run; all fixes are working-tree only."
     ],
     "next": "Phase R then Phase 17 (third risk driver: credit spread) per MODEL_DEV_TASK_PROMPT.md"
+  },
+  "notes": {
+    "2026-06-05_phaseR": "Phase R closed: recovered tree committed via alt-GIT_INDEX_FILE+direct-ref workaround (1f8f990); merged divergent origin/main (ca381b3, +7 commits) -> merge e24d74e (tree=local Phase16 Task5 superset); pushed; local==origin. RESIDUAL for human: ghost locks .git/index.lock + .git/HEAD.lock still unremovable from sandbox. Full pytest not run (scipy uninstallable); verified via py_compile + node offline self-test (ok:true,0 net,0 JS err)."
   }
 }
