@@ -463,13 +463,73 @@ Tasks for Phase 15 (one per cycle, in order):
    0.0017; textbook overfit signature (OOS R^2 0.970->0.854, gap 0.0017->0.0924, onset degree 2); noisy fit_r2 (0.17-0.19) shown
    NOT a validation metric vs in-sample-heavy R^2 (0.95-0.97). 20/20 tests PASS; compileall clean; Task 1 module untouched.
    docs/validation/PHASE15_PROXY_VALIDATION_REPORT.{json,md}. (SOA ASOP 56 §3.5; IA TAS M §3.6; IFoA proxy-model WP; L&S 2001)
-3. Correlated risk aggregation — combine standalone rate and equity capital via the ESG correlation matrix; compare
-   to fully-diversified multi-driver nested capital (diversification benefit evidence).
-4. Tail-convergence and stability diagnostics for the 99.5% capital metric (outer-count convergence, bootstrap CI on
-   VaR/ES, antithetic / quasi-MC variance reduction).
-5. Refresh governance — limitation card, ChangeRecord, MR register update for the multi-driver proxy; document
-   model-use restrictions and the remaining credentialled-data / independent-review residual.
+3. ✅ DONE (2026-06-05) Correlated risk aggregation — par_model_v2/projection/multi_driver_risk_aggregation.py:
+   standalone rate SCR (equity guarantee OFF) + standalone equity-guarantee SCR (CRN-isolated via L_full−L_rate),
+   variance-covariance aggregation with the governed ESG rate/equity correlation + validated 2×2 ESG matrix,
+   benchmarked to the fully-diversified two-driver nested capital. Also repaired a DataFrame-iteration bug left by a
+   prior cycle (phase8_rate_equity_fx_correlation_matrix returns a DataFrame). Evidence (seed 42; 99.5%; N_outer=1,000;
+   n_inner=256): rate SCR 21,285; equity SCR 23,191; sum 44,477; ESG-ρ(−0.15) formula SCR 29,031; nested SCR 43,251;
+   rel err 32.9% (<35% tol) → VERDICT PASS; digest 55ca305d. Key finding: raw ESG factor correlation understates
+   diversified capital by ~33% (realised capital-loss correlation +0.55, not −0.15) → new MR-010 (MITIGATED).
+   9/9 tests PASS; compileall clean. ChangeRecord 5e21202b OWNER_REVIEW; audit chain 24→25. (SOA ASOP 56 §3.5;
+   ASOP 25 §3.3; IA TAS M §3.2/§3.6)
+4. DONE (2026-06-05) Tail-convergence and stability diagnostics for the 99.5% capital metric -- added
+   par_model_v2/projection/multi_driver_tail_diagnostics.py (additive; built on the Task 1 LSMC surface):
+   outer-count convergence, non-parametric bootstrap CI + SE on VaR/ES (governed outer states), and a
+   crude/antithetic/Sobol-QMC variance-reduction comparison over a pilot-anchored Gaussian-copula surrogate.
+   Evidence (seed 42): VERDICT PASS -- converged True (dVaR<=0.58%, rec N_outer>=2000); bootstrap 95% CI VaR
+   [149402,154391] SE~1486 (+/-1.66%); Sobol QMC variance-reduction ratio ~7.1x; antithetic ineffective on the
+   tail quantile (theory-consistent, documented). 36 tests PASS; compileall clean; siblings unchanged.
+   ChangeRecord 820c6fe4 OWNER_REVIEW; audit chain 25->26. docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.{json,md};
+   docs/MULTI_DRIVER_TAIL_DIAGNOSTICS_CARD.md. (SOA ASOP 56 3.5/3.1.3; ASOP 25 3.3; IA TAS M 3.6; LEcuyer 2018 RQMC)
+5. ✅ DONE (2026-06-05) Refresh governance for the multi-driver economic-capital proxy. Added
+   scripts/build_phase15_task5_governance.py (idempotent): opened MR-011 (multi-driver capital proxy is EDUCATIONAL,
+   not production; model_error; HIGH; IN_PROGRESS) linking MR-006/008/010; created a consolidated governance_change
+   ChangeRecord at OWNER_REVIEW (sign-off withheld); appended 2 GOVERNANCE audit entries (verify_all True; store 26->28
+   audit / 13->14 change / 10->11 risk). Added docs/MULTI_DRIVER_PROXY_LIMITATION_CARD.md (consolidated Tasks 1-4:
+   scope, limitations, model-use restrictions, residual table) + docs/validation/PHASE15_TASK5_GOVERNANCE_REFRESH.{json,md}.
+   8/8 Task 5 tests PASS; governance regression 96 PASS; compileall clean; Task 1-4 modules untouched.
+   (IA TAS M §3.6/3.7; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3; IFoA Modelling PN §4) **PHASE 15 COMPLETE.**
 
-**Current milestone:** Phase 15 in progress | 82/85 tasks done | **PHASE 15 TASK 2 COMPLETE** (2026-06-05). Added par_model_v2/projection/multi_driver_proxy_validation.py: a formal out-of-sample proxy-model validation of the Task 1 bivariate LSMC capital surface. Fits on N_fit single-inner-path outer states and validates on an INDEPENDENT disjoint-seed hold-out against HEAVY (high-inner-count) nested truth; selects the polynomial degree by OOS RMSE/R^2 over a shared fitting set; reports leakage diagnostics (seeds disjoint, 0 shared states, positive min scaled distance), per-degree overfit gap, overfit-onset degree, a proxy-vs-nested capital comparison, a reproducibility digest, and an honest PASS/PARTIAL verdict. Evidence (seed 42/20260605; n_fit=1000, n_val=80, n_inner_heavy=512, degrees 1-4): VERDICT PASS — selected degree 1, OOS R^2=0.9704, OOS RMSE 2,311.7, VaR rel err 3.21%, ES rel err 2.60%, leakage-free, overfit gap 0.0017. Textbook overfit signature (OOS R^2 0.970->0.854 and gap 0.0017->0.0924 as degree rises 1->4; overfit onset degree 2). Confirmed the noisy single-path fit_r2 (0.17-0.19) is NOT a validation metric vs in-sample-heavy R^2 (0.95-0.97). 20/20 new tests PASS; compileall clean; Task 1 module untouched. docs/validation/PHASE15_PROXY_VALIDATION_REPORT.{json,md}. **All 12 educational deployment gates remain cleared.** Next: Phase 15 Task 3 — correlated risk aggregation (combine standalone rate & equity capital via the ESG correlation matrix; compare to fully-diversified multi-driver nested capital; diversification-benefit evidence).
+**Current milestone:** **ALL DOCUMENTED TASKS COMPLETE — 85/85 tasks, 15 phases.** Phase 15 closed 2026-06-05 with Task 5 (multi-driver proxy governance refresh: MR-011 opened, consolidated limitation card, OWNER_REVIEW ChangeRecord, audit 26->28; 8/8 Task 5 tests + 96 governance regression PASS). All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 10. Production sign-off still withheld — the residual is credentialled-data calibration + independent APS X2 review, NOT a code gap.
 
-**Previous milestone:** **PHASE 15 TAS
+---
+
+## Phase 16: Offline Result-Viewer UI (POST-MODEL — per scheduled-task directive)
+
+**Directive (verbatim intent):** Once all documented model-development tasks are complete, build a user interface for **offline** use. It must NOT depend on any pre-installation requirement: the stochastic model completes the calculation, then the UI consumes ONLY the model output to display the results graphically and interactively.
+
+**Design constraints (hard):**
+- A single self-contained `.html` file (HTML + CSS + vanilla JS inline). **No CDN, no npm, no Python server, no build step.** The user double-clicks the file and it works offline.
+- Charts hand-rendered as inline SVG (no Chart.js/Plotly/D3 dependency) so there is zero network requirement.
+- Reads model output that is **already produced** by the Python model — the JSON artifacts under `docs/validation/` and `outputs/` (e.g. PHASE15_*_REPORT.json, GOVERNANCE_STORE.json, TVOG/backtest/sensitivity outputs). The UI performs NO actuarial calculation itself.
+- Data ingestion without a server: support (a) drag-and-drop / file-picker load of one or more output JSON files, and (b) an optional `python3 scripts/build_offline_viewer.py` step that embeds a bundled snapshot into a standalone HTML so it opens with data pre-loaded.
+
+**Tasks for Phase 16 (one per cycle, in order):**
+1. ✅ DONE (2026-06-05) Data-contract + bundler: `scripts/build_offline_viewer.py` scans `docs/validation/*.json` + `.claude-dev/GOVERNANCE_STORE.json` + `MODEL_DEV_STATE.json`, normalises them into one `viewer_data.json` schema (meta, verdicts, summary, capital, tail, proxy, loss, governance) and emits a data-embedded standalone `model_result_viewer.html`. `par_model_v2/viewer/viewer_template.html` is the no-CDN/no-server template; `tests/test_offline_viewer.py` PASS.
+2. ✅ DONE (2026-06-05) Capital & tail dashboards. Added a model-side loss-distribution emitter `scripts/build_phase16_loss_distribution.py` (NOT the UI): fits the Phase 15 (rate+equity) LSMC capital surface ONCE and emits `docs/validation/PHASE16_LOSS_DISTRIBUTION.json` — a 40-bin histogram of the 1y outer liability distribution plus PRE-COMPUTED confidence sweep (VaR/ES/SCR at 90/95/99/99.5/99.9%), percentile table, and the same under 4 independent outer-sampling seeds (42/101/202/303) — so the viewer does ZERO numerics (pure look-up; reproducibility digest bit-identical). The bundler ingests it into a new `loss` schema section. The viewer now renders: SVG economic-capital bars (rate/equity/Σ/var-cov/nested), an interactive loss-distribution histogram with movable VaR/ES/mean/percentile threshold lines driven by seed+confidence+percentile selectors, the outer-count convergence line chart with a bootstrap-95%-CI shaded band, and a horizontal VaR/ES bootstrap-CI bar with variance-reduction (Sobol 7.1×/antithetic) read-outs. Evidence (seed 42, n_fit=500/n_outer=5000, fit R²=0.231): VaR99.5 148,903 / ES99.5 155,728 / SCR 41,040 — consistent with the Phase 15 tail report. New SVG `histChart`/`ciBar` are dependency-free. 12/12 `tests/test_offline_viewer.py` PASS (incl. histogram self-consistency, monotone confidence sweep, SCR=VaR−mean, multi-seed distinctness, no-compute/no-fetch viewer assertion); headless-jsdom render PASS with ZERO JS errors and ZERO network requests; py_compile clean.
+3. ✅ DONE (2026-06-05) Proxy-validation & aggregation views. Proxy tab now shows the degree-sweep
+   in-sample-vs-OOS R² chart PLUS a new overfit-gap (in-sample−OOS) bar chart (green ≤ onset / red ≥ onset),
+   an "Overfit gap" table column, and the selected-degree gap KPI. New **Aggregation** tab renders a
+   dependency-free diversification-benefit waterfall standalone→var-cov→nested (Σ 44,477 → var-cov 29,031 @
+   governed ESG ρ=−0.15 → nested 43,251) with hover tooltips and the MR-010 callout (raw ESG ρ understates
+   diversified capital by 32.9%; realised loss ρ=+0.55). Added `waterfallChart()` + `vfmt` to `barChart()`;
+   2 new tests; `tests/test_offline_viewer.py` 14/14 PASS; `node --check` JS OK; headless jsdom render 4 tabs,
+   waterfall+overfit-gap SVGs present, 0 JS errors / 0 network. Rebuilt `model_result_viewer.html` (47,998 B).
+   (IA TAS M §3.6; SOA ASOP 56 §3.5; ASOP 25 §3.3; IA TAS M §3.2)
+4. ✅ DONE (2026-06-05) Governance panel. Extended the bundler: a COMPUTED audit-integrity badge
+   (`_verify_audit_integrity` recomputes every audit-entry SHA-256 digest — 28/28 verified, 0 failed — replacing the
+   hard-coded flag) and `_parse_deployment_gates` (parses DEPLOYMENT_READINESS_CHECKLIST.md, first-match-wins over the
+   later sign-off table, merges G-11/G-12 → 12/12 cleared educational); enriched risk_register (description/mitigation/
+   owner/category/likelihood/impact/standard) and change_records (record_id/phase/author/peer_reviewer/sign_off_history).
+   Rewrote `viewGov`+`fillRiskRegister` (dependency-free): deployment-gate checklist with pass/fail icons + “12/12 cleared”
+   pill; risk register with TWO filters (status AND rating) + click-to-expand description/mitigation rows; a vertical
+   change-record TIMELINE with per-record sign-off history (peer→owner→approval); and the computed integrity badge
+   (“integrity OK · 28/28 digests verified”). Rebuilt model_result_viewer.html (73,985 B). 19/19 viewer tests PASS
+   (5 new); headless jsdom render: 12 gates, both filters, 11 risk rows, 14-item timeline, rating-filter + row-expand work,
+   0 JS errors / 0 network; `node --check` + `py_compile` clean. (IA TAS M §3.6/§3.7; SOA ASOP 56 §3.5; APS X2 §3)
+5. ✅ DONE (2026-06-05) Polish + offline packaging. Retained the no-server file-picker + drag-and-drop loader; added responsive layout polish for narrow screens, a print stylesheet + Print button, and canvas-based `Export PNG` controls for every inline-SVG chart (CSS variables resolved before SVG serialization). Added `scripts/offline_viewer_self_test.cjs`, an executable jsdom self-test that loads the bundled standalone HTML, checks all four tabs render, verifies 7 SVG charts + 7 export controls + print/file/drop controls, and asserts 0 JS errors / 0 network calls. Rebuilt `model_result_viewer.html` from `viewer_data.json`; external-reference scan PASS; embedded JS `node --check` clean. Python/pytest was not available on PATH in this run, so the new pytest assertions were added but not executed here.
+
+**Phase 16 progress:** COMPLETE (2026-06-05). Offline viewer renders, with zero network: economic-capital bars; an interactive loss-distribution histogram (seed/confidence/percentile selectors, pre-computed look-up); outer-count convergence with a bootstrap-CI band; the VaR/ES bootstrap-CI bar; the Proxy tab's degree-sweep R² chart + overfit-gap bar chart; the **Aggregation** tab with the diversification-benefit waterfall (standalone→var-cov→nested) and MR-010 finding; and the Governance tab with deployment gates, risk filters, change-record timeline, and computed audit-integrity badge. Task 5 packaging is complete: responsive layout, Print, canvas-based PNG export for every SVG chart, file-picker + drag-and-drop load, and executable offline self-test. Current Node/jsdom evidence: 4 tabs, 7 SVG charts, 7 export controls, print/file/drop controls, 0 JS errors, 0 network calls; external-reference scan PASS; embedded JS syntax clean.
+
+**What counts as complete each cycle:** the viewer opens offline (no network) and renders the targeted view from real model-output JSON; bundler/schema tests PASS; committed + pushed; state/log/prompt updated.

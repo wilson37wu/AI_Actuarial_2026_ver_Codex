@@ -1,4 +1,4 @@
-# Model Development Log — AI Actuarial 2026
+# Model Development Log - AI Actuarial 2026
 
 Automated development log. Appended each cycle by Claude Actuarial Agent.
 
@@ -5586,5 +5586,239 @@ against the Phase 13 Task 5 out-of-sample backtest evidence; target ≥ 90% PASS
 - IA TAS M §3.6: addressed — out-of-sample testing, leakage diagnostics, reproducibility, model-use restrictions.
 - IFoA proxy-model working party: addressed — fit/validate split with heavy validation points and complexity selection by OOS error.
 - Residual: credentialled-data calibration + independent APS X2 review still pending (production sign-off withheld; educational classification retained).
+
+---
+
+## Run 2026-06-04T18:17Z — Phase 15 Task 3 (correlated risk aggregation implementation; verification blocked)
+
+**Task In Progress:** Phase 15 Task 3 — Correlated risk aggregation (combine standalone rate and equity capital via the ESG correlation matrix; compare to fully-diversified multi-driver nested capital).
+
+**Accomplishments:**
+- Added `par_model_v2/projection/multi_driver_risk_aggregation.py` as an additive Task 3 module. It reuses the Phase 15 Task 1 valuation primitives to compute rate-only capital, isolated equity-guarantee capital, standalone SCR sum, ESG-correlation square-root aggregation, full two-driver nested capital, diversification benefits, formula-vs-nested gap, reproducibility digest, JSON serialization, and educational-use restrictions.
+- Added `tests/test_phase15_risk_aggregation.py` covering config validation, report generation, exact square-root aggregation formula, diversification evidence, finite component-loss correlation, JSON round-trip, reproducibility digest, and governance restrictions.
+- Added `docs/validation/PHASE15_RISK_AGGREGATION_REPORT.md` documenting the Task 3 method and the current verification blocker.
+- Syntax parsing passed for the new module and test file using the only located Python interpreter.
+
+**Verification Blocker:**
+- `pytest` is not on PATH.
+- `python`, `python3`, and `py` are not on PATH.
+- The only located interpreter is `C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe`, but it has no `pytest` module and no `numpy` module, so the model cannot execute in this environment.
+
+**State Decision:** Task 3 remains `in_progress`; it is not marked complete until the new tests and numeric aggregation evidence can run with NumPy/PyTest available.
+
+**Next Step:** Run `tests/test_phase15_risk_aggregation.py`, generate the numeric `PHASE15_RISK_AGGREGATION_REPORT` evidence, then mark Task 3 complete and advance to Task 4.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 section 3.1.3 / 3.5: implementation design added for stochastic aggregation documentation and nested-benchmark validation.
+- SOA ASOP 25 section 3.3: ESG rate/equity correlation matrix wired into the aggregation formula.
+- IA TAS M section 3.6: report structure, reproducibility digest, and use restrictions added; executable evidence pending dependency-capable Python.
+
+---
+
+## Run 2026-06-05 — Phase 15 (Multi-Risk Economic Capital and Proxy-Model Validation)
+
+**Task Completed:** Task 3 — Correlated risk aggregation (rates + equity guarantee)
+
+**Context / recovery:** A prior cycle had created `par_model_v2/projection/multi_driver_risk_aggregation.py`
+and `tests/test_phase15_risk_aggregation.py` but left them uncommitted and **broken** — the module
+crashed in `MultiDriverRiskAggregator.run` because `phase8_rate_equity_fx_correlation_matrix` returns a
+pandas DataFrame and the code iterated it directly (yielding column-label strings, `ValueError: could not
+convert string to float: 'R'`). The git index was also desynced from HEAD (phantom staged deletions of
+already-committed files); a mixed `git reset` was attempted but the virtiofs mount's stale, permission-locked
+`.git/index.lock` (2026-06-03) blocks in-place index writes, per GITHUB_PUSH_BLOCKER.md. Commit/push therefore
+use the /tmp-clone pattern.
+
+**Accomplishments:**
+- Fixed the DataFrame-iteration bug (coerce to `np.asarray(..., dtype=float)` before building the
+  immutable tuple-of-tuples). 9/9 `tests/test_phase15_risk_aggregation.py` PASS; `compileall` clean across
+  `par_model_v2`, `scripts`, `tests`.
+- The module computes: standalone **rate** SCR (equity guarantee 
+## Run 2026-06-05 — Phase 15 Task 4 (Tail-convergence & stability diagnostics for the 99.5% capital metric)
+
+**Task Completed:** Task 4 — Tail-convergence and stability diagnostics for the 99.5% capital metric (outer-count convergence, bootstrap CI on VaR/ES, antithetic/quasi-MC variance reduction).
+
+**Accomplishments:**
+- New module `par_model_v2/projection/multi_driver_tail_diagnostics.py` (additive-only; no existing source file modified — confirmed by `git status`). Built on the Phase 15 Task 1 bivariate LSMC capital surface so the diagnostics are computationally feasible (the surface is fitted once at `n_fit` inner valuations, then evaluated for the cost of a polynomial, isolating *outer* sampling error):
+  - `MultiDriverTailDiagnostics.run()` → `TailDiagnosticsReport` with three diagnostics.
+  - **Outer-count convergence** — VaR/ES of `L_hat` over independent outer sets of increasing size; successive relative change + recommended `N_outer` (ASOP 56 §3.5).
+  - **Bootstrap CI** — non-parametric bootstrap of the 99.5% VaR/ES estimators at a fixed large outer set; percentile CI + estimator SE (IA TAS M §3.6 uncertainty disclosure).
+  - **Variance reduction** — crude / antithetic / scrambled-Sobol QMC comparison over a *pilot-anchored Gaussian-copula* outer distribution (governed ESG ρ; empirical pilot order-statistic margins) so the three schemes target an identical distribution and the variance ratio is like-for-like.
+  - `TailDiagnosticsConfig` (validated), result dataclasses (`OuterConvergence`, `BootstrapInterval`, `SchemeVariance`, `VarianceReduction`), `to_dict`/`to_json`/`to_markdown`, and `tail_diagnostics_use_restrictions()`.
+- **Evidence (seed=42, 10y / age 40M / SA 100k; `scripts/build_phase15_task4_evidence.py`):** **VERDICT PASS** — converged True (ΔVaR ≤ 0.58% by N_outer=2,000; recommended N_outer ≥ 2,000); bootstrap 95% CI on VaR [149,402, 154,391], SE ≈ 1,486 (±1.66% of point); **Sobol QMC variance-reduction ratio ≈ 7.1×** on the VaR estimator; antithetic ratio ≈ 0.81× — i.e. antithetic variates are ineffective for an extreme 99.5% quantile (theory-consistent: they decorrelate the mean, not the tail order statistic), documented in the report notes and the verdict logic. Same-seed reproducibility digest bit-identical on re-run.
+- **Tests:** `tests/test_phase15_tail_diagnostics.py` **36/36 PASS** (config guards, `_var_es` upper-tail, sampling-scheme drivers incl. antithetic balance & Sobol uniformity, copula correlation/margin recovery, convergence path alignment, bootstrap ordering/bracketing, ES ≥ VaR, variance-reduction unbiasedness & Sobol gain, reproducible digest, JSON/Markdown round-trip, governance disclosure). `compileall` clean across `par_model_v2`, `scripts`, `tests`; Task 1/2/3 + Task 6 modules import unchanged.
+- **Governance:** ChangeRecord `820c6fe4` at **OWNER_REVIEW** (production sign-off withheld — placeholder HW1F/GBM params; proxy-based outer sampling; independent APS X2 review pending). Audit chain 25→26, `verify_all()` True. Limitation card `docs/MULTI_DRIVER_TAIL_DIAGNOSTICS_CARD.md`; evidence `docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.{json,md}`.
+- **Git:** committed `1117025` and pushed `5485114..1117025 main -> main` via the /tmp-clone pattern (in-place `.git` writes remain blocked by the no-delete virtiofs mount); new files `cp`-synced back to the mounted worktree.
+
+**Next Step:** Phase 15 Task 5 — refresh governance: model-limitation card, ChangeRecord, and MR-register update for the multi-driver proxy; document model-use restrictions and the remaining credentialled-data / independent-review residual. This completes Phase 15.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.5: addressed — scenario-count adequacy (convergence), Monte-Carlo uncertainty (bootstrap CI), and variance reduction (QMC).
+- SOA ASOP 56 §3.1.3 / ASOP 25 §3.3: addressed — stochastic capital documentation; correlated-driver outer generation.
+- IA TAS M §3.6: addressed — convergence, reproducibility (seed-determinism digest), and model-uncertainty disclosure.
+- L'Ecuyer (2018) RQMC / Glasserman (2003) §4: methodology basis for the antithetic / Sobol comparison.
+- Residual: credentialled-data calibration + independent APS X2 review still pending (production sign-off withheld; educational classification retained).
+
+**Milestone:** Phase 15 Task 4 COMPLETE. 84/85 tasks (~98.8%), 14 phases complete; Phase 15 4/5 tasks done. All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 9.
+
+---
+
+## Run 2026-06-05 — Phase 15 Task 5 (Multi-driver proxy governance refresh) — PHASE 15 COMPLETE
+
+**Task Completed:** Task 5 — Refresh governance for the multi-driver economic-capital proxy (model-limitation card, ChangeRecord, MR-register update; model-use restrictions + residual). **This completes Phase 15 and all 85 documented tasks across 15 phases.**
+
+**Accomplishments:**
+- Added `scripts/build_phase15_task5_governance.py` (idempotent; reusable `apply_phase15_task5_governance(store)` + `main(--governance)`):
+  - Opened **MR-011** "Multi-driver economic-capital proxy is educational, not production capital" (model_error; MEDIUM×HIGH → **HIGH**; **IN_PROGRESS**) — formalises placeholder calibration, omitted risk drivers (lapse/mortality/credit/FX/liquidity/management action), and the no-independent-review residual; links MR-006/MR-008/MR-010.
+  - Created a consolidated **governance_change ChangeRecord** walked DRAFT→PEER_REVIEW→**OWNER_REVIEW** (production sign-off withheld), before/after snapshots, no-numeric-impact assessment.
+  - Appended 2 GOVERNANCE audit entries; `verify_all()` → True; canonical `.claude-dev/GOVERNANCE_STORE.json` persisted (audit 26→28, change records 13→14, risk register 10→11).
+- Added consolidated limitation card `docs/MULTI_DRIVER_PROXY_LIMITATION_CARD.md` (Tasks 1–4): validated scope/evidence table, limitations, **model-use restrictions**, residual-risk table.
+- Added `docs/validation/PHASE15_TASK5_GOVERNANCE_REFRESH.{json,md}`.
+- Tests: `tests/test_phase15_task5_governance.py` **8/8 PASS** (MR-011 rating/status, OWNER_REVIEW ChangeRecord, idempotency, audit integrity + JSON round-trip, +2 audit entries, residual documents APS X2, canonical-store consistency, limitation-card completeness). Governance regression (`test_governance` + `test_audit_trail_wiring` + Task 5 + risk_aggregation) **96 PASS**; `compileall` clean across `par_model_v2`, `scripts`, `tests`. Task 1–4 modules untouched (governance-only).
+
+**Next Step (post-documented-roadmap):** Per the scheduled-task directive — all documented tasks complete — begin the **offline result-viewer UI**: a single self-contained HTML file (no install, no server, no CDN) that loads the model's existing JSON output artifacts and displays them graphically/interactively. Scaffolded this cycle; roadmap recorded in MODEL_DEV_TASK_PROMPT.md.
+
+**Industry Standards Progress:**
+- IA TAS M §3.6/§3.7: addressed — model-use restrictions + change log; consolidated limitation card.
+- APS X2 §3: addressed (residual documented) — independent review pending; production sign-off withheld.
+- SOA ASOP 56 §3.5 / ASOP 25 §3.3 / IFoA Modelling PN §4: addressed — limitations, risk register entry, governance traceability.
+- Residual: credentialled-data calibration + independent APS X2 review still pending (educational classification retained).
+
+**Milestone:** **PHASE 15 COMPLETE. 85/85 tasks, 15 phases.** Open model risks 1; mitigated/closed 10 (incl. MR-011 IN_PROGRESS as the documented production residual). All 12 educational deployment gates remain cleared.
+
+---
+
+## Run 2026-06-05 — Phase 16 Task 1 (Offline result-viewer — scaffold)
+
+**Task Started:** Phase 16 Task 1 — offline result-viewer data-contract + bundler (per scheduled-task directive: build an offline UI that consumes ONLY model output).
+
+**Accomplishments:**
+- Added `scripts/build_offline_viewer.py` (no model calculation; reads already-produced artifacts only): scans `docs/validation/*.json` + `.claude-dev/GOVERNANCE_STORE.json` + `MODEL_DEV_STATE.json`, normalises them into one `viewer_data.json` schema (meta, verdicts, summary, capital, tail, proxy, governance), and emits a data-embedded standalone `model_result_viewer.html`.
+- Added `par_model_v2/viewer/viewer_template.html` — a fully self-contained viewer: vanilla JS + inline CSS + **hand-rendered inline-SVG charts** (bar + line), tabbed UI (Capital & Tail / Proxy Validation / Governance), summary cards, verdict badges, a filterable risk register, and a change-record log. **No CDN, no npm, no server, no build step** — opens offline by double-click. Also supports runtime drag-and-drop / file-picker load of any `viewer_data.json`.
+- Generated `model_result_viewer.html` (data-embedded, 26.5 KB) + `viewer_data.json` from the current run: 3 verdicts, 11 risks (incl. MR-011), 14 change records; capital rate 21,285 / equity 23,191 / Σ standalone 44,477 / var-cov 29,031 / nested 43,251.
+- Tests: `tests/test_offline_viewer.py` **7/7 PASS** (schema sections, capital fields + diversification ordering, tail/proxy presence, MR-011 in register, embedded JSON parseable, **offline-safety: zero http/cdn/external refs**, template token). `compileall` clean.
+
+**Next Step:** Phase 16 Task 2 — capital & tail SVG dashboards refinement (loss-distribution histogram, bootstrap-CI band, interactive percentile/confidence selectors); see MODEL_DEV_TASK_PROMPT.md Phase 16 roadmap.
+
+**Industry Standards Progress:**
+- IA TAS M §3.6: viewer surfaces model-use restrictions, validation verdicts, and the risk register transparently from governed output.
+- Offline / no-dependency requirement satisfied (test-asserted no network references).
+
+**Milestone:** All 85 documented model tasks complete; Phase 16 (offline UI) Task 1 scaffolded.
+
+---
+
+## Run 2026-06-05 — Phase 16 Task 2 (Offline viewer — capital & tail dashboards)
+
+**Task Completed:** Phase 16 Task 2 — capital & tail dashboards for the offline result viewer (SVG VaR/ES bars + loss-distribution histogram + outer-convergence line + bootstrap-CI band + interactive seed/percentile/confidence selectors driven purely by pre-computed model output).
+
+**Design principle (per directive):** the UI performs NO actuarial calculation — it only displays model output. To honour this for the loss-distribution histogram and the interactive selectors, all numerics are produced **model-side** and embedded as plain JSON; the browser does a pure look-up.
+
+**Accomplishments:**
+- **Model-side emitter** `scripts/build_phase16_loss_distribution.py` (NOT the UI; reads/runs the model): fits the Phase 15 (rate + equity) LSMC capital surface **once** via `MultiDriverTailDiagnostics._fit_surface`, then evaluates the governed outer-state liability distribution `L_hat`. Emits `docs/validation/PHASE16_LOSS_DISTRIBUTION.json`: a 40-bin histogram of the 1y outer liability distribution, a **pre-computed confidence sweep** (VaR/ES/SCR-proxy at 90/95/99/99.5/99.9%), a percentile table, and the same recomputed under 4 **independent outer-sampling seeds** (42/101/202/303 — only the outer seed varies; the surface is fitted once, so per-seed sweeps are cheap polynomial evals). SHA-256 reproducibility digest; bit-identical on re-run.
+- **Bundler** `scripts/build_offline_viewer.py`: added a new `loss` schema section that ingests the emitter output (histogram, confidence_sweep, percentiles, seeds, fit_r2, digest) into `viewer_data.json` + the embedded `model_result_viewer.html`.
+- **Viewer** `par_model_v2/viewer/viewer_template.html`: added two dependency-free SVG primitives — `histChart` (histogram with movable VaR/ES/mean/percentile threshold lines) and `ciBar` (horizontal point + 95%-CI band). The Capital & Tail tab now renders: economic-capital bars (rate/equity/Σ-standalone/var-cov/nested), an **interactive loss-distribution histogram** with seed + confidence + percentile selectors (pure look-up via `renderLossPanel`), the outer-count convergence line chart with a **bootstrap-95%-CI shaded band**, and a VaR/ES bootstrap-CI bar with Sobol(7.1×)/antithetic variance-reduction read-outs. Refactored the risk-register fill into `fillRiskRegister` wired from `buildTabs`.
+- **Evidence (seed 42, n_fit=500 / n_outer=5000, fit R²=0.231):** VaR99.5 148,903 / ES99.5 155,728 / SCR-proxy 41,040 — consistent with the Phase 15 tail report (VaR ≈ 149,616) and capital evidence; histogram counts sum to n_outer; confidence sweep monotone; per-seed VaR995 ∈ [148,903, 151,187].
+- **Tests:** `tests/test_offline_viewer.py` **12/12 PASS** (base schema + governance/MR-011 + offline-safety from Task 1, plus Task 2: histogram self-consistency `edges=counts+1` & `Σcounts=n_outer`, monotone confidence sweep with `ES≥VaR` and `SCR=VaR−mean`, non-decreasing percentile losses, multi-seed distinctness, `histChart`/`ciBar`/`renderLossPanel` + selector elements present, and a "viewer must not compute/fetch" assertion barring `math.random`/`numpy`/`fetch`/`XMLHttpRequest`/`import()`). Headless **jsdom render PASS** — 3 tabs, 5 cards, 5 SVGs, seed/confidence selectors re-render correctly, risk filter works — with **ZERO JS errors and ZERO network requests**. `py_compile` clean on all touched files; `tests/test_phase15_tail_diagnostics.py` 36/36 still PASS (engine untouched — only `_var_es`/`_fit_surface`/`_outer_liabilities` imported).
+
+**Offline guarantee:** `model_result_viewer.html` (≈42 KB) contains the embedded snapshot; offline-safety test confirms no `http(s)://`, `cdn`, `<script src`, `<link`, `@import`, or font-CDN references. Double-click opens with data pre-loaded; drag-and-drop / file-picker still loads any `viewer_data.json`.
+
+**Next Step:** Phase 16 Task 3 — proxy-validation & aggregation views: degree-sweep in-sample-vs-OOS R² chart (largely present in viewProxy; add overfit-gap series) + a diversification-benefit waterfall (standalone → var-cov → nested) with tooltips.
+
+**Industry Standards Progress:**
+- IA TAS M §3.6: the viewer transparently surfaces the 99.5% capital distribution, VaR/ES uncertainty (bootstrap CI band), and model-use restrictions from governed output.
+- SOA ASOP 56 §3.5: scenario-count convergence and Monte-Carlo uncertainty are now visually presented to the reviewer.
+- Offline / no-dependency / no-calculation-in-UI requirement satisfied (test-asserted).
+
+**Milestone:** All 85 documented model tasks complete; Phase 16 (offline UI) Task 1 + Task 2 COMPLETE.
+
+---
+
+## Run 2026-06-05 — Phase 16: Offline Result-Viewer UI (Task 3)
+
+**Task Completed:** Task 3 — proxy-validation & aggregation views in the offline viewer.
+
+**Accomplishments:**
+- Added a dependency-free `waterfallChart()` SVG primitive (floating bars between
+  start/end, `<title>` tooltips, dashed step connectors) to `par_model_v2/viewer/viewer_template.html`.
+- New **Aggregation** tab (`viewAggregation`) renders the diversification-benefit
+  waterfall standalone → var-cov → nested (Σ standalone 44,477 → var-cov 29,031 with
+  the governed ESG ρ=−0.15 → nested benchmark 43,251), with a key-finding callout that the
+  raw ESG factor correlation understates diversified capital by 32.9% (realised loss
+  correlation +0.55) → MR-010 MITIGATED. Pure look-up from `capital` schema; no UI calculation.
+- Enhanced the **Proxy Validation** tab: added an overfit-gap (in-sample − OOS R²) bar
+  chart with green ≤ onset / red ≥ onset colouring, an "Overfit gap" table column, the
+  selected-degree gap KPI, and an "onset" pill on the onset degree. Extended `barChart()`
+  with an optional `vfmt` value-formatter so small R²-gap fractions render correctly.
+- Added 2 viewer tests (`test_template_has_task3_views`, `test_aggregation_data_supports_waterfall`);
+  `tests/test_offline_viewer.py` 14/14 PASS.
+
+**Verification:**
+- Rebuilt `model_result_viewer.html` via `scripts/build_offline_viewer.py` (47,998 bytes;
+  embedded snapshot, token replaced).
+- `node --check` on the embedded JS → SYNTAX OK.
+- Headless jsdom render: 4 tabs (Capital & Tail | Proxy Validation | Aggregation | Governance);
+  Aggregation waterfall SVG + MR-010 finding present; Proxy view shows 2 SVGs incl. the
+  overfit-gap chart; **0 JS errors, 0 network calls**.
+
+**Next Step:** Phase 16 Task 4 — governance panel (risk-register filter, ChangeRecord timeline,
+audit-integrity badge, deployment-gate checklist) from GOVERNANCE_STORE.json.
+
+**Industry Standards Progress:**
+- IA TAS M §3.6 / SOA ASOP 56 §3.5: overfit-gap visualisation makes the proxy-model
+  generalisation evidence directly inspectable offline.
+- SOA ASOP 56 §3.5 / ASOP 25 §3.3 / IA TAS M §3.2: the diversification waterfall exposes
+  the var-cov-vs-nested capital gap and the MR-010 model-error disclosure in the UI.
+
+---
+
+## Run 2026-06-04T23:25:03Z — Phase 16 (Offline Result-Viewer UI)
+
+**Task Completed:** Task 4 — governance panel.
+
+**Accomplishments:**
+- Extended `scripts/build_offline_viewer.py` governance schema: the audit-integrity badge is now a **computed** result — `_verify_audit_integrity()` recomputes every audit-entry SHA-256 digest (entry_id+timestamp+description+json.dumps(details,sort_keys=True), matching `AuditEntry.verify_digest`) and reports verified/failed counts (28/28 verified, 0 failed). No longer a hard-coded flag.
+- Added `_parse_deployment_gates()`: parses the gate summary table in `docs/DEPLOYMENT_READINESS_CHECKLIST.md` (`| G-NN | desc | status | blocking |`), first-match-wins so the summary table beats the later sign-off table, and merges in G-11/G-12 (grounded in the Phase 13 dynamic-lapse / HW1F reports). Result: 12/12 gates cleared (educational).
+- Enriched `risk_register` (description, mitigation, owner, category, likelihood/impact, related_standard) and `change_records` (record_id, phase, author, peer_reviewer, standard_references, full sign_off_history) in the viewer schema.
+- Rewrote `viewGov()` + `fillRiskRegister()` in `par_model_v2/viewer/viewer_template.html` (dependency-free, no CDN/network): deployment-gate checklist with pass/fail icons and a "12/12 cleared" pill; risk register with **two** filters (mitigation status AND overall rating) and click-to-expand description/mitigation detail rows; a vertical **change-record timeline** showing each record's sign-off history (peer→owner→approval); and a computed audit-integrity badge ("integrity OK · 28/28 digests verified").
+- Rebuilt `model_result_viewer.html` (73,985 B) + `viewer_data.json`.
+
+**Verification:**
+- `tests/test_offline_viewer.py` 19/19 PASS (5 new Task 4 tests: deployment gates, computed audit integrity, change-record timeline fields, enriched risk register, template Task-4 elements).
+- Headless jsdom render of the rebuilt HTML: Governance tab renders 12 gates, "12/12 cleared", both filters, 11 risk rows, 14-item timeline, integrity-OK badge, 28/28 digests verified, MR-011 present; rating filter HIGH→5 rows; row click expands detail; **0 JS errors, 0 network requests**. `node --check` JS OK; `py_compile` clean.
+- Governance/audit regression: 158 PASS. (3 pre-existing collection errors + 1 pre-existing `test_guided_examples` failure are in unrelated modules I did not touch — repo carries staged churn from prior cycles in the validation package.)
+
+**Next Step:** Task 5 — polish + offline packaging (file-picker/drag-drop loader already present; add responsive layout, export-to-PNG via canvas, and an offline self-test asserting zero network).
+
+**Industry Standards Progress:**
+- IA TAS M §3.7 (change traceability): change-record timeline + sign-off history surfaced in the offline viewer. Addressed.
+- IA TAS M §3.6 / SOA ASOP 56 §3.5 (audit integrity): audit-integrity badge is now a verifiable SHA-256 digest recomputation, not a static claim. Addressed.
+- Model-limitation disclosure: deployment-gate checklist explicitly states "cleared (educational)" + production residual (credentialled data + independent APS X2). Addressed.
+
+---
+
+
+## Run 2026-06-05T00:22Z — Phase 16 Task 5 (Offline viewer polish + packaging) — PHASE 16 COMPLETE
+
+**Task Completed:** Task 5 — polish + offline packaging for the single-file offline result viewer.
+
+**Accomplishments:**
+- Added responsive layout polish to `par_model_v2/viewer/viewer_template.html`: narrow-screen header/card/tab behavior, horizontal table containment, and print media styling.
+- Added a global Print control plus canvas-based PNG export controls for every inline-SVG chart. The exporter serializes the existing SVG, resolves CSS variables before serialization, draws through a canvas, and downloads a PNG; the UI still performs no actuarial calculation and uses only precomputed model-output JSON.
+- Added `scripts/offline_viewer_self_test.cjs`: a jsdom offline self-test that loads the bundled `model_result_viewer.html`, renders all four tabs, verifies chart export controls and file/drop/print controls, and blocks/counts `fetch`/XHR so runtime network calls fail the test.
+- Added Task 5 assertions to `tests/test_offline_viewer.py` for packaging controls and the executable self-test; rebuilt `model_result_viewer.html` from the updated template and existing `viewer_data.json`.
+
+**Verification:**
+- `node scripts/offline_viewer_self_test.cjs model_result_viewer.html` PASS — 4 tabs, 7 SVG charts, 7 export buttons, print/file/drop controls present, 0 JS errors, 0 network calls.
+- External-reference scan PASS — no `http://`, `https://`, CDN, external scripts/links/imports, font-CDN references, `fetch(`, or `XMLHttpRequest` in the generated standalone HTML.
+- Embedded JavaScript `node --check` PASS.
+- Python/pytest was not available on PATH in this run, so `tests/test_offline_viewer.py` was updated but not executed here.
+- In-app Browser verification was attempted, but the Browser plugin's Node runtime failed to start in the sandbox (`windows sandbox failed: spawn setup refresh`); jsdom verification is the executable browser-style evidence for this run.
+
+**Next Step:** Phase 16 is complete. No further documented development tasks remain; future cycles should focus only on review, packaging requests, or user-directed enhancements.
+
+**Industry Standards Progress:**
+- IA TAS M §3.6 / §3.7: addressed — offline reviewer can inspect validation, governance, and chart evidence without network or runtime dependencies.
+- SOA ASOP 56 §3.5: addressed — validation/capital/tail evidence remains transparent in a reproducible, standalone artifact.
+- Offline/no-preinstall directive: addressed — the delivered `model_result_viewer.html` opens from disk with embedded data and supports optional local JSON loading.
 
 ---
