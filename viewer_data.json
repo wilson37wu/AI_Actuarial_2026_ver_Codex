@@ -6,9 +6,9 @@
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
-      "docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.json",
-      "docs/validation/PHASE15_RISK_AGGREGATION_REPORT.json",
-      "docs/validation/PHASE15_PROXY_VALIDATION_REPORT.json",
+      "docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.json",
+      "docs/validation/PHASE17_RISK_AGGREGATION_REPORT.json",
+      "docs/validation/PHASE17_PROXY_VALIDATION_REPORT.json",
       "docs/validation/PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json",
       "docs/validation/PHASE16_LOSS_DISTRIBUTION.json"
     ],
@@ -18,24 +18,24 @@
     {
       "key": "proxy",
       "label": "Out-of-sample proxy validation",
-      "verdict": "PASS — selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"
+      "verdict": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)"
     },
     {
       "key": "aggregation",
       "label": "Correlated risk aggregation",
-      "verdict": "PASS - correlated aggregation reconciles to nested diversified capital"
+      "verdict": "PARTIAL - three-driver aggregation evidence generated with review items"
     },
     {
       "key": "tail",
       "label": "Tail convergence & stability",
-      "verdict": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
+      "verdict": "PASS - three-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     }
   ],
   "summary": {
-    "tasks_completed": 85,
-    "tasks_total": 85,
-    "phases_completed": 15,
-    "estimated_completion_pct": 100.0,
+    "tasks_completed": 89,
+    "tasks_total": 90,
+    "phases_completed": 16,
+    "estimated_completion_pct": 98.9,
     "gates_cleared": 12,
     "gates_total": 12,
     "risks_open": 1,
@@ -43,94 +43,146 @@
     "production_status": "NOT CLEARED FOR PRODUCTION"
   },
   "capital": {
+    "drivers": [
+      "short_rate",
+      "equity_guarantee",
+      "credit_spread"
+    ],
     "confidence_level": 0.995,
     "horizon_months": 12,
-    "rate_scr": 21285.4523,
-    "equity_scr": 23191.312,
-    "standalone_sum": 44476.764372,
-    "correlated_scr": 29031.296302,
-    "nested_scr": 43250.6194,
-    "diversification_benefit_formula": 15445.46807,
-    "diversification_benefit_nested": 1226.14502,
-    "component_loss_correlation": 0.546361,
-    "formula_vs_nested_rel_error": 0.328766,
+    "rate_scr": 20695.8468,
+    "equity_scr": 22559.0267,
+    "credit_scr": 4459.6518,
+    "standalone_sum": 47714.525364,
+    "correlated_scr": 26828.549272,
+    "nested_scr": 43752.9314,
+    "diversification_benefit_formula": 20885.976092,
+    "diversification_benefit_nested": 3961.593977,
+    "component_loss_correlation": 0.6367646368904357,
+    "loss_correlation_matrix": [
+      [
+        0.9999999999999998,
+        0.5385945441624796,
+        0.7666078287668839
+      ],
+      [
+        0.5385945441624798,
+        1.0,
+        0.6050915377419434
+      ],
+      [
+        0.7666078287668839,
+        0.6050915377419434,
+        0.9999999999999999
+      ]
+    ],
+    "esg_correlation_matrix": [
+      [
+        1.0,
+        -0.15,
+        -0.2
+      ],
+      [
+        -0.15,
+        1.0,
+        -0.3
+      ],
+      [
+        -0.2,
+        -0.3,
+        1.0
+      ]
+    ],
+    "esg_understatement_pct": 0.386817,
+    "formula_vs_nested_rel_error": 0.386817,
     "esg_rate_equity_correlation": -0.15,
-    "var": 149615.9089,
-    "es": 155356.539
+    "var": 152296.8313,
+    "es": 155757.2104
   },
   "tail": {
-    "verdict": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction",
+    "verdict": "PASS - three-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction",
     "converged": true,
-    "recommended_n_outer": 2000,
+    "recommended_n_outer": 1000,
     "outer_grid": [
+      500,
       1000,
       2000,
-      4000
+      3000
     ],
     "var_path": [
-      149974.358,
-      149100.9773,
-      149615.9089
+      149782.5195,
+      150265.2783,
+      149885.4055,
+      152296.8313
     ],
     "es_path": [
-      153476.3711,
-      155621.3301,
-      155356.539
+      150253.484,
+      156377.9261,
+      152954.4555,
+      155757.2104
     ],
-    "final_var": 149615.9089,
-    "final_es": 155356.539,
+    "final_var": 152296.8313,
+    "final_es": 155757.2104,
     "var_ci": [
-      149402.0883,
-      154390.5036
+      149634.1366,
+      152369.3152
     ],
     "es_ci": [
-      152499.911,
-      157861.4479
+      152023.0263,
+      156636.6954
     ],
-    "var_point": 150632.1993,
-    "es_point": 155454.674,
-    "var_se": 1486.3423,
-    "es_se": 1382.3618,
-    "sobol_ratio": 7.1032,
-    "antithetic_ratio": 0.8121
+    "var_point": 150859.0915,
+    "es_point": 154241.4896,
+    "var_se": 692.4251,
+    "es_se": 1163.7467,
+    "sobol_ratio": 2.759,
+    "antithetic_ratio": 0.8871
   },
   "proxy": {
-    "verdict": "PASS — selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)",
+    "verdict": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)",
     "selected_degree": 1,
     "overfit_onset_degree": 2,
+    "overfit_onset_terms": 10,
     "selection_metric": "oos_rmse",
     "degree_rows": [
       {
         "degree": 1,
-        "in_sample_r2": 0.972137,
-        "oos_r2": 0.970446,
-        "oos_max_abs_rel_error": 0.042468,
-        "n_basis_terms": 3
+        "in_sample_r2": 0.978442,
+        "oos_r2": 0.975066,
+        "oos_max_abs_rel_error": 0.039154,
+        "n_basis_terms": 4
       },
       {
         "degree": 2,
-        "in_sample_r2": 0.959426,
-        "oos_r2": 0.939167,
-        "oos_max_abs_rel_error": 0.116966,
-        "n_basis_terms": 6
-      },
-      {
-        "degree": 3,
-        "in_sample_r2": 0.953002,
-        "oos_r2": 0.879285,
-        "oos_max_abs_rel_error": 0.258098,
+        "in_sample_r2": 0.958478,
+        "oos_r2": 0.935962,
+        "oos_max_abs_rel_error": 0.114563,
         "n_basis_terms": 10
       },
       {
+        "degree": 3,
+        "in_sample_r2": 0.927661,
+        "oos_r2": 0.812323,
+        "oos_max_abs_rel_error": 0.299516,
+        "n_basis_terms": 19
+      },
+      {
+        "degree": 3,
+        "in_sample_r2": 0.925325,
+        "oos_r2": 0.760469,
+        "oos_max_abs_rel_error": 0.342327,
+        "n_basis_terms": 20
+      },
+      {
         "degree": 4,
-        "in_sample_r2": 0.94678,
-        "oos_r2": 0.854342,
-        "oos_max_abs_rel_error": 0.250122,
-        "n_basis_terms": 15
+        "in_sample_r2": 0.869102,
+        "oos_r2": 0.759285,
+        "oos_max_abs_rel_error": 0.280775,
+        "n_basis_terms": 32
       }
     ],
-    "var_rel_error": 0.032109,
-    "es_rel_error": 0.026036
+    "var_rel_error": 0.070549,
+    "es_rel_error": 0.069551
   },
   "loss": {
     "confidence_level": 0.995,
@@ -962,9 +1014,9 @@
     ]
   },
   "governance": {
-    "audit_entries": 28,
+    "audit_entries": 30,
     "audit_integrity_ok": true,
-    "audit_verified": 28,
+    "audit_verified": 30,
     "audit_failed": 0,
     "change_records": [
       {
@@ -1419,6 +1471,38 @@
             "comments": "Owner review: educational placeholder params; omitted risk drivers; independent APS X2 review pending. Production sign-off withheld."
           }
         ]
+      },
+      {
+        "record_id": "a68e2e8a4bb04db4b4cf342db06ec259",
+        "title": "Phase 17 Task 5 - three-driver (rate+equity+credit) economic-capital proxy governance refresh",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-05T07:10:02.898839+00:00",
+        "phase": "Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy",
+        "author": "Phase17Task5GovernanceRefresh",
+        "peer_reviewer": null,
+        "standard_references": [
+          "IA TAS M §3.6",
+          "IA TAS M §3.7",
+          "APS X2 §3",
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 25 §3.3",
+          "IFoA proxy-modelling working party"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-05T07:10:02.898864+00:00",
+            "actor": "Phase17Task5GovernanceRefresh",
+            "status": "PEER_REVIEW",
+            "comments": "Governance-only consolidation; underlying Task 1-4 modules unchanged; regression PASS in batches; compileall + offline self-test clean."
+          },
+          {
+            "timestamp": "2026-06-05T07:10:02.898872+00:00",
+            "actor": "Phase17Task5GovernanceRefresh",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: educational placeholder credit params; omitted risk drivers; MR-010 factor-correlation understatement ~38.7%; independent APS X2 review pending. Production sign-off withheld."
+          }
+        ]
       }
     ],
     "deployment_gates": [
@@ -1673,6 +1757,20 @@
         "mitigation": "Classify all multi-driver capital output as EDUCATIONAL ONLY in the limitation card and at the API boundary; bound proxy error by the Task 2 out-of-sample validation (OOS R^2=0.9704, VaR rel err 3.21%) and outer-sampling error by the Task 4 bootstrap CI (SE ~1.66%); benchmark every aggregated figure to the Task 3 nested ground truth. Residual closure requires credentialled-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008).",
         "related_standard": "IA TAS M §3.6; APS X2 §3; SOA ASOP 56 §3.5",
         "updated_at": "2026-06-04T20:15:59.122741+00:00"
+      },
+      {
+        "risk_id": "MR-012",
+        "title": "Credit-spread driver and three-driver economic-capital proxy are educational, not production capital",
+        "overall_rating": "HIGH",
+        "mitigation_status": "IN_PROGRESS",
+        "category": "model_error",
+        "owner": "Model Owner",
+        "likelihood": "MEDIUM",
+        "impact": "HIGH",
+        "description": "Phase 17 adds a CIR++ mean-reverting credit-spread driver (par_model_v2/stochastic/credit_spread.py) as the third risk factor in the nested/LSMC economic-capital proxy (rate + equity + credit-spread), with a reduced-form hazard x LGD credit-loss component on spread-sensitive backing assets. The CIR++ parameters (mean-reversion, long-run spread, vol, risk premium) and the hazard/LGD assumptions are PLACEHOLDER educational defaults, NOT calibrated to credentialled credit-market data; the trivariate LSMC surface still omits material drivers (lapse, mortality/longevity trend, FX, liquidity, management action) and has NOT been independently reviewed (APS X2). The three-driver 99.5% VaR/ES and SCR-proxy figures are illustrative only and must not be used for regulatory or internal economic-capital reporting until the credit parameters are calibrated, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
+        "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
+        "related_standard": "IA TAS M §3.6; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3",
+        "updated_at": "2026-06-05T07:10:02.898466+00:00"
       }
     ]
   }

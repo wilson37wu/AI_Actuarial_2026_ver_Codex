@@ -491,7 +491,7 @@ Tasks for Phase 15 (one per cycle, in order):
    8/8 Task 5 tests PASS; governance regression 96 PASS; compileall clean; Task 1-4 modules untouched.
    (IA TAS M §3.6/3.7; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3; IFoA Modelling PN §4) **PHASE 15 COMPLETE.**
 
-**Current milestone:** **Phase 17 IN PROGRESS — 89/90 tasks (15 phases + Phase 16 viewer complete; Phase 17 Tasks 1–4 of 5 done 2026-06-05).** The economic-capital proxy now spans THREE correlated drivers (rate + equity + CIR++ credit spread), has formal disjoint-seed out-of-sample proxy validation (PASS, OOS R²=0.9751), three-driver correlated risk aggregation (honest PARTIAL; MR-010 factor-correlation understatement ~38.7%), AND three-driver tail-convergence/stability diagnostics. Task 4 evidence: final VaR99.5 152,296.8 / ES 155,757.2, outer-count convergence by N_outer>=1,000, bootstrap VaR 150,859.1 with 95% CI [149,634.1, 152,369.3] and SE 692.4 (0.91% rel halfwidth), Sobol QMC variance-reduction 2.76x; antithetic 0.89x documented as expected for an extreme quantile. All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 10. Production sign-off withheld — residual is credentialled-data calibration + independent APS X2 review, NOT a code gap. **Env note for next cycle:** Windows PATH currently has no `python`/`py`/`bash`; prior cycles used `/var/tmp/pylibs` with `PYTHONPATH=/var/tmp/pylibs:.` where available. Git still has a ghost `.git/index.lock`/`.git/HEAD.lock` state and a phantom staged-delete/untracked mirror; commit via the documented alt-`GIT_INDEX_FILE` + direct-ref workaround until a human shell deletes the locks.
+**Current milestone:** **Phase 17 COMPLETE — 90/90 documented tasks (17 phases: 15 model + Phase 16 offline viewer + Phase 17 three-driver credit-spread proxy, all done 2026-06-05). Next: Phase 18 (tail-dependent copula aggregation + 4th driver + credit calibration).** The economic-capital proxy now spans THREE correlated drivers (rate + equity + CIR++ credit spread), has formal disjoint-seed out-of-sample proxy validation (PASS, OOS R²=0.9751), three-driver correlated risk aggregation (honest PARTIAL; MR-010 factor-correlation understatement ~38.7%), AND three-driver tail-convergence/stability diagnostics. Task 4 evidence: final VaR99.5 152,296.8 / ES 155,757.2, outer-count convergence by N_outer>=1,000, bootstrap VaR 150,859.1 with 95% CI [149,634.1, 152,369.3] and SE 692.4 (0.91% rel halfwidth), Sobol QMC variance-reduction 2.76x; antithetic 0.89x documented as expected for an extreme quantile. All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 10. Production sign-off withheld — residual is credentialled-data calibration + independent APS X2 review, NOT a code gap. **Env note for next cycle:** Windows PATH currently has no `python`/`py`/`bash`; prior cycles used `/var/tmp/pylibs` with `PYTHONPATH=/var/tmp/pylibs:.` where available. Git still has a ghost `.git/index.lock`/`.git/HEAD.lock` state and a phantom staged-delete/untracked mirror; commit via the documented alt-`GIT_INDEX_FILE` + direct-ref workaround until a human shell deletes the locks.
 
 **✅ 2026-06-05 crash-recovery RESOLVED & PUSHED (READ FIRST):** The 2026-06-03 crash left the working tree corrupted AND two ghost git locks. An earlier 2026-06-05 cycle fixed the *code* (offline viewer + template + 3 truncated `__init__.py` + `phase13_ia_tas_m.run()` + `test_guided_examples.py`) but could not touch git. **This cycle closed Phase R:** committed the recovered tree via an alt-`GIT_INDEX_FILE` + direct-ref-write workaround (commit `1f8f990`), discovered origin/main had diverged by 7 commits (another cycle: Phase 15 T3–5 + Phase 16 T1–4), and **merged** them — merge `e24d74e`, tree = the more-advanced local Phase 16 Task 5 superset, origin/main `ca381b3` kept as 2nd parent so nothing is orphaned. **`git push origin main` OK; local == origin (0/0).** Offline self-test `ok:true` (0 network / 0 JS errors); `compileall` clean. **Residual for a HUMAN:** the two ghost locks `.git/index.lock` + `.git/HEAD.lock` (2026-06-03) are still unremovable from the sandbox and block *normal* git — delete them in a human shell. Until then, cycles must reuse the alt-index + direct-ref workaround. **Full `pytest` was NOT run** (scipy uninstallable this run); py_compile + node self-test substituted — next cycle with a working Python env should run the suite in <45 s batches as the formal gate.
 
@@ -632,6 +632,50 @@ Tasks for Phase 17 (one per cycle, in order):
    (0 net/0 JS err); py_compile clean. `scripts/build_phase17_task4_tail_diagnostics.py`;
    docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.{json,md}; docs/MULTI_DRIVER_3D_TAIL_DIAGNOSTICS_CARD.md.
    (SOA ASOP 56 §3.5/§3.1.3; ASOP 25 §3.3; IA TAS M §3.6; L'Ecuyer 2018 RQMC)
-5. ⭐ NEXT — Governance refresh — open the credit-driver model-risk entry, a consolidated three-driver limitation card, an
-   OWNER_REVIEW ChangeRecord, and an audit-chain append; extend the offline viewer schema + Aggregation/Capital tabs to
-   the three-driver economic-capital proxy. **PHASE 17 COMPLETE** when done. (IA TAS M §3.6/§3.7; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3)
+5. ✅ DONE (2026-06-05) Governance refresh — added `scripts/build_phase17_task5_governance.py` (idempotent):
+   opened **MR-012** (credit-spread driver / three-driver capital proxy is EDUCATIONAL, not production; model_error;
+   HIGH; IN_PROGRESS) linking MR-006/008/010/011; created a consolidated `governance_change` ChangeRecord at
+   **OWNER_REVIEW** (sign-off withheld); appended 2 GOVERNANCE audit entries (verify_all True; store audit 28→30,
+   change 14→15, risk 11→12). Added `docs/MULTI_DRIVER_3D_PROXY_LIMITATION_CARD.md` (consolidated Tasks 1–4: three
+   drivers, scope, limitations, model-use restrictions, residual table) + `docs/validation/PHASE17_TASK5_GOVERNANCE_REFRESH.{json,md}`.
+   Extended the offline viewer: the bundler now PREFERS the Phase 17 three-driver reports (tail/aggregation/proxy) over
+   Phase 15 and surfaces `credit_scr`/`drivers`/`esg_understatement_pct`, and normalises the Phase 17 proxy
+   `basis_rows`→`degree_rows` + `overfit_onset_terms`→degree; the **Capital** tab adds a Credit standalone-SCR bar +
+   a "3-driver proxy" pill; the **Aggregation** tab waterfall/finding now describe three drivers and the ~38.7%
+   factor-correlation understatement (vs ~32.9% two-driver). Rebuilt `model_result_viewer.html` (83,686 B). 9 new
+   Task-5 tests PASS; viewer 19 PASS; governance regression 62 PASS (90 in batch); offline self-test ok:true (7 SVG
+   charts, 7 export controls, 0 net / 0 JS err); py_compile clean. (IA TAS M §3.6/§3.7; APS X2 §3; SOA ASOP 56 §3.5;
+   ASOP 25 §3.3; IFoA proxy-modelling WP) **PHASE 17 COMPLETE.**
+
+---
+
+## Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication ⭐ NEXT
+
+The dominant open model risk in the economic-capital proxy is **MR-010**: the variance–covariance aggregation on the
+governed ESG *factor* correlations understates the fully-diversified nested capital by ~38.7% (three-driver), because
+the realised capital-*loss* correlations are all strongly positive in the tail while the factor off-diagonals are
+negative. Current life-insurance capital-modelling practice (IFoA *Life Aggregation and Simulation Techniques* working
+party; Solvency II Delegated Reg. Art. 234, which requires diversification assumptions to be *empirically justified*;
+copula-based aggregation literature) addresses exactly this by replacing the linear-correlation/elliptical aggregation
+with a **copula** chosen to capture **tail dependence**, and by expanding the proxy basis to non-financial drivers.
+Phase 18 makes the aggregation tail-aware, adds the next driver, and calibrates the credit driver.
+
+Tasks for Phase 18 (one per cycle, in order):
+1. ⭐ NEXT — Copula-based risk aggregation that captures tail dependence. Add a new aggregation engine (additive;
+   leave the var-covar `ThreeDriverRiskAggregator` untouched) that fits a copula (Gaussian baseline + at least one
+   tail-dependent family, e.g. Student-t or Clayton) to the realised standalone capital-loss vectors, aggregates the
+   99.5% capital under each copula, and benchmarks every result to the three-driver nested ground truth. Verdict
+   target: a copula whose aggregated SCR matches the nested benchmark materially better than the var-covar formula
+   (drive the MR-010 rel. error well below the 35% var-covar gap), with an empirical-justification report. Closes/MITIGATES
+   MR-010. (SOA ASOP 56 §3.5; ASOP 25 §3.3; IA TAS M §3.6; Solvency II Del. Reg. Art. 234; IFoA Life Aggregation & Simulation WP)
+2. Calibrate the CIR++ credit-spread driver to educational-proxy credit-spread history (mirror the GBM/HW1F
+   calibrators): mean-reversion speed, long-run spread, vol, and the credit risk premium; APPROVED-pattern ChangeRecord
+   + PARAM_CHANGE audit entries; move MR-012 toward MITIGATED. (SOA ASOP 56 §3.4; ASOP 25 §3.3; IA TAS M §3.5)
+3. Add a fourth (non-financial) risk driver — dynamic lapse / policyholder behaviour — to the nested ground truth and
+   the LSMC proxy basis (the asset/liability layer already carries dynamic lapse), with disjoint-seed out-of-sample
+   four-driver proxy validation. (IFoA proxy-modelling WP: financial AND non-financial drivers; IA TAS M §3.6)
+4. Four-driver tail-dependent aggregation + tail-convergence/stability diagnostics; refresh MR-010/MR-012 for four
+   drivers. (SOA ASOP 56 §3.5/§3.1.3; IA TAS M §3.6)
+5. Governance + offline-viewer refresh for the copula-aggregation and four-driver proxy: limitation card, OWNER_REVIEW
+   ChangeRecord, audit append, and a viewer Aggregation-tab copula/tail-dependence panel. **PHASE 18 COMPLETE** when done.
+   (IA TAS M §3.6/§3.7; APS X2 §3; SOA ASOP 56 §3.5)

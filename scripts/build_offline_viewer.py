@@ -123,12 +123,27 @@ def build_viewer_data() -> Dict[str, Any]:
 
     gov = src(GOV_PATH, _load(GOV_PATH))
     state = src(STATE_PATH, _load(STATE_PATH))
-    tail = src(os.path.join(VAL, "PHASE15_TAIL_DIAGNOSTICS_REPORT.json"),
-               _load(os.path.join(VAL, "PHASE15_TAIL_DIAGNOSTICS_REPORT.json")))
-    agg = src(os.path.join(VAL, "PHASE15_RISK_AGGREGATION_REPORT.json"),
-              _load(os.path.join(VAL, "PHASE15_RISK_AGGREGATION_REPORT.json")))
-    proxy = src(os.path.join(VAL, "PHASE15_PROXY_VALIDATION_REPORT.json"),
-                _load(os.path.join(VAL, "PHASE15_PROXY_VALIDATION_REPORT.json")))
+
+    def _prefer(*names):
+        """Load the first existing report among ``names`` (newest phase first).
+
+        Phase 17 adds the three-driver (rate+equity+credit) reports; when present
+        they supersede the Phase 15 two-driver reports of the same kind so the
+        viewer shows the most advanced economic-capital proxy with zero churn.
+        """
+        for n in names:
+            p = os.path.join(VAL, n)
+            obj = _load(p)
+            if obj is not None:
+                return src(p, obj)
+        return None
+
+    tail = _prefer("PHASE17_TAIL_DIAGNOSTICS_REPORT.json",
+                   "PHASE15_TAIL_DIAGNOSTICS_REPORT.json")
+    agg = _prefer("PHASE17_RISK_AGGREGATION_REPORT.json",
+                  "PHASE15_RISK_AGGREGATION_REPORT.json")
+    proxy = _prefer("PHASE17_PROXY_VALIDATION_REPORT.json",
+                    "PHASE15_PROXY_VALIDATION_REPORT.json")
     capev = src(os.path.join(VAL, "PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json"),
                 _load(os.path.join(VAL, "PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json")))
     lossd = src(os.path.join(VAL, "PHASE16_LOSS_DISTRIBUTION.json"),
@@ -174,20 +189,44 @@ def build_viewer_data() -> Dict[str, Any]:
         ag = agg.get("aggregation", {})
         rate = sa.get("rate_capital", {}) or {}
         eq = sa.get("equity_capital", {}) or {}
+        credit = sa.get("credit_capital", {}) or {}   # Phase 17 three-driver only
         nested = ag.get("full_nested_capital", {}) or {}
+        drivers = agg.get("drivers") or (
+            ["short_rate", "equity", "credit_spread"] if credit else ["short_rate", "equity"])
+
+        # Realised capital-loss correlation: Phase 15 reports a scalar
+        # (rate-equity); Phase 17 reports a 3x3 matrix. Normalise both to a
+        # representative scalar (mean off-diagonal) plus carry the full matrix.
+        loss_corr_matrix = sa.get("loss_correlation_matrix")
+        comp_loss = sa.get("component_loss_correlation")
+        if comp_loss is None and loss_corr_matrix:
+            offs = [loss_corr_matrix[i][j]
+                    for i in range(len(loss_corr_matrix))
+                    for j in range(len(loss_corr_matrix)) if i < j]
+            comp_loss = (sum(offs) / len(offs)) if offs else None
+        esg_matrix = ag.get("esg_correlation_matrix")
+        esg_re = ag.get("esg_rate_equity_correlation")
+        if esg_re is None and esg_matrix and len(esg_matrix) >= 2:
+            esg_re = esg_matrix[0][1]
+
         data["capital"] = {
+            "drivers": drivers,
             "confidence_level": (rate.get("confidence_level") or eq.get("confidence_level")),
             "horizon_months": (rate.get("capital_horizon_months") or eq.get("capital_horizon_months")),
             "rate_scr": rate.get("scr_proxy") or rate.get("var_liability"),
             "equity_scr": eq.get("scr_proxy") or eq.get("var_liability"),
+            "credit_scr": (credit.get("scr_proxy") or credit.get("var_liability")) if credit else None,
             "standalone_sum": sa.get("standalone_scr_sum"),
             "correlated_scr": ag.get("correlated_scr"),
             "nested_scr": nested.get("scr_proxy") or nested.get("var_liability"),
             "diversification_benefit_formula": ag.get("diversification_benefit_formula"),
             "diversification_benefit_nested": ag.get("diversification_benefit_nested"),
-            "component_loss_correlation": sa.get("component_loss_correlation"),
+            "component_loss_correlation": comp_loss,
+            "loss_correlation_matrix": loss_corr_matrix,
+            "esg_correlation_matrix": esg_matrix,
+            "esg_understatement_pct": ag.get("esg_understatement_pct"),
             "formula_vs_nested_rel_error": ag.get("formula_vs_nested_scr_rel_error"),
-            "esg_rate_equity_correlation": ag.get("esg_rate_equity_correlation"),
+            "esg_rate_equity_correlation": esg_re,
         }
     # fill VaR/ES from tail
     if tail:
@@ -218,19 +257,32 @@ def build_viewer_data() -> Dict[str, Any]:
     # ---- proxy validation ----------------------------------------------
     if proxy:
         cc = proxy.get("capital_comparison", {})
+        # Phase 15 reports `degree_rows` + `overfit_onset_degree`; Phase 17 (three
+        # driver) reports `basis_rows` (degree x max_interaction_order grid) +
+        # `overfit_onset_terms`. Normalise both to the viewer's degree_rows shape.
+        raw_rows = proxy.get("degree_rows") or proxy.get("basis_rows") or []
+        rows = [
+            {"degree": r.get("degree"),
+             "in_sample_r2": (r.get("in_sample_r2") if r.get("in_sample_r2") is not None
+                              else r.get("in_sample_r2_heavy")),
+             "oos_r2": r.get("oos_r2"),
+             "oos_max_abs_rel_error": r.get("oos_max_abs_rel_error"),
+             "n_basis_terms": r.get("n_basis_terms")}
+            for r in raw_rows
+        ]
+        onset = proxy.get("overfit_onset_degree")
+        if onset is None and proxy.get("overfit_onset_terms") is not None:
+            # map the onset term-count to the degree of the matching basis row
+            ot = proxy.get("overfit_onset_terms")
+            onset = next((r.get("degree") for r in raw_rows
+                          if r.get("n_basis_terms") == ot), None)
         data["proxy"] = {
             "verdict": proxy.get("verdict"),
             "selected_degree": proxy.get("selected_degree"),
-            "overfit_onset_degree": proxy.get("overfit_onset_degree"),
+            "overfit_onset_degree": onset,
+            "overfit_onset_terms": proxy.get("overfit_onset_terms"),
             "selection_metric": proxy.get("selection_metric"),
-            "degree_rows": [
-                {"degree": r.get("degree"),
-                 "in_sample_r2": r.get("in_sample_r2_heavy"),
-                 "oos_r2": r.get("oos_r2"),
-                 "oos_max_abs_rel_error": r.get("oos_max_abs_rel_error"),
-                 "n_basis_terms": r.get("n_basis_terms")}
-                for r in proxy.get("degree_rows", [])
-            ],
+            "degree_rows": rows,
             "var_rel_error": cc.get("var_rel_error"),
             "es_rel_error": cc.get("es_rel_error"),
         }

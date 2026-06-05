@@ -553,6 +553,60 @@
       "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation",
       "digest": "267392126aa2ac2c2c71ba081d343318284376cf3314797bb09882c011a0d7da",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "9009ff625fa44b46aee6bc349c47295a",
+      "timestamp": "2026-06-05T07:10:02.898627+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase17Task5GovernanceRefresh",
+      "description": "Governance event: risk register update - opened MR-012 (credit-spread driver / three-driver capital proxy is educational)",
+      "details": {
+        "risk_id": "MR-012",
+        "category": "model_error",
+        "overall_rating": "HIGH",
+        "mitigation_status": "IN_PROGRESS",
+        "linked_residual": [
+          "MR-006",
+          "MR-008",
+          "MR-010",
+          "MR-011"
+        ],
+        "new_driver": "credit_spread (CIR++)"
+      },
+      "phase": "Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy",
+      "digest": "2d2ac1de129a8f43e1e4557574d1f42d9694541457b80a7abc97d6a8c2be28f8",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "b7256363007f4c8899d16a50f4399abb",
+      "timestamp": "2026-06-05T07:10:02.898891+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase17Task5GovernanceRefresh",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - three-driver economic-capital proxy governance refresh",
+      "details": {
+        "record_id": "a68e2e8a4bb04db4b4cf342db06ec259",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/stochastic/credit_spread.py",
+          "par_model_v2/projection/multi_driver_capital_3d.py",
+          "par_model_v2/projection/multi_driver_proxy_validation.py",
+          "par_model_v2/projection/multi_driver_risk_aggregation.py",
+          "par_model_v2/projection/multi_driver_tail_diagnostics.py",
+          "docs/MULTI_DRIVER_3D_PROXY_LIMITATION_CARD.md",
+          "docs/validation/PHASE17_TASK5_GOVERNANCE_REFRESH.{json,md}",
+          "par_model_v2/viewer/viewer_template.html",
+          "scripts/build_offline_viewer.py"
+        ],
+        "drivers": [
+          "short_rate",
+          "equity",
+          "credit_spread"
+        ]
+      },
+      "phase": "Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy",
+      "digest": "3fbe7485061c81954f948621cbca2071daa6ddad6c533696b895c534c8b8ebb1",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -1378,6 +1432,71 @@
         }
       ],
       "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation"
+    },
+    {
+      "record_id": "a68e2e8a4bb04db4b4cf342db06ec259",
+      "created_at": "2026-06-05T07:10:02.898839+00:00",
+      "title": "Phase 17 Task 5 - three-driver (rate+equity+credit) economic-capital proxy governance refresh",
+      "description": "Consolidated governance refresh for the Phase 17 three-driver economic-capital proxy (Tasks 1-4): added the CIR++ credit-spread driver and the trivariate (rate+equity+credit) nested ground truth + LSMC surface (Task 1), formal disjoint-seed out-of-sample trivariate proxy validation (Task 2, OOS R^2=0.9751), three-driver correlated risk aggregation (Task 3, honest PARTIAL), and three-driver tail-convergence / stability diagnostics (Task 4, PASS). Published a single consolidated three-driver model-limitation card, opened MR-012 to formalise the credit-driver educational-only classification and the credentialled-data + independent-review residual, and extended the offline result-viewer schema and Capital/Aggregation tabs to the three-driver proxy.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/stochastic/credit_spread.py",
+        "par_model_v2/projection/multi_driver_capital_3d.py",
+        "par_model_v2/projection/multi_driver_proxy_validation.py",
+        "par_model_v2/projection/multi_driver_risk_aggregation.py",
+        "par_model_v2/projection/multi_driver_tail_diagnostics.py",
+        "docs/MULTI_DRIVER_3D_PROXY_LIMITATION_CARD.md",
+        "docs/validation/PHASE17_TASK5_GOVERNANCE_REFRESH.{json,md}",
+        "par_model_v2/viewer/viewer_template.html",
+        "scripts/build_offline_viewer.py"
+      ],
+      "standard_references": [
+        "IA TAS M \u00a73.6",
+        "IA TAS M \u00a73.7",
+        "APS X2 \u00a73",
+        "SOA ASOP 56 \u00a73.5",
+        "SOA ASOP 25 \u00a73.3",
+        "IFoA proxy-modelling working party"
+      ],
+      "before_snapshot": {
+        "economic_capital_proxy_drivers": "two (short rate + equity)",
+        "consolidated_limitation_card": "docs/MULTI_DRIVER_PROXY_LIMITATION_CARD.md (two-driver)",
+        "open_risks_for_proxy": [
+          "MR-010 (factor-correlation gap)",
+          "MR-011 (multi-driver proxy educational)"
+        ],
+        "offline_viewer": "Capital/Aggregation tabs render two drivers (rate + equity)"
+      },
+      "after_snapshot": {
+        "economic_capital_proxy_drivers": "three (short rate + equity + credit spread)",
+        "consolidated_limitation_card": "docs/MULTI_DRIVER_3D_PROXY_LIMITATION_CARD.md (three-driver)",
+        "new_risk": "MR-012 (credit-spread driver / three-driver capital proxy is educational)",
+        "mr_010_status": "MITIGATED",
+        "mr_011_status": "IN_PROGRESS",
+        "risk_register_total": 12,
+        "offline_viewer": "Capital/Aggregation tabs render three drivers (rate + equity + credit)"
+      },
+      "impact_assessment": "No numeric model output changes (governance + viewer-presentation only). Establishes a single point of reference for the three-driver capital proxy's scope, validated error bounds (trivariate OOS R^2=0.9751; three-driver outer-sampling SE +-0.91%; aggregation benchmarked to nested) and the explicit production residual: placeholder credit calibration, omitted risk drivers, factor-correlation diversification understatement (~38.7%, MR-010), and no independent APS X2 review. Educational classification retained; production sign-off withheld.",
+      "quantitative_impact": "None (governance + viewer-presentation only). Residual: credentialled credit data + APS X2 review.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase17Task5GovernanceRefresh",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-05T07:10:02.898864+00:00",
+          "actor": "Phase17Task5GovernanceRefresh",
+          "status": "PEER_REVIEW",
+          "comments": "Governance-only consolidation; underlying Task 1-4 modules unchanged; regression PASS in batches; compileall + offline self-test clean."
+        },
+        {
+          "timestamp": "2026-06-05T07:10:02.898872+00:00",
+          "actor": "Phase17Task5GovernanceRefresh",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: educational placeholder credit params; omitted risk drivers; MR-010 factor-correlation understatement ~38.7%; independent APS X2 review pending. Production sign-off withheld."
+        }
+      ],
+      "phase": "Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy"
     }
   ],
   "risk_register": [
@@ -1556,6 +1675,22 @@
       "created_at": "2026-06-04T20:15:59.122741+00:00",
       "updated_at": "2026-06-04T20:15:59.122741+00:00",
       "notes": "Opened by Phase 15 Task 5 governance refresh. Linked residual: MR-006 (validation readiness), MR-008 (HW1F calibration), MR-010 (aggregation diversification gap)."
+    },
+    {
+      "risk_id": "MR-012",
+      "title": "Credit-spread driver and three-driver economic-capital proxy are educational, not production capital",
+      "description": "Phase 17 adds a CIR++ mean-reverting credit-spread driver (par_model_v2/stochastic/credit_spread.py) as the third risk factor in the nested/LSMC economic-capital proxy (rate + equity + credit-spread), with a reduced-form hazard x LGD credit-loss component on spread-sensitive backing assets. The CIR++ parameters (mean-reversion, long-run spread, vol, risk premium) and the hazard/LGD assumptions are PLACEHOLDER educational defaults, NOT calibrated to credentialled credit-market data; the trivariate LSMC surface still omits material drivers (lapse, mortality/longevity trend, FX, liquidity, management action) and has NOT been independently reviewed (APS X2). The three-driver 99.5% VaR/ES and SCR-proxy figures are illustrative only and must not be used for regulatory or internal economic-capital reporting until the credit parameters are calibrated, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
+      "category": "model_error",
+      "likelihood": "MEDIUM",
+      "impact": "HIGH",
+      "overall_rating": "HIGH",
+      "owner": "Model Owner",
+      "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
+      "mitigation_status": "IN_PROGRESS",
+      "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
+      "created_at": "2026-06-05T07:10:02.898466+00:00",
+      "updated_at": "2026-06-05T07:10:02.898466+00:00",
+      "notes": "Opened by Phase 17 Task 5 governance refresh. Linked residual: MR-006 (validation readiness), MR-008 (HW1F calibration), MR-010 (factor-correlation diversification understatement, now ~38.7% with three drivers), MR-011 (multi-driver proxy educational)."
     }
   ]
 }

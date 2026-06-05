@@ -8,7 +8,7 @@
   :root{
     --bg:#0f1720; --panel:#172230; --panel2:#1e2c3d; --ink:#e8eef5; --muted:#9fb1c4;
     --line:#2b3b4f; --accent:#2ecc71; --accent2:#3498db; --warn:#f39c12; --bad:#e74c3c;
-    --rate:#3498db; --equity:#9b59b6; --nested:#2ecc71; --formula:#f39c12;
+    --rate:#3498db; --equity:#9b59b6; --credit:#e67e22; --nested:#2ecc71; --formula:#f39c12;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
@@ -361,15 +361,19 @@ function buildTabs(d){
 
 function viewCapital(d){
   const c=d.capital||{}, t=d.tail||{};
+  const hasCredit=c.credit_scr!=null;
+  const drivers=(c.drivers&&c.drivers.length)?c.drivers:(hasCredit?["short_rate","equity","credit_spread"]:["short_rate","equity"]);
+  const driverLabel=drivers.map(x=>x.replace("_spread","").replace("short_rate","rate").replace("_"," ")).join(" + ");
   const bars=[
     {label:"Rate",v:c.rate_scr,c:'var(--rate)'},
     {label:"Equity",v:c.equity_scr,c:'var(--equity)'},
+    {label:"Credit",v:c.credit_scr,c:'var(--credit)'},
     {label:"Σ standalone",v:c.standalone_sum,c:'#7f8c8d'},
     {label:"Var-cov",v:c.correlated_scr,c:'var(--formula)'},
     {label:"Nested",v:c.nested_scr,c:'var(--nested)'},
   ].filter(b=>b.v!=null);
-  let html=`<div class="panel"><h3>Economic capital — standalone vs aggregated (99.5%)</h3>
-    <div class="desc">Standalone rate and equity-guarantee SCR, the variance–covariance aggregate, and the fully-diversified nested benchmark. Confidence ${pct(c.confidence_level,1)}, horizon ${fmt(c.horizon_months)} months.</div>
+  let html=`<div class="panel"><h3>Economic capital — standalone vs aggregated (${pct(c.confidence_level,1)})</h3>
+    <div class="desc">Standalone SCR for each risk driver (<strong>${esc(driverLabel)}</strong>), the variance–covariance aggregate, and the fully-diversified nested benchmark. Confidence ${pct(c.confidence_level,1)}, horizon ${fmt(c.horizon_months)} months.${hasCredit?' <span class="pill b-pass">3-driver proxy</span>':''}</div>
     ${bars.length?barChart(bars,{w:560,h:240}):'<div class="empty">No aggregation data loaded.</div>'}
     <div class="kvs" style="margin-top:12px">
       <span class="kk">Diversification benefit (formula)</span><span>${fmt(c.diversification_benefit_formula)}</span>
@@ -485,8 +489,15 @@ function viewAggregation(d){
     {label:'Nested',start:0,end:c.nested_scr,c:'var(--nested)',kind:'abs'},
   ];
   const understated=c.correlated_scr<c.nested_scr;
+  const hasCredit=c.credit_scr!=null;
+  const drivers=(c.drivers&&c.drivers.length)?c.drivers:(hasCredit?["short_rate","equity","credit_spread"]:["short_rate","equity"]);
+  const nDrv=drivers.length;
+  const understatePct=(c.esg_understatement_pct!=null)?c.esg_understatement_pct:c.formula_vs_nested_rel_error;
+  const corrText=hasCredit
+    ?`the governed 3×3 ESG driver correlation (rate/equity/credit off-diagonals ${(c.esg_correlation_matrix?[c.esg_correlation_matrix[0][1],c.esg_correlation_matrix[0][2],c.esg_correlation_matrix[1][2]].map(x=>fmt(x,2)).join(' / '):fmt(c.esg_rate_equity_correlation,2))})`
+    :`the governed ESG rate/equity correlation (ρ=${fmt(c.esg_rate_equity_correlation,2)})`;
   return `<div class="panel"><h3>Diversification-benefit waterfall — standalone → var-cov → nested (${pct(c.confidence_level,1)})</h3>
-    <div class="desc">From the sum of standalone rate and equity-guarantee SCR, the variance–covariance step applies the governed ESG rate/equity correlation (ρ=${fmt(c.esg_rate_equity_correlation,2)}) to claim a diversification benefit; the final step corrects to the fully-diversified nested benchmark. Hover any bar for the step value.</div>
+    <div class="desc">From the sum of <strong>${nDrv} standalone driver SCR</strong>${hasCredit?' (rate + equity-guarantee + credit-loss)':' (rate + equity-guarantee)'}, the variance–covariance step applies ${corrText} to claim a diversification benefit; the final step corrects to the fully-diversified nested benchmark. Hover any bar for the step value.</div>
     ${waterfallChart(steps,{w:600,h:285})}
     ${legend([{c:'#7f8c8d',t:'standalone / aggregate level'},{c:'#2ecc71',t:'diversification reduction'},{c:'#e74c3c',t:'correlation correction'},{c:'var(--nested)',t:'nested benchmark'}])}
     <div class="row" style="margin-top:14px">
@@ -504,7 +515,7 @@ function viewAggregation(d){
       </div>
     </div>
     <div class="desc" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">
-      <strong>Key finding (MR-010, MITIGATED):</strong> the raw ESG factor correlation (${fmt(c.esg_rate_equity_correlation,2)}) ${understated?'understates':'misstates'} diversified capital by ${pct(c.formula_vs_nested_rel_error,1)}. The realised capital-loss correlation is +${fmt(c.component_loss_correlation,2)}, so the variance–covariance formula overstates the diversification benefit relative to the nested ground truth. Use the nested benchmark for the headline capital figure (SOA ASOP 56 §3.5; ASOP 25 §3.3; IA TAS M §3.2/§3.6).
+      <strong>Key finding (MR-010, MITIGATED):</strong> the raw ESG factor correlation ${understated?'understates':'misstates'} diversified ${nDrv}-driver capital by ${pct(understatePct,1)}${hasCredit?' (vs ~32.9% with two drivers — adding credit widens the gap)':''}. The realised capital-loss correlation is +${fmt(c.component_loss_correlation,2)} (mean off-diagonal)${hasCredit?'; pairwise losses (rate-eq / rate-cr / eq-cr) all co-move positively in stress even though the ESG factor off-diagonals are negative':''}, so the variance–covariance formula overstates the diversification benefit relative to the nested ground truth and is non-conservative. Use the nested benchmark for the headline capital figure (SOA ASOP 56 §3.5; ASOP 25 §3.3; IA TAS M §3.2/§3.6).
     </div></div>`;
 }
 
