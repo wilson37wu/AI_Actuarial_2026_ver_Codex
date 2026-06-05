@@ -6193,4 +6193,35 @@ reduction comparison for the 99.5% three-driver capital metric).
 
 **Evidence:** VERDICT PASS. Final VaR99.5=152,296.8; final ES=155,757.2; recommended N_outer>=1,000. Bootstrap VaR=150,859.1 with 95% CI [149,634.1, 152,369.3], SE=692.4, relative halfwidth=0.91%. Sobol QMC reduces VaR-estimator variance by 2.76x; antithetic ratio is 0.89x and disclosed as expected for an extreme quantile.
 
-**Verification:** Node offline viewer self-test PASS (`ok:true`, 4 tabs, 7 SVG charts, 7 export controls, 0 JS errors, 0 network). JSON parse checks PASS for `.claude-dev/MODEL_DEV_STATE.json` and `docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.json`. Python tests could not be rerun in this
+**Verification:** Node offline viewer self-test PASS (`ok:true`, 4 tabs, 7 SVG charts, 7 export controls, 0 JS errors, 0 network). JSON parse checks PASS for `.claude-dev/MODEL_DEV_STATE.json` and `docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.json`. Python tests could not be rerun in this shell because `python`, `py`, and `bash` are not on PATH.
+
+**Next Step:** Phase 17 Task 5 — governance refresh: open/refresh the credit-driver model-risk entry, publish the consolidated three-driver limitation card, create an OWNER_REVIEW ChangeRecord/audit append, and extend the offline viewer schema plus Capital/Aggregation tabs to the three-driver economic-capital proxy.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.5 / §3.1.3 — scenario adequacy, convergence, reproducibility, and model documentation addressed for the three-driver tail metric.
+- SOA ASOP 25 §3.3 — 3x3 correlated horizon-state distribution and empirical copula disclosed.
+- IA TAS M §3.6 — validation evidence, bootstrap uncertainty, and use restrictions documented.
+
+---
+
+## Run 2026-06-05T06:20Z — Phase 17 Task 4 (three-driver tail diagnostics)
+
+**Task Completed:** Tail-convergence + stability diagnostics for the three-driver (rate + equity + credit-spread) 99.5% economic-capital metric.
+
+**Accomplishments:**
+- Extended `par_model_v2/projection/multi_driver_tail_diagnostics.py` **additively** with `ThreeDriverTailConfig`, `ThreeDriverTailDiagnostics`, `ThreeDriverTailReport`, `VarianceReduction3D`, and the 3-D empirical-copula helpers `_draw_normals_nd` / `_correlate_nd` / `_states_from_normals_nd` / `_nearest_correlation_matrix`. The two-driver `MultiDriverTailDiagnostics` and the Phase 17 Task 1/2/3 modules are untouched.
+- Diagnostics built on the Phase 17 Task 1 trivariate LSMC surface (fitted once, then evaluated as a polynomial so outer sampling error is probed at scale): (1) outer-count convergence on genuinely 3-factor-correlated governed outer states; (2) non-parametric bootstrap CI/SE on 99.5% VaR/ES; (3) crude/antithetic/Sobol variance-reduction over a pilot-anchored Gaussian copula whose controlling correlation is the realised 3×3 outer-state correlation (rate/equity/credit) and whose margins are the empirical pilot margins (like-for-like efficiency).
+- Evidence (seed 42; n_fit=400; outer grid 500/1000/2000/3000; bootstrap B=1200/N=3000; VR 80×2048): VERDICT **PASS** — final VaR99.5 152,296.8 / ES 155,757.2; converged at recommended N_outer ≥ 1,000; bootstrap VaR 150,859.1, 95% CI [149,634.1, 152,369.3], SE 692.4 (±0.91% rel halfwidth); Sobol QMC VaR variance-reduction **2.76×**; antithetic 0.89× documented as theory-consistent expected-ineffective for an extreme quantile; reproducibility digest aca7800a921ac1bd.
+- Tests: 38 new in `tests/test_phase17_tail_diagnostics.py` (config validation, N-D scheme/copula primitives, end-to-end structure, 3×3 copula symmetry, Sobol-beats-crude, reproducibility, JSON/MD round-trip, governance disclosure). Regression re-run green: 2D tail 36/36 (shared module intact), 3D capital 22/22, three-driver aggregation 12/12. Offline self-test ok:true (0 network / 0 JS errors); py_compile clean.
+- Artifacts: `scripts/build_phase17_task4_tail_diagnostics.py`; `docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.{json,md}`; `docs/MULTI_DRIVER_3D_TAIL_DIAGNOSTICS_CARD.md`.
+
+**Maintenance this cycle:** A concurrent/recent cycle had advanced the state/prompt for the same Task 4 (identical deterministic numbers) but left `MODEL_DEV_STATE.json` and `MODEL_DEV_TASK_PROMPT.md` **truncated** mid-write. Both were repaired this cycle (state JSON re-validated; prompt Task 3 tail + Task 4 DONE + Task 5 NEXT restored). The bash-mount copy of `multi_driver_tail_diagnostics.py` had also desynced/truncated; it was rebuilt from the clean HEAD version + the pre-staged 3D imports/ND helpers + the new Task 4 code via a single bash write (AST + import verified).
+
+**Next Step:** Phase 17 Task 5 — governance refresh (credit-driver model-risk entry, consolidated three-driver limitation card, OWNER_REVIEW ChangeRecord, audit-chain append) + offline-viewer schema/Aggregation+Capital tab extension to three drivers. **PHASE 17 COMPLETE** when done.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.5 (scenario adequacy, convergence, variance reduction): addressed — convergence sweep + bootstrap + QMC comparison.
+- SOA ASOP 56 §3.1.3 / ASOP 25 §3.3: addressed — stochastic model documentation; correlated 3-factor scenario generation.
+- IA TAS M §3.6 (validation, reproducibility, model-uncertainty disclosure): addressed — bootstrap CI/SE + reproducibility digest + use-restriction disclosure.
+
+**Env note:** `/sessions` ~
