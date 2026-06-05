@@ -5956,4 +5956,65 @@ LSMC capital surface from two drivers (r, S) to three (r, S, spread).
   long-run level is re-anchored upward by the CIR risk premium `lambda_s*sigma^2/kappa` (positive market
   price of credit risk => Q spreads exceed P). Measure enforcement + ESGAdapter-style DataFrame output,
   matching the rate/equity process API. Added `_inner_q_spread_process` (conditions the inner nest on the
-  horizon spread `s_H`, mirroring `_inner_q_process` for rates) and a reduced-form `expected_
+  horizon spread `s_H`, mirroring `_inner_q_process` for rates) and a reduced-form `expected_credit_loss_fraction`
+  = `1-exp(-∫ s du)` (Duffie-Singleton hazard×LGD proxy).
+- **New `par_model_v2/projection/multi_driver_capital_3d.py`** — three-driver nested ground truth
+  (`ThreeDriverNestedEngine`), trivariate-LSMC proxy (`ThreeDriverLSMCProxyEngine`), and
+  `ThreeDriverDiagnostics`, mirroring the Phase 15 two-driver / Phase 14 Task 6 API. Conditional liability
+  L(r_H,S_H,s_H) = guaranteed PV (rates) + equity-linked GMMB/put PV (rates+equity) + credit-loss PV
+  (rates+credit, via the reduced-form hazard on the inner spread path). The inner Q nest is conditioned on
+  ALL THREE states off one correlated `(rate, equity, spread)` draw. `ThreeDriverCorrelation` builds the
+  governed 3x3 ESG matrix with a nearest-PD (eigenvalue-clip) Cholesky fallback (ASOP 25 §3.3). Outer
+  states are genuinely correlated via a shared 3-factor Cholesky-correlated antithetic draw.
+- **Trivariate polynomial basis (pairwise + capped three-way):** total-degree polynomial in (r,S,s);
+  genuine three-way terms (all exponents >=1) admitted only while total order <= `max_interaction_order`
+  (default 3). The cap is a no-op at degree<=3 (only `r·S·s` exists) and removes the order-4 three-way
+  terms `{(2,1,1),(1,2,1),(1,1,2)}` at degree 4 — the recommended lean-basis discipline (IFoA proxy WP).
+
+**Verification (PYTHONPATH=/var/tmp/pylibs):**
+- `tests/test_credit_spread.py` 17 PASS; `tests/test_phase17_multi_driver_capital_3d.py` 22 PASS (39 new).
+- Evidence (seed 42): outer corr(r,s)=-0.22 (target -0.20), corr(S,s)=-0.30 (target -0.30); spread
+  widening raises the conditional liability; LSMC-vs-nested 3-D grid R^2=0.964, max abs rel err 5.5%
+  (27-node interquartile grid, n_inner=1500); VaR99.5 ≈ 150.5k, ES ≈ 154.7k, SCR ≈ 32.5k — consistent with
+  the Phase 15 two-driver magnitudes plus the new credit component.
+- Regression: Phase 15 two-driver suite 29 PASS (the module this builds on is untouched). Offline viewer
+  self-test `ok:true`, 0 network, 0 JS errors. `py_compile` clean on all four files.
+- **Mount note:** the file-tools left 7 stray null bytes mid-file (the desync the prior cycle documented);
+  rewriting the files through a bash-side Python read/strip/fsync/replace made the interpreter and
+  `py_compile` see consistent bytes. Prefer bash for same-cycle code edits, per the standing note.
+
+**Next Step:** Phase 17 Task 2 — out-of-sample trivariate proxy validation (extend
+`multi_driver_proxy_validation.py`: disjoint-seed hold-out, basis-degree/interaction selection by OOS
+RMSE/R^2, leakage + overfit diagnostics, honest verdict).
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.1.3/§3.4 — credit-spread stochastic process documented; parameters disclosed as
+  placeholders. Addressed.
+- SOA ASOP 25 §3.3 — correlated three-driver scenario generation with nearest-PD correlation. Addressed.
+- IA TAS M §3.4 — explicit P/Q separation for the new credit driver. Addressed.
+- IA TAS M §3.6 / SOA ASOP 56 §3.5 — proxy-vs-nested convergence + reproducibility evidence; formal OOS
+  validation deferred to Task 2. Partially addressed.
+
+---
+
+## Run 2026-06-05 (later) — Phase 17 Task 2 (Out-of-sample trivariate proxy validation)
+
+**Context:** Phase 17 Task 1 (credit-spread driver + trivariate LSMC surface) was committed last cycle
+(`bb002ef`). This cycle delivers Task 2 — a formal out-of-sample validation of that three-driver surface.
+Environment unchanged: `/sessions` 100% full; `scipy`+`pytest` used from `/var/tmp/pylibs` via
+`PYTHONPATH`. Git still carries the virtiofs phantom `.git/index.lock` (invisible to `ls`/`rm`, blocks
+normal index/ref writes) — committed via the documented alt-`GIT_INDEX_FILE` + direct-ref workaround.
+
+**File-mount note (recurred):** the first large append via the Windows-path file-tools desynced — the
+bash/Python view of `multi_driver_proxy_validation.py` was truncated mid-comment while the file-tool view
+looked complete. Re-applied the whole new section through a **bash heredoc** (truncate-to-splice +
+append), after which Python saw it. Confirms the prompt's "prefer bash for code edits you execute the
+same cycle" guidance.
+
+**Task Completed:** Phase 17 Task 2 — extend `multi_driver_proxy_validation.py` to validate the
+three-driver (rate + equity + credit-spread) LSMC capital surface out-of-sample.
+
+**Accomplishments:**
+- **New `ThreeDriverProxyValidator`** (additive; two-driver `MultiDriverProxyValidator` + the Task 1
+  engines imported, never modified) with `TriProxyValidationConfig`, `TriBasisDiagnostics`,
+  `Tri

@@ -1,0 +1,170 @@
+{
+  "audit_entry_id": null,
+  "basis_rows": [
+    {
+      "degree": 1,
+      "in_sample_r2_heavy": 0.978442,
+      "in_sample_r2_noisy": 0.185171,
+      "max_interaction_order": 3,
+      "n_basis_terms": 4,
+      "oos_mae": 1952.888901,
+      "oos_max_abs_rel_error": 0.039154,
+      "oos_r2": 0.975066,
+      "oos_rmse": 2299.687235,
+      "overfit_gap": 0.003376
+    },
+    {
+      "degree": 2,
+      "in_sample_r2_heavy": 0.958478,
+      "in_sample_r2_noisy": 0.196001,
+      "max_interaction_order": 3,
+      "n_basis_terms": 10,
+      "oos_mae": 2555.963263,
+      "oos_max_abs_rel_error": 0.114563,
+      "oos_r2": 0.935962,
+      "oos_rmse": 3685.472193,
+      "overfit_gap": 0.022516
+    },
+    {
+      "degree": 3,
+      "in_sample_r2_heavy": 0.927661,
+      "in_sample_r2_noisy": 0.205305,
+      "max_interaction_order": 2,
+      "n_basis_terms": 19,
+      "oos_mae": 4035.358379,
+      "oos_max_abs_rel_error": 0.299516,
+      "oos_r2": 0.812323,
+      "oos_rmse": 6309.269203,
+      "overfit_gap": 0.115338
+    },
+    {
+      "degree": 3,
+      "in_sample_r2_heavy": 0.925325,
+      "in_sample_r2_noisy": 0.208087,
+      "max_interaction_order": 3,
+      "n_basis_terms": 20,
+      "oos_mae": 4235.720967,
+      "oos_max_abs_rel_error": 0.342327,
+      "oos_r2": 0.760469,
+      "oos_rmse": 7127.776348,
+      "overfit_gap": 0.164856
+    },
+    {
+      "degree": 4,
+      "in_sample_r2_heavy": 0.869102,
+      "in_sample_r2_noisy": 0.2196,
+      "max_interaction_order": 3,
+      "n_basis_terms": 32,
+      "oos_mae": 4050.918679,
+      "oos_max_abs_rel_error": 0.280775,
+      "oos_r2": 0.759285,
+      "oos_rmse": 7145.379961,
+      "overfit_gap": 0.109818
+    }
+  ],
+  "capital_comparison": {
+    "es_rel_error": 0.069551,
+    "nested_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 167477.1285,
+      "mean_liability": 117924.5287,
+      "n_outer": 800,
+      "scr_proxy": 44849.1241,
+      "var_liability": 162773.6527
+    },
+    "nested_n_inner": 96,
+    "nested_n_outer": 800,
+    "proxy_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 155828.9988,
+      "mean_liability": 118844.3504,
+      "n_outer": 1000,
+      "scr_proxy": 32445.7417,
+      "var_liability": 151290.0922
+    },
+    "scr_rel_error": 0.276558,
+    "var_rel_error": 0.070549
+  },
+  "config": {
+    "basis_grid": [
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ]
+    ],
+    "capital_horizon_months": 12,
+    "confidence_level": 0.995,
+    "fit_seed": 42,
+    "insample_heavy_seed": 7,
+    "n_fit": 1000,
+    "n_inner_heavy": 512,
+    "n_insample_heavy": 60,
+    "n_validation": 80,
+    "outer_measure": "P",
+    "selection_metric": "oos_rmse",
+    "validation_seed": 20260605
+  },
+  "drivers": [
+    "short_rate",
+    "equity_level",
+    "credit_spread"
+  ],
+  "duration_seconds": 23.3072,
+  "leakage": {
+    "fit_seed": 42,
+    "leakage_free": true,
+    "min_pairwise_distance": 0.056956052,
+    "n_exact_shared_states": 0,
+    "seeds_disjoint": true,
+    "validation_seed": 20260605
+  },
+  "notes": [],
+  "overfit_onset_terms": 10,
+  "reproducibility_digest": "4972795d39315cb7545cfcc9a0a381cf534fe536bf39a0fa588c7a8f88f50dec",
+  "run_id": "td-proxyval-ff679156",
+  "selected_degree": 1,
+  "selected_max_interaction_order": 3,
+  "selected_row": {
+    "degree": 1,
+    "in_sample_r2_heavy": 0.978442,
+    "in_sample_r2_noisy": 0.185171,
+    "max_interaction_order": 3,
+    "n_basis_terms": 4,
+    "oos_mae": 1952.888901,
+    "oos_max_abs_rel_error": 0.039154,
+    "oos_r2": 0.975066,
+    "oos_rmse": 2299.687235,
+    "overfit_gap": 0.003376
+  },
+  "selection_metric": "oos_rmse",
+  "standards": [
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 56 \u00a73.1.3",
+    "SOA ASOP 25 \u00a73.3",
+    "IA TAS M \u00a73.6",
+    "IA TAS M \u00a73.2",
+    "IFoA proxy-model working party",
+    "Longstaff & Schwartz (2001)",
+    "Duffie & Singleton (1999)",
+    "Cox-Ingersoll-Ross (1985)"
+  ],
+  "verdict": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)"
+}
