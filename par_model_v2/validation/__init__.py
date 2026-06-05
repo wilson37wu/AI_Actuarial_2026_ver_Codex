@@ -62,28 +62,22 @@ __all__ += [
     "run_health_checks",
 ]
 
-from .validation_dashboard import (
-    ValidationDashboard,
-    HealthPanel,
-    IAValidationPanel,
-    LimitationCardPanel,
-    CalibrationPanel,
-    SuitePanel,
-    PhaseTrackerPanel,
-    ReadinessVerdict,
-    build_validation_dashboard,
-    write_validation_dashboard,
+# NOTE: the legacy `.validation_dashboard` module was retired in Phase 16 when the
+# offline result-viewer (model_result_viewer.html) replaced the in-process
+# dashboard. Its import block is intentionally omitted here.
+
+# --- Phase 13 IA TAS M validation suite (re-wired after a prior cycle's
+# truncated write; module + tests already on disk) ---
+from .phase13_ia_tas_m import (
+    Phase13IAValidationResult,
+    build_phase13_validation_requirements,
+    evaluate_g06_gate,
+    run_phase13_ia_tas_m_validation,
 )
 
 __all__ += [
-    "ValidationDashboard",
-    "HealthPanel",
-    "IAValidationPanel",
-    "LimitationCardPanel",
-    "CalibrationPanel",
-    "SuitePanel",
-    "PhaseTrackerPanel",
-    "ReadinessVerdict",
-    "build_validation_dashboard",
-    "write_validation_dashboard",
+    "Phase13IAValidationResult",
+    "build_phase13_validation_requirements",
+    "evaluate_g06_gate",
+    "run_phase13_ia_tas_m_validation",
 ]

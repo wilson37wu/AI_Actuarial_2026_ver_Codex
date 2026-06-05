@@ -52,3 +52,29 @@ __all__ = [
     "BacktestReport",
     "generate_backtest_report",
 ]
+
+# --- Phase 12 calibration-assumption pack (re-wired after a prior cycle's
+# truncated write; module + tests already on disk) ---
+from par_model_v2.calibration.phase12_calibration_pack import (
+    CalibrationAssumptionCard,
+    CalibrationInputCheck,
+    Phase12CalibrationPack,
+    build_credit_calibration_cards,
+    build_curve_calibration_cards,
+    build_equity_calibration_cards,
+    build_liability_calibration_cards,
+    build_phase12_calibration_pack,
+    validate_calibration_cards,
+)
+
+__all__ += [
+    "CalibrationAssumptionCard",
+    "CalibrationInputCheck",
+    "Phase12CalibrationPack",
+    "build_credit_calibration_cards",
+    "build_curve_calibration_cards",
+    "build_equity_calibration_cards",
+    "build_liability_calibration_cards",
+    "build_phase12_calibration_pack",
+    "validate_calibration_cards",
+]

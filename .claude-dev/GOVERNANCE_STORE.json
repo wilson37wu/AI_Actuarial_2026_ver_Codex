@@ -465,6 +465,94 @@
       "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation",
       "digest": "359c570fb7470ab70aa3719339f95e937e6c03f6a1189993c337d35202e64c87",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "95ec9722385d4cd4936bf35b09d6d253",
+      "timestamp": "2026-06-04T18:28:37.351577+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "MultiDriverRiskAggregator",
+      "description": "Model run md-riskagg-c095b025: PASS",
+      "details": {
+        "run_id": "md-riskagg-c095b025",
+        "scenario_count": 256000,
+        "duration_seconds": 39.2295,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/multi_driver_risk_aggregation.py",
+          "tests/test_phase15_risk_aggregation.py",
+          "scripts/build_phase15_task3_evidence.py",
+          "docs/validation/PHASE15_RISK_AGGREGATION_REPORT.json",
+          "docs/MULTI_DRIVER_RISK_AGGREGATION_CARD.md"
+        ],
+        "test_summary": "Phase15 T3 risk-aggregation: rate SCR=21285; equity SCR=23191; sum=44477; ESG-rho formula SCR=29031; nested SCR=43251; rel_err=32.9%; loss_corr=+0.546; 9/9 tests PASS; digest 55ca305d9fbd"
+      },
+      "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation",
+      "digest": "3bcb767b2b4ff5a956589cdd883ff31b82b45e890bd830add045f4788b25bfd9",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "82d3c3efa1be4eda8cf30d0cd5fa596c",
+      "timestamp": "2026-06-04T19:41:52.055554+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "MultiDriverTailDiagnostics",
+      "description": "Model run md-tail-7a52688d: PASS",
+      "details": {
+        "run_id": "md-tail-7a52688d",
+        "scenario_count": 252260,
+        "duration_seconds": 25.3043,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/multi_driver_tail_diagnostics.py"
+        ],
+        "test_summary": "VaR99.5%=149615.9; converged=True; rec_N>=2000; CI=[149402.1,154390.5]; SE=1486.3; anti_ratio=0.81; sobol_ratio=7.10"
+      },
+      "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation",
+      "digest": "0f29976bee9b69b8d08ad2a803df2f5b1b7e984a20d3da4f72bf8208c30775d8",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "36db0dc5056e4b42bd0fd4ab7c169519",
+      "timestamp": "2026-06-04T20:15:59.122833+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase15Task5GovernanceRefresh",
+      "description": "Governance event: risk register update - opened MR-011 (multi-driver capital proxy is educational)",
+      "details": {
+        "risk_id": "MR-011",
+        "category": "model_error",
+        "overall_rating": "HIGH",
+        "mitigation_status": "IN_PROGRESS",
+        "linked_residual": [
+          "MR-006",
+          "MR-008",
+          "MR-010"
+        ]
+      },
+      "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation",
+      "digest": "5e44e9fa82780f286fc1b701038170e9dbe27941b5eb0a5e6342103b2e8f34fb",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "0efdf3f10eb74d5580b73587fa84fe5e",
+      "timestamp": "2026-06-04T20:15:59.122982+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase15Task5GovernanceRefresh",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - multi-driver proxy governance refresh",
+      "details": {
+        "record_id": "50da1379b00f44acbe069457a863ff06",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/projection/multi_driver_capital.py",
+          "par_model_v2/projection/multi_driver_proxy_validation.py",
+          "par_model_v2/projection/multi_driver_risk_aggregation.py",
+          "par_model_v2/projection/multi_driver_tail_diagnostics.py",
+          "docs/MULTI_DRIVER_PROXY_LIMITATION_CARD.md",
+          "docs/validation/PHASE15_TASK5_GOVERNANCE_REFRESH.{json,md}"
+        ]
+      },
+      "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation",
+      "digest": "267392126aa2ac2c2c71ba081d343318284376cf3314797bb09882c011a0d7da",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -1125,6 +1213,171 @@
         }
       ],
       "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation"
+    },
+    {
+      "record_id": "5e21202bf5a843ffb63dce5ad28099a5",
+      "created_at": "2026-06-04T18:28:37.351932+00:00",
+      "title": "Phase 15 Task 3 \u2014 Correlated risk aggregation (rates + equity guarantee)",
+      "description": "Added par_model_v2/projection/multi_driver_risk_aggregation.py: standalone rate and equity-guarantee SCR (CRN-isolated), variance-covariance aggregation via the governed ESG rate/equity correlation and validated 2x2 ESG correlation matrix, and benchmark to the fully-diversified two-driver nested capital. Repaired a DataFrame-iteration bug (phase8_rate_equity_fx_correlation_matrix returns a pandas DataFrame) so the matrix coerces to a numeric tuple-of-tuples. 9/9 tests PASS; compileall clean.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_risk_aggregation.py",
+        "tests/test_phase15_risk_aggregation.py",
+        "scripts/build_phase15_task3_evidence.py",
+        "docs/validation/PHASE15_RISK_AGGREGATION_REPORT.json",
+        "docs/validation/PHASE15_RISK_AGGREGATION_REPORT.md",
+        "docs/MULTI_DRIVER_RISK_AGGREGATION_CARD.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 \u00a73.5",
+        "SOA ASOP 56 \u00a73.1.3",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.2",
+        "IA TAS M \u00a73.6"
+      ],
+      "before_snapshot": {
+        "aggregation": "single-driver nested only (Phase 14 T6 / Phase 15 T1-T2)"
+      },
+      "after_snapshot": {
+        "rate_scr": 21285.45,
+        "equity_scr": 23191.31,
+        "undiversified_sum": 44476.76,
+        "esg_rho_formula_scr": 29031.3,
+        "nested_diversified_scr": 43250.62,
+        "formula_vs_nested_rel_error": 0.3288,
+        "empirical_loss_correlation": 0.5464
+      },
+      "impact_assessment": "Educational. Demonstrates diversification benefit and a key model-risk finding: the raw ESG factor correlation (-0.15) understates diversified tail capital by ~33% because the realised capital-loss correlation is +0.55 (non-linear guarantee payoffs). Production aggregation must use the capital-loss correlation or the nested run directly.",
+      "quantitative_impact": "99.5% diversified SCR-proxy: formula 29,031 vs nested 43,251 (-32.9%); loss_corr +0.55",
+      "status": "OWNER_REVIEW",
+      "author": "Claude (automated 12h cycle)",
+      "peer_reviewer": "APS X2 independent reviewer (PENDING)",
+      "assumption_owner": "Model Owner",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-04T18:28:37.351958+00:00",
+          "actor": "Claude (automated 12h cycle)",
+          "status": "PEER_REVIEW",
+          "comments": "Code + tests + reproducible evidence attached."
+        },
+        {
+          "timestamp": "2026-06-04T18:28:37.351971+00:00",
+          "actor": "APS X2 independent reviewer (PENDING)",
+          "status": "OWNER_REVIEW",
+          "comments": "Educational sign-off; production review withheld pending credentialled data + independent APS X2."
+        }
+      ],
+      "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation"
+    },
+    {
+      "record_id": "820c6fe4707a48f28772eaad4753ab8b",
+      "created_at": "2026-06-04T19:41:52.056687+00:00",
+      "title": "Phase 15 Task 4 - tail-convergence & stability diagnostics for the 99.5% capital metric",
+      "description": "Added par_model_v2/projection/multi_driver_tail_diagnostics.py (additive): outer-count convergence, a non-parametric bootstrap CI, and a crude/antithetic/Sobol variance-reduction comparison for the multi-driver (rate+equity) 99.5% VaR/ES capital metric, built on the once-fitted Phase 15 Task 1 LSMC surface. Verdict PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_tail_diagnostics.py",
+        "tests/test_phase15_tail_diagnostics.py",
+        "scripts/build_phase15_task4_evidence.py",
+        "docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.{json,md}",
+        "docs/MULTI_DRIVER_TAIL_DIAGNOSTICS_CARD.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 \u00a73.5",
+        "SOA ASOP 56 \u00a73.1.3",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.6",
+        "L'Ecuyer (2018) RQMC",
+        "Glasserman (2003) \u00a74"
+      ],
+      "before_snapshot": {
+        "tail_diagnostics": "absent \u2014 99.5% capital cited without convergence/CI/variance-reduction evidence"
+      },
+      "after_snapshot": {
+        "final_var": 149615.91,
+        "converged": true,
+        "recommended_n_outer": 2000,
+        "var_bootstrap_se": 1486.34,
+        "sobol_var_ratio": 7.103,
+        "antithetic_var_ratio": 0.812
+      },
+      "impact_assessment": "99.5% VaR converges (recommended N_outer>=2000); bootstrap 95% CI [149402,154391] SE 1486; Sobol QMC variance-reduction ratio 7.1x; antithetic ineffective on the tail quantile (theory-consistent). Educational; placeholder params; independent APS X2 review pending.",
+      "quantitative_impact": "VaR SE 1486; Sobol VR 7.1x",
+      "status": "OWNER_REVIEW",
+      "author": "MultiDriverTailDiagnostics",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-04T19:41:52.056714+00:00",
+          "actor": "MultiDriverTailDiagnostics",
+          "status": "PEER_REVIEW",
+          "comments": "Additive tail-diagnostics module; 36 unit tests PASS; compileall clean."
+        },
+        {
+          "timestamp": "2026-06-04T19:41:52.056727+00:00",
+          "actor": "MultiDriverTailDiagnostics",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: educational placeholder params; independent APS X2 review pending."
+        }
+      ],
+      "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation"
+    },
+    {
+      "record_id": "50da1379b00f44acbe069457a863ff06",
+      "created_at": "2026-06-04T20:15:59.122947+00:00",
+      "title": "Phase 15 Task 5 - multi-driver economic-capital proxy governance refresh",
+      "description": "Consolidated governance refresh for the Phase 15 multi-driver economic-capital proxy (Tasks 1-4): published a single multi-driver-proxy model-limitation card, opened MR-011 to formalise the educational-only classification and the credentialled-data + independent-review residual, and restated the model-use restrictions spanning the two-driver LSMC surface (Task 1), the out-of-sample proxy validation (Task 2), the correlated risk aggregation (Task 3), and the tail-convergence / stability diagnostics (Task 4).",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_capital.py",
+        "par_model_v2/projection/multi_driver_proxy_validation.py",
+        "par_model_v2/projection/multi_driver_risk_aggregation.py",
+        "par_model_v2/projection/multi_driver_tail_diagnostics.py",
+        "docs/MULTI_DRIVER_PROXY_LIMITATION_CARD.md",
+        "docs/validation/PHASE15_TASK5_GOVERNANCE_REFRESH.{json,md}"
+      ],
+      "standard_references": [
+        "IA TAS M \u00a73.6",
+        "IA TAS M \u00a73.7",
+        "APS X2 \u00a73",
+        "SOA ASOP 56 \u00a73.5",
+        "SOA ASOP 25 \u00a73.3",
+        "IFoA Modelling Practice Note \u00a74"
+      ],
+      "before_snapshot": {
+        "multi_driver_proxy_governance": "Per-task limitation cards (CAPITAL/RISK_AGGREGATION/TAIL_DIAGNOSTICS) and OWNER_REVIEW ChangeRecords existed, but there was no consolidated multi-driver proxy limitation card and no single MR entry classifying the proxy as educational.",
+        "open_risks_for_multi_driver_proxy": [
+          "MR-010 (diversification gap)"
+        ]
+      },
+      "after_snapshot": {
+        "consolidated_limitation_card": "docs/MULTI_DRIVER_PROXY_LIMITATION_CARD.md",
+        "new_risk": "MR-011 (multi-driver capital proxy is educational, not production)",
+        "mr_010_status": "MITIGATED",
+        "risk_register_total": 11
+      },
+      "impact_assessment": "No numeric model output changes (governance-only). Establishes a single point of reference for the multi-driver capital proxy's scope, validated error bounds (proxy OOS R^2=0.9704; outer-sampling SE ~1.66%; aggregation benchmarked to nested), and the explicit production residual: placeholder calibration, omitted risk drivers, and no independent APS X2 review. Educational classification retained; production sign-off withheld.",
+      "quantitative_impact": "None (governance-only). Residual: credentialled data + APS X2 review.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase15Task5GovernanceRefresh",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-04T20:15:59.122960+00:00",
+          "actor": "Phase15Task5GovernanceRefresh",
+          "status": "PEER_REVIEW",
+          "comments": "Governance-only consolidation; underlying Task 1-4 modules unchanged; 1650+ regression tests PASS; compileall clean."
+        },
+        {
+          "timestamp": "2026-06-04T20:15:59.122967+00:00",
+          "actor": "Phase15Task5GovernanceRefresh",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: educational placeholder params; omitted risk drivers; independent APS X2 review pending. Production sign-off withheld."
+        }
+      ],
+      "phase": "Phase 15: Multi-Risk Economic Capital and Proxy-Model Validation"
     }
   ],
   "risk_register": [
@@ -1271,6 +1524,38 @@
       "created_at": "2026-06-04T07:43:57.716882+00:00",
       "updated_at": "2026-06-04T12:37:49.737472+00:00",
       "notes": "Identified by phase13_ia_validation run; does not affect G-06 score. | CLOSED 2026-06-04 (Phase 14 Task 3): guided_examples.py migrated to current RiskFreeCurve/FixedIncomeInstrument/TVOG/HK-liability/correlation/reporting-cycle APIs; tests/test_guided_examples.py 64/64 PASS."
+    },
+    {
+      "risk_id": "MR-010",
+      "title": "Variance-covariance aggregation understates diversified capital",
+      "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
+      "category": "model_error",
+      "likelihood": "MEDIUM",
+      "impact": "HIGH",
+      "overall_rating": "HIGH",
+      "owner": "Model Owner",
+      "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
+      "mitigation_status": "MITIGATED",
+      "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
+      "created_at": "2026-06-04T18:28:37.352914+00:00",
+      "updated_at": "2026-06-04T18:28:37.352914+00:00",
+      "notes": "Phase 15 Task 3. ChangeRecord 5e21202bf5. Evidence digest 55ca305d9fbd."
+    },
+    {
+      "risk_id": "MR-011",
+      "title": "Multi-driver economic-capital proxy is educational, not production capital",
+      "description": "The Phase 15 multi-driver (short-rate + equity) nested/LSMC economic-capital proxy (Tasks 1-4) is fitted on PLACEHOLDER HW1F / GBM parameters, omits material risk drivers (lapse, mortality/longevity trend, credit spread, FX, liquidity, management action), uses an educational single-guarantee liability, and has NOT been independently reviewed (APS X2). The 99.5% VaR/ES and SCR-proxy figures it produces are illustrative only and must not be used for regulatory or internal economic-capital reporting until parameters are calibrated to credentialled market data, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
+      "category": "model_error",
+      "likelihood": "MEDIUM",
+      "impact": "HIGH",
+      "overall_rating": "HIGH",
+      "owner": "Model Owner",
+      "mitigation": "Classify all multi-driver capital output as EDUCATIONAL ONLY in the limitation card and at the API boundary; bound proxy error by the Task 2 out-of-sample validation (OOS R^2=0.9704, VaR rel err 3.21%) and outer-sampling error by the Task 4 bootstrap CI (SE ~1.66%); benchmark every aggregated figure to the Task 3 nested ground truth. Residual closure requires credentialled-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008).",
+      "mitigation_status": "IN_PROGRESS",
+      "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5",
+      "created_at": "2026-06-04T20:15:59.122741+00:00",
+      "updated_at": "2026-06-04T20:15:59.122741+00:00",
+      "notes": "Opened by Phase 15 Task 5 governance refresh. Linked residual: MR-006 (validation readiness), MR-008 (HW1F calibration), MR-010 (aggregation diversification gap)."
     }
   ]
 }

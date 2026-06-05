@@ -5823,3 +5823,15 @@ audit-integrity badge, deployment-gate checklist) from GOVERNANCE_STORE.json.
 - Offline/no-preinstall directive: addressed — the delivered `model_result_viewer.html` opens from disk with embedded data and supports optional local JSON loading.
 
 ---
+
+## Run 2026-06-05T01:34:49Z — Maintenance / Crash-Recovery (post-Phase 16)
+
+**Context:** All 85 documented model-dev tasks + the Phase 16 offline viewer were marked COMPLETE.
+This run is a scheduled maintenance pass. It found and repaired real corruption left by a crashed
+prior cycle and brought the working-tree test suite fully green.
+
+**Findings & fixes (all verified):**
+- **Offline viewer was BROKEN on disk.** `model_result_viewer.html` (and `par_model_v2/viewer/viewer_template.html`)
+  had been **truncated mid-\<script\>** by an interrupted write, so the embedded JS threw
+  "Unexpected end of input" and the self-test failed (0 tabs / 0 SVGs / 2 JS errors). The **committed
+  HEAD** copies were intact, so I restore

@@ -222,3 +222,8 @@ class TestDynamicALMReturns:
 def test_default_mappings_cover_all_v1_consumers():
     by_id = {m.consumer_id for m in default_phase6_consumer_mappings()}
     assert {"tvog", "risk_metrics", "dynamic_alm", "reporting"}.issubset(by_id)
+
+    by_id = {m.consumer_id for m in default_phase6_consumer_mappings()}
+    assert {"tvog", "risk_metrics", "dynamic_alm", "reporting"}.issubset(by_id)
+    by_id = {m.consumer_id for m in default_phase6_consumer_mappings()}
+    assert {"tvog", "risk_metrics", "dynamic_alm", "reporting"}.issubset(by_id)

@@ -1,0 +1,79 @@
+{
+  "aggregation": {
+    "correlated_scr": 29031.296302,
+    "correlation_matrix_passed": true,
+    "diversification_benefit_formula": 15445.46807,
+    "diversification_benefit_nested": 1226.14502,
+    "esg_correlation_matrix": [
+      [
+        1.0,
+        -0.15
+      ],
+      [
+        -0.15,
+        1.0
+      ]
+    ],
+    "esg_rate_equity_correlation": -0.15,
+    "formula_vs_nested_scr_gap": -14219.32305,
+    "formula_vs_nested_scr_rel_error": 0.328766,
+    "full_nested_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 151659.1505,
+      "mean_liability": 107460.7226,
+      "n_outer": 1000,
+      "scr_proxy": 43250.6194,
+      "var_liability": 150711.342
+    }
+  },
+  "audit_entry_id": null,
+  "config": {
+    "aggregation_gap_tolerance": 0.35,
+    "capital_horizon_months": 12,
+    "confidence_level": 0.995,
+    "n_inner": 256,
+    "n_outer": 1000,
+    "outer_measure": "P",
+    "seed": 42
+  },
+  "duration_seconds": 39.2295,
+  "notes": [
+    "Standalone rate capital uses the guaranteed-benefit component with the equity guarantee switched off.",
+    "Standalone equity capital uses the equity-guarantee component isolated by common-random-number subtraction.",
+    "Formula aggregation uses the ESG rate_equity_correlation input, not a fitted capital-factor correlation."
+  ],
+  "reproducibility_digest": "55ca305d9fbdfe3aae67f4c8cd2451fcd18886b2946e4365257b7993b9611f3c",
+  "run_id": "md-riskagg-c095b025",
+  "standalone": {
+    "component_loss_correlation": 0.546361,
+    "equity_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 47942.0182,
+      "mean_liability": 23203.9825,
+      "n_outer": 1000,
+      "scr_proxy": 23191.312,
+      "var_liability": 46395.2945
+    },
+    "rate_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 105992.7685,
+      "mean_liability": 84256.7402,
+      "n_outer": 1000,
+      "scr_proxy": 21285.4523,
+      "var_liability": 105542.1925
+    },
+    "standalone_scr_sum": 44476.764372
+  },
+  "standards": [
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 56 \u00a73.1.3",
+    "SOA ASOP 25 \u00a73.3",
+    "IA TAS M \u00a73.6",
+    "IA TAS M \u00a73.2",
+    "IFoA proxy-model working party"
+  ],
+  "verdict": "PASS - correlated aggregation reconciles to nested diversified capital"
+}

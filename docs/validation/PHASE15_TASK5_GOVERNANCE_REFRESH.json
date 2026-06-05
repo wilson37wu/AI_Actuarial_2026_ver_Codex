@@ -1,0 +1,54 @@
+{
+  "task": "Phase 15 Task 5 - multi-driver economic-capital proxy governance refresh",
+  "added_risk_MR_011": true,
+  "added_change_record": true,
+  "change_record_status": "OWNER_REVIEW",
+  "audit_entries": 28,
+  "audit_integrity_ok": true,
+  "change_records_total": 14,
+  "risk_register_summary": {
+    "total": 11,
+    "by_rating": {
+      "VERY_LOW": 1,
+      "LOW": 1,
+      "MEDIUM": 0,
+      "HIGH": 5,
+      "VERY_HIGH": 0,
+      "CRITICAL": 4
+    },
+    "by_status": {
+      "OPEN": 1,
+      "IN_PROGRESS": 4,
+      "MITIGATED": 4,
+      "ACCEPTED": 0,
+      "CLOSED": 2
+    },
+    "open_critical": 1
+  },
+  "mr_011": {
+    "risk_id": "MR-011",
+    "title": "Multi-driver economic-capital proxy is educational, not production capital",
+    "description": "The Phase 15 multi-driver (short-rate + equity) nested/LSMC economic-capital proxy (Tasks 1-4) is fitted on PLACEHOLDER HW1F / GBM parameters, omits material risk drivers (lapse, mortality/longevity trend, credit spread, FX, liquidity, management action), uses an educational single-guarantee liability, and has NOT been independently reviewed (APS X2). The 99.5% VaR/ES and SCR-proxy figures it produces are illustrative only and must not be used for regulatory or internal economic-capital reporting until parameters are calibrated to credentialled market data, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
+    "category": "model_error",
+    "likelihood": "MEDIUM",
+    "impact": "HIGH",
+    "overall_rating": "HIGH",
+    "owner": "Model Owner",
+    "mitigation": "Classify all multi-driver capital output as EDUCATIONAL ONLY in the limitation card and at the API boundary; bound proxy error by the Task 2 out-of-sample validation (OOS R^2=0.9704, VaR rel err 3.21%) and outer-sampling error by the Task 4 bootstrap CI (SE ~1.66%); benchmark every aggregated figure to the Task 3 nested ground truth. Residual closure requires credentialled-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008).",
+    "mitigation_status": "IN_PROGRESS",
+    "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5",
+    "created_at": "2026-06-04T20:15:59.122741+00:00",
+    "updated_at": "2026-06-04T20:15:59.122741+00:00",
+    "notes": "Opened by Phase 15 Task 5 governance refresh. Linked residual: MR-006 (validation readiness), MR-008 (HW1F calibration), MR-010 (aggregation diversification gap)."
+  },
+  "limitation_card": "docs/MULTI_DRIVER_PROXY_LIMITATION_CARD.md",
+  "residual": "Credentialled-data calibration + independent APS X2 review pending; omitted risk drivers (lapse/mortality/credit/FX/liquidity/management action) outside the tail. Educational classification retained.",
+  "standard_references": [
+    "IA TAS M \u00a73.6",
+    "IA TAS M \u00a73.7",
+    "APS X2 \u00a73",
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 25 \u00a73.3",
+    "IFoA Modelling Practice Note \u00a74"
+  ]
+}

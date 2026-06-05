@@ -1,7 +1,6 @@
-v2.0.0
-2026-06-04
-PAR Endowment Stochastic ALM, TVOG & Multi-Market ESG Model
-Educational release — NOT cleared for production use
+v1.0.0-dev
+2026-05-23
+PAR Endowment Stochastic ALM & TVOG Model
+Development complete — NOT cleared for production use
 See docs/RELEASE_NOTES.md for full release record
-See docs/MODEL_RISK_CARD.md for risk disclosure and production gate criteria
-See docs/PHASE12_VALIDATION_DASHBOARD.md for current validation status
+See docs/DEPLOYMENT_READINESS_CHECKLIST.md for production gate criteria

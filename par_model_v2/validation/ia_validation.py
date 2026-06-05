@@ -103,10 +103,12 @@ class ValidationCategory(str, enum.Enum):
     UNIT        = "Unit"
     INTEGRATION = "Integration"
     STOCHASTIC  = "Stochastic"
+    STOCHASTIC_PROCESS = "Stochastic"
     SENSITIVITY = "Sensitivity"
     BACKTEST    = "Backtest"
     GOVERNANCE  = "Governance"
     DATA        = "Data"
+    DATA_VALIDATION = "Data"
 
 
 class Severity(str, enum.Enum):
@@ -542,6 +544,10 @@ class ValidationRunner:
             results=results,
             requirements=self.requirements,
         )
+
+    def run_all(self) -> ValidationReport:
+        """Compatibility alias for governance checklists that cite run_all()."""
+        return self.run()
 
     def run_category(self, category: ValidationCategory) -> List[ValidationResult]:
         """Run only requirements in one category.
@@ -1281,9 +1287,4 @@ IA_VALIDATION_REQUIREMENTS: List[ValidationRequirement] = [
             "Lapse rates: 0 ≤ lapse ≤ 1 for all entries",
             "Mortality qx: 0 ≤ qx ≤ 1 for all entries",
             "Bonus rates: 0 ≤ bonus ≤ 0.20 (max 20% annual bonus)",
-            "Completeness check: warn if any fallback lookup triggered during projection",
-        ],
-        development_phase=3,
-        notes="21/21 assumption unit tests passing.  Range validation checks not yet present.",
-    ),
-]
+            "Compl

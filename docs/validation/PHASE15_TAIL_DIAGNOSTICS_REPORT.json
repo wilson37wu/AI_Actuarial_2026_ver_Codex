@@ -1,0 +1,141 @@
+{
+  "audit_entry_id": "82d3c3efa1be4eda8cf30d0cd5fa596c",
+  "bootstrap": {
+    "ci_level": 0.95,
+    "es_ci_high": 157861.4479,
+    "es_ci_low": 152499.911,
+    "es_point": 155454.674,
+    "es_standard_error": 1382.3618,
+    "n_bootstrap": 1500,
+    "n_outer": 2500,
+    "var_ci_high": 154390.5036,
+    "var_ci_low": 149402.0883,
+    "var_ci_rel_halfwidth": 0.016558,
+    "var_point": 150632.1993,
+    "var_standard_error": 1486.3423
+  },
+  "config": {
+    "bootstrap_ci_level": 0.95,
+    "bootstrap_n_outer": 2500,
+    "capital_horizon_months": 12,
+    "confidence_level": 0.995,
+    "convergence_tol": 0.02,
+    "lsmc_degree": 2,
+    "n_bootstrap": 1500,
+    "n_fit": 700,
+    "outer_grid": [
+      1000,
+      2000,
+      4000
+    ],
+    "outer_measure": "P",
+    "seed": 42,
+    "vr_n_outer": 4096,
+    "vr_pilot_n": 2000,
+    "vr_replications": 60
+  },
+  "convergence": {
+    "converged": true,
+    "es_path": [
+      153476.3711,
+      155621.3301,
+      155356.539
+    ],
+    "es_successive_rel_change": [
+      0.013976,
+      0.001702
+    ],
+    "final_es": 155356.539,
+    "final_var": 149615.9089,
+    "n_outer_grid": [
+      1000,
+      2000,
+      4000
+    ],
+    "recommended_n_outer": 2000,
+    "var_path": [
+      149974.358,
+      149100.9773,
+      149615.9089
+    ],
+    "var_successive_rel_change": [
+      0.005824,
+      0.003454
+    ]
+  },
+  "duration_seconds": 25.3043,
+  "lsmc_summary": {
+    "capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 156694.0238,
+      "mean_liability": 108519.3159,
+      "n_outer": 1000,
+      "scr_proxy": 44980.0831,
+      "var_liability": 153499.399
+    },
+    "degree": 2,
+    "drivers": [
+      "short_rate",
+      "equity_level"
+    ],
+    "duration_seconds": 10.9494,
+    "fit_r2": 0.202764,
+    "n_basis_terms": 6,
+    "n_fit": 700,
+    "n_outer_eval": 1000,
+    "run_id": "md-lsmc-4bc249d3"
+  },
+  "notes": [
+    "Outer-count convergence and the bootstrap CI use the GOVERNED outer states (ScenarioSet.generate) with the once-fitted LSMC surface; they isolate outer Monte-Carlo (sampling) error, not proxy error.",
+    "Proxy error is bounded separately by the Task 1 proxy-vs-nested (R^2=0.9936) and Task 2 out-of-sample reports.",
+    "The variance-reduction study uses a pilot-anchored Gaussian copula (governed ESG rho; empirical pilot margins) so crude / antithetic / Sobol target an identical distribution and the ratio is like-for-like.",
+    "Antithetic uses negated normal pairs; Sobol uses a scrambled base-2 sequence (n is a power of two for exact balance).",
+    "Antithetic variates do not reduce the 99.5% VaR-estimator variance (ratio 0.81<1) \u2014 expected for an extreme quantile; QMC is the effective scheme here (ratio 7.10)."
+  ],
+  "reproducibility_digest": "03398506b8c67933ab4951d60960ed29f8a2e72a6650da8c4eb072dbfae82858",
+  "run_id": "md-tail-7a52688d",
+  "standards": [
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 56 \u00a73.1.3",
+    "SOA ASOP 25 \u00a73.3",
+    "IA TAS M \u00a73.6",
+    "L'Ecuyer (2018) RQMC",
+    "Glasserman (2003) \u00a74"
+  ],
+  "variance_reduction": {
+    "antithetic": {
+      "es_mean": 155212.3637,
+      "es_std": 1730.144677,
+      "n_outer": 4096,
+      "n_replications": 60,
+      "scheme": "antithetic",
+      "var_mean": 149591.4162,
+      "var_std": 1216.310538
+    },
+    "antithetic_es_ratio": 0.8328,
+    "antithetic_var_ratio": 0.8121,
+    "copula_rho": -0.099737,
+    "crude": {
+      "es_mean": 154965.6271,
+      "es_std": 1578.900385,
+      "n_outer": 4096,
+      "n_replications": 60,
+      "scheme": "crude",
+      "var_mean": 149225.1423,
+      "var_std": 1096.076348
+    },
+    "sobol": {
+      "es_mean": 155116.862,
+      "es_std": 202.465489,
+      "n_outer": 4096,
+      "n_replications": 60,
+      "scheme": "sobol",
+      "var_mean": 149508.6992,
+      "var_std": 411.257715
+    },
+    "sobol_es_ratio": 60.8145,
+    "sobol_var_ratio": 7.1032
+  },
+  "verdict": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
+}

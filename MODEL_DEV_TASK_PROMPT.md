@@ -491,7 +491,9 @@ Tasks for Phase 15 (one per cycle, in order):
    8/8 Task 5 tests PASS; governance regression 96 PASS; compileall clean; Task 1-4 modules untouched.
    (IA TAS M §3.6/3.7; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3; IFoA Modelling PN §4) **PHASE 15 COMPLETE.**
 
-**Current milestone:** **ALL DOCUMENTED TASKS COMPLETE — 85/85 tasks, 15 phases.** Phase 15 closed 2026-06-05 with Task 5 (multi-driver proxy governance refresh: MR-011 opened, consolidated limitation card, OWNER_REVIEW ChangeRecord, audit 26->28; 8/8 Task 5 tests + 96 governance regression PASS). All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 10. Production sign-off still withheld — the residual is credentialled-data calibration + independent APS X2 review, NOT a code gap.
+**Current milestone:** **ALL DOCUMENTED TASKS COMPLETE — 85/85 tasks, 15 phases + Phase 16 offline viewer.** All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 10. Production sign-off withheld — residual is credentialled-data calibration + independent APS X2 review, NOT a code gap.
+
+**⚠️ 2026-06-05 maintenance / crash-recovery (READ FIRST):** A prior cycle crashed mid-write (2026-06-03) and corrupted the working tree. The 2026-06-05 cycle FIXED the code: the offline viewer + template + 3 truncated package `__init__.py` files were restored/rebuilt, `phase13_ia_tas_m` `run_all()`→`run()`, and `test_guided_examples.py` restored from HEAD — clearing the 3 collection errors + 1 guided_examples failure earlier cycles left open. Offline self-test `ok:true` (0 network / 0 JS errors); pytest 0 failures (run in <45 s batches, 800+ tests). **BUT git is blocked** — a stale `.git/index.lock` (unremovable from the sandbox) + a corrupted index mean NOTHING was committed/pushed this run; all fixes are working-tree only. **Next cycle MUST start with Phase R** (clear the lock, `git reset`, commit the backlog, push) before any new development.
 
 ---
 
@@ -533,3 +535,61 @@ Tasks for Phase 15 (one per cycle, in order):
 **Phase 16 progress:** COMPLETE (2026-06-05). Offline viewer renders, with zero network: economic-capital bars; an interactive loss-distribution histogram (seed/confidence/percentile selectors, pre-computed look-up); outer-count convergence with a bootstrap-CI band; the VaR/ES bootstrap-CI bar; the Proxy tab's degree-sweep R² chart + overfit-gap bar chart; the **Aggregation** tab with the diversification-benefit waterfall (standalone→var-cov→nested) and MR-010 finding; and the Governance tab with deployment gates, risk filters, change-record timeline, and computed audit-integrity badge. Task 5 packaging is complete: responsive layout, Print, canvas-based PNG export for every SVG chart, file-picker + drag-and-drop load, and executable offline self-test. Current Node/jsdom evidence: 4 tabs, 7 SVG charts, 7 export controls, print/file/drop controls, 0 JS errors, 0 network calls; external-reference scan PASS; embedded JS syntax clean.
 
 **What counts as complete each cycle:** the viewer opens offline (no network) and renders the targeted view from real model-output JSON; bundler/schema tests PASS; committed + pushed; state/log/prompt updated.
+
+---
+
+## Phase R: Crash Recovery & Commit-Backlog (⭐ DO THIS FIRST NEXT CYCLE)
+
+A prior cycle crashed mid-write (2026-06-03), leaving the repository in a degraded state. The
+2026-06-05 maintenance cycle diagnosed and fixed the **code** corruption (working tree only — see
+MODEL_DEV_LOG.md), but **could not touch git**. Resolve the git state before any new development.
+
+**Blockers to clear (need real filesystem / credentials — the sandbox cannot):**
+1. **Stale lock:** delete `.git/index.lock` (0 B, dated 2026-06-03T19:39Z). The mounted FS returns
+   "Operation not permitted" for `rm`/`mv` on it from the automation sandbox. A human shell can remove it.
+2. **Phantom index:** ~93 tracked files are staged as deleted while byte-identical copies exist on disk
+   (verified == HEAD). After the lock is gone, `git reset` clears this in one step.
+3. **Commit the real backlog** (working-tree changes that ARE genuine and tested):
+   - Recovery fixes (2026-06-05): restored `model_result_viewer.html`, `viewer_template.html`,
+     `governance/__init__.py` from HEAD; rebuilt `calibration/__init__.py` + `validation/__init__.py`
+     with Phase 12 / Phase 13 export wiring; `phase13_ia_tas_m.py` `run_all()`→`run()`;
+     `tests/test_guided_examples.py` restored from HEAD.
+   - Untracked WIP from earlier cycles that is now GREEN: `par_model_v2/calibration/phase12_calibration_pack.py`,
+     `par_model_v2/validation/phase13_ia_tas_m.py`, `par_model_v2/projection/multi_driver_risk_aggregation.py`,
+     `par_model_v2/projection/multi_driver_tail_diagnostics.py`, `scripts/build_phase15_task*.py`,
+     `scripts/build_phase16_loss_distribution.py`, and their tests.
+4. **Push** `origin main`. (The 2026-06-03 GITHUB_PUSH_BLOCKER was marked resolved; re-verify the PAT.)
+
+**Verification gate before commit:** `python3 -m pytest -q` must be 0 failures (it is, when run in batches
+< 45 s; the full run exceeds the sandbox wall-clock but each batch passes) and
+`node scripts/offline_viewer_self_test.cjs model_result_viewer.html` must report `ok:true` / 0 network / 0 JS errors.
+
+**Note on the mount:** files written via **bash** are seen reliably by the Python interpreter; files written
+via the Windows-path file-tools can lag/desync within a run. Prefer bash for code edits you intend to execute
+the same cycle.
+
+---
+
+## Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy ⭐ AFTER PHASE R
+
+Extends the documented Phase 15 limitation (the LSMC capital proxy spans only two drivers — short rate +
+equity). Current proxy-model practice (IFoA proxy-modelling WP; Milliman/MDPI LSMC literature) expands the
+proxy basis to financial AND non-financial drivers (rates, equity, **credit**, lapse, mortality) with
+higher-order and interaction terms, validated out-of-sample. The asset library already carries credit
+spreads / private credit, so credit is the natural third driver.
+
+Tasks for Phase 17 (one per cycle, in order):
+1. Add a stochastic credit-spread driver (e.g. CIR++ or a mean-reverting OU spread) to the ESG, P- and
+   Q-measure consistent, and extend the multi-driver LSMC surface to (r, S, spread) with a trivariate
+   polynomial basis incl. pairwise + capped three-way interaction terms. Condition the inner Q nest on all
+   three states. (SOA ASOP 56 §3.1.3/§3.4; IA TAS M §3.6)
+2. Out-of-sample trivariate proxy validation — extend `multi_driver_proxy_validation.py`: disjoint-seed
+   hold-out, basis-degree/interaction selection by OOS RMSE/R², leakage + overfit diagnostics, honest verdict.
+   (SOA ASOP 56 §3.5; IA TAS M §3.6)
+3. Three-driver correlated aggregation — standalone rate/equity/credit SCR (CRN-isolated), var-cov with the
+   governed 3×3 ESG correlation, benchmarked to the fully-diversified nested capital; refresh the MR-010
+   diversification-understatement finding for three drivers. (SOA ASOP 56 §3.5; ASOP 25 §3.3)
+4. Tail-convergence + stability diagnostics for the three-driver 99.5% capital metric (extend
+   `multi_driver_tail_diagnostics.py`). (SOA ASOP 56 §3.5/§3.1.3)
+5. Governance refresh — open the credit-driver model-risk entry, consolidated limitation card, OWNER_REVIEW
+   ChangeRecord, audit-chain append; extend the offline viewer schema + Aggregation/Capital tabs to th
