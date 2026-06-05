@@ -1,0 +1,47 @@
+{
+  "task": "Phase 18 Task 1 - copula-based tail-dependent risk aggregation",
+  "drivers": [
+    "short_rate",
+    "equity_guarantee",
+    "credit_spread"
+  ],
+  "mr_010_refreshed": true,
+  "mr_010_status": "MITIGATED",
+  "added_change_record": true,
+  "change_record_status": "OWNER_REVIEW",
+  "selected_copula": "gaussian",
+  "selected_copula_rel_error_vs_nested": 0.014264,
+  "var_covar_rel_error_vs_nested": 0.344765,
+  "audit_entries": 32,
+  "audit_integrity_ok": true,
+  "change_records_total": 16,
+  "risk_register_summary": {
+    "total": 12,
+    "by_rating": {
+      "VERY_LOW": 1,
+      "LOW": 1,
+      "MEDIUM": 0,
+      "HIGH": 6,
+      "VERY_HIGH": 0,
+      "CRITICAL": 4
+    },
+    "by_status": {
+      "OPEN": 1,
+      "IN_PROGRESS": 5,
+      "MITIGATED": 4,
+      "ACCEPTED": 0,
+      "CLOSED": 2
+    },
+    "open_critical": 1
+  },
+  "limitation_card": "docs/COPULA_AGGREGATION_CARD.md",
+  "residual": "Empirical marginals cannot extrapolate beyond simulated component loss ranges; tail-dependence estimates are sampling-noisy; copulas impose a single exchangeable/elliptical tail structure; credentialled calibration + independent APS X2 review pending.",
+  "standard_references": [
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 25 \u00a73.3",
+    "IA TAS M \u00a73.6",
+    "Solvency II Delegated Reg. Art. 234",
+    "IFoA Life Aggregation & Simulation working party",
+    "Demarta-McNeil 2005 (t-copula)"
+  ]
+}

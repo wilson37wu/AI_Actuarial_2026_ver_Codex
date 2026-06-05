@@ -1,10 +1,10 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-05T07:21:36Z",
-  "last_run_duration_minutes": 50,
-  "current_phase": "Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy",
-  "overall_status": "active_phase17_complete",
+  "last_run": "2026-06-05T08:30:00Z",
+  "last_run_duration_minutes": 55,
+  "current_phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
+  "overall_status": "active_phase18_in_progress",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -311,6 +311,17 @@
       ],
       "in_progress": [],
       "next": null
+    },
+    "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication": {
+      "status": "in_progress",
+      "description": "Make the economic-capital aggregation tail-aware (copula-based), add the next risk driver, and calibrate the credit driver. Closes/mitigates MR-010 (var-covar factor-correlation understatement).",
+      "completed": [
+        "Task 1 (2026-06-05) Copula-based tail-dependent aggregation engine (multi_driver_copula_aggregation.py): fits Gaussian/Student-t/survival-Clayton copulas to the realised standalone capital-loss vectors, aggregates 99.5% SCR under each, benchmarks to three-driver nested ground truth, selects best by AIC. VERDICT PASS: var-covar understates nested by ~34-39%; AIC-selected copula reconciles within ~1-2%. MR-010 MITIGATED. 22 tests PASS."
+      ],
+      "in_progress": [
+        "Task 2: calibrate the CIR++ credit-spread driver to educational-proxy credit-spread history"
+      ],
+      "next": "Task 3: add a fourth (non-financial) lapse driver to the nested ground truth + LSMC proxy basis"
     }
   },
   "repository_info": {
@@ -321,15 +332,15 @@
     "commits_this_session": 72
   },
   "progress_metrics": {
-    "total_tasks": 90,
-    "tasks_completed": 90,
+    "total_tasks": 95,
+    "tasks_completed": 91,
     "phases_completed": 17,
-    "estimated_completion_pct": 100.0,
+    "estimated_completion_pct": 95.8,
     "average_cycle_duration_minutes": 53,
-    "cycles_run": 133,
-    "tasks_total": 90,
-    "last_task": "Phase 17 Task 5 \u2014 three-driver governance refresh + offline-viewer extension",
-    "next_task": "Phase 17 COMPLETE \u2014 all 90 documented tasks done; next cycle: research further stochastic-model improvements (see MODEL_DEV_TASK_PROMPT.md)"
+    "cycles_run": 134,
+    "tasks_total": 95,
+    "last_task": "Phase 18 Task 1 \u2014 copula-based tail-dependent risk aggregation (MR-010 mitigated)",
+    "next_task": "Phase 18 Task 2 \u2014 calibrate the CIR++ credit-spread driver"
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",

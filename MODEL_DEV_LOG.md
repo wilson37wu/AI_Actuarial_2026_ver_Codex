@@ -4,6 +4,34 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-05T08:30Z — Phase 18 Task 1 (Copula-based tail-dependent risk aggregation)
+
+**Context:** Phase 17 was COMPLETE (90/90). Started Phase 18 (tail-dependent aggregation + driver/calibration sophistication). This cycle HAD a working Python interpreter — numpy 2.2.6 / scipy 1.15.3 already present under `/var/tmp/pylibs` (`PYTHONPATH=/var/tmp/pylibs:.`); `pip install` fails on no-space but the libs are present, so the formal pytest gate ran (in <45s batches). The two ghost git locks (`.git/index.lock`, `.git/HEAD.lock`, 2026-06-03) persist, so the alt-`GIT_INDEX_FILE` + direct-ref commit workaround is still required.
+
+**Task Completed:** Phase 18 Task 1 — copula-based risk aggregation that captures tail dependence; implements the long-documented MR-010 mitigation.
+
+**Accomplishments:**
+- Added `par_model_v2/projection/multi_driver_copula_aggregation.py` (additive; the var-covar `ThreeDriverRiskAggregator` is untouched): `CopulaRiskAggregator`, `CopulaAggregationConfig`, `CopulaFit`, `CopulaAggregationReport`, plus copula primitives — empirical-marginal inverse-CDF, rank pseudo-observations, nearest-correlation projection, and three fitted copulas: Gaussian (corr from normal scores), Student-t (R from Kendall's-tau→sin, df by profile MLE over a grid, symmetric tail dependence λU), and survival-Clayton (180°-rotated Clayton, upper-tail dependent; θ from average Kendall's tau, Marshall-Olkin Gamma-frailty sampler).
+- The engine rebuilds the joint loss from empirical marginals + each copula (Monte-Carlo, fixed seed), reads the 99.5% aggregate SCR off the simulated joint loss, benchmarks every copula AND the var-covar formula to the three-driver nested ground truth, and selects the best copula by AIC on the pseudo-observations (empirical justification per Solvency II Del. Reg. Art. 234 — NOT benchmark fitting).
+- `scripts/build_phase18_task1_copula_aggregation.py` runs a single three-driver nested pass, derives the var-covar + nested benchmarks from the realised loss vectors, runs the copula aggregator, and writes `docs/validation/PHASE18_COPULA_AGGREGATION_REPORT.{json,md}`.
+- `scripts/build_phase18_task1_governance.py` (idempotent): refreshed MR-010 (kept MITIGATED, recorded the implemented copula mitigation and the recommended aggregation), opened a `methodology_change` ChangeRecord at OWNER_REVIEW (sign-off withheld), appended 2 GOVERNANCE audit entries (store audit 30→32, change 15→16; `verify_all` True), and wrote `docs/COPULA_AGGREGATION_CARD.md`.
+
+**Evidence (VERDICT PASS):** seed 42; n_outer=500 / n_inner=160; n_sim=200,000. Var-covar (governed ESG *factor* correlation) SCR = 26,061.7 understates nested 39,774.6 by **34.5%** (MR-010). AIC-selected **gaussian** copula SCR = 40,342.0 → **1.43%** rel. err; Student-t 40,388.6 → 1.54% (df pinned high → collapses toward Gaussian, i.e. little residual tail dependence beyond the correctly-signed linear loss correlation); survival-Clayton 45,771.8 → +15.1% (λU=0.644, a conservative upper bound). Realised capital-loss correlations are all strongly positive (+0.59/+0.79/+0.66) versus the negative ESG factor off-diagonals — the root cause of MR-010.
+
+**Key finding:** MR-010's understatement is driven primarily by the WRONG dependence INPUT (var-covar uses the negative ESG factor correlation; the realised capital-LOSS vectors co-move strongly positively in the tail), not by missing tail dependence. Refitting dependence on the realised losses removes most of the gap even with a Gaussian copula; tail-dependent families bound the estimate conservatively from above. **MR-010 → MITIGATED** (mitigation now implemented, not just documented); copula-on-realised-losses is the recommended aggregation, var-covar retained for reference.
+
+**Verification:** 22 new unit tests PASS (`tests/test_phase18_copula_aggregation.py` — config validation, pseudo-obs/marginal/nearest-correlation helpers, all-copulas-beat-var-covar, AIC selection, tail-dependence orientation, diversification ≤ standalone sum, reproducibility, independence-diversifies, JSON round-trip, optional governance append). Related-module regression PASS in batches: Phase 17 aggregation 12, Phase 17 3-D capital 22, Phase 15 aggregation 9. Offline viewer self-test `ok:true` (4 tabs, 7 SVG charts, 7 export controls, 0 JS errors, 0 network). `py_compile` clean. Governance store re-verified after write: 32 audit entries, integrity True, 16 change records, 12 risks, MR-010 MITIGATED.
+
+**Next Step:** Phase 18 Task 2 — calibrate the CIR++ credit-spread driver to educational-proxy credit-spread history (mean-reversion, long-run spread, vol, credit risk premium), with an APPROVED-pattern ChangeRecord + PARAM_CHANGE audit entries; move MR-012 toward MITIGATED.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.5 — aggregation methodology, empirical justification, and model documentation addressed; copula vs var-covar reconciliation to nested benchmark.
+- SOA ASOP 25 §3.3 — realised capital-loss dependence (correlation + copula tail dependence) disclosed and used in aggregation.
+- IA TAS M §3.6 — validation evidence (copula fits, AIC selection, reproducibility digest, use restrictions) documented.
+- Solvency II Delegated Reg. Art. 234 — diversification assumption empirically justified (copula fitted to realised losses, selected by AIC).
+
+---
+
 ## Run 2026-06-05T06:22Z — Phase 17 Task 4 (Three-driver tail convergence and stability)
 
 **Context:** The working tree already contained the Phase 17 Task 4 implementation and evidence artifacts ahead of the stale JSON state. This cycle reconciled the latest repo state, confirmed the artifacts, and advanced state/prompt/log to Task 5. The git index is still in the known phantom staged-delete/untracked mirror state; normal Python tooling is also unavailable in this Windows PATH (`python`, `py`, and `bash` not found).
@@ -6123,62 +6151,4 @@ to aggregate the three-driver (rate + equity + credit-spread) economic capital.
 - Evidence builder `scripts/build_phase17_task3_aggregation.py` writes
   `docs/validation/PHASE17_RISK_AGGREGATION_REPORT.{json,md}`.
 
-**Verification (`PYTHONPATH=/var/tmp/pylibs:.`):**
-- `tests/test_phase17_risk_aggregation.py` **12 PASS** (config validation, governed-3×3 var-covar
-  identity, exact CRN additivity, diversification bounds, positive realised loss correlation, MR-010
-  understatement>0, JSON round-trip, reproducibility digest, use-restrictions, two-driver API intact).
-- Regression: `test_phase15_risk_aggregation.py` + `test_credit_spread.py` **26 PASS**;
-  `test_phase17_multi_driver_capital_3d.py` **22 PASS** (60 tests total). `compileall` clean. Offline
-  viewer self-test `ok:true`, 0 network, 0 JS errors.
-- **Evidence (seed 42; 99.5%; N_outer=800; n_inner=128; reduced from the canonical 1000/256 to fit the
-  sandbox wall clock):** rate SCR 20,696; equity SCR 22,559; credit SCR 4,460; standalone sum 47,715;
-  var-cov SCR 26,829; full nested SCR 43,753; formula-vs-nested rel err **38.7%** (>0.35 tol) → VERDICT
-  **PARTIAL** (honest). Realised capital-loss correlations rate-eq +0.54, rate-cr +0.77, eq-cr +0.61;
-  ESG factor off-diagonals −0.15/−0.20/−0.30. **Finding:** adding the credit driver WIDENS the ESG-factor
-  understatement of diversified capital to ~38.7% (vs the two-driver ~32.9%) — equity-guarantee and
-  credit losses co-move positively in stress while the underlying factor correlations are negative, so
-  the second-moment factor formula is non-conservative. MR-010 remains the dominant model risk. Verdict
-  is intentionally PARTIAL rather than widening the tolerance to force PASS.
-
-**Next Step:** Phase 17 Task 4 — three-driver tail-convergence + stability diagnostics (extend
-`multi_driver_tail_diagnostics.py`: outer-count convergence, bootstrap CI/SE on VaR/ES, variance-
-reduction comparison for the 99.5% three-driver capital metric).
-
-**Industry Standards Progress:**
-- SOA ASOP 56 §3.5 — risk aggregation + reconciliation to nested ground truth. Addressed.
-- SOA ASOP 25 §3.3 — governed 3×3 correlated aggregation (nearest-PD safeguarded upstream). Addressed.
-- IA TAS M §3.2/§3.6 — market-consistent valuation + documented validation/reproducibility. Addressed.
-- Open item: the factor-correlation understatement (MR-010) is a known, documented limitation, not a
-  code defect; a fitted capital-module correlation or copula tail aggregation is the production fix.
-
----
-
-## Run 2026-06-05T06:22Z — Phase 17 Task 4 (Three-driver tail convergence and stability)
-
-**Task Completed:** Phase 17 Task 4 — tail-convergence and stability diagnostics for the three-driver (rate + equity + credit-spread) 99.5% capital metric.
-
-**Accomplishments:**
-- Confirmed `par_model_v2/projection/multi_driver_tail_diagnostics.py` has the additive Phase 17 three-driver extension: `ThreeDriverTailConfig`, `VarianceReduction3D`, `ThreeDriverTailReport`, `ThreeDriverTailDiagnostics`, 3-D empirical-copula helpers, outer-count convergence, non-parametric bootstrap CI, and crude/antithetic/Sobol variance-reduction comparison.
-- Confirmed `tests/test_phase17_tail_diagnostics.py`, `scripts/build_phase17_task4_tail_diagnostics.py`, and `docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.{json,md}` are present.
-- Updated `.claude-dev/MODEL_DEV_STATE.json`: Phase 17 Task 3 and Task 4 marked completed, Task 5 set in progress, progress now 89/90 tasks (98.9%).
-- Updated `MODEL_DEV_TASK_PROMPT.md` so the next cycle starts on Phase 17 Task 5.
-
-**Evidence:** VERDICT PASS. Final VaR99.5=152,296.8; final ES=155,757.2; recommended N_outer>=1,000. Bootstrap VaR=150,859.1 with 95% CI [149,634.1, 152,369.3], SE=692.4, relative halfwidth=0.91%. Sobol QMC reduces VaR-estimator variance by 2.76x; antithetic ratio is 0.89x and disclosed as expected for an extreme quantile.
-
-**Verification:** Node offline viewer self-test PASS (`ok:true`, 4 tabs, 7 SVG charts, 7 export controls, 0 JS errors, 0 network). JSON parse checks PASS for `.claude-dev/MODEL_DEV_STATE.json` and `docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.json`. Python tests could not be rerun in this shell because `python`, `py`, and `bash` are not on PATH.
-
-**Next Step:** Phase 17 Task 5 — governance refresh: open/refresh the credit-driver model-risk entry, publish the consolidated three-driver limitation card, create an OWNER_REVIEW ChangeRecord/audit append, and extend the offline viewer schema plus Capital/Aggregation tabs to the three-driver economic-capital proxy.
-
-**Industry Standards Progress:**
-- SOA ASOP 56 §3.5 / §3.1.3 — scenario adequacy, convergence, reproducibility, and model documentation addressed for the three-driver tail metric.
-- SOA ASOP 25 §3.3 — 3x3 correlated horizon-state distribution and empirical copula disclosed.
-- IA TAS M §3.6 — validation evidence, bootstrap uncertainty, and use restrictions documented.
-
----
-
-## Run 2026-06-05T06:20Z — Phase 17 Task 4 (three-driver tail diagnostics)
-
-**Task Completed:** Tail-convergence + stability diagnostics for the three-driver (rate + equity + credit-spread) 99.5% economic-capital metric.
-
-**Accomplishments:**
-- Extended `par_model_v2/projection/multi_driver_tail_diagnostics.py` **additively** with `ThreeDriverTailConfig`, `ThreeDriverTailDiagnostics`, `ThreeDriverTailReport`, `VarianceReduction3D`, and the 3-D empirical-copula helpers `_draw_normals_nd` / `_correlate_nd` / `_states_from_normals_nd` / `_nearest_correlation_matrix`. The two-driver `MultiDriverTailDiagnostics` and the Phase 17 Task 1/2/3 mo
+**Verification (`PYTHONPATH=/var

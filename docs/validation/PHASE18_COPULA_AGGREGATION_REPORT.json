@@ -1,0 +1,190 @@
+{
+  "audit_entry_id": null,
+  "config": {
+    "capital_horizon_months": 12,
+    "confidence_level": 0.995,
+    "n_sim": 200000,
+    "rel_error_tolerance": 0.1,
+    "seed": 20260605,
+    "t_df_grid": [
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      8.0,
+      10.0,
+      15.0,
+      25.0,
+      50.0
+    ]
+  },
+  "copulas": [
+    {
+      "aggregated_capital": {
+        "capital_horizon_months": 12,
+        "confidence_level": 0.995,
+        "es_liability": 162827.952,
+        "mean_liability": 117763.7931,
+        "n_outer": 200000,
+        "scr_proxy": 40341.9857,
+        "var_liability": 158105.7788
+      },
+      "aggregated_scr": 40341.9857,
+      "aic": -680.6538,
+      "diversification_benefit": 5867.455,
+      "loglik": 343.3269,
+      "n_params": 3,
+      "name": "gaussian",
+      "params": {
+        "correlation": [
+          [
+            1.0,
+            0.5010723081052538,
+            0.7869601114685568
+          ],
+          [
+            0.5010723081052538,
+            1.0,
+            0.5727723225043235
+          ],
+          [
+            0.7869601114685568,
+            0.5727723225043234,
+            1.0
+          ]
+        ]
+      },
+      "scr_rel_error_vs_nested": 0.014264,
+      "upper_tail_dependence": 0.0
+    },
+    {
+      "aggregated_capital": {
+        "capital_horizon_months": 12,
+        "confidence_level": 0.995,
+        "es_liability": 162596.06,
+        "mean_liability": 117790.9189,
+        "n_outer": 200000,
+        "scr_proxy": 40388.5567,
+        "var_liability": 158179.4756
+      },
+      "aggregated_scr": 40388.5567,
+      "aic": -675.715,
+      "diversification_benefit": 5820.884,
+      "loglik": 341.8575,
+      "n_params": 4,
+      "name": "student_t",
+      "params": {
+        "correlation": [
+          [
+            1.0,
+            0.505014948597006,
+            0.8024093854107816
+          ],
+          [
+            0.505014948597006,
+            1.0,
+            0.5778604789467235
+          ],
+          [
+            0.8024093854107816,
+            0.5778604789467235,
+            1.0
+          ]
+        ],
+        "df": 50.0
+      },
+      "scr_rel_error_vs_nested": 0.015435,
+      "upper_tail_dependence": 0.007529
+    },
+    {
+      "aggregated_capital": {
+        "capital_horizon_months": 12,
+        "confidence_level": 0.995,
+        "es_liability": 168287.8235,
+        "mean_liability": 117789.4951,
+        "n_outer": 200000,
+        "scr_proxy": 45771.7915,
+        "var_liability": 163561.2866
+      },
+      "aggregated_scr": 45771.7915,
+      "aic": -303.7025,
+      "diversification_benefit": 437.6493,
+      "loglik": 152.8513,
+      "n_params": 1,
+      "name": "survival_clayton",
+      "params": {
+        "tau_bar": 0.4407160988643954,
+        "theta": 1.5760013759364009
+      },
+      "scr_rel_error_vs_nested": 0.150779,
+      "upper_tail_dependence": 0.644156
+    }
+  ],
+  "drivers": [
+    "short_rate",
+    "equity_guarantee",
+    "credit_spread"
+  ],
+  "duration_seconds": 1.4485,
+  "esg_factor_correlation_matrix": [
+    [
+      1.0,
+      -0.15,
+      -0.2
+    ],
+    [
+      -0.15,
+      1.0,
+      -0.3
+    ],
+    [
+      -0.2,
+      -0.3,
+      1.0
+    ]
+  ],
+  "nested_scr": 39774.623,
+  "notes": [
+    "Marginals are the empirical loss distributions; the copula supplies only the dependence structure.",
+    "Copula correlation/df/theta are fitted to the REALISED standalone capital-loss vectors, not the ESG factor matrix.",
+    "Best copula selected by AIC on the pseudo-observations (empirical justification per Solvency II Art. 234).",
+    "var-covar (ESG factor) SCR understates nested capital by 34.5% (MR-010); copula aggregation closes most of that gap."
+  ],
+  "realised_loss_correlation": [
+    [
+      1.0,
+      0.5033479179806021,
+      0.7833827223546532
+    ],
+    [
+      0.5033479179806021,
+      1.0,
+      0.5709537730111921
+    ],
+    [
+      0.7833827223546532,
+      0.5709537730111921,
+      1.0
+    ]
+  ],
+  "reproducibility_digest": "270cc6426dfa5f9b5e337e21d99defba0afdf77d479d30be5e2b844d7fa86eb3",
+  "run_id": "copula-agg-afefd696",
+  "selected_copula": "gaussian",
+  "standalone_scr": [
+    19889.6603,
+    22075.0654,
+    4244.715
+  ],
+  "standalone_scr_sum": 46209.4407,
+  "standards": [
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 25 \u00a73.3",
+    "IA TAS M \u00a73.6",
+    "Solvency II Delegated Reg. Art. 234",
+    "IFoA Life Aggregation & Simulation WP",
+    "Demarta-McNeil 2005 (t-copula)"
+  ],
+  "var_covar_rel_error_vs_nested": 0.344765,
+  "var_covar_scr": 26061.72,
+  "verdict": "PASS - copula aggregation (selected: gaussian) reconciles to nested capital within 1.4% (best 1.4%) vs var-covar 34.5%; MR-010 mitigated"
+}

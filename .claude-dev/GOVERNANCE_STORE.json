@@ -607,6 +607,47 @@
       "phase": "Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy",
       "digest": "3fbe7485061c81954f948621cbca2071daa6ddad6c533696b895c534c8b8ebb1",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "83cb2d8a021f4136ae89abb90a776065",
+      "timestamp": "2026-06-05T08:22:23.172771+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase18Task1CopulaAggregation",
+      "description": "Governance event: risk register update - MR-010 refreshed with Phase 18 copula-aggregation mitigation",
+      "details": {
+        "risk_id": "MR-010",
+        "mitigation_status": "MITIGATED",
+        "var_covar_rel_error_vs_nested": 0.344765,
+        "selected_copula": "gaussian",
+        "selected_copula_rel_error": 0.014264,
+        "engine": "multi_driver_copula_aggregation.py"
+      },
+      "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
+      "digest": "afbc7df33801cd52adc2bbd4624ed919f5b26fbcf74c1d2c16b80ce7798324f9",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "ab3d772fd7894f88acaa988139d53a62",
+      "timestamp": "2026-06-05T08:22:23.173042+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase18Task1CopulaAggregation",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - copula-based tail-dependent risk aggregation",
+      "details": {
+        "record_id": "c5b80a72e3684064b80c8c12a99d8743",
+        "change_type": "methodology_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/projection/multi_driver_copula_aggregation.py",
+          "scripts/build_phase18_task1_copula_aggregation.py",
+          "tests/test_phase18_copula_aggregation.py",
+          "docs/COPULA_AGGREGATION_CARD.md",
+          "docs/validation/PHASE18_COPULA_AGGREGATION_REPORT.{json,md}"
+        ],
+        "mr_mitigated": "MR-010"
+      },
+      "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
+      "digest": "13a9d507c0d38c8f3b4925543318dc1aad05046117e2ead5b771e624133c12f6",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -1497,6 +1538,61 @@
         }
       ],
       "phase": "Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy"
+    },
+    {
+      "record_id": "c5b80a72e3684064b80c8c12a99d8743",
+      "created_at": "2026-06-05T08:22:23.172974+00:00",
+      "title": "Phase 18 Task 1 - copula-based tail-dependent risk aggregation (MR-010 mitigation)",
+      "description": "Added a copula-based, tail-dependent risk-aggregation engine (par_model_v2/projection/multi_driver_copula_aggregation.py, additive; the variance-covariance ThreeDriverRiskAggregator is left untouched). The engine fits a Gaussian (baseline), a Student-t (symmetric tail dependence) and a survival-Clayton (upper-tail dependence) copula to the realised standalone capital-loss vectors, rebuilds the joint loss from empirical marginals + each copula, reads the 99.5% aggregate SCR off the simulated joint loss, benchmarks every copula AND the var-covar formula to the three-driver nested ground truth, and selects the best copula by AIC on the pseudo-observations (an empirical-justification step per Solvency II Art. 234, not benchmark fitting).",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_copula_aggregation.py",
+        "scripts/build_phase18_task1_copula_aggregation.py",
+        "tests/test_phase18_copula_aggregation.py",
+        "docs/COPULA_AGGREGATION_CARD.md",
+        "docs/validation/PHASE18_COPULA_AGGREGATION_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 \u00a73.5",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.6",
+        "Solvency II Delegated Reg. Art. 234",
+        "IFoA Life Aggregation & Simulation working party",
+        "Demarta-McNeil 2005 (t-copula)"
+      ],
+      "before_snapshot": {
+        "aggregation_method": "variance-covariance on ESG factor correlation",
+        "mr_010_gap_vs_nested": "~34-39% understatement (var-covar)",
+        "tail_dependence_in_aggregation": "none (elliptical)"
+      },
+      "after_snapshot": {
+        "aggregation_method": "copula (Gaussian / Student-t / survival-Clayton) on realised capital-loss vectors",
+        "selected_copula": "gaussian",
+        "selected_copula_rel_error_vs_nested": 0.014264,
+        "var_covar_rel_error_vs_nested": 0.344765,
+        "mr_010_status": "MITIGATED (mitigation now implemented, not just documented)"
+      },
+      "impact_assessment": "Materially closes the MR-010 diversification understatement: the AIC-selected copula reconciles to the nested benchmark within ~1-2% versus the ~34-39% var-covar gap. No change to any existing numeric output path (purely additive engine). The educational classification is retained; production sign-off is withheld pending credentialled calibration data and independent APS X2 review.",
+      "quantitative_impact": "Aggregated 99.5% SCR rel. error vs nested: var-covar ~34-39%; copula ~1-2% (AIC-selected). Reproducibility digest in the evidence report.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase18Task1CopulaAggregation",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-05T08:22:23.173005+00:00",
+          "actor": "Phase18Task1CopulaAggregation",
+          "status": "PEER_REVIEW",
+          "comments": "Additive engine; var-covar aggregator unchanged; 22 new unit tests PASS; related-module regression PASS in batches; compileall + offline self-test clean."
+        },
+        {
+          "timestamp": "2026-06-05T08:22:23.173019+00:00",
+          "actor": "Phase18Task1CopulaAggregation",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: copulas fitted to a finite outer-state sample (tail-dependence estimates sampling-noisy); empirical marginals do not extrapolate; credentialled calibration + independent APS X2 review pending. Sign-off withheld."
+        }
+      ],
+      "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication"
     }
   ],
   "risk_register": [
@@ -1657,8 +1753,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
       "created_at": "2026-06-04T18:28:37.352914+00:00",
-      "updated_at": "2026-06-04T18:28:37.352914+00:00",
-      "notes": "Phase 15 Task 3. ChangeRecord 5e21202bf5. Evidence digest 55ca305d9fbd."
+      "updated_at": "2026-06-05T08:22:23.172635+00:00",
+      "notes": "Phase 15 Task 3. ChangeRecord 5e21202bf5. Evidence digest 55ca305d9fbd. | Phase 18 Task 1: implemented the documented mitigation as a copula aggregation engine (par_model_v2/projection/multi_driver_copula_aggregation.py) fitted to the REALISED standalone capital-loss vectors (Gaussian / Student-t / survival-Clayton), benchmarked to the three-driver nested ground truth. The var-covar (ESG factor) SCR understates nested by 34.5%; the AIC-selected copula ('gaussian') reconciles to nested within 1.4%. Root cause confirmed: the gap is driven by the WRONG dependence input (negative ESG factor correlation vs strongly positive realised loss co-movement), not primarily tail dependence (the t-copula collapses toward Gaussian; survival-Clayton bounds conservatively from above). Recommended aggregation is now copula-on-realised-losses; var-covar retained for reference. Residual: empirical marginals cannot extrapolate beyond the simulated component range; tail-dependence estimates are sampling-noisy; credentialled calibration + independent APS X2 review still required."
     },
     {
       "risk_id": "MR-011",
