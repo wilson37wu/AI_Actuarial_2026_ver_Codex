@@ -232,7 +232,8 @@ hr.div{border:none;border-top:1px solid var(--border);margin:18px 0}
     <button class="btn btn-ghost btn-sm" onclick="loadSample()">⚡ Sample Data</button>
     <button class="btn btn-ghost btn-sm" onclick="clearAll()">✕ Clear</button>
     <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
-    <button class="btn btn-run" onclick="runAll()">▶ Run Projection</button>
+    <button class="btn btn-run" onclick="runAll()">▶ Run (in-browser)</button>
+    <button class="btn btn-run" onclick="runModel()" id="btn-model" style="display:none;background:#1f6f54" title="Render the governed par_model_v2 result">🏛 Show model result</button>
   </div>
 </header>
 
@@ -1356,6 +1357,36 @@ function runAll(){
   $('result-body').style.display='block';
   $('run-label').textContent='Base Projection — '+p.termYrs+'Y PAR Endowment';
   $('run-meta').textContent=`Issue age ${p.age} | SA ¥${fk(p.sa)} | Prem ¥${fk(p.annPrem)}/yr | disc ${fp(p.disc)}`;
+  goTab('results',$('btn-results'));
+}
+
+// === GOVERNED MODEL RESULT (par_model_v2 reference run) ===
+let REF_RUN=null;
+function setReferenceRun(ref){
+  REF_RUN=ref||null;
+  var b=document.getElementById('btn-model');
+  if(b) b.style.display = REF_RUN ? 'inline-flex' : 'none';
+}
+function runModel(){
+  if(!REF_RUN){ alert('No governed model result loaded. Open this inside the Combined GUI, or load a data file that contains projection.reference_run.'); return; }
+  var r=REF_RUN, p=REF_RUN.params||{};
+  // mirror key inputs into the DOM so functions that read $() directly stay consistent
+  if(p.inputs){ for(var id in p.inputs){ var el=$(id); if(el){ el.value=p.inputs[id];
+    try{ el.dispatchEvent(new Event('input',{bubbles:true})); }catch(_){} } } }
+  // normalise field names the render funcs expect
+  p.termYrs = p.termYrs || Math.round((r.L?r.L.length:240)/12);
+  p.sa = p.sa!=null ? p.sa : parseFloat($('p-sa').value);
+  p.annPrem = p.annPrem!=null ? p.annPrem : parseFloat($('p-prem').value);
+  p.age = p.age!=null ? p.age : parseInt($('p-age').value);
+  p.disc = p.disc!=null ? p.disc : 0.03;
+  RESULT=r; RESULT._p=p;
+  renderMetrics(r,p); renderCharts(r,p); renderTables(r,p);
+  renderIllustration(r,p,'illus-result-wrap'); renderIllustration(r,p,'illus-wrap');
+  $('ok-badge').style.display='inline';
+  $('no-result-msg').style.display='none';
+  $('result-body').style.display='block';
+  $('run-label').textContent='🏛 GOVERNED MODEL — '+p.termYrs+'Y PAR Endowment (par_model_v2)';
+  $('run-meta').textContent='source: '+(r.source||'monthly_projection.run_full_projection')+'  |  '+(r.classification||'educational');
   goTab('results',$('btn-results'));
 }
 

@@ -200,7 +200,8 @@ def project_liability_cashflows(
     death_benefit_guar, death_benefit_ng,
     maturity_benefit_guar, maturity_benefit_ng,
     surrender_benefit, net_cashflow,
-    discount_factor, pv_net_cashflow
+    discount_factor, pv_net_cashflow,
+    rb_accum, asset_share_proxy
     """
     if annual_lapse_fn is None:
         annual_lapse_fn = _base_annual_lapse
@@ -226,6 +227,8 @@ def project_liability_cashflows(
     net_cf_arr            = np.zeros(T)
     disc_arr              = np.zeros(T)
     pv_net_arr            = np.zeros(T)
+    rb_accum_arr          = np.zeros(T)   # accumulated reversionary bonus, per month
+    asset_share_prx_arr   = np.zeros(T)   # proxy asset share (surrender-value basis)
 
     rb_accum        = product.initial_rb_accum
     asset_share_prx = 0.0   # proxy for surrender value (no ESG)
@@ -276,6 +279,8 @@ def project_liability_cashflows(
         # --- accumulated RB (grows on in-force fund) ---
         rb_accum = (rb_accum * (1.0 + product.rb_rate_monthly)
                     + product.sum_assured * product.rb_rate_monthly * prob_bom)
+        rb_accum_arr[m]        = rb_accum
+        asset_share_prx_arr[m] = asset_share_prx
 
         # --- benefits (end of month) ---
         is_maturity = (month_num == T)
@@ -325,6 +330,8 @@ def project_liability_cashflows(
         "net_cashflow":          net_cf_arr,
         "discount_factor":       disc_arr,
         "pv_net_cashflow":       pv_net_arr,
+        "rb_accum":              rb_accum_arr,
+        "asset_share_proxy":     asset_share_prx_arr,
     })
 
     pv_prem   = (premium_arr * disc_arr).sum()
@@ -795,14 +802,19 @@ def run_full_projection(
     result.audit_entry_id = audit_entry_id
     return result
 
-
 __all__ = [
-    "VALID_TERMS", "ParEndowmentProduct",
-    "LiabilityProjectionResult", "project_liability_cashflows",
-    "AssetPosition", "AssetCashflowResult", "project_asset_cashflows",
-    "AssetShareResult", "project_asset_share",
-    "FullProjectionResult", "run_full_projection",
-    "monthly_discount_factor", "monthly_mortality_qx",
-    # Phase 3 governance wiring: GovernanceStore imported at call-time;
-    # construct from par_model_v2.governance.audit_trail and pass via governance_store=
+    "VALID_TERMS",
+    "ParEndowmentProduct",
+    "monthly_discount_factor",
+    "monthly_mortality_qx",
+    "dynamic_annual_lapse",
+    "LiabilityProjectionResult",
+    "project_liability_cashflows",
+    "AssetPosition",
+    "AssetCashflowResult",
+    "project_asset_cashflows",
+    "AssetShareResult",
+    "project_asset_share",
+    "FullProjectionResult",
+    "run_full_projection",
 ]

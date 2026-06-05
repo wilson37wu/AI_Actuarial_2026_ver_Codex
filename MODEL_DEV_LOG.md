@@ -6366,3 +6366,84 @@ to wilsonwukl@gmail.com.
 **Emailed/drafted** the human a status report with the residual checklist.
 
 ---
+
+## Run 2026-06-05 (interactive) — Combined GUI: two GUIs merged into one offline file
+
+**Task:** Combine par_projection_gui.html (interactive projection) + model_result_viewer.html
+(offline result dashboard) into a single self-contained offline HTML.
+
+**Delivered:**
+- `combined_model_app.html` (~301 KB) — one file, two modes (📈 Projection | 📊 Results), fully offline
+  (zero http(s) refs anywhere). Each original app embedded in an isolated <iframe srcdoc> (no CSS/JS
+  collision); thin shell adds the mode switch + one unified data loader (embedded snapshot + drag-drop +
+  file-picker, routed to both modes via postMessage).
+- `par_model_v2/viewer/svg_chart_shim.js` — inline SVG renderer (line / stacked+grouped bar / doughnut /
+  dual-axis) that replaces the projection GUI's CDN Chart.js, so the whole app needs no network. The GUI
+  funnels every chart through one mkChart(), so a single override converts all of them.
+- `combined_app_data.json` (enriched unified contract v1): {schema, meta, results=<viewer_data.json>,
+  projection=<saved scenario: curve/preset/inputs/assumptions>} — one file captures BOTH GUIs.
+- `scripts/build_combined_gui.py` (reproducible assembler) + `scripts/combined_gui_self_test.cjs`.
+- `docs/COMBINED_GUI_README.md` (usage + data-consumption advice + schema).
+
+**Verification:** `node scripts/combined_gui_self_test.cjs combined_model_app.html` → ok:true, all 23
+checks pass. Executes the projection sub-app in jsdom: renders 4 SVG charts on load / 11 after a full run,
+0 JS errors, 0 Chart.js references, 0 network; results dashboard renders its 7 SVGs. Original
+model_result_viewer.html self-test still ok:true (untouched).
+
+**Notes:** Decided fully-offline via SVG shim (not vendored Chart.js) — web_fetch could not retrieve the
+library, and the project mandate forbids Chart.js anyway. Projection engine remains the in-browser
+educational engine; a future `projection.reference_run` from the Python model would let Projection mode
+also show governed-model numbers.
+
+---
+
+## Run 2026-06-05 (interactive) — Projection mode now uses the GOVERNED model result
+
+**Task:** Make the Python model emit a projection.reference_run and have the Projection-side GUI
+display the governed model's numbers (not just the in-browser educational engine).
+
+**Model change (additive):** `par_model_v2/projection/monthly_projection.py` — liability cashflows
+DataFrame now also emits per-month `rb_accum` and `asset_share_proxy` (the two fields the GUI's
+in-force/RB chart needs). Also reconstructed the file's truncated `__all__` export list (another
+disk-full crash truncation at line 808, same pattern as ia_validation.py) so the module imports.
+62/62 tests/test_monthly_projection.py PASS.
+
+**New emitter:** `scripts/build_projection_reference.py` runs
+`monthly_projection.run_full_projection` (20Y CNY par endowment, balanced fund, 3.0% discount) and maps
+the liability/asset/asset-share DataFrames + PV scalars 1:1 into the GUI's result schema
+({params,L,A,S,pvP,pvG,pvN,pvSv,pvE,pvNL,pvAI,totSh,totPh,asAtMat}) → docs/validation/PROJECTION_REFERENCE_RUN.json
+(240 months; PV prem 579,170; net liab -41,079; AS@mat 754,361).
+
+**GUI wiring:** par_projection_gui.html gains REF_RUN + runModel() + a "🏛 Show model result" button;
+runAll() relabelled "▶ Run (in-browser)". build_combined_gui.py loads the reference run into
+projection.reference_run and the bridge renders it by default (banner: 🏛 GOVERNED MODEL).
+
+**Verification:** `node scripts/combined_gui_self_test.cjs` → ok:true, 27/27 checks. jsdom confirms
+runModel() renders 11 SVG charts with the governed numbers (metric cards show PV Premiums ¥579.2K,
+Net Liability ¥-41.1K, AS@Maturity ¥754.4K) + banner "🏛 GOVERNED MODEL", 0 JS errors, 0 network.
+Combined app rebuilt (456 KB; reference_run embedded). model_result_viewer.html self-test still ok:true.
+
+---
+
+## Run 2026-06-05T18:10:52Z — Phase 18 closeout / Phase 19 handoff
+
+**Task Completed:** Verified and prepared the residual combined GUI + governed Projection-mode reference bundle for commit; updated automation state so Phase 18 is complete and Phase 19 Task 1 is active.
+
+**Accomplishments:**
+- Confirmed git is usable again (`git status` works; no `.git/*.lock` files). HEAD before this commit was `0a0228a86a6bc550fad2ec56e4a397bf58a3dce3`.
+- Verified `combined_model_app.html` with `node scripts/combined_gui_self_test.cjs combined_model_app.html` -> `ok:true`: Projection mode 4 SVGs, governed model 11 SVGs, Results mode 7 SVGs, 0 network calls, 0 JavaScript errors.
+- Verified `model_result_viewer.html` with `node scripts/offline_viewer_self_test.cjs model_result_viewer.html` -> `ok:true`: 7 SVG charts/export controls, 0 network calls, 0 JavaScript errors.
+- Verified `combined_app_data.json` includes the governed `projection.reference_run` (240 months; PV premiums 579,170.0432; net liability -41,078.9704; asset share at maturity 754,360.8055).
+- Updated `.claude-dev/MODEL_DEV_STATE.json` to mark Phase 18 Task 5 complete, add Phase 19, and make Phase 19 Task 1 the active gate.
+
+**Next Step:** Phase 19 Task 1 remains active for a Python-enabled shell: run pytest health batches and then proceed to Phase 19 Task 2 (re-apply Phase 18 four-driver/copula viewer uplift on the healthy base).
+
+**Blockers / Limits:**
+- Python is unavailable in this Windows shell (`python`, `python3`, and `py` are absent), so pytest and `scripts/build_projection_reference.py` were not re-run here.
+- Do not commit write-probe junk: `_probe_write_2.tmp`, `_wtest_2`, `_wtest_2.tmp`, `outputs/_writetest_combined.tmp`.
+
+**Industry Standards Progress:**
+- IA TAS M 3.6 / 3.7: strengthens offline reviewability and traceability by showing governed model projection output alongside the result dashboard in a no-network artifact.
+- SOA ASOP 56 3.5: preserves validation evidence and model-use restrictions in the viewer handoff; production use remains withheld pending credentialled data and independent APS X2 review.
+
+---
