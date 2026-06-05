@@ -1,10 +1,10 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-05T04:22:44.000Z",
-  "last_run_duration_minutes": 60,
+  "last_run": "2026-06-05T05:15:00.000Z",
+  "last_run_duration_minutes": 55,
   "current_phase": "Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy",
-  "overall_status": "active_development_phase17_task2_done",
+  "overall_status": "active_development_phase17_task3_done",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -321,12 +321,14 @@
   },
   "progress_metrics": {
     "total_tasks": 90,
-    "tasks_completed": 87,
+    "tasks_completed": 88,
     "phases_completed": 16,
-    "estimated_completion_pct": 97,
+    "estimated_completion_pct": 97.8,
     "average_cycle_duration_minutes": 53,
     "cycles_run": 132,
-    "tasks_total": 90
+    "tasks_total": 90,
+    "last_task": "Phase 17 Task 3 \u2014 three-driver correlated risk aggregation (var-covar vs nested; MR-010 refresh)",
+    "next_task": "Phase 17 Task 4 \u2014 three-driver tail-convergence + stability diagnostics"
   },
   "technical_notes": {
     "model_type": "Stochastic ALM & TVOG",

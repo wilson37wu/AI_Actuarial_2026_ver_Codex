@@ -1,0 +1,119 @@
+{
+  "aggregation": {
+    "correlated_scr": 26828.549272,
+    "correlation_matrix_passed": true,
+    "diversification_benefit_formula": 20885.976092,
+    "diversification_benefit_nested": 3961.593977,
+    "esg_correlation_matrix": [
+      [
+        1.0,
+        -0.15,
+        -0.2
+      ],
+      [
+        -0.15,
+        1.0,
+        -0.3
+      ],
+      [
+        -0.2,
+        -0.3,
+        1.0
+      ]
+    ],
+    "esg_understatement_pct": 0.386817,
+    "formula_vs_nested_scr_gap": -16924.382115,
+    "formula_vs_nested_scr_rel_error": 0.386817,
+    "full_nested_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 165507.3477,
+      "mean_liability": 117924.4857,
+      "n_outer": 800,
+      "scr_proxy": 43752.9314,
+      "var_liability": 161677.4171
+    }
+  },
+  "audit_entry_id": null,
+  "config": {
+    "aggregation_gap_tolerance": 0.35,
+    "capital_horizon_months": 12,
+    "confidence_level": 0.995,
+    "n_inner": 128,
+    "n_outer": 800,
+    "outer_measure": "P",
+    "seed": 42
+  },
+  "drivers": [
+    "short_rate",
+    "equity_guarantee",
+    "credit_spread"
+  ],
+  "duration_seconds": 30.4715,
+  "notes": [
+    "Standalone rate capital is the guaranteed-benefit component (equity guarantee and credit exposure both off).",
+    "Standalone equity capital is the equity-guarantee component isolated by common-random-number subtraction.",
+    "Standalone credit capital is the reduced-form credit-loss component isolated by common-random-number subtraction.",
+    "Var-covar aggregation uses the governed 3x3 ESG driver correlation, NOT a fitted capital-factor correlation.",
+    "MR-010 (three-driver refresh): the raw ESG-factor formula understates the diversified nested capital by 38.7% because realised equity-guarantee and credit losses co-move positively in stress even though the underlying equity/spread factor correlation is negative.",
+    "Formula-vs-nested SCR gap exceeds tolerance; review non-linear equity-guarantee / credit-loss interactions in the tail."
+  ],
+  "reproducibility_digest": "27edeaf8c3ddf67fcc59ccfe844e767a25e765932ca9ddd2c65ebb7acfc1036b",
+  "run_id": "td-riskagg-400f7963",
+  "standalone": {
+    "credit_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 15484.3605,
+      "mean_liability": 10500.6598,
+      "n_outer": 800,
+      "scr_proxy": 4459.6518,
+      "var_liability": 14960.3117
+    },
+    "equity_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 51069.5146,
+      "mean_liability": 23172.0324,
+      "n_outer": 800,
+      "scr_proxy": 22559.0267,
+      "var_liability": 45731.0591
+    },
+    "loss_correlation_matrix": [
+      [
+        0.9999999999999998,
+        0.5385945441624796,
+        0.7666078287668839
+      ],
+      [
+        0.5385945441624798,
+        1.0,
+        0.6050915377419434
+      ],
+      [
+        0.7666078287668839,
+        0.6050915377419434,
+        0.9999999999999999
+      ]
+    ],
+    "rate_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 105968.4678,
+      "mean_liability": 84251.7935,
+      "n_outer": 800,
+      "scr_proxy": 20695.8468,
+      "var_liability": 104947.6403
+    },
+    "standalone_scr_sum": 47714.525364
+  },
+  "standards": [
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 56 \u00a73.1.3",
+    "SOA ASOP 25 \u00a73.3",
+    "IA TAS M \u00a73.6",
+    "IA TAS M \u00a73.2",
+    "IFoA proxy-model working party"
+  ],
+  "verdict": "PARTIAL - three-driver aggregation evidence generated with review items"
+}

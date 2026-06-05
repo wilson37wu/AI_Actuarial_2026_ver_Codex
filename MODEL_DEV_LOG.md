@@ -6017,4 +6017,73 @@ three-driver (rate + equity + credit-spread) LSMC capital surface out-of-sample.
 **Accomplishments:**
 - **New `ThreeDriverProxyValidator`** (additive; two-driver `MultiDriverProxyValidator` + the Task 1
   engines imported, never modified) with `TriProxyValidationConfig`, `TriBasisDiagnostics`,
-  `Tri
+  `TriProxyValidationReport`, `_FittedTriSurface`/`_fit_tri_surface`, a dimension-agnostic `_leakage_nd`,
+  and `tri_proxy_validation_use_restrictions[_json]`.
+- **Disjoint-seed hold-out:** fit on N_fit single-inner-path states (seed 42); validate on an INDEPENDENT
+  set from a disjoint seed (20260605) against HEAVY nested truth (`n_inner_heavy=512` Q-paths/state). Heavy
+  in-sample subset (seed 7) gives the in-sample-heavy-vs-OOS skill gap.
+- **Basis selection over (degree, max_interaction_order):** unlike the two-driver sweep (degree only), the
+  trivariate sweep treats the capped three-way interaction order as an independent complexity lever
+  (the `r·S·s` term toggles at degree ≥ 3). Default grid (1,3)(2,3)(3,2)(3,3)(4,3); selected by OOS RMSE.
+- **Leakage + overfit diagnostics:** exact-shared-row count + min scaled pairwise distance; overfit onset =
+  first basis (ordered by #terms) whose OOS RMSE rises; per-basis in-sample-heavy − OOS R² gap.
+- **Honest verdict** vs documented educational thresholds (OOS R² ≥ 0.95, VaR rel err ≤ 10%, leakage-free,
+  overfit gap ≤ 0.05) + capital comparison to `ThreeDriverNestedEngine`; reproducibility digest.
+
+**Evidence (seed 42; n_fit=1000/n_val=80/n_inner_heavy=512; nested 800×96; 99.5%):**
+VERDICT **PASS** — selected basis (deg1, max_int3); OOS R²=0.9751; VaR rel err 7.05% / ES 6.96%;
+leakage-free (0 shared, min scaled dist 0.057); overfit gap 0.0034; digest `4972795d3931`. Textbook overfit
+profile: OOS R² 0.975→0.936→0.812→0.761→0.759 as terms grow 4→10→19→20→32, overfit gap 0.003→0.165,
+onset at 10 terms. Noisy fit_r2 (~0.19) shown NOT a validation metric (in-sample-heavy R² 0.87–0.98).
+SCR rel err 27.7% — difference-of-means (VaR−mean) amplification, NOT a verdict gate (Phase 15 precedent).
+
+**Verification:** `tests/test_phase17_proxy_validation.py` 26/26 PASS; regression PASS in batches —
+Phase 15 proxy 13, credit_spread 24, Phase 17 3D 22, Phase 15 capital 29; offline self-test ok:true
+(0 network / 0 JS errors); `py_compile` clean. Full single-shot `pytest` still exceeds the sandbox
+wall-clock; ran in <45 s batches as the formal gate.
+
+**Artifacts:** `docs/validation/PHASE17_PROXY_VALIDATION_REPORT.{json,md}`.
+
+**Next Step:** Phase 17 Task 3 — three-driver correlated aggregation (standalone rate/equity/credit SCR,
+CRN-isolated; var-cov with the governed 3×3 ESG correlation; benchmark to the fully-diversified nested
+capital; refresh the MR-010 diversification-understatement finding for three drivers).
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.5 (scenario adequacy / proxy-model validation): addressed — formal OOS hold-out, heavy
+  targets, basis selection by OOS skill, reproducibility digest.
+- IA TAS M §3.6 (validation / out-of-sample testing / reproducibility): addressed — disjoint-seed hold-out,
+  leakage evidence, honest PASS/PARTIAL verdict, structured JSON+MD report.
+- IFoA proxy-modelling working party: addressed — fit/validate split with heavy validation points and
+  basis-complexity discipline (degree + capped interaction order).
+
+---
+
+## Run 2026-06-05 (later) — Phase 17 Task 3 (Three-driver correlated risk aggregation)
+
+**Context:** Phase 17 Task 1 (credit-spread driver + trivariate LSMC surface, `bb002ef`) and Task 2
+(out-of-sample trivariate proxy validation, `4958067`) were committed in prior cycles. This cycle
+delivers Task 3 — three-driver correlated risk aggregation. Environment unchanged: `/sessions` 100%
+full; `scipy`/`pytest`/`numpy` used from `/var/tmp/pylibs` via `PYTHONPATH=/var/tmp/pylibs:.`. Git
+still carries the virtiofs phantom `.git/index.lock`/`HEAD.lock` (invisible to `ls`/`rm`, block normal
+index/ref writes) — committed via the documented alt-`GIT_INDEX_FILE` + direct-ref workaround.
+
+**File-mount note (recurred):** the large append to `multi_driver_risk_aggregation.py` via the
+Windows-path file-tools desynced again — bash/Python saw the final `__all__ +=` block truncated
+mid-token (`"ThreeDr...`) and 7 stray null bytes. Re-applied the tail through a bash heredoc and a
+read/strip-null/fsync/replace pass, after which `py_compile` was clean. Confirms the standing "prefer
+bash for code edits you execute the same cycle" guidance. A `.py.tmp` sibling could not be `rm`'d from
+the sandbox (same virtiofs "Operation not permitted") — added to `.gitignore`.
+
+**Task Completed:** Phase 17 Task 3 — extend `par_model_v2/projection/multi_driver_risk_aggregation.py`
+to aggregate the three-driver (rate + equity + credit-spread) economic capital.
+
+**Accomplishments:**
+- **New `ThreeDriverRiskAggregator`** (additive; the two-driver `MultiDriverRiskAggregator` and the
+  Phase 17 Task 1 trivariate engines are imported, never modified) with `ThreeDriverAggregationConfig`,
+  `ThreeDriverStandaloneCapital`, `ThreeDriverCorrelatedAggregation`, and
+  `ThreeDriverRiskAggregationReport`.
+- **Exact CRN decomposition of the conditional liability.** On a fixed inner seed every inner
+  `(rate, equity, spread)` path is shared across three valuations, so the components are *exactly
+  additive*: `L_rate` (guaranteed PV, equity+credit OFF), `L_re` (equity ON) → equity component
+  `L_re−L_rate`, `L_rc` (credit ON) → credit component `L_rc−L_rate`; `full = rate+equity+credit`. This
+  is 
