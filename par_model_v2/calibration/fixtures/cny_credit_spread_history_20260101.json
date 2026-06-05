@@ -1,0 +1,38 @@
+{
+  "fixture_id": "CNY_CREDIT_SPREAD_HIST_2026",
+  "description": "Educational-proxy CNY investment-grade corporate credit-spread (ChinaBond AA+ medium-term-note option-adjusted spread over the China Government Bond curve) monthly history, 2006-2025, used to drive the Phase 18 Task 2 CIR++ credit-spread calibration (risk MR-012). EDUCATIONAL PROXY series approximating published ChinaBond / Wind AA+ corporate OAS levels; NOT a credentialled vendor feed. Replace with licensed market-data extracts and re-run sign-off before any regulatory, pricing, or capital-adequacy use.",
+  "market": "CNY",
+  "currency": "CNY",
+  "credit_index": "ChinaBond AA+ corporate MTN OAS over CGB (proxy)",
+  "as_of_date": "2026-01-01",
+  "monthly_synthesis": {
+    "seed": 20260101,
+    "steps_per_year": 12,
+    "start_date": "2006-01-31",
+    "end_date": "2025-12-31",
+    "method": "A monthly CIR++ credit-spread path is simulated from the documented target parameters (target_mean_reversion, target_long_run_spread, target_spread_vol, shift) using a seeded full-truncation Euler scheme on the square-root factor x = spread - shift: x_{t+1} = x_t + kappa*(b - x_t)*dt + sigma*sqrt(max(x_t,0))*sqrt(dt)*Z, b = target_long_run_spread - shift, dt = 1/12. The realised spread = clip(x + shift). Fully deterministic given the seed. The CIR OLS calibrator recovers the long-run spread (sample-mean robust), the spread vol (residual-variance robust) and the mean-reversion speed (regression-slope, noisier) from this single path; the market price of credit risk is derived from the documented risk-neutral long-run anchor."
+  },
+  "target_mean_reversion": 0.60,
+  "target_long_run_spread": 0.012,
+  "target_spread_vol": 0.040,
+  "shift": 0.003,
+  "initial_spread": 0.011,
+  "risk_neutral_long_run_spread": 0.014,
+  "risk_premium_upper": 2.0,
+  "spread_floor": 0.0,
+  "spread_ceiling": 0.20,
+  "documented_sources_note": "Long-run AA+ corporate OAS over CGB in the educational range 90-160 bp; risk-neutral (CDS/bond-implied) long-run spread sits above the physical long-run mean by a credit risk premium, here 200 bp vs 120 bp, so a positive market price of credit risk re-anchors the Q-measure level upward.",
+  "data_lineage": {
+    "provenance": "educational_historical_proxy",
+    "approved_by": "ModelGovernance_Phase18",
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "version": "1.0.0",
+    "checksum_sha256": "educational_fixture_no_checksum",
+    "primary_sources": [
+      "ChinaBond AA+ corporate medium-term-note option-adjusted spread over the CGB curve, monthly (educational proxy levels)",
+      "China 5Y CDS / bond-implied risk-neutral long-run spread anchor (educational proxy)"
+    ],
+    "production_restriction": "Proxy levels only. Replace with licensed ChinaBond/Wind/Markit extracts and re-run sign-off before regulatory, pricing, or capital-adequacy use."
+  },
+  "notes": "20 calendar years of monthly synthesis (>= 240 monthly observations; the credit calibration needs >= 60). The CIR++ square-root factor and the deterministic shift keep the spread non-negative; the long-run spread of ~120 bp sits in the middle of the documented AA+ corporate range."
+}

@@ -6151,4 +6151,46 @@ to aggregate the three-driver (rate + equity + credit-spread) economic capital.
 - Evidence builder `scripts/build_phase17_task3_aggregation.py` writes
   `docs/validation/PHASE17_RISK_AGGREGATION_REPORT.{json,md}`.
 
-**Verification (`PYTHONPATH=/var
+**Verification (`PYTHONPATH=/var/tmp/pylibs:.`):**
+- `tests/test_phase17_risk_aggregation.py` **12 PASS** (config validation, governed-3×3 var-covar
+  identity, exact CRN additivity, diversification bounds, positive realised loss correlation, MR-010
+  understatement>0, JSON round-trip, reproducibility digest, use-restrictions, two-driver API intact).
+- Regression: `test_phase15_risk_aggregation.py` + `test_credit_spread.py` **26 PASS**;
+  `test_phase17_multi_driver_capital_3d.py` **22 PASS** (60 tests total). `compileall` clean. Offline
+  viewer self-test `ok:true`, 0 network, 0 JS errors.
+- **Evidence (seed 42; 99.5%; N_outer=800; n_inner=128; reduced from the canonical 1000/256 to fit the
+  sandbox wall clock):** rate SCR 20,696; equity SCR 22,559; credit SCR 4,460; standalone sum 47,715;
+  var-cov SCR 26,829; full nested SCR 43,753; formula-vs-nested rel err **38.7%** (>0.35 tol) → VERDICT
+  **PARTIAL** (honest). Realised capital-loss correlations rate-eq +0.54, rate-cr +0.77, eq-cr +0.61;
+  ESG factor off-diagonals −0.15/−0.20/−0.30. **Finding:** adding the credit driver WIDENS the ESG-factor
+  understatement of diversified capital to ~38.7% (vs the two-driver ~32.9%) — equity-guarantee and
+  credit losses co-move positively in stress while the underlying factor correlations are negative, so
+  the second-moment factor formula is non-conservative. MR-010 remains the dominant model risk. Verdict
+  is intentionally PARTIAL rather than widening the tolerance to force PASS.
+
+**Next Step:** Phase 17 Task 4 — three-driver tail-convergence + stability diagnostics (extend
+`multi_driver_tail_diagnostics.py`: outer-count convergence, bootstrap CI/SE on VaR/ES, variance-
+reduction comparison for the 99.5% three-driver capital metric).
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.5 — risk aggregation + reconciliation to nested ground truth. Addressed.
+- SOA ASOP 25 §3.3 — governed 3×3 correlated aggregation (nearest-PD safeguarded upstream). Addressed.
+- IA TAS M §3.2/§3.6 — market-consistent valuation + documented validation/reproducibility. Addressed.
+- Open item: the factor-correlation understatement (MR-010) is a known, documented limitation, not a
+  code defect; a fitted capital-module correlation or copula tail aggregation is the production fix.
+
+---
+
+## Run 2026-06-05T06:22Z — Phase 17 Task 4 (Three-driver tail convergence and stability)
+
+**Task Completed:** Phase 17 Task 4 — tail-convergence and stability diagnostics for the three-driver (rate + equity + credit-spread) 99.5% capital metric.
+
+**Accomplishments:**
+- Confirmed `par_model_v2/projection/multi_driver_tail_diagnostics.py` has the additive Phase 17 three-driver extension: `ThreeDriverTailConfig`, `VarianceReduction3D`, `ThreeDriverTailReport`, `ThreeDriverTailDiagnostics`, 3-D empirical-copula helpers, outer-count convergence, non-parametric bootstrap CI, and crude/antithetic/Sobol variance-reduction comparison.
+- Confirmed `tests/test_phase17_tail_diagnostics.py`, `scripts/build_phase17_task4_tail_diagnostics.py`, and `docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.{json,md}` are present.
+- Updated `.claude-dev/MODEL_DEV_STATE.json`: Phase 17 Task 3 and Task 4 marked completed, Task 5 set in progress, progress now 89/90 tasks (98.9%).
+- Updated `MODEL_DEV_TASK_PROMPT.md` so the next cycle starts on Phase 17 Task 5.
+
+**Evidence:** VERDICT PASS. Final VaR99.5=152,296.8; final ES=155,757.2; recommended N_outer>=1,000. Bootstrap VaR=150,859.1 with 95% CI [149,634.1, 152,369.3], SE=692.4, relative halfwidth=0.91%. Sobol QMC reduces VaR-estimator variance by 2.76x; antithetic ratio is 0.89x and disclosed as expected for an extreme quantile.
+
+**Verification:** Node offline viewer self-test PASS (`ok:true`, 4 tabs, 7 SVG charts, 7 export controls, 0 JS errors, 0 network). JSON parse checks PASS for `.claude-dev/MODEL_DEV_STATE.json` and `docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.json`. Python tests could not be rerun in this

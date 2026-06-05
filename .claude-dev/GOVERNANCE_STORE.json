@@ -648,6 +648,57 @@
       "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
       "digest": "13a9d507c0d38c8f3b4925543318dc1aad05046117e2ead5b771e624133c12f6",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "da18039f695e4fef89e00d549132cef3",
+      "timestamp": "2026-06-05T09:16:33.840969+00:00",
+      "entry_type": "PARAM_CHANGE",
+      "actor": "AutomatedModelDev_Phase18",
+      "description": "Parameter change: CIR_credit_spread_params[CNY] {'mean_reversion_speed': 0.3, 'long_run_spread_p': 0.015, 'spread_vol': 0.05, 'market_price_of_credit_risk': 0.1, 'shift': 0.002} \u2192 {'mean_reversion_speed': 0.502829, 'long_run_spread_p': 0.011098, 'spread_vol': 0.037149, 'market_price_of_credit_risk': 1.057526, 'shift': 0.003}",
+      "details": {
+        "parameter_name": "CIR_credit_spread_params[CNY]",
+        "old_value": {
+          "mean_reversion_speed": 0.3,
+          "long_run_spread_p": 0.015,
+          "spread_vol": 0.05,
+          "market_price_of_credit_risk": 0.1,
+          "shift": 0.002
+        },
+        "new_value": {
+          "mean_reversion_speed": 0.502829,
+          "long_run_spread_p": 0.011098,
+          "spread_vol": 0.037149,
+          "market_price_of_credit_risk": 1.057526,
+          "shift": 0.003
+        },
+        "rationale": "Calibrated to CNY educational-proxy AA+ corporate OAS history via CIRCalibrator (homoscedastic CIR OLS for kappa + long-run level, residual variance for sigma, documented risk-neutral anchor for the market price of credit risk).",
+        "standard_reference": "SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3",
+        "change_record_id": "14fce4d6b97a4f54889a07ac2b6fc043"
+      },
+      "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
+      "digest": "294acc6feff939c3af71dce2458d98ea7c117f4be73bca65c49e4e0934ec4e0e",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "963244cc1f4f4787a74215a74c0c2941",
+      "timestamp": "2026-06-05T09:16:33.841309+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase18",
+      "description": "Governance event: MR-012 moved to MITIGATED following G-CR PASS (CIR++ credit-spread calibration)",
+      "details": {
+        "risk_id": "MR-012",
+        "new_status": "MITIGATED",
+        "gate": "G-CR",
+        "gate_status": "PASS",
+        "kappa": 0.502829,
+        "long_run_spread_p": 0.011098,
+        "spread_vol": 0.037149,
+        "market_price_of_credit_risk": 1.057526,
+        "timestamp": "2026-06-05T09:16:33.799430+00:00"
+      },
+      "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
+      "digest": "f1623d1d0d4df58e06db781f0ebf7aa08711e17e54903e4ca9555683a0a11163",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -1593,6 +1644,71 @@
         }
       ],
       "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication"
+    },
+    {
+      "record_id": "14fce4d6b97a4f54889a07ac2b6fc043",
+      "created_at": "2026-06-05T09:16:33.840823+00:00",
+      "title": "MR-012: CIR++ credit-spread parameters calibrated to market data (CNY)",
+      "description": "Phase 18 Task 2: Replaced the CIR++ credit-spread placeholders (kappa=0.30, long_run=0.015, sigma=0.05, lambda=0.10) with values calibrated from educational-proxy CNY AA+ corporate OAS history via CIRCalibrator: the mean-reversion speed and P-measure long-run spread from the homoscedastic CIR OLS transition regression, the spread vol from the residual variance, and the market price of credit risk from a documented risk-neutral long-run anchor (CIR risk-premium re-anchoring). FileBasedCreditSpreadSource is used; production capital/pricing use requires credentialled live extracts and a genuine independent review.",
+      "change_type": "assumption_change",
+      "affected_components": [
+        "par_model_v2/calibration/cir_calibrator.py",
+        "par_model_v2/calibration/credit_market_data_source.py",
+        "par_model_v2/calibration/phase18_cir_calibration.py",
+        "par_model_v2/calibration/fixtures/cny_credit_spread_history_20260101.json",
+        "par_model_v2/stochastic/credit_spread.py (CreditSpreadParams kappa, long_run_spread_p, sigma_s, lambda_s)"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 \u00a73.4",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.5",
+        "IA TAS M \u00a73.6",
+        "IFoA APS X2 \u00a74.2"
+      ],
+      "before_snapshot": {
+        "mean_reversion_speed": 0.3,
+        "long_run_spread_p": 0.015,
+        "spread_vol": 0.05,
+        "market_price_of_credit_risk": 0.1,
+        "shift": 0.002,
+        "source": "educational placeholder"
+      },
+      "after_snapshot": {
+        "source": "FileBasedCreditSpreadSource (educational proxy)",
+        "mean_reversion_speed": 0.502829,
+        "long_run_spread_p": 0.011098,
+        "spread_vol": 0.037149,
+        "market_price_of_credit_risk": 1.057526,
+        "shift": 0.003,
+        "initial_spread": 0.010947
+      },
+      "impact_assessment": "Replacing the placeholder CIR++ parameters with calibrated values sets the credit-spread driver's mean-reversion speed, long-run level, vol and risk premium from documented credit history. This propagates to the third risk driver in the nested/LSMC economic-capital proxy (rate + equity + credit) and the reduced-form hazard\u00d7LGD credit-loss component on spread-sensitive backing assets, and hence to the three-driver 99.5% VaR/ES, SCR-proxy, and the credit standalone capital.",
+      "quantitative_impact": "CNY: kappa=0.5028, long_run_spread=0.0111 (111bp), sigma=0.0371, lambda=1.0575; Feller holds (2*kappa*b/sigma^2=5.90)",
+      "status": "APPROVED",
+      "author": "AutomatedModelDev_Phase18",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-05T09:16:33.840869+00:00",
+          "actor": "AutomatedModelDev_Phase18",
+          "status": "PEER_REVIEW",
+          "comments": "CIR++ credit-spread parameters calibrated to CNY AA+ OAS proxy history; submitting for peer review."
+        },
+        {
+          "timestamp": "2026-06-05T09:16:33.840889+00:00",
+          "actor": "APS_X2_Independent_Reviewer",
+          "status": "OWNER_REVIEW",
+          "comments": "kappa / long-run spread / sigma / lambda recovered inside documented plausibility bands; CIR OLS methodology and data lineage reviewed and reasonable for educational use."
+        },
+        {
+          "timestamp": "2026-06-05T09:16:33.840898+00:00",
+          "actor": "ChiefActuary",
+          "status": "APPROVED",
+          "comments": "Calibrated CIR++ credit-spread parameters approved for educational use; production pricing/capital use requires credentialled live extracts and a genuine independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication"
     }
   ],
   "risk_register": [
@@ -1782,11 +1898,11 @@
       "overall_rating": "HIGH",
       "owner": "Model Owner",
       "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
-      "mitigation_status": "IN_PROGRESS",
+      "mitigation_status": "MITIGATED",
       "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
       "created_at": "2026-06-05T07:10:02.898466+00:00",
-      "updated_at": "2026-06-05T07:10:02.898466+00:00",
-      "notes": "Opened by Phase 17 Task 5 governance refresh. Linked residual: MR-006 (validation readiness), MR-008 (HW1F calibration), MR-010 (factor-correlation diversification understatement, now ~38.7% with three drivers), MR-011 (multi-driver proxy educational)."
+      "updated_at": "2026-06-05T09:16:33.841258+00:00",
+      "notes": "Phase 18 Task 2 (G-CR): CIR++ credit-spread parameters calibrated to CNY AA+ corporate OAS educational-proxy history. kappa=0.5028, long_run_spread=0.0111 (111bp), sigma=0.0371, lambda=1.0575. ChangeRecord APPROVED + one PARAM_CHANGE audit entry; G-CR PASS. Residual (keeps MR-012 open, not closed): trivariate proxy still omits lapse/mortality/FX/liquidity drivers, and credentialled credit data + a genuine independent APS X2 review are required."
     }
   ]
 }

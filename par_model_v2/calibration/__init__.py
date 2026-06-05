@@ -78,3 +78,36 @@ __all__ += [
     "build_phase12_calibration_pack",
     "validate_calibration_cards",
 ]
+
+# --- Phase 18 Task 2: CIR++ credit-spread calibration (MR-012) ---
+from par_model_v2.calibration.cir_calibrator import (
+    CIRCalibrationInputs,
+    CIRCalibrationResult,
+    CIRCalibrator,
+)
+from par_model_v2.calibration.credit_market_data_source import (
+    CreditSpreadDataLoader,
+    FileBasedCreditSpreadSource,
+    build_credit_loader,
+    check_credit_calibration,
+    evaluate_credit_gate,
+    synthesize_spread_history,
+)
+from par_model_v2.calibration.phase18_cir_calibration import (
+    Phase18CIRReport,
+    run_phase18_cir_calibration,
+)
+
+__all__ += [
+    "CIRCalibrationInputs",
+    "CIRCalibrationResult",
+    "CIRCalibrator",
+    "CreditSpreadDataLoader",
+    "FileBasedCreditSpreadSource",
+    "build_credit_loader",
+    "check_credit_calibration",
+    "evaluate_credit_gate",
+    "synthesize_spread_history",
+    "Phase18CIRReport",
+    "run_phase18_cir_calibration",
+]

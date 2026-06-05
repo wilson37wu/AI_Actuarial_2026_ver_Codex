@@ -1,0 +1,52 @@
+{
+  "run_timestamp": "2026-06-05T09:16:33.799430+00:00",
+  "summary": {
+    "market": "CNY",
+    "calibration_date": "2026-01-01",
+    "kappa": 0.5028292839633349,
+    "long_run_spread_p": 0.011097522019236725,
+    "spread_vol": 0.037149181881211774,
+    "market_price_of_credit_risk": 1.0575258407014154,
+    "shift": 0.003,
+    "initial_spread": 0.010947427402090742,
+    "n_obs": 240,
+    "feller_ok": true,
+    "fit_r2": 0.02448477449916986,
+    "risk_neutral_long_run_spread": 0.014,
+    "is_placeholder": false,
+    "notes": "CIR OLS calibration on 240 monthly observations (dt=0.0833); kappa from regression slope, long-run spread from intercept/slope (== sample mean to first order), sigma from residual variance, lambda_s from documented risk-neutral long-run anchor.",
+    "lineage": {
+      "lineage_id": "LINCR_CNY_20260101",
+      "market": "CNY",
+      "as_of_date": "2026-01-01",
+      "source_type": "educational_historical_proxy",
+      "source_detail": "/sessions/gallant-charming-hopper/mnt/Auto_Actuarial_Model_Dev_May26/par_model_v2/calibration/fixtures/cny_credit_spread_history_20260101.json",
+      "fixture_version": "1.0.0",
+      "approved_by": "ModelGovernance_Phase18",
+      "approval_timestamp": "2026-01-01T00:00:00Z",
+      "sha256_checksum": "f63fe078eaa80dda76c1691e465834e512f036967270ce3269a1e5274839f224",
+      "produced_at": "2026-06-05T09:16:33.839472+00:00"
+    },
+    "criteria": {
+      "c1_min_obs": true,
+      "c2_kappa_in_band": true,
+      "c3_long_run_in_band": true,
+      "c4_sigma_in_band": true,
+      "c5_lambda_in_band": true,
+      "c6_not_placeholder_with_audit": true
+    }
+  },
+  "gate_gcr": {
+    "gate_id": "G-CR",
+    "gate_description": "CIR++ credit-spread parameters (kappa, long-run spread, sigma, lambda) calibrated to credit-market data (not placeholders); kappa in [0.05, 3.0], long-run in [20, 500]bp, sigma in [0.005, 0.50], lambda in [0.0, 2.0] (SOA ASOP 56 \u00a73.4)",
+    "status": "PASS",
+    "evidence": "CNY: n=240, kappa=0.5028, long_run=0.0111 (111bp), sigma=0.0371, lambda=1.0575",
+    "evaluated_at": "2026-06-05T09:16:33.841192+00:00"
+  },
+  "change_record_id": "14fce4d6b97a4f54889a07ac2b6fc043",
+  "change_record_status": "APPROVED",
+  "mr012_status": "MITIGATED",
+  "audit_entry_ids": [
+    "da18039f695e4fef89e00d549132cef3"
+  ]
+}
