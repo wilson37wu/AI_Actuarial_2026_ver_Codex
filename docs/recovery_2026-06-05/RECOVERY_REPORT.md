@@ -53,3 +53,35 @@ Committing now would (a) require the fragile alt-`GIT_INDEX_FILE` workaround on 
 5. Re-run `python3 scripts/build_offline_viewer.py` and `node scripts/offline_viewer_self_test.cjs model_result_viewer.html` (expect `ok:true`).
 6. Commit the restored viewer toolchain + `ia_validation.py` + this report; `git push origin main`.
 7. (Optional) Re-apply the Phase 18 viewer enhancements using `build_offline_viewer.PHASE18_RECONSTRUCTED.py` + a reconstructed Phase 18 template.
+
+---
+
+## UPDATE 2026-06-05 (interactive) — human ran git fix; PUSH SUCCEEDED; residual index repair pending
+
+**Human deleted the ghost locks and ran commit+push. Result:**
+- ✅ Ghost locks `.git/refs/heads/main.lock` + `.git/__probe_lock` — GONE.
+- ✅ Commit `3d17637` "Recover ia_validation.py + crash-recovery working tree" created.
+- ✅ **PUSHED to GitHub** — `origin/main` == local HEAD == `3d17637`. The recovered `ia_validation.py`
+  (1296 lines, correct reconstructed tail) is verified inside the pushed commit. **The substantive
+  recovery is now safe on the remote.**
+
+**New residual blocker (local-only, low stakes):** the working `.git/index` is CORRUPT
+(`fatal: unknown index entry format 0x…`) — leftover disk-full write damage. Because the index was
+corrupt at commit time, the human's `git add -A` was incomplete: **35 files are still uncommitted**, ALL
+of them documentation/logs (`docs/G05_*` probe logs, `docs/MODEL_USAGE_GUIDE.md`,
+`docs/validation/PHASE15_RISK_AGGREGATION_REPORT.md`, `MODEL_DEV_LOG.md`, `MODEL_DEV_TASK_PROMPT.md`).
+No source/model/test file is pending — `ia_validation.py` is fully committed+pushed.
+
+The sandbox CANNOT repair the index (`rm .git/index` → "Operation not permitted"; a `.git/index.lock`
+ghost is present again). **Human action required (on the Windows host):**
+```
+cd C:\Users\SkiesNet\Downloads\Auto_Actuarial_Model_Dev_May26
+Remove-Item -Force .git\index, .git\index.lock -ErrorAction SilentlyContinue
+git reset
+git status
+git add -A
+git commit -m "Capture residual doc/log/state updates (post index-repair)"
+git push origin main
+```
+After that the tree is fully clean and Phase 19 can begin. Disk-full on `/sessions` (the automation
+sandbox volume, not the host) remains the corruption root cause for future automated cycles.

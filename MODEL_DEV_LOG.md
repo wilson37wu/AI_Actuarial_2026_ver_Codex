@@ -6346,3 +6346,23 @@ health gate) → Task 2 (re-apply Phase 18 viewer uplift).
   user's folder regardless of git.
 
 ---
+
+## Run 2026-06-05 (interactive) — git unblocked by human; ia_validation.py pushed; index repair pending
+
+**Validated the human's git fix:** ghost locks deleted; commit `3d17637` created and **pushed** —
+`origin/main` == HEAD == `3d17637`, and the recovered `ia_validation.py` is verified inside it. The
+substantive crash recovery is now on GitHub.
+
+**Remaining blocker (NEW, local-only):** `.git/index` is corrupt (disk-full write damage), so the
+human's `git add -A` was incomplete — 35 files remain uncommitted, ALL docs/logs (no source/model/test).
+Sandbox cannot repair the index (Operation not permitted; index.lock ghost present). Human must, on the
+host: `Remove-Item -Force .git\index, .git\index.lock`; `git reset`; `git add -A`; `git commit`;
+`git push origin main`.
+
+**Added standing instruction** to MODEL_DEV_TASK_PROMPT.md: every cycle must end by emailing the human
+status + blockers + numbered human-action checklist (draft if send unavailable). Email recipient updated
+to wilsonwukl@gmail.com.
+
+**Emailed/drafted** the human a status report with the residual checklist.
+
+---

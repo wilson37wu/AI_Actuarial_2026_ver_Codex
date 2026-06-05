@@ -1,10 +1,10 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-05T14:10:00Z",
+  "last_run": "2026-06-05T14:40:00Z",
   "last_run_duration_minutes": 60,
   "current_phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
-  "overall_status": "crash_recovery_2026-06-05__ia_validation_RECOVERED__suite_collects_2070__git_still_blocked_HUMAN_REQUIRED__disk_full_ghost_locks",
+  "overall_status": "ia_validation_PUSHED_to_origin(3d17637)__git_index_corrupt__residual_35_DOCS_uncommitted__HUMAN_index_repair_pending",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -463,6 +463,13 @@
       "Free /sessions disk (100% full ~32MB free) — write-corruption root cause",
       "Delete ghost git locks: .git/index.lock, .git/refs/heads/main.lock, .git/__probe_lock",
       "git reset (clear phantom-deleted index), then commit + push recovered tree"
-    ]
+    ],
+    "git": {
+      "commit_pushed": "3d17637 (origin/main == HEAD); recovered ia_validation.py verified in commit",
+      "new_blocker": "working .git/index corrupt (disk-full damage); git add -A was incomplete",
+      "residual_uncommitted": "35 files, ALL docs/logs (no source/model/test); ia_validation.py NOT pending",
+      "human_fix": "Remove-Item -Force .git\\index, .git\\index.lock ; git reset ; git add -A ; git commit ; git push origin main"
+    },
+    "standing_email_instruction": "added to MODEL_DEV_TASK_PROMPT.md; recipient wilsonwukl@gmail.com"
   }
 }

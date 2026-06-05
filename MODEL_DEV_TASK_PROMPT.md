@@ -8,7 +8,25 @@ description: "Autonomous model development task with state persistence, GitHub c
 **Task Frequency:** Every 12 hours  
 **Repository:** https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex
 **State File:** `.claude-dev/MODEL_DEV_STATE.json`  
-**Email Recipient:** wilson.cuhk.ifa@gmail.com (update below)
+**Email Recipient:** wilsonwukl@gmail.com
+
+---
+
+## ⭐ STANDING INSTRUCTION (MANDATORY, EVERY CYCLE) — Email the human at the end
+
+At the **end of every run**, before finishing, email the human (wilsonwukl@gmail.com) a concise status
+report. Use the Gmail tool; if only draft creation is available, create a **draft** addressed to that
+address (the human will send/review). The email MUST contain, in this order:
+
+1. **Status** — what this cycle did, with the one or two headline outcomes (pass/fail, what was fixed).
+2. **Blockers** — anything blocking further progress, especially git/disk/credential issues the sandbox
+   cannot resolve itself.
+3. **Actions needed from the human** — an explicit, numbered, copy-pasteable checklist (exact shell
+   commands where applicable) of what the human must do. If nothing is needed, say "None — proceeding
+   autonomously."
+
+This is required whether the cycle succeeded, partially succeeded, or was blocked. Do not end a run
+without producing this email/draft.
 
 ---
 
