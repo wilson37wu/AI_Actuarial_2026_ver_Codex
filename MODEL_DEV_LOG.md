@@ -6254,3 +6254,95 @@ reduction comparison for the 99.5% three-driver capital metric).
 - IA TAS M §3.6 (validation, reproducibility, model-uncertainty disclosure): addressed — bootstrap CI/SE + reproducibility digest + use-restriction disclosure.
 
 **Env note:** `/sessions` ~
+
+---
+
+## Run 2026-06-05T12:20Z - Phase 18 Task 5 (offline viewer four-driver refresh)
+
+**Task Completed:** Offline-viewer refresh for the four-driver copula aggregation and proxy evidence.
+
+**Accomplishments:**
+- Updated `scripts/build_offline_viewer.py` to prefer Phase 18 Task 4 aggregation/tail JSON and Phase 18 Task 3 proxy-validation JSON over older Phase 17/15 artifacts, and to normalize four-driver fields: lapse SCR, selected copula SCR, copula error, CRN additive SCR, interaction residual, copula rows, and limitation-card links.
+- Updated `par_model_v2/viewer/viewer_template.html` so Capital/Aggregation tabs show the lapse driver, gaussian copula reconciliation, MR-010 var-covar gap 47.4% -> copula gap 9.4%, multiplicative-lapse interaction residual (-11.1% of nested), and links to `docs/MULTI_DRIVER_4D_AGGREGATION_CARD.md` / `docs/MULTI_DRIVER_4D_PROXY_LIMITATION_CARD.md`.
+- Added `tests/test_offline_viewer.py` assertions for Phase 18 four-driver/copula fields and template tokens.
+- Regenerated `viewer_data.json` and `model_result_viewer.html` with Phase 18 sources embedded.
+- Updated `.claude-dev/MODEL_DEV_STATE.json`: Phase 18 status `completed`, no in-progress task, 95/95 documented tasks complete, estimated completion 100%.
+
+**Verification:**
+- `node scripts/offline_viewer_self_test.cjs model_result_viewer.html` PASS: embeddedLoaded true, 4 tabs, 8 SVG charts, 8 export buttons, 0 network calls, 0 JS errors.
+- Node schema checks PASS: four drivers present, `copula_selected=gaussian`, `var-cov < copula < nested`, var-cov gap 47.4%, copula gap 9.4%, limitation-card links present.
+- Python/pytest unavailable on PATH in this Windows shell (`python`, `py`, `python3` not found), so pytest assertions were updated but not executed here.
+
+**Next Step:** Post-Phase 18 roadmap decision / define Phase 19 if further expansion is required.
+
+**Industry Standards Progress:**
+- IA TAS M section 3.6 / SOA ASOP 56 section 3.5: validation evidence is visible in the offline viewer with no server or network dependency.
+- IA TAS M section 3.7 / APS X2 section 3: limitation-card and governance traceability links are surfaced for reviewer use.
+
+## Run 2026-06-05T13:32:16Z — Crash Recovery (2nd disk-full crash) — Offline viewer RESTORED
+
+**Cycle type:** crash-recovery + offline-viewer restoration (no model dev; **no git commit** — unsafe).
+
+**Discovered:** The offline viewer was broken — `model_result_viewer.html` truncated mid-JS (no `</html>`, 0 tabs).
+Root cause: the shared `/sessions` volume is **100% full** (~32 MB free; ~9.2 GB used by other sessions), which
+**corrupts writes to the mount** ("same size, different bytes"). The 2026-06-03 crash + this pressure truncated several
+files, and the Phase R commit baked some truncations into `HEAD` (== origin/main 65ae2cf).
+
+**Fixed (working tree; persists in the user's folder):**
+- Restored `par_model_v2/viewer/viewer_template.html` + `scripts/build_offline_viewer.py` from HEAD (on-disk Phase 18
+  copies were corrupted: duplicate `viewAggregation` + truncation / truncated mid-`change_records`).
+- Rebuilt `model_result_viewer.html` (87,777 B) + `viewer_data.json` → **self-test ok:true** (4 tabs, 7 SVG charts,
+  7 export controls, 0 network, 0 JS errors); `tests/test_offline_viewer.py` 20/21 (1 = 10 s node-subprocess timeout).
+- Restored `tests/test_offline_viewer.py` (blob fa5d5fe) and the corrupted `.claude-dev/MODEL_DEV_STATE.json` (HEAD blob).
+- Viewer DISPLAY reverts to Phase 17 (3-driver); Phase 18 lapse/copula panels not shown. Losslessly-reconstructed
+  Phase 18 bundler saved at `docs/recovery_2026-06-05/build_offline_viewer.PHASE18_RECONSTRUCTED.py` for re-apply.
+
+**Unrecoverable without a human — `par_model_v2/validation/ia_validation.py`:** truncated at line ~1290 in EVERY git
+blob incl. origin/main; the complete ~1289-line version was never committed (history jumps 716-line → truncated
+1289-line in one commit). Restore from a developer machine / reconstruct `IA_VALIDATION_REQUIREMENTS` tail + `ValidationRunner`.
+
+**Human action checklist:** (1) free disk space on `/sessions`; (2) `rm -f .git/index.lock .git/refs/heads/main.lock
+.git/__probe_lock`; (3) `git reset`; (4) restore `ia_validation.py`; (5) rebuild viewer + self-test; (6) commit + push.
+Full detail: `docs/recovery_2026-06-05/RECOVERY_REPORT.md`. **Next:** Phase 19 (see MODEL_DEV_TASK_PROMPT.md).
+
+<!-- LOGENTRY-END 2026-06-05T13:32:16Z -->
+
+## Run 2026-06-05 (later cycle) — Crash-recovery: ia_validation.py reconstructed
+
+**Task Completed:** Recovered `par_model_v2/validation/ia_validation.py`, the file the prior cycle's
+RECOVERY_REPORT flagged "UNRECOVERABLE without a human." It was NOT unrecoverable: the only damage was a
+single truncated string in the **last** entry (`VR-D03`) of the `IA_VALIDATION_REQUIREMENTS` list
+(`            "Compl` with no newline). `ValidationRunner` (claimed missing) is intact at line 483; only
+the list tail was gone.
+
+**Accomplishments:**
+- Reconstructed the tail: completed the final acceptance-criterion string ("Completeness gaps (missing
+  combinations) logged to AuditTrail with the missing key"), closed the criteria list, added
+  `development_phase=3` + a `notes=` flag recording the 2026-06-05 reconstruction, closed the
+  `ValidationRequirement(`, and closed the `IA_VALIDATION_REQUIREMENTS` list. Written via a verified
+  temp-file→compile→copy→recompile path (disk-full write-corruption guard).
+- Verified: `py_compile` clean; package imports; `len(IA_VALIDATION_REQUIREMENTS)==31`, all unique,
+  last id `VR-D03`. None of the importers (`__init__`, `model_health`, `phase13/14_*`,
+  `validation_dashboard`) reference any name defined after the list, so closing it is sufficient.
+- Test impact: full suite now **collects all 2070 tests with 0 import errors** (previously the SyntaxError
+  blocked every test importing the validation package). PASS: `test_ia_validation`+`test_phase13_ia_validation`
+  75; `test_validation_dashboard`+`test_phase14_ia_revalidation` 66 (incl. `dashboard.ia_validation.total==31`
+  and `total==31` in phase13); `test_model_health`+`test_data_validator` 113. Phase 18 4-driver/copula/CIR
+  batch is numerically heavy and exceeds the 45 s batch wall-clock (no failures observed) — consistent with
+  the documented batching constraint.
+- Offline viewer unaffected: `node scripts/offline_viewer_self_test.cjs model_result_viewer.html` → ok:true
+  (4 tabs, 7 SVG charts, 0 network, 0 JS errors).
+
+**Next Step:** Human still required for the remaining blockers — free `/sessions` disk (100% full, ~32 MB
+free; the write-corruption root cause), delete ghost git locks (`.git/index.lock`,
+`.git/refs/heads/main.lock`, `.git/__probe_lock`), `git reset`, then commit + push the recovered tree
+(ia_validation.py + viewer toolchain + this log/state/report). After that, Phase 19 Task 1 (post-recovery
+health gate) → Task 2 (re-apply Phase 18 viewer uplift).
+
+**Industry Standards Progress:**
+- IA TAS M §3.9: the recovered file IS the IA data-validation requirement registry (VR-D01/02/03 data-layer
+  checks) — restoring it restores the documented validation audit trail.
+- No git commit this cycle (sandbox cannot — ghost locks + full disk). Working-tree fix persists in the
+  user's folder regardless of git.
+
+---

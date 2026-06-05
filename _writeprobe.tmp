@@ -216,39 +216,4 @@ def test_governance_risk_register_enriched(data):
 
 def test_template_has_task4_views():
     tpl = open(_TEMPLATE, encoding="utf-8").read()
-    for token in ["Deployment-gate checklist", 'id="rrStatus"', 'id="rrRating"',
-                  'class="timeline"', "digests verified", "function viewGov",
-                  "Change-record timeline"]:
-        assert token in tpl, "missing Task 4 viewer element: " + token
-
-
-# ---------------------------------------------------------------- Task 5 polish + offline packaging
-def test_template_has_task5_packaging_controls():
-    tpl = open(_TEMPLATE, encoding="utf-8").read()
-    for token in ["function exportSvgToPng", "createElement(\"canvas\")",
-                  "function enhanceChartExports", "Export PNG",
-                  'id="printView"', "@media(max-width:540px)", "@media print",
-                  'id="file"', 'id="drop"']:
-        assert token in tpl, "missing Task 5 packaging element: " + token
-
-
-def test_offline_self_test_script_runs_on_rendered_html(tmp_path, data):
-    node = shutil.which("node")
-    if not node:
-        pytest.skip("node is not available")
-    html_path = tmp_path / "viewer.html"
-    html_path.write_text(_mod().render_html(data), encoding="utf-8")
-    result = subprocess.run(
-        [node, _SELF_TEST, str(html_path)],
-        cwd=_REPO,
-        text=True,
-        capture_output=True,
-        timeout=10,
-        check=False,
-    )
-    assert result.returncode == 0, result.stdout + result.stderr
-    checks = json.loads(result.stdout)["checks"]
-    assert checks["networkCalls"] == 0
-    assert checks["jsErrors"] == 0
-    assert checks["exportButtons"] >= checks["svgCount"] >= 6
-    assert checks["canvasExportSource"] is True
+    for token

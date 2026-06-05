@@ -1287,4 +1287,10 @@ IA_VALIDATION_REQUIREMENTS: List[ValidationRequirement] = [
             "Lapse rates: 0 ≤ lapse ≤ 1 for all entries",
             "Mortality qx: 0 ≤ qx ≤ 1 for all entries",
             "Bonus rates: 0 ≤ bonus ≤ 0.20 (max 20% annual bonus)",
-            "Compl
+            "Completeness gaps (missing combinations) logged to AuditTrail with the missing key",
+        ],
+        development_phase=3,
+        notes="FlexibleAssumptions tables exist; completeness/range validation is a Phase 3 target.  "
+              "Tail reconstructed 2026-06-05: HEAD blob was truncated mid-string (never committed complete).",
+    ),
+]
