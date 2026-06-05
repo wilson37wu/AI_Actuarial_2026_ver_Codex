@@ -491,7 +491,7 @@ Tasks for Phase 15 (one per cycle, in order):
    8/8 Task 5 tests PASS; governance regression 96 PASS; compileall clean; Task 1-4 modules untouched.
    (IA TAS M §3.6/3.7; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3; IFoA Modelling PN §4) **PHASE 15 COMPLETE.**
 
-**Current milestone:** **ALL DOCUMENTED TASKS COMPLETE — 85/85 tasks, 15 phases + Phase 16 offline viewer.** All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 10. Production sign-off withheld — residual is credentialled-data calibration + independent APS X2 review, NOT a code gap.
+**Current milestone:** **Phase 17 IN PROGRESS — 86/90 tasks (15 phases + Phase 16 viewer complete; Phase 17 Task 1 of 5 done 2026-06-05).** The economic-capital proxy now spans THREE correlated drivers (rate + equity + CIR++ credit spread). All 12 educational deployment gates remain cleared; open model risks 1; mitigated/closed 10. Production sign-off withheld — residual is credentialled-data calibration + independent APS X2 review, NOT a code gap. **Env note for next cycle:** `/sessions` is full — install scipy/pytest to `/var/tmp/pylibs` and run with `PYTHONPATH=/var/tmp/pylibs`. Git still has a virtiofs ghost `.git/index.lock` (invisible to `ls`/`rm` but blocks normal git); commit via the alt-`GIT_INDEX_FILE` + direct-ref workaround until a human shell deletes it.
 
 **✅ 2026-06-05 crash-recovery RESOLVED & PUSHED (READ FIRST):** The 2026-06-03 crash left the working tree corrupted AND two ghost git locks. An earlier 2026-06-05 cycle fixed the *code* (offline viewer + template + 3 truncated `__init__.py` + `phase13_ia_tas_m.run()` + `test_guided_examples.py`) but could not touch git. **This cycle closed Phase R:** committed the recovered tree via an alt-`GIT_INDEX_FILE` + direct-ref-write workaround (commit `1f8f990`), discovered origin/main had diverged by 7 commits (another cycle: Phase 15 T3–5 + Phase 16 T1–4), and **merged** them — merge `e24d74e`, tree = the more-advanced local Phase 16 Task 5 superset, origin/main `ca381b3` kept as 2nd parent so nothing is orphaned. **`git push origin main` OK; local == origin (0/0).** Offline self-test `ok:true` (0 network / 0 JS errors); `compileall` clean. **Residual for a HUMAN:** the two ghost locks `.git/index.lock` + `.git/HEAD.lock` (2026-06-03) are still unremovable from the sandbox and block *normal* git — delete them in a human shell. Until then, cycles must reuse the alt-index + direct-ref workaround. **Full `pytest` was NOT run** (scipy uninstallable this run); py_compile + node self-test substituted — next cycle with a working Python env should run the suite in <45 s batches as the formal gate.
 
@@ -570,7 +570,7 @@ the same cycle.
 
 ---
 
-## Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy ⭐ NEXT (Phase R closed)
+## Phase 17: Third Risk Driver (Credit Spread) in the Economic-Capital Proxy ⭐ IN PROGRESS (Task 1 done 2026-06-05)
 
 Extends the documented Phase 15 limitation (the LSMC capital proxy spans only two drivers — short rate +
 equity). Current proxy-model practice (IFoA proxy-modelling WP; Milliman/MDPI LSMC literature) expands the
@@ -579,17 +579,12 @@ higher-order and interaction terms, validated out-of-sample. The asset library a
 spreads / private credit, so credit is the natural third driver.
 
 Tasks for Phase 17 (one per cycle, in order):
-1. Add a stochastic credit-spread driver (e.g. CIR++ or a mean-reverting OU spread) to the ESG, P- and
-   Q-measure consistent, and extend the multi-driver LSMC surface to (r, S, spread) with a trivariate
-   polynomial basis incl. pairwise + capped three-way interaction terms. Condition the inner Q nest on all
-   three states. (SOA ASOP 56 §3.1.3/§3.4; IA TAS M §3.6)
-2. Out-of-sample trivariate proxy validation — extend `multi_driver_proxy_validation.py`: disjoint-seed
-   hold-out, basis-degree/interaction selection by OOS RMSE/R², leakage + overfit diagnostics, honest verdict.
-   (SOA ASOP 56 §3.5; IA TAS M §3.6)
-3. Three-driver correlated aggregation — standalone rate/equity/credit SCR (CRN-isolated), var-cov with the
-   governed 3×3 ESG correlation, benchmarked to the fully-diversified nested capital; refresh the MR-010
-   diversification-understatement finding for three drivers. (SOA ASOP 56 §3.5; ASOP 25 §3.3)
-4. Tail-convergence + stability diagnostics for the three-driver 99.5% capital metric (extend
-   `multi_driver_tail_diagnostics.py`). (SOA ASOP 56 §3.5/§3.1.3)
-5. Governance refresh — open the credit-driver model-risk entry, consolidated limitation card, OWNER_REVIEW
-   ChangeRecord, audit-chain append; extend the offline viewer schema + Aggregation/Capital tabs to th
+1. ✅ DONE (2026-06-05) Added `par_model_v2/stochastic/credit_spread.py` (CIR++ mean-reverting square-root
+   credit-spread driver; full-truncation Euler; P/Q consistent via the CIR risk premium; reduced-form
+   hazard×LGD loss helper; measure enforcement + DataFrame output + `_inner_q_spread_process` conditioning)
+   and `par_model_v2/projection/multi_driver_capital_3d.py` (three-driver (r,S,spread) nested ground truth +
+   trivariate-LSMC proxy + diagnostics). Inner Q nest conditioned on all three states off one correlated
+   draw; conditional liability adds a credit-loss component on spread-sensitive backing assets. Trivariate
+   total-degree basis with **capped three-way interactions** (cap bites at degree>=4, removing
+   {(2,1,1),(1,2,1),(1,1,2)}). Outer states genuinely correlated via a shared 3-factor Cholesky
+   (nearest
