@@ -1,0 +1,64 @@
+{
+  "task": "Phase 18 Task 4 - four-driver tail-dependent risk aggregation + tail diagnostics",
+  "drivers": [
+    "short_rate",
+    "equity_guarantee",
+    "credit_spread",
+    "lapse_behaviour"
+  ],
+  "mr_010_refreshed": true,
+  "mr_010_status": "MITIGATED",
+  "mr_012_refreshed": true,
+  "mr_012_status": "MITIGATED",
+  "added_change_record": true,
+  "change_record_status": "OWNER_REVIEW",
+  "esg_understatement_pct_four_driver": 0.47367,
+  "var_covar_rel_error_vs_nested": 0.47367,
+  "selected_copula": "gaussian",
+  "selected_copula_rel_error_vs_nested": 0.094278,
+  "interaction_residual_rel": -0.111288,
+  "nested_scr": 99268.7236,
+  "tail_converged": true,
+  "tail_recommended_n_outer": 16000,
+  "tail_bootstrap_var": 231150.3026,
+  "tail_bootstrap_ci": [
+    226371.443,
+    239438.1118
+  ],
+  "tail_sobol_var_ratio": 3.284,
+  "audit_entries": 37,
+  "audit_integrity_ok": true,
+  "change_records_total": 18,
+  "risk_register_summary": {
+    "total": 12,
+    "by_rating": {
+      "VERY_LOW": 1,
+      "LOW": 1,
+      "MEDIUM": 0,
+      "HIGH": 6,
+      "VERY_HIGH": 0,
+      "CRITICAL": 4
+    },
+    "by_status": {
+      "OPEN": 1,
+      "IN_PROGRESS": 4,
+      "MITIGATED": 5,
+      "ACCEPTED": 0,
+      "CLOSED": 2
+    },
+    "open_critical": 1
+  },
+  "limitation_card": "docs/MULTI_DRIVER_4D_AGGREGATION_CARD.md",
+  "residual": "Lapse-behaviour index is a single systemic OU factor with placeholder parameters; mortality-trend / FX / liquidity drivers still omitted; copula marginals do not extrapolate; credentialled calibration + independent APS X2 review pending.",
+  "standard_references": [
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 56 \u00a73.1.3",
+    "SOA ASOP 25 \u00a73.3",
+    "SOA ASOP 7 \u00a73.3",
+    "IA TAS M \u00a73.2",
+    "IA TAS M \u00a73.6",
+    "Solvency II Delegated Reg. Art. 234",
+    "IFoA Life Aggregation & Simulation working party",
+    "L'Ecuyer (2018) RQMC"
+  ]
+}

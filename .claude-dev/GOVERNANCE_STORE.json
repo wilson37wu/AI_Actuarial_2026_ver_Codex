@@ -699,6 +699,82 @@
       "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
       "digest": "f1623d1d0d4df58e06db781f0ebf7aa08711e17e54903e4ca9555683a0a11163",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "a660210597ee4e299dedfa98ccc8bf79",
+      "timestamp": "2026-06-05T11:35:58.078913+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase18Task4GovernanceRefresh",
+      "description": "Governance event: risk register update - MR-010 refreshed with Phase 18 Task 4 four-driver copula aggregation",
+      "details": {
+        "risk_id": "MR-010",
+        "mitigation_status": "MITIGATED",
+        "esg_understatement_pct_four_driver": 0.47367,
+        "var_covar_rel_error_vs_nested": 0.47367,
+        "selected_copula": "gaussian",
+        "selected_copula_rel_error": 0.094278,
+        "interaction_residual_rel": -0.111288,
+        "nested_scr": 99268.7236,
+        "engine": "multi_driver_capital_4d_aggregation.py"
+      },
+      "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
+      "digest": "8664c8ee6ee012212b85599dd81ac520347dbb3ad689ca298d000d0249eba484",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "2fa649e0ae7f413ca954275ef7a1693f",
+      "timestamp": "2026-06-05T11:35:58.079098+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase18Task4GovernanceRefresh",
+      "description": "Governance event: risk register update - MR-012 refreshed for four-driver capital proxy",
+      "details": {
+        "risk_id": "MR-012",
+        "mitigation_status": "MITIGATED",
+        "drivers": [
+          "short_rate",
+          "equity_guarantee",
+          "credit_spread",
+          "lapse_behaviour"
+        ],
+        "still_omitted": [
+          "mortality_trend",
+          "FX",
+          "liquidity"
+        ],
+        "sobol_var_ratio": 3.284
+      },
+      "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
+      "digest": "69f7fea83abcedf0e927cafad1b557150fe9db0efadbf2eba85d5f5ca59fae0a",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "c64d50f9143040ee956601c9bb139cd7",
+      "timestamp": "2026-06-05T11:35:58.079214+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase18Task4GovernanceRefresh",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - four-driver tail-dependent aggregation + diagnostics",
+      "details": {
+        "record_id": "a01a9260116848ef88dcea5f3a47f8b8",
+        "change_type": "methodology_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/projection/multi_driver_capital_4d_aggregation.py",
+          "par_model_v2/projection/multi_driver_tail_diagnostics.py",
+          "scripts/build_phase18_task4_aggregation.py",
+          "scripts/build_phase18_task4_tail_diagnostics.py",
+          "tests/test_phase18_task4_aggregation.py",
+          "docs/MULTI_DRIVER_4D_AGGREGATION_CARD.md",
+          "docs/validation/PHASE18_TASK4_AGGREGATION_REPORT.{json,md}",
+          "docs/validation/PHASE18_TASK4_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+        ],
+        "mr_refreshed": [
+          "MR-010",
+          "MR-012"
+        ]
+      },
+      "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
+      "digest": "51d9272eb7c9fef3de400bc046e3699b08771e25c60345419b41c29d26b84575",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -1709,6 +1785,74 @@
         }
       ],
       "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication"
+    },
+    {
+      "record_id": "a01a9260116848ef88dcea5f3a47f8b8",
+      "created_at": "2026-06-05T11:35:58.079173+00:00",
+      "title": "Phase 18 Task 4 - four-driver tail-dependent risk aggregation + tail diagnostics",
+      "description": "Added the four-driver tail-dependent risk aggregator (par_model_v2/projection/multi_driver_capital_4d_aggregation.py, additive) and the four-driver tail-convergence/stability diagnostics (FourDriverTailDiagnostics in multi_driver_tail_diagnostics.py, additive). The aggregator isolates four standalone capital-loss vectors by a common-random-number decomposition of the four-driver conditional liability, aggregates them BOTH with the governed 4x4 ESG factor correlation (var-covar) AND with an AIC-selected copula fitted to the realised losses, and benchmarks both to genuine four-driver nested capital computed on the same outer states / inner seeds. The diagnostics probe outer-count convergence, a non-parametric bootstrap CI/SE on the 99.5% VaR/ES, and a crude/antithetic/Sobol variance-reduction comparison on the quadrivariate LSMC surface.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_capital_4d_aggregation.py",
+        "par_model_v2/projection/multi_driver_tail_diagnostics.py",
+        "scripts/build_phase18_task4_aggregation.py",
+        "scripts/build_phase18_task4_tail_diagnostics.py",
+        "tests/test_phase18_task4_aggregation.py",
+        "docs/MULTI_DRIVER_4D_AGGREGATION_CARD.md",
+        "docs/validation/PHASE18_TASK4_AGGREGATION_REPORT.{json,md}",
+        "docs/validation/PHASE18_TASK4_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 \u00a73.5",
+        "SOA ASOP 56 \u00a73.1.3",
+        "SOA ASOP 25 \u00a73.3",
+        "SOA ASOP 7 \u00a73.3",
+        "IA TAS M \u00a73.2",
+        "IA TAS M \u00a73.6",
+        "Solvency II Delegated Reg. Art. 234",
+        "IFoA Life Aggregation & Simulation working party",
+        "L'Ecuyer (2018) RQMC"
+      ],
+      "before_snapshot": {
+        "aggregation_drivers": "three (rate + equity + credit)",
+        "mr_010_gap_vs_nested": "~38.7% understatement (three-driver var-covar)",
+        "tail_diagnostics_drivers": "three"
+      },
+      "after_snapshot": {
+        "aggregation_drivers": "four (rate + equity + credit + lapse-behaviour)",
+        "var_covar_rel_error_vs_nested": 0.47367,
+        "esg_understatement_pct_four_driver": 0.47367,
+        "selected_copula": "gaussian",
+        "selected_copula_rel_error_vs_nested": 0.094278,
+        "interaction_residual_rel": -0.111288,
+        "tail_converged": true,
+        "tail_recommended_n_outer": 16000,
+        "tail_bootstrap_var": 231150.3026,
+        "tail_sobol_var_ratio": 3.284,
+        "mr_010_status": "MITIGATED (four-driver)",
+        "mr_012_status": "MITIGATED (four-driver)"
+      },
+      "impact_assessment": "Extends the MR-010 copula mitigation and the multi-driver tail diagnostics to a fourth, non-financial (lapse-behaviour) driver. The ESG-factor var-covar understatement widens with the extra driver, but the copula on realised losses continues to reconcile to nested capital, and the four-driver 99.5% capital metric converges and is bootstrap-bounded with effective QMC variance reduction. Purely additive; no existing numeric output path changes. Educational classification retained; production sign-off withheld pending credentialled lapse-experience calibration and independent APS X2 review.",
+      "quantitative_impact": "Four-driver var-covar SCR rel. error vs nested ~47.4%; copula ('gaussian') ~9.4%; multiplicative-lapse interaction residual ~-11.1% of nested; tail VaR99.5 ~231,150, Sobol var-reduction ~3.3x.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase18Task4GovernanceRefresh",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-05T11:35:58.079188+00:00",
+          "actor": "Phase18Task4GovernanceRefresh",
+          "status": "PEER_REVIEW",
+          "comments": "Additive modules; var-covar/copula/3D-tail classes unchanged; 22 new unit tests PASS; related-module regression PASS in batches; compileall + offline self-test clean."
+        },
+        {
+          "timestamp": "2026-06-05T11:35:58.079199+00:00",
+          "actor": "Phase18Task4GovernanceRefresh",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: lapse-behaviour index is a single systemic OU factor with placeholder parameters; mortality-trend / FX / liquidity drivers still omitted; copula marginals do not extrapolate; credentialled calibration + independent APS X2 review pending. Production sign-off withheld."
+        }
+      ],
+      "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication"
     }
   ],
   "risk_register": [
@@ -1869,8 +2013,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
       "created_at": "2026-06-04T18:28:37.352914+00:00",
-      "updated_at": "2026-06-05T08:22:23.172635+00:00",
-      "notes": "Phase 15 Task 3. ChangeRecord 5e21202bf5. Evidence digest 55ca305d9fbd. | Phase 18 Task 1: implemented the documented mitigation as a copula aggregation engine (par_model_v2/projection/multi_driver_copula_aggregation.py) fitted to the REALISED standalone capital-loss vectors (Gaussian / Student-t / survival-Clayton), benchmarked to the three-driver nested ground truth. The var-covar (ESG factor) SCR understates nested by 34.5%; the AIC-selected copula ('gaussian') reconciles to nested within 1.4%. Root cause confirmed: the gap is driven by the WRONG dependence input (negative ESG factor correlation vs strongly positive realised loss co-movement), not primarily tail dependence (the t-copula collapses toward Gaussian; survival-Clayton bounds conservatively from above). Recommended aggregation is now copula-on-realised-losses; var-covar retained for reference. Residual: empirical marginals cannot extrapolate beyond the simulated component range; tail-dependence estimates are sampling-noisy; credentialled calibration + independent APS X2 review still required."
+      "updated_at": "2026-06-05T11:35:58.078824+00:00",
+      "notes": "Phase 15 Task 3. ChangeRecord 5e21202bf5. Evidence digest 55ca305d9fbd. | Phase 18 Task 1: implemented the documented mitigation as a copula aggregation engine (par_model_v2/projection/multi_driver_copula_aggregation.py) fitted to the REALISED standalone capital-loss vectors (Gaussian / Student-t / survival-Clayton), benchmarked to the three-driver nested ground truth. The var-covar (ESG factor) SCR understates nested by 34.5%; the AIC-selected copula ('gaussian') reconciles to nested within 1.4%. Root cause confirmed: the gap is driven by the WRONG dependence input (negative ESG factor correlation vs strongly positive realised loss co-movement), not primarily tail dependence (the t-copula collapses toward Gaussian; survival-Clayton bounds conservatively from above). Recommended aggregation is now copula-on-realised-losses; var-covar retained for reference. Residual: empirical marginals cannot extrapolate beyond the simulated component range; tail-dependence estimates are sampling-noisy; credentialled calibration + independent APS X2 review still required. | Phase 18 Task 4: extended the copula-on-realised-losses mitigation to FOUR drivers (rate + equity + credit + lapse). With the lapse driver the raw ESG-factor var-covar understatement WIDENS to 47.4% (vs ~38.7% three-driver), while the AIC-selected 'gaussian' copula on realised losses still reconciles to four-driver nested capital within 9.4% \u2014 confirming the root cause is the wrong dependence INPUT, not primarily tail dependence, and that the copula aggregation scales to more drivers. New four-driver finding: the lapse driver couples to the policyholder benefit MULTIPLICATIVELY (the in-force x equity-guarantee cross-term), so the CRN additive decomposition leaves a -11.1%-of-nested interaction residual and the genuine nested capital is NOT bounded by the CRN-additive standalone sum (super-additive tail). Residual unchanged: empirical marginals do not extrapolate; tail-dependence estimates sampling-noisy; credentialled calibration + independent APS X2 review pending."
     },
     {
       "risk_id": "MR-011",
@@ -1901,8 +2045,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
       "created_at": "2026-06-05T07:10:02.898466+00:00",
-      "updated_at": "2026-06-05T09:16:33.841258+00:00",
-      "notes": "Phase 18 Task 2 (G-CR): CIR++ credit-spread parameters calibrated to CNY AA+ corporate OAS educational-proxy history. kappa=0.5028, long_run_spread=0.0111 (111bp), sigma=0.0371, lambda=1.0575. ChangeRecord APPROVED + one PARAM_CHANGE audit entry; G-CR PASS. Residual (keeps MR-012 open, not closed): trivariate proxy still omits lapse/mortality/FX/liquidity drivers, and credentialled credit data + a genuine independent APS X2 review are required."
+      "updated_at": "2026-06-05T11:35:58.079068+00:00",
+      "notes": "Phase 18 Task 2 (G-CR): CIR++ credit-spread parameters calibrated to CNY AA+ corporate OAS educational-proxy history. kappa=0.5028, long_run_spread=0.0111 (111bp), sigma=0.0371, lambda=1.0575. ChangeRecord APPROVED + one PARAM_CHANGE audit entry; G-CR PASS. Residual (keeps MR-012 open, not closed): trivariate proxy still omits lapse/mortality/FX/liquidity drivers, and credentialled credit data + a genuine independent APS X2 review are required. | Phase 18 Task 4: the economic-capital proxy now spans FOUR correlated drivers (rate + equity + credit-spread + lapse-behaviour) with a tail-dependent copula aggregation and a converged, bootstrap-bounded, variance-reduced four-driver 99.5% capital metric (Sobol QMC variance-reduction ~3.3x). The lapse-behaviour index is a single systemic OU factor with PLACEHOLDER parameters; mortality/longevity trend, FX, and liquidity drivers are STILL omitted from the tail, and credentialled calibration + independent APS X2 review remain pending \u2014 so the four-driver figures stay EDUCATIONAL ONLY."
     }
   ]
 }
