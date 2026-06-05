@@ -4,6 +4,32 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-05T06:22Z — Phase 17 Task 4 (Three-driver tail convergence and stability)
+
+**Context:** The working tree already contained the Phase 17 Task 4 implementation and evidence artifacts ahead of the stale JSON state. This cycle reconciled the latest repo state, confirmed the artifacts, and advanced state/prompt/log to Task 5. The git index is still in the known phantom staged-delete/untracked mirror state; normal Python tooling is also unavailable in this Windows PATH (`python`, `py`, and `bash` not found).
+
+**Task Completed:** Phase 17 Task 4 — tail-convergence and stability diagnostics for the three-driver (rate + equity + credit-spread) 99.5% capital metric.
+
+**Accomplishments:**
+- Confirmed `par_model_v2/projection/multi_driver_tail_diagnostics.py` has the additive Phase 17 three-driver extension: `ThreeDriverTailConfig`, `VarianceReduction3D`, `ThreeDriverTailReport`, `ThreeDriverTailDiagnostics`, 3-D empirical-copula helpers, outer-count convergence, non-parametric bootstrap CI, and crude/antithetic/Sobol variance-reduction comparison.
+- Confirmed `tests/test_phase17_tail_diagnostics.py` covers config validation, 3-D sampling/correlation helpers, report shape, bootstrap/convergence ordering, 3x3 copula correlation, variance-reduction ratios, reproducibility digest, markdown/JSON round-trip, and model-use restrictions.
+- Confirmed `scripts/build_phase17_task4_tail_diagnostics.py` writes `docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.{json,md}`.
+- Updated `.claude-dev/MODEL_DEV_STATE.json`: Phase 17 Task 3 and Task 4 marked completed, Task 5 set in progress, progress now 89/90 tasks (98.9%).
+- Updated `MODEL_DEV_TASK_PROMPT.md` so the next cycle starts on Phase 17 Task 5 rather than repeating Task 4.
+
+**Evidence:** `docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.json` reports VERDICT PASS. Seed 42; n_fit=400; outer grid 500/1,000/2,000/3,000; bootstrap B=1,200 at N_outer=3,000; VR 80 x 2,048. Final VaR99.5=152,296.8; final ES=155,757.2; converged with recommended N_outer>=1,000. Bootstrap VaR=150,859.1 with 95% CI [149,634.1, 152,369.3], SE=692.4, relative halfwidth=0.91%. Sobol QMC reduces VaR-estimator variance by 2.76x; antithetic ratio is 0.89x and disclosed as expected for an extreme quantile.
+
+**Verification:** Node offline viewer self-test PASS (`ok:true`, 4 tabs, 7 SVG charts, 7 export controls, 0 JS errors, 0 network). JSON parse checks PASS for `.claude-dev/MODEL_DEV_STATE.json` and `docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.json`. Python tests could not be rerun in this shell because `python`, `py`, and `bash` are not on PATH.
+
+**Next Step:** Phase 17 Task 5 — governance refresh: open/refresh the credit-driver model-risk entry, publish the consolidated three-driver limitation card, create an OWNER_REVIEW ChangeRecord/audit append, and extend the offline viewer schema plus Capital/Aggregation tabs to the three-driver economic-capital proxy.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.5 / §3.1.3 — scenario adequacy, convergence, reproducibility, and model documentation addressed for the three-driver tail metric.
+- SOA ASOP 25 §3.3 — 3x3 correlated horizon-state distribution and empirical copula disclosed.
+- IA TAS M §3.6 — validation evidence, bootstrap uncertainty, and use restrictions documented.
+
+---
+
 ## Run 2026-06-04T00:58:00Z - Phase 12: Governance, Calibration, and Educational Packaging
 
 **Task Completed:** Add model limitation cards for every ESG and liability module.
@@ -6086,4 +6112,12 @@ to aggregate the three-driver (rate + equity + credit-spread) economic capital.
   `(rate, equity, spread)` path is shared across three valuations, so the components are *exactly
   additive*: `L_rate` (guaranteed PV, equity+credit OFF), `L_re` (equity ON) → equity component
   `L_re−L_rate`, `L_rc` (credit ON) → credit component `L_rc−L_rate`; `full = rate+equity+credit`. This
-  is 
+  is leakage-free isolation (no second independent draw). A test asserts the reconstruction equals an
+  independent full valuation to `rel=1e-9`.
+- **Var-covar aggregation with the governed 3×3 ESG driver correlation** (rate, equity, credit) via
+  `ThreeDriverCorrelation.matrix(...)` + `CorrelationMatrixValidator`; `SCR_agg = sqrt(s' C s)`.
+  Benchmarked to the fully-diversified three-driver nested capital (`capital_metrics_from_liabilities`
+  on the reconstructed full liability).
+- **MR-010 refreshed for three drivers.** Reports the realised capital-loss correlation matrix and the
+  ESG-factor-formula understatement of diversified nested capital.
+- Evidence builder `scripts/build_phas
