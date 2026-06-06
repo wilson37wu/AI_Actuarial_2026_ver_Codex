@@ -830,3 +830,216 @@ Do these **only once** disk space is freed, the ghost locks are removed, and `gi
    calibrators); add a G-LAPSE plausibility gate; governance refresh. **PHASE 19 COMPLETE** when documented.
 
 <!-- END OF PROMPT -->
+n the user folder regardless of git.
+
+---
+
+## Phase 19: Recovery-completion + viewer re-uplift + driver expansion (PLAN — source of truth is `.claude-dev/MODEL_DEV_STATE.json`)
+
+> This section was reconstructed 2026-06-06 PM-4 after a disk-full truncation lost the on-disk tail. One task per cycle, in order:
+
+1. ✅ DONE (2026-06-06) Post-recovery health gate (pytest batches green; offline self-test ok:true).
+2. ✅ DONE (2026-06-06) Re-applied the Phase 18 four-driver/copula viewer uplift on the healthy base.
+3. ✅ DONE (2026-06-06) Added the **mortality-trend** stochastic driver (5th capital driver; OU/Lee-Carter-style index)
+   to the nested ground truth + LSMC proxy (`par_model_v2/stochastic/mortality_trend.py` + `multi_driver_capital_5d.py`);
+   five-driver OOS proxy validation VERDICT PASS (OOS R²=0.9616).
+4. ✅ DONE (2026-06-06) **Five-driver tail-dependent aggregation** (PM-3: `multi_driver_capital_5d_aggregation.py`;
+   var-covar understates nested by 48.8% MR-010; gaussian copula reconciles 6.5%) **AND** **five-driver
+   tail-convergence/stability diagnostics** (PM-4: `FiveDriverTailDiagnostics` in `multi_driver_tail_diagnostics.py`).
+   Tail VERDICT PASS — VaR99.5 230,879 / ES 246,337, converged True (rec N_outer≥8,000), bootstrap 95% CI
+   [227,582, 241,861] SE 3,104 (±3.07%), Sobol QMC variance-reduction 4.80×, antithetic 0.78× (expected-ineffective).
+   Offline-viewer five-driver uplift complete (Mortality standalone-SCR bar + dynamic 5-driver pill; bundler prefers the
+   Phase 19 reports + surfaces mortality_scr; rebuilt model_result_viewer.html 92,142 B). MR-010/MR-012 governance refresh
+   done PM-3. Artifacts: `docs/validation/PHASE19_TASK4_{AGGREGATION,TAIL_DIAGNOSTICS,GOVERNANCE_REFRESH}_REPORT.{json,md}`;
+   `docs/MULTI_DRIVER_5D_{AGGREGATION,TAIL_DIAGNOSTICS}_CARD.md`. (SOA ASOP 56 §3.5/§3.1.3; ASOP 25 §3.3; ASOP 7 §3.3;
+   IA TAS M §3.6; Solvency II Del. Reg. Art. 234; L'Ecuyer 2018 RQMC)
+5. ⭐ **NEXT** — Calibrate the **lapse behavioural index** to an educational-proxy experience series (mirror the
+   GBM/HW1F/CIR calibrators: OU/AR(1) transition regression for the mean-reversion speed + long-run level, residual
+   variance for sigma); add a **G-LAPSE** plausibility gate; governance refresh (assumption_change ChangeRecord, MR
+   register). **PHASE 19 COMPLETE** when documented.
+
+**After Phase 19:** begin the standalone **offline user-interface** track per the scheduled-task directive — the stochastic
+model completes the calculation, then a no-pre-install UI consumes ONLY the model output to display results graphically and
+interactively. `model_result_viewer.html` (self-contained, no CDN/server/build; inline-SVG charts; 0 network) is the foundation.
+
+<!-- END OF PROMPT -->
+
+---
+
+# NEXT EXECUTION TRACK — STANDALONE OFFLINE USER INTERFACE (model dev 100% complete)
+
+All 19 phases / 100 model-development tasks are COMPLETE (2026-06-06 PM-5). Per the scheduled-task directive, focus now shifts to a standalone offline UI.
+
+## Hard requirements
+1. Zero pre-installation: runs by opening one HTML file in a browser. No Python/Node/server, no runtime CDN, no network calls.
+2. Output-only: do NOT re-run any calculation. Consume only model OUTPUT (`viewer_data.json` and/or `docs/validation/*REPORT.json`).
+3. Graphical and interactive: charts, tables, tabs, tooltips, export — all client-side, self-contained.
+
+## Foundation already in place
+- `model_result_viewer.html` (self-contained; passes `scripts/offline_viewer_self_test.cjs`, 0 network/0 JS errors) — the baseline, built by `scripts/build_offline_viewer.py` from `par_model_v2/viewer/viewer_template.html` + the Phase 19 report JSONs.
+- `combined_model_app.html` + `combined_app_data.json` (inline SVG chart shim, no CDN); `viewer_data.json` (the output contract).
+
+## Staged plan (ONE task per cycle)
+- ✅ DONE (2026-06-06 PM-6) UI Task 1 — Inventory & contract. `scripts/build_ui_data.py` (no-calc bundler) catalogues every model-output JSON (32 artifacts, each SHA-256-addressed) and all calibrations incl. the new lapse **G-LAPSE** report into one stable `ui_data.json` contract (v1.0.0: meta/summary/inventory/capital/tail/proxy/loss/calibrations/governance/verdicts), and emits a self-contained `ui_app.html` with the snapshot embedded inline. `scripts/ui_app_self_test.cjs` (jsdom) asserts **0 network / 0 JS errors** → ok:true (5 tabs, 32 inventory rows, 6 calibration gates, 8 capital cards). External-ref scan clean; py_compile clean.
+- ✅ DONE (2026-06-06 PM-7) UI Task 2 — Capital & tail dashboard. Added a zero-dependency inline-SVG chart toolkit (barChart/ciChart/lineChart + delegated tooltips) to `scripts/build_ui_data.py`'s `HTML_TEMPLATE` and rebuilt the Capital & Tail tab into a 4-view segmented dashboard: (1) **Driver SCRs** — 5 standalone-SCR bars with %-of-sum tooltips; (2) **Aggregation** — standalone-sum → var-covar → 3 copula candidates (gaussian selected/outlined, student_t, survival_clayton) vs the dashed nested benchmark, tooltips show rel-err/diversification/tail-dependence/AIC; (3) **VaR / ES + CI** — point estimates with 95% bootstrap-CI whiskers + variance-reduction ratios; (4) **Convergence** — VaR & ES vs outer_grid with the recommended-n* marker. Self-test extended (`capitalSubnavBtns===4`, `capitalSvgCharts>=4`, `driverBars>=5`, `capitalTipElems>=10`) → **ok:true, 0 network / 0 JS errors**. External-ref scan clean (0 http/src/link); py_compile clean. NOTE: the sandbox `/sessions` disk hit 100% mid-run and truncated three file-tool writes; recovered by switching all mount writes to the bash head+heredoc+mv workaround.
+- ✅ DONE (2026-06-06 PM-8) UI Task 3 — Calibration explorer. Rebuilt `renderCalibrations()` in `scripts/build_ui_data.py`'s HTML_TEMPLATE into a per-driver explorer: a driver sub-nav (one segmented button per calibration record) toggling a detail panel per driver with (a) KPI cards (gate id, observations, fit R², optimiser-converged), (b) a gate-criteria pass/fail breakdown, (c) a calibrated-parameter table, and (d) a zero-dependency inline-SVG fit-diagnostics bar chart (HW1F swaption RMSE/max-error vs the dashed G-02 25 bps band; GBM σ implied/historical/blended; CIR++ initial/long-run-P/long-run-Q spread levels in bp; OU-lapse half-life/stationary-σ/A-E). The bundler's `_build_calibrations()` now attaches a `diagnostics` block {method,n_obs,fit_r2,converged,criteria[],fit_bars} per record (contract bumped to **v1.1.0**, additive) and adds an honest **mortality-trend** panel (educational OU placeholder; no data calibration, no G-MORT gate — flagged placeholder). Self-test extended (calibDrivers≥5, calibPanels≥5, calibCharts≥1, calibCrit≥3, calibParamRows≥1) → **ok:true**: 7 driver panels, 6 fit charts, 32 criteria rows, 31 param rows, **0 network / 0 JS errors**; external-ref scan clean (0); py_compile clean. NOTE: `/sessions` was at 100% (19 MB free) and truncated a file-tool write of the bundler mid-cycle; recovered by rebuilding the file off-mount in `/var/tmp` and writing back with byte-count + parse verification.
+- ✅ DONE (2026-06-06 PM-9) UI Task 4 — Governance & assumptions view. Rebuilt `renderGovernance()` in `scripts/build_ui_data.py`'s HTML_TEMPLATE into a 4-view segmented dashboard over the read-only governance export: (1) **Deployment gates** — a cleared/total progress bar + 12 gate cards (status chip, level/blocking badges, hover tip); (2) **Model-risk register** — rating + mitigation-status filters driving a zero-dependency inline-SVG impact×likelihood heatmap (5×5, count-binned) and an expandable risk table (click a row for description/mitigation/standards basis); (3) **Change records** — a newest-first ChangeRecord approval timeline; each record expands to its standards basis + full peer-review→owner-review→approval sign-off chain (40 sign-off steps across 18 records); (4) **Audit integrity** — a recomputed offline integrity badge (holds iff every audit entry verified and none failed) + entries/verified/failed/sign-off-step KPI cards + change-by-status/by-type distributions. No data-contract change (governance section already in v1.1.0; UI-only). Self-test extended (govSubnavBtns===4, govGateCards>=5, govRiskRows>=5, govRiskFilterWorks, govHeatCells>=25, govChangeItems>=5, govSignoff>=1, govAuditBadge>=1) -> **ok:true**: 5 tabs, 12 gate cards, 12 risk rows (6 under the HIGH filter), 25 heat cells, 18 change records, 40 sign-off steps, **0 network / 0 JS errors**; external-ref scan clean (0 http/src/link); py_compile clean; ui_app.html rebuilt = 115,617 B. **SANDBOX BLOCKER (recovered):** the `/sessions` mount stayed at 100% (19 MB free) and the **Edit/Write file-tools silently TRUNCATED** mid-write -- they cut `build_ui_data.py` at line ~1053 (inside govGatesBlock) and corrupted `ui_app_self_test.cjs`. Recovered with NO source loss by: reading the intact pre-template code from the truncated file, recovering the complete original `HTML_TEMPLATE` from the surviving good bytecode `scripts/__pycache__/build_ui_data.cpython-310.pyc`, recovering the lost `write_outputs()/main()` writer from its disassembly, re-applying the 3 governance edits in Python off-mount, then **`cp`-ing back (bash cp works where the file-tools truncate)** with byte-count + `cmp` + py_compile verification. **Future cycles on this sandbox: do NOT use the Edit/Write file-tools for files on the full `/sessions` mount -- build off-mount and `cp` back with verification.**
+- ✅ DONE (2026-06-06 PM-10) — UI Task 5 — Packaging & polish (FINAL UI task): consolidate to a single self-contained build, add Export PNG (canvas-serialise each inline-SVG chart) + Export CSV (inventory / risk register / change records), a Print stylesheet, keyboard/ARIA accessibility on tabs+subnavs+filters, and a README/usage note. Keep the self-test at 0 network / 0 JS errors and the external-ref scan clean. NOTE: write all mount files via bash `cp`/heredoc, never the Edit/Write file-tools, while `/sessions` is full.
+
+
+---
+
+# UI TRACK COMPLETE (2026-06-06 PM-10)
+
+All five offline-UI tasks are DONE. `ui_app.html` (126,787 B) is a zero-install, fully-offline,
+output-only viewer: 5 interactive tabs; inline-SVG charts; **Export PNG** (canvas-serialised charts),
+**CSV** exports (inventory / risk register / change records), a **print/Save-PDF** stylesheet, and
+**keyboard/ARIA** accessibility on tabs + sub-navs + filters. `scripts/ui_app_self_test.cjs`
+(jsdom) → **ok:true, 0 network / 0 JS errors** (40 checks); external-ref scan clean (sole runtime
+`xmlns` on PNG export only); `py_compile` clean; `ui_data.json` contract v1.1.0. Usage note: `UI_README.md`.
+
+Build/verify: `PYTHONPATH=. python3 scripts/build_ui_data.py && node scripts/ui_app_self_test.cjs ui_app.html`.
+
+> SANDBOX NOTE (still applies): `/sessions` disk is at 100% (~19 MB free) and the Edit/Write
+> file-tools TRUNCATE mid-write on this mount. This cycle built off-mount in `/tmp` and `cp`-ed
+> back with `cmp` + byte-count + py_compile + self-test verification. Future cycles MUST do the same
+> (bash `cp`/heredoc, never the Edit/Write file-tools) until a human frees disk and clears the ghost
+> git locks (`.git/index.lock`, `.git/HEAD.lock`) so commits/pushes can resume.
+
+## NEXT EXECUTION — Phase 20 (market-consistency / multi-factor uplift)
+
+Model development reached 100% across 19 phases and the offline-UI track is complete. Per the
+scheduled-task directive ("research for further improvement to the stochastic model"), the active
+track is a **market-consistency / multi-factor uplift**. ONE task per cycle, mirroring prior
+structure; each ends with a validation gate + governance ChangeRecord (OWNER_REVIEW) + MR-register refresh.
+
+**Progress:**
+
+1. ✅ **DONE (2026-06-06) — Two-factor interest-rate driver (G2++ / 2F Hull-White).** Exact OU
+   simulator + analytic initial-curve-fitted ZCB/bond-option formulas + **G-RATE2** gate (PASS 6/6).
+   `par_model_v2/stochastic/g2pp_rate.py`; `tests/test_phase20_g2pp_rate.py` (7 pass);
+   `scripts/build_phase20_task1_g2pp.py`; ChangeRecord OWNER_REVIEW; MR-013 opened.
+2. ✅ **DONE (2026-06-06) — Swaption-surface calibration of G2++.** Analytic Brigo-Mercurio European
+   swaption pricer (Gauss-Hermite decomposition into an option on the coupon bond; MC-cross-checked
+   within 4 SE), Black-76 ATM targets, pure-numpy Nelder-Mead calibration of (a,b,sigma,eta,rho), and
+   the **G-SWPN** gate (PASS 7/7; vol RMSE 54.7 bps over 24 ATM quotes). Calibrated a=0.0345, b=0.9583,
+   sigma=0.00637, eta=0.00240, rho=-0.908. `par_model_v2/stochastic/g2pp_swaption.py`;
+   `tests/test_phase20_g2pp_swaption.py` (14 pass); `scripts/build_phase20_task2_swaption.py`;
+   ChangeRecord `6c7d5354530c451a9a6ab46f33a8dba0` OWNER_REVIEW; MR-013 refreshed; audit integrity True.
+3. ✅ **DONE (2026-06-06) — Market-consistency (martingale) validation gate (G-MART).** Added the
+   additive, output-only `par_model_v2/validation/phase20_market_consistency.py`: an EXACT,
+   initial-curve-consistent HW1F simulator (`simulate_hw1f_exact`) and the **G-MART** gate verifying,
+   under the money-market numeraire, that deflated assets are Q-martingales — MART-HW1F-ZCB (5y/10y),
+   MART-G2PP-ZCB (5y/10y), MART-EQ-FWD (ex-div discounted GBM equity), MART-FX-CIP (covered interest
+   parity), each a 4-sigma MC test. **G-MART PASS** (6/6 ERROR checks; worst 1.22 sigma; max rel err
+   3.9e-4; 40k paths; t=1y). Trapezoidal deflator for bond checks (O(dt^2)); left-point deflator for
+   equity/FX (matches the Euler drift → discrete identity exact); G2++ ZCB vectorised (bit-identical to
+   the scalar pricer). Honest diagnostics (non-gating): the educational monthly-Euler `HullWhiteRateProcess.simulate`
+   has a ~7% (~59 sigma) martingale bias vs the exact dynamics (MART-HW1F-EULER-BIAS), and the discounted
+   equity drifts up by exp(ERP*t) under P (MART-PQ-MEASURE). 14 tests PASS (`tests/test_phase20_market_consistency.py`);
+   regression Task1+2 21 PASS, IA-validation+health 115 PASS. `scripts/build_phase20_task3_market_consistency.py`;
+   `docs/validation/PHASE20_TASK3_G_MART_REPORT.{json,md}`; `docs/MARKET_CONSISTENCY_G_MART_CARD.md`;
+   ChangeRecord `955fe35ce8034a9cb98904a7b6d79c62` OWNER_REVIEW; MR-013 refreshed; audit integrity True.
+   (SOA ASOP 56 §3.1.3/§3.5; IA TAS M §3.6; Solvency II Del. Reg. Art. 22/234; Brigo-Mercurio 2006)
+4. ✅ **DONE (2026-06-06) — Capital re-aggregation with the two-factor G2++ rates driver.** Additive G2++
+   outer-rate state (dominant factor carries the governed 5×5 ESG cross-correlation; second factor adds an
+   orthogonal slope/curvature axis); governed HW1F inner nest reused as the conditional liability operator.
+   Calibrated 2F driver lowers horizon short-rate dispersion ~114→~49 bps; nested SCR 104,132 (HW1F) →
+   55,116 (G2++, −47.1%). G2++ var-covar understates nested 39.7%; gaussian copula reconciles within 12.4%
+   (beats var-covar). Tail diagnostics (VaR/ES, outer convergence, bootstrap 99.5% CI rel-halfwidth 17.9%)
+   refreshed; MR-010 & MR-012 refreshed (MITIGATED); ChangeRecord OWNER_REVIEW; audit integrity True;
+   4 new pytests PASS; regression 21+22+13+51 PASS.
+5. ✅ **DONE (2026-06-06) — Offline-UI propagation for Phase 20.** G-SWPN G2++ swaption-calibration panel,
+   G-MART headline verdict, and G2++ 2F capital/tail dashboard sources wired into `ui_data.json`/`ui_app.html`
+   (contract bumped to **1.2.0**); `node scripts/ui_app_self_test.cjs ui_app.html` → ok:true, 0 network / 0 JS
+   errors. **PHASE 20 COMPLETE.**
+
+<!-- END OF PROMPT (Phase 20) -->
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-06 (PM, supersedes everything above)
+
+**Model development is 100% complete: all 19 phases + Phase 20 (market-consistency / multi-factor uplift), 100/100
+documented tasks, plus the standalone offline-UI track (`ui_app.html`, contract 1.2.0, 0 network / 0 JS errors).**
+The canonical source of truth is `.claude-dev/MODEL_DEV_STATE.json` (`Phase 20 … status: "completed"`,
+`tasks_completed: 100`). The older "Phase 20 Task 4 ⭐ NEXT" line above is **stale** — Tasks 4 & 5 are done.
+
+### 🛑 SANDBOX-DOWN BLOCKER THIS CYCLE (ESCALATED — HUMAN ACTION REQUIRED)
+This cycle could run **no code at all**. The `/sessions` shared volume is now so full that the Linux sandbox
+**cannot even boot a user**: every `bash` call fails with
+`useradd: /etc/passwd.NNNNN: No space left on device … cannot lock /etc/passwd`. This is a hard escalation
+beyond the prior "100% full but functional" state — previously Python/pytest/node still ran from `/var/tmp/pylibs`;
+now the shell itself will not start. Consequently **no pytest, no node self-test, no git, no numeric work** was
+possible. This cycle was limited to file-tool reads/writes against the user's Windows folder (a different
+filesystem from the full `/sessions` mount) to update planning docs and email the human.
+
+**This blocker is NOT resolvable from the sandbox. A human must free disk on the host that backs `/sessions`
+before any further executable cycle can run.** Until then, every cycle will be a no-op for code.
+
+### Persisting blockers carried forward (all human-only)
+1. **Disk:** free space on the host backing `/sessions` (root cause of the sandbox-boot failure AND the prior
+   silent file-tool write-truncation on that mount).
+2. **Ghost git locks:** `.git/index.lock` + `.git/HEAD.lock` (2026-06-03) — unremovable from the sandbox; delete
+   in a real shell, then `git reset`. There is an **un-pushed local commit backlog** (state file shows
+   `commits_this_session: 72`, last pushed sha `fa5d5fe` = Phase 16) — Phases 17–20 are committed locally via the
+   alt-`GIT_INDEX_FILE` workaround but **need a human `git push origin main`** once the locks are cleared.
+3. **Production sign-off residual (not a code gap):** every Phase 14–20 ChangeRecord sits at OWNER_REVIEW with
+   final APPROVED withheld pending (a) calibration to **credentialled** data and (b) an **independent APS X2**
+   review. This is the standing governance residual, by design, for an educational model.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-07 (supersedes everything above)
+
+**Blockers cleared this cycle:** `/sessions` disk freed; sandbox boots; Python + pytest + scipy
+available; git functional. **Health gate PASS: 2,084 passed / 0 failed** (4 single tests exceed the
+44s sandbox wall-clock — disclosed in MODEL_DEV_LOG.md; rerun them in an unconstrained shell).
+
+**Phase 21 Task 1 is COMPLETE** (FX sixth driver + G-FX gate PASS 6/6; six-driver aggregation PASS;
+ChangeRecord `25e1eac6661a4d9bb74276ee1a2a4b46` OWNER_REVIEW; MR-012 refreshed; audit True). See
+`docs/validation/PHASE21_TASK1_FX_DRIVER_REPORT.{json,md}` and `docs/FX_DRIVER_G_FX_CARD.md`.
+
+**NEXT executable task: Phase 21 Task 2** (out-of-sample six-driver proxy validation, below).
+
+**Sandbox operating rules learned (apply to every future cycle):**
+1. Each bash call has a ~44s hard wall; background/detached processes are KILLED when the call
+   ends. Do not trust `pgrep` liveness checks (they self-match the polling command) — verify via
+   `/proc/loadavg` and output artifacts.
+2. Stage long computations. `scripts/build_phase21_task1_fx.py --stage outer|slice|finalise` is the
+   reference pattern: slice-stable CRN (`SeedSequence(seed).spawn(n_full)[i0:i1]`) makes staged
+   bit-identical to monolithic (regression-tested). Reuse this pattern for Task 2's heavy nested runs.
+3. Run pytest in chunks (`-n 2`, file/class/test granularity) with done-tracking; record any test
+   that cannot fit the wall as NOT RUN with a reason.
+
+## Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital ⭐ IN PROGRESS (Task 1 ✅ — next: Task 2)
+
+**Do not start until the sandbox boots again (disk freed) and `python3 -m pytest -q` runs in <45 s batches at
+0 failures.** The economic-capital proxy currently spans **five** drivers (rate → now G2++ 2F, equity, credit
+spread, dynamic lapse, mortality trend). The two documented-but-omitted drivers are **FX/currency** and
+**liquidity** (see MR-012 residual text). Phase 21 adds them, mirroring the established per-cycle structure —
+one task per cycle, each ending with a validation gate + governance ChangeRecord (OWNER_REVIEW) + MR-register
+refresh + offline-UI propagation. Source of truth for task state remains `.claude-dev/MODEL_DEV_STATE.json`.
+
+1. ✅ **FX / currency driver (6th driver) — COMPLETE 2026-06-07.** `multi_driver_capital_6d_fx.py`:
+   lognormal FX spot (P outer / Q CIP drift), CIP-exact analytic inner conditioning, 6x6 governed
+   correlation, six-driver standalone/var-covar/copula/nested aggregation, G-FX gate PASS 6/6 with
+   MART-FX-CIP evidence; 11 tests; staged build. Six-driver LSMC surface extension was deliberately
+   deferred to Task 2 (where its OOS validation lives) — the nested benchmark is the 6D ground truth.
+2. **Out-of-sample six-driver proxy validation.** Disjoint-seed hold-out vs HEAVY nested truth; (degree,
+   max_interaction_order) basis selection by OOS RMSE/R²; leakage + overfit diagnostics; honest verdict.
+3. **Liquidity driver (7th driver) + calibration.** Add a liquidity-premium / funding-spread driver; calibrate
+   it to an educational-proxy series (mirror the GBM/HW1F/CIR/OU-lapse calibrators) with a **G-LIQ** gate.
+4. **Six/seven-driver tail-dependent aggregation + tail diagnostics.** Copula-on-realised-losses re-aggregation,
+   var-covar vs copula vs nested reconciliation, tail convergence / bootstrap CI / variance-reduction; refresh
+   MR-010/MR-012; governance ChangeRecord OWNER_REVIEW. (Solvency II Del. Reg. Art. 234; IA TAS M §3.6)
+5. **Offline-UI propagation.** Surface the FX + liquidity standalone SCRs, the new gates (G-FX/G-LIQ), and the
+   six/seven-driver aggregation/tail read-outs in the bundler + `ui_app.html`; keep the self-test at 0 network /
+   0 JS errors; no contract break (additive). **PHASE 21 COMPLETE** when documented.
+
+**After Phase 21 (research direction):** stochastic-volatility / Heston equity, a regime-switching or
+Lévy ESG extension, and — the highest-value governance step — replacing the educational-proxy calibrations with
+**credentialled** market/experience data plus the independent APS X2 review, which is what actually moves the
+ChangeRecords from OWNER_REVIEW to APPROVED. None of these are code gaps in the current educational build.
+
+<!-- END OF PROMPT -->

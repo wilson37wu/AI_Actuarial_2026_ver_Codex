@@ -1,0 +1,535 @@
+{
+  "run_timestamp": "2026-06-06T08:25:30.201161+00:00",
+  "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+  "task": "Phase 20 Task 2 - G2++ swaption-surface calibration and G-SWPN gate",
+  "gate": {
+    "gate_id": "G-SWPN",
+    "status": "PASS",
+    "checks": [
+      {
+        "check_id": "G-SWPN-01",
+        "description": "ATM payer/receiver swaption prices satisfy put-call (swap) parity",
+        "passed": true,
+        "observed": 9.71445146547012e-17,
+        "threshold": "<= 1e-7 absolute price difference"
+      },
+      {
+        "check_id": "G-SWPN-02",
+        "description": "Calibration converged (mean relative price objective below 1)",
+        "passed": true,
+        "observed": 0.000727136232865106,
+        "threshold": "converged and objective < 0.1"
+      },
+      {
+        "check_id": "G-SWPN-03",
+        "description": "Implied-vol RMSE across the surface within educational tolerance",
+        "passed": true,
+        "observed": 54.67058361346492,
+        "threshold": "<= 75 bps"
+      },
+      {
+        "check_id": "G-SWPN-04",
+        "description": "Worst-point implied-vol error within educational tolerance",
+        "passed": true,
+        "observed": 172.98761081990298,
+        "threshold": "<= 200 bps"
+      },
+      {
+        "check_id": "G-SWPN-05",
+        "description": "Calibrated parameters lie in the admissible G2++ region (b != a, vols>0, |rho|<1)",
+        "passed": true,
+        "observed": -0.9082136050335214,
+        "threshold": "a,b>0 distinct; sigma,eta>0; -1<rho<1"
+      },
+      {
+        "check_id": "G-SWPN-06",
+        "description": "All calibrated ATM swaption model prices are strictly positive",
+        "passed": true,
+        "observed": 0.002065767096568501,
+        "threshold": "> 0 for every grid point"
+      },
+      {
+        "check_id": "G-SWPN-07",
+        "description": "Calibrated engine still reprices the input curve (affine ZCB identity)",
+        "passed": true,
+        "observed": 0.0,
+        "threshold": "<= 1e-12 absolute price error"
+      }
+    ],
+    "calibration": {
+      "params": {
+        "mean_reversion_x": 0.0345437806981911,
+        "mean_reversion_y": 0.9582779369460774,
+        "vol_x": 0.006369513208373254,
+        "vol_y": 0.0024001097598661688,
+        "factor_correlation": -0.9082136050335214
+      },
+      "initial_params": {
+        "mean_reversion_x": 0.1,
+        "mean_reversion_y": 0.5,
+        "vol_x": 0.01,
+        "vol_y": 0.007,
+        "factor_correlation": -0.6
+      },
+      "rmse_relative_price": 0.026965463705731187,
+      "rmse_vol_bps": 54.67058361346492,
+      "max_abs_vol_bps": 172.98761081990298,
+      "objective_value": 0.000727136232865106,
+      "n_quotes": 24,
+      "iterations": 931,
+      "converged": true,
+      "per_quote": [
+        {
+          "expiry": 1.0,
+          "tenor": 1.0,
+          "forward": 0.022622772017860865,
+          "market_vol": 0.2374,
+          "model_vol": 0.2378795879499763,
+          "vol_error_bps": 4.795879499762956,
+          "target_price": 0.0020616218852801227,
+          "model_price": 0.002065767096568501,
+          "rel_price_error": 0.0020106554543172983
+        },
+        {
+          "expiry": 1.0,
+          "tenor": 2.0,
+          "forward": 0.02367266428597376,
+          "market_vol": 0.2315,
+          "model_vol": 0.23477015395231732,
+          "vol_error_bps": 32.70153952317306,
+          "target_price": 0.004157735094923827,
+          "model_price": 0.004216199626679482,
+          "rel_price_error": 0.014061629810671359
+        },
+        {
+          "expiry": 1.0,
+          "tenor": 5.0,
+          "forward": 0.025712804482194613,
+          "market_vol": 0.2214,
+          "model_vol": 0.21729503951806112,
+          "vol_error_bps": -41.04960481938896,
+          "target_price": 0.010393507269705646,
+          "model_price": 0.010201566304312704,
+          "rel_price_error": -0.018467391267661896
+        },
+        {
+          "expiry": 1.0,
+          "tenor": 10.0,
+          "forward": 0.02706265574184974,
+          "market_vol": 0.2125,
+          "model_vol": 0.1952012389180097,
+          "vol_error_bps": -172.98761081990298,
+          "target_price": 0.019643470340441425,
+          "model_price": 0.018049671355337867,
+          "rel_price_error": -0.08113632456390812
+        },
+        {
+          "expiry": 2.0,
+          "tenor": 1.0,
+          "forward": 0.02474817658438324,
+          "market_vol": 0.2271,
+          "model_vol": 0.22517554963561526,
+          "vol_error_bps": -19.244503643847388,
+          "target_price": 0.002972642833669497,
+          "model_price": 0.0029476657482912744,
+          "rel_price_error": -0.008402316314399015
+        },
+        {
+          "expiry": 2.0,
+          "tenor": 2.0,
+          "forward": 0.025348419623415358,
+          "market_vol": 0.2212,
+          "model_vol": 0.22349898307210586,
+          "vol_error_bps": 22.989830721058535,
+          "target_price": 0.005857794996541545,
+          "model_price": 0.0059181738169357245,
+          "rel_price_error": 0.010307431453273336
+        },
+        {
+          "expiry": 2.0,
+          "tenor": 5.0,
+          "forward": 0.027002915664852935,
+          "market_vol": 0.2111,
+          "model_vol": 0.2072835357191316,
+          "vol_error_bps": -38.164642808684036,
+          "target_price": 0.014308826711100177,
+          "model_price": 0.014052002503128274,
+          "rel_price_error": -0.01794865597000134
+        },
+        {
+          "expiry": 2.0,
+          "tenor": 10.0,
+          "forward": 0.0276654688257673,
+          "market_vol": 0.2022,
+          "model_vol": 0.1901298858336625,
+          "vol_error_bps": -120.70114166337493,
+          "target_price": 0.026253409000334176,
+          "model_price": 0.024695958294501566,
+          "rel_price_error": -0.05932375128170155
+        },
+        {
+          "expiry": 3.0,
+          "tenor": 1.0,
+          "forward": 0.025964187734781097,
+          "market_vol": 0.2171,
+          "model_vol": 0.21749633088246734,
+          "vol_error_bps": 3.963308824673495,
+          "target_price": 0.0035537200388665235,
+          "model_price": 0.003560131287772718,
+          "rel_price_error": 0.001804095099241302
+        },
+        {
+          "expiry": 3.0,
+          "tenor": 2.0,
+          "forward": 0.026863801214691674,
+          "market_vol": 0.2112,
+          "model_vol": 0.21180461929862762,
+          "vol_error_bps": 6.046192986276234,
+          "target_price": 0.007060276282065627,
+          "model_price": 0.007080262963382979,
+          "rel_price_error": 0.0028308639094084386
+        },
+        {
+          "expiry": 3.0,
+          "tenor": 5.0,
+          "forward": 0.02769129246358666,
+          "market_vol": 0.2011,
+          "model_vol": 0.201167206318771,
+          "vol_error_bps": 0.6720631877099592,
+          "target_price": 0.01663586999577047,
+          "model_price": 0.016641373602085126,
+          "rel_price_error": 0.00033082768235472086
+        },
+        {
+          "expiry": 3.0,
+          "tenor": 10.0,
+          "forward": 0.028063782482627773,
+          "market_vol": 0.1923,
+          "model_vol": 0.18578300028614253,
+          "vol_error_bps": -65.16999713857469,
+          "target_price": 0.030133142879387474,
+          "model_price": 0.02912087372294458,
+          "rel_price_error": -0.03359321530099451
+        },
+        {
+          "expiry": 5.0,
+          "tenor": 1.0,
+          "forward": 0.02778922032502498,
+          "market_vol": 0.2034,
+          "model_vol": 0.2029147838860862,
+          "vol_error_bps": -4.852161139138056,
+          "target_price": 0.004343401216555687,
+          "model_price": 0.004333216584707883,
+          "rel_price_error": -0.002344851727946147
+        },
+        {
+          "expiry": 5.0,
+          "tenor": 2.0,
+          "forward": 0.02838902446574558,
+          "market_vol": 0.1974,
+          "model_vol": 0.19840886921999049,
+          "vol_error_bps": 10.088692199904937,
+          "target_price": 0.008495759965192974,
+          "model_price": 0.00853847420118479,
+          "rel_price_error": 0.005027712196061956
+        },
+        {
+          "expiry": 5.0,
+          "tenor": 5.0,
+          "forward": 0.028584149900329796,
+          "market_vol": 0.1873,
+          "model_vol": 0.19100885160564635,
+          "vol_error_bps": 37.08851605646352,
+          "target_price": 0.019474707472775837,
+          "model_price": 0.0198545689784682,
+          "rel_price_error": 0.01950537671610109
+        },
+        {
+          "expiry": 5.0,
+          "tenor": 10.0,
+          "forward": 0.028467782975054083,
+          "market_vol": 0.1785,
+          "model_vol": 0.1787337745625947,
+          "vol_error_bps": 2.3377456259471296,
+          "target_price": 0.03455355454673267,
+          "model_price": 0.03459820915395971,
+          "rel_price_error": 0.0012923303495923574
+        },
+        {
+          "expiry": 7.0,
+          "tenor": 1.0,
+          "forward": 0.028060531873028243,
+          "market_vol": 0.1966,
+          "model_vol": 0.19772412374717926,
+          "vol_error_bps": 11.241237471792676,
+          "target_price": 0.004727233173486923,
+          "model_price": 0.004753653659197286,
+          "rel_price_error": 0.005588995664217493
+        },
+        {
+          "expiry": 7.0,
+          "tenor": 2.0,
+          "forward": 0.02839379002736911,
+          "market_vol": 0.1906,
+          "model_vol": 0.19441878142851876,
+          "vol_error_bps": 38.18781428518769,
+          "target_price": 0.009151236384193403,
+          "model_price": 0.009330619013545108,
+          "rel_price_error": 0.01960201024438031
+        },
+        {
+          "expiry": 7.0,
+          "tenor": 5.0,
+          "forward": 0.028427827519862312,
+          "market_vol": 0.1805,
+          "model_vol": 0.18740302277499624,
+          "vol_error_bps": 69.03022774996242,
+          "target_price": 0.020821909244024158,
+          "model_price": 0.021602338852033304,
+          "rel_price_error": 0.03748117422196177
+        },
+        {
+          "expiry": 7.0,
+          "tenor": 10.0,
+          "forward": 0.02862904869110005,
+          "market_vol": 0.1717,
+          "model_vol": 0.17274445774540442,
+          "vol_error_bps": 10.444577454044312,
+          "target_price": 0.03729291235313701,
+          "model_price": 0.03751585701611698,
+          "rel_price_error": 0.0059782046751631224
+        },
+        {
+          "expiry": 10.0,
+          "tenor": 1.0,
+          "forward": 0.02782128092654243,
+          "market_vol": 0.1899,
+          "model_vol": 0.19293464935350235,
+          "vol_error_bps": 30.346493535023388,
+          "target_price": 0.004949465114620945,
+          "model_price": 0.005026154898604895,
+          "rel_price_error": 0.015494559959096418
+        },
+        {
+          "expiry": 10.0,
+          "tenor": 2.0,
+          "forward": 0.027951262010230668,
+          "market_vol": 0.184,
+          "model_vol": 0.19050578850435468,
+          "vol_error_bps": 65.05788504354682,
+          "target_price": 0.009512616392532609,
+          "model_price": 0.009839081997821292,
+          "rel_price_error": 0.034319223210236734
+        },
+        {
+          "expiry": 10.0,
+          "tenor": 5.0,
+          "forward": 0.028333737283988063,
+          "market_vol": 0.1738,
+          "model_vol": 0.18046806332358117,
+          "vol_error_bps": 66.68063323581164,
+          "target_price": 0.021876581177393006,
+          "model_price": 0.02269378952294649,
+          "rel_price_error": 0.03735539565926225
+        },
+        {
+          "expiry": 10.0,
+          "tenor": 10.0,
+          "forward": 0.028945354391865626,
+          "market_vol": 0.165,
+          "model_vol": 0.16344530439695337,
+          "vol_error_bps": -15.546956030466353,
+          "target_price": 0.03963315095480437,
+          "model_price": 0.039267990703078084,
+          "rel_price_error": -0.009213505434950127
+        }
+      ]
+    },
+    "use_restriction": "EDUCATIONAL ONLY. Calibrated to a synthetic proxy swaption surface; re-calibrate to a validated market surface and obtain independent review before any production, capital, or disclosure use."
+  },
+  "proxy_grid": {
+    "frequency": 2,
+    "expiries": [
+      1.0,
+      2.0,
+      3.0,
+      5.0,
+      7.0,
+      10.0
+    ],
+    "tenors": [
+      1.0,
+      2.0,
+      5.0,
+      10.0
+    ],
+    "quotes": [
+      {
+        "expiry": 1.0,
+        "tenor": 1.0,
+        "black_vol": 0.2374
+      },
+      {
+        "expiry": 1.0,
+        "tenor": 2.0,
+        "black_vol": 0.2315
+      },
+      {
+        "expiry": 1.0,
+        "tenor": 5.0,
+        "black_vol": 0.2214
+      },
+      {
+        "expiry": 1.0,
+        "tenor": 10.0,
+        "black_vol": 0.2125
+      },
+      {
+        "expiry": 2.0,
+        "tenor": 1.0,
+        "black_vol": 0.2271
+      },
+      {
+        "expiry": 2.0,
+        "tenor": 2.0,
+        "black_vol": 0.2212
+      },
+      {
+        "expiry": 2.0,
+        "tenor": 5.0,
+        "black_vol": 0.2111
+      },
+      {
+        "expiry": 2.0,
+        "tenor": 10.0,
+        "black_vol": 0.2022
+      },
+      {
+        "expiry": 3.0,
+        "tenor": 1.0,
+        "black_vol": 0.2171
+      },
+      {
+        "expiry": 3.0,
+        "tenor": 2.0,
+        "black_vol": 0.2112
+      },
+      {
+        "expiry": 3.0,
+        "tenor": 5.0,
+        "black_vol": 0.2011
+      },
+      {
+        "expiry": 3.0,
+        "tenor": 10.0,
+        "black_vol": 0.1923
+      },
+      {
+        "expiry": 5.0,
+        "tenor": 1.0,
+        "black_vol": 0.2034
+      },
+      {
+        "expiry": 5.0,
+        "tenor": 2.0,
+        "black_vol": 0.1974
+      },
+      {
+        "expiry": 5.0,
+        "tenor": 5.0,
+        "black_vol": 0.1873
+      },
+      {
+        "expiry": 5.0,
+        "tenor": 10.0,
+        "black_vol": 0.1785
+      },
+      {
+        "expiry": 7.0,
+        "tenor": 1.0,
+        "black_vol": 0.1966
+      },
+      {
+        "expiry": 7.0,
+        "tenor": 2.0,
+        "black_vol": 0.1906
+      },
+      {
+        "expiry": 7.0,
+        "tenor": 5.0,
+        "black_vol": 0.1805
+      },
+      {
+        "expiry": 7.0,
+        "tenor": 10.0,
+        "black_vol": 0.1717
+      },
+      {
+        "expiry": 10.0,
+        "tenor": 1.0,
+        "black_vol": 0.1899
+      },
+      {
+        "expiry": 10.0,
+        "tenor": 2.0,
+        "black_vol": 0.184
+      },
+      {
+        "expiry": 10.0,
+        "tenor": 5.0,
+        "black_vol": 0.1738
+      },
+      {
+        "expiry": 10.0,
+        "tenor": 10.0,
+        "black_vol": 0.165
+      }
+    ],
+    "source": "EDUCATIONAL_PROXY",
+    "disclaimer": "Synthetic placeholder surface - not market data; do not use in production."
+  },
+  "affected_components": [
+    "par_model_v2/stochastic/g2pp_swaption.py",
+    "par_model_v2/stochastic/__init__.py",
+    "tests/test_phase20_g2pp_swaption.py",
+    "scripts/build_phase20_task2_swaption.py",
+    "docs/MARKET_CONSISTENT_G2PP_SWAPTION_CARD.md",
+    "docs/validation/PHASE20_TASK2_G2PP_SWAPTION_REPORT.{json,md}"
+  ],
+  "standard_references": [
+    "SOA ASOP 56 section 3.1.3",
+    "SOA ASOP 56 section 3.5",
+    "SOA ASOP 56 section 4.1",
+    "IA TAS M section 3.5",
+    "IA TAS M section 3.6",
+    "Solvency II Delegated Regulation Article 22",
+    "Solvency II Delegated Regulation Article 77"
+  ],
+  "change_record_id": "6c7d5354530c451a9a6ab46f33a8dba0",
+  "change_record_status": "OWNER_REVIEW",
+  "mr013_action": "refreshed",
+  "mr013_status": "IN_PROGRESS",
+  "audit_integrity_ok": true,
+  "change_records_total": 21,
+  "risk_register_summary": {
+    "total": 13,
+    "by_rating": {
+      "VERY_LOW": 1,
+      "LOW": 1,
+      "MEDIUM": 0,
+      "HIGH": 7,
+      "VERY_HIGH": 0,
+      "CRITICAL": 4
+    },
+    "by_status": {
+      "OPEN": 1,
+      "IN_PROGRESS": 3,
+      "MITIGATED": 7,
+      "ACCEPTED": 0,
+      "CLOSED": 2
+    },
+    "open_critical": 1
+  },
+  "use_restriction": "EDUCATIONAL ONLY. Calibrated to a synthetic proxy swaption surface; re-calibrate to a validated market surface and obtain independent review before any production, capital, or disclosure use.",
+  "markdown": "# Phase 20 Task 2 - G2++ Swaption-Surface Calibration\n\n**Run timestamp:** 2026-06-06T08:25:30.201161+00:00\n\n**Gate:** `G-SWPN` - **PASS**\n\n## Calibrated G2++ Parameters\n\n| a | b | sigma | eta | rho |\n| ---: | ---: | ---: | ---: | ---: |\n| 0.03454 | 0.95828 | 0.00637 | 0.00240 | -0.9082 |\n\nInitial seed: a=0.1000, b=0.5000, sigma=0.0100, eta=0.0070, rho=-0.600.\n\n## Fit Quality\n\n| Metric | Value |\n| --- | ---: |\n| ATM quotes | 24 |\n| Implied-vol RMSE | 54.67 bps |\n| Worst-point vol error | 172.99 bps |\n| Relative-price RMSE | 0.0270 |\n| Objective (mean rel-price^2) | 0.000727136 |\n| Simplex iterations | 931 |\n\n## G-SWPN Checks\n\n- **G-SWPN-01**: PASS (observed `9.71445e-17`, threshold `<= 1e-7 absolute price difference`)\n- **G-SWPN-02**: PASS (observed `0.000727136`, threshold `converged and objective < 0.1`)\n- **G-SWPN-03**: PASS (observed `54.6706`, threshold `<= 75 bps`)\n- **G-SWPN-04**: PASS (observed `172.988`, threshold `<= 200 bps`)\n- **G-SWPN-05**: PASS (observed `-0.908214`, threshold `a,b>0 distinct; sigma,eta>0; -1<rho<1`)\n- **G-SWPN-06**: PASS (observed `0.00206577`, threshold `> 0 for every grid point`)\n- **G-SWPN-07**: PASS (observed `0`, threshold `<= 1e-12 absolute price error`)\n\n## Per-Quote Fit (ATM, semi-annual)\n\n| Expiry x Tenor | Forward | Market vol | Model vol | Error (bps) |\n| --- | ---: | ---: | ---: | ---: |\n| 1y x 1y | 0.0226 | 0.2374 | 0.2379 | +4.8 |\n| 1y x 2y | 0.0237 | 0.2315 | 0.2348 | +32.7 |\n| 1y x 5y | 0.0257 | 0.2214 | 0.2173 | -41.0 |\n| 1y x 10y | 0.0271 | 0.2125 | 0.1952 | -173.0 |\n| 2y x 1y | 0.0247 | 0.2271 | 0.2252 | -19.2 |\n| 2y x 2y | 0.0253 | 0.2212 | 0.2235 | +23.0 |\n| 2y x 5y | 0.0270 | 0.2111 | 0.2073 | -38.2 |\n| 2y x 10y | 0.0277 | 0.2022 | 0.1901 | -120.7 |\n| 3y x 1y | 0.0260 | 0.2171 | 0.2175 | +4.0 |\n| 3y x 2y | 0.0269 | 0.2112 | 0.2118 | +6.0 |\n| 3y x 5y | 0.0277 | 0.2011 | 0.2012 | +0.7 |\n| 3y x 10y | 0.0281 | 0.1923 | 0.1858 | -65.2 |\n| 5y x 1y | 0.0278 | 0.2034 | 0.2029 | -4.9 |\n| 5y x 2y | 0.0284 | 0.1974 | 0.1984 | +10.1 |\n| 5y x 5y | 0.0286 | 0.1873 | 0.1910 | +37.1 |\n| 5y x 10y | 0.0285 | 0.1785 | 0.1787 | +2.3 |\n| 7y x 1y | 0.0281 | 0.1966 | 0.1977 | +11.2 |\n| 7y x 2y | 0.0284 | 0.1906 | 0.1944 | +38.2 |\n| 7y x 5y | 0.0284 | 0.1805 | 0.1874 | +69.0 |\n| 7y x 10y | 0.0286 | 0.1717 | 0.1727 | +10.4 |\n| 10y x 1y | 0.0278 | 0.1899 | 0.1929 | +30.3 |\n| 10y x 2y | 0.0280 | 0.1840 | 0.1905 | +65.1 |\n| 10y x 5y | 0.0283 | 0.1738 | 0.1805 | +66.7 |\n| 10y x 10y | 0.0289 | 0.1650 | 0.1634 | -15.5 |\n\n## Governance\n\n- ChangeRecord: `6c7d5354530c451a9a6ab46f33a8dba0` - **OWNER_REVIEW**\n- MR-013: **IN_PROGRESS** (refreshed)\n- Audit integrity: **True**\n\n## Production Restriction\n\nEDUCATIONAL ONLY. Calibrated to a synthetic proxy swaption surface; re-calibrate to a validated market surface and obtain independent review before any production, capital, or disclosure use.\n"
+}

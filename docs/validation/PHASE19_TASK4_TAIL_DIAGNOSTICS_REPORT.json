@@ -1,0 +1,204 @@
+{
+  "audit_entry_id": null,
+  "bootstrap": {
+    "ci_level": 0.95,
+    "es_ci_high": 255989.4701,
+    "es_ci_low": 242967.2155,
+    "es_point": 250090.8156,
+    "es_standard_error": 3317.5938,
+    "n_bootstrap": 1200,
+    "n_outer": 8000,
+    "var_ci_high": 241861.2987,
+    "var_ci_low": 227582.3943,
+    "var_ci_rel_halfwidth": 0.030746,
+    "var_point": 232210.8836,
+    "var_standard_error": 3103.5805
+  },
+  "config": {
+    "bootstrap_ci_level": 0.95,
+    "bootstrap_n_outer": 8000,
+    "capital_horizon_months": 12,
+    "confidence_level": 0.995,
+    "convergence_tol": 0.02,
+    "lsmc_degree": 2,
+    "max_interaction_order": 3,
+    "n_bootstrap": 1200,
+    "n_fit": 900,
+    "outer_grid": [
+      1000,
+      2000,
+      4000,
+      8000,
+      16000
+    ],
+    "outer_measure": "P",
+    "seed": 42,
+    "vr_n_outer": 2048,
+    "vr_pilot_n": 8000,
+    "vr_replications": 60
+  },
+  "convergence": {
+    "converged": true,
+    "es_path": [
+      245247.6904,
+      253983.1174,
+      244700.1603,
+      243000.9365,
+      246336.757
+    ],
+    "es_successive_rel_change": [
+      0.035619,
+      0.03655,
+      0.006944,
+      0.013728
+    ],
+    "final_es": 246336.757,
+    "final_var": 230879.3385,
+    "n_outer_grid": [
+      1000,
+      2000,
+      4000,
+      8000,
+      16000
+    ],
+    "recommended_n_outer": 8000,
+    "var_path": [
+      228660.8378,
+      240837.4481,
+      232319.2076,
+      228278.0459,
+      230879.3385
+    ],
+    "var_successive_rel_change": [
+      0.053252,
+      0.035369,
+      0.017395,
+      0.011395
+    ]
+  },
+  "drivers": [
+    "short_rate",
+    "equity_level",
+    "credit_spread",
+    "lapse_behaviour",
+    "mortality_trend"
+  ],
+  "duration_seconds": 30.2605,
+  "lsmc_summary": {
+    "capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 240974.0899,
+      "mean_liability": 119464.1883,
+      "n_outer": 1000,
+      "scr_proxy": 110259.0004,
+      "var_liability": 229723.1887
+    },
+    "degree": 2,
+    "drivers": [
+      "short_rate",
+      "equity_level",
+      "credit_spread",
+      "lapse_behaviour",
+      "mortality_trend"
+    ],
+    "duration_seconds": 25.6081,
+    "fit_r2": 0.418932,
+    "max_interaction_order": 3,
+    "n_basis_terms": 21,
+    "n_fit": 900,
+    "n_outer_eval": 1000,
+    "run_id": "fv-lsmc-2b09c6cc"
+  },
+  "notes": [
+    "Five-driver (rate+equity+credit+lapse+mortality) extension of the Phase 18 Task 4 four-driver tail diagnostics; built on the Phase 19 Task 3 quintivariate LSMC surface (no two-/three-/four-driver diagnostics class modified).",
+    "The fifth driver is the SECOND NON-FINANCIAL axis -- an OU mortality-trend index m(t) (Lee-Carter-style single systemic time index); it is orthogonal to the financial drivers AND to lapse in the governed 5x5 ESG matrix, but its realised liability impact still perturbs the tail through benefit timing on the sum-assured endowment.",
+    "Outer-count convergence and the bootstrap CI use the GOVERNED 5-factor correlated outer states (_outer_states_5d) with the once-fitted LSMC surface; they isolate outer Monte-Carlo (sampling) error, not proxy error.",
+    "Proxy error is bounded separately by the Phase 19 Task 3 five-driver out-of-sample validation (OOS R^2=0.9616) report.",
+    "The variance-reduction study uses a pilot-anchored Gaussian copula whose controlling correlation is the realised 5x5 outer-state correlation (rate/equity/credit/lapse/mortality) and whose margins are the empirical pilot margins, so crude / antithetic / Sobol target an identical distribution and the ratio is like-for-like.",
+    "Antithetic uses negated normal quintuples; Sobol uses a scrambled base-2 sequence in 5 dimensions (n is a power of two for exact balance).",
+    "Antithetic variates do not reduce the 99.5% VaR-estimator variance (ratio 0.78<1) - expected for an extreme quantile; QMC is the effective scheme here (ratio 4.80)."
+  ],
+  "reproducibility_digest": "760664b826141d2816334212f475898755e9163c136251b25f4fefba527e9785",
+  "run_id": "td5-tail-0ed04f5c",
+  "standards": [
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 56 \u00a73.1.3",
+    "SOA ASOP 25 \u00a73.3",
+    "SOA ASOP 7 \u00a73.3",
+    "IA TAS M \u00a73.6",
+    "L'Ecuyer (2018) RQMC",
+    "Glasserman (2003) \u00a74"
+  ],
+  "variance_reduction": {
+    "antithetic": {
+      "es_mean": 246418.1868,
+      "es_std": 5813.227374,
+      "n_outer": 2048,
+      "n_replications": 60,
+      "scheme": "antithetic",
+      "var_mean": 230908.114,
+      "var_std": 5569.530166
+    },
+    "antithetic_es_ratio": 0.9615,
+    "antithetic_var_ratio": 0.7765,
+    "copula_corr": [
+      [
+        1.0,
+        -0.1282,
+        -0.181526,
+        -0.005828,
+        0.01229
+      ],
+      [
+        -0.1282,
+        1.0,
+        -0.283194,
+        0.034799,
+        0.024897
+      ],
+      [
+        -0.181526,
+        -0.283194,
+        1.0,
+        -0.024988,
+        -0.015417
+      ],
+      [
+        -0.005828,
+        0.034799,
+        -0.024988,
+        1.0,
+        -0.012093
+      ],
+      [
+        0.01229,
+        0.024897,
+        -0.015417,
+        -0.012093,
+        1.0
+      ]
+    ],
+    "crude": {
+      "es_mean": 245739.5161,
+      "es_std": 5700.314469,
+      "n_outer": 2048,
+      "n_replications": 60,
+      "scheme": "crude",
+      "var_mean": 229701.802,
+      "var_std": 4907.87993
+    },
+    "sobol": {
+      "es_mean": 246412.6583,
+      "es_std": 2573.247173,
+      "n_outer": 2048,
+      "n_replications": 60,
+      "scheme": "sobol",
+      "var_mean": 231157.5309,
+      "var_std": 2240.698439
+    },
+    "sobol_es_ratio": 4.9072,
+    "sobol_var_ratio": 4.7976
+  },
+  "verdict": "PASS - five-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
+}

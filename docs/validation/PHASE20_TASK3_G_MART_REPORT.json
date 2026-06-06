@@ -1,0 +1,173 @@
+{
+  "run_timestamp": "2026-06-06T09:25:49.350310+00:00",
+  "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+  "task": "Phase 20 Task 3 - market-consistency martingale validation gate (G-MART)",
+  "gate": {
+    "gate_id": "G-MART",
+    "status": "PASS",
+    "passed": true,
+    "checks": [
+      {
+        "check_id": "MART-HW1F-ZCB-5Y",
+        "passed": true,
+        "severity": "ERROR",
+        "description": "E^Q[ D(1.00) * P_HW(1.00,6.00) ] = P(0,6.00)",
+        "estimate": 0.8350653690912117,
+        "target": 0.835270211411272,
+        "std_error": 0.00021178722938724047,
+        "n_std_errors": 0.967208082626209,
+        "rel_error": 0.0002452407822784061,
+        "tolerance_sigma": 4.0
+      },
+      {
+        "check_id": "MART-HW1F-ZCB-10Y",
+        "passed": true,
+        "severity": "ERROR",
+        "description": "E^Q[ D(1.00) * P_HW(1.00,11.00) ] = P(0,11.00)",
+        "estimate": 0.7186431037813833,
+        "target": 0.7189237334319262,
+        "std_error": 0.00028023655974164215,
+        "n_std_errors": 1.0014027106298846,
+        "rel_error": 0.00039034689980706617,
+        "tolerance_sigma": 4.0
+      },
+      {
+        "check_id": "MART-HW1F-EULER-BIAS",
+        "passed": true,
+        "severity": "INFO",
+        "description": "Educational monthly-Euler HW1F simulate() carries a documented discretisation + r0 bias vs the analytic bond (use exact dynamics).",
+        "estimate": 0.7688399656650514,
+        "target": 0.7189237334319262,
+        "std_error": 0.0008472731537352335,
+        "n_std_errors": 58.913978346968484,
+        "rel_error": 0.06943188812927364,
+        "tolerance_sigma": Infinity
+      },
+      {
+        "check_id": "MART-G2PP-ZCB-5Y",
+        "passed": true,
+        "severity": "ERROR",
+        "description": "E^Q[ D(1.00) * P_G2(1.00,6.00) ] = P(0,6.00)",
+        "estimate": 0.8354419207743378,
+        "target": 0.835270211411272,
+        "std_error": 0.00014090181375891924,
+        "n_std_errors": 1.2186455126798863,
+        "rel_error": 0.00020557343087291953,
+        "tolerance_sigma": 4.0
+      },
+      {
+        "check_id": "MART-G2PP-ZCB-10Y",
+        "passed": true,
+        "severity": "ERROR",
+        "description": "E^Q[ D(1.00) * P_G2(1.00,11.00) ] = P(0,11.00)",
+        "estimate": 0.7191627035563352,
+        "target": 0.7189237334319262,
+        "std_error": 0.00019661815382391305,
+        "n_std_errors": 1.2154021373987907,
+        "rel_error": 0.00033239982670792693,
+        "tolerance_sigma": 4.0
+      },
+      {
+        "check_id": "MART-EQ-FWD",
+        "passed": true,
+        "severity": "ERROR",
+        "description": "E^Q[ D(1.00) * S(1.00) * exp(q*1.00) ] = S(0)",
+        "estimate": 99.98428292192052,
+        "target": 100.0,
+        "std_error": 0.11100984270159119,
+        "n_std_errors": 0.14158274344848226,
+        "rel_error": 0.00015717078079475756,
+        "tolerance_sigma": 4.0
+      },
+      {
+        "check_id": "MART-PQ-MEASURE",
+        "passed": true,
+        "severity": "INFO",
+        "description": "Under P the discounted equity drifts up by exp(ERP*t); martingale is Q-specific.",
+        "estimate": 104.64618000105689,
+        "target": 104.6027859908717,
+        "std_error": 0.11752225801124822,
+        "n_std_errors": 0.3692407797426991,
+        "rel_error": 0.0004148456446368722,
+        "tolerance_sigma": 3.0
+      },
+      {
+        "check_id": "MART-FX-CIP",
+        "passed": true,
+        "severity": "ERROR",
+        "description": "E^Q_d[ D_d(1.00) * X(1.00) * exp(r_f*1.00) ] = X(0)",
+        "estimate": 7.799514084202505,
+        "target": 7.8,
+        "std_error": 0.003884632749005869,
+        "n_std_errors": 0.1250866758561335,
+        "rel_error": 6.229689711474588e-05,
+        "tolerance_sigma": 4.0
+      }
+    ],
+    "diagnostics": {
+      "test_time_years": 1.0,
+      "n_scenarios": 40000,
+      "k_sigma": 4.0,
+      "bond_maturities": [
+        5.0,
+        10.0
+      ],
+      "numeraire": "money-market account B(t)=exp(int_0^t r ds)",
+      "worst_n_std_errors": 1.2186455126798863,
+      "max_rel_error": 0.00039034689980706617,
+      "drivers": [
+        "HW1F rates",
+        "G2++ rates",
+        "GBM equity",
+        "FX (CIP)"
+      ]
+    },
+    "use_restriction": "EDUCATIONAL market-consistency evidence. The martingale gate confirms the simulators are arbitrage-free under Q at the tested horizon and Monte-Carlo accuracy; it is NOT a production sign-off. Calibration to a validated market surface and independent (APS X2) review remain pending.",
+    "n_checks": 8,
+    "n_error_checks": 6,
+    "n_passed": 8
+  },
+  "affected_components": [
+    "par_model_v2/validation/phase20_market_consistency.py",
+    "par_model_v2/validation/__init__.py",
+    "tests/test_phase20_market_consistency.py",
+    "scripts/build_phase20_task3_market_consistency.py",
+    "docs/MARKET_CONSISTENCY_G_MART_CARD.md",
+    "docs/validation/PHASE20_TASK3_G_MART_REPORT.{json,md}"
+  ],
+  "standard_references": [
+    "SOA ASOP 56 section 3.1.3",
+    "SOA ASOP 56 section 3.5",
+    "IA TAS M section 3.6",
+    "Solvency II Delegated Regulation Article 22",
+    "Solvency II Delegated Regulation Article 234",
+    "Brigo-Mercurio 2006"
+  ],
+  "change_record_id": "955fe35ce8034a9cb98904a7b6d79c62",
+  "change_record_status": "OWNER_REVIEW",
+  "mr013_action": "refreshed",
+  "mr013_status": "IN_PROGRESS",
+  "audit_integrity_ok": true,
+  "change_records_total": 22,
+  "risk_register_summary": {
+    "total": 13,
+    "by_rating": {
+      "VERY_LOW": 1,
+      "LOW": 1,
+      "MEDIUM": 0,
+      "HIGH": 7,
+      "VERY_HIGH": 0,
+      "CRITICAL": 4
+    },
+    "by_status": {
+      "OPEN": 1,
+      "IN_PROGRESS": 3,
+      "MITIGATED": 7,
+      "ACCEPTED": 0,
+      "CLOSED": 2
+    },
+    "open_critical": 1
+  },
+  "use_restriction": "EDUCATIONAL market-consistency evidence. The martingale gate confirms the simulators are arbitrage-free under Q at the tested horizon and Monte-Carlo accuracy; it is NOT a production sign-off. Calibration to a validated market surface and independent (APS X2) review remain pending.",
+  "markdown": "# Phase 20 Task 3 -- Market-Consistency (Martingale) Gate G-MART\n\n**Run:** 2026-06-06T09:25:49.350310+00:00\n\n**Gate G-MART:** PASS (8/6 ERROR checks pass; 8 checks incl. diagnostics)\n\n## Numeraire and method\n\nMoney-market account B(t) = exp(int_0^t r ds). Each deflated-asset martingale identity is\ntested by Monte-Carlo against its analytic target within a 4-standard-error band\n(n = 40000 paths; horizon t = 1.00y).\n\n## Checks\n\n| Check | Severity | Result | MC estimate | Target | Rel err | n-sigma |\n| --- | --- | --- | ---: | ---: | ---: | ---: |\n| MART-HW1F-ZCB-5Y | ERROR | PASS | 0.835065 | 0.835270 | 2.45e-04 | 0.97 |\n| MART-HW1F-ZCB-10Y | ERROR | PASS | 0.718643 | 0.718924 | 3.90e-04 | 1.00 |\n| MART-HW1F-EULER-BIAS | INFO | PASS | 0.768840 | 0.718924 | 6.94e-02 | 58.91 |\n| MART-G2PP-ZCB-5Y | ERROR | PASS | 0.835442 | 0.835270 | 2.06e-04 | 1.22 |\n| MART-G2PP-ZCB-10Y | ERROR | PASS | 0.719163 | 0.718924 | 3.32e-04 | 1.22 |\n| MART-EQ-FWD | ERROR | PASS | 99.984283 | 100.000000 | 1.57e-04 | 0.14 |\n| MART-PQ-MEASURE | INFO | PASS | 104.646180 | 104.602786 | 4.15e-04 | 0.37 |\n| MART-FX-CIP | ERROR | PASS | 7.799514 | 7.800000 | 6.23e-05 | 0.13 |\n\n## Summary\n\n- Worst ERROR-check deviation: 1.22 sigma (band 4 sigma).\n- Max ERROR relative error: 3.90e-04.\n- Drivers covered: HW1F rates, G2++ rates, GBM equity, FX (CIP).\n\n## Diagnostics (non-gating)\n\n- The educational monthly-Euler HW1F simulator shows a documented ~7% martingale bias vs the\n  exact dynamics (MART-HW1F-EULER-BIAS) -- exact simulation is used for the gate.\n- Under P the discounted equity drifts up by exp(ERP*t) (MART-PQ-MEASURE), confirming the\n  martingale property is Q-specific.\n\n## Governance\n\n- ChangeRecord: 955fe35ce8034a9cb98904a7b6d79c62 (OWNER_REVIEW).\n- MR-013: IN_PROGRESS (refreshed).\n- Audit integrity: True.\n\n## Production restriction\n\nEDUCATIONAL market-consistency evidence. The martingale gate confirms the simulators are arbitrage-free under Q at the tested horizon and Monte-Carlo accuracy; it is NOT a production sign-off. Calibration to a validated market surface and independent (APS X2) review remain pending.\n"
+}

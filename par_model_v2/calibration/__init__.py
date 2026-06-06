@@ -97,6 +97,23 @@ from par_model_v2.calibration.phase18_cir_calibration import (
     Phase18CIRReport,
     run_phase18_cir_calibration,
 )
+from par_model_v2.calibration.lapse_calibrator import (
+    LapseBehaviourCalibrator,
+    LapseCalibrationInputs,
+    LapseCalibrationResult,
+)
+from par_model_v2.calibration.lapse_experience_data_source import (
+    LapseExperienceDataLoader,
+    FileBasedLapseExperienceSource,
+    build_lapse_loader,
+    check_lapse_calibration,
+    evaluate_lapse_gate,
+    synthesize_ae_history,
+)
+from par_model_v2.calibration.phase19_lapse_calibration import (
+    Phase19LapseReport,
+    run_phase19_lapse_calibration,
+)
 
 __all__ += [
     "CIRCalibrationInputs",
@@ -110,4 +127,15 @@ __all__ += [
     "synthesize_spread_history",
     "Phase18CIRReport",
     "run_phase18_cir_calibration",
+    "LapseBehaviourCalibrator",
+    "LapseCalibrationInputs",
+    "LapseCalibrationResult",
+    "LapseExperienceDataLoader",
+    "FileBasedLapseExperienceSource",
+    "build_lapse_loader",
+    "check_lapse_calibration",
+    "evaluate_lapse_gate",
+    "synthesize_ae_history",
+    "Phase19LapseReport",
+    "run_phase19_lapse_calibration",
 ]

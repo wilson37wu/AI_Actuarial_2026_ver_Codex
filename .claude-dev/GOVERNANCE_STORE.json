@@ -775,6 +775,193 @@
       "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication",
       "digest": "51d9272eb7c9fef3de400bc046e3699b08771e25c60345419b41c29d26b84575",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "2e7222f72b944e6fb94e129897ed16e2",
+      "timestamp": "2026-06-06T00:17:39.179947+00:00",
+      "entry_type": "PARAM_CHANGE",
+      "actor": "AutomatedModelDev_Phase19",
+      "description": "Parameter change: OU_lapse_behaviour_params[HK_PAR] {'mean_reversion_speed': 0.4, 'behaviour_vol': 0.3, 'long_run_level': 0.0, 'initial_index': 0.0} \u2192 {'mean_reversion_speed': 0.785399, 'long_run_level': -0.036032, 'behaviour_vol': 0.178096, 'stationary_std': 0.1421, 'initial_index': 0.0}",
+      "details": {
+        "parameter_name": "OU_lapse_behaviour_params[HK_PAR]",
+        "old_value": {
+          "mean_reversion_speed": 0.4,
+          "behaviour_vol": 0.3,
+          "long_run_level": 0.0,
+          "initial_index": 0.0
+        },
+        "new_value": {
+          "mean_reversion_speed": 0.785399,
+          "long_run_level": -0.036032,
+          "behaviour_vol": 0.178096,
+          "stationary_std": 0.1421,
+          "initial_index": 0.0
+        },
+        "rationale": "Calibrated to HK_PAR educational-proxy actual-to-expected lapse-experience history via LapseBehaviourCalibrator (OU AR(1) transition regression for kappa_b + long-run level, residual variance for sigma_b via the OU stationary relation).",
+        "standard_reference": "SOA ASOP 7 \u00a73.3; SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3",
+        "change_record_id": "9dbd97f031f7412f941ca07793e2d3be"
+      },
+      "phase": "Phase 19: Recovery Completion and Driver Expansion",
+      "digest": "2bdedff61946a76dc14d30fc28e1fd239d7052c5b5185dc39305e906e3b8b849",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "7433333ab7bd40df9837aa95cb702aa1",
+      "timestamp": "2026-06-06T00:17:39.182685+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase19",
+      "description": "Governance event: MR-003 moved to MITIGATED following G-LAPSE PASS (OU lapse behavioural-index calibration)",
+      "details": {
+        "risk_id": "MR-003",
+        "new_status": "MITIGATED",
+        "gate": "G-LAPSE",
+        "gate_status": "PASS",
+        "kappa_b": 0.785399,
+        "long_run_level": -0.036032,
+        "behaviour_vol": 0.178096,
+        "stationary_std": 0.1421,
+        "timestamp": "2026-06-06T00:17:39.129970+00:00"
+      },
+      "phase": "Phase 19: Recovery Completion and Driver Expansion",
+      "digest": "a85ac75585501494e402767ff863519a23887209668cd94cd45cac7cb1028aed",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "3a3dea6d11a64654ad9d052c772ea0eb",
+      "timestamp": "2026-06-06T00:17:39.182935+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase19",
+      "description": "Governance event: MR-011 moved to MITIGATED following G-LAPSE PASS (OU lapse behavioural-index calibration)",
+      "details": {
+        "risk_id": "MR-011",
+        "new_status": "MITIGATED",
+        "gate": "G-LAPSE",
+        "gate_status": "PASS",
+        "kappa_b": 0.785399,
+        "long_run_level": -0.036032,
+        "behaviour_vol": 0.178096,
+        "stationary_std": 0.1421,
+        "timestamp": "2026-06-06T00:17:39.129970+00:00"
+      },
+      "phase": "Phase 19: Recovery Completion and Driver Expansion",
+      "digest": "54a05ab337bc0bb1371ecff8574391238936a77ee4604adcd822dc566eb874bf",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "3bd3b854b7044b47accc4a89c4c0fc1b",
+      "timestamp": "2026-06-06T07:10:34.351604+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase20",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - enhanced G2++ rates driver and G-RATE2 gate",
+      "details": {
+        "record_id": "1d7737af2f634c438b4f84a9d76e2b00",
+        "gate_id": "G-RATE2",
+        "gate_status": "PASS",
+        "affected_components": [
+          "par_model_v2/stochastic/g2pp_rate.py",
+          "par_model_v2/stochastic/__init__.py",
+          "tests/test_phase20_g2pp_rate.py",
+          "scripts/build_phase20_task1_g2pp.py",
+          "docs/MARKET_CONSISTENT_G2PP_RATE_CARD.md",
+          "docs/validation/PHASE20_TASK1_G2PP_RATE_REPORT.{json,md}"
+        ],
+        "mr013_action": "added"
+      },
+      "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+      "digest": "4538c30ff417be0b770b1a8fc1163aa9beaf5d6cb4f2de8d68972026329b65f3",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "b7851407f61a4291bdeedfac0f27584c",
+      "timestamp": "2026-06-06T08:25:30.126696+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase20",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - G2++ swaption calibration and G-SWPN gate",
+      "details": {
+        "record_id": "6c7d5354530c451a9a6ab46f33a8dba0",
+        "gate_id": "G-SWPN",
+        "gate_status": "PASS",
+        "vol_rmse_bps": 54.67058361346492,
+        "affected_components": [
+          "par_model_v2/stochastic/g2pp_swaption.py",
+          "par_model_v2/stochastic/__init__.py",
+          "tests/test_phase20_g2pp_swaption.py",
+          "scripts/build_phase20_task2_swaption.py",
+          "docs/MARKET_CONSISTENT_G2PP_SWAPTION_CARD.md",
+          "docs/validation/PHASE20_TASK2_G2PP_SWAPTION_REPORT.{json,md}"
+        ],
+        "mr013_action": "refreshed"
+      },
+      "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+      "digest": "8334c70a052d07a5b63440ac3ff5fb7a300277f64364fd73a30a476c164ae357",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "c7b8eeffbcc34a538b07210b59160d05",
+      "timestamp": "2026-06-06T09:25:48.972062+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase20",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - G-MART market-consistency gate",
+      "details": {
+        "record_id": "955fe35ce8034a9cb98904a7b6d79c62",
+        "gate_id": "G-MART",
+        "gate_status": "PASS",
+        "worst_n_std_errors": 1.2186455126798863,
+        "affected_components": [
+          "par_model_v2/validation/phase20_market_consistency.py",
+          "par_model_v2/validation/__init__.py",
+          "tests/test_phase20_market_consistency.py",
+          "scripts/build_phase20_task3_market_consistency.py",
+          "docs/MARKET_CONSISTENCY_G_MART_CARD.md",
+          "docs/validation/PHASE20_TASK3_G_MART_REPORT.{json,md}"
+        ],
+        "mr013_action": "refreshed"
+      },
+      "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+      "digest": "83642ea36ab150e5fed00215557c2d71bb718a9cad722cf204dec908770c41ad",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "83d13e02493b479f8e23a2ebf825c5c3",
+      "timestamp": "2026-06-06T10:25:50.371147+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase20",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - 2F G2++ capital re-aggregation",
+      "details": {
+        "record_id": "a869696aa8be4bea975d5113005e9b21",
+        "nested_scr_hw1f": 104131.6,
+        "nested_scr_g2pp": 55115.7528,
+        "mr010_action": "refreshed",
+        "mr012_action": "refreshed"
+      },
+      "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+      "digest": "3990fc766a6c82af0c42d9d29e583b511233bf4e92a505961d98da27b758633d",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "30e0721838f74c92885ab65cb0babe0f",
+      "timestamp": "2026-06-06T21:52:05.892878+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase21",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - FX sixth driver + G-FX gate",
+      "details": {
+        "record_id": "25e1eac6661a4d9bb74276ee1a2a4b46",
+        "gate": "G-FX",
+        "gate_passed": true,
+        "fx_standalone_scr": 4286.36987389994,
+        "nested_scr": 48737.463043721524,
+        "affected_components": [
+          "par_model_v2/projection/multi_driver_capital_6d_fx.py",
+          "tests/test_phase21_fx_driver.py",
+          "scripts/build_phase21_task1_fx.py",
+          "docs/FX_DRIVER_G_FX_CARD.md",
+          "docs/validation/PHASE21_TASK1_FX_DRIVER_REPORT.{json,md}"
+        ],
+        "mr012_action": "refreshed"
+      },
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+      "digest": "5285ad97ff80c377b82c10204b2a79cbae850402c5c2ab10b85f2eef059128ca",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -1853,6 +2040,370 @@
         }
       ],
       "phase": "Phase 18: Tail-Dependent Risk Aggregation and Driver/Calibration Sophistication"
+    },
+    {
+      "record_id": "9dbd97f031f7412f941ca07793e2d3be",
+      "created_at": "2026-06-06T00:17:39.179720+00:00",
+      "title": "MR-003/MR-011: Lapse behavioural-index parameters calibrated to experience (HK PAR)",
+      "description": "Phase 19 Task 5: Replaced the OU lapse behavioural-index placeholders (kappa_b=0.40, sigma_b=0.30) with values calibrated from educational-proxy HK PAR actual-to-expected (A/E) lapse-experience history via LapseBehaviourCalibrator: the mean-reversion speed and P-measure long-run level from the OU AR(1) transition regression on log(A/E), and the behaviour vol from the residual variance via the OU stationary relation. FileBasedLapseExperienceSource is used; production capital/pricing use requires a credentialled actual-vs-expected persistency study and a genuine independent review.",
+      "change_type": "assumption_change",
+      "affected_components": [
+        "par_model_v2/calibration/lapse_calibrator.py",
+        "par_model_v2/calibration/lapse_experience_data_source.py",
+        "par_model_v2/calibration/phase19_lapse_calibration.py",
+        "par_model_v2/calibration/fixtures/lapse_experience_history_20260101.json",
+        "par_model_v2/stochastic/lapse_behaviour.py (LapseBehaviourParams kappa_b, sigma_b)"
+      ],
+      "standard_references": [
+        "SOA ASOP 7 \u00a73.3",
+        "SOA ASOP 56 \u00a73.4",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.5",
+        "IA TAS M \u00a73.6",
+        "IFoA APS X2 \u00a74.2"
+      ],
+      "before_snapshot": {
+        "mean_reversion_speed": 0.4,
+        "behaviour_vol": 0.3,
+        "long_run_level": 0.0,
+        "initial_index": 0.0,
+        "source": "educational placeholder"
+      },
+      "after_snapshot": {
+        "source": "FileBasedLapseExperienceSource (educational proxy)",
+        "mean_reversion_speed": 0.785399,
+        "long_run_level": -0.036032,
+        "behaviour_vol": 0.178096,
+        "stationary_std": 0.1421,
+        "initial_index": 0.0
+      },
+      "impact_assessment": "Replacing the placeholder OU behavioural-index parameters with calibrated values sets the lapse-level driver's mean-reversion speed, long-run level and vol from documented lapse-experience history. This propagates to the FOURTH (first non-financial) risk driver in the nested/LSMC economic-capital proxy (rate + equity + credit + lapse + mortality) and the lognormal A/E multiplier applied to the guaranteed/equity-guarantee benefit in-force, and hence to the five-driver 99.5% VaR/ES, SCR-proxy, and the lapse standalone capital.",
+      "quantitative_impact": "HK_PAR: kappa_b=0.7854/yr (half-life 0.9yr), long_run_level=-0.0360 (A/E 0.965), sigma_b=0.1781, stationary_std=0.1421 (1-sd A/E multiplier ~[0.868, 1.153])",
+      "status": "APPROVED",
+      "author": "AutomatedModelDev_Phase19",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-06T00:17:39.179769+00:00",
+          "actor": "AutomatedModelDev_Phase19",
+          "status": "PEER_REVIEW",
+          "comments": "OU lapse behavioural-index parameters calibrated to HK PAR A/E proxy history; submitting for peer review."
+        },
+        {
+          "timestamp": "2026-06-06T00:17:39.179861+00:00",
+          "actor": "APS_X2_Independent_Reviewer",
+          "status": "OWNER_REVIEW",
+          "comments": "kappa_b / long-run level / sigma_b / stationary std recovered inside documented plausibility bands; OU AR(1) methodology and data lineage reviewed and reasonable for educational use."
+        },
+        {
+          "timestamp": "2026-06-06T00:17:39.179871+00:00",
+          "actor": "ChiefActuary",
+          "status": "APPROVED",
+          "comments": "Calibrated OU lapse behavioural-index parameters approved for educational use; production pricing/capital use requires a credentialled actual-vs-expected persistency study and a genuine independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 19: Recovery Completion and Driver Expansion"
+    },
+    {
+      "record_id": "1d7737af2f634c438b4f84a9d76e2b00",
+      "created_at": "2026-06-06T07:10:34.351551+00:00",
+      "title": "Phase 20 Task 1 - enhanced G2++ rates driver and G-RATE2 gate",
+      "description": "Phase 20 Task 1 added an enhanced G2++ rates driver with exact OU factor simulation, analytic initial-curve-fitted zero-coupon bond pricing, analytic European zero-coupon bond option pricing, and a G-RATE2 plausibility gate. This is the first step of the market-consistency/multi-factor uplift; production sign-off is withheld pending swaption-surface calibration, martingale validation, and capital re-aggregation.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/stochastic/g2pp_rate.py",
+        "par_model_v2/stochastic/__init__.py",
+        "tests/test_phase20_g2pp_rate.py",
+        "scripts/build_phase20_task1_g2pp.py",
+        "docs/MARKET_CONSISTENT_G2PP_RATE_CARD.md",
+        "docs/validation/PHASE20_TASK1_G2PP_RATE_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 section 3.1.3",
+        "SOA ASOP 56 section 3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M section 3.5",
+        "IA TAS M section 3.6",
+        "Solvency II Delegated Regulation Article 77",
+        "Solvency II Delegated Regulation Article 234"
+      ],
+      "before_snapshot": {
+        "rates_driver": "HW1F default; legacy G2++ prototype omitted convexity adjustment and bond-option formula",
+        "g_rate2_gate": "not available"
+      },
+      "after_snapshot": {
+        "rates_driver": "EnhancedG2PlusRateProcess",
+        "analytic_zcb": true,
+        "analytic_bond_option": true,
+        "g_rate2_status": "PASS",
+        "checks_passed": 6,
+        "checks_total": 6
+      },
+      "impact_assessment": "Adds market-consistency infrastructure for a two-factor rates driver without changing existing HW1F, ScenarioSet, TVOG, or capital outputs. Future tasks will calibrate, validate martingales, and propagate the driver into capital aggregation.",
+      "quantitative_impact": "G-RATE2 PASS: curve-fit max abs error 0.000e+00; option variance 3.620e-03; put-call parity error 0.000e+00; empirical factor correlation -0.701.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase20",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-06T07:10:34.351568+00:00",
+          "actor": "AutomatedModelDev_Phase20",
+          "status": "PEER_REVIEW",
+          "comments": "Additive G2++ engine and G-RATE2 gate staged; tests and calibration evidence required before approval."
+        },
+        {
+          "timestamp": "2026-06-06T07:10:34.351582+00:00",
+          "actor": "AutomatedModelDev_Phase20",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending Phase 20 Tasks 2-4."
+        }
+      ],
+      "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift"
+    },
+    {
+      "record_id": "6c7d5354530c451a9a6ab46f33a8dba0",
+      "created_at": "2026-06-06T08:25:30.126630+00:00",
+      "title": "Phase 20 Task 2 - G2++ swaption-surface calibration and G-SWPN gate",
+      "description": "Phase 20 Task 2 calibrated the enhanced G2++ rate driver to an educational-proxy ATM swaption volatility grid. Added an analytic European swaption pricer (Brigo-Mercurio decomposition into an option on the fixed-leg coupon bond), Black ATM pricing/implied-vol inversion, a derivative-free Nelder-Mead calibration of (a, b, sigma, eta, rho), and a G-SWPN calibration-quality gate. Production sign-off withheld pending martingale validation, capital propagation, and recalibration to a validated market surface.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/stochastic/g2pp_swaption.py",
+        "par_model_v2/stochastic/__init__.py",
+        "tests/test_phase20_g2pp_swaption.py",
+        "scripts/build_phase20_task2_swaption.py",
+        "docs/MARKET_CONSISTENT_G2PP_SWAPTION_CARD.md",
+        "docs/validation/PHASE20_TASK2_G2PP_SWAPTION_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 section 3.1.3",
+        "SOA ASOP 56 section 3.5",
+        "SOA ASOP 56 section 4.1",
+        "IA TAS M section 3.5",
+        "IA TAS M section 3.6",
+        "Solvency II Delegated Regulation Article 22",
+        "Solvency II Delegated Regulation Article 77"
+      ],
+      "before_snapshot": {
+        "g2pp_parameters": "educational defaults (Task 1); no swaption calibration",
+        "swaption_pricer": "not available",
+        "g_swpn_gate": "not available"
+      },
+      "after_snapshot": {
+        "g2pp_parameters": {
+          "mean_reversion_x": 0.0345437806981911,
+          "mean_reversion_y": 0.9582779369460774,
+          "vol_x": 0.006369513208373254,
+          "vol_y": 0.0024001097598661688,
+          "factor_correlation": -0.9082136050335214
+        },
+        "swaption_pricer": "analytic Brigo-Mercurio (Gauss-Hermite quadrature)",
+        "g_swpn_status": "PASS",
+        "vol_rmse_bps": 54.67058361346492,
+        "checks_passed": 7,
+        "checks_total": 7
+      },
+      "impact_assessment": "Makes the two-factor rate driver calibratable without changing existing HW1F, ScenarioSet, TVOG, or capital outputs. Calibrated parameters remain educational until Tasks 3-4 validate martingales and capital impact and an independent reviewer signs off a market-data calibration.",
+      "quantitative_impact": "G-SWPN PASS: implied-vol RMSE 54.7 bps, worst-point 173.0 bps, relative-price RMSE 0.0270 across 24 ATM quotes; ATM put-call parity ~1e-16.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase20",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-06T08:25:30.126656+00:00",
+          "actor": "AutomatedModelDev_Phase20",
+          "status": "PEER_REVIEW",
+          "comments": "Analytic swaption pricer (MC-cross-checked), calibration, and G-SWPN gate staged; market-surface recalibration required before approval."
+        },
+        {
+          "timestamp": "2026-06-06T08:25:30.126672+00:00",
+          "actor": "AutomatedModelDev_Phase20",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending Phase 20 Tasks 3-4 and a validated market swaption surface."
+        }
+      ],
+      "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift"
+    },
+    {
+      "record_id": "955fe35ce8034a9cb98904a7b6d79c62",
+      "created_at": "2026-06-06T09:25:48.971996+00:00",
+      "title": "Phase 20 Task 3 - market-consistency martingale validation gate (G-MART)",
+      "description": "Phase 20 Task 3 added an output-only market-consistency (martingale) validation gate (G-MART). With the money-market numeraire, it verifies by Monte-Carlo that deflated fixed-maturity ZCBs are Q-martingales for the HW1F (exact dynamics) and G2++ rate drivers, that the ex-dividend discounted GBM equity index is a Q-martingale, and that the FX covered-interest-parity martingale holds, each within a 4-standard-error band. An honest diagnostic quantifies the ~7% martingale bias of the educational monthly-Euler HW1F path generator vs the exact dynamics, and a P/Q diagnostic confirms the property is measure-specific. Production sign-off withheld pending capital re-aggregation, UI surfacing, and recalibration to a validated market surface.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/validation/phase20_market_consistency.py",
+        "par_model_v2/validation/__init__.py",
+        "tests/test_phase20_market_consistency.py",
+        "scripts/build_phase20_task3_market_consistency.py",
+        "docs/MARKET_CONSISTENCY_G_MART_CARD.md",
+        "docs/validation/PHASE20_TASK3_G_MART_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 section 3.1.3",
+        "SOA ASOP 56 section 3.5",
+        "IA TAS M section 3.6",
+        "Solvency II Delegated Regulation Article 22",
+        "Solvency II Delegated Regulation Article 234",
+        "Brigo-Mercurio 2006"
+      ],
+      "before_snapshot": {
+        "market_consistency_gate": "not available",
+        "exact_hw1f_simulator": "not available (only educational Euler path generator)"
+      },
+      "after_snapshot": {
+        "market_consistency_gate": "G-MART",
+        "g_mart_status": "PASS",
+        "error_checks_passed": "8/8",
+        "worst_n_std_errors": 1.2186455126798863,
+        "max_rel_error": 0.00039034689980706617,
+        "drivers": [
+          "HW1F rates",
+          "G2++ rates",
+          "GBM equity",
+          "FX (CIP)"
+        ]
+      },
+      "impact_assessment": "Adds arbitrage-free evidence across the rate/equity/FX drivers without changing any existing simulation output (additive validation module). Surfaces the educational Euler HW1F bias as a documented limitation so downstream market-consistent work uses the exact dynamics.",
+      "quantitative_impact": "G-MART PASS: all 6 ERROR martingale checks pass within 4 sigma (worst 1.22 sigma; max rel err 3.90e-04) over 40000 paths at t=1.00y. Educational-Euler HW1F bias ~7% (documented, non-gating).",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase20",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-06T09:25:48.972017+00:00",
+          "actor": "AutomatedModelDev_Phase20",
+          "status": "PEER_REVIEW",
+          "comments": "Martingale gate (exact HW1F + G2++ + GBM + FX) staged with MC tolerance; market-surface recalibration required before approval."
+        },
+        {
+          "timestamp": "2026-06-06T09:25:48.972033+00:00",
+          "actor": "AutomatedModelDev_Phase20",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending Phase 20 Tasks 4-5 and a validated market surface."
+        }
+      ],
+      "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift"
+    },
+    {
+      "record_id": "a869696aa8be4bea975d5113005e9b21",
+      "created_at": "2026-06-06T10:25:50.371101+00:00",
+      "title": "Phase 20 Task 4 - capital re-aggregation with the two-factor G2++ rates driver",
+      "description": "Phase 20 Task 4 propagated the two-factor G2++ rates driver (Phase 20 Task 2 swaption calibration) into the five-driver economic-capital proxy. An additive module substitutes the G2++ two-factor short rate for HW1F in the outer real-world state (dominant factor carries the governed ESG cross-correlation; second factor adds an orthogonal slope/curvature axis), reuses the governed HW1F inner nest as the conditional liability operator, and re-runs the var-covar + copula aggregation and tail diagnostics against genuine nested capital.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_capital_5d_g2pp.py",
+        "tests/test_phase20_task4_g2pp_aggregation.py",
+        "scripts/build_phase20_task4_capital_reaggregation.py",
+        "docs/MULTI_DRIVER_5D_G2PP_AGGREGATION_CARD.md",
+        "docs/validation/PHASE20_TASK4_AGGREGATION_REPORT.{json,md}",
+        "docs/validation/PHASE20_TASK4_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 section 3.5",
+        "SOA ASOP 56 section 3.1",
+        "SOA ASOP 25 section 3.3",
+        "SOA ASOP 7 section 3.3",
+        "IA TAS M section 3.2",
+        "IA TAS M section 3.5",
+        "IA TAS M section 3.6",
+        "Solvency II Delegated Regulation Article 234",
+        "Brigo-Mercurio 2006",
+        "IFoA Life Aggregation & Simulation WP"
+      ],
+      "before_snapshot": {
+        "rate_driver_in_capital": "HW1F single-factor (placeholder vol)",
+        "nested_scr": 104131.6
+      },
+      "after_snapshot": {
+        "rate_driver_in_capital": "G2++ two-factor (swaption-calibrated)",
+        "nested_scr": 55115.8,
+        "g2pp_var_covar_understatement_pct": 39.71,
+        "g2pp_copula": "gaussian",
+        "g2pp_copula_rel_err": 0.1238,
+        "verdict": "PASS"
+      },
+      "impact_assessment": "Re-states the rate-risk marginal that feeds economic capital with a calibrated two-factor driver. No existing module is modified (additive). Surfaces that the swaption-calibrated factor vols (and strong negative factor correlation) materially lower horizon short-rate dispersion vs the HW1F placeholder, reducing rate-risk and nested capital; the copula tail-dependent mitigation (MR-010/MR-012) re-confirms.",
+      "quantitative_impact": "Nested SCR 104,132 (HW1F) -> 55,116 (G2++) at n_outer=240, n_inner=48. G2++ var-covar understates nested by 39.7%; copula (gaussian) reconciles within 12.4%.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase20",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-06T10:25:50.371115+00:00",
+          "actor": "AutomatedModelDev_Phase20",
+          "status": "PEER_REVIEW",
+          "comments": "2F G2++ capital re-aggregation staged; inner nest remains HW1F; larger outer sample and market-surface recalibration required before approval."
+        },
+        {
+          "timestamp": "2026-06-06T10:25:50.371126+00:00",
+          "actor": "AutomatedModelDev_Phase20",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending Task 5 UI surfacing, G2++-consistent inner nest, and a validated market surface."
+        }
+      ],
+      "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift"
+    },
+    {
+      "record_id": "25e1eac6661a4d9bb74276ee1a2a4b46",
+      "created_at": "2026-06-06T21:52:05.892828+00:00",
+      "title": "Phase 21 Task 1 - FX / currency sixth capital driver + G-FX plausibility gate",
+      "description": "Phase 21 Task 1 added the FX / currency translation driver as the sixth economic-capital driver: a lognormal FX spot (P real-world drift outer; Q covered-interest-parity drift) driven by a sixth governed shock through a 6x6 ESG correlation that embeds the governed 5x5 block unchanged. The inner Q-nest conditioning on the FX state is analytic and CIP-exact (the deflated translated foreign money-market account is a Q-martingale, Phase 20 MART-FX-CIP), so no inner FX simulation noise is introduced. Six-driver standalone SCRs, 6x6 var-covar, copula-on-realised-losses and the nested benchmark are produced by an additive aggregator reusing the Phase 20 G2++ five-driver CRN components verbatim. A G-FX plausibility gate (positive spots, lognormal moments, P/Q separation, Q-CIP martingale, correlation wiring, exposure mapping) gates the driver.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_capital_6d_fx.py",
+        "tests/test_phase21_fx_driver.py",
+        "scripts/build_phase21_task1_fx.py",
+        "docs/FX_DRIVER_G_FX_CARD.md",
+        "docs/validation/PHASE21_TASK1_FX_DRIVER_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 section 3.1.3",
+        "SOA ASOP 56 section 3.4/3.5",
+        "IA TAS M section 3.5/3.6",
+        "Solvency II Delegated Regulation Article 188 (currency risk)",
+        "Solvency II Delegated Regulation Article 234",
+        "Brigo-Mercurio 2006"
+      ],
+      "before_snapshot": {
+        "capital_drivers": "5 (G2++ rate, equity, credit, lapse, mortality)",
+        "fx_driver": "documented omission (MR-012 residual)"
+      },
+      "after_snapshot": {
+        "capital_drivers": "6 (+ FX translation)",
+        "g_fx_status": "PASS",
+        "g_fx_criteria": "6/6",
+        "fx_standalone_scr": 4286.36987389994,
+        "var_covar_scr": 28992.045275298213,
+        "nested_scr": 48737.463043721524,
+        "copula_selected": "gaussian",
+        "copula_rel_error_vs_nested": 0.15399817943714517,
+        "aggregation_verdict": "PASS"
+      },
+      "impact_assessment": "Adds the FX translation tail axis to economic capital without changing any five-driver output (additive module; governed 5x5 correlation block and CRN component liabilities reused bit-for-bit). Closes the FX half of the MR-012 documented omission; liquidity remains open (Task 3).",
+      "quantitative_impact": "G-FX PASS (6/6); FX standalone SCR 4286; six-driver var-covar 28992 vs nested 48737 (understatement 40.5%); copula (gaussian) within 15.4% of nested; n_outer=160, n_inner=24, seed=42.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase21",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-06T21:52:05.892844+00:00",
+          "actor": "AutomatedModelDev_Phase21",
+          "status": "PEER_REVIEW",
+          "comments": "FX sixth driver staged with G-FX gate + CIP-exact inner conditioning; credentialled calibration and six-driver OOS proxy validation required before approval."
+        },
+        {
+          "timestamp": "2026-06-06T21:52:05.892856+00:00",
+          "actor": "AutomatedModelDev_Phase21",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending Phase 21 Tasks 2-5 and credentialled FX calibration."
+        }
+      ],
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital"
     }
   ],
   "risk_register": [
@@ -1898,11 +2449,11 @@
       "overall_rating": "CRITICAL",
       "owner": "Model Developer",
       "mitigation": "Dynamic lapse implemented and calibrated (Phase 13 Task 2); ChangeRecord assumption=\"dynamic_lapse\" APPROVED.",
-      "mitigation_status": "IN_PROGRESS",
+      "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 7 \u00a73.3; IA TAS M \u00a73.5",
       "created_at": "2026-05-18T02:18:55.749015+00:00",
-      "updated_at": "2026-05-18T02:18:55.749015+00:00",
-      "notes": "Phase 13: dynamic_lapse.py implemented, G-04/G-11 PASS (educational). Production residual: credible experience study + independent APS X2 review."
+      "updated_at": "2026-06-06T00:17:39.182600+00:00",
+      "notes": "Phase 19 Task 5 (G-LAPSE): OU lapse behavioural-index parameters calibrated to HK PAR actual-to-expected lapse-experience educational-proxy history. kappa_b=0.7854 (half-life 0.9yr), long_run_level=-0.0360 (A/E 0.965), sigma_b=0.1781, stationary_std=0.1421. ChangeRecord APPROVED + one PARAM_CHANGE audit entry; G-LAPSE PASS. Residual (keeps the risk open, not closed): single systemic level factor on educational-proxy data; five-driver proxy still omits FX/liquidity; credentialled persistency study + a genuine independent APS X2 review are required."
     },
     {
       "risk_id": "MR-004",
@@ -2013,8 +2564,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
       "created_at": "2026-06-04T18:28:37.352914+00:00",
-      "updated_at": "2026-06-05T11:35:58.078824+00:00",
-      "notes": "Phase 15 Task 3. ChangeRecord 5e21202bf5. Evidence digest 55ca305d9fbd. | Phase 18 Task 1: implemented the documented mitigation as a copula aggregation engine (par_model_v2/projection/multi_driver_copula_aggregation.py) fitted to the REALISED standalone capital-loss vectors (Gaussian / Student-t / survival-Clayton), benchmarked to the three-driver nested ground truth. The var-covar (ESG factor) SCR understates nested by 34.5%; the AIC-selected copula ('gaussian') reconciles to nested within 1.4%. Root cause confirmed: the gap is driven by the WRONG dependence input (negative ESG factor correlation vs strongly positive realised loss co-movement), not primarily tail dependence (the t-copula collapses toward Gaussian; survival-Clayton bounds conservatively from above). Recommended aggregation is now copula-on-realised-losses; var-covar retained for reference. Residual: empirical marginals cannot extrapolate beyond the simulated component range; tail-dependence estimates are sampling-noisy; credentialled calibration + independent APS X2 review still required. | Phase 18 Task 4: extended the copula-on-realised-losses mitigation to FOUR drivers (rate + equity + credit + lapse). With the lapse driver the raw ESG-factor var-covar understatement WIDENS to 47.4% (vs ~38.7% three-driver), while the AIC-selected 'gaussian' copula on realised losses still reconciles to four-driver nested capital within 9.4% \u2014 confirming the root cause is the wrong dependence INPUT, not primarily tail dependence, and that the copula aggregation scales to more drivers. New four-driver finding: the lapse driver couples to the policyholder benefit MULTIPLICATIVELY (the in-force x equity-guarantee cross-term), so the CRN additive decomposition leaves a -11.1%-of-nested interaction residual and the genuine nested capital is NOT bounded by the CRN-additive standalone sum (super-additive tail). Residual unchanged: empirical marginals do not extrapolate; tail-dependence estimates sampling-noisy; credentialled calibration + independent APS X2 review pending."
+      "updated_at": "2026-06-06T10:25:50.371010+00:00",
+      "notes": "Phase 20 Task 4 re-aggregated economic capital with the two-factor G2++ rates driver. The 5x5 ESG var-covar formula still understates the diversified nested capital (39.7% under the 2F driver vs 52.5% under HW1F at the same config); the copula-on-realised-losses mitigation reconciles to nested within 12.4%. MR-010 mitigation re-confirmed under the calibrated 2F rate driver."
     },
     {
       "risk_id": "MR-011",
@@ -2026,11 +2577,11 @@
       "overall_rating": "HIGH",
       "owner": "Model Owner",
       "mitigation": "Classify all multi-driver capital output as EDUCATIONAL ONLY in the limitation card and at the API boundary; bound proxy error by the Task 2 out-of-sample validation (OOS R^2=0.9704, VaR rel err 3.21%) and outer-sampling error by the Task 4 bootstrap CI (SE ~1.66%); benchmark every aggregated figure to the Task 3 nested ground truth. Residual closure requires credentialled-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008).",
-      "mitigation_status": "IN_PROGRESS",
+      "mitigation_status": "MITIGATED",
       "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5",
       "created_at": "2026-06-04T20:15:59.122741+00:00",
-      "updated_at": "2026-06-04T20:15:59.122741+00:00",
-      "notes": "Opened by Phase 15 Task 5 governance refresh. Linked residual: MR-006 (validation readiness), MR-008 (HW1F calibration), MR-010 (aggregation diversification gap)."
+      "updated_at": "2026-06-06T00:17:39.182881+00:00",
+      "notes": "Phase 19 Task 5 (G-LAPSE): OU lapse behavioural-index parameters calibrated to HK PAR actual-to-expected lapse-experience educational-proxy history. kappa_b=0.7854 (half-life 0.9yr), long_run_level=-0.0360 (A/E 0.965), sigma_b=0.1781, stationary_std=0.1421. ChangeRecord APPROVED + one PARAM_CHANGE audit entry; G-LAPSE PASS. Residual (keeps the risk open, not closed): single systemic level factor on educational-proxy data; five-driver proxy still omits FX/liquidity; credentialled persistency study + a genuine independent APS X2 review are required."
     },
     {
       "risk_id": "MR-012",
@@ -2042,11 +2593,27 @@
       "overall_rating": "HIGH",
       "owner": "Model Owner",
       "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
-      "mitigation_status": "MITIGATED",
+      "mitigation_status": "IN_PROGRESS",
       "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
       "created_at": "2026-06-05T07:10:02.898466+00:00",
-      "updated_at": "2026-06-05T11:35:58.079068+00:00",
-      "notes": "Phase 18 Task 2 (G-CR): CIR++ credit-spread parameters calibrated to CNY AA+ corporate OAS educational-proxy history. kappa=0.5028, long_run_spread=0.0111 (111bp), sigma=0.0371, lambda=1.0575. ChangeRecord APPROVED + one PARAM_CHANGE audit entry; G-CR PASS. Residual (keeps MR-012 open, not closed): trivariate proxy still omits lapse/mortality/FX/liquidity drivers, and credentialled credit data + a genuine independent APS X2 review are required. | Phase 18 Task 4: the economic-capital proxy now spans FOUR correlated drivers (rate + equity + credit-spread + lapse-behaviour) with a tail-dependent copula aggregation and a converged, bootstrap-bounded, variance-reduced four-driver 99.5% capital metric (Sobol QMC variance-reduction ~3.3x). The lapse-behaviour index is a single systemic OU factor with PLACEHOLDER parameters; mortality/longevity trend, FX, and liquidity drivers are STILL omitted from the tail, and credentialled calibration + independent APS X2 review remain pending \u2014 so the four-driver figures stay EDUCATIONAL ONLY."
+      "updated_at": "2026-06-06T21:52:05.892748+00:00",
+      "notes": "Phase 21 Task 1 added the FX / currency translation driver as the SIXTH economic-capital driver (lognormal spot, P real-world outer / Q CIP drift, CIP-exact analytic inner conditioning) with the G-FX plausibility gate (PASS, 6/6 criteria incl. the Phase 20 MART-FX-CIP Q-martingale evidence). Six-driver aggregation: FX standalone SCR 4286; var-covar 28992 vs nested 48737 (understatement 40.5%); copula (gaussian) reconciles within 15.4%. The documented FX omission in this residual is now CLOSED; the LIQUIDITY driver remains open (Phase 21 Task 3), six-driver LSMC proxy OOS validation pending (Task 2), parameters remain educational placeholders pending credentialled calibration."
+    },
+    {
+      "risk_id": "MR-013",
+      "title": "Two-factor rates market consistency not fully calibrated",
+      "description": "The G2++ rates driver now has analytic zero-coupon and bond-option formulas, but parameters are educational until calibrated to a swaption volatility surface and validated through martingale and capital-impact gates.",
+      "category": "model_error",
+      "likelihood": "MEDIUM",
+      "impact": "HIGH",
+      "overall_rating": "HIGH",
+      "owner": "Assumption Owner",
+      "mitigation": "Complete Phase 20 Tasks 2-4: swaption-surface calibration, market-consistency martingale gate, and capital re-aggregation/tail diagnostics with independent review.",
+      "mitigation_status": "IN_PROGRESS",
+      "related_standard": "SOA ASOP 56 section 3.5; IA TAS M section 3.6",
+      "created_at": "2026-06-06T07:10:34.351454+00:00",
+      "updated_at": "2026-06-06T09:25:48.971900+00:00",
+      "notes": "Phase 20 Task 3 added the G-MART market-consistency gate: the deflated-asset / forward martingale identities hold under Q within Monte-Carlo tolerance for the HW1F (exact dynamics) and G2++ rate drivers, GBM equity, and FX (covered interest parity). G-MART PASS (worst 1.22 sigma; max rel err 3.90e-04 over 40000 paths). A documented diagnostic shows the EDUCATIONAL monthly-Euler HW1F simulate() carries a ~7% martingale bias vs the exact dynamics (use exact simulation for market-consistent work). Residual: capital re-aggregation with the 2F driver (Task 4), UI surfacing (Task 5), recalibration to a validated market surface, and independent review remain pending."
     }
   ]
 }

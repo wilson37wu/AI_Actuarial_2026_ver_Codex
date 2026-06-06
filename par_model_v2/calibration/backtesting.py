@@ -28,7 +28,8 @@ from typing import Dict, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
-from scipy import stats as scipy_stats
+# NOTE: scipy is imported lazily at its single use-site (Kupiec p-value) so the
+# calibration package imports without scipy in scipy-free environments.
 
 from par_model_v2.calibration.calibration_framework import CalibrationResult, martingale_test
 from par_model_v2.governance.audit_trail import AuditEntry, GovernanceStore
@@ -91,6 +92,7 @@ def _kupiec_pof_pvalue(
         log_l_alt += n_exceptions * np.log(observed_prob)
 
     lr_stat = max(0.0, -2.0 * (log_l_null - log_l_alt))
+    from scipy import stats as scipy_stats  # lazy: only needed here
     return float(scipy_stats.chi2.sf(lr_stat, df=1))
 
 

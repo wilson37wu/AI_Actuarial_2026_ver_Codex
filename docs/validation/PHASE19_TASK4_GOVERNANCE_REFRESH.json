@@ -1,0 +1,56 @@
+{
+  "added_change_record": true,
+  "change_record_status": "OWNER_REVIEW",
+  "config": {
+    "aggregation_gap_tolerance": 0.35,
+    "capital_horizon_months": 12,
+    "confidence_level": 0.995,
+    "n_inner": 32,
+    "n_outer": 200,
+    "n_sim_copula": 120000,
+    "outer_measure": "P",
+    "seed": 42
+  },
+  "drivers": [
+    "short_rate",
+    "equity_guarantee",
+    "credit_spread",
+    "lapse_behaviour",
+    "mortality_trend"
+  ],
+  "esg_understatement_pct_five_driver": 0.488442,
+  "interaction_residual_rel": -0.080984,
+  "limitation_card": "docs/MULTI_DRIVER_5D_AGGREGATION_CARD.md",
+  "mortality_orthogonal_smallest_driver": true,
+  "mr_010_refreshed": true,
+  "mr_010_status": "MITIGATED",
+  "mr_012_refreshed": true,
+  "mr_012_status": "MITIGATED",
+  "nested_scr": 92448.6048,
+  "reproducibility_digest": "50ca08d617fef76090a3b6730bbaa2ecd27d2d6ce3511aafcc03729e908a541c",
+  "residual": "Mortality-trend index is a single systemic Lee-Carter-style OU factor with placeholder parameters and no age/cohort/basis-risk structure; lapse-behaviour index likewise a single systemic OU factor; FX / liquidity / management-action drivers still omitted; copula marginals do not extrapolate; credentialled calibration + independent APS X2 review pending.",
+  "selected_copula": "gaussian",
+  "selected_copula_rel_error_vs_nested": 0.064949,
+  "standalone_scr": {
+    "credit": 9770.7463,
+    "equity": 30195.5771,
+    "lapse": 26973.1319,
+    "mortality": 413.3082,
+    "rate": 33329.495
+  },
+  "standard_references": [
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 56 \u00a73.1",
+    "SOA ASOP 25 \u00a73.3",
+    "SOA ASOP 7 \u00a73.3",
+    "IA TAS M \u00a73.2",
+    "IA TAS M \u00a73.5",
+    "IA TAS M \u00a73.6",
+    "Solvency II Delegated Reg. Art. 234",
+    "IFoA Life Aggregation & Simulation working party",
+    "Lee & Carter (1992)"
+  ],
+  "task": "Phase 19 Task 4 - five-driver tail-dependent risk aggregation (mortality-trend 5th driver)",
+  "var_covar_rel_error_vs_nested": 0.488442,
+  "verdict": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
+}

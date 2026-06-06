@@ -1,0 +1,35 @@
+{
+  "fixture_id": "HK_PAR_LAPSE_EXPERIENCE_2026",
+  "description": "Educational-proxy Hong Kong participating-business lapse experience series, expressed as a monthly actual-to-expected (A/E) lapse ratio relative to the locked best-estimate lapse basis, 2006-2025. Used to drive the Phase 19 Task 5 lapse behavioural-index (OU) calibration (risks MR-003 / MR-011). The behavioural index is b(t) = log(A/E); a centred mean-reverting OU level factor capturing the risk that the WHOLE lapse basis is systematically higher or lower than assumed, independent of the rate-dependent dynamic-lapse function. EDUCATIONAL PROXY approximating published HK PAR persistency-study A/E dispersion; NOT a credentialled experience-study extract. Replace with a credentialled actual-vs-expected persistency study and re-run sign-off before any regulatory, pricing, or capital-adequacy use.",
+  "market": "HK_PAR",
+  "currency": "HKD",
+  "experience_basis": "Actual/Expected monthly lapse ratio over the locked best-estimate lapse table (proxy)",
+  "as_of_date": "2026-01-01",
+  "monthly_synthesis": {
+    "seed": 20260106,
+    "steps_per_year": 12,
+    "start_date": "2006-01-31",
+    "end_date": "2025-12-31",
+    "method": "A monthly behavioural-index path b(t) = log(A/E) is simulated from the documented target OU parameters (target_mean_reversion kappa_b, target_long_run_level theta_b, target_behaviour_vol sigma_b) using the EXACT AR(1) discretisation of the OU process b_{t+1} = b_t*e^{-kappa*dt} + theta*(1-e^{-kappa*dt}) + sqrt(sigma^2*(1-e^{-2*kappa*dt})/(2*kappa))*Z, dt = 1/12, b_0 = initial_index. The realised A/E ratio = exp(b). Fully deterministic given the seed. The OU AR(1) OLS calibrator recovers the long-run level theta (intercept/(1-slope), sample-mean robust), the behaviour vol sigma_b (residual-variance robust) and the mean-reversion speed kappa_b (regression-slope, noisier) from this single path.",
+    "initial_index": 0.05
+  },
+  "target_mean_reversion": 0.50,
+  "target_long_run_level": 0.00,
+  "target_behaviour_vol": 0.18,
+  "ae_floor": 0.30,
+  "ae_ceiling": 3.00,
+  "documented_sources_note": "HK participating-business persistency studies report material year-to-year dispersion of actual-vs-expected lapse rates around the locked best-estimate basis (A/E typically in a 0.7-1.4 band on credible exposure, wider on thin cohorts). A centred OU on log(A/E) with a stationary std of sigma_b/sqrt(2*kappa_b) ~ 0.18/sqrt(1.0) ~ 0.18 implies a one-standard-deviation A/E multiplier of exp(+/-0.18) ~ [0.84, 1.20], consistent with the documented dispersion. The long-run level is anchored at theta=0 (A/E=1) because the best-estimate basis is, by construction, unbiased on a credible basis.",
+  "data_lineage": {
+    "provenance": "educational_historical_proxy",
+    "approved_by": "ModelGovernance_Phase19",
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "version": "1.0.0",
+    "checksum_sha256": "educational_fixture_no_checksum",
+    "primary_sources": [
+      "Hong Kong participating-business persistency / lapse experience studies, monthly actual-vs-expected ratios (educational proxy levels)",
+      "Best-estimate lapse basis locked at the prior assumption review (educational proxy)"
+    ],
+    "production_restriction": "Proxy levels only. Replace with a credentialled HK PAR actual-vs-expected persistency study (cohort/duration-segmented, with exposure weights and standard errors) and re-run sign-off before regulatory, pricing, or capital-adequacy use."
+  },
+  "notes": "20 calendar years of monthly synthesis (>= 240 monthly observations; the lapse calibration needs >= 60). log(A/E) is signed (lapse can be both higher and lower than expected), so a Gaussian OU on the log multiplier is the natural choice; exp() keeps the A/E ratio positive without a Feller condition. The long-run level of ~0 (A/E ~ 1.0) sits at the centre of the documented HK PAR persistency dispersion."
+}

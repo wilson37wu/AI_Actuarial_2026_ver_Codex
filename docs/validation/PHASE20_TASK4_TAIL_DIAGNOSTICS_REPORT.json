@@ -1,0 +1,62 @@
+{
+  "run_timestamp": "2026-06-06T10:25:50.364534+00:00",
+  "tail": {
+    "n_outer": 240,
+    "mean_liability": 116516.3426,
+    "var_es_by_level": {
+      "0.950": {
+        "var": 156401.7585,
+        "es": 164843.8805,
+        "scr_var": 39885.4159,
+        "scr_es": 48327.538
+      },
+      "0.990": {
+        "var": 170786.1998,
+        "es": 174818.1269,
+        "scr_var": 54269.8573,
+        "scr_es": 58301.7843
+      },
+      "0.995": {
+        "var": 171632.0954,
+        "es": 176556.5017,
+        "scr_var": 55115.7528,
+        "scr_es": 60040.1592
+      }
+    },
+    "outer_convergence": [
+      {
+        "n_outer": 60,
+        "scr_proxy": 42313.6857
+      },
+      {
+        "n_outer": 120,
+        "scr_proxy": 50961.0114
+      },
+      {
+        "n_outer": 180,
+        "scr_proxy": 54176.7574
+      },
+      {
+        "n_outer": 240,
+        "scr_proxy": 55115.7528
+      }
+    ],
+    "bootstrap_scr_995": {
+      "point": 55115.7528,
+      "ci_lo_95": 45679.9994,
+      "ci_hi_95": 65408.8107,
+      "rel_halfwidth": 0.179,
+      "n_boot": 2000
+    }
+  },
+  "config": {
+    "n_outer": 240,
+    "n_inner": 48,
+    "seed": 42,
+    "confidence_level": 0.995,
+    "capital_horizon_months": 12,
+    "outer_measure": "P",
+    "aggregation_gap_tolerance": 0.35,
+    "n_sim_copula": 120000
+  }
+}

@@ -74,8 +74,20 @@ from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Tuple
 
 import numpy as np
-from scipy import stats
-from scipy.stats import qmc
+# --- lazy scipy proxy: keeps this module importable without scipy; the real
+# scipy submodule is imported on first attribute access (only if used). ---
+class _LazyScipy:
+    def __init__(self, _modname):
+        object.__setattr__(self, "_modname", _modname)
+        object.__setattr__(self, "_mod", None)
+    def __getattr__(self, _name):
+        if object.__getattribute__(self, "_mod") is None:
+            import importlib
+            object.__setattr__(self, "_mod",
+                               importlib.import_module(object.__getattribute__(self, "_modname")))
+        return getattr(object.__getattribute__(self, "_mod"), _name)
+stats = _LazyScipy("scipy.stats")
+qmc = _LazyScipy("scipy.stats.qmc")
 
 from par_model_v2.projection.monthly_projection import ParEndowmentProduct
 from par_model_v2.projection.nested_stochastic_tvog import (
@@ -2041,3 +2053,590 @@ def four_driver_tail_use_restrictions() -> Dict[str, object]:
 
 def four_driver_tail_use_restrictions_json() -> str:
     return json.dumps(four_driver_tail_use_restrictions(), indent=2, sort_keys=True)
+
+
+# ===========================================================================
+# Phase 19 Task 4 (remaining) -- FIVE-DRIVER tail-convergence & stability
+# diagnostics.  Additive: extends the four-driver diagnostics with a second
+# NON-FINANCIAL driver -- the OU mortality-trend index m(t) (Lee-Carter-style
+# single systemic time index).  Built on the Phase 19 Task 3 *quintivariate*
+# LSMC surface so the outer (Monte-Carlo) sampling error of the 99.5% five-driver
+# capital metric can be probed at scale.  The N-D copula / scheme helpers
+# (_draw_normals_nd, _correlate_nd, _states_from_normals_nd,
+# _nearest_correlation_matrix) are dimension-agnostic and reused with dim=5.
+# No two-/three-/four-driver diagnostics class is modified.
+
+from par_model_v2.projection.multi_driver_capital_5d import (  # noqa: E402
+    DEFAULT_MAX_INTERACTION_ORDER_5D,
+    DEFAULT_QUINT_LSMC_DEGREE,
+    FiveDriverCorrelation,
+    FiveDriverLSMCProxyEngine,
+    FiveDriverLSMCResult,
+    MortalityExposureSpec,
+    _outer_states_5d,
+)
+from par_model_v2.stochastic.mortality_trend import MortalityTrendParams  # noqa: E402
+
+
+@dataclass
+class FiveDriverTailConfig:
+    """Configuration for the Phase 19 Task 4 five-driver tail-diagnostics run."""
+
+    n_fit: int = 1_500
+    lsmc_degree: int = DEFAULT_QUINT_LSMC_DEGREE
+    max_interaction_order: int = DEFAULT_MAX_INTERACTION_ORDER_5D
+    confidence_level: float = DEFAULT_CONFIDENCE_LEVEL
+    capital_horizon_months: int = DEFAULT_CAPITAL_HORIZON_MONTHS
+    outer_measure: Measure = Measure.P
+    seed: int = 42
+
+    outer_grid: Tuple[int, ...] = DEFAULT_OUTER_GRID
+    convergence_tol: float = DEFAULT_CONVERGENCE_TOL
+
+    n_bootstrap: int = DEFAULT_N_BOOTSTRAP
+    bootstrap_n_outer: int = DEFAULT_BOOTSTRAP_N_OUTER
+    bootstrap_ci_level: float = 0.95
+
+    vr_replications: int = DEFAULT_VR_REPLICATIONS
+    vr_n_outer: int = DEFAULT_VR_N_OUTER
+    vr_pilot_n: int = DEFAULT_VR_PILOT_N
+
+    def __post_init__(self) -> None:
+        if self.n_fit < 50:
+            raise ValueError("n_fit must be >= 50")
+        if self.lsmc_degree < 1:
+            raise ValueError("lsmc_degree must be >= 1")
+        if self.max_interaction_order < 0:
+            raise ValueError("max_interaction_order must be >= 0")
+        if not (0.5 < self.confidence_level < 1.0):
+            raise ValueError("confidence_level must be in (0.5, 1.0)")
+        if self.capital_horizon_months <= 0:
+            raise ValueError("capital_horizon_months must be positive")
+        if len(self.outer_grid) < 2:
+            raise ValueError("outer_grid must contain at least two sizes")
+        if any(n <= 0 for n in self.outer_grid):
+            raise ValueError("outer_grid sizes must be positive")
+        if list(self.outer_grid) != sorted(self.outer_grid):
+            raise ValueError("outer_grid must be ascending")
+        if self.convergence_tol <= 0:
+            raise ValueError("convergence_tol must be positive")
+        if self.n_bootstrap < 100:
+            raise ValueError("n_bootstrap must be >= 100")
+        if self.bootstrap_n_outer < 100:
+            raise ValueError("bootstrap_n_outer must be >= 100")
+        if not (0.5 < self.bootstrap_ci_level < 1.0):
+            raise ValueError("bootstrap_ci_level must be in (0.5, 1.0)")
+        if self.vr_replications < 10:
+            raise ValueError("vr_replications must be >= 10")
+        if self.vr_n_outer < 64 or (self.vr_n_outer & (self.vr_n_outer - 1)) != 0:
+            raise ValueError("vr_n_outer must be a power of two >= 64")
+        if self.vr_pilot_n < 200:
+            raise ValueError("vr_pilot_n must be >= 200")
+        self.outer_measure = Measure(self.outer_measure)
+        self.outer_grid = tuple(int(n) for n in self.outer_grid)
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "n_fit": self.n_fit,
+            "lsmc_degree": self.lsmc_degree,
+            "max_interaction_order": self.max_interaction_order,
+            "confidence_level": self.confidence_level,
+            "capital_horizon_months": self.capital_horizon_months,
+            "outer_measure": self.outer_measure.value,
+            "seed": self.seed,
+            "outer_grid": list(self.outer_grid),
+            "convergence_tol": self.convergence_tol,
+            "n_bootstrap": self.n_bootstrap,
+            "bootstrap_n_outer": self.bootstrap_n_outer,
+            "bootstrap_ci_level": self.bootstrap_ci_level,
+            "vr_replications": self.vr_replications,
+            "vr_n_outer": self.vr_n_outer,
+            "vr_pilot_n": self.vr_pilot_n,
+        }
+
+
+@dataclass
+class VarianceReduction5D:
+    """Variance-reduction comparison across sampling schemes (five drivers).
+
+    Identical structure to :class:`VarianceReduction4D` except the controlling
+    copula is now five-dimensional, so ``copula_corr`` is the realised 5x5
+    outer-state correlation (rate, equity, credit-spread, lapse-behaviour,
+    mortality-trend).
+    """
+
+    crude: SchemeVariance
+    antithetic: SchemeVariance
+    sobol: SchemeVariance
+    antithetic_var_ratio: float
+    sobol_var_ratio: float
+    antithetic_es_ratio: float
+    sobol_es_ratio: float
+    copula_corr: Tuple[Tuple[float, ...], ...]   # realised 5x5 outer-state corr
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "crude": self.crude.to_dict(),
+            "antithetic": self.antithetic.to_dict(),
+            "sobol": self.sobol.to_dict(),
+            "antithetic_var_ratio": round(self.antithetic_var_ratio, 4),
+            "sobol_var_ratio": round(self.sobol_var_ratio, 4),
+            "antithetic_es_ratio": round(self.antithetic_es_ratio, 4),
+            "sobol_es_ratio": round(self.sobol_es_ratio, 4),
+            "copula_corr": [[round(x, 6) for x in row] for row in self.copula_corr],
+        }
+
+
+@dataclass
+class FiveDriverTailReport:
+    """Full structured Phase 19 Task 4 five-driver tail-diagnostics report."""
+
+    config: FiveDriverTailConfig
+    lsmc_summary: Dict[str, object]
+    convergence: OuterConvergence
+    bootstrap: BootstrapInterval
+    variance_reduction: VarianceReduction5D
+    run_id: str
+    duration_seconds: float
+    verdict: str
+    reproducibility_digest: str
+    drivers: Tuple[str, ...] = (
+        "short_rate", "equity_level", "credit_spread",
+        "lapse_behaviour", "mortality_trend")
+    notes: List[str] = field(default_factory=list)
+    audit_entry_id: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "run_id": self.run_id,
+            "verdict": self.verdict,
+            "drivers": list(self.drivers),
+            "lsmc_summary": self.lsmc_summary,
+            "convergence": self.convergence.to_dict(),
+            "bootstrap": self.bootstrap.to_dict(),
+            "variance_reduction": self.variance_reduction.to_dict(),
+            "reproducibility_digest": self.reproducibility_digest,
+            "duration_seconds": round(self.duration_seconds, 4),
+            "config": self.config.to_dict(),
+            "notes": list(self.notes),
+            "audit_entry_id": self.audit_entry_id,
+            "standards": [
+                "SOA ASOP 56 §3.5",
+                "SOA ASOP 56 §3.1.3",
+                "SOA ASOP 25 §3.3",
+                "SOA ASOP 7 §3.3",
+                "IA TAS M §3.6",
+                "L'Ecuyer (2018) RQMC",
+                "Glasserman (2003) §4",
+            ],
+        }
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2, sort_keys=True)
+
+    def to_markdown(self) -> str:
+        c = self.convergence
+        b = self.bootstrap
+        v = self.variance_reduction
+        lines = [
+            "# Phase 19 Task 4 — Five-Driver Tail-Convergence & Stability Diagnostics",
+            "",
+            "**Drivers:** {}".format(", ".join(self.drivers)),
+            "",
+            "**Verdict:** {}".format(self.verdict),
+            "",
+            "Run `{}` | {} s | digest `{}`".format(
+                self.run_id, round(self.duration_seconds, 2),
+                self.reproducibility_digest[:12]),
+            "",
+            "## 1. Outer-count convergence (99.5% VaR / ES)",
+            "",
+            "| N_outer | VaR | ES | ΔVaR (rel) |",
+            "|--------:|----:|---:|-----------:|",
+        ]
+        changes = (None,) + c.var_successive_rel_change
+        for n, var, es, ch in zip(c.n_outer_grid, c.var_path, c.es_path, changes):
+            chs = "—" if ch is None else "{:.3%}".format(ch)
+            lines.append("| {:,} | {:,.1f} | {:,.1f} | {} |".format(n, var, es, chs))
+        lines += [
+            "",
+            "Converged: **{}** (tol {:.2%}); recommended N_outer ≥ **{:,}**.".format(
+                c.converged, self.config.convergence_tol, c.recommended_n_outer),
+            "",
+            "## 2. Bootstrap {:.0%} CI (N_outer={:,}, B={:,})".format(
+                b.ci_level, b.n_outer, b.n_bootstrap),
+            "",
+            "- VaR {:,.1f}  CI [{:,.1f}, {:,.1f}]  SE {:,.1f}  (±{:.2%} of point)".format(
+                b.var_point, b.var_ci_low, b.var_ci_high, b.var_standard_error,
+                b.var_ci_rel_halfwidth),
+            "- ES  {:,.1f}  CI [{:,.1f}, {:,.1f}]  SE {:,.1f}".format(
+                b.es_point, b.es_ci_low, b.es_ci_high, b.es_standard_error),
+            "",
+            "## 3. Variance reduction (VaR estimator, {} reps × N={:,})".format(
+                v.crude.n_replications, v.crude.n_outer),
+            "",
+            "Copula correlation (realised 5x5 outer-state, rate/equity/credit/lapse/mortality): {}".format(
+                v.copula_corr),
+            "",
+            "| Scheme | VaR estimator SD | Variance-reduction ratio |",
+            "|--------|-----------------:|-------------------------:|",
+            "| Crude (pseudo-random) | {:,.2f} | 1.00× |".format(v.crude.var_std),
+            "| Antithetic | {:,.2f} | {:.2f}× |".format(v.antithetic.var_std, v.antithetic_var_ratio),
+            "| Sobol QMC | {:,.2f} | {:.2f}× |".format(v.sobol.var_std, v.sobol_var_ratio),
+            "",
+            "## Notes",
+            "",
+        ]
+        lines += ["- {}".format(n) for n in self.notes]
+        return "\n".join(lines) + "\n"
+
+
+class FiveDriverTailDiagnostics:
+    """Convergence, bootstrap-CI, and variance-reduction diagnostics for the
+    FIVE-driver (rate + equity + credit-spread + lapse-behaviour +
+    mortality-trend) 99.5% capital metric, built on the Phase 19 Task 3
+    quintivariate LSMC surface (additive; no existing diagnostics class
+    touched)."""
+
+    def __init__(
+        self,
+        product: ParEndowmentProduct,
+        hw_params: Optional[HullWhiteParams] = None,
+        gbm_params: Optional[GBMParams] = None,
+        spread_params: Optional[CreditSpreadParams] = None,
+        lapse_params: Optional[LapseBehaviourParams] = None,
+        mortality_params: Optional[MortalityTrendParams] = None,
+        correlation: Optional[FiveDriverCorrelation] = None,
+        initial_curve: Optional[RiskFreeCurve] = None,
+        equity_guarantee: Optional[EquityGuaranteeSpec] = None,
+        credit_exposure: Optional[CreditExposureSpec] = None,
+        lapse_exposure: Optional[LapseExposureSpec] = None,
+        mortality_exposure: Optional[MortalityExposureSpec] = None,
+        annual_qx_fn: Optional[Callable] = None,
+    ) -> None:
+        self.product = product
+        self.hw_params = hw_params if hw_params is not None else HullWhiteParams()
+        self.gbm_params = gbm_params if gbm_params is not None else GBMParams()
+        self.spread_params = spread_params if spread_params is not None else CreditSpreadParams()
+        self.lapse_params = lapse_params if lapse_params is not None else LapseBehaviourParams()
+        self.mortality_params = (
+            mortality_params if mortality_params is not None else MortalityTrendParams())
+        self.correlation = correlation if correlation is not None else FiveDriverCorrelation()
+        self.initial_curve = initial_curve
+        self.equity_guarantee = equity_guarantee or EquityGuaranteeSpec()
+        self.credit_exposure = credit_exposure or CreditExposureSpec()
+        self.lapse_exposure = lapse_exposure or LapseExposureSpec()
+        self.mortality_exposure = mortality_exposure or MortalityExposureSpec()
+        self.annual_qx_fn = annual_qx_fn
+
+    # -- fitted surface -----------------------------------------------------
+    def _fit_surface(self, cfg: FiveDriverTailConfig) -> FiveDriverLSMCResult:
+        engine = FiveDriverLSMCProxyEngine(
+            self.product,
+            hw_params=self.hw_params,
+            gbm_params=self.gbm_params,
+            spread_params=self.spread_params,
+            lapse_params=self.lapse_params,
+            mortality_params=self.mortality_params,
+            correlation=self.correlation,
+            initial_curve=self.initial_curve,
+            equity_guarantee=self.equity_guarantee,
+            credit_exposure=self.credit_exposure,
+            lapse_exposure=self.lapse_exposure,
+            mortality_exposure=self.mortality_exposure,
+            capital_horizon_months=cfg.capital_horizon_months,
+            confidence_level=cfg.confidence_level,
+            outer_measure=cfg.outer_measure,
+            degree=cfg.lsmc_degree,
+            max_interaction_order=cfg.max_interaction_order,
+            annual_qx_fn=self.annual_qx_fn,
+        )
+        return engine.fit_and_run(n_fit=cfg.n_fit, n_outer_eval=1_000, seed=cfg.seed)
+
+    def _outer_states(
+        self, n_outer: int, cfg: FiveDriverTailConfig, seed: int
+    ) -> np.ndarray:
+        return _outer_states_5d(
+            n_outer, cfg.capital_horizon_months, cfg.outer_measure,
+            self.hw_params, self.gbm_params, self.spread_params, self.lapse_params,
+            self.mortality_params, self.correlation, self.initial_curve, seed,
+        )
+
+    def _outer_liabilities(
+        self, surface: FiveDriverLSMCResult, n_outer: int,
+        cfg: FiveDriverTailConfig, seed: int,
+    ) -> np.ndarray:
+        return surface.predict(self._outer_states(n_outer, cfg, seed))
+
+    # -- 1. convergence -----------------------------------------------------
+    def _convergence(
+        self, surface: FiveDriverLSMCResult, cfg: FiveDriverTailConfig
+    ) -> OuterConvergence:
+        var_path: List[float] = []
+        es_path: List[float] = []
+        for k, n in enumerate(cfg.outer_grid):
+            liab = self._outer_liabilities(surface, n, cfg, seed=cfg.seed + 1_000 + 7 * k)
+            var, es = _var_es(liab, cfg.confidence_level)
+            var_path.append(var)
+            es_path.append(es)
+        var_chg = tuple(_rel(var_path[i], var_path[i - 1]) for i in range(1, len(var_path)))
+        es_chg = tuple(_rel(es_path[i], es_path[i - 1]) for i in range(1, len(es_path)))
+
+        recommended = cfg.outer_grid[-1]
+        converged = bool(var_chg and var_chg[-1] <= cfg.convergence_tol)
+        for i, ch in enumerate(var_chg):
+            if ch <= cfg.convergence_tol:
+                recommended = cfg.outer_grid[i + 1]
+                break
+        return OuterConvergence(
+            n_outer_grid=tuple(cfg.outer_grid),
+            var_path=tuple(var_path), es_path=tuple(es_path),
+            var_successive_rel_change=var_chg, es_successive_rel_change=es_chg,
+            converged=converged, recommended_n_outer=int(recommended),
+            final_var=var_path[-1], final_es=es_path[-1],
+        )
+
+    # -- 2. bootstrap CI ----------------------------------------------------
+    def _bootstrap(
+        self, surface: FiveDriverLSMCResult, cfg: FiveDriverTailConfig
+    ) -> BootstrapInterval:
+        liab = self._outer_liabilities(
+            surface, cfg.bootstrap_n_outer, cfg, seed=cfg.seed + 500
+        )
+        n = liab.size
+        var_pt, es_pt = _var_es(liab, cfg.confidence_level)
+        rng = np.random.default_rng(cfg.seed + 999)
+        var_bs = np.empty(cfg.n_bootstrap, dtype=float)
+        es_bs = np.empty(cfg.n_bootstrap, dtype=float)
+        for b in range(cfg.n_bootstrap):
+            idx = rng.integers(0, n, n)
+            var_bs[b], es_bs[b] = _var_es(liab[idx], cfg.confidence_level)
+        alpha = 1.0 - cfg.bootstrap_ci_level
+        lo_q, hi_q = alpha / 2.0, 1.0 - alpha / 2.0
+        return BootstrapInterval(
+            n_outer=n, n_bootstrap=cfg.n_bootstrap, ci_level=cfg.bootstrap_ci_level,
+            var_point=var_pt,
+            var_ci_low=float(np.quantile(var_bs, lo_q)),
+            var_ci_high=float(np.quantile(var_bs, hi_q)),
+            var_standard_error=float(var_bs.std(ddof=1)),
+            es_point=es_pt,
+            es_ci_low=float(np.quantile(es_bs, lo_q)),
+            es_ci_high=float(np.quantile(es_bs, hi_q)),
+            es_standard_error=float(es_bs.std(ddof=1)),
+        )
+
+    # -- 3. variance reduction ---------------------------------------------
+    def _variance_reduction(
+        self, surface: FiveDriverLSMCResult, cfg: FiveDriverTailConfig
+    ) -> VarianceReduction5D:
+        pilot = self._outer_states(cfg.vr_pilot_n, cfg, seed=cfg.seed + 321)
+        margins = tuple(np.sort(pilot[:, j]) for j in range(5))
+        corr = np.corrcoef(pilot, rowvar=False)
+        if not np.all(np.isfinite(corr)):
+            corr = np.eye(5)
+        corr = _nearest_correlation_matrix(corr)
+
+        def scheme_stats(scheme: str) -> SchemeVariance:
+            vars_, ess_ = [], []
+            for rep in range(cfg.vr_replications):
+                z = _draw_normals_nd(scheme, cfg.vr_n_outer, 5, seed=cfg.seed + 10_000 + rep)
+                w = _correlate_nd(z, corr)
+                states = _states_from_normals_nd(w, margins)
+                liab = surface.predict(states)
+                var, es = _var_es(liab, cfg.confidence_level)
+                vars_.append(var)
+                ess_.append(es)
+            vars_ = np.asarray(vars_)
+            ess_ = np.asarray(ess_)
+            return SchemeVariance(
+                scheme=scheme, n_outer=cfg.vr_n_outer, n_replications=cfg.vr_replications,
+                var_mean=float(vars_.mean()), var_std=float(vars_.std(ddof=1)),
+                es_mean=float(ess_.mean()), es_std=float(ess_.std(ddof=1)),
+            )
+
+        crude = scheme_stats("crude")
+        anti = scheme_stats("antithetic")
+        sob = scheme_stats("sobol")
+
+        def ratio(base: float, other: float) -> float:
+            return float((base ** 2) / (other ** 2)) if other > 1e-12 else float("inf")
+
+        return VarianceReduction5D(
+            crude=crude, antithetic=anti, sobol=sob,
+            antithetic_var_ratio=ratio(crude.var_std, anti.var_std),
+            sobol_var_ratio=ratio(crude.var_std, sob.var_std),
+            antithetic_es_ratio=ratio(crude.es_std, anti.es_std),
+            sobol_es_ratio=ratio(crude.es_std, sob.es_std),
+            copula_corr=tuple(tuple(float(x) for x in row) for row in np.round(corr, 6)),
+        )
+
+    # -- orchestration ------------------------------------------------------
+    def run(
+        self,
+        config: Optional[FiveDriverTailConfig] = None,
+        governance_store: Optional[object] = None,
+        actor: str = "FiveDriverTailDiagnostics",
+        phase: str = "Phase 19: Recovery Completion and Driver Expansion",
+    ) -> FiveDriverTailReport:
+        cfg = config or FiveDriverTailConfig()
+        if cfg.capital_horizon_months >= self.product.term_months:
+            raise ValueError("capital_horizon_months must be less than product term")
+
+        t0 = time.monotonic()
+        run_id = "td5-tail-" + uuid.uuid4().hex[:8]
+
+        surface = self._fit_surface(cfg)
+        convergence = self._convergence(surface, cfg)
+        bootstrap = self._bootstrap(surface, cfg)
+        vr = self._variance_reduction(surface, cfg)
+
+        notes: List[str] = [
+            "Five-driver (rate+equity+credit+lapse+mortality) extension of the "
+            "Phase 18 Task 4 four-driver tail diagnostics; built on the Phase 19 "
+            "Task 3 quintivariate LSMC surface (no two-/three-/four-driver "
+            "diagnostics class modified).",
+            "The fifth driver is the SECOND NON-FINANCIAL axis -- an OU "
+            "mortality-trend index m(t) (Lee-Carter-style single systemic time "
+            "index); it is orthogonal to the financial drivers AND to lapse in the "
+            "governed 5x5 ESG matrix, but its realised liability impact still "
+            "perturbs the tail through benefit timing on the sum-assured endowment.",
+            "Outer-count convergence and the bootstrap CI use the GOVERNED 5-factor "
+            "correlated outer states (_outer_states_5d) with the once-fitted LSMC "
+            "surface; they isolate outer Monte-Carlo (sampling) error, not proxy error.",
+            "Proxy error is bounded separately by the Phase 19 Task 3 five-driver "
+            "out-of-sample validation (OOS R^2=0.9616) report.",
+            "The variance-reduction study uses a pilot-anchored Gaussian copula whose "
+            "controlling correlation is the realised 5x5 outer-state correlation "
+            "(rate/equity/credit/lapse/mortality) and whose margins are the empirical "
+            "pilot margins, so crude / antithetic / Sobol target an identical "
+            "distribution and the ratio is like-for-like.",
+            "Antithetic uses negated normal quintuples; Sobol uses a scrambled base-2 "
+            "sequence in 5 dimensions (n is a power of two for exact balance).",
+        ]
+        verdict = self._verdict(cfg, convergence, bootstrap, vr, notes)
+
+        digest = hashlib.sha256(
+            np.round(
+                np.concatenate([
+                    np.asarray(convergence.var_path, dtype=float),
+                    np.asarray(convergence.es_path, dtype=float),
+                    np.array([bootstrap.var_point, bootstrap.es_point,
+                              bootstrap.var_standard_error, bootstrap.es_standard_error],
+                             dtype=float),
+                    np.array([vr.crude.var_std, vr.antithetic.var_std, vr.sobol.var_std],
+                             dtype=float),
+                    np.asarray(vr.copula_corr, dtype=float).reshape(-1),
+                ]),
+                6,
+            ).tobytes()
+        ).hexdigest()
+
+        duration = time.monotonic() - t0
+        audit_entry_id = None
+        if governance_store is not None:
+            try:
+                from par_model_v2.governance.audit_trail import AuditEntry
+
+                entry = AuditEntry.model_run(
+                    actor=actor, phase=phase, run_id=run_id,
+                    scenario_count=cfg.outer_grid[-1] + cfg.bootstrap_n_outer
+                    + cfg.vr_replications * cfg.vr_n_outer,
+                    duration_seconds=round(duration, 4),
+                    outcome=verdict.split()[0],
+                    files_changed=[
+                        "par_model_v2/projection/multi_driver_tail_diagnostics.py"
+                    ],
+                    test_summary=(
+                        "5D VaR{:.1f}%={:.1f}; converged={}; rec_N>={}; CI=[{:.1f},{:.1f}]; "
+                        "SE={:.1f}; anti_ratio={:.2f}; sobol_ratio={:.2f}".format(
+                            cfg.confidence_level * 100, convergence.final_var,
+                            convergence.converged, convergence.recommended_n_outer,
+                            bootstrap.var_ci_low, bootstrap.var_ci_high,
+                            bootstrap.var_standard_error,
+                            vr.antithetic_var_ratio, vr.sobol_var_ratio)
+                    ),
+                )
+                governance_store.audit_trail.append(entry)
+                audit_entry_id = entry.entry_id
+            except Exception as exc:  # pragma: no cover - governance optional
+                notes.append("Governance audit append skipped: {}".format(exc))
+
+        return FiveDriverTailReport(
+            config=cfg, lsmc_summary=surface.summary(),
+            convergence=convergence, bootstrap=bootstrap, variance_reduction=vr,
+            run_id=run_id, duration_seconds=duration, verdict=verdict,
+            reproducibility_digest=digest, notes=notes, audit_entry_id=audit_entry_id,
+        )
+
+    @staticmethod
+    def _verdict(
+        cfg: FiveDriverTailConfig,
+        convergence: OuterConvergence,
+        bootstrap: BootstrapInterval,
+        vr: VarianceReduction5D,
+        notes: List[str],
+    ) -> str:
+        var_in_ci = bootstrap.var_ci_low <= convergence.final_var <= bootstrap.var_ci_high
+        best_ratio = max(vr.antithetic_var_ratio, vr.sobol_var_ratio)
+        checks = [
+            convergence.converged,
+            var_in_ci,
+            best_ratio > 1.0,
+        ]
+        if not convergence.converged:
+            notes.append("99.5% VaR not converged within outer_grid; extend N_outer.")
+        if not var_in_ci:
+            notes.append("Convergence VaR lies outside the bootstrap CI (independent samples); review.")
+        if vr.antithetic_var_ratio < 1.0:
+            notes.append(
+                "Antithetic variates do not reduce the 99.5% VaR-estimator variance "
+                "(ratio {:.2f}<1) - expected for an extreme quantile; QMC is the "
+                "effective scheme here (ratio {:.2f}).".format(
+                    vr.antithetic_var_ratio, vr.sobol_var_ratio))
+        if vr.sobol_var_ratio < 1.0:
+            notes.append("Sobol QMC did not reduce VaR-estimator variance for this surface.")
+        if all(checks):
+            return "PASS - five-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
+        return "PARTIAL - five-driver tail diagnostics generated with review items"
+
+
+def five_driver_tail_use_restrictions() -> Dict[str, object]:
+    """Structured model-use restrictions for the five-driver tail diagnostics.
+
+    SOA ASOP 56 §3.5.1; SOA ASOP 7 §3.3; SOA ASOP 25 §3.3; IA TAS M §3.6.
+    """
+    return {
+        "module": "par_model_v2/projection/multi_driver_tail_diagnostics.py",
+        "component": "FiveDriverTailDiagnostics",
+        "classification": "EDUCATIONAL ONLY - NOT a regulatory capital model",
+        "risk_drivers": [
+            "short rate", "equity level", "credit spread",
+            "lapse behaviour", "mortality trend"],
+        "method": (
+            "Outer-count convergence, non-parametric bootstrap CI/SE on the 99.5% "
+            "VaR/ES, and a crude/antithetic/Sobol variance-reduction comparison for the "
+            "five-driver 99.5% capital metric, built on the Phase 19 Task 3 quintivariate "
+            "LSMC surface (the outer-sampling error is probed; proxy error is bounded "
+            "separately by the five-driver OOS proxy-validation report)."
+        ),
+        "limitations": [
+            "Outer sampling and bootstrap diagnostics probe Monte-Carlo error only; the proxy (surface) error is bounded separately by the five-driver OOS validation.",
+            "The variance-reduction study runs on a smooth pilot-anchored Gaussian-copula surrogate of the horizon-state distribution, NOT the raw governed processes; antithetic/QMC require a controllable normal/uniform driver.",
+            "Five drivers only (rates + equity + credit + lapse + mortality-trend); FX and liquidity remain outside the tail.",
+            "Mortality trend is a single systemic OU index (Lee-Carter-style) with placeholder parameters; the benefit coupling is educational.",
+            "Lapse behaviour is a single systemic OU index with placeholder parameters; the in-force coupling is multiplicative and educational.",
+            "Independent APS X2 review and credentialled calibration data are still required before any production use.",
+        ],
+        "standards": [
+            "SOA ASOP 56 §3.5",
+            "SOA ASOP 56 §3.1.3",
+            "SOA ASOP 25 §3.3",
+            "SOA ASOP 7 §3.3",
+            "IA TAS M §3.6",
+            "L'Ecuyer (2018) RQMC",
+        ],
+    }
+
+
+def five_driver_tail_use_restrictions_json() -> str:
+    return json.dumps(five_driver_tail_use_restrictions(), indent=2, sort_keys=True)

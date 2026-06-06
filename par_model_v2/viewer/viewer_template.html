@@ -8,7 +8,7 @@
   :root{
     --bg:#0f1720; --panel:#172230; --panel2:#1e2c3d; --ink:#e8eef5; --muted:#9fb1c4;
     --line:#2b3b4f; --accent:#2ecc71; --accent2:#3498db; --warn:#f39c12; --bad:#e74c3c;
-    --rate:#3498db; --equity:#9b59b6; --credit:#e67e22; --nested:#2ecc71; --formula:#f39c12;
+    --rate:#3498db; --equity:#9b59b6; --credit:#e67e22; --lapse:#16a085; --mortality:#c0392b; --nested:#2ecc71; --formula:#f39c12;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
@@ -40,6 +40,7 @@
   th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
   th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
   tr:hover td{background:var(--panel2)}
+  tr.sel td{background:rgba(46,204,113,.12)}
   svg{display:block;max-width:100%}
   .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
   .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:middle}
@@ -364,16 +365,19 @@ function viewCapital(d){
   const hasCredit=c.credit_scr!=null;
   const drivers=(c.drivers&&c.drivers.length)?c.drivers:(hasCredit?["short_rate","equity","credit_spread"]:["short_rate","equity"]);
   const driverLabel=drivers.map(x=>x.replace("_spread","").replace("short_rate","rate").replace("_"," ")).join(" + ");
+  const nDrv=drivers.length;
   const bars=[
     {label:"Rate",v:c.rate_scr,c:'var(--rate)'},
     {label:"Equity",v:c.equity_scr,c:'var(--equity)'},
     {label:"Credit",v:c.credit_scr,c:'var(--credit)'},
+    {label:"Lapse",v:c.lapse_scr,c:'var(--lapse)'},
+    {label:"Mortality",v:c.mortality_scr,c:'var(--mortality)'},
     {label:"Σ standalone",v:c.standalone_sum,c:'#7f8c8d'},
     {label:"Var-cov",v:c.correlated_scr,c:'var(--formula)'},
     {label:"Nested",v:c.nested_scr,c:'var(--nested)'},
   ].filter(b=>b.v!=null);
   let html=`<div class="panel"><h3>Economic capital — standalone vs aggregated (${pct(c.confidence_level,1)})</h3>
-    <div class="desc">Standalone SCR for each risk driver (<strong>${esc(driverLabel)}</strong>), the variance–covariance aggregate, and the fully-diversified nested benchmark. Confidence ${pct(c.confidence_level,1)}, horizon ${fmt(c.horizon_months)} months.${hasCredit?' <span class="pill b-pass">3-driver proxy</span>':''}</div>
+    <div class="desc">Standalone SCR for each risk driver (<strong>${esc(driverLabel)}</strong>), the variance–covariance aggregate, and the fully-diversified nested benchmark. Confidence ${pct(c.confidence_level,1)}, horizon ${fmt(c.horizon_months)} months.${nDrv>=3?` <span class="pill b-pass">${nDrv}-driver proxy</span>`:''}</div>
     ${bars.length?barChart(bars,{w:560,h:240}):'<div class="empty">No aggregation data loaded.</div>'}
     <div class="kvs" style="margin-top:12px">
       <span class="kk">Diversification benefit (formula)</span><span>${fmt(c.diversification_benefit_formula)}</span>
@@ -493,10 +497,13 @@ function viewAggregation(d){
   const drivers=(c.drivers&&c.drivers.length)?c.drivers:(hasCredit?["short_rate","equity","credit_spread"]:["short_rate","equity"]);
   const nDrv=drivers.length;
   const understatePct=(c.esg_understatement_pct!=null)?c.esg_understatement_pct:c.formula_vs_nested_rel_error;
-  const corrText=hasCredit
+  const offdiag=(m)=>{const o=[];for(let i=0;i<m.length;i++)for(let j=i+1;j<m.length;j++)o.push(fmt(m[i][j],2));return o.join(' / ');};
+  const corrText=(nDrv>=4&&c.esg_correlation_matrix)
+    ?`the governed ${nDrv}×${nDrv} ESG driver correlation (off-diagonals ${offdiag(c.esg_correlation_matrix)}; the behavioural lapse index is orthogonal to the financial drivers)`
+    :hasCredit
     ?`the governed 3×3 ESG driver correlation (rate/equity/credit off-diagonals ${(c.esg_correlation_matrix?[c.esg_correlation_matrix[0][1],c.esg_correlation_matrix[0][2],c.esg_correlation_matrix[1][2]].map(x=>fmt(x,2)).join(' / '):fmt(c.esg_rate_equity_correlation,2))})`
     :`the governed ESG rate/equity correlation (ρ=${fmt(c.esg_rate_equity_correlation,2)})`;
-  return `<div class="panel"><h3>Diversification-benefit waterfall — standalone → var-cov → nested (${pct(c.confidence_level,1)})</h3>
+  const wf=`<div class="panel"><h3>Diversification-benefit waterfall — standalone → var-cov → nested (${pct(c.confidence_level,1)})</h3>
     <div class="desc">From the sum of <strong>${nDrv} standalone driver SCR</strong>${hasCredit?' (rate + equity-guarantee + credit-loss)':' (rate + equity-guarantee)'}, the variance–covariance step applies ${corrText} to claim a diversification benefit; the final step corrects to the fully-diversified nested benchmark. Hover any bar for the step value.</div>
     ${waterfallChart(steps,{w:600,h:285})}
     ${legend([{c:'#7f8c8d',t:'standalone / aggregate level'},{c:'#2ecc71',t:'diversification reduction'},{c:'#e74c3c',t:'correlation correction'},{c:'var(--nested)',t:'nested benchmark'}])}
@@ -517,6 +524,31 @@ function viewAggregation(d){
     <div class="desc" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">
       <strong>Key finding (MR-010, MITIGATED):</strong> the raw ESG factor correlation ${understated?'understates':'misstates'} diversified ${nDrv}-driver capital by ${pct(understatePct,1)}${hasCredit?' (vs ~32.9% with two drivers — adding credit widens the gap)':''}. The realised capital-loss correlation is +${fmt(c.component_loss_correlation,2)} (mean off-diagonal)${hasCredit?'; pairwise losses (rate-eq / rate-cr / eq-cr) all co-move positively in stress even though the ESG factor off-diagonals are negative':''}, so the variance–covariance formula overstates the diversification benefit relative to the nested ground truth and is non-conservative. Use the nested benchmark for the headline capital figure (SOA ASOP 56 §3.5; ASOP 25 §3.3; IA TAS M §3.2/§3.6).
     </div></div>`;
+  // Phase 18 copula / tail-dependence aggregation panel
+  let copulaHtml='';
+  const cop=c.copula;
+  if(cop&&cop.candidates&&cop.candidates.length){
+    const rows=cop.candidates.map(k=>{
+      const sel=(k.name===cop.selected);
+      return `<tr${sel?' class="sel"':''}><td>${esc(k.name)}${sel?' <span class="pill b-pass">selected</span>':''}</td>`+
+        `<td>${fmt(k.aggregated_scr)}</td>`+
+        `<td><span class="pill ${(k.scr_rel_error_vs_nested!=null&&k.scr_rel_error_vs_nested<0.1)?'b-pass':'b-warn'}">${pct(k.scr_rel_error_vs_nested,1)}</span></td>`+
+        `<td>${fmt(k.upper_tail_dependence,3)}</td>`+
+        `<td>${fmt(k.diversification_benefit)}</td>`+
+        `<td>${fmt(k.aic,1)}</td></tr>`;
+    }).join("");
+    copulaHtml=`<div class="panel"><h3>Tail-dependent (copula) aggregation — MR-010 mitigation</h3>
+      <div class="desc">The Gaussian variance–covariance formula reconciles to the nested benchmark with a <strong>${pct(cop.var_covar_rel_error_vs_nested,1)}</strong> SCR error. Fitting a copula to the realised outer-state losses and re-aggregating against empirical marginals reconciles the diversified ${nDrv}-driver SCR to the nested ground truth far more tightly. The viewer performs no calculation — every figure is a pre-computed model output (selected copula: <strong>${esc(cop.selected)}</strong>). Upper tail dependence λ_U &gt; 0 means joint extreme losses cluster beyond the Gaussian-formula assumption (Demarta–McNeil 2005; Solvency II Delegated Reg. Art. 234).</div>
+      <table><thead><tr><th>Copula</th><th>Aggregated SCR</th><th>Rel. err vs nested</th><th>Upper tail dep. λ_U</th><th>Diversif. benefit</th><th>AIC</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="kvs" style="margin-top:12px">
+        <span class="kk">Var-cov SCR</span><span>${fmt(cop.var_covar_scr)}</span>
+        <span class="kk">Var-cov rel. err vs nested</span><span><span class="pill ${cop.var_covar_rel_error_vs_nested>0.1?'b-warn':'b-pass'}">${pct(cop.var_covar_rel_error_vs_nested,1)}</span></span>
+        <span class="kk">Nested SCR (benchmark)</span><span>${fmt(cop.nested_scr)}</span>
+      </div>
+      <div class="desc" style="margin-top:10px">Selection is by AIC across the fitted copula family; the selected copula's SCR is the recommended tail-dependent aggregate. Copulas fitted to a finite outer sample carry sampling noise and empirical marginals do not extrapolate — credentialled calibration + independent APS X2 review remain the production residual.</div>
+    </div>`;
+  }
+  return wf+copulaHtml;
 }
 
 function viewGov(d){

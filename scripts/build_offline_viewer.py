@@ -138,11 +138,16 @@ def build_viewer_data() -> Dict[str, Any]:
                 return src(p, obj)
         return None
 
-    tail = _prefer("PHASE17_TAIL_DIAGNOSTICS_REPORT.json",
+    tail = _prefer("PHASE19_TASK4_TAIL_DIAGNOSTICS_REPORT.json",
+                   "PHASE18_TASK4_TAIL_DIAGNOSTICS_REPORT.json",
+                   "PHASE17_TAIL_DIAGNOSTICS_REPORT.json",
                    "PHASE15_TAIL_DIAGNOSTICS_REPORT.json")
-    agg = _prefer("PHASE17_RISK_AGGREGATION_REPORT.json",
+    agg = _prefer("PHASE19_TASK4_AGGREGATION_REPORT.json",
+                  "PHASE18_TASK4_AGGREGATION_REPORT.json",
+                  "PHASE17_RISK_AGGREGATION_REPORT.json",
                   "PHASE15_RISK_AGGREGATION_REPORT.json")
-    proxy = _prefer("PHASE17_PROXY_VALIDATION_REPORT.json",
+    proxy = _prefer("PHASE19_TASK3_PROXY_VALIDATION_REPORT.json",
+                    "PHASE17_PROXY_VALIDATION_REPORT.json",
                     "PHASE15_PROXY_VALIDATION_REPORT.json")
     capev = src(os.path.join(VAL, "PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json"),
                 _load(os.path.join(VAL, "PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json")))
@@ -186,13 +191,19 @@ def build_viewer_data() -> Dict[str, Any]:
     # ---- capital (aggregation + proxy nested) ---------------------------
     if agg:
         sa = agg.get("standalone", {})
-        ag = agg.get("aggregation", {})
+        # Phase 15/17 nest the aggregation summary under "aggregation"; Phase 18
+        # (four-driver copula run) nests the var-cov summary under "var_covar".
+        ag = agg.get("aggregation") or agg.get("var_covar") or {}
         rate = sa.get("rate_capital", {}) or {}
         eq = sa.get("equity_capital", {}) or {}
-        credit = sa.get("credit_capital", {}) or {}   # Phase 17 three-driver only
+        credit = sa.get("credit_capital", {}) or {}   # Phase 17+ three-driver
+        lapse = sa.get("lapse_capital", {}) or {}      # Phase 18 four-driver only
+        mortality = sa.get("mortality_capital", {}) or {}   # Phase 19 five-driver only
         nested = ag.get("full_nested_capital", {}) or {}
         drivers = agg.get("drivers") or (
-            ["short_rate", "equity", "credit_spread"] if credit else ["short_rate", "equity"])
+            ["short_rate", "equity", "credit_spread", "lapse", "mortality_trend"] if mortality else
+            (["short_rate", "equity", "credit_spread", "lapse"] if lapse else
+             (["short_rate", "equity", "credit_spread"] if credit else ["short_rate", "equity"])))
 
         # Realised capital-loss correlation: Phase 15 reports a scalar
         # (rate-equity); Phase 17 reports a 3x3 matrix. Normalise both to a
@@ -209,13 +220,39 @@ def build_viewer_data() -> Dict[str, Any]:
         if esg_re is None and esg_matrix and len(esg_matrix) >= 2:
             esg_re = esg_matrix[0][1]
 
+        # Phase 18 carries a copula sub-report (tail-dependent aggregation that
+        # reconciles var-cov -> nested better than the Gaussian var-cov formula).
+        cop = agg.get("copula") or {}
+        copula_block = None
+        if cop:
+            copula_block = {
+                "selected": cop.get("selected_copula"),
+                "var_covar_scr": cop.get("var_covar_scr"),
+                "nested_scr": cop.get("nested_scr"),
+                "var_covar_rel_error_vs_nested": cop.get("var_covar_rel_error_vs_nested"),
+                "candidates": [
+                    {
+                        "name": cc.get("name"),
+                        "aggregated_scr": cc.get("aggregated_scr"),
+                        "scr_rel_error_vs_nested": cc.get("scr_rel_error_vs_nested"),
+                        "upper_tail_dependence": cc.get("upper_tail_dependence"),
+                        "diversification_benefit": cc.get("diversification_benefit"),
+                        "aic": cc.get("aic"),
+                    }
+                    for cc in (cop.get("copulas") or [])
+                ],
+            }
+
         data["capital"] = {
             "drivers": drivers,
+            "n_drivers": len(drivers),
             "confidence_level": (rate.get("confidence_level") or eq.get("confidence_level")),
             "horizon_months": (rate.get("capital_horizon_months") or eq.get("capital_horizon_months")),
             "rate_scr": rate.get("scr_proxy") or rate.get("var_liability"),
             "equity_scr": eq.get("scr_proxy") or eq.get("var_liability"),
             "credit_scr": (credit.get("scr_proxy") or credit.get("var_liability")) if credit else None,
+            "lapse_scr": (lapse.get("scr_proxy") or lapse.get("var_liability")) if lapse else None,
+            "mortality_scr": (mortality.get("scr_proxy") or mortality.get("var_liability")) if mortality else None,
             "standalone_sum": sa.get("standalone_scr_sum"),
             "correlated_scr": ag.get("correlated_scr"),
             "nested_scr": nested.get("scr_proxy") or nested.get("var_liability"),
@@ -227,6 +264,7 @@ def build_viewer_data() -> Dict[str, Any]:
             "esg_understatement_pct": ag.get("esg_understatement_pct"),
             "formula_vs_nested_rel_error": ag.get("formula_vs_nested_scr_rel_error"),
             "esg_rate_equity_correlation": esg_re,
+            "copula": copula_block,
         }
     # fill VaR/ES from tail
     if tail:
@@ -367,14 +405,7 @@ def main() -> Dict[str, Any]:
     print("sources:", ", ".join(data["meta"]["source_files"]) or "(none)")
     g = data.get("governance", {})
     print("verdicts:", len(data["verdicts"]),
-          "| risks:", len(g.get("risk_register", [])),
-          "| change records:", len(g.get("change_records", [])),
-          "| gates:", len(g.get("deployment_gates", [])),
-          "| audit integrity:", ("OK" if g.get("audit_integrity_ok") else "FAIL"),
-          "({}/{} verified)".format(g.get("audit_verified"), g.get("audit_entries")),
-          "| loss seeds:", len(data.get("loss", {}).get("seeds", [])))
-    print("wrote:", os.path.relpath(OUT_JSON, REPO), "+", os.path.relpath(OUT_HTML, REPO),
-          "({} bytes)".format(len(html)))
+          "| change records:", len(g.get("change_records", [])))
     return data
 
 

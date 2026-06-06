@@ -243,7 +243,7 @@ def test_offline_self_test_script_runs_on_rendered_html(tmp_path, data):
         cwd=_REPO,
         text=True,
         capture_output=True,
-        timeout=10,
+        timeout=90,  # bumped from 10s: headless Node render self-test needs ~25s on slow CI/sandbox hosts (P19T1)
         check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr

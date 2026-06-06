@@ -1,0 +1,158 @@
+{
+  "audit_entry_id": null,
+  "basis_rows": [
+    {
+      "degree": 1,
+      "in_sample_r2_heavy": 0.964729,
+      "in_sample_r2_noisy": 0.420315,
+      "max_interaction_order": 3,
+      "n_basis_terms": 6,
+      "oos_mae": 4722.258846,
+      "oos_max_abs_rel_error": 0.128956,
+      "oos_r2": 0.961579,
+      "oos_rmse": 5650.372379,
+      "overfit_gap": 0.003149
+    },
+    {
+      "degree": 2,
+      "in_sample_r2_heavy": 0.906654,
+      "in_sample_r2_noisy": 0.453828,
+      "max_interaction_order": 3,
+      "n_basis_terms": 21,
+      "oos_mae": 8852.135613,
+      "oos_max_abs_rel_error": 0.327265,
+      "oos_r2": 0.850762,
+      "oos_rmse": 11136.132279,
+      "overfit_gap": 0.055891
+    },
+    {
+      "degree": 3,
+      "in_sample_r2_heavy": 0.75163,
+      "in_sample_r2_noisy": 0.51729,
+      "max_interaction_order": 3,
+      "n_basis_terms": 56,
+      "oos_mae": 13116.850103,
+      "oos_max_abs_rel_error": 0.378586,
+      "oos_r2": 0.651363,
+      "oos_rmse": 17020.857989,
+      "overfit_gap": 0.100267
+    },
+    {
+      "degree": 4,
+      "in_sample_r2_heavy": 0.419659,
+      "in_sample_r2_noisy": 0.569317,
+      "max_interaction_order": 3,
+      "n_basis_terms": 91,
+      "oos_mae": 16646.574244,
+      "oos_max_abs_rel_error": 0.786683,
+      "oos_r2": 0.340063,
+      "oos_rmse": 23417.792855,
+      "overfit_gap": 0.079595
+    }
+  ],
+  "capital_comparison": {
+    "es_rel_error": 0.031796,
+    "nested_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 226209.2464,
+      "mean_liability": 117662.4819,
+      "n_outer": 500,
+      "scr_proxy": 100752.3773,
+      "var_liability": 218414.8592
+    },
+    "nested_n_inner": 96,
+    "nested_n_outer": 500,
+    "proxy_capital": {
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "es_liability": 219016.8014,
+      "mean_liability": 119091.6237,
+      "n_outer": 500,
+      "scr_proxy": 94898.2609,
+      "var_liability": 213989.8846
+    },
+    "scr_rel_error": 0.058104,
+    "var_rel_error": 0.020259
+  },
+  "config": {
+    "basis_grid": [
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ]
+    ],
+    "capital_horizon_months": 12,
+    "confidence_level": 0.995,
+    "fit_seed": 42,
+    "insample_heavy_seed": 7,
+    "n_fit": 500,
+    "n_inner_heavy": 384,
+    "n_insample_heavy": 50,
+    "n_validation": 60,
+    "outer_measure": "P",
+    "selection_metric": "oos_rmse",
+    "validation_seed": 20260606
+  },
+  "drivers": [
+    "short_rate",
+    "equity_level",
+    "credit_spread",
+    "lapse_behaviour",
+    "mortality_trend"
+  ],
+  "duration_seconds": 24.3094,
+  "leakage": {
+    "fit_seed": 42,
+    "leakage_free": true,
+    "min_pairwise_distance": 0.340823162,
+    "n_exact_shared_states": 0,
+    "seeds_disjoint": true,
+    "validation_seed": 20260606
+  },
+  "notes": [],
+  "overfit_onset_terms": 21,
+  "reproducibility_digest": "f8a97423b85b1dc3b77677f8bee0b39b00a648836f7a9d1fb79e825e0df3cff6",
+  "run_id": "fv-proxyval-4268f848",
+  "selected_degree": 1,
+  "selected_max_interaction_order": 3,
+  "selected_row": {
+    "degree": 1,
+    "in_sample_r2_heavy": 0.964729,
+    "in_sample_r2_noisy": 0.420315,
+    "max_interaction_order": 3,
+    "n_basis_terms": 6,
+    "oos_mae": 4722.258846,
+    "oos_max_abs_rel_error": 0.128956,
+    "oos_r2": 0.961579,
+    "oos_rmse": 5650.372379,
+    "overfit_gap": 0.003149
+  },
+  "selection_metric": "oos_rmse",
+  "standards": [
+    "SOA ASOP 7 \u00a73.3",
+    "SOA ASOP 25 \u00a73.3",
+    "SOA ASOP 56 \u00a73.5",
+    "SOA ASOP 56 \u00a73.1.3",
+    "IA TAS M \u00a73.6",
+    "IA TAS M \u00a73.2",
+    "IFoA proxy-modelling working party",
+    "Lee & Carter (1992)",
+    "Longstaff & Schwartz (2001)",
+    "Duffie & Singleton (1999)",
+    "Cox-Ingersoll-Ross (1985)"
+  ],
+  "verdict": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
+}

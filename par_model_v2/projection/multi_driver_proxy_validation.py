@@ -1850,3 +1850,562 @@ __all__ += [
     "quad_proxy_validation_use_restrictions_json",
     "_fit_quad_surface",
 ]
+
+
+# ===========================================================================
+# Phase 19 Task 3: FIVE-DRIVER out-of-sample proxy validation
+# ===========================================================================
+#
+# Everything here is additive — the two-, three- and four-driver validators
+# above and the Phase 19 Task 3 five-driver engines are imported, never modified.
+
+from par_model_v2.projection.multi_driver_capital_5d import (  # noqa: E402
+    FiveDriverCorrelation,
+    FiveDriverNestedEngine,
+    MortalityExposureSpec,
+    _inner_pathwise_pvs_5d,
+    _n_quint_basis_terms,
+    _outer_states_5d,
+    _quint_poly_basis,
+)
+from par_model_v2.stochastic.mortality_trend import MortalityTrendParams  # noqa: E402
+
+
+#: Default (degree, max_interaction_order) grid swept for the five-driver basis.
+#: Interaction order is a genuine complexity lever once there are five drivers
+#: (the in-force factor multiplies the equity put while the mortality multiplier
+#: scales the guaranteed leg — an r·b·m·S interaction).
+DEFAULT_QUINT_BASIS_GRID: Tuple[Tuple[int, int], ...] = (
+    (1, 3), (2, 3), (3, 2), (3, 3), (4, 3),
+)
+
+
+@dataclass(frozen=True)
+class QuintProxyValidationConfig:
+    """Configuration for an out-of-sample FIVE-DRIVER proxy-validation run.
+
+    Mirrors :class:`QuadProxyValidationConfig`; the model-selection grid is a
+    tuple of ``(degree, max_interaction_order)`` pairs (``basis_grid``).
+    """
+
+    n_fit: int = 1_000
+    n_validation: int = 80
+    n_insample_heavy: int = 60
+    n_inner_heavy: int = 512
+    basis_grid: Tuple[Tuple[int, int], ...] = DEFAULT_QUINT_BASIS_GRID
+    selection_metric: str = "oos_rmse"
+    confidence_level: float = DEFAULT_CONFIDENCE_LEVEL
+    capital_horizon_months: int = DEFAULT_CAPITAL_HORIZON_MONTHS
+    fit_seed: int = 42
+    validation_seed: int = 20260606
+    insample_heavy_seed: int = 7
+    outer_measure: Measure = Measure.P
+
+    def __post_init__(self) -> None:
+        if self.selection_metric not in ("oos_rmse", "oos_r2"):
+            raise ValueError("selection_metric must be 'oos_rmse' or 'oos_r2'")
+        if int(self.fit_seed) == int(self.validation_seed):
+            raise ValueError(
+                "fit_seed and validation_seed must differ to prevent hold-out leakage"
+            )
+        if not self.basis_grid:
+            raise ValueError("basis_grid must be non-empty")
+        for (d, m) in self.basis_grid:
+            if d < 1:
+                raise ValueError("all basis degrees must be >= 1")
+            if m < 0:
+                raise ValueError("all max_interaction_order values must be >= 0")
+        if self.n_validation < 8:
+            raise ValueError("n_validation must be >= 8 for a meaningful OOS metric")
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "n_fit": self.n_fit,
+            "n_validation": self.n_validation,
+            "n_insample_heavy": self.n_insample_heavy,
+            "n_inner_heavy": self.n_inner_heavy,
+            "basis_grid": [list(p) for p in self.basis_grid],
+            "selection_metric": self.selection_metric,
+            "confidence_level": self.confidence_level,
+            "capital_horizon_months": self.capital_horizon_months,
+            "fit_seed": self.fit_seed,
+            "validation_seed": self.validation_seed,
+            "insample_heavy_seed": self.insample_heavy_seed,
+            "outer_measure": self.outer_measure.value
+            if isinstance(self.outer_measure, Measure)
+            else str(self.outer_measure),
+        }
+
+
+@dataclass
+class QuintBasisDiagnostics:
+    """In/out-of-sample skill for a single ``(degree, max_interaction_order)``."""
+
+    degree: int
+    max_interaction_order: int
+    n_basis_terms: int
+    in_sample_r2_noisy: float
+    in_sample_r2_heavy: float
+    oos_rmse: float
+    oos_r2: float
+    oos_mae: float
+    oos_max_abs_rel_error: float
+    overfit_gap: float
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "degree": self.degree,
+            "max_interaction_order": self.max_interaction_order,
+            "n_basis_terms": self.n_basis_terms,
+            "in_sample_r2_noisy": round(self.in_sample_r2_noisy, 6),
+            "in_sample_r2_heavy": round(self.in_sample_r2_heavy, 6),
+            "oos_rmse": round(self.oos_rmse, 6),
+            "oos_r2": round(self.oos_r2, 6),
+            "oos_mae": round(self.oos_mae, 6),
+            "oos_max_abs_rel_error": round(self.oos_max_abs_rel_error, 6),
+            "overfit_gap": round(self.overfit_gap, 6),
+        }
+
+
+@dataclass
+class QuintProxyValidationReport:
+    """Full structured out-of-sample FIVE-DRIVER proxy-validation report."""
+
+    config: QuintProxyValidationConfig
+    basis_rows: List[QuintBasisDiagnostics]
+    selected_degree: int
+    selected_max_interaction_order: int
+    selection_metric: str
+    overfit_onset_terms: Optional[int]
+    leakage: LeakageDiagnostics
+    capital_comparison: CapitalComparison
+    reproducibility_digest: str
+    run_id: str
+    duration_seconds: float
+    verdict: str
+    notes: List[str] = field(default_factory=list)
+    audit_entry_id: Optional[str] = None
+
+    def selected_row(self) -> QuintBasisDiagnostics:
+        return next(
+            r for r in self.basis_rows
+            if r.degree == self.selected_degree
+            and r.max_interaction_order == self.selected_max_interaction_order
+        )
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "run_id": self.run_id,
+            "verdict": self.verdict,
+            "drivers": [
+                "short_rate", "equity_level", "credit_spread",
+                "lapse_behaviour", "mortality_trend",
+            ],
+            "selected_degree": self.selected_degree,
+            "selected_max_interaction_order": self.selected_max_interaction_order,
+            "selection_metric": self.selection_metric,
+            "overfit_onset_terms": self.overfit_onset_terms,
+            "selected_row": self.selected_row().to_dict(),
+            "basis_rows": [r.to_dict() for r in self.basis_rows],
+            "leakage": self.leakage.to_dict(),
+            "capital_comparison": self.capital_comparison.to_dict(),
+            "reproducibility_digest": self.reproducibility_digest,
+            "duration_seconds": round(self.duration_seconds, 4),
+            "config": self.config.to_dict(),
+            "notes": list(self.notes),
+            "audit_entry_id": self.audit_entry_id,
+            "standards": [
+                "SOA ASOP 7 §3.3",
+                "SOA ASOP 25 §3.3",
+                "SOA ASOP 56 §3.5",
+                "SOA ASOP 56 §3.1.3",
+                "IA TAS M §3.6",
+                "IA TAS M §3.2",
+                "IFoA proxy-modelling working party",
+                "Lee & Carter (1992)",
+                "Longstaff & Schwartz (2001)",
+                "Duffie & Singleton (1999)",
+                "Cox-Ingersoll-Ross (1985)",
+            ],
+        }
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2, sort_keys=True)
+
+
+@dataclass
+class _FittedQuintSurface:
+    beta: np.ndarray
+    centers: np.ndarray
+    scales: np.ndarray
+    degree: int
+    max_interaction_order: int
+    in_sample_r2_noisy: float
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        X = np.asarray(X, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(1, -1)
+        Xs = (X - self.centers) / self.scales
+        return _quint_poly_basis(Xs, self.degree, self.max_interaction_order) @ self.beta
+
+
+def _fit_quint_surface(
+    fit_X: np.ndarray, fit_y: np.ndarray, degree: int, max_interaction_order: int
+) -> _FittedQuintSurface:
+    """Least-squares fit of the quintivariate ``(degree, max_int)`` surface.
+
+    Mirrors :meth:`FiveDriverLSMCProxyEngine.fit_and_run` exactly (same
+    centring/scaling and ``np.linalg.lstsq``) but takes the fitting data as
+    arguments so every basis is fitted on the *same* states + payoffs.
+    """
+    centers = fit_X.mean(axis=0)
+    scales = fit_X.std(axis=0, ddof=0)
+    scales = np.where(scales > 0, scales, 1.0)
+    Xs = (fit_X - centers) / scales
+    design = _quint_poly_basis(Xs, degree, max_interaction_order)
+    beta, _resid, _rank, _sv = np.linalg.lstsq(design, fit_y, rcond=None)
+    y_hat = design @ beta
+    ss_res = float(np.sum((fit_y - y_hat) ** 2))
+    ss_tot = float(np.sum((fit_y - fit_y.mean()) ** 2)) or 1.0
+    return _FittedQuintSurface(
+        beta=beta, centers=centers, scales=scales, degree=int(degree),
+        max_interaction_order=int(max_interaction_order),
+        in_sample_r2_noisy=1.0 - ss_res / ss_tot,
+    )
+
+
+class FiveDriverProxyValidator:
+    """Orchestrate fit / hold-out / basis-selection for the 5-driver proxy.
+
+    Owns the product and the HW1F / GBM / CIR++ / OU-lapse / OU-mortality /
+    correlation / exposure assumptions; a single :meth:`validate` call runs the
+    whole disjoint-seed hold-out workflow over the ``(degree,
+    max_interaction_order)`` grid and returns a :class:`QuintProxyValidationReport`.
+
+    SOA ASOP 7 §3.3; ASOP 25 §3.3; ASOP 56 §3.5; IA TAS M §3.6; IFoA WP.
+    """
+
+    def __init__(
+        self,
+        product: ParEndowmentProduct,
+        hw_params: Optional[HullWhiteParams] = None,
+        gbm_params: Optional[GBMParams] = None,
+        spread_params: Optional["object"] = None,
+        lapse_params: Optional[LapseBehaviourParams] = None,
+        mortality_params: Optional[MortalityTrendParams] = None,
+        correlation: Optional[FiveDriverCorrelation] = None,
+        initial_curve: Optional[RiskFreeCurve] = None,
+        equity_guarantee: Optional[EquityGuaranteeSpec] = None,
+        credit_exposure: Optional["object"] = None,
+        lapse_exposure: Optional[LapseExposureSpec] = None,
+        mortality_exposure: Optional[MortalityExposureSpec] = None,
+        capital_horizon_months: int = DEFAULT_CAPITAL_HORIZON_MONTHS,
+        confidence_level: float = DEFAULT_CONFIDENCE_LEVEL,
+        outer_measure: Measure = Measure.P,
+        annual_qx_fn: Optional[Callable] = None,
+    ) -> None:
+        if not (0 < capital_horizon_months < product.term_months):
+            raise ValueError("capital_horizon_months must satisfy 0 < H < term_months")
+        from par_model_v2.stochastic.credit_spread import CreditSpreadParams
+        from par_model_v2.projection.multi_driver_capital_3d import CreditExposureSpec
+        self.product = product
+        self.hw_params = hw_params if hw_params is not None else HullWhiteParams()
+        self.gbm_params = gbm_params if gbm_params is not None else GBMParams()
+        self.spread_params = spread_params if spread_params is not None else CreditSpreadParams()
+        self.lapse_params = lapse_params if lapse_params is not None else LapseBehaviourParams()
+        self.mortality_params = (
+            mortality_params if mortality_params is not None else MortalityTrendParams()
+        )
+        self.correlation = correlation if correlation is not None else FiveDriverCorrelation()
+        self.initial_curve = initial_curve
+        self.equity_guarantee = equity_guarantee or EquityGuaranteeSpec()
+        self.credit_exposure = credit_exposure or CreditExposureSpec()
+        self.lapse_exposure = lapse_exposure or LapseExposureSpec()
+        self.mortality_exposure = mortality_exposure or MortalityExposureSpec()
+        self.capital_horizon_months = int(capital_horizon_months)
+        self.confidence_level = float(confidence_level)
+        self.outer_measure = Measure(outer_measure)
+        self.annual_qx_fn = annual_qx_fn
+
+    @property
+    def _rem(self) -> int:
+        return self.product.term_months - self.capital_horizon_months
+
+    def _states(self, n: int, seed: int) -> np.ndarray:
+        return _outer_states_5d(
+            n, self.capital_horizon_months, self.outer_measure,
+            self.hw_params, self.gbm_params, self.spread_params, self.lapse_params,
+            self.mortality_params, self.correlation, self.initial_curve, seed,
+        )
+
+    def _single_path_payoffs(self, states: np.ndarray, seed: int) -> np.ndarray:
+        """One inner path per state -> noisy fit target (matches Task 3 engine)."""
+        child = np.random.SeedSequence(seed + 1).spawn(len(states))
+        y = np.empty(len(states), dtype=float)
+        for i, (r, s, c, b, m) in enumerate(states):
+            inner_seed = int(child[i].generate_state(1)[0])
+            pvs = _inner_pathwise_pvs_5d(
+                float(r), float(s), float(c), float(b), float(m), 1, self._rem,
+                self.product, self.hw_params, self.gbm_params, self.spread_params,
+                self.correlation, self.capital_horizon_months, inner_seed,
+                self.equity_guarantee, self.credit_exposure, self.lapse_exposure,
+                self.mortality_exposure, self.annual_qx_fn,
+            )
+            y[i] = float(pvs[0])
+        return y
+
+    def _heavy_targets(self, states: np.ndarray, n_inner: int, seed: int) -> np.ndarray:
+        """High-accuracy nested E^Q[L | r,S,s,b,m] at each state (the OOS truth)."""
+        child = np.random.SeedSequence(seed).spawn(len(states))
+        truth = np.empty(len(states), dtype=float)
+        for i, (r, s, c, b, m) in enumerate(states):
+            inner_seed = int(child[i].generate_state(1)[0])
+            pvs = _inner_pathwise_pvs_5d(
+                float(r), float(s), float(c), float(b), float(m), n_inner, self._rem,
+                self.product, self.hw_params, self.gbm_params, self.spread_params,
+                self.correlation, self.capital_horizon_months, inner_seed,
+                self.equity_guarantee, self.credit_exposure, self.lapse_exposure,
+                self.mortality_exposure, self.annual_qx_fn,
+            )
+            truth[i] = float(pvs.mean())
+        return truth
+
+    def validate(
+        self,
+        config: Optional[QuintProxyValidationConfig] = None,
+        nested_n_outer: int = 1_000,
+        nested_n_inner: int = 128,
+        governance_store: Optional["object"] = None,
+        actor: str = "FiveDriverProxyValidator",
+        phase: str = "Phase 19: Recovery Completion and Driver Expansion",
+    ) -> QuintProxyValidationReport:
+        cfg = config or QuintProxyValidationConfig()
+        t0 = time.monotonic()
+        run_id = "fv-proxyval-" + uuid.uuid4().hex[:8]
+        notes: List[str] = []
+
+        # --- 1. fitting data (one inner path each), seen ONLY by the fit -----
+        fit_X = self._states(cfg.n_fit, cfg.fit_seed)
+        fit_y = self._single_path_payoffs(fit_X, cfg.fit_seed)
+
+        # --- 2. independent heavy hold-out (disjoint seed) ------------------
+        val_X = self._states(cfg.n_validation, cfg.validation_seed)
+        val_truth = self._heavy_targets(val_X, cfg.n_inner_heavy, cfg.validation_seed)
+
+        # --- 3. held-in heavy subset (for the in/out skill gap) -------------
+        n_in_heavy = min(cfg.n_insample_heavy, len(fit_X))
+        insample_heavy_X = fit_X[:n_in_heavy]
+        insample_heavy_truth = self._heavy_targets(
+            insample_heavy_X, cfg.n_inner_heavy, cfg.insample_heavy_seed
+        )
+
+        # --- 4. leakage diagnostics -----------------------------------------
+        leakage = _leakage_nd(fit_X, val_X, cfg.fit_seed, cfg.validation_seed)
+        if not leakage.leakage_free:
+            notes.append("WARNING: hold-out leakage check did not pass — review seeds.")
+
+        # --- 5. basis sweep on shared fitting data --------------------------
+        rows: List[QuintBasisDiagnostics] = []
+        surfaces: Dict[Tuple[int, int], _FittedQuintSurface] = {}
+        for (d, m) in cfg.basis_grid:
+            surf = _fit_quint_surface(fit_X, fit_y, d, m)
+            surfaces[(d, m)] = surf
+            val_pred = surf.predict(val_X)
+            in_pred = surf.predict(insample_heavy_X)
+            resid = val_pred - val_truth
+            denom = np.where(np.abs(val_truth) > 1e-9, np.abs(val_truth), 1.0)
+            oos_rmse = float(np.sqrt(np.mean(resid ** 2)))
+            oos_mae = float(np.mean(np.abs(resid)))
+            oos_max_rel = float(np.max(np.abs(resid) / denom))
+            oos_r2 = _r2(val_truth, val_pred)
+            in_r2_heavy = _r2(insample_heavy_truth, in_pred)
+            rows.append(QuintBasisDiagnostics(
+                degree=d, max_interaction_order=m,
+                n_basis_terms=_n_quint_basis_terms(d, m),
+                in_sample_r2_noisy=surf.in_sample_r2_noisy,
+                in_sample_r2_heavy=in_r2_heavy,
+                oos_rmse=oos_rmse, oos_r2=oos_r2, oos_mae=oos_mae,
+                oos_max_abs_rel_error=oos_max_rel,
+                overfit_gap=in_r2_heavy - oos_r2,
+            ))
+
+        # --- 6. model selection by OOS skill --------------------------------
+        if cfg.selection_metric == "oos_rmse":
+            selected = min(rows, key=lambda r: r.oos_rmse)
+        else:
+            selected = max(rows, key=lambda r: r.oos_r2)
+        selected_key = (selected.degree, selected.max_interaction_order)
+
+        # overfit onset: order bases by complexity (#terms) and find the first
+        # whose OOS RMSE rises above the previous (less complex) basis.
+        ordered = sorted(rows, key=lambda r: (r.n_basis_terms, r.degree, r.max_interaction_order))
+        overfit_onset_terms: Optional[int] = None
+        for prev, cur in zip(ordered, ordered[1:]):
+            if cur.oos_rmse > prev.oos_rmse * 1.001:
+                overfit_onset_terms = cur.n_basis_terms
+                break
+
+        # --- 7. capital comparison at the selected basis -------------------
+        chosen = surfaces[selected_key]
+        eval_X = self._states(cfg.n_fit, cfg.fit_seed + 99)  # large cheap outer set
+        proxy_l = chosen.predict(eval_X)
+        proxy_capital = capital_metrics_from_liabilities(
+            proxy_l, cfg.confidence_level, cfg.capital_horizon_months
+        )
+        nested_res = FiveDriverNestedEngine(
+            self.product, self.hw_params, self.gbm_params, self.spread_params,
+            self.lapse_params, self.mortality_params, self.correlation,
+            self.initial_curve, self.equity_guarantee, self.credit_exposure,
+            self.lapse_exposure, self.mortality_exposure,
+            self.capital_horizon_months, cfg.confidence_level, self.outer_measure,
+            self.annual_qx_fn,
+        ).run(n_outer=nested_n_outer, n_inner=nested_n_inner, seed=cfg.fit_seed + 99)
+        nested_capital = nested_res.capital
+
+        def _rel(a: float, b: float) -> float:
+            return abs(a - b) / (abs(b) if abs(b) > 1e-9 else 1.0)
+
+        capital_cmp = CapitalComparison(
+            proxy_capital=proxy_capital, nested_capital=nested_capital,
+            var_rel_error=_rel(proxy_capital.var_liability, nested_capital.var_liability),
+            es_rel_error=_rel(proxy_capital.es_liability, nested_capital.es_liability),
+            scr_rel_error=_rel(proxy_capital.scr_proxy, nested_capital.scr_proxy),
+            nested_n_outer=nested_n_outer, nested_n_inner=nested_n_inner,
+        )
+
+        # --- 8. reproducibility digest --------------------------------------
+        digest = hashlib.sha256(
+            np.round(np.concatenate([
+                val_truth, chosen.beta,
+                np.array([selected.degree, selected.max_interaction_order,
+                          proxy_capital.var_liability, proxy_capital.es_liability],
+                         dtype=float),
+            ]), 9).tobytes()
+        ).hexdigest()
+
+        # --- 9. verdict -----------------------------------------------------
+        verdict = self._verdict(selected, capital_cmp, leakage, notes)
+
+        duration = time.monotonic() - t0
+
+        audit_entry_id = None
+        if governance_store is not None:
+            try:
+                from par_model_v2.governance.audit_trail import AuditEntry
+
+                entry = AuditEntry.model_run(
+                    actor=actor, phase=phase, run_id=run_id,
+                    scenario_count=cfg.n_fit + cfg.n_validation * cfg.n_inner_heavy,
+                    duration_seconds=round(duration, 4),
+                    outcome="PASS" if verdict.startswith("PASS") else "PARTIAL",
+                    files_changed=[
+                        "par_model_v2/projection/multi_driver_proxy_validation.py"
+                    ],
+                    test_summary=(
+                        "5D OOS proxy-val: selected (deg={}, max_int={}), OOS R2={:.4f}, "
+                        "OOS RMSE={:.2f}, VaR rel err={:.2%}, leakage_free={}".format(
+                            selected.degree, selected.max_interaction_order,
+                            selected.oos_r2, selected.oos_rmse,
+                            capital_cmp.var_rel_error, leakage.leakage_free)
+                    ),
+                )
+                governance_store.audit_trail.append(entry)
+                audit_entry_id = entry.entry_id
+            except Exception as exc:  # pragma: no cover - governance optional
+                notes.append("audit append skipped: {}".format(exc))
+
+        return QuintProxyValidationReport(
+            config=cfg, basis_rows=ordered,
+            selected_degree=selected.degree,
+            selected_max_interaction_order=selected.max_interaction_order,
+            selection_metric=cfg.selection_metric,
+            overfit_onset_terms=overfit_onset_terms,
+            leakage=leakage, capital_comparison=capital_cmp,
+            reproducibility_digest=digest, run_id=run_id, duration_seconds=duration,
+            verdict=verdict, notes=notes, audit_entry_id=audit_entry_id,
+        )
+
+    @staticmethod
+    def _verdict(
+        selected: QuintBasisDiagnostics,
+        capital_cmp: CapitalComparison,
+        leakage: LeakageDiagnostics,
+        notes: List[str],
+    ) -> str:
+        """Honest PASS / PARTIAL verdict against documented thresholds.
+
+        Thresholds (educational): OOS R^2 >= 0.95, selected-basis VaR rel error
+        <= 10%, hold-out leakage-free, and a bounded overfit gap (<= 0.05).
+        """
+        reasons: List[str] = []
+        if selected.oos_r2 < 0.95:
+            reasons.append("OOS R^2 {:.4f} < 0.95".format(selected.oos_r2))
+        if capital_cmp.var_rel_error > 0.10:
+            reasons.append("VaR rel error {:.2%} > 10%".format(capital_cmp.var_rel_error))
+        if not leakage.leakage_free:
+            reasons.append("hold-out not leakage-free")
+        if selected.overfit_gap > 0.05:
+            reasons.append("overfit gap {:.4f} > 0.05".format(selected.overfit_gap))
+        if reasons:
+            notes.append("verdict drivers: " + "; ".join(reasons))
+            return "PARTIAL — " + "; ".join(reasons)
+        return (
+            "PASS — selected basis (deg {}, max_int {}) validated OOS "
+            "(R^2={:.4f}, VaR rel err={:.2%}, leakage-free, overfit gap={:.4f})".format(
+                selected.degree, selected.max_interaction_order, selected.oos_r2,
+                capital_cmp.var_rel_error, selected.overfit_gap)
+        )
+
+
+def quint_proxy_validation_use_restrictions() -> Dict[str, object]:
+    """Structured model-use restrictions for the FIVE-DRIVER OOS proxy validation."""
+    base = proxy_validation_use_restrictions()
+    base.update({
+        "module": "par_model_v2/projection/multi_driver_proxy_validation.py::FiveDriverProxyValidator",
+        "classification": "EDUCATIONAL ONLY — five-driver proxy-model validation evidence, not a regulatory sign-off",
+        "what_it_validates": (
+            "Out-of-sample skill of the Phase 19 Task 3 QUINTIVARIATE (rate + "
+            "equity + credit-spread + lapse-behaviour + mortality-trend) LSMC "
+            "capital surface against high-accuracy nested truth on an independent, "
+            "disjoint-seed hold-out, with the basis (polynomial degree AND capped "
+            "higher-order interaction order) selected by OOS error."
+        ),
+        "selection_caveat": (
+            "Basis selection minimises OOS error over the swept (degree, "
+            "max_interaction_order) grid only; the true optimum may lie outside "
+            "the grid. Valid only over the fitted 5-D interquartile state region "
+            "— extrapolation is unsupported."
+        ),
+        "residual_risk": (
+            "FX and liquidity risks remain outside the proxy; lapse and mortality "
+            "are each a single systemic OU index (no product / cohort / age "
+            "structure); credit is a single systemic CIR++ spread. Parameters are "
+            "illustrative placeholders; capital magnitudes are NOT calibrated."
+        ),
+        "standards": [
+            "SOA ASOP 7 §3.3", "SOA ASOP 25 §3.3", "SOA ASOP 56 §3.5",
+            "SOA ASOP 56 §3.1.3", "IA TAS M §3.6", "IA TAS M §3.2",
+            "IFoA proxy-modelling working party", "Lee & Carter (1992)",
+            "Longstaff & Schwartz (2001)", "Duffie & Singleton (1999)",
+            "Cox-Ingersoll-Ross (1985)",
+        ],
+    })
+    return base
+
+
+def quint_proxy_validation_use_restrictions_json() -> str:
+    return json.dumps(quint_proxy_validation_use_restrictions(), indent=2, sort_keys=True)
+
+
+__all__ += [
+    # --- Phase 19 Task 3: five-driver OOS proxy validation ---
+    "DEFAULT_QUINT_BASIS_GRID",
+    "QuintProxyValidationConfig",
+    "QuintBasisDiagnostics",
+    "QuintProxyValidationReport",
+    "FiveDriverProxyValidator",
+    "quint_proxy_validation_use_restrictions",
+    "quint_proxy_validation_use_restrictions_json",
+    "_fit_quint_surface",
+]

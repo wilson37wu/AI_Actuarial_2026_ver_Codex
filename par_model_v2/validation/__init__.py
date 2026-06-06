@@ -81,3 +81,18 @@ __all__ += [
     "evaluate_g06_gate",
     "run_phase13_ia_tas_m_validation",
 ]
+
+# --- Phase 20 Task 3: market-consistency (martingale) validation gate (G-MART) ---
+from .phase20_market_consistency import (
+    GMartGateReport,
+    MartingaleCheck,
+    evaluate_g_mart_gate,
+    simulate_hw1f_exact,
+)
+
+__all__ += [
+    "GMartGateReport",
+    "MartingaleCheck",
+    "evaluate_g_mart_gate",
+    "simulate_hw1f_exact",
+]

@@ -98,6 +98,7 @@ class LapseBehaviourParams:
     mean_reversion_speed: float = DEFAULT_LAPSE_KAPPA
     behaviour_vol: float = DEFAULT_LAPSE_SIGMA
     initial_index: float = 0.0
+    long_run_index: float = 0.0
 
     methodology: str = (
         "Mean-reverting OU behavioural index b(t); lapse multiplier M=exp(b) "
@@ -126,6 +127,7 @@ class LapseBehaviourParams:
             "mean_reversion_speed": self.mean_reversion_speed,
             "behaviour_vol": self.behaviour_vol,
             "initial_index": self.initial_index,
+            "long_run_index": self.long_run_index,
             "stationary_std": round(self.stationary_std, 6),
             "methodology": self.methodology,
             "standard_references": list(self.standard_references),
@@ -165,6 +167,7 @@ class LapseBehaviourProcess:
         p = self.params
         kappa = p.mean_reversion_speed
         sigma = p.behaviour_vol
+        theta = p.long_run_index
         dt = 1.0 / 12.0
         phi = float(np.exp(-kappa * dt))
         cond_std = float(np.sqrt(sigma * sigma * (1.0 - phi * phi) / (2.0 * kappa)))
@@ -173,7 +176,7 @@ class LapseBehaviourProcess:
         paths[:, 0] = p.initial_index
         x_prev = np.full(n_scenarios, p.initial_index, dtype=float)
         for month in range(T_months):
-            x_prev = phi * x_prev + cond_std * shocks[:, month]
+            x_prev = theta + phi * (x_prev - theta) + cond_std * shocks[:, month]
             paths[:, month + 1] = x_prev
         return paths
 

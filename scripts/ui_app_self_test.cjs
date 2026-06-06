@@ -1,0 +1,187 @@
+// Offline self-test for ui_app.html (UI Tasks 1-4).
+// Loads the standalone HTML under jsdom, blocks fetch/XHR, clicks every tab and
+// sub-view, and asserts: embedded data parsed; inventory + calibration explorer +
+// capital dashboard + governance view render; ZERO network calls; ZERO JS errors.
+const fs = require("fs");
+const path = require("path");
+const { JSDOM, VirtualConsole } = require("jsdom");
+
+const htmlPath = process.argv[2] || path.join(process.cwd(), "ui_app.html");
+const html = fs.readFileSync(htmlPath, "utf8");
+const errors = [];
+const networkCalls = [];
+const virtualConsole = new VirtualConsole();
+virtualConsole.on("jsdomError", err => errors.push(String((err && err.message) || err)));
+
+const dom = new JSDOM(html, {
+  runScripts: "dangerously",
+  pretendToBeVisual: true,
+  virtualConsole,
+  beforeParse(window) {
+    window.onerror = message => errors.push(String(message));
+    window.fetch = (...args) => {
+      networkCalls.push(["fetch", String(args[0])]);
+      return Promise.reject(new Error("offline self-test blocked fetch"));
+    };
+    window.XMLHttpRequest = class OfflineBlockedXHR {
+      open(_m, url) { networkCalls.push(["xhr", String(url)]); }
+      send() { throw new Error("offline self-test blocked XMLHttpRequest"); }
+    };
+  },
+});
+
+const done = (ok, checks) => {
+  console.log(JSON.stringify({ ok, checks, errors, networkCalls }, null, 2));
+  process.exit(ok ? 0 : 1);
+};
+
+setTimeout(() => {
+  const { document } = dom.window;
+  const tabs = [...document.querySelectorAll(".tab")];
+  tabs.forEach(t => t.click());
+  // re-activate inventory tab to ensure its DOM is built
+  const invTab = tabs.find(t => t.getAttribute("data-target") === "inventory");
+  if (invTab) invTab.click();
+
+  // UI Task 2: open Capital & Tail tab and click through every chart sub-view.
+  const capTab = tabs.find(t => t.getAttribute("data-target") === "capital");
+  if (capTab) capTab.click();
+  const segBtns = [...document.querySelectorAll("#capnav .segbtn")];
+  segBtns.forEach(b => b.click());
+  const driverBars = document.querySelectorAll("#cap-bars svg.chart rect.bar").length;
+  segBtns.forEach(b => { if (b.getAttribute("data-view") === "bars") b.click(); });
+
+  // UI Task 3: open the Calibration explorer and click through every driver panel.
+  const calibTab = tabs.find(t => t.getAttribute("data-target") === "calibrations");
+  if (calibTab) calibTab.click();
+  const calibBtns = [...document.querySelectorAll("#calibnav .segbtn")];
+  calibBtns.forEach(b => b.click());
+  const calibCharts = document.querySelectorAll("#calibrations svg.chart").length;
+  const calibCrit = document.querySelectorAll("#calibrations .crit").length;
+  const calibParamRows = document.querySelectorAll("#calibrations table.ptable tbody tr").length;
+  calibBtns.forEach(b => { if (b.getAttribute("data-idx") === "0") b.click(); });
+
+  // UI Task 4: open the Governance & assumptions view and click through every sub-view.
+  const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
+  if (govTab) govTab.click();
+  const govBtns = [...document.querySelectorAll("#govnav .segbtn")];
+  govBtns.forEach(b => b.click());
+  const govGateCards = document.querySelectorAll("#gov-gates .gate").length;
+  // exercise the risk filter (change a select and re-render)
+  const rfRating = document.getElementById("rfRating");
+  if (rfRating) { rfRating.value = "HIGH"; rfRating.onchange && rfRating.onchange(); }
+  const govRiskRowsFiltered = document.querySelectorAll("#gov-risk-body tr.rrow").length;
+  if (rfRating) { rfRating.value = ""; rfRating.onchange && rfRating.onchange(); }
+  const govRiskRows = document.querySelectorAll("#gov-risk-body tr.rrow").length;
+  const govHeatCells = document.querySelectorAll("#gov-risk-body svg.chart rect").length;
+  const govChangeItems = document.querySelectorAll("#gov-changes .tl-item").length;
+  // expand first change record to confirm sign-off history toggles
+  const firstCrow = document.querySelector("#gov-changes .crow");
+  if (firstCrow) firstCrow.click();
+  const govSignoff = document.querySelectorAll("#gov-changes .tl-soh").length;
+  const govAuditBadge = document.querySelectorAll("#gov-audit .auditbadge").length;
+  govBtns.forEach(b => { if (b.getAttribute("data-view") === "gates") b.click(); });
+
+  // UI Task 5: export buttons, CSV builders, ARIA roles, print stylesheet.
+  const toolbar = document.getElementById("toolbar");
+  const exportBtns = ["btnExportPng","btnCsvInv","btnCsvRisk","btnCsvChg","btnPrint"].filter(id => !!document.getElementById(id)).length;
+  const ux = dom.window.__uiExport || {};
+  const invCSV = typeof ux.inventoryCSV === "function" ? ux.inventoryCSV() : "";
+  const riskCSV = typeof ux.riskCSV === "function" ? ux.riskCSV() : "";
+  const chgCSV = typeof ux.changesCSV === "function" ? ux.changesCSV() : "";
+  const invCsvRows = invCSV ? invCSV.split("\r\n").length : 0;
+  const riskCsvRows = riskCSV ? riskCSV.split("\r\n").length : 0;
+  const chgCsvRows = chgCSV ? chgCSV.split("\r\n").length : 0;
+  const tablistRoles = document.querySelectorAll('[role="tablist"]').length;
+  const tabRoleCount = document.querySelectorAll('#tabs [role="tab"]').length;
+  const ariaSelectedTabs = document.querySelectorAll('#tabs [aria-selected="true"]').length;
+  const segTabRoles = document.querySelectorAll('.subnav [role="tab"]').length;
+  const printCssPresent = /@media print/.test(html);
+  const dataTitlePanels = document.querySelectorAll('.panel[data-title]').length;
+  const bodyText = document.body.textContent || "";
+  const checks = {
+    embeddedParsed: /contract v\d/.test(bodyText),
+    tabCount: tabs.length,
+    inventoryRows: document.querySelectorAll("#invtable tbody tr").length,
+    inventoryFilter: !!document.getElementById("invq") && !!document.getElementById("invcat"),
+    contractSchemaPresent: /ui_data\.json -- stable offline UI contract/.test(bodyText),
+    calibrationGates: document.querySelectorAll("#calibrations .gate").length,
+    glapsePresent: /G-LAPSE/.test(bodyText),
+    gswpnPresent: /G-SWPN/.test(bodyText),
+    calibDrivers: calibBtns.length,
+    calibPanels: document.querySelectorAll("#calibrations .calibpanel").length,
+    calibCharts,
+    calibCrit,
+    calibParamRows,
+    capitalCards: document.querySelectorAll("#capital .card").length,
+    capitalSubnavBtns: segBtns.length,
+    capitalSvgCharts: document.querySelectorAll("#capital svg.chart").length,
+    driverBars,
+    capitalTipElems: document.querySelectorAll("#capital [data-tip]").length,
+    g2ppCapitalPresent: /G2\+\+ two-factor rates/.test(bodyText),
+    gmartVerdictPresent: /G-MART market-consistency gate/.test(bodyText),
+    governancePresent: /Audit integrity/.test(bodyText),
+    govSubnavBtns: govBtns.length,
+    govGateCards,
+    govRiskRows,
+    govRiskRowsFiltered,
+    govRiskFilterWorks: govRiskRowsFiltered > 0 && govRiskRowsFiltered <= govRiskRows,
+    govHeatCells,
+    govChangeItems,
+    govSignoff,
+    govAuditBadge,
+    toolbarPresent: !!toolbar,
+    exportBtns,
+    invCsvHasHeader: /(^|,)sha256(,|$)/.test((invCSV.split("\r\n")[0]||"")),
+    invCsvRows, riskCsvRows, chgCsvRows,
+    tablistRoles, tabRoleCount, ariaSelectedTabs, segTabRoles,
+    printCssPresent, dataTitlePanels,
+    networkCalls: networkCalls.length,
+    jsErrors: errors.length,
+  };
+  const ok =
+    checks.embeddedParsed &&
+    checks.tabCount >= 5 &&
+    checks.inventoryRows >= 20 &&
+    checks.inventoryFilter &&
+    checks.contractSchemaPresent &&
+    checks.calibrationGates >= 4 &&
+    checks.glapsePresent &&
+    checks.gswpnPresent &&
+    checks.calibDrivers >= 6 &&
+    checks.calibPanels >= 6 &&
+    checks.calibCharts >= 1 &&
+    checks.calibCrit >= 3 &&
+    checks.calibParamRows >= 1 &&
+    checks.capitalCards >= 5 &&
+    checks.capitalSubnavBtns === 4 &&
+    checks.capitalSvgCharts >= 4 &&
+    checks.driverBars >= 5 &&
+    checks.capitalTipElems >= 10 &&
+    checks.g2ppCapitalPresent &&
+    checks.gmartVerdictPresent &&
+    checks.governancePresent &&
+    checks.govSubnavBtns === 4 &&
+    checks.govGateCards >= 5 &&
+    checks.govRiskRows >= 5 &&
+    checks.govRiskFilterWorks &&
+    checks.govHeatCells >= 25 &&
+    checks.govChangeItems >= 5 &&
+    checks.govSignoff >= 1 &&
+    checks.govAuditBadge >= 1 &&
+    checks.toolbarPresent &&
+    checks.exportBtns === 5 &&
+    checks.invCsvHasHeader &&
+    checks.invCsvRows >= 21 &&
+    checks.riskCsvRows >= 13 &&
+    checks.chgCsvRows >= 19 &&
+    checks.tablistRoles >= 1 &&
+    checks.tabRoleCount >= 5 &&
+    checks.ariaSelectedTabs === 1 &&
+    checks.segTabRoles >= 4 &&
+    checks.printCssPresent &&
+    checks.dataTitlePanels >= 5 &&
+    checks.networkCalls === 0 &&
+    checks.jsErrors === 0;
+  done(ok, checks);
+}, 400);

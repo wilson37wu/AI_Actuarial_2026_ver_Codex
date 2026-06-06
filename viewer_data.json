@@ -5,9 +5,10 @@
     "generated_utc": "2026-06-04T16:24:41.348190+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
-      "docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.json",
-      "docs/validation/PHASE17_RISK_AGGREGATION_REPORT.json",
-      "docs/validation/PHASE17_PROXY_VALIDATION_REPORT.json",
+      ".claude-dev/MODEL_DEV_STATE.json",
+      "docs/validation/PHASE19_TASK4_TAIL_DIAGNOSTICS_REPORT.json",
+      "docs/validation/PHASE19_TASK4_AGGREGATION_REPORT.json",
+      "docs/validation/PHASE19_TASK3_PROXY_VALIDATION_REPORT.json",
       "docs/validation/PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json",
       "docs/validation/PHASE16_LOSS_DISTRIBUTION.json"
     ],
@@ -17,161 +18,244 @@
     {
       "key": "proxy",
       "label": "Out-of-sample proxy validation",
-      "verdict": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)"
+      "verdict": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
     },
     {
       "key": "aggregation",
       "label": "Correlated risk aggregation",
-      "verdict": "PARTIAL - three-driver aggregation evidence generated with review items"
+      "verdict": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
     },
     {
       "key": "tail",
       "label": "Tail convergence & stability",
-      "verdict": "PASS - three-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
+      "verdict": "PASS - five-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     }
   ],
-  "summary": {},
+  "summary": {
+    "tasks_completed": 97,
+    "tasks_total": 100,
+    "phases_completed": 18,
+    "estimated_completion_pct": 97.0,
+    "gates_cleared": 12,
+    "gates_total": 12,
+    "risks_open": 1,
+    "risks_mitigated": 10,
+    "production_status": "NOT CLEARED FOR PRODUCTION"
+  },
   "capital": {
     "drivers": [
       "short_rate",
       "equity_guarantee",
-      "credit_spread"
+      "credit_spread",
+      "lapse_behaviour",
+      "mortality_trend"
     ],
+    "n_drivers": 5,
     "confidence_level": 0.995,
     "horizon_months": 12,
-    "rate_scr": 20695.8468,
-    "equity_scr": 22559.0267,
-    "credit_scr": 4459.6518,
-    "standalone_sum": 47714.525364,
-    "correlated_scr": 26828.549272,
-    "nested_scr": 43752.9314,
-    "diversification_benefit_formula": 20885.976092,
-    "diversification_benefit_nested": 3961.593977,
-    "component_loss_correlation": 0.6367646368904357,
+    "rate_scr": 33329.495,
+    "equity_scr": 30195.5771,
+    "credit_scr": 9770.7463,
+    "lapse_scr": 26973.1319,
+    "mortality_scr": 413.3082,
+    "standalone_sum": 100682.2585,
+    "correlated_scr": 47292.85,
+    "nested_scr": 92448.6048,
+    "diversification_benefit_formula": 53389.4085,
+    "diversification_benefit_nested": 8233.6537,
+    "component_loss_correlation": 0.3870458,
     "loss_correlation_matrix": [
       [
-        0.9999999999999998,
-        0.5385945441624796,
-        0.7666078287668839
-      ],
-      [
-        0.5385945441624798,
         1.0,
-        0.6050915377419434
+        0.839762,
+        0.967533,
+        0.368116,
+        0.002895
       ],
       [
-        0.7666078287668839,
-        0.6050915377419434,
-        0.9999999999999999
+        0.839762,
+        1.0,
+        0.863011,
+        0.328634,
+        0.017918
+      ],
+      [
+        0.967533,
+        0.863011,
+        1.0,
+        0.379653,
+        -0.02457
+      ],
+      [
+        0.368116,
+        0.328634,
+        0.379653,
+        1.0,
+        0.127506
+      ],
+      [
+        0.002895,
+        0.017918,
+        -0.02457,
+        0.127506,
+        1.0
       ]
     ],
     "esg_correlation_matrix": [
       [
         1.0,
         -0.15,
-        -0.2
+        -0.2,
+        0.0,
+        0.0
       ],
       [
         -0.15,
         1.0,
-        -0.3
+        -0.3,
+        0.0,
+        0.0
       ],
       [
         -0.2,
         -0.3,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         1.0
       ]
     ],
-    "esg_understatement_pct": 0.386817,
-    "formula_vs_nested_rel_error": 0.386817,
+    "esg_understatement_pct": 0.488442,
+    "formula_vs_nested_rel_error": 0.488442,
     "esg_rate_equity_correlation": -0.15,
-    "var": 152296.8313,
-    "es": 155757.2104
+    "copula": {
+      "selected": "gaussian",
+      "var_covar_scr": 47292.85,
+      "nested_scr": 92448.6048,
+      "var_covar_rel_error_vs_nested": 0.488442,
+      "candidates": [
+        {
+          "name": "gaussian",
+          "aggregated_scr": 86444.1805,
+          "scr_rel_error_vs_nested": 0.064949,
+          "upper_tail_dependence": 0.0,
+          "diversification_benefit": 14238.078,
+          "aic": -830.7697
+        },
+        {
+          "name": "student_t",
+          "aggregated_scr": 86693.9134,
+          "scr_rel_error_vs_nested": 0.062247,
+          "upper_tail_dependence": 0.0477,
+          "diversification_benefit": 13988.3451,
+          "aic": -824.8071
+        },
+        {
+          "name": "survival_clayton",
+          "aggregated_scr": 95054.9339,
+          "scr_rel_error_vs_nested": 0.028192,
+          "upper_tail_dependence": 0.421907,
+          "diversification_benefit": 5627.3246,
+          "aic": -97.0001
+        }
+      ]
+    },
+    "var": 230879.3385,
+    "es": 246336.757
   },
   "tail": {
-    "verdict": "PASS - three-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction",
+    "verdict": "PASS - five-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction",
     "converged": true,
-    "recommended_n_outer": 1000,
+    "recommended_n_outer": 8000,
     "outer_grid": [
-      500,
       1000,
       2000,
-      3000
+      4000,
+      8000,
+      16000
     ],
     "var_path": [
-      149782.5195,
-      150265.2783,
-      149885.4055,
-      152296.8313
+      228660.8378,
+      240837.4481,
+      232319.2076,
+      228278.0459,
+      230879.3385
     ],
     "es_path": [
-      150253.484,
-      156377.9261,
-      152954.4555,
-      155757.2104
+      245247.6904,
+      253983.1174,
+      244700.1603,
+      243000.9365,
+      246336.757
     ],
-    "final_var": 152296.8313,
-    "final_es": 155757.2104,
+    "final_var": 230879.3385,
+    "final_es": 246336.757,
     "var_ci": [
-      149634.1366,
-      152369.3152
+      227582.3943,
+      241861.2987
     ],
     "es_ci": [
-      152023.0263,
-      156636.6954
+      242967.2155,
+      255989.4701
     ],
-    "var_point": 150859.0915,
-    "es_point": 154241.4896,
-    "var_se": 692.4251,
-    "es_se": 1163.7467,
-    "sobol_ratio": 2.759,
-    "antithetic_ratio": 0.8871
+    "var_point": 232210.8836,
+    "es_point": 250090.8156,
+    "var_se": 3103.5805,
+    "es_se": 3317.5938,
+    "sobol_ratio": 4.7976,
+    "antithetic_ratio": 0.7765
   },
   "proxy": {
-    "verdict": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)",
+    "verdict": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)",
     "selected_degree": 1,
     "overfit_onset_degree": 2,
-    "overfit_onset_terms": 10,
+    "overfit_onset_terms": 21,
     "selection_metric": "oos_rmse",
     "degree_rows": [
       {
         "degree": 1,
-        "in_sample_r2": 0.978442,
-        "oos_r2": 0.975066,
-        "oos_max_abs_rel_error": 0.039154,
-        "n_basis_terms": 4
+        "in_sample_r2": 0.964729,
+        "oos_r2": 0.961579,
+        "oos_max_abs_rel_error": 0.128956,
+        "n_basis_terms": 6
       },
       {
         "degree": 2,
-        "in_sample_r2": 0.958478,
-        "oos_r2": 0.935962,
-        "oos_max_abs_rel_error": 0.114563,
-        "n_basis_terms": 10
+        "in_sample_r2": 0.906654,
+        "oos_r2": 0.850762,
+        "oos_max_abs_rel_error": 0.327265,
+        "n_basis_terms": 21
       },
       {
         "degree": 3,
-        "in_sample_r2": 0.927661,
-        "oos_r2": 0.812323,
-        "oos_max_abs_rel_error": 0.299516,
-        "n_basis_terms": 19
-      },
-      {
-        "degree": 3,
-        "in_sample_r2": 0.925325,
-        "oos_r2": 0.760469,
-        "oos_max_abs_rel_error": 0.342327,
-        "n_basis_terms": 20
+        "in_sample_r2": 0.75163,
+        "oos_r2": 0.651363,
+        "oos_max_abs_rel_error": 0.378586,
+        "n_basis_terms": 56
       },
       {
         "degree": 4,
-        "in_sample_r2": 0.869102,
-        "oos_r2": 0.759285,
-        "oos_max_abs_rel_error": 0.280775,
-        "n_basis_terms": 32
+        "in_sample_r2": 0.419659,
+        "oos_r2": 0.340063,
+        "oos_max_abs_rel_error": 0.786683,
+        "n_basis_terms": 91
       }
     ],
-    "var_rel_error": 0.070549,
-    "es_rel_error": 0.069551
+    "var_rel_error": 0.020259,
+    "es_rel_error": 0.031796
   },
   "loss": {
     "confidence_level": 0.995,

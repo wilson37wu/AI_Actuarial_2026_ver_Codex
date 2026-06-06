@@ -53,7 +53,19 @@ from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
-from scipy import stats
+# --- lazy scipy proxy: keeps this module importable without scipy; the real
+# scipy submodule is imported on first attribute access (only if used). ---
+class _LazyScipy:
+    def __init__(self, _modname):
+        object.__setattr__(self, "_modname", _modname)
+        object.__setattr__(self, "_mod", None)
+    def __getattr__(self, _name):
+        if object.__getattribute__(self, "_mod") is None:
+            import importlib
+            object.__setattr__(self, "_mod",
+                               importlib.import_module(object.__getattribute__(self, "_modname")))
+        return getattr(object.__getattribute__(self, "_mod"), _name)
+stats = _LazyScipy("scipy.stats")
 
 from par_model_v2.projection.nested_stochastic_tvog import (
     CapitalMetrics,

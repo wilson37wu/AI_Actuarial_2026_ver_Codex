@@ -1,0 +1,52 @@
+{
+  "run_timestamp": "2026-06-06T00:17:39.129970+00:00",
+  "summary": {
+    "market": "HK_PAR",
+    "calibration_date": "2026-01-01",
+    "kappa": 0.7853990364288198,
+    "long_run_level": -0.036032165013837145,
+    "behaviour_vol": 0.17809624969327237,
+    "stationary_std": 0.1421001689894605,
+    "half_life_years": 0.882541419596922,
+    "initial_index": 0.0,
+    "long_run_ae": 0.9646092663137327,
+    "n_obs": 240,
+    "fit_r2": 0.8782601986102929,
+    "is_placeholder": false,
+    "notes": "OU AR(1) OLS calibration on 240 monthly log(A/E) observations (dt=0.0833); kappa from the regression slope phi=exp(-kappa dt), long-run level from intercept/(1-phi) (== sample mean to first order), sigma_b from the residual variance via the OU stationary relation. Behaviour is non-financial (P=Q drift); capital projection starts at b(0)=0.0000.",
+    "lineage": {
+      "lineage_id": "LINLAPSE_HK_PAR_20260101",
+      "market": "HK_PAR",
+      "as_of_date": "2026-01-01",
+      "source_type": "educational_historical_proxy",
+      "source_detail": "/sessions/eager-ecstatic-feynman/mnt/Auto_Actuarial_Model_Dev_May26/par_model_v2/calibration/fixtures/lapse_experience_history_20260101.json",
+      "fixture_version": "1.0.0",
+      "approved_by": "ModelGovernance_Phase19",
+      "approval_timestamp": "2026-01-01T00:00:00Z",
+      "sha256_checksum": "55ba9cdad9acddf59827fff8777bc2df908801f4dc385626b98f9dec923cff74",
+      "produced_at": "2026-06-06T00:17:39.170562+00:00"
+    },
+    "criteria": {
+      "c1_min_obs": true,
+      "c2_kappa_in_band": true,
+      "c3_long_run_in_band": true,
+      "c4_sigma_in_band": true,
+      "c5_stationary_std_in_band": true,
+      "c6_not_placeholder_with_audit": true
+    }
+  },
+  "gate_glapse": {
+    "gate_id": "G-LAPSE",
+    "gate_description": "OU lapse behavioural-index parameters (kappa_b, long-run level, sigma_b) calibrated to lapse-experience A/E history (not placeholders); kappa in [0.05, 5.0], long-run level in [-0.20, 0.20], sigma in [0.02, 0.60], stationary std in [0.02, 0.50] (SOA ASOP 7 \u00a73.3; ASOP 56 \u00a73.4)",
+    "status": "PASS",
+    "evidence": "HK_PAR: n=240, kappa=0.7854 (half-life 0.9yr), long_run_level=-0.0360 (A/E 0.965), sigma=0.1781, stationary_std=0.1421",
+    "evaluated_at": "2026-06-06T00:17:39.182444+00:00"
+  },
+  "change_record_id": "9dbd97f031f7412f941ca07793e2d3be",
+  "change_record_status": "APPROVED",
+  "mr003_status": "MITIGATED",
+  "mr011_status": "MITIGATED",
+  "audit_entry_ids": [
+    "2e7222f72b944e6fb94e129897ed16e2"
+  ]
+}

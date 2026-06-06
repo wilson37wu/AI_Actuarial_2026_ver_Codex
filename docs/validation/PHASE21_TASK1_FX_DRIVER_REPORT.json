@@ -1,0 +1,246 @@
+{
+  "run_timestamp": "2026-06-06T21:52:05.965347+00:00",
+  "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+  "task": "Phase 21 Task 1 - FX / currency sixth capital driver + G-FX plausibility gate",
+  "gate": {
+    "gate": "G-FX",
+    "passed": true,
+    "n_criteria": 6,
+    "n_passed": 6,
+    "criteria": [
+      {
+        "criterion": "FX-01-positive-spots",
+        "passed": true,
+        "evidence": {
+          "min_spot": 6.172982777363508
+        }
+      },
+      {
+        "criterion": "FX-02-lognormal-moments",
+        "passed": true,
+        "evidence": {
+          "log_mean_emp": -0.0018000000000000021,
+          "log_mean_theory": -0.0018,
+          "z_mean": 2.2856988727712895e-15,
+          "log_sd_emp": 0.060403960938131086,
+          "log_sd_theory": 0.06,
+          "z_sd": 0.6021141335621146
+        }
+      },
+      {
+        "criterion": "FX-03-pq-measure-separation",
+        "passed": true,
+        "evidence": {
+          "terminal_mean_P": 8.198949707242726,
+          "terminal_mean_Q": 7.9566341231825515,
+          "ratio": 1.030454533953517,
+          "expected_ratio": 1.030454533953517
+        }
+      },
+      {
+        "criterion": "FX-04-q-cip-martingale",
+        "passed": true,
+        "evidence": {
+          "check_id": "MART-FX-CIP",
+          "estimate": 7.800572976172533,
+          "target": 7.8,
+          "n_std_errors": 0.07582118025605618,
+          "rel_error": 7.345848365808285e-05,
+          "tolerance_sigma": 4.0
+        }
+      },
+      {
+        "criterion": "FX-05-correlation-wiring",
+        "passed": true,
+        "evidence": {
+          "realised_rate_fx_corr": -0.1512899677696645,
+          "target": -0.15,
+          "tolerance": 0.02
+        }
+      },
+      {
+        "criterion": "FX-06-exposure-mapping",
+        "passed": true,
+        "evidence": {
+          "impact_at_initial_spot": 0.0,
+          "monotone_decreasing_in_spot": true,
+          "loss_at_20pct_depreciation": 5999.999999999999
+        }
+      }
+    ],
+    "params": {
+      "fx_vol": 0.06,
+      "real_world_drift": 0.0,
+      "domestic_foreign_rate_spread": 0.02,
+      "initial_spot_rate": 7.8,
+      "n_scenarios": 4000,
+      "test_month": 12,
+      "k_sigma": 4.0,
+      "seed": 20260607
+    },
+    "standards": [
+      "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+      "IA TAS M \u00a73.6",
+      "Solvency II Delegated Reg. Art. 188/234"
+    ]
+  },
+  "aggregation": {
+    "config": {
+      "n_outer": 160,
+      "n_inner": 24,
+      "seed": 42,
+      "confidence_level": 0.995,
+      "capital_horizon_months": 12,
+      "outer_measure": "P",
+      "aggregation_gap_tolerance": 0.35,
+      "n_sim_copula": 200000
+    },
+    "drivers": [
+      "short_rate_g2pp_2f",
+      "equity_guarantee",
+      "credit_spread",
+      "lapse_behaviour",
+      "mortality_trend",
+      "fx_translation"
+    ],
+    "standalone_scr": {
+      "rate": 14486.319850929489,
+      "equity": 15931.555851018842,
+      "credit": 4713.865675437704,
+      "lapse": 22538.93657690868,
+      "mortality": 387.2000248782355,
+      "fx": 4286.36987389994
+    },
+    "standalone_scr_sum": 62344.247853072884,
+    "esg_correlation_matrix": [
+      [
+        1.0,
+        -0.15,
+        -0.2,
+        0.0,
+        0.0,
+        -0.15
+      ],
+      [
+        -0.15,
+        1.0,
+        -0.3,
+        0.0,
+        0.0,
+        -0.1
+      ],
+      [
+        -0.2,
+        -0.3,
+        1.0,
+        0.0,
+        0.0,
+        0.05
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        -0.15,
+        -0.1,
+        0.05,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "correlation_matrix_passed": true,
+    "var_covar_scr": 28992.045275298213,
+    "nested_scr": 48737.463043721524,
+    "var_covar_vs_nested_rel_error": 0.4051383994015044,
+    "esg_understatement_pct": 0.4051383994015044,
+    "copula_selected": "gaussian",
+    "copula_scr": 41231.982464603265,
+    "copula_vs_nested_rel_error": 0.15399817943714517,
+    "interaction_residual_rel": -0.1665828616357795,
+    "fx_exposure_notional": 30000.0,
+    "fx_initial_spot": 7.8,
+    "run_id": "fx-6d-riskagg-9d508a6e",
+    "duration_seconds": 1.341269533999366,
+    "verdict": "PASS",
+    "reproducibility_digest": "7e4cb6e0685b61daebd4fc5b6c4f44019bb63d9bda3d1525101af7d7f6d2f04e",
+    "notes": [
+      "SIXTH DRIVER = lognormal FX spot (P-measure real-world drift outer; CIP drift r_d - r_f under Q), vol=0.060, X0=7.800; educational placeholder parameters, NOT calibrated to credentialled data.",
+      "Inner Q-nest FX conditioning is ANALYTIC and CIP-EXACT: the deflated translated foreign money-market account is a Q-martingale (Phase 20 MART-FX-CIP), so the conditional PV of the foreign asset leg given X_H is its time-H translated value; fx_l = notional * (1 - X_H/X0).",
+      "First five drivers and their CRN component liabilities are reused verbatim from the Phase 20 G2++ five-driver engine; the 6x6 governed correlation embeds the 5x5 block unchanged (ASOP 25 \u00a73.3).",
+      "Var-covar (6x6 ESG) understates nested by 40.5%; copula (gaussian) reconciles within 15.4% (MR-010/MR-012 refresh under six drivers).",
+      "FX standalone SCR 4286.4 vs rate 14486.3, equity 15931.6; the additive FX leg leaves the five-driver interaction residual unchanged in kind (residual rel -16.7%)."
+    ]
+  },
+  "affected_components": [
+    "par_model_v2/projection/multi_driver_capital_6d_fx.py",
+    "tests/test_phase21_fx_driver.py",
+    "scripts/build_phase21_task1_fx.py",
+    "docs/FX_DRIVER_G_FX_CARD.md",
+    "docs/validation/PHASE21_TASK1_FX_DRIVER_REPORT.{json,md}"
+  ],
+  "standard_references": [
+    "SOA ASOP 56 section 3.1.3",
+    "SOA ASOP 56 section 3.4/3.5",
+    "IA TAS M section 3.5/3.6",
+    "Solvency II Delegated Regulation Article 188 (currency risk)",
+    "Solvency II Delegated Regulation Article 234",
+    "Brigo-Mercurio 2006"
+  ],
+  "change_record_id": "25e1eac6661a4d9bb74276ee1a2a4b46",
+  "change_record_status": "OWNER_REVIEW",
+  "mr012_action": "refreshed",
+  "mr012_status": "IN_PROGRESS",
+  "audit_integrity_ok": true,
+  "change_records_total": 24,
+  "risk_register_summary": {
+    "total": 13,
+    "by_rating": {
+      "VERY_LOW": 1,
+      "LOW": 1,
+      "MEDIUM": 0,
+      "HIGH": 7,
+      "VERY_HIGH": 0,
+      "CRITICAL": 4
+    },
+    "by_status": {
+      "OPEN": 1,
+      "IN_PROGRESS": 4,
+      "MITIGATED": 6,
+      "ACCEPTED": 0,
+      "CLOSED": 2
+    },
+    "open_critical": 1
+  },
+  "use_restrictions": {
+    "model": "SixDriverFXRiskAggregator",
+    "status": "EDUCATIONAL",
+    "restrictions": [
+      "FX parameters are educational placeholders (fx_vol, drift, couplings); NOT calibrated to credentialled market data.",
+      "The FX exposure is a single translated foreign asset leg with an analytic CIP-exact conditional valuation; real books carry term-structured, optioned and partially hedged FX exposures.",
+      "The lognormal FX process has no jumps, stochastic volatility or peg/de-peg regime dynamics; a pegged currency (e.g. HKD) is materially regime-driven, so the tail is stylised, not historical.",
+      "The first five drivers' inner Q nest remains the governed HW1F nest conditioned at the realised G2++ r_H (Phase 20 residual).",
+      "Six-driver LSMC proxy-surface validation is Phase 21 Task 2; until it reports, the nested benchmark is the only validated 6D ground truth.",
+      "Not for production capital, pricing, or regulatory reporting."
+    ],
+    "standards": [
+      "SOA ASOP 56 \u00a73.4",
+      "IA TAS M \u00a73.5",
+      "SOA ASOP 41 \u00a73.4.4"
+    ]
+  },
+  "markdown": "# Phase 21 Task 1 -- FX / Currency Sixth Capital Driver (G-FX)\n\nRun: 2026-06-06T21:52:05.965347+00:00\n\n## G-FX gate: PASS (6/6)\n\n| Criterion | Result | Evidence (truncated) |\n| --- | --- | --- |\n| FX-01-positive-spots | PASS | min_spot=6.172983 |\n| FX-02-lognormal-moments | PASS | log_mean_emp=-0.0018; log_mean_theory=-0.0018; z_mean=0.0 |\n| FX-03-pq-measure-separation | PASS | terminal_mean_P=8.19895; terminal_mean_Q=7.956634; ratio=1.030455 |\n| FX-04-q-cip-martingale | PASS | check_id=MART-FX-CIP; estimate=7.800573; target=7.8 |\n| FX-05-correlation-wiring | PASS | realised_rate_fx_corr=-0.15129; target=-0.15; tolerance=0.02 |\n| FX-06-exposure-mapping | PASS | impact_at_initial_spot=0.0; monotone_decreasing_in_spot=True; loss_at_20pct_depreciation=6000.0 |\n\n## Six-driver aggregation (verdict: PASS)\n\n| Driver | Standalone SCR |\n| --- | --- |\n| rate | 14486.3 |\n| equity | 15931.6 |\n| credit | 4713.9 |\n| lapse | 22538.9 |\n| mortality | 387.2 |\n| fx | 4286.4 |\n\n* Var-covar (6x6): 28992.0; nested: 48737.5; understatement 40.5%\n* Copula (gaussian): 41232.0 (rel err vs nested 15.4%)\n* Interaction residual (rel): -16.7%\n* Reproducibility digest: `7e4cb6e0685b61daebd4fc5b6c4f44019bb63d9bda3d1525101af7d7f6d2f04e`\n\n## Governance\n\n* ChangeRecord: 25e1eac6661a4d9bb74276ee1a2a4b46 (OWNER_REVIEW)\n* MR-012: IN_PROGRESS (refreshed)\n* Audit integrity: True\n"
+}

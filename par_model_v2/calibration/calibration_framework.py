@@ -68,7 +68,9 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
-from scipy import optimize as scipy_optimize
+# NOTE: scipy is imported lazily inside HullWhiteCalibrator.calibrate() so that
+# the calibration package remains importable in scipy-free environments (e.g.
+# the offline sandbox). Only the actual HW1F/GBM optimiser call requires scipy.
 
 
 # ---------------------------------------------------------------------------
@@ -706,6 +708,7 @@ class HullWhiteCalibrator:
             self.inputs.optimizer_bounds["sigma_r"],
         ]
 
+        from scipy import optimize as scipy_optimize  # lazy: only needed here
         result_opt = scipy_optimize.minimize(
             self.loss,
             x0,
