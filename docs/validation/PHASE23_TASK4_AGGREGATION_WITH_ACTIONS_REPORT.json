@@ -1,0 +1,403 @@
+{
+  "run_timestamp": "2026-06-07T14:16:15.647144+00:00",
+  "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+  "task": "Phase 23 Task 4 - seven-driver aggregation + tail read-outs re-run WITH management actions",
+  "verdict": "PASS",
+  "gates": {
+    "G1_t_copula_with_actions_gate": true,
+    "G2_nested_with_le_without": true,
+    "G3_all_standalone_with_le_without": true,
+    "G4_df_rank_invariance": true
+  },
+  "rule": {
+    "cr_trigger": 1.1,
+    "cr_floor": 0.9,
+    "bonus_share": 0.3,
+    "pre_floor": 0.6,
+    "reference_coverage": 1.12,
+    "max_relief": 0.12
+  },
+  "reference_assets": 129916.49144595393,
+  "fit_mean_liability": 115996.86736245886,
+  "active_share_full": 0.46875,
+  "floor_share_full": 0.075,
+  "aggregation_with_actions": {
+    "run_id": "tcopula-tailmatch-a989f91c",
+    "verdict": "PASS",
+    "gate": "PASS if t(df_matched) SCR rel err <= gaussian baseline rel err OR <= 25%; lambda_U + threshold sensitivity + capped-share disclosed",
+    "drivers": [
+      "rate",
+      "equity",
+      "credit",
+      "lapse",
+      "mortality",
+      "fx",
+      "liquidity"
+    ],
+    "n_obs": 160,
+    "nested_scr": 33117.7704,
+    "var_covar_scr": 14428.7393,
+    "var_covar_rel_error_vs_nested": 0.56432,
+    "threshold_sensitivity": [
+      {
+        "threshold": 0.8,
+        "expected_tail_obs": 32.0,
+        "pooled_df": 1.802,
+        "capped_share": 0.0,
+        "mean_offdiag_lambda": 0.245536,
+        "max_offdiag_lambda": 0.71875
+      },
+      {
+        "threshold": 0.85,
+        "expected_tail_obs": 24.0,
+        "pooled_df": 2.9451,
+        "capped_share": 0.0,
+        "mean_offdiag_lambda": 0.19246,
+        "max_offdiag_lambda": 0.708333
+      },
+      {
+        "threshold": 0.9,
+        "expected_tail_obs": 16.0,
+        "pooled_df": 3.6253,
+        "capped_share": 0.1429,
+        "mean_offdiag_lambda": 0.151786,
+        "max_offdiag_lambda": 0.6875
+      }
+    ],
+    "df_matched": 2.9451,
+    "df_matched_capped_share": 0.0476,
+    "central_threshold": 0.85,
+    "rho_matrix": [
+      [
+        1.0,
+        0.555981,
+        0.892794,
+        0.119254,
+        0.022226,
+        -0.121216,
+        -0.002717
+      ],
+      [
+        0.555981,
+        1.0,
+        0.587985,
+        -0.020992,
+        -0.084121,
+        -0.111158,
+        0.272153
+      ],
+      [
+        0.892794,
+        0.587985,
+        1.0,
+        0.130526,
+        0.019757,
+        -0.126607,
+        0.190728
+      ],
+      [
+        0.119254,
+        -0.020992,
+        0.130526,
+        1.0,
+        0.092731,
+        -0.08978,
+        -0.076735
+      ],
+      [
+        0.022226,
+        -0.084121,
+        0.019757,
+        0.092731,
+        1.0,
+        0.043455,
+        0.083629
+      ],
+      [
+        -0.121216,
+        -0.111158,
+        -0.126607,
+        -0.08978,
+        0.043455,
+        1.0,
+        -0.149845
+      ],
+      [
+        -0.002717,
+        0.272153,
+        0.190728,
+        -0.076735,
+        0.083629,
+        -0.149845,
+        1.0
+      ]
+    ],
+    "empirical_lambda_matrix": [
+      [
+        1.0,
+        0.291667,
+        0.708333,
+        0.333333,
+        0.125,
+        0.083333,
+        0.083333
+      ],
+      [
+        0.291667,
+        1.0,
+        0.333333,
+        0.166667,
+        0.041667,
+        0.125,
+        0.291667
+      ],
+      [
+        0.708333,
+        0.333333,
+        1.0,
+        0.25,
+        0.083333,
+        0.083333,
+        0.166667
+      ],
+      [
+        0.333333,
+        0.166667,
+        0.25,
+        1.0,
+        0.208333,
+        0.083333,
+        0.125
+      ],
+      [
+        0.125,
+        0.041667,
+        0.083333,
+        0.208333,
+        1.0,
+        0.25,
+        0.166667
+      ],
+      [
+        0.083333,
+        0.125,
+        0.083333,
+        0.083333,
+        0.25,
+        1.0,
+        0.041667
+      ],
+      [
+        0.083333,
+        0.291667,
+        0.166667,
+        0.125,
+        0.166667,
+        0.041667,
+        1.0
+      ]
+    ],
+    "implied_lambda_matrix": [
+      [
+        1.0,
+        0.349264,
+        0.661389,
+        0.153868,
+        0.125,
+        0.08921,
+        0.118214
+      ],
+      [
+        0.349264,
+        1.0,
+        0.369637,
+        0.113398,
+        0.097737,
+        0.091474,
+        0.208383
+      ],
+      [
+        0.661389,
+        0.369637,
+        1.0,
+        0.157491,
+        0.124317,
+        0.088011,
+        0.177866
+      ],
+      [
+        0.153868,
+        0.113398,
+        0.157491,
+        1.0,
+        0.145571,
+        0.096404,
+        0.099493
+      ],
+      [
+        0.125,
+        0.097737,
+        0.124317,
+        0.145571,
+        1.0,
+        0.130974,
+        0.142796
+      ],
+      [
+        0.08921,
+        0.091474,
+        0.088011,
+        0.096404,
+        0.130974,
+        1.0,
+        0.082956
+      ],
+      [
+        0.118214,
+        0.208383,
+        0.177866,
+        0.099493,
+        0.142796,
+        0.082956,
+        1.0
+      ]
+    ],
+    "gaussian_scr": 23921.8205,
+    "gaussian_rel_error_vs_nested": 0.277674,
+    "gaussian_aic": -332.6774,
+    "t_matched_scr": 25652.9228,
+    "t_matched_rel_error_vs_nested": 0.225403,
+    "t_matched_loglik": 111.7464,
+    "t_matched_aic": -179.4928,
+    "t_capital": {
+      "confidence_level": 0.995,
+      "mean_liability": 807640.3604,
+      "var_liability": 833293.2832,
+      "es_liability": 835480.964,
+      "scr_proxy": 25652.9228,
+      "n_outer": 200000,
+      "capital_horizon_months": 12
+    },
+    "gaussian_capital": {
+      "confidence_level": 0.995,
+      "mean_liability": 807632.6801,
+      "var_liability": 831554.5006,
+      "es_liability": 833034.3737,
+      "scr_proxy": 23921.8205,
+      "n_outer": 200000,
+      "capital_horizon_months": 12
+    },
+    "duration_seconds": 2.2862,
+    "reproducibility_digest": "370521b428f8c0d58e4458387660e801903d37e7d52aa9c09367c34942b79465",
+    "config": {
+      "thresholds": [
+        0.8,
+        0.85,
+        0.9
+      ],
+      "n_sim": 200000,
+      "seed": 20260607,
+      "confidence_level": 0.995,
+      "capital_horizon_months": 12,
+      "rel_error_tolerance": 0.25,
+      "df_lo": 1.0,
+      "df_hi": 200.0
+    },
+    "notes": [
+      "df matched by tail-dependence inversion (Demarta-McNeil 2005), NOT by AIC/MLE on the body: pooled MEDIAN pairwise df, median across 3 thresholds.",
+      "Pooled common-df t-copula is exchangeable in df across pairs -- a disclosed simplification (per-pair dfs are reported).",
+      "Capped-pair share 5% (pairs whose inversion hit a df search bound; disclosed, not hidden).",
+      "Gaussian baseline simulated with the same empirical marginals and seed family for an apples-to-apples SCR comparison."
+    ],
+    "standards": [
+      "SOA ASOP 56 s3.5",
+      "SOA ASOP 25 s3.3",
+      "IA TAS M s3.6",
+      "Solvency II Delegated Reg. Art. 234",
+      "IFoA Life Aggregation & Simulation WP",
+      "Demarta-McNeil 2005 (t-copula tail dependence)"
+    ]
+  },
+  "without_actions_baseline": {
+    "nested_scr": 48707.43490332604,
+    "var_covar_scr": 28990.889357788157,
+    "gaussian_scr": 41472.429,
+    "t_matched_scr": 46755.963,
+    "df_matched": 2.9451,
+    "t_matched_rel_error_vs_nested": 0.040065,
+    "gaussian_rel_error_vs_nested": 0.14854,
+    "var_covar_rel_error_vs_nested": 0.404795,
+    "standalone_scr": [
+      14486.319850929489,
+      15931.555851018842,
+      4713.865675437704,
+      22538.93657690868,
+      387.2000248782355,
+      4286.36987389994,
+      45.05333401574302
+    ]
+  },
+  "standalone_scr_with_actions": [
+    7299.389698290179,
+    8026.65283796376,
+    3090.9508545374556,
+    11131.77937241891,
+    387.2000248782424,
+    2919.257064799036,
+    45.05333401572716
+  ],
+  "standalone_drivers": [
+    "rate",
+    "equity",
+    "credit",
+    "lapse",
+    "mortality",
+    "fx",
+    "liquidity"
+  ],
+  "deltas": {
+    "nested_scr": -15589.664503326036,
+    "var_covar_scr": -14562.150057788158,
+    "gaussian_scr": -17550.608499999995,
+    "t_matched_scr": -21103.040200000003,
+    "nested_var_with": 145231.12815491078,
+    "nested_es_with": 145911.5015666014
+  },
+  "crosscheck_count": 13,
+  "anchoring_convention": "V_k = L_fit + (vec_k - mean(vec_k)); nested = rule(full); A_ref identical to Task 3 (leakage-free)",
+  "affected_components": [
+    "scripts/build_phase23_task4_aggregation_with_actions.py",
+    "tests/test_phase23_task4_aggregation_with_actions.py",
+    "docs/WITH_ACTIONS_AGGREGATION_CARD.md",
+    "docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.{json,md}"
+  ],
+  "standard_references": [
+    "Solvency II Delegated Regulation Article 23 (future management actions)",
+    "Solvency II Delegated Regulation Article 234 (aggregation)",
+    "SOA ASOP 56 section 3.1.3/3.4/3.5",
+    "IA TAS M section 3.2/3.6",
+    "IFoA Life Aggregation & Simulation working party",
+    "Demarta-McNeil 2005; McNeil-Frey-Embrechts 2015 ch.7"
+  ],
+  "use_restrictions": {
+    "classification": "EDUCATIONAL_DEMONSTRATION_ONLY",
+    "approved_uses": [
+      "Methodology demonstration of Solvency II Art. 23 management actions in a nested-stochastic / LSMC-proxy framework",
+      "Training material on dynamic bonus-participation rules"
+    ],
+    "prohibited_uses": [
+      "Production capital or solvency decisions",
+      "Policyholder bonus declarations",
+      "Regulatory submissions"
+    ],
+    "rationale": "Trigger, floor, bonus-share, PRE and reference-coverage parameters are educational placeholders; no credentialled management-practice data; production sign-off withheld pending independent APS X2 review."
+  },
+  "reproducibility_digest": "0db4bcd1560aa69ccf7b8bf264f1bd383aab89504e01ced132678df21c32f16a",
+  "markdown_path": "docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.md",
+  "change_record_id": "912ef3f92e714188baec4377ab59474d",
+  "change_record_status": "OWNER_REVIEW",
+  "mr010_refreshed": true,
+  "mr014_refreshed": true,
+  "audit_integrity_ok": true,
+  "change_records_total": 37
+}

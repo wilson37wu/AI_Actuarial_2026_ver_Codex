@@ -97,3 +97,40 @@ PHASE 23 COMPLETE documentation.
 
 **Persisting blockers (human action):** git ghost locks (commit via alt-index workaround on
 branch `p22c9`); production sign-off residual (credentialled data + APS X2 review); disk ~90%.
+
+---
+
+## Latest Cycle Status - 2026-06-07 (cycle 15)
+
+**Phase 23 Task 4 COMPLETE (PASS, 4/4 fixed pre-registered gates + governance).
+Next: Phase 23 Task 5 (offline-UI propagation + PHASE 23 COMPLETE documentation).**
+
+What this cycle did:
+
+- NEW staged build `scripts/build_phase23_task4_aggregation_with_actions.py`: seven-driver
+  aggregation + tail read-outs re-run WITH the governed Task 3 management-action rule.
+  Without-actions losses reused bit-identically from the Task 2 stage after **13/13 archive
+  cross-checks**; disclosed anchoring convention V_k = L_fit + (vec_k - mean_k); nested
+  benchmark = rule applied to the full conditional liability; A_ref identical to Task 3.
+- **Results (99.5% 1y SCR):** nested 48,707.4 -> **33,117.8** (-32.0%); tail-matched
+  t(2.9451) 46,756.0 -> 25,652.9; gaussian 41,472.4 -> 23,921.8; var-covar 28,990.9 ->
+  14,428.7 (56.4% understatement vs nested-with; MR-010 refreshed). Action active on 46.9%
+  of outer nodes. RANK INVARIANCE gated: df re-matched at exactly 2.9451.
+- **MATERIAL FINDING (disclosed):** copula-on-standalone-losses understates the nested
+  with-actions benchmark (t rel err 4.0% -> 22.5%) because the action saturates (max relief
+  12%) in the joint tail; gate PASS on the fixed <=25% arm; nested remains the reference.
+- Governance: ChangeRecord `912ef3f92e714188baec4377ab59474d` (methodology_change)
+  OWNER_REVIEW; MR-010 + MR-014 refreshed; audit 63->64; changes 35->36; verify_all True.
+- Tests: 25 new PASS (`tests/test_phase23_task4_aggregation_with_actions.py`); regression
+  **307 PASS / 0 FAIL** (incl. full p21 suite; heavy test run solo). UI self-test ok:true.
+- Evidence: `docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.{json,md}`;
+  `docs/WITH_ACTIONS_AGGREGATION_CARD.md`.
+
+**Next executable action: Phase 23 Task 5** - offline-UI propagation: management-action
+panel (rule card, active/floor shares, trigger sensitivity from Task 3) + with-actions
+capital read-outs and the Task 4 saturation finding; contract bump 1.4.0 -> 1.5.0
+(additive); UI keeps consuming ONLY model output JSON. Then PHASE 23 COMPLETE docs.
+
+**Persisting blockers (human action):** git ghost locks (commit via alt-index workaround on
+branch `p22c9`); production sign-off residual (credentialled data + APS X2 review); disk
+/sessions ~90%; sandbox kills background shells between tool calls (run long tests solo).

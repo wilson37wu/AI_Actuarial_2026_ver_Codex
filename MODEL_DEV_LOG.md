@@ -7836,3 +7836,76 @@ model output JSON) + PHASE 23 COMPLETE documentation.
 onto branch `p22c9`; disk /sessions ~90%.
 
 ---
+## Run 2026-06-07T14:45Z — Phase 23 (cycle 15)
+
+**Task Completed:** Phase 23 Task 4 — seven-driver aggregation + tail read-outs re-run WITH
+management actions. **VERDICT PASS (4/4 fixed pre-registered gates + G5 governance).**
+
+**Accomplishments:**
+- NEW staged build `scripts/build_phase23_task4_aggregation_with_actions.py`
+  (losses/aggregate/governance; idempotent). WITHOUT-actions seven-driver standalone loss
+  vectors reused BIT-IDENTICALLY from the Phase 23 Task 2 stage (/var/tmp/p23t2_stage), with
+  **13/13 archive cross-checks PASS before any with-actions work** (P22T4 nested/var-covar +
+  7 standalone SCRs + var-covar reproduction from the archived 7x7 matrix + P23T2 nested +
+  A_ref/rule identity vs the Task 3 report).
+- WITH-ACTIONS realisation under a DISCLOSED anchoring convention: standalone level vector
+  V_k = L_fit + (vec_k − mean_k) (a single-driver stress moves the TOTAL balance sheet from
+  the fit-sample baseline; the action responds to the total coverage ratio); nested benchmark
+  = rule applied directly to the full seven-driver conditional liability. A_ref = 129,916.5
+  IDENTICAL to Task 3 (leakage-free). Standalone SCRs are translation-invariant; the anchor
+  only sets where the action triggers.
+- **Results (99.5% 1y SCR, n_obs=160, seed 20260607, n_sim 200k):**
+  nested 48,707.4 → **33,117.8** (−32.0%); tail-matched t(2.9451) 46,756.0 → **25,652.9**;
+  gaussian same-seed 41,472.4 → 23,921.8; var-covar 28,990.9 → 14,428.7 (understatement vs
+  nested-with 56.4%, MR-010 refreshed). Action active on 46.9% of outer nodes (7.5% at floor).
+  Standalone deltas: rate −7,187, equity −7,905, lapse −11,407, credit −1,623, fx −1,367;
+  mortality/liquidity UNCHANGED by construction (anchored CR 1.12 > trigger 1.10; disclosed).
+- **RANK INVARIANCE (gated, G4):** the action is a monotone marginal transform, so the
+  empirical copula, Kendall taus and tail-matched df are IDENTICAL with/without actions —
+  df re-matched at exactly 2.9451. Only marginal quantiles move.
+- **MATERIAL FINDING (disclosed in report + MR-010 notes):** copula rel errors GROW on the
+  with-actions basis (t: 4.0% → 22.5%; gaussian: 14.9% → 27.8%): aggregating standalone
+  with-actions losses understates the nested-with-actions benchmark because the action
+  SATURATES (max relief 12%) in the joint tail while standalone tails sit in the steeper
+  partial-cut band. The nested run remains the capital reference; copula read-outs are
+  diagnostics on this basis. Gate G1 still PASS on its fixed <=25% arm (22.54%).
+- Evidence: `docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.{json,md}`;
+  card `docs/WITH_ACTIONS_AGGREGATION_CARD.md`; stage `/var/tmp/p23t4_stage`.
+
+**Governance:** ChangeRecord `912ef3f92e714188baec4377ab59474d` (methodology_change)
+OWNER_REVIEW (production sign-off withheld); MR-010 + MR-014 mitigation notes refreshed
+(both MITIGATED); audit entries 63→64; change records 35→36; verify_all True; governance
+stage idempotent ("already applied").
+
+**Verification:** `tests/test_phase23_task4_aggregation_with_actions.py` **25 PASS**
+(evidence contract, capital monotonicity, deltas, rank invariance incl. synthetic argsort
+preservation, SCR translation invariance, governance store checks, FAIL paths incl. _gates
+on a bad verdict and the monotonicity guard). Regression: phase23 t2/t3/tail 78 +
+governance/p22t4 72 + p22 t1/t2/t3 38 + p22t5 16 + p21 fx/liquidity/oos/task4 78 =
+**282 PASS / 0 FAIL** (307 incl. the 25 new; <45 s batches; the heavy p21 staged-slicing
+test run solo). `node
+scripts/ui_app_self_test.cjs ui_app.html` ok:true (0 network / 0 JS errors; no UI change
+this cycle — propagation is Task 5). ast/json checks clean; off-mount stage + cp + cmp
+write protocol observed.
+
+**Next Step:** Phase 23 Task 5 — offline-UI propagation: management-action panel
+(rule card, active/floor shares, trigger sensitivity) + with-actions capital read-outs
+(nested/t-copula/gaussian/var-covar with-vs-without deltas, Task 4 saturation finding);
+UI keeps consuming ONLY model output JSON; contract bump 1.4.0 → 1.5.0 (additive);
+PHASE 23 COMPLETE documentation.
+
+**Industry Standards Progress:**
+- Solvency II Art. 23: management-action EFFECT now quantified at the aggregation level
+  (with-vs-without deltas per benchmark), not only at the proxy/nested level.
+- Solvency II Art. 234: dependence justification carries over EXACTLY under the action
+  (rank invariance gated); the saturation-driven divergence of copula-on-standalone-losses
+  on the with-actions basis is disclosed as a methodology limitation.
+- SOA ASOP 56 s3.5 / IA TAS M s3.6: fixed pre-registered gates honoured (no gate-shopping);
+  13 archive cross-checks; anchoring convention, unchanged-small-driver construction and
+  placeholder parameters disclosed.
+
+**Blockers:** unchanged — ghost git locks (`.git/index.lock`, `.git/HEAD.lock`,
+`.git/refs/heads/main.lock`) need a human shell; commit via alt-`GIT_INDEX_FILE` workaround
+onto branch `p22c9`; disk /sessions ~90%.
+
+---

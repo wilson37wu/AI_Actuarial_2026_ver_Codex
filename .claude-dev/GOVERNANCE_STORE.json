@@ -1423,6 +1423,29 @@
       "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
       "digest": "bbf087ad1d0858391610c6d90f9ec5739226a6294c3d09ef1205fc2ceed1248b",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "87afc2d95ca3410e91cd39e1f2f293a2",
+      "timestamp": "2026-06-07T14:16:28.962305+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "AutomatedModelDev_Phase23",
+      "description": "Model run tcopula-tailmatch-a989f91c: PASS",
+      "details": {
+        "run_id": "tcopula-tailmatch-a989f91c",
+        "scenario_count": 200000,
+        "duration_seconds": 2.2862,
+        "outcome": "PASS",
+        "files_changed": [
+          "scripts/build_phase23_task4_aggregation_with_actions.py",
+          "tests/test_phase23_task4_aggregation_with_actions.py",
+          "docs/WITH_ACTIONS_AGGREGATION_CARD.md",
+          "docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.{json,md}"
+        ],
+        "test_summary": "with-actions: nested 33117.8, t(2.95) 25652.9 (rel 22.54%), gaussian 23921.8, var-covar 14428.7; gates 4/4 PASS"
+      },
+      "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+      "digest": "c5a403dc7dd927a687c87103ea19c57f38d80ee3e1859a75d23fac998cebce4f",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -3669,6 +3692,72 @@
         }
       ],
       "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions"
+    },
+    {
+      "record_id": "912ef3f92e714188baec4377ab59474d",
+      "created_at": "2026-06-07T14:16:28.962208+00:00",
+      "title": "Phase 23 Task 4 - seven-driver aggregation + tail read-outs re-run WITH management actions",
+      "description": "Re-ran the seven-driver aggregation benchmarks (nested ground truth, var-covar, same-seed gaussian copula, tail-matched Student-t copula) WITH the governed Phase 23 Task 3 management-action rule applied to the realised standalone capital-loss vectors (anchored level convention, disclosed) and the nested benchmark. Without-actions primitives reused bit-identically from the Phase 23 Task 2 stage after 13 archive cross-checks.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "scripts/build_phase23_task4_aggregation_with_actions.py",
+        "tests/test_phase23_task4_aggregation_with_actions.py",
+        "docs/WITH_ACTIONS_AGGREGATION_CARD.md",
+        "docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Regulation Article 23 (future management actions)",
+        "Solvency II Delegated Regulation Article 234 (aggregation)",
+        "SOA ASOP 56 section 3.1.3/3.4/3.5",
+        "IA TAS M section 3.2/3.6",
+        "IFoA Life Aggregation & Simulation working party",
+        "Demarta-McNeil 2005; McNeil-Frey-Embrechts 2015 ch.7"
+      ],
+      "before_snapshot": {
+        "aggregation_basis": "without management actions (Phase 23 Task 2)",
+        "nested_scr": 48707.43490332604,
+        "t_matched_scr": 46755.963,
+        "var_covar_scr": 28990.889357788157,
+        "gaussian_scr": 41472.429,
+        "df_matched": 2.9451
+      },
+      "after_snapshot": {
+        "aggregation_basis": "WITH management actions (Art. 23 rule)",
+        "nested_scr": 33117.7704,
+        "t_matched_scr": 25652.9228,
+        "var_covar_scr": 14428.7393,
+        "gaussian_scr": 23921.8205,
+        "df_matched": 2.9451,
+        "gates": {
+          "G1_t_copula_with_actions_gate": true,
+          "G2_nested_with_le_without": true,
+          "G3_all_standalone_with_le_without": true,
+          "G4_df_rank_invariance": true
+        },
+        "verdict": "PASS",
+        "reproducibility_digest": "0db4bcd1560aa69ccf7b8bf264f1bd383aab89504e01ced132678df21c32f16a"
+      },
+      "impact_assessment": "Methodology change at the aggregation/reporting level only: no governed upstream module is altered; the without-actions evidence remains archived (Phase 22 Task 4 / Phase 23 Task 2). Copula dependence structure is rank-invariant under the monotone action transform, so MR-010's tail-dependence mitigation carries over unchanged.",
+      "quantitative_impact": "Nested SCR 48707.4 -> 33117.8; tail-matched t-copula 46756.0 -> 25652.9 (rel err 22.54%); gaussian 41472.4 -> 23921.8; var-covar 28990.9 -> 14428.7 (understatement 56.4%); action active on 46.9% of outer nodes.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase23",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T14:16:28.962232+00:00",
+          "actor": "AutomatedModelDev_Phase23",
+          "status": "PEER_REVIEW",
+          "comments": "Fixed pre-registered gates (G1-G4) all PASS; bit-identical primitive reuse with 13 archive cross-checks; anchoring convention and rank invariance disclosed; placeholders disclosed."
+        },
+        {
+          "timestamp": "2026-06-07T14:16:28.962249+00:00",
+          "actor": "AutomatedModelDev_Phase23",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions"
     }
   ],
   "risk_register": [
@@ -3829,8 +3918,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
       "created_at": "2026-06-04T18:28:37.352914+00:00",
-      "updated_at": "2026-06-07T12:21:07.990908+00:00",
-      "notes": "Phase 23 Task 2 upgraded the governed copula mitigation from AIC-only selection to TAIL-DEPENDENCE-MATCHED Student-t aggregation (df=2.95 by Demarta-McNeil inversion on the realised seven-driver losses; thresholds [0.8, 0.85, 0.9]; capped share 5%): t(df) SCR 46756 vs nested 48707 (rel 4.0%) vs gaussian 41472 (rel 14.9%); var-covar still understates by 40.5%. Dependence INPUT remains realised losses, per the Phase 18 Task 1 root-cause finding; the tail-matching upgrade makes the Art. 234 empirical justification explicit at the TAIL, not the body."
+      "updated_at": "2026-06-07T14:16:28.962072+00:00",
+      "notes": "Phase 23 Task 4 refresh (WITH management actions): var-covar 14429 vs nested-with 33118 (understatement 56.4%); tail-matched t(2.95) rel err 22.5% vs gaussian 27.8%. The Art.-23 action lowers all aggregates but does NOT close the var-covar tail understatement; t-copula remains the mitigation."
     },
     {
       "risk_id": "MR-011",
@@ -3893,8 +3982,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
       "created_at": "2026-06-07T13:19:29.055501+00:00",
-      "updated_at": "2026-06-07T13:19:29.055585+00:00",
-      "notes": "Phase 23 Task 3 PASS: monotone Art.-23 bonus-cut rule (trigger 1.10, floor 0.90, PRE floor 60%, max relief 12.0%) applied to nested truth + proxy; nested VaR99.5 171555 -> 150969, SCR reduction 16270; OOS R2 with actions 0.9983; VaR rel err 0.51%; all 5 pre-registered gates PASS. Parameters remain educational placeholders (residual risk: parameter realism, outer-node approximation). NOTE: design note said MR-013 but that ID was already taken by the G2++ market-consistency risk; opened as MR-014 (MR-013 briefly overwritten by the Task 3 governance stage and restored from the pre-stage backup this run)."
+      "updated_at": "2026-06-07T14:16:28.962124+00:00",
+      "notes": "Phase 23 Task 4: management-action effect quantified at the AGGREGATION level: nested SCR 48707 -> 33118 (-32.0%); tail-matched t-copula 46756 -> 25653; copula structure rank-invariant (df unchanged 2.9451). Residual: placeholder parameters, outer-node approximation, fixed A_ref proxy."
     }
   ]
 }
