@@ -1491,6 +1491,29 @@
       "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
       "digest": "3dbbd305c6e3af69c15834f51630e19a7bea80eccb891d2071ea986b443f6e75",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "453a08fe695a46fa876f10891ab25b8d",
+      "timestamp": "2026-06-07T17:13:57.754835+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "AutomatedModelDev_Phase24",
+      "description": "Model run p24t2-joint-1624d6f9: PASS",
+      "details": {
+        "run_id": "p24t2-joint-1624d6f9",
+        "scenario_count": 200000,
+        "duration_seconds": 0.0,
+        "outcome": "PASS",
+        "files_changed": [
+          "scripts/build_phase24_task2_joint_action_reaggregation.py",
+          "tests/test_phase24_task2_joint_action_reaggregation.py",
+          "docs/JOINT_ACTION_AGGREGATION_CARD.md",
+          "docs/validation/PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.{json,md}"
+        ],
+        "test_summary": "joint-action: t(2.9451) 31001.8 (rel 6.39% vs nested-with 33117.8; baseline 22.54%), gaussian 26267.1 (rel 20.69%); gates 4/4 PASS"
+      },
+      "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+      "digest": "ff7633ad1f1087c5fe5cbbf8181fc6274497f9f08488875e287dd6d81a43d20d",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -3921,6 +3944,72 @@
         }
       ],
       "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"
+    },
+    {
+      "record_id": "3a1a74bef1c24fa8ac9121e56a4bb24f",
+      "created_at": "2026-06-07T17:13:57.754743+00:00",
+      "title": "Phase 24 Task 2 - joint-scenario (action-after-aggregation) t-copula re-aggregation vs nested-with-actions",
+      "description": "Joint-scenario (action-after-aggregation) re-aggregation per the Phase 24 Task 1 design note: the governed Phase 23 Task 3 management-action rule applied ONCE to the anchored simulated JOINT liability under the frozen tail-matched t(2.9451) and Gaussian copulas on the archived Phase 23 Task 2 dependence basis, benchmarked against the nested-with-actions reference. Staged primitives reused bit-identically after archive cross-checks; copula NOT re-tuned on the action basis.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "scripts/build_phase24_task2_joint_action_reaggregation.py",
+        "tests/test_phase24_task2_joint_action_reaggregation.py",
+        "docs/JOINT_ACTION_AGGREGATION_CARD.md",
+        "docs/validation/PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Regulation Article 23 (future management actions)",
+        "Solvency II Delegated Regulation Article 234 (aggregation)",
+        "SOA ASOP 56 section 3.1.3/3.4/3.5",
+        "IA TAS M section 3.2/3.6",
+        "IFoA Life Aggregation & Simulation working party",
+        "Demarta-McNeil 2005; McNeil-Frey-Embrechts 2015 ch.7"
+      ],
+      "before_snapshot": {
+        "with_actions_copula_basis": "standalone-action marginals (Phase 23 Task 4)",
+        "t_matched_scr": 25652.9228,
+        "t_matched_rel_error_vs_nested": 0.225403,
+        "gaussian_rel_error_vs_nested": 0.277674,
+        "nested_scr_with": 33117.77036621129,
+        "df_matched": 2.9451
+      },
+      "after_snapshot": {
+        "with_actions_copula_basis": "JOINT-action (action-after-aggregation, Phase 24 Task 2)",
+        "t_joint_scr": 31001.77628158343,
+        "t_joint_rel_error_vs_nested": 0.06389301155329964,
+        "gaussian_joint_scr": 26267.06157714709,
+        "gaussian_joint_rel_error_vs_nested": 0.2068589978525154,
+        "df_rematched": 2.9450930033094664,
+        "gates": {
+          "G1_joint_t_rel_error_le_10pct": true,
+          "G2_joint_t_strictly_below_standalone_baseline": true,
+          "G3_df_rank_invariance": true,
+          "G4_archive_crosschecks_pass": true
+        },
+        "verdict": "PASS",
+        "reproducibility_digest": "1624d6f9002ec288dea98d802f1cfcac047f91643933966971080b89bd2d8170"
+      },
+      "impact_assessment": "Methodology change at the aggregation/reporting level only: the with-actions copula read-out basis moves from standalone-action marginals to a single joint action, restoring Art.-23 exercise consistency. No governed upstream module altered; the nested run remains the capital reference; without-actions evidence and the Phase 23 Task 4 disclosed finding remain archived.",
+      "quantitative_impact": "t(2.9451) with-actions copula SCR 25652.9 -> 31001.8; rel err vs nested-with-actions 33117.8: 22.54% -> 6.39%; gaussian 27.77% -> 20.69%; action active on 44.0% of joint scenarios (nested outer-node share 46.9%).",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase24",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T17:13:57.754772+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "PEER_REVIEW",
+          "comments": "Fixed pre-registered gates (G1-G4, Task 1 design note s5) all PASS; 25 archive cross-checks; rank invariance verified (df 2.9451); placeholders disclosed."
+        },
+        {
+          "timestamp": "2026-06-07T17:13:57.754790+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"
     }
   ],
   "risk_register": [
@@ -4081,8 +4170,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
       "created_at": "2026-06-04T18:28:37.352914+00:00",
-      "updated_at": "2026-06-07T14:16:28.962072+00:00",
-      "notes": "Phase 23 Task 4 refresh (WITH management actions): var-covar 14429 vs nested-with 33118 (understatement 56.4%); tail-matched t(2.95) rel err 22.5% vs gaussian 27.8%. The Art.-23 action lowers all aggregates but does NOT close the var-covar tail understatement; t-copula remains the mitigation."
+      "updated_at": "2026-06-07T17:13:57.754616+00:00",
+      "notes": "Phase 24 Task 2 refresh: on the WITH-ACTIONS basis the correct copula read-out is the JOINT-action (action-after-aggregation) basis: t(2.9451) rel err vs nested-with 33118 is 6.4% (was 22.5% on the standalone-action basis; gaussian 20.7%); var-covar understatement 56.4% unchanged (refreshed). t-copula on the joint-action basis is the standing mitigation."
     },
     {
       "risk_id": "MR-011",
@@ -4145,8 +4234,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
       "created_at": "2026-06-07T13:19:29.055501+00:00",
-      "updated_at": "2026-06-07T14:16:28.962124+00:00",
-      "notes": "Phase 23 Task 4: management-action effect quantified at the AGGREGATION level: nested SCR 48707 -> 33118 (-32.0%); tail-matched t-copula 46756 -> 25653; copula structure rank-invariant (df unchanged 2.9451). Residual: placeholder parameters, outer-node approximation, fixed A_ref proxy."
+      "updated_at": "2026-06-07T17:13:57.754662+00:00",
+      "notes": "Phase 24 Task 2: action-exercise consistency restored (SII Art. 23) - the governed rule is applied ONCE to the simulated JOINT liability; saturation gap closed 22.5% -> 6.4% (t-copula SCR 25653 -> 31002 vs nested-with 33118). Copula NOT re-tuned on the action basis (df re-matched 2.9451 unchanged). Residual: outer-node approximation (Task 3 inner-path prototype), placeholder parameters, fixed A_ref proxy."
     }
   ]
 }

@@ -8025,3 +8025,69 @@ methodology_change ChangeRecord.
 - IA TAS M §3.2/§3.6 — limitations disclosed (anchoring approximation, margin sampling noise); reproducibility digests. Addressed.
 
 ---
+
+## Run 2026-06-08T12:00Z — Phase 24 Task 2 (Joint-scenario action-after-aggregation re-aggregation)
+
+**Task Completed:** Joint-scenario t(2.9451)/gaussian re-aggregation with the governed rule applied
+ONCE to the simulated JOINT liability; benchmark vs nested-with-actions; MR-010/MR-014 refresh —
+**VERDICT PASS (4/4 fixed pre-registered gates)**.
+
+**Accomplishments:**
+- NEW `scripts/build_phase24_task2_joint_action_reaggregation.py` (staged: verify / joint /
+  governance, each < 45 s; idempotent governance by ChangeRecord title).
+- Stage verify: **25/25 archive cross-checks PASS** before any new computation — staged primitives
+  (`/var/tmp/p23t2_stage/losses.npz`, `/var/tmp/p23t4_stage/losses_with_actions.npz`) bit-identical
+  vs P22T4/P23T2/P23T3/P23T4 archives (nested/var-covar/standalone SCRs, anchors, L_fit, A_ref,
+  rule). **Rank invariance (SII Art. 234 — copula NOT re-tuned on the action basis): df re-matched
+  on the WITHOUT-actions losses = 2.9451 (4-dp archive value; raw 2.94509300), Kendall-tau rho
+  re-derived with the archived machinery, max|diff| vs archived matrix 7.2e-16.**
+- Stage joint (`JointActionAggregator`, seed 20260607, n_sim 200k — identical to P23 T2/T4):
+  anchored joint levels V = L_fit + Σ_k (Q_k(U_k) − mean_k); rule applied ONCE.
+  **t(2.9451) JOINT-action SCR 31,001.8 vs nested-with-actions 33,117.8 → rel err 6.39%**
+  (G1 ≤ 10% PASS; G2 strictly < 22.54% standalone-action baseline PASS — **the disclosed Phase 23
+  Task 4 saturation gap is CLOSED, 22.54% → 6.39%**). Gaussian joint-action comparator 26,267.1
+  (20.69%, was 27.77%); var-covar comparator unchanged (56.4% understatement, MR-010). Action
+  active on 44.0% of joint scenarios (4.4% at/below floor; nested outer-node share 46.9%). Joint
+  WITHOUT-actions sanity: 47,269.1 vs archived t-matched 46,756.0 (+1.10%, MC seed-path only).
+  Joint action only relieves (W ≤ V) verified.
+- Evidence: `docs/validation/PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.{json,md}` +
+  `docs/JOINT_ACTION_AGGREGATION_CARD.md` (gate table, comparator table, disclosures,
+  reproducibility digests).
+
+**Governance:** ChangeRecord `3a1a74bef1c24fa8ac9121e56a4bb24f` (methodology_change) OWNER_REVIEW
+(production sign-off withheld); **MR-010 + MR-014 refreshed** (joint-action basis is now the
+standing with-actions copula read-out; residuals: outer-node approximation → Task 3, placeholder
+parameters, fixed A_ref); audit entries 66→67; change records 39→40; verify_all True; second
+governance run idempotent ("already applied"); store backed up to
+/var/tmp/p24t2_build/GOV_BACKUP_pre_p24t2.json.
+
+**Verification:** `tests/test_phase24_task2_joint_action_reaggregation.py` **25 PASS** (evidence
+contract, gate numerics vs module constants, rel-err/SCR identity, saturation-gap-closed vs P23T4,
+rank invariance vs P23T2, only-relieves, reproducibility digests, governance, synthetic behaviour).
+Regression: p23 t3/tail-dep/p24t1 75 + p23 t2 28 + p23 t4 25 + p23/p22 t5 UI 36 + governance 54 +
+new 25 = **243 PASS / 0 FAIL**. DISCLOSED: one Phase 23 Task 4 test pinned the MR-010/MR-014 notes
+to its own refresh; `update_mitigation` REPLACES notes, so the test was made forward-compatible
+(MITIGATED + current refresh note from Task 4 or a successor) — intent preserved.
+`node scripts/ui_app_self_test.cjs ui_app.html` → ok:true, 0 network / 0 JS errors. py_compile
+clean; off-mount stage + cp + cmp write protocol observed.
+
+**Next Step:** **Phase 24 Task 3** — inner-path management-action dynamics prototype: the bonus
+cut affects INNER-path cashflows (not only the outer-node liability transform); nested ground
+truth + proxy basis-feature update; OOS re-validation at the unchanged Phase 22 gates
+(R² ≥ 0.95, VaR rel err ≤ 10%); action monotonicity preserved.
+
+**Industry Standards Progress:**
+- Solvency II Art. 23 — action-exercise consistency RESTORED: the rule is exercised once on the
+  total (joint) solvency position; effect quantified (22.54% → 6.39%). Addressed.
+- Solvency II Art. 234 — no silent copula re-tuning: df re-matched on the without-actions basis,
+  dependence matrix bit-compared to archive. Addressed.
+- SOA ASOP 56 §3.1.3/§3.5 — pre-registered gates evaluated exactly as fixed in the Task 1 design
+  note; disclosed comparators at every level. Addressed.
+- IA TAS M §3.2/§3.6 — quantified remediation of a disclosed limitation with persisted evidence +
+  25 executable contract tests. Addressed.
+
+**Blockers:** unchanged — ghost git locks (`.git/index.lock`, `.git/HEAD.lock`,
+`.git/refs/heads/main.lock`) need a human shell; commit via alt-`GIT_INDEX_FILE` workaround onto
+branch `p22c9`; disk /sessions ~89%.
+
+---

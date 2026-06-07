@@ -1,0 +1,116 @@
+{
+  "run_timestamp": "2026-06-07T17:13:42.982303+00:00",
+  "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+  "task": "Phase 24 Task 2 - joint-scenario (action-after-aggregation) t-copula re-aggregation vs nested-with-actions",
+  "verdict": "PASS",
+  "gates": {
+    "G1_joint_t_rel_error_le_10pct": true,
+    "G2_joint_t_strictly_below_standalone_baseline": true,
+    "G3_df_rank_invariance": true,
+    "G4_archive_crosschecks_pass": true
+  },
+  "pre_registered_gate_constants": {
+    "JOINT_REL_ERROR_GATE": 0.1,
+    "STANDALONE_ACTION_REL_ERROR_BASELINE": 0.225
+  },
+  "rule": {
+    "cr_trigger": 1.1,
+    "cr_floor": 0.9,
+    "bonus_share": 0.3,
+    "pre_floor": 0.6,
+    "reference_coverage": 1.12,
+    "max_relief": 0.12
+  },
+  "reference_assets": 129916.49144595393,
+  "fit_mean_liability": 115996.86736245886,
+  "nested_scr_with": 33117.77036621129,
+  "var_covar_scr_with": 14428.739328663964,
+  "nested_active_share": 0.46875,
+  "df_matched": 2.9451,
+  "df_rematched": 2.9450930033094664,
+  "archived_t_without": 46755.963,
+  "joint_action": {
+    "t_scr": 31001.77628158343,
+    "t_var": 143682.04744466447,
+    "t_es": 148496.34347728066,
+    "t_rel": 0.06389301155329964,
+    "g_scr": 26267.06157714709,
+    "g_rel": 0.2068589978525154,
+    "t_scr_without": 47269.12222883626,
+    "t_without_diff_pct": 0.01097526809224866,
+    "active_share": 0.44035,
+    "floor_share": 0.044025,
+    "joint_action_only_relieves": true,
+    "t_digest": "61dab617ed39",
+    "g_digest": "3da4c71db4e2",
+    "t_config": {
+      "n_sim": 200000,
+      "seed": 20260607,
+      "df": 2.9451,
+      "copula": "t(2.9451)",
+      "confidence": 0.995
+    },
+    "g_config": {
+      "n_sim": 200000,
+      "seed": 20260607,
+      "df": null,
+      "copula": "gaussian",
+      "confidence": 0.995
+    }
+  },
+  "standalone_action_baseline_p23t4": {
+    "t_matched_scr": 25652.9228,
+    "t_matched_rel_error_vs_nested": 0.225403,
+    "gaussian_scr": 23921.8205,
+    "gaussian_rel_error_vs_nested": 0.277674,
+    "var_covar_rel_error_vs_nested": 0.56432
+  },
+  "drivers": [
+    "rate",
+    "equity",
+    "credit",
+    "lapse",
+    "mortality",
+    "fx",
+    "liquidity"
+  ],
+  "n_obs": 160,
+  "crosscheck_count": 25,
+  "anchoring_convention": "V = L_fit + sum_k (Q_k(U_k) - mean_k); W = rule(V, A_ref) applied ONCE to the joint liability; L_fit/A_ref identical to Phase 23 Task 3/4 (leakage-free)",
+  "affected_components": [
+    "scripts/build_phase24_task2_joint_action_reaggregation.py",
+    "tests/test_phase24_task2_joint_action_reaggregation.py",
+    "docs/JOINT_ACTION_AGGREGATION_CARD.md",
+    "docs/validation/PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.{json,md}"
+  ],
+  "standard_references": [
+    "Solvency II Delegated Regulation Article 23 (future management actions)",
+    "Solvency II Delegated Regulation Article 234 (aggregation)",
+    "SOA ASOP 56 section 3.1.3/3.4/3.5",
+    "IA TAS M section 3.2/3.6",
+    "IFoA Life Aggregation & Simulation working party",
+    "Demarta-McNeil 2005; McNeil-Frey-Embrechts 2015 ch.7"
+  ],
+  "use_restrictions": {
+    "classification": "EDUCATIONAL",
+    "restrictions": [
+      "NOT for production or regulatory capital decisions.",
+      "Joint anchoring V = L_fit + sum_k (Q_k - mean_k) is a first-order level approximation; cross-driver liability non-linearities beyond the action are not represented.",
+      "Action parameters are educational placeholders pending credentialled management-practice data and independent APS X2 review.",
+      "The copula consumes realised standalone losses; sampling noise at n_outer=160 propagates into the joint read-out (disclosed)."
+    ],
+    "standards": [
+      "Solvency II Delegated Reg. Art. 23 / Art. 234",
+      "SOA ASOP 56 s3.1.3/s3.4/s3.5",
+      "IA TAS M s3.2/s3.6"
+    ]
+  },
+  "reproducibility_digest": "1624d6f9002ec288dea98d802f1cfcac047f91643933966971080b89bd2d8170",
+  "markdown_path": "docs/validation/PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.md",
+  "change_record_id": "3a1a74bef1c24fa8ac9121e56a4bb24f",
+  "change_record_status": "OWNER_REVIEW",
+  "mr010_refreshed": true,
+  "mr014_refreshed": true,
+  "audit_integrity_ok": true,
+  "change_records_total": 40
+}
