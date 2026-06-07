@@ -1,0 +1,112 @@
+{
+ "title": "Phase 24 Task 1 - Design Note: Joint-Scenario Action-After-Aggregation + Inner-Path Action Dynamics",
+ "verdict": "PASS",
+ "classification": "EDUCATIONAL",
+ "motivation_from_phase23_task4": {
+  "nested_scr_with_actions": 33117.7704,
+  "t_matched_scr_with_actions": 25652.9228,
+  "t_matched_rel_error_with_actions": 0.225403,
+  "gaussian_rel_error_with_actions": 0.277674,
+  "var_covar_understatement_with_actions": 0.56432,
+  "df_matched": 2.9451,
+  "source": "docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.json"
+ },
+ "problem": "Phase 23 Task 4 disclosed a MATERIAL FINDING: aggregating standalone WITH-ACTIONS losses with the tail-matched t(2.9451) copula understates the nested with-actions benchmark by 22.5% (vs 4.0% without actions). The governed action SATURATES (max liability relief 12%) in the joint tail where the total liability is largest, while each standalone tail sits in the steeper partial-cut band - applying the rule to marginals before aggregation double-counts relief exactly where capital is measured. Separately, the action remains an outer-node liability transform; inner-path bonus dynamics (cut affecting projected cashflows) are unmodelled.",
+ "method_a_joint_scenario": {
+  "task": "Task 2",
+  "design": "Aggregate the WITHOUT-actions dependence structure first, then apply the governed rule ONCE to the anchored simulated JOINT liability: V = L_fit + sum_k (Q_k(U_k) - mean_k); W = rule.apply_to_liabilities(V, A_ref). Q_k = empirical margins of the Phase 23 Task 2 staged WITHOUT-actions standalone losses; U from t(df_matched) and Gaussian copulas on the governed correlation; L_fit/A_ref identical (leakage-free) to the Phase 23 Task 3/4 convention. Implemented and unit-tested in par_model_v2/projection/joint_action_aggregation.py (JointActionAggregator).",
+  "hypothesis": "Saturation is then modelled at the joint level, so the t-copula joint-action SCR rel err vs nested-with-actions collapses from the disclosed 22.5% to <= 10%."
+ },
+ "method_b_inner_path": {
+  "task": "Task 3",
+  "design": "Prototype inner-path action dynamics: the bonus cut applies to the inner-path projected bonus cashflows (declared-rate path responds to the coverage ratio at the outer node), not only to the outer-node conditional-liability transform. Nested ground truth extended; the LSMC proxy gains the matching analytic post-composition basis feature; seven-driver OOS re-validation at the unchanged Phase 22 gates.",
+  "scope_note": "Full path-wise dynamic declaration (action re-evaluated at every inner time step) is OUT of Phase 24 scope; the prototype relaxes the outer-node approximation one step (horizon-level cashflow response) and documents the residual."
+ },
+ "pre_study_synthetic_saturation": {
+  "seed": 42,
+  "n_truth": 120000,
+  "n_outer": 3000,
+  "n_sim": 120000,
+  "rho": 0.6,
+  "df_true": 4.0,
+  "truth_var995_with": 150598.86019199115,
+  "standalone_action_var995": 140789.56767630173,
+  "joint_action_var995": 148642.73330732452,
+  "standalone_action_rel_err": 0.06513523743263416,
+  "joint_action_rel_err": 0.01298898864289444,
+  "truth_active_share": 0.35475833333333334,
+  "joint_action_active_share": 0.3526666666666667,
+  "digest": "ff4de2b86464",
+  "understatement_sign_ok": true,
+  "joint_recovers_truth": true
+ },
+ "pre_study_disclosure": "The pre-study uses a SYNTHETIC two-driver lognormal/t(4)-copula ground truth so that no real archived nested benchmark is consumed before the Task 2 gates: it demonstrates the saturation MECHANISM (standalone-action basis understates true with-actions VaR99.5 by 6.5%) and that action-after-aggregation recovers the truth (rel err 1.3%).",
+ "gap_analysis": [
+  {
+   "standard": "Solvency II Del. Reg. Art. 23 (management actions)",
+   "requirement": "Effect of management actions quantified consistently with how they would be exercised: the insurer cuts the bonus ONCE on its TOTAL solvency position, not once per risk driver.",
+   "current_state": "Phase 23 Task 4 applies the rule per standalone marginal, then aggregates; nested-with-actions applies it to the full conditional liability (correct reference).",
+   "gap": "Copula diagnostic basis is inconsistent with how the action is exercised; understates capital by 22.5% vs the nested reference (disclosed).",
+   "phase24_design": "Task 2 joint-scenario re-aggregation: rule applied INSIDE the copula simulation to the joint liability; gate rel err <= 10% AND strictly below the 22.5% baseline."
+  },
+  {
+   "standard": "SOA ASOP 56 \u00a73.1.3/\u00a73.4 (model structure; assumptions supportable)",
+   "requirement": "Model structure appropriate to the intended purpose, including the level at which management behaviour enters the model.",
+   "current_state": "Action is an outer-node deterministic transform of the conditional liability; inner-path cashflows (bonus declarations) do not respond.",
+   "gap": "Liability relief is instantaneous at the horizon; no recognition lag or cashflow path response - TVOG interaction unmeasured.",
+   "phase24_design": "Task 3 inner-path prototype: horizon-level bonus-cashflow response in the nested truth + matching proxy basis feature; OOS re-validation R^2 >= 0.95, VaR rel err <= 10%."
+  },
+  {
+   "standard": "IA TAS M \u00a73.2/\u00a73.6 (limitations disclosed; evidence reproducible)",
+   "requirement": "Material limitations of the aggregation basis disclosed; validation evidence reproducible with recorded config.",
+   "current_state": "Saturation finding disclosed verbatim in the Task 4 report, MR-010/MR-014 notes, and the offline UI.",
+   "gap": "Risk-register notes describe the gap but no quantified joint-basis remediation exists yet.",
+   "phase24_design": "Task 4: joint-vs-standalone and with-vs-without capital deltas at every level; MR-010/MR-014 refreshed with the joint-basis figures; seeds/config/digests recorded."
+  },
+  {
+   "standard": "Solvency II Del. Reg. Art. 234; IFoA Aggregation WP (tail dependence)",
+   "requirement": "Dependence assumptions empirically justified INCLUDING tail behaviour, on the basis actually used for capital.",
+   "current_state": "df=2.9451 tail-matched on WITHOUT-actions losses (Phase 23 Task 2); Task 4 showed rank invariance under the standalone with-actions transform.",
+   "gap": "Joint-action basis must not silently re-tune the copula: df re-matched on the without-actions losses must remain 2.9451 (the action is a liability transform, not a dependence change).",
+   "phase24_design": "Task 2 rank-invariance gate: df re-matched on the without-actions staged losses unchanged at 2.9451; copula params frozen before the joint-action read-out."
+  }
+ ],
+ "task2_acceptance_criteria": [
+  "t(df_matched) JOINT-action SCR rel err vs nested-with-actions <= 10%",
+  "AND strictly below the disclosed Phase 23 Task 4 standalone-action rel err (22.5%)",
+  "Rank invariance: df re-matched on WITHOUT-actions staged losses unchanged at 2.9451; correlation matrix frozen",
+  "Gaussian joint-action and var-covar comparators reported alongside; nested-with-actions remains the reference",
+  "Staged primitives reused bit-identically with archive cross-checks BEFORE any new computation",
+  "No gate-shopping: these gates fixed in this Task 1 note before any real-data joint-action benchmark",
+  "MR-010 + MR-014 refresh; methodology_change ChangeRecord OWNER_REVIEW"
+ ],
+ "task3_acceptance_criteria": [
+  "Inner-path prototype: bonus cut enters horizon-level inner cashflows in the nested truth AND the proxy basis identically",
+  "Seven-driver OOS re-validation: R^2 >= 0.95, VaR rel err <= 10% (unchanged Phase 22 gates)",
+  "Action monotonicity preserved (construction guard re-verified on the inner-path basis)",
+  "Outer-node vs inner-path capital delta disclosed; residual (full path-wise declaration) documented",
+  "assumption_change ChangeRecord OWNER_REVIEW"
+ ],
+ "task4_acceptance_criteria": [
+  "Joint-action tail diagnostics: with-vs-without and joint-vs-standalone deltas at VaR/ES/SCR for nested, t, gaussian, var-covar",
+  "Var-covar understatement refreshed on the joint-action basis; MR-010/MR-014 notes refreshed",
+  "Reproducibility: seeds, config, digests recorded; methodology_change ChangeRecord OWNER_REVIEW"
+ ],
+ "task5_plan": "Offline-UI propagation (ui_data.json contract 1.5.0 -> 1.6.0 ADDITIVE; joint-action panel) + PHASE 24 COMPLETE documentation; UI consumes ONLY model output JSON.",
+ "limitations": [
+  "Joint anchoring V = L_fit + sum_k (Q_k - mean_k) is a first-order level approximation; cross-driver non-linearities beyond the action are not represented.",
+  "Empirical margins from n_outer=160 realised losses are sampling-noisy; the joint read-out inherits this (disclosed; nested remains the reference).",
+  "The synthetic pre-study proves the mechanism, not the magnitude, of the real-data improvement.",
+  "Action parameters remain educational placeholders pending credentialled practice data + independent APS X2 review."
+ ],
+ "standard_references": [
+  "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable; effect quantified)",
+  "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour)",
+  "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+  "SOA ASOP 25 \u00a73.3",
+  "IA TAS M \u00a73.2/\u00a73.6",
+  "IFoA Life Aggregation & Simulation working party",
+  "McNeil-Frey-Embrechts 2015 ch.7",
+  "Demarta-McNeil 2005"
+ ]
+}

@@ -1450,3 +1450,51 @@ offline-UI propagation (contract 1.5.0 → 1.6.0 additive) + PHASE 24 COMPLETE d
 GITHUB_PUSH_BLOCKER.md); production sign-off residual (credentialled data + independent APS X2
 review) — by design for this educational model; disk /sessions ~89% — consider pruning
 `/var/tmp` build dirs and `.git.old-repo-*`.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-08 (cycle 17, supersedes everything above)
+
+**Phase 24 Task 1 COMPLETE (design note PASS).** NEW additive tested module
+`par_model_v2/projection/joint_action_aggregation.py` (`JointActionAggregator`: anchored joint
+levels V = L_fit + Σ_k (Q_k(U_k) − mean_k) from the WITHOUT-actions standalone empirical margins;
+the governed `ManagementActionRule` applied ONCE to the joint liability — action-after-aggregation;
+gaussian/t copula sims; reproducibility digests). Synthetic-truth pre-study (2-driver lognormal,
+t(4) copula, seed 42, n=120k — NO real archived benchmark consumed before the Task 2 gates):
+standalone-action basis UNDERSTATES true with-actions VaR99.5 by **6.5%** (the Phase 23 Task 4
+saturation mechanism reproduced); joint-action basis recovers truth (**rel err 1.3%**). FIXED
+pre-registered gates (module constants + design-note §5): Task 2 joint-action t SCR rel err vs
+nested-with-actions ≤ 10% AND strictly < the disclosed 22.5% standalone baseline + RANK INVARIANCE
+(df re-matched on without-actions losses = 2.9451, correlation frozen); Task 3 inner-path prototype
+at the unchanged Phase 22 OOS gates (R² ≥ 0.95, VaR rel err ≤ 10%); Task 4 joint-vs-standalone +
+with-vs-without deltas at every level + MR-010/MR-014 refresh. Evidence:
+`docs/validation/PHASE24_TASK1_DESIGN_NOTE.{json,md}`. ChangeRecord
+`479ec5cc7ed94d1eb434c0739cdff25d` (governance_change) OWNER_REVIEW; audit 65→66; changes 38→39;
+verify_all True. 25 new tests PASS; regression batches 139 PASS / 0 FAIL; ui_app self-test ok:true.
+
+**NEXT executable task: Phase 24 Task 2 — joint-scenario t(2.9451)/gaussian re-aggregation.**
+Reuse `/var/tmp/p23t2_stage/losses.npz` (without-actions standalone losses, 7 drivers × 160) +
+`/var/tmp/p23t4_stage/losses_with_actions.npz` (corr matrix, anchor means, l_fit, a_ref, nested
+benchmarks) — cross-check against the archived PHASE23_TASK2/TASK4 reports BEFORE any new
+computation; freeze df=2.9451 + correlation; run `JointActionAggregator` (t + gaussian) at
+n_sim=200k; benchmark vs nested-with-actions SCR 33,117.8; gates per the Task 1 note (rel err
+≤ 10% AND < 22.5%); rank-invariance check (re-match df on without-actions losses); var-covar
+comparator; MR-010/MR-014 refresh; methodology_change ChangeRecord OWNER_REVIEW; report
+`docs/validation/PHASE24_TASK2_JOINT_ACTION_AGGREGATION_REPORT.{json,md}`. Then Task 3 =
+inner-path prototype + OOS re-validation; Task 4 = tail diagnostics + MR refresh; Task 5 =
+offline-UI propagation (contract 1.5.0 → 1.6.0 additive) + PHASE 24 COMPLETE docs.
+
+**Sandbox operating rules (CONFIRMED AGAIN cycle 17):**
+1. ~44 s hard wall per bash call; stage long computations; run heavy pytest batches solo.
+2. Python/pytest/scipy/pandas live in `/var/tmp/pylibs` — run with `PYTHONPATH=/var/tmp/pylibs:.`.
+3. Long-file writes truncate on the mount — build files OFF-MOUNT (/var/tmp/p24t1_build pattern),
+   then `cp` + `cmp` verify; validate with ast.parse / json.loads. NEVER use the Windows
+   file-tools for long repo files.
+4. Git ghost locks persist — commit with the alt-`GIT_INDEX_FILE` workaround onto branch `p22c9`
+   (updating `main` directly is blocked by `refs/heads/main.lock`); push `p22c9:main`.
+5. Risk-register IDs: next free is MR-015; back up the store before any governance stage
+   (backup at /var/tmp/p24t1_build/GOV_BACKUP_pre_p24t1.json this cycle).
+
+**Standing blockers (human action):** delete the three git ghost locks (see
+GITHUB_PUSH_BLOCKER.md); production sign-off residual (credentialled data + independent APS X2
+review) — by design for this educational model; disk /sessions ~89%.

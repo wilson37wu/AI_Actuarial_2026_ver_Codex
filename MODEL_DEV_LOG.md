@@ -7974,3 +7974,54 @@ Tasks 2–4. State file updated (`current_phase` = Phase 24).
 workaround onto branch `p22c9`; disk /sessions ~89%.
 
 ---
+
+## Run 2026-06-08 — Phase 24 Task 1 (Design note: joint-scenario action-after-aggregation + inner-path action dynamics)
+
+**Task Completed:** Research + design note: joint-scenario (action-after-aggregation) copula
+re-aggregation vs the saturation finding; inner-path action dynamics gap analysis vs Solvency II
+Art. 23 / ASOP 56 / TAS M; fixed pre-registered gates — **VERDICT PASS**.
+
+**Accomplishments:**
+- NEW additive tested module `par_model_v2/projection/joint_action_aggregation.py`:
+  `JointActionAggregator` (anchored joint levels V = L_fit + sum_k (Q_k(U_k) − mean_k) from the
+  WITHOUT-actions standalone empirical margins; the governed `ManagementActionRule` applied ONCE
+  to the joint liability), `simulate_gaussian_copula_uniforms`, `JointActionConfig/Result`
+  (reproducibility digest), and `synthetic_saturation_pre_study` (synthetic TRUTH — no real
+  archived benchmark consumed before the Task 2 gates).
+- Pre-study evidence (2-driver lognormal margins, t(4) copula, rho=0.6, seed=42, n_truth=120k,
+  n_sim=120k): true with-actions VaR99.5 150,599; standalone-action basis 140,790 — UNDERSTATES
+  truth by 6.5% (the Phase 23 Task 4 saturation mechanism reproduced on synthetic data);
+  joint-action basis 148,643 — rel err 1.3%; understatement_sign_ok=True; joint_recovers_truth=True.
+- FIXED pre-registered acceptance gates (recorded BEFORE any real-data joint-action benchmark —
+  no gate-shopping), as module constants + design-note s5: Task 2 t(df_matched) joint-action SCR
+  rel err vs nested-with-actions <= 10% AND strictly below the disclosed 22.5% standalone-action
+  baseline, rank invariance df = 2.9451 on the without-actions losses; Task 3 inner-path
+  prototype at the unchanged Phase 22 OOS gates (R^2 >= 0.95, VaR rel err <= 10%); Task 4
+  joint-vs-standalone + with-vs-without deltas at every level, MR-010/MR-014 refresh.
+- 4-row gap analysis: SII Art. 23 (action exercised ONCE on the total solvency position — the
+  standalone basis is inconsistent with exercise practice), ASOP 56 §3.1.3/§3.4 (outer-node
+  transform vs inner-path cashflow response), TAS M §3.2/§3.6 (quantified remediation missing),
+  SII Art. 234 (copula must not be silently re-tuned on the action basis).
+- Evidence: `docs/validation/PHASE24_TASK1_DESIGN_NOTE.{json,md}` (builder
+  `scripts/build_phase24_task1_design_note.py`, idempotent ChangeRecord by title).
+- Governance: ChangeRecord `479ec5cc7ed94d1eb434c0739cdff25d` (governance_change) OWNER_REVIEW;
+  audit 65→66; change records 38→39; verify_all True; no new MR (MR-010/MR-014 refresh is
+  Tasks 2/4 per plan); store backed up to /var/tmp/p24t1_build/GOV_BACKUP_pre_p24t1.json.
+- Tests: 25 new PASS (`tests/test_phase24_task1_design_note.py`); regression batches 139 PASS /
+  0 FAIL (management_actions 29 + tail_dependence 21 + p23 t-copula 28 + p23t4 25 + p23t5/p22t5
+  UI 36 + governance 8 — re-run after governance); `node scripts/ui_app_self_test.cjs
+  ui_app.html` ok:true (0 network / 0 JS errors); py_compile clean.
+
+**Next Step:** Phase 24 Task 2 — joint-scenario t(2.9451)/gaussian re-aggregation with the rule
+applied INSIDE the copula simulation to the simulated JOINT liability; staged primitives
+(`/var/tmp/p23t2_stage/losses.npz`, `/var/tmp/p23t4_stage/losses_with_actions.npz`) reused
+bit-identically after archive cross-checks; gates per the Task 1 note; MR-010/MR-014 refresh;
+methodology_change ChangeRecord.
+
+**Industry Standards Progress:**
+- Solvency II Art. 23 — action-exercise consistency gap identified and remediation designed. Addressed (design).
+- Solvency II Art. 234 — rank-invariance gate prevents silent copula re-tuning. Addressed (design).
+- SOA ASOP 56 §3.1.3/§3.5 — synthetic-truth mechanism evidence + pre-registered validation gates. Addressed.
+- IA TAS M §3.2/§3.6 — limitations disclosed (anchoring approximation, margin sampling noise); reproducibility digests. Addressed.
+
+---
