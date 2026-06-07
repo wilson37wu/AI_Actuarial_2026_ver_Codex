@@ -4,6 +4,40 @@ Automated development log. Appended each cycle by Claude Actuarial Agent.
 
 ---
 
+## Run 2026-06-07T12:30Z - Phase 23 (cycle 13 bookkeeping)
+
+**Task Completed:** Phase 23 Task 2 - Student-t copula aggregation with df calibrated by
+tail-dependence matching. **VERDICT PASS** based on existing evidence already present in the
+tree (`docs/validation/PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.json`, run timestamp
+2026-06-07T12:15:51Z).
+
+**Evidence reconciled:**
+- Existing additive module `par_model_v2/projection/t_copula_tail_matched_aggregation.py` implements
+  the Phase 23 Task 1 design: empirical pairwise lambda_U at thresholds 0.80/0.85/0.90, Kendall-tau
+  rho, Demarta-McNeil df inversion, pooled median df, capped-pair disclosure, and Gaussian/t/nested
+  benchmark comparison.
+- Existing report: df matched 2.9451; t-copula SCR 46,756 vs nested 48,707 (4.0% rel error);
+  Gaussian same-seed SCR 41,472 (14.9% rel error); archived Phase 22 Gaussian 41,604 (14.6%);
+  var-covar 28,991 (40.5% understatement). Fixed Task 1 gate passed because t rel error is below
+  the Gaussian baseline and below 25%.
+- Governance: ChangeRecord `509699ae1f1d4adabe197bcf8419c92a` OWNER_REVIEW; MR-010 refreshed to
+  MITIGATED; audit integrity true; 35 change records total.
+
+**Verification note:** This Windows shell has no `python`/`python3`/`py`, and WSL is not installed,
+so the build/tests were not rerun here. Bookkeeping was updated from persisted report evidence.
+
+**Next Step:** Phase 23 Task 3 - management-action rule (dynamic bonus participation cut under
+solvency stress) in nested ground truth + proxy; seven-driver OOS re-validation.
+
+**Industry Standards Progress:** Solvency II Art. 234 tail-dependence justification is now explicit
+at the tail rather than body-dominated AIC; SOA ASOP 56 section 3.5 / IA TAS M section 3.6 evidence
+is persisted in the Task 2 report.
+
+**Blockers:** Python runtime unavailable in this shell for rerun; existing git ghost locks/push
+blocker unchanged; production sign-off residual unchanged.
+
+---
+
 ## Run 2026-06-07 (cycle 9) - Phase 22: Proxy Hardening + Seven-Driver OOS Validation
 
 **Tasks Completed:** Task 2 VERIFIED (seven-driver OOS validation, verdict **PASS**) and Task 3
@@ -7665,5 +7699,64 @@ MR-010 refresh; methodology_change ChangeRecord OWNER_REVIEW).
 **Blockers:** unchanged — ghost git locks (`.git/index.lock`, `.git/HEAD.lock`,
 `.git/refs/heads/main.lock`) still need a human shell; commit via alt-index + branch `p22c9`
 workaround; disk /sessions at ~90%.
+
+---
+## Run 2026-06-07T23:45Z — Phase 23 (cycle 13)
+
+**Task Completed:** Phase 23 Task 2 — Student-t copula aggregation with df calibrated by
+tail-dependence matching. **VERDICT PASS.**
+
+**Accomplishments:**
+- NEW additive module `par_model_v2/projection/t_copula_tail_matched_aggregation.py`:
+  `TailMatchedTCopulaAggregator` (consumes ONLY realised standalone capital-loss vectors +
+  nested/var-covar benchmarks), fixed-df chi-square-mixing t-copula sampler
+  (`simulate_t_copula_uniforms`), fixed-df t-copula log-likelihood (gammaln-based), empirical
+  marginals + Kendall-tau rho reused from the governed copula machinery. The governed
+  `CopulaRiskAggregator` is untouched.
+- Loss realisation reused the Phase 22 Task 4 calibrated staged primitives **bit-identically**
+  (stage `losses` cross-checks nested 48,707.4 / var-covar 28,990.9 against the archived report —
+  match=True; staged slices /var/tmp/p22t4_stage reused; persisted to /var/tmp/p23t2_stage).
+- df matching per the Task 1 design: empirical pairwise lambda_U at thresholds 0.80/0.85/0.90
+  (E[tail obs] 32/24/16 at n=160 — the 0.97+ design-note thresholds are infeasible at this n and
+  this is DISCLOSED), Kendall-tau-implied rho, closed-form Demarta-McNeil df inversion per pair,
+  pooled MEDIAN pair df per threshold (1.80 / 2.95 / 3.63), median across thresholds ->
+  **df_matched 2.95**; capped-pair share 4.8% disclosed.
+- **RESULT:** t(2.95) aggregate SCR **46,756.0** — rel err **4.01%** vs nested 48,707.4, vs the
+  gaussian AIC incumbent **14.85%** (same-seed rerun 41,472.4; archived Phase 22 Task 4 41,604.3 /
+  14.58%). The FIXED pre-registered Task 1 gate (t rel err <= gaussian baseline OR <= 25%) is met
+  on its primary arm; tail-dependence matching closes ~73% of the remaining gaussian gap.
+- Evidence: `docs/validation/PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.{json,md}`;
+  `docs/T_COPULA_AGGREGATION_CARD.md`. Staged build
+  `scripts/build_phase23_task2_t_copula_aggregation.py` (losses/aggregate/governance; idempotent).
+- ALSO repaired `.claude-dev/MODEL_DEV_STATE.json`: the cycle-8 trailing block was truncated
+  mid-string by the known disk-full write corruption; completed faithfully from the archived
+  PHASE22_TASK2 report (record 5d68c9b6 OWNER_REVIEW); corrupt original backed up to
+  /var/tmp/p23t2_build/MODEL_DEV_STATE.corrupt.bak.
+
+**Governance:** ChangeRecord `509699ae1f1d4adabe197bcf8419c92a` (methodology_change) OWNER_REVIEW
+(production sign-off withheld pending credentialled data + Task 3 management actions + APS X2);
+MR-010 refreshed (mitigation now TAIL-aware, Art. 234 empirical justification at the tail, not the
+body); audit entries 61->62; verify_all True; governance stage idempotent ("already applied").
+
+**Verification:** `tests/test_phase23_task2_t_copula.py` **28 PASS**. Regression: tail_dependence
+21 + copula 22 + governance 54 + phase22-task4 18 = **115 PASS / 0 FAIL** (<45 s batches).
+`node scripts/ui_app_self_test.cjs ui_app.html` ok:true (0 network / 0 JS errors). py_compile
+clean. Off-mount stage + cp + cmp write protocol observed.
+
+**Next Step:** Phase 23 Task 3 — management-action rule (dynamic reversionary-bonus cut
+cut_factor=clip((CR-CR_floor)/(CR_trigger-CR_floor),0,1)) in the nested ground truth AND the LSMC
+proxy basis; seven-driver OOS re-validation (fixed gate: OOS R2>=0.95, VaR rel err<=10%,
+with-actions capital <= without-actions); open MR-013; assumption_change ChangeRecord.
+
+**Industry Standards Progress:**
+- Solvency II Art. 234: dependence now empirically justified AT THE TAIL (lambda_U matching),
+  not by body-dominated AIC — implemented, not just designed.
+- SOA ASOP 56 s3.5 / IA TAS M s3.6: pre-registered gate honoured; threshold sensitivity,
+  capped-share, exchangeable-df simplification and small-n estimator noise disclosed.
+- ERM management-action risk (ASOP 56 s3.1.3): unchanged this cycle — Task 3 implements.
+
+**Blockers:** unchanged — ghost git locks need a human shell; commit via alt-index workaround;
+disk /sessions ~90% (this cycle hit TWO legacy/mount write-truncation artifacts: the state-file
+cycle-8 block and a truncated log append, both repaired and verified).
 
 ---

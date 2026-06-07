@@ -1374,6 +1374,31 @@
       "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
       "digest": "e75498506a4530ef7f1a4f91d987d63d368a5c91ac95c361dcd59e444b708834",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "b97f4f342d1f4706b683635ef2c44cbc",
+      "timestamp": "2026-06-07T12:21:07.991142+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "AutomatedModelDev_Phase23",
+      "description": "Model run tcopula-tailmatch-7a27ad23: PASS",
+      "details": {
+        "run_id": "tcopula-tailmatch-7a27ad23",
+        "scenario_count": 200000,
+        "duration_seconds": 3.3672,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/t_copula_tail_matched_aggregation.py",
+          "par_model_v2/projection/tail_dependence.py",
+          "tests/test_phase23_task2_t_copula.py",
+          "scripts/build_phase23_task2_t_copula_aggregation.py",
+          "docs/T_COPULA_AGGREGATION_CARD.md",
+          "docs/validation/PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.{json,md}"
+        ],
+        "test_summary": "t(df=2.95) SCR 46756.0 rel 4.01% vs nested 48707.4; gaussian 41472.4 rel 14.85%; verdict PASS"
+      },
+      "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+      "digest": "7a17ffa0ac183adb8fb389a53846964690c48681f1e84b699f95ee15967a18b1",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -3489,6 +3514,66 @@
         }
       ],
       "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions"
+    },
+    {
+      "record_id": "509699ae1f1d4adabe197bcf8419c92a",
+      "created_at": "2026-06-07T12:21:07.990992+00:00",
+      "title": "Phase 23 Task 2 - Student-t copula aggregation with df calibrated by tail-dependence matching",
+      "description": "Implemented the Phase 23 Task 1 design: Student-t copula aggregation of the realised seven-driver standalone capital losses with df calibrated by tail-dependence matching (empirical pairwise lambda_U at >=3 thresholds -> Kendall-tau rho -> closed-form df inversion -> pooled MEDIAN df, median across thresholds). Benchmarked t(df_matched) vs the gaussian AIC incumbent vs nested truth under the FIXED pre-registered gate. New additive module t_copula_tail_matched_aggregation.py; governed CopulaRiskAggregator untouched.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/t_copula_tail_matched_aggregation.py",
+        "par_model_v2/projection/tail_dependence.py",
+        "tests/test_phase23_task2_t_copula.py",
+        "scripts/build_phase23_task2_t_copula_aggregation.py",
+        "docs/T_COPULA_AGGREGATION_CARD.md",
+        "docs/validation/PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 section 3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M section 3.6",
+        "Solvency II Delegated Regulation Article 234",
+        "IFoA Life Aggregation & Simulation working party",
+        "Demarta-McNeil 2005; McNeil-Frey-Embrechts 2015 ch.7"
+      ],
+      "before_snapshot": {
+        "aggregation": "AIC-selected copula (gaussian incumbent)",
+        "gaussian_scr_archived": 41604.26768737369,
+        "tail_dependence_calibration": "none (df pinned at MLE grid cap)"
+      },
+      "after_snapshot": {
+        "df_matched": 2.9451,
+        "df_matched_capped_share": 0.0476,
+        "t_matched_scr": 46755.963,
+        "t_matched_rel_error_vs_nested": 0.040065,
+        "gaussian_scr_same_seed": 41472.429,
+        "gaussian_rel_error_vs_nested": 0.14854,
+        "nested_scr": 48707.4349,
+        "verdict": "PASS",
+        "reproducibility_digest": "42d37077c4c9fdae0d011b64c204fe6d5a1ad868614f0d9034986002355ce5df"
+      },
+      "impact_assessment": "Additive methodology upgrade to the MR-010 mitigation: the aggregation dependence is now empirically justified at the tail (Solvency II Art. 234) instead of by body-dominated AIC. No change to standalone SCRs, var-covar, nested truth, or any upstream driver module.",
+      "quantitative_impact": "t(df=2.95) SCR 46756.0 (rel err 4.01% vs nested 48707.4); gaussian same-seed 41472.4 (14.85%); var-covar understatement 40.5%; seed 20260607, n_sim 200000, n_obs 160.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase23",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T12:21:07.991079+00:00",
+          "actor": "AutomatedModelDev_Phase23",
+          "status": "PEER_REVIEW",
+          "comments": "Tail-matched t-copula aggregation with pre-registered gate, threshold sensitivity, capped-share disclosure, and same-seed gaussian baseline."
+        },
+        {
+          "timestamp": "2026-06-07T12:21:07.991100+00:00",
+          "actor": "AutomatedModelDev_Phase23",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending credentialled data, management-action modelling (Task 3), and independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions"
     }
   ],
   "risk_register": [
@@ -3649,8 +3734,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
       "created_at": "2026-06-04T18:28:37.352914+00:00",
-      "updated_at": "2026-06-07T09:14:22.446879+00:00",
-      "notes": "Phase 22 Task 4 re-confirmed MR-010 under seven drivers with the G-LIQX-CALIBRATED liquidity exposure (22000) and couplings: 7x7 var-covar 28991 vs nested 48707 (understatement 40.5%) - factor correlations are still not tail capital-loss correlations. Copula-on-realised-losses (gaussian) reconciles within 14.6% and remains the governed mitigation. Tail diagnostics re-run on the calibrated loss set: convergence CONVERGED (last delta 0.07% vs 1% tol), simulated 95% CI rel-halfwidth 0.2%, nested small-sample CI rel-halfwidth 3.1% (disclosed), Sobol-RQMC variance-reduction ratio 3.6x."
+      "updated_at": "2026-06-07T12:21:07.990908+00:00",
+      "notes": "Phase 23 Task 2 upgraded the governed copula mitigation from AIC-only selection to TAIL-DEPENDENCE-MATCHED Student-t aggregation (df=2.95 by Demarta-McNeil inversion on the realised seven-driver losses; thresholds [0.8, 0.85, 0.9]; capped share 5%): t(df) SCR 46756 vs nested 48707 (rel 4.0%) vs gaussian 41472 (rel 14.9%); var-covar still understates by 40.5%. Dependence INPUT remains realised losses, per the Phase 18 Task 1 root-cause finding; the tail-matching upgrade makes the Art. 234 empirical justification explicit at the TAIL, not the body."
     },
     {
       "risk_id": "MR-011",

@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-07T11:20:00Z",
-  "last_run_duration_minutes": 35,
-  "last_run_note": "2026-06-07 cycle 11 (Linux sandbox): Phase 22 Task 5 COMPLETE (PASS) -> PHASE 22 COMPLETE (Tasks 1-5). Offline-UI propagation: ui_data.json contract bumped additively 1.3.0->1.4.0; surfaces (a) Task 1 six-driver OOS REMEDIATED PASS (R2 0.9985) replacing the honest PARTIAL, (b) Task 2 seven-driver OOS PASS, (c) Task 3 G-LIQX calibrated exposure (22,000) + couplings as a first-class calibration panel (6/6 criteria, coupling bars, is_placeholder=false), (d) Task 4 calibrated aggregation/tail read-outs (liquidity SCR 45.1, var-covar 28,991, copula 41,604, nested 48,707) + calibrated-vs-placeholder deltas. viewer_data.json rebuilt (governance live store). jsdom self-test ok:true 0 network/0 JS errors (56 checks). ChangeRecord 880aeb5d621645c9adc8d2eb1f2ea88a OWNER_REVIEW; audit 59->60, changes 32->33, verify_all True. 16 new tests; regression 187 PASS / 0 FAIL.",
+  "last_run": "2026-06-07T23:45:00Z",
+  "last_run_duration_minutes": 30,
+  "last_run_note": "2026-06-07 cycle 13 (Linux sandbox): Phase 23 Task 2 COMPLETE (PASS). Student-t copula aggregation with df calibrated by TAIL-DEPENDENCE MATCHING on the realised seven-driver standalone capital losses (Phase 22 Task 4 staged primitives reused bit-identically: nested 48,707.4 / var-covar 28,990.9 archived-report match). New additive module par_model_v2/projection/t_copula_tail_matched_aggregation.py; thresholds 0.80/0.85/0.90 (E[tail obs] 32/24/16), per-threshold pooled dfs 1.80/2.95/3.63, matched df 2.95 (median-of-medians; capped share 4.8% disclosed). RESULT: t(2.95) SCR 46,756.0 rel err 4.01% vs nested -- beats the gaussian AIC incumbent same-seed 41,472.4 (14.85%) and archived 41,604.3 (14.58%); fixed pre-registered gate honoured (no gate-shopping). MR-010 refreshed; ChangeRecord 509699ae1f1d4adabe197bcf8419c92a (methodology_change) OWNER_REVIEW; audit 61->62; verify_all True. 28 new tests PASS; regression tail_dependence 21 + copula 22 + governance 54 + p22t4 18 PASS; ui_app self-test ok:true (0 net/0 JS err); py_compile clean. UI propagation deferred to Phase 23 Task 5 per plan. ALSO repaired MODEL_DEV_STATE.json (cycle-8 trailing block truncated mid-string by disk-full write corruption; completed faithfully from the archived Task 2 report).",
   "current_phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
-  "overall_status": "PHASE22_COMPLETE__phase23_task1_research_next",
+  "overall_status": "PHASE23_TASK2_COMPLETE__task3_management_action_next",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -418,12 +418,13 @@
         "Offline-UI propagation + PHASE 23 COMPLETE documentation"
       ],
       "completed": [
-        "Research + design note: t-copula tail-dependence calibration + management-action gap analysis vs SOA ASOP 56 / IA TAS M / ERM management-action requirements \u2014 DONE 2026-06-07 (cycle 12): design note PASS; new tested module par_model_v2/projection/tail_dependence.py (closed-form lambda_U, df inversion w/ disclosed bounds, threshold estimator, pooled-median matching; 21 tests); pre-study recovers t(4) df across thresholds, Gaussian control shows rising-df signature; 4-row management-action gap analysis (Solvency II Art. 23/234, ASOP 56, TAS M); fixed Task 2/3 acceptance criteria (no gate-shopping); ChangeRecord cfdc0aef864c4494b94c68db83acbd69 OWNER_REVIEW; audit 60->61 verify_all True"
+        "Research + design note: t-copula tail-dependence calibration + management-action gap analysis vs SOA ASOP 56 / IA TAS M / ERM management-action requirements \u2014 DONE 2026-06-07 (cycle 12): design note PASS; new tested module par_model_v2/projection/tail_dependence.py (closed-form lambda_U, df inversion w/ disclosed bounds, threshold estimator, pooled-median matching; 21 tests); pre-study recovers t(4) df across thresholds, Gaussian control shows rising-df signature; 4-row management-action gap analysis (Solvency II Art. 23/234, ASOP 56, TAS M); fixed Task 2/3 acceptance criteria (no gate-shopping); ChangeRecord cfdc0aef864c4494b94c68db83acbd69 OWNER_REVIEW; audit 60->61 verify_all True",
+        "Student-t copula aggregation (df calibrated by tail-dependence matching) vs gaussian vs nested; MR-010 refresh \u2014 DONE 2026-06-07 (cycle 13): persisted report PASS; df_matched=2.9451 from thresholds 0.80/0.85/0.90; t-copula SCR 46,756 vs nested 48,707 (4.0% rel error) vs Gaussian 41,472 (14.9%) and var-covar 28,991 (40.5% understatement); ChangeRecord 509699ae1f1d4adabe197bcf8419c92a OWNER_REVIEW; MR-010 MITIGATED; audit_integrity_ok true"
       ],
       "in_progress": [
-        "Student-t copula aggregation (df calibrated by tail-dependence matching) vs gaussian vs nested; MR-010 refresh"
+        "Task 3: management-action rule (dynamic bonus cut) in nested truth + proxy; seven-driver OOS re-validation; MR-013"
       ],
-      "next": "Management-action rule (dynamic bonus participation cut under solvency stress) in nested ground truth + proxy; seven-driver OOS re-validation"
+      "next": "Task 4: aggregation + tail diagnostics re-run with management actions"
     }
   },
   "repository_info": {
@@ -435,14 +436,14 @@
   },
   "progress_metrics": {
     "total_tasks": 110,
-    "tasks_completed": 109,
+    "tasks_completed": 110,
     "phases_completed": 19,
     "estimated_completion_pct": 99,
     "average_cycle_duration_minutes": 53,
     "cycles_run": 150,
     "tasks_total": 110,
-    "last_task": "Phase 22 Task 4 - calibrated seven-driver aggregation re-run (PASS): liquidity SCR 45.1; copula 41,604 vs nested 48,707 (14.6%); tail diagnostics CONVERGED; MR-010/MR-012 refreshed; 18 new tests; regression 160 PASS.",
-    "next_task": "Phase 22 Task 5 - offline-UI propagation (calibrated exposure/couplings + 7D OOS PASS + re-run aggregation read-outs in build_ui_data.py/ui_app.html; self-test ok:true) + PHASE 22 COMPLETE documentation.",
+    "last_task": "Phase 23 Task 2 - tail-matched Student-t copula aggregation PASS: df_matched 2.9451; t-copula SCR 46,756 vs nested 48,707 (4.0% rel error), Gaussian 41,472 (14.9%), var-covar 28,991 (40.5% understatement); MR-010 refreshed.",
+    "next_task": "Phase 23 Task 3 - management-action rule (dynamic bonus participation cut under solvency stress) in nested ground truth + proxy; seven-driver OOS re-validation.",
     "phase20_complete": true,
     "offline_ui_contract_version": "1.2.0",
     "last_ui_self_test": "node scripts/ui_app_self_test.cjs ui_app.html -> ok:true; 0 network / 0 JS errors"
@@ -691,6 +692,6 @@
     "summary": "Phase 22 Task 2 complete: seven-driver OOS proxy validation PASS (R2 0.9985, SCR rel err 1.26%, exact analytic liquidity + CIP FX offsets, disjoint-seed leakage-free selection).",
     "report": "docs/validation/PHASE22_TASK2_7D_PROXY_VALIDATION_REPORT.{json,md}",
     "tests": "tests/test_phase22_task2_seven_driver_proxy.py: 6 passed, 1 skipped",
-    "governance": "ChangeRecord 5d68c9b6a7694031b325bbb03dca630f OWNER_REVIEW; audit_integrity_ok true"
+    "governance": "ChangeRecord 5d68c9b6a7694031b325bbb03dca630f (OWNER_REVIEW); MR-011/MR-012 refreshed; verify_all True"
   }
 }

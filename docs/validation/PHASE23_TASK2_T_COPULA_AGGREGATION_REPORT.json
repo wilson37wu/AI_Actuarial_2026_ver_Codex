@@ -1,0 +1,345 @@
+{
+  "run_timestamp": "2026-06-07T12:15:51.929203+00:00",
+  "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+  "task": "Phase 23 Task 2 - Student-t copula aggregation with df calibrated by tail-dependence matching",
+  "aggregation": {
+    "run_id": "tcopula-tailmatch-7a27ad23",
+    "verdict": "PASS",
+    "gate": "PASS if t(df_matched) SCR rel err <= gaussian baseline rel err OR <= 25%; lambda_U + threshold sensitivity + capped-share disclosed",
+    "drivers": [
+      "rate",
+      "equity",
+      "credit",
+      "lapse",
+      "mortality",
+      "fx",
+      "liquidity"
+    ],
+    "n_obs": 160,
+    "nested_scr": 48707.4349,
+    "var_covar_scr": 28990.8894,
+    "var_covar_rel_error_vs_nested": 0.404795,
+    "threshold_sensitivity": [
+      {
+        "threshold": 0.8,
+        "expected_tail_obs": 32.0,
+        "pooled_df": 1.802,
+        "capped_share": 0.0,
+        "mean_offdiag_lambda": 0.245536,
+        "max_offdiag_lambda": 0.71875
+      },
+      {
+        "threshold": 0.85,
+        "expected_tail_obs": 24.0,
+        "pooled_df": 2.9451,
+        "capped_share": 0.0,
+        "mean_offdiag_lambda": 0.19246,
+        "max_offdiag_lambda": 0.708333
+      },
+      {
+        "threshold": 0.9,
+        "expected_tail_obs": 16.0,
+        "pooled_df": 3.6253,
+        "capped_share": 0.1429,
+        "mean_offdiag_lambda": 0.151786,
+        "max_offdiag_lambda": 0.6875
+      }
+    ],
+    "df_matched": 2.9451,
+    "df_matched_capped_share": 0.0476,
+    "central_threshold": 0.85,
+    "rho_matrix": [
+      [
+        1.0,
+        0.555981,
+        0.892794,
+        0.119254,
+        0.022226,
+        -0.121216,
+        -0.002717
+      ],
+      [
+        0.555981,
+        1.0,
+        0.587985,
+        -0.020992,
+        -0.084121,
+        -0.111158,
+        0.272153
+      ],
+      [
+        0.892794,
+        0.587985,
+        1.0,
+        0.130526,
+        0.019757,
+        -0.126607,
+        0.190728
+      ],
+      [
+        0.119254,
+        -0.020992,
+        0.130526,
+        1.0,
+        0.092731,
+        -0.08978,
+        -0.076735
+      ],
+      [
+        0.022226,
+        -0.084121,
+        0.019757,
+        0.092731,
+        1.0,
+        0.043455,
+        0.083629
+      ],
+      [
+        -0.121216,
+        -0.111158,
+        -0.126607,
+        -0.08978,
+        0.043455,
+        1.0,
+        -0.149845
+      ],
+      [
+        -0.002717,
+        0.272153,
+        0.190728,
+        -0.076735,
+        0.083629,
+        -0.149845,
+        1.0
+      ]
+    ],
+    "empirical_lambda_matrix": [
+      [
+        1.0,
+        0.291667,
+        0.708333,
+        0.333333,
+        0.125,
+        0.083333,
+        0.083333
+      ],
+      [
+        0.291667,
+        1.0,
+        0.333333,
+        0.166667,
+        0.041667,
+        0.125,
+        0.291667
+      ],
+      [
+        0.708333,
+        0.333333,
+        1.0,
+        0.25,
+        0.083333,
+        0.083333,
+        0.166667
+      ],
+      [
+        0.333333,
+        0.166667,
+        0.25,
+        1.0,
+        0.208333,
+        0.083333,
+        0.125
+      ],
+      [
+        0.125,
+        0.041667,
+        0.083333,
+        0.208333,
+        1.0,
+        0.25,
+        0.166667
+      ],
+      [
+        0.083333,
+        0.125,
+        0.083333,
+        0.083333,
+        0.25,
+        1.0,
+        0.041667
+      ],
+      [
+        0.083333,
+        0.291667,
+        0.166667,
+        0.125,
+        0.166667,
+        0.041667,
+        1.0
+      ]
+    ],
+    "implied_lambda_matrix": [
+      [
+        1.0,
+        0.349264,
+        0.661389,
+        0.153868,
+        0.125,
+        0.08921,
+        0.118214
+      ],
+      [
+        0.349264,
+        1.0,
+        0.369637,
+        0.113398,
+        0.097737,
+        0.091474,
+        0.208383
+      ],
+      [
+        0.661389,
+        0.369637,
+        1.0,
+        0.157491,
+        0.124317,
+        0.088011,
+        0.177866
+      ],
+      [
+        0.153868,
+        0.113398,
+        0.157491,
+        1.0,
+        0.145571,
+        0.096404,
+        0.099493
+      ],
+      [
+        0.125,
+        0.097737,
+        0.124317,
+        0.145571,
+        1.0,
+        0.130974,
+        0.142796
+      ],
+      [
+        0.08921,
+        0.091474,
+        0.088011,
+        0.096404,
+        0.130974,
+        1.0,
+        0.082956
+      ],
+      [
+        0.118214,
+        0.208383,
+        0.177866,
+        0.099493,
+        0.142796,
+        0.082956,
+        1.0
+      ]
+    ],
+    "gaussian_scr": 41472.429,
+    "gaussian_rel_error_vs_nested": 0.14854,
+    "gaussian_aic": -332.6774,
+    "t_matched_scr": 46755.963,
+    "t_matched_rel_error_vs_nested": 0.040065,
+    "t_matched_loglik": 111.7464,
+    "t_matched_aic": -179.4928,
+    "t_capital": {
+      "confidence_level": 0.995,
+      "mean_liability": 117270.9837,
+      "var_liability": 164026.9467,
+      "es_liability": 169381.4157,
+      "scr_proxy": 46755.963,
+      "n_outer": 200000,
+      "capital_horizon_months": 12
+    },
+    "gaussian_capital": {
+      "confidence_level": 0.995,
+      "mean_liability": 117261.6738,
+      "var_liability": 158734.1029,
+      "es_liability": 162894.5595,
+      "scr_proxy": 41472.429,
+      "n_outer": 200000,
+      "capital_horizon_months": 12
+    },
+    "duration_seconds": 3.3672,
+    "reproducibility_digest": "42d37077c4c9fdae0d011b64c204fe6d5a1ad868614f0d9034986002355ce5df",
+    "config": {
+      "thresholds": [
+        0.8,
+        0.85,
+        0.9
+      ],
+      "n_sim": 200000,
+      "seed": 20260607,
+      "confidence_level": 0.995,
+      "capital_horizon_months": 12,
+      "rel_error_tolerance": 0.25,
+      "df_lo": 1.0,
+      "df_hi": 200.0
+    },
+    "notes": [
+      "df matched by tail-dependence inversion (Demarta-McNeil 2005), NOT by AIC/MLE on the body: pooled MEDIAN pairwise df, median across 3 thresholds.",
+      "Pooled common-df t-copula is exchangeable in df across pairs -- a disclosed simplification (per-pair dfs are reported).",
+      "Capped-pair share 5% (pairs whose inversion hit a df search bound; disclosed, not hidden).",
+      "Gaussian baseline simulated with the same empirical marginals and seed family for an apples-to-apples SCR comparison."
+    ],
+    "standards": [
+      "SOA ASOP 56 s3.5",
+      "SOA ASOP 25 s3.3",
+      "IA TAS M s3.6",
+      "Solvency II Delegated Reg. Art. 234",
+      "IFoA Life Aggregation & Simulation WP",
+      "Demarta-McNeil 2005 (t-copula tail dependence)"
+    ]
+  },
+  "archived_gaussian_scr_phase22_task4": 41604.26768737369,
+  "archived_gaussian_rel_error_phase22_task4": 0.14583332565245183,
+  "affected_components": [
+    "par_model_v2/projection/t_copula_tail_matched_aggregation.py",
+    "par_model_v2/projection/tail_dependence.py",
+    "tests/test_phase23_task2_t_copula.py",
+    "scripts/build_phase23_task2_t_copula_aggregation.py",
+    "docs/T_COPULA_AGGREGATION_CARD.md",
+    "docs/validation/PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.{json,md}"
+  ],
+  "standard_references": [
+    "SOA ASOP 56 section 3.5",
+    "SOA ASOP 25 section 3.3",
+    "IA TAS M section 3.6",
+    "Solvency II Delegated Regulation Article 234",
+    "IFoA Life Aggregation & Simulation working party",
+    "Demarta-McNeil 2005; McNeil-Frey-Embrechts 2015 ch.7"
+  ],
+  "use_restrictions": {
+    "classification": "EDUCATIONAL",
+    "permitted_uses": [
+      "Teaching tail-dependence-aware capital aggregation",
+      "Sensitivity analysis of aggregate SCR to copula tail dependence",
+      "Benchmarking against the AIC-selected gaussian incumbent"
+    ],
+    "prohibited_uses": [
+      "Regulatory or statutory capital reporting",
+      "Pricing, reserving, or any production actuarial use"
+    ],
+    "key_limitations": [
+      "Finite-threshold lambda_U estimator is sampling-noisy at n~160",
+      "Common pooled df (exchangeable t-copula) across all driver pairs",
+      "Empirical marginals limited to the realised outer-loss support",
+      "Educational-proxy market data; independent APS X2 review pending"
+    ]
+  },
+  "markdown": "# Phase 23 Task 2 -- Tail-Matched Student-t Copula Aggregation\n\n**Verdict: PASS** (gate: PASS if t(df_matched) SCR rel err <= gaussian baseline rel err OR <= 25%; lambda_U + threshold sensitivity + capped-share disclosed)\n\nEDUCATIONAL ONLY. Drivers: rate, equity, credit, lapse, mortality, fx, liquidity (n_obs=160).\n\n## Benchmarks (99.5% 1y SCR)\n\n| Aggregation | SCR | rel err vs nested |\n|---|---|---|\n| Nested ground truth | 48707.4 | -- |\n| Var-covar (ESG factor) | 28990.9 | 40.5% (MR-010) |\n| Gaussian copula (AIC incumbent, same-seed rerun) | 41472.4 | 14.9% |\n| Gaussian copula (archived Phase 22 Task 4) | 41604.3 | 14.6% |\n| **t(df=2.95) tail-matched** | **46756.0** | **4.0%** |\n\n## Tail-dependence matching (>=3 thresholds; pooled MEDIAN df)\n\n| q | E[tail obs] | pooled df | capped share | mean lambda_U | max lambda_U |\n|---|---|---|---|---|---|\n| 0.80 | 32 | 1.80 | 0% | 0.246 | 0.719 |\n| 0.85 | 24 | 2.95 | 0% | 0.192 | 0.708 |\n| 0.90 | 16 | 3.63 | 14% | 0.152 | 0.688 |\n\nMatched df = **2.95** (median across thresholds; capped-pair share 5%).\n\n## Disclosures\n\n- df matched by tail-dependence inversion (Demarta-McNeil 2005), NOT by AIC/MLE on the body: pooled MEDIAN pairwise df, median across 3 thresholds.\n- Pooled common-df t-copula is exchangeable in df across pairs -- a disclosed simplification (per-pair dfs are reported).\n- Capped-pair share 5% (pairs whose inversion hit a df search bound; disclosed, not hidden).\n- Gaussian baseline simulated with the same empirical marginals and seed family for an apples-to-apples SCR comparison.\n\nDigest `42d37077c4c9fdae`; run `tcopula-tailmatch-7a27ad23`; config seed 20260607, n_sim 200000.\n\nStandards: SOA ASOP 56 s3.5; SOA ASOP 25 s3.3; IA TAS M s3.6; Solvency II Delegated Reg. Art. 234; IFoA Life Aggregation & Simulation WP; Demarta-McNeil 2005 (t-copula tail dependence).\n",
+  "change_record_id": "509699ae1f1d4adabe197bcf8419c92a",
+  "change_record_status": "OWNER_REVIEW",
+  "mr010_action": "refreshed",
+  "mr010_status": "MITIGATED",
+  "audit_integrity_ok": true,
+  "change_records_total": 35
+}

@@ -833,6 +833,39 @@ Do these **only once** disk space is freed, the ghost locks are removed, and `gi
 
 ---
 
+## LATEST STATUS - 2026-06-07 (cycle 13, supersedes earlier text) — **PHASE 23 TASK 2 COMPLETE (PASS)**
+
+**Phase 23 Task 2 is COMPLETE: Student-t copula aggregation with df calibrated by tail-dependence
+matching, VERDICT PASS.** New additive module `par_model_v2/projection/t_copula_tail_matched_aggregation.py`
+(`TailMatchedTCopulaAggregator`; fixed-df chi-square-mixing t-copula sampler; fixed-df gammaln loglik;
+governed `CopulaRiskAggregator` untouched). Losses realised by bit-identical reuse of the Phase 22 Task 4
+calibrated staged primitives (nested 48,707.4 / var-covar 28,990.9 — archived-report match asserted).
+Matching per the Task 1 design: pairwise lambda_U at thresholds 0.80/0.85/0.90 (E[tail obs] 32/24/16 at
+n=160; 0.97+ infeasible at this n — DISCLOSED), Kendall-tau rho, Demarta-McNeil df inversion, pooled
+MEDIAN pair df per threshold (1.80/2.95/3.63), median across thresholds -> **df_matched 2.95** (capped
+share 4.8% disclosed). **RESULT: t(2.95) SCR 46,756.0, rel err 4.01% vs nested — beats the gaussian AIC
+incumbent (same-seed 41,472.4 / 14.85%; archived 41,604.3 / 14.58%); the FIXED pre-registered gate is met
+on its primary arm (no gate-shopping); ~73% of the residual gaussian gap closed.** MR-010 refreshed
+(mitigation now tail-aware per Art. 234); ChangeRecord `509699ae1f1d4adabe197bcf8419c92a`
+(methodology_change) OWNER_REVIEW; audit 61->62; verify_all True; governance idempotent. Verification:
+28 new tests PASS (`tests/test_phase23_task2_t_copula.py`); regression tail_dependence 21 + copula 22 +
+governance 54 + phase22-task4 18 = 115 PASS; ui_app self-test ok:true (0 net / 0 JS err); py_compile clean.
+Evidence: `docs/validation/PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.{json,md}`;
+`docs/T_COPULA_AGGREGATION_CARD.md`; staged build `scripts/build_phase23_task2_t_copula_aggregation.py`.
+**Maintenance this cycle:** repaired `.claude-dev/MODEL_DEV_STATE.json` (cycle-8 trailing block truncated
+mid-string by the legacy disk-full corruption; completed faithfully from the archived PHASE22_TASK2 report;
+corrupt original at /var/tmp/p23t2_build/MODEL_DEV_STATE.corrupt.bak) and re-wrote a truncated
+MODEL_DEV_LOG.md append (mount write-lag) with end-marker verification. UI propagation of the t-copula
+verdict is deliberately deferred to Phase 23 Task 5 (one task per cycle).
+
+**NEXT executable task: Phase 23 Task 3 — management-action rule in nested ground truth + proxy.**
+Implement the Task 1 design: dynamic reversionary-bonus cut
+cut_factor=clip((CR-CR_floor)/(CR_trigger-CR_floor),0,1) at the outer node, entering the nested
+conditional liability AND the LSMC proxy basis; seven-driver OOS re-validation against the with-actions
+nested truth. FIXED Task 3 gate (recorded in the Task 1 design note): OOS R2>=0.95, VaR rel err<=10%,
+with-actions capital <= without-actions, open MR-013 (management-action omission/model risk) +
+assumption_change ChangeRecord OWNER_REVIEW.
+
 ## LATEST STATUS - 2026-06-07 (cycle 12, supersedes earlier text) — **PHASE 23 TASK 1 COMPLETE (PASS)**
 
 **Phase 23 Task 1 is COMPLETE: research + design note for the t-copula tail-dependence calibration and the
@@ -861,9 +894,10 @@ rel err <= gaussian baseline or <=25%); MR-010 refresh; methodology_change Chang
 
 1. ✅ DONE (2026-06-07 cycle 12) — Research + design note: t-copula tail-dependence calibration +
    management-action gap analysis (PASS; tail_dependence.py module + 21 tests; fixed Task 2/3 gates).
-2. ⭐ **NEXT** — Student-t copula aggregation (df by tail-dependence matching) vs gaussian vs nested; MR-010 refresh.
-3. Management-action rule (dynamic bonus participation cut under solvency stress) in nested ground truth + proxy;
-   seven-driver OOS re-validation; MR-013.
+2. ✅ DONE (2026-06-07 cycle 13) — Student-t copula aggregation, df by tail-dependence matching
+   (PASS: df 2.95; t SCR 46,756 rel err 4.01% vs nested; gaussian baseline 14.85%; MR-010 refreshed).
+3. ⭐ **NEXT** — Management-action rule (dynamic bonus participation cut under solvency stress) in nested ground
+   truth + proxy; seven-driver OOS re-validation; MR-013.
 4. Aggregation + tail-diagnostics re-run with management actions; capital impact quantified.
 5. Offline-UI propagation + PHASE 23 COMPLETE documentation.
 
