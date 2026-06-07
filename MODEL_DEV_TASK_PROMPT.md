@@ -1664,6 +1664,8 @@ alt-`GIT_INDEX_FILE` commits onto `p22c9`, push `p22c9:main`; next free risk ID 
 re-check mtimes for parallel-run foreign writes before governance/commit.
 
 **Standing blockers (human action):** delete the three git ghost locks
-(GITHUB_PUSH_BLOCKER.md) and push `p22c9:main`; serialise the scheduled runs; production
-sign-off residual (credentialled data + APS X2) — by design for this educational model;
-disk /sessions ~89%.
+(GITHUB_PUSH_BLOCKER.md) — NOTE cycle 21: `git push origin p22c9:main` now WORKS from the
+sandbox (origin/main = a149e37, Phase 24 COMPLETE tip; push at the end of every cycle); the
+locks remain only to fast-forward LOCAL main and restore normal git. Serialise the scheduled
+runs; production sign-off residual (credentialled data + APS X2) — by design for this
+educational model; disk /sessions ~89%.

@@ -39,8 +39,9 @@ parallel-run foreign writes before governance/commit.
 
 **Persisting blockers (human action):**
 - Git ghost locks (`.git/index.lock`, `.git/HEAD.lock`, `.git/refs/heads/main.lock`) -
-  commits land on branch `p22c9` via the alt-index workaround; push `p22c9:main`
-  (see GITHUB_PUSH_BLOCKER.md checklist).
+  commits land on branch `p22c9` via the alt-index workaround. **PUSH NOW WORKS from the
+  sandbox** (`p22c9:main` pushed this cycle, origin/main = a149e37); the locks still need a
+  human shell only to fast-forward LOCAL main + restore normal git (GITHUB_PUSH_BLOCKER.md).
 - Serialise/stagger the scheduled runs (collision demonstrated cycle 19).
 - Production sign-off residual: credentialled calibration + independent APS X2 review.
 - Disk /sessions ~89%.

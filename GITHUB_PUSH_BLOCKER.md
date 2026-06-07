@@ -203,3 +203,27 @@ Remaining LOCAL-only issue (cosmetic, human action when convenient): ghost locks
 2. `git update-ref refs/heads/main p22c9` (fast-forward local main to the pushed tip)
 3. `git reset` (rebuild the stale index); `git status` should then be clean apart from probes
 4. Optional: `git branch -D p22c9` locally and `git push origin :p22c9` to drop the helper branch
+
+## UPDATE 2026-06-08 (cycle 19) — PUSH SUCCEEDED
+
+`git push origin p22c9:main` fast-forwarded GitHub main 6adf2a8 -> 1c5f855 (Phase 24 Tasks 2-3
+now on the remote). The LOCAL ghost locks remain (`refs/heads/main` still cannot be updated in
+the sandbox; commits continue to land on `p22c9`), but the remote backlog is cleared. Human
+checklist steps 1-4 (delete locks, fast-forward local main, rebuild index) still apply for
+local hygiene; step 5 (push) is no longer blocked.
+
+---
+
+## ✅ 2026-06-08 (+08) cycle 21 UPDATE — PUSH NOW WORKS FROM THE SANDBOX
+
+`git push origin p22c9:main` SUCCEEDED this cycle: `2cd7327..a149e37  p22c9 -> main`.
+**origin/main is current** (Phase 24 COMPLETE tip `a149e37`). Scheduled cycles should now
+push `p22c9:main` at the end of every cycle — no human push needed.
+
+**Still requiring a human shell (unchanged):** the three ghost locks
+(`.git/index.lock`, `.git/HEAD.lock`, `.git/refs/heads/main.lock`) — they block NORMAL
+`git add/commit` and keep the LOCAL `main` ref stale (5caeebb; harmless, origin is the
+truth). After deleting them: `git update-ref refs/heads/main a149e37...` (or the current
+p22c9 tip), then normal git resumes. Note: `git fetch` reports a pre-existing local
+corruption artifact (`bad object refs/heads/phase22-cycle9`) — also clears once the locks
+are gone and the stale branch ref is deleted.
