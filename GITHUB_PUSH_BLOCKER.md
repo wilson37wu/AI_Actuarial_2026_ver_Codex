@@ -189,3 +189,17 @@ applies, with step 3 generalised (SHA-independent):
 
 3. Fast-forward main to the branch tip: `git update-ref refs/heads/main p22c9`
    (or on Windows: `git rev-parse p22c9` then `git update-ref refs/heads/main <that SHA>`)
+
+## ✅ UPDATE 2026-06-07 (cycle 10) — PUSH RESOLVED; remote main current
+
+Push authentication works again. Cycle 10 pushed `p22c9:main` (fast-forward
+`02891e3..3c87bce`) and `p22c9:p22c9` — **the entire Phase 17+ / Phase 22 commit backlog is now
+on GitHub; remote `main` = `3c87bce` (Phase 22 Task 4)**.
+
+Remaining LOCAL-only issue (cosmetic, human action when convenient): ghost locks
+(`.git/index.lock`, `.git/HEAD.lock`, `.git/refs/heads/main.lock`) still block updating the LOCAL
+`main` ref, which is stale at `5caeebb`. In a normal shell:
+1. `del .git\index.lock .git\HEAD.lock .git\refs\heads\main.lock`
+2. `git update-ref refs/heads/main p22c9` (fast-forward local main to the pushed tip)
+3. `git reset` (rebuild the stale index); `git status` should then be clean apart from probes
+4. Optional: `git branch -D p22c9` locally and `git push origin :p22c9` to drop the helper branch

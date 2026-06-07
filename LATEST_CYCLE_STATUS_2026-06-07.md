@@ -34,5 +34,5 @@ mount. Write long repo files from bash and verify with ast.parse / json.loads.
 **Persisting blockers (human action):**
 - Git ghost locks (`.git/index.lock`, `.git/HEAD.lock`, `.git/refs/heads/main.lock`) — commits
   land on branch `p22c9` via the alt-index workaround; see GITHUB_PUSH_BLOCKER.md checklist.
-- GitHub push blocked — local commit backlog needs `git push origin main` after lock cleanup.
+- GitHub push RESOLVED this cycle (remote main = 3c87bce via p22c9:main). Local main ref still stale behind ghost locks — cleanup checklist in GITHUB_PUSH_BLOCKER.md.
 - Production sign-off residual: credentialled calibration + independent APS X2 review.
