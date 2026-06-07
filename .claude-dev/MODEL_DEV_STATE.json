@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-07T07:11:04Z",
-  "last_run_duration_minutes": 15,
-  "last_run_note": "2026-06-07 cycle 9 (Linux sandbox): Phase 22 Task 2 COMPLETE. Ran pytest (6 passed, 1 skipped) and the full staged 7D proxy-validation build (fit 2000, val 60, inheavy 60, nested 2x250, finalise). Verdict PASS: analytic surface deg 3, max_int 2, 46 terms; OOS R2=0.9985; VaR/ES/SCR rel err 0.51%/0.18%/1.26%; liquidity offset exact; leakage-free. ChangeRecord 5d68c9b6 OWNER_REVIEW; audit integrity true. Also repaired NUL-padded state file written by the previous Windows-shell cycle.",
+  "last_run": "2026-06-07T09:55:00Z",
+  "last_run_duration_minutes": 25,
+  "last_run_note": "2026-06-07 cycle 10 (Linux sandbox): Phase 22 Task 4 COMPLETE (PASS). Seven-driver aggregation re-run consuming the Task 3 G-LIQX-calibrated exposure notional (22,000) + couplings via the loaders; all 6 Phase 21 Task 4 CRN slices reused after bit-identity verification (Cholesky rows 0-5 invariant; liquidity drawn last). Liquidity SCR 63.5->45.1; var-covar 28,991 vs nested 48,707 (40.5% understatement, MR-010 re-confirmed); gaussian copula 41,604 (14.6%); tail CONVERGED 0.07%; Sobol-RQMC 3.6x. ChangeRecord 5a9934acc1c64f91a4c94c77a5ae37fc OWNER_REVIEW; MR-010/MR-012 MITIGATED; audit verify_all True (32 records). 18 new tests; regression 160 PASS/0 FAIL.",
   "current_phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
-  "overall_status": "PHASE22_TASK2_COMPLETE_PASS__task3_liquidity_calibration_next",
+  "overall_status": "PHASE22_TASK4_COMPLETE_PASS__task5_ui_propagation_next",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -400,12 +400,13 @@
       "completed": [
         "Six-driver OOS remediation (inner 96->256+, n_outer 500->2000+ staged CRN, targeted deg-2 basis)",
         "Seven-driver LSMC proxy extension + disjoint-seed OOS validation",
-        "Liquidity exposure-notional + coupling calibration (replace placeholders) + sensitivity"
-      ],
-      "in_progress": [
+        "Liquidity exposure-notional + coupling calibration (replace placeholders) + sensitivity",
         "Seven-driver aggregation re-run + MR-010/MR-012 refresh + tail diagnostics"
       ],
-      "next": "Offline-UI propagation + PHASE 22 COMPLETE documentation"
+      "in_progress": [
+        "Offline-UI propagation + PHASE 22 COMPLETE documentation"
+      ],
+      "next": "PHASE 22 COMPLETE -> research further stochastic-model improvement; then offline-UI focus per standing instruction"
     }
   },
   "repository_info": {
@@ -417,14 +418,14 @@
   },
   "progress_metrics": {
     "total_tasks": 110,
-    "tasks_completed": 108,
+    "tasks_completed": 109,
     "phases_completed": 19,
     "estimated_completion_pct": 99,
     "average_cycle_duration_minutes": 53,
-    "cycles_run": 149,
+    "cycles_run": 150,
     "tasks_total": 110,
-    "last_task": "Phase 22 Task 3 - liquidity exposure notional (30000 placeholder -> 22000 reproducible) + 7x7 liquidity couplings calibrated; G-LIQX PASS 6/6; 10 new tests; regression 116 PASS. Task 2 (7D OOS validation, verdict PASS R2 0.9985) verified this cycle.",
-    "next_task": "Phase 22 Task 4 - seven-driver aggregation re-run with CALIBRATED exposure/couplings + MR-010/MR-012 refresh + tail diagnostics.",
+    "last_task": "Phase 22 Task 4 - calibrated seven-driver aggregation re-run (PASS): liquidity SCR 45.1; copula 41,604 vs nested 48,707 (14.6%); tail diagnostics CONVERGED; MR-010/MR-012 refreshed; 18 new tests; regression 160 PASS.",
+    "next_task": "Phase 22 Task 5 - offline-UI propagation (calibrated exposure/couplings + 7D OOS PASS + re-run aggregation read-outs in build_ui_data.py/ui_app.html; self-test ok:true) + PHASE 22 COMPLETE documentation.",
     "phase20_complete": true,
     "offline_ui_contract_version": "1.2.0",
     "last_ui_self_test": "node scripts/ui_app_self_test.cjs ui_app.html -> ok:true; 0 network / 0 JS errors"

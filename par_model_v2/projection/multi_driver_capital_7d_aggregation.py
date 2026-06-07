@@ -612,15 +612,37 @@ class SevenDriverLiquidityRiskAggregator(SixDriverFXRiskAggregator):
             "tau_years": tau,
         }
 
+        cal_notional, _np_ph = calibrated_liquidity_exposure_notional()
+        cal_corr, _c_ph = calibrated_seven_driver_correlation()
+        exposure_is_calibrated = (not _np_ph) and abs(
+            self.liquidity_exposure.exposure_notional - cal_notional) <= 1e-6
+        couplings_are_calibrated = (not _c_ph) and all(
+            getattr(self.correlation7, n) == getattr(cal_corr, n)
+            for n in ("liq_rate", "liq_equity", "liq_spread",
+                      "liq_lapse", "liq_mortality", "liq_fx")
+        )
+        if exposure_is_calibrated and couplings_are_calibrated:
+            exposure_note = (
+                "the EXPOSURE notional ({:.0f}) and 7x7 liquidity couplings are "
+                "the Phase 22 Task 3 G-LIQX-CALIBRATED values (reproducible "
+                "balance-sheet notional; CIR transition-residual coupling "
+                "recovery, PSD-validated) - no longer placeholders; residual "
+                "is credentialled-data quality + APS X2 review.".format(
+                    self.liquidity_exposure.exposure_notional)
+            )
+        else:
+            exposure_note = (
+                "the EXPOSURE notional ({:.0f}) and 7x7 liquidity couplings "
+                "are educational placeholders.".format(
+                    self.liquidity_exposure.exposure_notional)
+            )
         notes = (
             "SEVENTH DRIVER = CIR++ liquidity/funding-spread premium with the "
             "Phase 21 Task 3 G-LIQ-calibrated parameters (kappa={:.4f}/yr, "
-            "long-run {:.0f}bp, sigma={:.4f}, lambda_l={:.2f}); the EXPOSURE "
-            "notional ({:.0f}) and 7x7 liquidity couplings are educational "
-            "placeholders.".format(
+            "long-run {:.0f}bp, sigma={:.4f}, lambda_l={:.2f}); ".format(
                 lp.mean_reversion_speed, 1e4 * lp.long_run_premium_p,
                 lp.premium_vol, lp.market_price_of_liquidity_risk,
-                self.liquidity_exposure.exposure_notional),
+            ) + exposure_note,
             "Inner Q-nest liquidity conditioning is ANALYTIC and CIR-AFFINE-"
             "EXACT: haircut(l_H) = 1 - exp(-phi tau) A(tau) exp(-B(tau) x_H) "
             "under the Q-re-anchored long-run level; liability impact is "

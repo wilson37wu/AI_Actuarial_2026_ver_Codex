@@ -869,14 +869,14 @@ nested benchmark 256+ inner); ChangeRecord OWNER_REVIEW + MR-register refresh.
 
 1. ✅ DONE (2026-06-07 cycle 7) — Six-driver OOS remediation — PARTIAL cleared honestly (PASS,
    OOS R² 0.9985, stricter VaR/ES/SCR ≤10% gate; no gate-shopping).
-2. ⭐ **NEXT** — Extend the LSMC proxy surface to the calibrated liquidity (7th) driver (analytic CIR-affine haircut
-   feature); disjoint-seed seven-driver OOS validation vs the Task 4 nested ground truth (R² ≥ 0.95,
-   VaR rel-err ≤ 10%); overfit sweep.
-3. Liquidity exposure-notional + 7×7 liquidity-coupling calibration to documented educational proxies
-   (replace placeholders; sensitivity table over couplings ±0.15); refresh the small-liquidity-SCR finding.
-4. Seven-driver aggregation re-run on the hardened proxy + refreshed couplings; MR-010/MR-012 refresh;
-   tail diagnostics.
-5. Offline-UI propagation + PHASE 22 COMPLETE documentation.
+2. ✅ DONE (2026-06-07 cycle 8, verified cycle 9) — Seven-driver LSMC proxy extension + OOS validation
+   (PASS: OOS R² 0.9985; VaR/ES/SCR rel err 0.51%/0.18%/1.26%).
+3. ✅ DONE (2026-06-07 cycle 9) — Liquidity exposure-notional (30,000 placeholder → 22,000 reproducible)
+   + 7×7 coupling calibration (G-LIQX PASS 6/6; PSD-validated; sensitivity bounded).
+4. ✅ DONE (2026-06-07 cycle 10) — Seven-driver aggregation re-run with the CALIBRATED exposure/couplings
+   (PASS: liquidity SCR 45.1; copula 41,604 vs nested 48,707, rel 14.6%; tail CONVERGED; MR-010/MR-012
+   refreshed; ChangeRecord 5a9934acc1c64f91a4c94c77a5ae37fc OWNER_REVIEW).
+5. ⭐ **NEXT** — Offline-UI propagation + PHASE 22 COMPLETE documentation.
 
 ---
 
@@ -1170,3 +1170,45 @@ ChangeRecord at OWNER_REVIEW; then Task 5 = offline-UI propagation + PHASE 22 CO
 
 **Standing blockers (human action):** GitHub push (see GITHUB_PUSH_BLOCKER.md); production sign-off
 residual (credentialled data + independent APS X2 review) — by design for this educational model.
+
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-07 (cycle 10, supersedes everything above)
+
+**Phase 22 progress: Tasks 1–4 ✅. Task 4 (this cycle): seven-driver aggregation RE-RUN with the
+G-LIQX-CALIBRATED liquidity exposure notional (22,000) + 7x7 couplings consumed via
+`calibrated_liquidity_exposure_notional()` / `calibrated_seven_driver_correlation()` —
+VERDICT PASS.** Liquidity SCR 63.5 → 45.1; var-covar 28,991 vs nested 48,707 (40.5%
+understatement, MR-010 re-confirmed); gaussian copula 41,604 (rel 14.6% ≤ 25%); tail diagnostics
+re-run CONVERGED (last VaR delta 0.07%); Sobol-RQMC 3.6x. All 6 Phase 21 Task 4 CRN slices reused
+after bit-identity verification (Cholesky rows 0–5 invariant to liquidity couplings; liquidity
+shock drawn last). Calibrated-vs-placeholder deltas quantified in
+`docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.{json,md}`;
+card `docs/MULTI_DRIVER_7D_CALIBRATED_AGGREGATION_CARD.md`. ChangeRecord
+`5a9934acc1c64f91a4c94c77a5ae37fc` OWNER_REVIEW; MR-010/MR-012 MITIGATED; audit verify_all True
+(32 records). 18 new tests; regression 160 PASS / 0 FAIL.
+
+**NEXT executable task: Phase 22 Task 5 — offline-UI propagation + PHASE 22 COMPLETE
+documentation.** Surface in `scripts/build_ui_data.py` + `ui_app.html` (additive contract bump):
+(a) the Phase 22 Task 1 OOS remediation PASS (R² 0.9985) replacing the displayed six-driver
+PARTIAL; (b) the Task 2 seven-driver OOS validation PASS; (c) the Task 3 calibrated exposure/
+couplings (G-LIQX panel); (d) the Task 4 calibrated aggregation read-outs (liquidity SCR 45.1,
+var-covar 28,991, copula 41,604, nested 48,707) replacing the stale placeholder numbers. Keep
+`node scripts/ui_app_self_test.cjs ui_app.html` ok:true (0 network / 0 JS errors); rebuild
+`viewer_data.json` so governance reflects the live store. Then write PHASE 22 COMPLETE
+documentation. After Phase 22: research further stochastic-model improvement (per the scheduled-
+task standing instruction) and refresh this prompt; the offline-UI focus continues (the UI must
+keep consuming ONLY model output JSON, no pre-installation requirement).
+
+**Sandbox operating rules (CONFIRMED AGAIN cycle 10):**
+1. ~44 s hard wall per bash call; stage long computations; verify liveness via artifacts.
+2. Python/pytest/scipy/pandas live in `/var/tmp/pylibs` — run with `PYTHONPATH=/var/tmp/pylibs:.`.
+3. Windows-side file-tool writes of LONG files silently truncate on sync — write long repo files
+   via bash heredoc/python and ALWAYS verify with `ast.parse`/`json.loads`/`cmp`.
+4. Git ghost locks persist — commit with the alt-`GIT_INDEX_FILE` workaround onto branch `p22c9`
+   (updating `main` is blocked by `refs/heads/main.lock`); see GITHUB_PUSH_BLOCKER.md checklist.
+
+**Standing blockers (human action):** GitHub push (see GITHUB_PUSH_BLOCKER.md); production
+sign-off residual (credentialled data + independent APS X2 review) — by design for this
+educational model.

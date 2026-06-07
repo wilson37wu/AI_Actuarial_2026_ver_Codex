@@ -1,30 +1,38 @@
-# Latest Cycle Status - 2026-06-07 (cycle 9)
+# Latest Cycle Status - 2026-06-07 (cycle 10)
 
-**Phase 22 Task 2 VERIFIED (PASS) and Task 3 COMPLETE (G-LIQX PASS 6/6). Next: Task 4.**
+**Phase 22 Task 4 COMPLETE (PASS): seven-driver aggregation re-run with CALIBRATED liquidity
+exposure + couplings. Next: Task 5 (offline-UI propagation + PHASE 22 COMPLETE).**
 
 What this cycle did:
 
-- Verified Task 2 (seven-driver OOS proxy validation): report verdict PASS (OOS R2 0.9985;
-  VaR/ES/SCR rel err 0.51%/0.18%/1.26%); 7 tests PASS; audit integrity True.
-- Completed Task 3: liquidity exposure notional made reproducible (100,000 x 0.55 x 0.40 = 22,000,
-  replacing the ad-hoc 30,000) and the six 7x7 liquidity couplings calibrated by CIR
-  transition-residual estimator recovery against a 1,200-month seeded joint synthesis
-  (all within 0.12 tolerance; PSD-validated; SCR sensitivity bounded). G-LIQX PASS 6/6.
-- ChangeRecord `39b5c559fc63426b830660cd7595a297` OWNER_REVIEW; MR-011/MR-012 MITIGATED;
-  audit verify_all True (31 change records).
-- New loaders `calibrated_liquidity_exposure_notional()` / `calibrated_seven_driver_correlation()`
-  in `multi_driver_capital_7d_aggregation.py` for Task 4 to consume.
-- Tests: 10 new PASS; focused regression 116 PASS / 0 FAIL.
-- Documented finding: liquidity driver is net-diversifying at this scale (negative net cross-term),
-  so var-covar SCR falls slightly as the notional rises.
+- Built `scripts/build_phase22_task4_aggregation.py` (staged) consuming
+  `calibrated_liquidity_exposure_notional()` (22,000; fail-loud on placeholder fallback) and
+  `calibrated_seven_driver_correlation()` (G-LIQX couplings, PSD-validated).
+- Reused all 6 Phase 21 Task 4 CRN slices after bit-identity verification (Cholesky rows 0-5
+  are invariant to liquidity couplings; the liquidity shock is drawn last).
+- Results: liquidity SCR 63.5 -> 45.1; var-covar 28,991 vs nested 48,707 (40.5% understatement,
+  MR-010 re-confirmed); gaussian copula 41,604 (rel 14.6% <= 25%); tail diagnostics re-run
+  CONVERGED (last VaR delta 0.07%); Sobol-RQMC 3.6x. **Verdict PASS.**
+- Calibrated-vs-placeholder deltas quantified in the report (capital impact bounded; consistent
+  with the Task 3 net-diversifying finding).
+- `run_7d` notes now flip to "G-LIQX-CALIBRATED" wording only when BOTH exposure and all six
+  couplings match the calibrated loaders (condition-checked honesty).
+- ChangeRecord `5a9934acc1c64f91a4c94c77a5ae37fc` OWNER_REVIEW (assumption_change);
+  MR-010/MR-012 MITIGATED; audit verify_all True (32 change records).
+- Tests: 18 new PASS (`tests/test_phase22_task4_aggregation.py`); regression 160 PASS / 0 FAIL.
+- Artifacts: `docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.{json,md}`;
+  `docs/MULTI_DRIVER_7D_CALIBRATED_AGGREGATION_CARD.md`.
 
-**Next executable action: Phase 22 Task 4** — seven-driver aggregation re-run consuming the
-calibrated exposure/couplings via the new loaders (staged build), MR-010/MR-012 refresh,
-tail diagnostics. Then Task 5 (offline-UI propagation + PHASE 22 COMPLETE).
+**Next executable action: Phase 22 Task 5** — offline-UI propagation (surface the calibrated
+exposure/couplings, the re-run aggregation read-outs, and the Task 2 7D OOS PASS in
+`scripts/build_ui_data.py` + `ui_app.html`; keep `node scripts/ui_app_self_test.cjs ui_app.html`
+ok:true, 0 network / 0 JS errors) + **PHASE 22 COMPLETE** documentation.
 
 **Operating warning:** Windows-side file-tool writes of long files truncate on sync to the Linux
 mount. Write long repo files from bash and verify with ast.parse / json.loads.
 
 **Persisting blockers (human action):**
-- GitHub push blocked (GITHUB_PUSH_BLOCKER.md) — local commit backlog needs `git push origin main`.
+- Git ghost locks (`.git/index.lock`, `.git/HEAD.lock`, `.git/refs/heads/main.lock`) — commits
+  land on branch `p22c9` via the alt-index workaround; see GITHUB_PUSH_BLOCKER.md checklist.
+- GitHub push blocked — local commit backlog needs `git push origin main` after lock cleanup.
 - Production sign-off residual: credentialled calibration + independent APS X2 review.

@@ -7479,3 +7479,62 @@ Phase 21 Task 2 honest PARTIAL, OOS R² 0.9498 → **0.9985**, with NO gate-shop
   MR-011/MR-012 refreshed → MITIGATED; audit 52→54 (model_run + governance entries), change records
   28→29, verify_all True.
 - Tests: NEW `tests/test_phase22_task1_oos_remediation.py` — **21 PASS** (targeted-basis constru
+---
+
+## 2026-06-07 (cycle 10) — Phase 22 Task 4 COMPLETE — Seven-driver aggregation re-run with CALIBRATED liquidity exposure + couplings (VERDICT PASS)
+
+**Task Completed:** Phase 22 Task 4 — seven-driver aggregation re-run consuming the Task 3
+G-LIQX-calibrated exposure notional + 7x7 liquidity couplings via the loaders; MR-010/MR-012
+refresh; tail diagnostics re-run.
+
+**Accomplishments:**
+- New `scripts/build_phase22_task4_aggregation.py` (staged: outer/slice/finalise): constructs
+  `SevenDriverLiquidityRiskAggregator` from `calibrated_liquidity_exposure_notional()` (22,000;
+  fail-loud if the placeholder fallback would be used) and `calibrated_seven_driver_correlation()`
+  (G-LIQX-estimated couplings, PSD-validated).
+- **CRN slice reuse, verified:** Cholesky rows 0–5 depend only on the unchanged 6x6 block and the
+  liquidity shock is drawn last, so outer columns 0–5 are bit-identical to the Phase 21 Task 4 run;
+  all 6 staged five-driver CRN slices (`/var/tmp/p21t4_stage`) were reused after
+  `np.array_equal` verification of the outer joint. Only the liquidity column/loss vector and
+  everything downstream of the 7x7 correlation were recomputed.
+- Patched `multi_driver_capital_7d_aggregation.py` `run_7d` notes: the placeholder wording now
+  flips to "G-LIQX-CALIBRATED … no longer placeholders" only when BOTH the exposure notional and
+  all six couplings match the calibrated loaders (honest, condition-checked disclosure).
+
+**Results (seed 42, n_outer 160 x n_inner 24, n_sim_copula 200,000):**
+- Standalone SCRs: rate 14,486 / equity 15,932 / credit 4,714 / lapse 22,539 / mortality 387 /
+  fx 4,286 / **liquidity 45.1** (placeholder run: 63.5 — smaller notional 22,000 < 30,000).
+- Var-covar 28,991 vs nested 48,707 (understatement 40.5% — MR-010 re-confirmed under calibrated
+  inputs); gaussian copula 41,604 (rel 14.6% ≤ 25%). Verdict **PASS**.
+- Calibrated-vs-placeholder deltas (quantified in the report): var-covar −5.2, nested +13.4,
+  copula +11.0 — capital impact bounded, consistent with the Task 3 net-diversifying finding.
+- Tail diagnostics re-run on the calibrated loss set: CONVERGED (last VaR delta 0.07% vs 1% tol);
+  simulated + honest small-sample nested bootstrap CIs; Sobol-RQMC 3.6x.
+
+**Governance:** ChangeRecord `5a9934acc1c64f91a4c94c77a5ae37fc` (assumption_change) OWNER_REVIEW;
+MR-010/MR-012 refreshed → MITIGATED (MR-012 residual narrowed to credentialled-data quality +
+APS X2 review; coverage and wiring complete). Audit verify_all True (32 change records).
+
+**Verification:** `tests/test_phase22_task4_aggregation.py` **18 passed** (loaders, PSD,
+Cholesky-row + outer-column bit-identity under coupling change, baseline-centred impact scaling,
+report integrity incl. calibrated-wording flag). Regression: phase21_task4 13 + phase22_task3 10
++ phase21_liquidity 37 + governance 54 + phase22 task1/task2 28 = **160 PASS / 0 FAIL**.
+ast.parse clean; off-mount build + cp + cmp write protocol observed.
+
+**Artifacts:** `docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.{json,md}`;
+`docs/MULTI_DRIVER_7D_CALIBRATED_AGGREGATION_CARD.md`.
+
+**Next Step:** Phase 22 Task 5 — offline-UI propagation (surface the calibrated exposure/couplings,
+re-run aggregation read-outs, and the Task 2 7D OOS PASS in `scripts/build_ui_data.py` +
+`ui_app.html`; keep self-test ok:true) + **PHASE 22 COMPLETE** documentation.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.1.3/3.4/3.5: calibrated-input aggregation with reproducibility (CRN bit-identity
+  verified before reuse) and re-run tail diagnostics.
+- SOA ASOP 25 §3.3 / IA TAS M §3.5/3.6: assumption change traceable end-to-end (Task 3 calibration
+  report → loaders → aggregation → ChangeRecord with before/after snapshots + quantified deltas).
+- Honest disclosures: educational-proxy data residual; nested small-sample CI wide; liquidity SCR
+  small by calibrated mean reversion (documented finding, not a wiring defect).
+
+**Blockers:** git ghost locks persist (commit via alt-index/branch workaround; see
+GITHUB_PUSH_BLOCKER.md); `git push origin main` still needs human action.

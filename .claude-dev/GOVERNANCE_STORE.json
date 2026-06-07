@@ -3239,6 +3239,80 @@
         }
       ],
       "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation"
+    },
+    {
+      "record_id": "5a9934acc1c64f91a4c94c77a5ae37fc",
+      "created_at": "2026-06-07T09:14:22.447286+00:00",
+      "title": "Phase 22 Task 4 - seven-driver aggregation re-run with calibrated liquidity exposure + couplings",
+      "description": "Phase 22 Task 4 re-ran the seven-driver 99.5% one-year economic-capital aggregation consuming the Phase 22 Task 3 G-LIQX-gated calibration via calibrated_liquidity_exposure_notional() and calibrated_seven_driver_correlation(): exposure notional 22000 (reproducible balance-sheet construction 100,000 x 0.55 x 0.40, replacing the 30,000 ad-hoc placeholder) and the six estimated 7x7 liquidity couplings (CIR transition-residual estimator recovery, PSD-validated). CRN design reused: Cholesky rows 0-5 depend only on the unchanged 6x6 block and the liquidity shock is drawn last, so outer columns 0-5 and the five-driver CRN component liabilities are bit-identical to the Phase 21 Task 4 run (verified before slice reuse). Standalone SCRs, 7x7 var-covar, AIC-selected copula re-aggregation, nested benchmark, and the full tail-diagnostics battery were recomputed on the calibrated loss set, with deltas vs the archived placeholder run quantified in the report.",
+      "change_type": "assumption_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_capital_7d_aggregation.py",
+        "tests/test_phase22_task4_aggregation.py",
+        "scripts/build_phase22_task4_aggregation.py",
+        "docs/MULTI_DRIVER_7D_CALIBRATED_AGGREGATION_CARD.md",
+        "docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 section 3.1.3/3.4/3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M section 3.2/3.5/3.6",
+        "Solvency II Delegated Regulation Article 234 (aggregation)",
+        "EIOPA volatility-adjustment methodology (illiquidity premium)",
+        "Duffie-Singleton 1999; Brigo-Mercurio 2006; L'Ecuyer 2018 (RQMC)"
+      ],
+      "before_snapshot": {
+        "liquidity_exposure_notional": 30000.0,
+        "liquidity_couplings": "educational placeholders (0.05,-0.20,0.35,0.10,0.00,0.10)",
+        "aggregation_report": "PHASE21_TASK4_AGGREGATION_REPORT.json"
+      },
+      "after_snapshot": {
+        "liquidity_exposure_notional": 22000.000000000004,
+        "liquidity_couplings": {
+          "liq_rate": -0.0794,
+          "liq_equity": -0.2935,
+          "liq_spread": 0.4579,
+          "liq_lapse": 0.1081,
+          "liq_mortality": 0.016,
+          "liq_fx": 0.107
+        },
+        "standalone_scr": {
+          "rate": 14486.319850929489,
+          "equity": 15931.555851018842,
+          "credit": 4713.865675437704,
+          "lapse": 22538.93657690868,
+          "mortality": 387.2000248782355,
+          "fx": 4286.36987389994,
+          "liquidity": 45.05333401574302
+        },
+        "var_covar_scr": 28990.889357788157,
+        "nested_scr": 48707.43490332604,
+        "copula_selected": "gaussian",
+        "copula_rel_error_vs_nested": 0.14583332565245183,
+        "tail_converged": true,
+        "aggregation_verdict": "PASS"
+      },
+      "impact_assessment": "Replaces the last liquidity-related educational placeholders in the aggregation with gate-validated calibrated values. No change to the first six drivers or the five-driver CRN component liabilities (bit-identity verified). Capital impact is bounded and quantified vs the placeholder baseline; MR-010 finding re-confirmed and MR-012 calibration residual narrowed to credentialled-data quality + APS X2 review.",
+      "quantitative_impact": "Standalone sum 62389; var-covar 28991 vs nested 48707 (understatement 40.5%); copula (gaussian) within 14.6%; liquidity standalone SCR 45.1; tail convergence CONVERGED (last VaR delta 0.07%); Sobol-RQMC ratio 3.6x; n_outer=160, n_inner=24, seed=42, n_sim_copula=200000.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase22",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T09:14:22.447325+00:00",
+          "actor": "AutomatedModelDev_Phase22",
+          "status": "PEER_REVIEW",
+          "comments": "Calibrated-input seven-driver aggregation re-run with verified CRN slice reuse, copula re-aggregation, tail diagnostics, and placeholder-vs-calibrated delta quantification."
+        },
+        {
+          "timestamp": "2026-06-07T09:14:22.447345+00:00",
+          "actor": "AutomatedModelDev_Phase22",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending Phase 22 Task 5 (UI propagation), credentialled market data, and APS X2 review."
+        }
+      ],
+      "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation"
     }
   ],
   "risk_register": [
@@ -3399,8 +3473,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
       "created_at": "2026-06-04T18:28:37.352914+00:00",
-      "updated_at": "2026-06-07T02:21:44.686993+00:00",
-      "notes": "Phase 21 Task 4 re-confirmed the MR-010 finding under SEVEN drivers: the 7x7 var-covar formula with raw ESG factor correlations gives 28996 vs the nested benchmark 48694 (understatement 40.5%), because factor correlations are not capital-loss correlations in the tail. The copula-on-realised-losses re-aggregation (gaussian) reconciles within 14.6% and remains the governed mitigation. Tail diagnostics: copula-simulated VaR convergence CONVERGED (last delta 0.07% vs 1% tol), simulated 95% CI rel-halfwidth 0.2%, nested small-sample CI rel-halfwidth 3.1% (disclosed), Sobol-RQMC variance-reduction ratio 3.6x."
+      "updated_at": "2026-06-07T09:14:22.446879+00:00",
+      "notes": "Phase 22 Task 4 re-confirmed MR-010 under seven drivers with the G-LIQX-CALIBRATED liquidity exposure (22000) and couplings: 7x7 var-covar 28991 vs nested 48707 (understatement 40.5%) - factor correlations are still not tail capital-loss correlations. Copula-on-realised-losses (gaussian) reconciles within 14.6% and remains the governed mitigation. Tail diagnostics re-run on the calibrated loss set: convergence CONVERGED (last delta 0.07% vs 1% tol), simulated 95% CI rel-halfwidth 0.2%, nested small-sample CI rel-halfwidth 3.1% (disclosed), Sobol-RQMC variance-reduction ratio 3.6x."
     },
     {
       "risk_id": "MR-011",
@@ -3431,8 +3505,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
       "created_at": "2026-06-05T07:10:02.898466+00:00",
-      "updated_at": "2026-06-07T08:25:03.762612+00:00",
-      "notes": "Phase 22 Task 3 (G-LIQX): liquidity exposure notional and 7x7 liquidity couplings calibrated \u2014 the LAST liquidity placeholders. notional=22000 (reproducible: backing_asset_mv x illiquid_share x forced_sale_fraction); couplings (rate,equity,spread,lapse,mortality,fx)=(-0.079,-0.293,0.458,0.108,0.016,0.107) recovered within +/-0.12 of documented targets from 240 monthly joint observations; 7x7 PSD-validated; var-covar SCR sensitivity bounded. Residual (keeps the risk open): nested/copula re-aggregation with these values is Task 4; documented-targets fixture is educational \u2014 credentialled joint data + independent APS X2 review required."
+      "updated_at": "2026-06-07T09:14:22.447046+00:00",
+      "notes": "Phase 22 Task 4 re-ran the seven-driver aggregation with the Task 3 G-LIQX-CALIBRATED liquidity exposure notional and 7x7 liquidity couplings - the LAST liquidity-related educational placeholders at aggregation level are now replaced by reproducible, gate-validated values. Liquidity standalone SCR moved 63.3 -> 45.1 under the calibrated notional (30000 -> 22000) and couplings. Driver coverage remains complete (all seven documented drivers aggregate). REMAINING residual is data quality, not coverage or wiring: educational-proxy market data pending credentialled sources + independent APS X2 review."
     },
     {
       "risk_id": "MR-013",

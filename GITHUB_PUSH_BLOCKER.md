@@ -155,3 +155,37 @@ before work, confirming sandbox push capability. No pause required. Phase 13 Tas
 (G-10 PASS) and recorded the APS X2 independent review (G-08 educational); Phase 13 is now complete
 (6/6 tasks). In-place edits in the mounted worktree remain blocked by the no-delete virtiofs mount,
 so source was written/tested in the clone and synced back via `cp`.
+
+---
+
+## UPDATE 2026-06-07 (cycle 9) — ghost locks now also block branch `main` updates
+
+`.git/index.lock`, `.git/HEAD.lock`, AND `.git/refs/heads/main.lock` are ghost files that the sandbox
+cannot delete (`Operation not permitted`). Cycle 9 commits were created with the alt-`GIT_INDEX_FILE`
+workaround and stored on a NEW branch **`p22c9`** (creating new refs works; updating `main` does not):
+
+- `8bb8783` — [Phase 22] Task 2: Seven-driver LSMC proxy OOS validation (PASS, OOS R2 0.9985)
+- `71b2f12` — [Phase 22] Task 3: Liquidity exposure-notional + 7x7 coupling calibration (G-LIQX PASS 6/6)
+
+Branch `p22c9` = `main` (5caeebb) + these two commits (fast-forward).
+
+### Human recovery checklist (run in a real Windows/normal shell)
+1. `cd <repo>`
+2. Delete ghost locks: `del .git\index.lock .git\HEAD.lock .git\refs\heads\main.lock`
+   (also delete the empty broken ref `del .git\refs\heads\phase22-cycle9` and its `.lock` if present)
+3. Fast-forward main: `git update-ref refs/heads/main 71b2f12d0e2f79e6a6d496f07e1cb77d73369633`
+4. `git reset` (rebuild the stale index), `git status` should be clean apart from untracked probes
+5. `git push origin main` (clears the Phase 17+ backlog)
+6. Optional cleanup: `git branch -D p22c9`; ignore unreferenced commit `9387062` (an aborted duplicate;
+   `git gc` will collect it).
+
+NOTE: do NOT run `git gc`/`git prune` BEFORE step 3 — the cycle-9 commits are only reachable via `p22c9`.
+
+## UPDATE 2026-06-07 (cycle 10) — Phase 22 Task 4 committed to `p22c9`
+
+Cycle 10 added the Phase 22 Task 4 commit (calibrated seven-driver aggregation re-run) on top of
+branch `p22c9` via the same alt-`GIT_INDEX_FILE` workaround. The recovery checklist above still
+applies, with step 3 generalised (SHA-independent):
+
+3. Fast-forward main to the branch tip: `git update-ref refs/heads/main p22c9`
+   (or on Windows: `git rev-parse p22c9` then `git update-ref refs/heads/main <that SHA>`)
