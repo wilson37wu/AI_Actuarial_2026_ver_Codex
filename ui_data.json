@@ -1,9 +1,9 @@
 {
-  "contract_version": "1.3.0",
+  "contract_version": "1.4.0",
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-07T04:16:23.687532+00:00",
+    "generated_utc": "2026-06-07T10:13:02.053278+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -16,8 +16,8 @@
     "classification": "EDUCATIONAL ONLY -- NOT a regulatory capital model"
   },
   "summary": {
-    "tasks_completed": 104,
-    "tasks_total": 105,
+    "tasks_completed": 109,
+    "tasks_total": 110,
     "phases_completed": 19,
     "estimated_completion_pct": 99,
     "gates_cleared": 12,
@@ -25,8 +25,8 @@
     "risks_open": 1,
     "risks_mitigated": 10,
     "production_status": "NOT CLEARED FOR PRODUCTION",
-    "contract_artifacts": 42,
-    "calibrated_drivers": 10
+    "contract_artifacts": 46,
+    "calibrated_drivers": 11
   },
   "inventory": [
     {
@@ -354,6 +354,42 @@
       "headline": "PASS"
     },
     {
+      "id": "PHASE22_TASK1_OOS_REMEDIATION_REPORT",
+      "path": "docs/validation/PHASE22_TASK1_OOS_REMEDIATION_REPORT.json",
+      "category": "other",
+      "bytes": 17786,
+      "sha256": "c635a3c57126c0ed80ef2877b87f5fb3c11c8832f659d86900451b5f492e9714",
+      "mtime_utc": "2026-06-07T05:16:56Z",
+      "headline": ""
+    },
+    {
+      "id": "PHASE22_TASK2_7D_PROXY_VALIDATION_REPORT",
+      "path": "docs/validation/PHASE22_TASK2_7D_PROXY_VALIDATION_REPORT.json",
+      "category": "proxy_validation",
+      "bytes": 13221,
+      "sha256": "b775216d97b7c5e81340878cbe2f85e6d32d83cfab41ea2643a804d72d9b5685",
+      "mtime_utc": "2026-06-07T07:09:52Z",
+      "headline": ""
+    },
+    {
+      "id": "PHASE22_TASK3_LIQUIDITY_EXPOSURE_REPORT",
+      "path": "docs/validation/PHASE22_TASK3_LIQUIDITY_EXPOSURE_REPORT.json",
+      "category": "other",
+      "bytes": 7208,
+      "sha256": "b109cff65588311eb8fb44ebd08a5bf7a7b549f916519f1faa037fd38bfdd990",
+      "mtime_utc": "2026-06-07T08:25:03Z",
+      "headline": ""
+    },
+    {
+      "id": "PHASE22_TASK4_AGGREGATION_REPORT",
+      "path": "docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.json",
+      "category": "risk_aggregation",
+      "bytes": 25306,
+      "sha256": "72be26d7b8b96f00ea8d85573e3c1ab8b58363d318e54f39868a59562a0bc302",
+      "mtime_utc": "2026-06-07T09:14:22Z",
+      "headline": ""
+    },
+    {
       "id": "PROJECTION_REFERENCE_RUN",
       "path": "docs/validation/PROJECTION_REFERENCE_RUN.json",
       "category": "other",
@@ -426,9 +462,9 @@
     "credit_scr": 4713.865675437704,
     "lapse_scr": 22538.93657690868,
     "mortality_scr": 387.2000248782355,
-    "standalone_sum": 62407.5689696945,
+    "standalone_sum": 62389.301187088626,
     "correlated_scr": 47292.85,
-    "nested_scr": 48694.022628600025,
+    "nested_scr": 48707.43490332604,
     "diversification_benefit_formula": 53389.4085,
     "diversification_benefit_nested": 8233.6537,
     "component_loss_correlation": 0.3870458,
@@ -506,11 +542,11 @@
         1.0
       ]
     ],
-    "esg_understatement_pct": 40.45,
-    "formula_vs_nested_rel_error": 0.40452241053779375,
+    "esg_understatement_pct": 40.48,
+    "formula_vs_nested_rel_error": 0.40479539899136663,
     "esg_rate_equity_correlation": -0.15,
     "copula": {
-      "run_id": "copula-agg-0b663fe1",
+      "run_id": "copula-agg-5905b788",
       "verdict": "PARTIAL - copula aggregation evidence generated with review items",
       "drivers": [
         "rate",
@@ -521,9 +557,9 @@
         "fx",
         "liquidity"
       ],
-      "nested_scr": 48694.0226,
-      "var_covar_scr": 28996.1992,
-      "var_covar_rel_error_vs_nested": 0.404522,
+      "nested_scr": 48707.4349,
+      "var_covar_scr": 28990.8894,
+      "var_covar_rel_error_vs_nested": 0.404795,
       "standalone_scr": [
         14486.3199,
         15931.5559,
@@ -531,9 +567,9 @@
         22538.9366,
         387.2,
         4286.3699,
-        63.3211
+        45.0533
       ],
-      "standalone_scr_sum": 62407.569,
+      "standalone_scr_sum": 62389.3012,
       "realised_loss_correlation": [
         [
           1.0,
@@ -542,7 +578,7 @@
           0.1618376140146465,
           -0.030362006981267717,
           -0.1673015668209978,
-          -0.14864594387541802
+          -0.035653693158790314
         ],
         [
           0.5088878100052605,
@@ -551,7 +587,7 @@
           -0.047203615944372154,
           -0.16506753666442653,
           -0.10228586354408357,
-          0.10879339979262162
+          0.2634776159326854
         ],
         [
           0.8878723336825546,
@@ -560,7 +596,7 @@
           0.1506311175112681,
           -0.038878618390426445,
           -0.1312072093018077,
-          0.018418216055976978
+          0.15007085022033098
         ],
         [
           0.16183761401464647,
@@ -569,7 +605,7 @@
           1.0,
           0.06600443159184158,
           -0.17597717011317135,
-          -0.05643884711305155
+          -0.06687320954606928
         ],
         [
           -0.030362006981267713,
@@ -578,7 +614,7 @@
           0.06600443159184158,
           0.9999999999999999,
           0.01642021764472774,
-          0.10335583086303582
+          0.081739925352727
         ],
         [
           -0.1673015668209978,
@@ -587,15 +623,15 @@
           -0.17597717011317135,
           0.01642021764472774,
           1.0,
-          -0.10722125324165775
+          -0.11460088190871084
         ],
         [
-          -0.14864594387541802,
-          0.10879339979262162,
-          0.018418216055976978,
-          -0.05643884711305155,
-          0.10335583086303582,
-          -0.10722125324165775,
+          -0.035653693158790314,
+          0.2634776159326854,
+          0.15007085022033095,
+          -0.06687320954606928,
+          0.081739925352727,
+          -0.11460088190871083,
           1.0
         ]
       ],
@@ -604,158 +640,158 @@
         {
           "name": "gaussian",
           "n_params": 21,
-          "loglik": 180.5868,
-          "aic": -319.1736,
+          "loglik": 187.3387,
+          "aic": -332.6774,
           "upper_tail_dependence": 0.0,
           "params": {
             "correlation": [
               [
                 1.0,
-                0.5100164609374879,
-                0.8889420455976548,
-                0.17072757474834546,
-                0.005916588761979716,
-                -0.14545445036918667,
-                -0.14948828648912305
+                0.5100164609374884,
+                0.8889420455976542,
+                0.1707275747483455,
+                0.005916588761979448,
+                -0.14545445036918656,
+                -0.04339365014604125
               ],
               [
-                0.510016460937488,
+                0.5100164609374884,
                 1.0,
-                0.5462780044537353,
-                -0.028588150207344412,
-                -0.13606526369994806,
-                -0.10506787357003979,
-                0.09604464878404649
+                0.5462780044537359,
+                -0.028588150207345533,
+                -0.13606526369994817,
+                -0.10506787357003909,
+                0.2520195688582713
               ],
               [
-                0.8889420455976548,
-                0.5462780044537352,
+                0.8889420455976541,
+                0.5462780044537359,
                 1.0,
-                0.15799910787531818,
-                -0.0062661816671566945,
-                -0.11765203241040986,
-                0.016141270944703065
+                0.15799910787531793,
+                -0.0062661816671567405,
+                -0.11765203241040999,
+                0.14248762087460076
               ],
               [
                 0.1707275747483455,
-                -0.028588150207344447,
-                0.15799910787531818,
+                -0.02858815020734554,
+                0.15799910787531796,
                 1.0,
-                0.09155832399824981,
-                -0.1527119981077046,
-                -0.05129181393891281
+                0.09155832399825004,
+                -0.1527119981077051,
+                -0.059477595534496795
               ],
               [
-                0.0059165887619797115,
-                -0.13606526369994806,
-                -0.00626618166715671,
-                0.09155832399824988,
+                0.005916588761979441,
+                -0.1360652636999482,
+                -0.00626618166715675,
+                0.09155832399825002,
                 1.0,
-                0.014601853270014765,
-                0.08624233656193626
+                0.014601853270014427,
+                0.06498673926789991
               ],
               [
-                -0.14545445036918667,
-                -0.10506787357003976,
-                -0.11765203241040983,
-                -0.15271199810770464,
-                0.014601853270014809,
+                -0.14545445036918656,
+                -0.1050678735700391,
+                -0.11765203241041002,
+                -0.15271199810770514,
+                0.014601853270014425,
                 1.0,
-                -0.14508772401829514
+                -0.1560492786459769
               ],
               [
-                -0.14948828648912302,
-                0.09604464878404649,
-                0.016141270944703086,
-                -0.05129181393891281,
-                0.08624233656193625,
-                -0.14508772401829517,
+                -0.043393650146041275,
+                0.2520195688582713,
+                0.14248762087460076,
+                -0.05947759553449679,
+                0.06498673926789993,
+                -0.15604927864597692,
                 1.0
               ]
             ]
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117317.7052,
-            "var_liability": 158910.2986,
-            "es_liability": 162731.4924,
-            "scr_proxy": 41592.5934,
+            "mean_liability": 117317.3158,
+            "var_liability": 158921.5835,
+            "es_liability": 162738.7666,
+            "scr_proxy": 41604.2677,
             "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 41592.5934,
-          "scr_rel_error_vs_nested": 0.145838,
-          "diversification_benefit": 20814.9756
+          "aggregated_scr": 41604.2677,
+          "scr_rel_error_vs_nested": 0.145833,
+          "diversification_benefit": 20785.0335
         },
         {
           "name": "student_t",
           "n_params": 22,
-          "loglik": 177.2907,
-          "aic": -310.5814,
+          "loglik": 184.1462,
+          "aic": -324.2924,
           "upper_tail_dependence": 0.004586,
           "params": {
             "correlation": [
               [
                 1.0,
-                0.5559808788758446,
-                0.8927935918243628,
-                0.11925410113197915,
-                0.02222641947449137,
-                -0.1212156114234272,
-                -0.1104216540751302
+                0.5559808788758441,
+                0.892793591824362,
+                0.1192541011319786,
+                0.022226419474491686,
+                -0.12121561142342704,
+                -0.0027167827577375234
               ],
               [
-                0.5559808788758446,
+                0.5559808788758441,
                 1.0,
-                0.5879850458290623,
-                -0.020991805135309172,
-                -0.08412084089488903,
-                -0.11115803437777859,
-                0.11704684594200107
+                0.5879850458290629,
+                -0.02099180513530902,
+                -0.08412084089488894,
+                -0.11115803437777849,
+                0.272153498474185
               ],
               [
-                0.8927935918243628,
-                0.5879850458290624,
+                0.8927935918243621,
+                0.5879850458290629,
                 1.0,
-                0.1305261922200523,
-                0.019757158783946367,
-                -0.1266073016534903,
-                0.06417082092294628
+                0.13052619222005155,
+                0.019757158783946648,
+                -0.1266073016534907,
+                0.19072818045464296
               ],
               [
-                0.11925410113197918,
-                -0.02099180513530919,
-                0.13052619222005227,
+                0.11925410113197862,
+                -0.02099180513530903,
+                0.13052619222005152,
                 1.0,
-                0.09273127084763683,
-                -0.08977987160077061,
-                -0.06909944820287803
+                0.09273127084763666,
+                -0.08977987160077049,
+                -0.07673544495919438
               ],
               [
-                0.022226419474491374,
-                -0.08412084089488907,
-                0.01975715878394638,
-                0.09273127084763684,
+                0.022226419474491697,
+                -0.08412084089488896,
+                0.019757158783946644,
+                0.09273127084763669,
                 1.0,
-                0.04345488978562261,
-                0.10010614864718753
+                0.043454889785622675,
+                0.08362862035845726
               ],
               [
-                -0.12121561142342718,
-                -0.1111580343777786,
-                -0.12660730165349027,
-                -0.08977987160077057,
-                0.0434548897856226,
+                -0.12121561142342707,
+                -0.11115803437777849,
+                -0.12660730165349068,
+                -0.08977987160077049,
+                0.04345488978562269,
                 1.0,
-                -0.15106550628125937
+                -0.14984466068023425
               ],
               [
-                -0.1104216540751302,
-                0.11704684594200108,
-                0.06417082092294628,
-                -0.069099448202878,
-                0.10010614864718756,
-                -0.15106550628125928,
+                -0.00271678275773751,
+                0.272153498474185,
+                0.19072818045464296,
+                -0.07673544495919435,
+                0.08362862035845721,
+                -0.14984466068023425,
                 1.0
               ]
             ],
@@ -763,43 +799,43 @@
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117290.6636,
-            "var_liability": 159158.03,
-            "es_liability": 163531.4495,
-            "scr_proxy": 41867.3664,
+            "mean_liability": 117290.3045,
+            "var_liability": 159170.2784,
+            "es_liability": 163538.6109,
+            "scr_proxy": 41879.9739,
             "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 41867.3664,
-          "scr_rel_error_vs_nested": 0.140195,
-          "diversification_benefit": 20540.2025
+          "aggregated_scr": 41879.9739,
+          "scr_rel_error_vs_nested": 0.140173,
+          "diversification_benefit": 20509.3273
         },
         {
           "name": "survival_clayton",
           "n_params": 1,
-          "loglik": 4.9361,
-          "aic": -7.8722,
-          "upper_tail_dependence": 0.006865,
+          "loglik": 7.014,
+          "aic": -12.0279,
+          "upper_tail_dependence": 0.015056,
           "params": {
-            "theta": 0.1391504901018643,
-            "tau_bar": 0.06504941599281222
+            "theta": 0.16519413147442652,
+            "tau_bar": 0.0762952979934112
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117269.5414,
-            "var_liability": 159540.6009,
-            "es_liability": 164231.3077,
-            "scr_proxy": 42271.0595,
+            "mean_liability": 117265.1165,
+            "var_liability": 161105.1666,
+            "es_liability": 166048.5704,
+            "scr_proxy": 43840.0501,
             "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 42271.0595,
-          "scr_rel_error_vs_nested": 0.131905,
-          "diversification_benefit": 20136.5094
+          "aggregated_scr": 43840.0501,
+          "scr_rel_error_vs_nested": 0.099931,
+          "diversification_benefit": 18549.2511
         }
       ],
-      "reproducibility_digest": "cf099c770c7aae08ff8e83fd982f9fa8c8c800367ae72b892177b4ae26b74aac",
-      "duration_seconds": 1.5202,
+      "reproducibility_digest": "ba774c6c3a621e801d9353837e32f3b7b60a8cf16289b4eff9134bba55075244",
+      "duration_seconds": 2.9467,
       "config": {
         "n_sim": 200000,
         "seed": 55,
@@ -838,158 +874,158 @@
         {
           "name": "gaussian",
           "n_params": 21,
-          "loglik": 180.5868,
-          "aic": -319.1736,
+          "loglik": 187.3387,
+          "aic": -332.6774,
           "upper_tail_dependence": 0.0,
           "params": {
             "correlation": [
               [
                 1.0,
-                0.5100164609374879,
-                0.8889420455976548,
-                0.17072757474834546,
-                0.005916588761979716,
-                -0.14545445036918667,
-                -0.14948828648912305
+                0.5100164609374884,
+                0.8889420455976542,
+                0.1707275747483455,
+                0.005916588761979448,
+                -0.14545445036918656,
+                -0.04339365014604125
               ],
               [
-                0.510016460937488,
+                0.5100164609374884,
                 1.0,
-                0.5462780044537353,
-                -0.028588150207344412,
-                -0.13606526369994806,
-                -0.10506787357003979,
-                0.09604464878404649
+                0.5462780044537359,
+                -0.028588150207345533,
+                -0.13606526369994817,
+                -0.10506787357003909,
+                0.2520195688582713
               ],
               [
-                0.8889420455976548,
-                0.5462780044537352,
+                0.8889420455976541,
+                0.5462780044537359,
                 1.0,
-                0.15799910787531818,
-                -0.0062661816671566945,
-                -0.11765203241040986,
-                0.016141270944703065
+                0.15799910787531793,
+                -0.0062661816671567405,
+                -0.11765203241040999,
+                0.14248762087460076
               ],
               [
                 0.1707275747483455,
-                -0.028588150207344447,
-                0.15799910787531818,
+                -0.02858815020734554,
+                0.15799910787531796,
                 1.0,
-                0.09155832399824981,
-                -0.1527119981077046,
-                -0.05129181393891281
+                0.09155832399825004,
+                -0.1527119981077051,
+                -0.059477595534496795
               ],
               [
-                0.0059165887619797115,
-                -0.13606526369994806,
-                -0.00626618166715671,
-                0.09155832399824988,
+                0.005916588761979441,
+                -0.1360652636999482,
+                -0.00626618166715675,
+                0.09155832399825002,
                 1.0,
-                0.014601853270014765,
-                0.08624233656193626
+                0.014601853270014427,
+                0.06498673926789991
               ],
               [
-                -0.14545445036918667,
-                -0.10506787357003976,
-                -0.11765203241040983,
-                -0.15271199810770464,
-                0.014601853270014809,
+                -0.14545445036918656,
+                -0.1050678735700391,
+                -0.11765203241041002,
+                -0.15271199810770514,
+                0.014601853270014425,
                 1.0,
-                -0.14508772401829514
+                -0.1560492786459769
               ],
               [
-                -0.14948828648912302,
-                0.09604464878404649,
-                0.016141270944703086,
-                -0.05129181393891281,
-                0.08624233656193625,
-                -0.14508772401829517,
+                -0.043393650146041275,
+                0.2520195688582713,
+                0.14248762087460076,
+                -0.05947759553449679,
+                0.06498673926789993,
+                -0.15604927864597692,
                 1.0
               ]
             ]
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117317.7052,
-            "var_liability": 158910.2986,
-            "es_liability": 162731.4924,
-            "scr_proxy": 41592.5934,
+            "mean_liability": 117317.3158,
+            "var_liability": 158921.5835,
+            "es_liability": 162738.7666,
+            "scr_proxy": 41604.2677,
             "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 41592.5934,
-          "scr_rel_error_vs_nested": 0.145838,
-          "diversification_benefit": 20814.9756
+          "aggregated_scr": 41604.2677,
+          "scr_rel_error_vs_nested": 0.145833,
+          "diversification_benefit": 20785.0335
         },
         {
           "name": "student_t",
           "n_params": 22,
-          "loglik": 177.2907,
-          "aic": -310.5814,
+          "loglik": 184.1462,
+          "aic": -324.2924,
           "upper_tail_dependence": 0.004586,
           "params": {
             "correlation": [
               [
                 1.0,
-                0.5559808788758446,
-                0.8927935918243628,
-                0.11925410113197915,
-                0.02222641947449137,
-                -0.1212156114234272,
-                -0.1104216540751302
+                0.5559808788758441,
+                0.892793591824362,
+                0.1192541011319786,
+                0.022226419474491686,
+                -0.12121561142342704,
+                -0.0027167827577375234
               ],
               [
-                0.5559808788758446,
+                0.5559808788758441,
                 1.0,
-                0.5879850458290623,
-                -0.020991805135309172,
-                -0.08412084089488903,
-                -0.11115803437777859,
-                0.11704684594200107
+                0.5879850458290629,
+                -0.02099180513530902,
+                -0.08412084089488894,
+                -0.11115803437777849,
+                0.272153498474185
               ],
               [
-                0.8927935918243628,
-                0.5879850458290624,
+                0.8927935918243621,
+                0.5879850458290629,
                 1.0,
-                0.1305261922200523,
-                0.019757158783946367,
-                -0.1266073016534903,
-                0.06417082092294628
+                0.13052619222005155,
+                0.019757158783946648,
+                -0.1266073016534907,
+                0.19072818045464296
               ],
               [
-                0.11925410113197918,
-                -0.02099180513530919,
-                0.13052619222005227,
+                0.11925410113197862,
+                -0.02099180513530903,
+                0.13052619222005152,
                 1.0,
-                0.09273127084763683,
-                -0.08977987160077061,
-                -0.06909944820287803
+                0.09273127084763666,
+                -0.08977987160077049,
+                -0.07673544495919438
               ],
               [
-                0.022226419474491374,
-                -0.08412084089488907,
-                0.01975715878394638,
-                0.09273127084763684,
+                0.022226419474491697,
+                -0.08412084089488896,
+                0.019757158783946644,
+                0.09273127084763669,
                 1.0,
-                0.04345488978562261,
-                0.10010614864718753
+                0.043454889785622675,
+                0.08362862035845726
               ],
               [
-                -0.12121561142342718,
-                -0.1111580343777786,
-                -0.12660730165349027,
-                -0.08977987160077057,
-                0.0434548897856226,
+                -0.12121561142342707,
+                -0.11115803437777849,
+                -0.12660730165349068,
+                -0.08977987160077049,
+                0.04345488978562269,
                 1.0,
-                -0.15106550628125937
+                -0.14984466068023425
               ],
               [
-                -0.1104216540751302,
-                0.11704684594200108,
-                0.06417082092294628,
-                -0.069099448202878,
-                0.10010614864718756,
-                -0.15106550628125928,
+                -0.00271678275773751,
+                0.272153498474185,
+                0.19072818045464296,
+                -0.07673544495919435,
+                0.08362862035845721,
+                -0.14984466068023425,
                 1.0
               ]
             ],
@@ -997,53 +1033,104 @@
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117290.6636,
-            "var_liability": 159158.03,
-            "es_liability": 163531.4495,
-            "scr_proxy": 41867.3664,
+            "mean_liability": 117290.3045,
+            "var_liability": 159170.2784,
+            "es_liability": 163538.6109,
+            "scr_proxy": 41879.9739,
             "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 41867.3664,
-          "scr_rel_error_vs_nested": 0.140195,
-          "diversification_benefit": 20540.2025
+          "aggregated_scr": 41879.9739,
+          "scr_rel_error_vs_nested": 0.140173,
+          "diversification_benefit": 20509.3273
         },
         {
           "name": "survival_clayton",
           "n_params": 1,
-          "loglik": 4.9361,
-          "aic": -7.8722,
-          "upper_tail_dependence": 0.006865,
+          "loglik": 7.014,
+          "aic": -12.0279,
+          "upper_tail_dependence": 0.015056,
           "params": {
-            "theta": 0.1391504901018643,
-            "tau_bar": 0.06504941599281222
+            "theta": 0.16519413147442652,
+            "tau_bar": 0.0762952979934112
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117269.5414,
-            "var_liability": 159540.6009,
-            "es_liability": 164231.3077,
-            "scr_proxy": 42271.0595,
+            "mean_liability": 117265.1165,
+            "var_liability": 161105.1666,
+            "es_liability": 166048.5704,
+            "scr_proxy": 43840.0501,
             "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 42271.0595,
-          "scr_rel_error_vs_nested": 0.131905,
-          "diversification_benefit": 20136.5094
+          "aggregated_scr": 43840.0501,
+          "scr_rel_error_vs_nested": 0.099931,
+          "diversification_benefit": 18549.2511
         }
       ]
     },
     "var": 230879.3385,
     "es": 246336.757,
     "fx_scr": 4286.36987389994,
-    "liquidity_scr": 63.32111662161069,
-    "var_covar_scr": 28996.199216096866,
+    "liquidity_scr": 45.05333401574302,
+    "var_covar_scr": 28990.889357788157,
     "selected_copula": "gaussian",
-    "copula_scr": 41592.59337458981,
-    "copula_vs_nested_rel_error": 0.14583780247884578,
+    "copula_scr": 41604.26768737369,
+    "copula_vs_nested_rel_error": 0.14583332565245183,
     "rate_driver": "G2++ two-factor rates",
-    "liquidity_note": "Liquidity standalone SCR is small under the calibrated mean reversion (half-life 0.74y over a ~19y workout) \u2014 documented finding, verified CIR-affine-exact.",
-    "aggregation_source": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json",
+    "liquidity_note": "Liquidity inputs are G-LIQX-CALIBRATED: exposure notional 22000 replaces the 30,000 placeholder; the six couplings are estimated from a 1,200-month seeded joint synthesis (PSD-validated). The standalone liquidity SCR remains small under the calibrated mean reversion (half-life 0.74y over a ~19y workout) - documented finding, verified CIR-affine-exact.",
+    "aggregation_source": "docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.json",
+    "liquidity_exposure_notional": 22000.000000000004,
+    "liquidity_inputs_calibrated": true,
+    "calibrated_vs_placeholder": {
+      "baseline_available": true,
+      "baseline_report": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json",
+      "inputs_changed": {
+        "exposure_notional": {
+          "placeholder": 30000.0,
+          "calibrated": 22000.000000000004
+        },
+        "liquidity_couplings": "placeholder (0.05,-0.20,0.35,0.10,0.00,0.10) -> G-LIQX-estimated (see calibration_inputs)"
+      },
+      "standalone_scr_liquidity": {
+        "placeholder": 63.32111662161069,
+        "calibrated": 45.05333401574302
+      },
+      "var_covar_scr": {
+        "placeholder": 28996.199216096866,
+        "calibrated": 28990.889357788157,
+        "delta": -5.309858308708499,
+        "rel_delta": -0.00018312256268955413
+      },
+      "nested_scr": {
+        "placeholder": 48694.022628600025,
+        "calibrated": 48707.43490332604,
+        "delta": 13.412274726011674,
+        "rel_delta": 0.0002754398589804344
+      },
+      "copula_scr": {
+        "placeholder": 41592.59337458981,
+        "calibrated": 41604.26768737369,
+        "delta": 11.674312783885398,
+        "rel_delta": 0.0002806824926434521
+      },
+      "copula_selected": {
+        "placeholder": "gaussian",
+        "calibrated": "gaussian"
+      },
+      "esg_understatement_pct": {
+        "placeholder": 0.40452241053779375,
+        "calibrated": 0.40479539899136663,
+        "delta": 0.0002729884535728755,
+        "rel_delta": 0.0006748413597406137
+      },
+      "copula_vs_nested_rel_error": {
+        "placeholder": 0.14583780247884578,
+        "calibrated": 0.14583332565245183,
+        "delta": -4.476826393956523e-06,
+        "rel_delta": -3.0697297393835186e-05
+      }
+    },
     "aggregation_verdict": "PASS"
   },
   "tail": {
@@ -1058,45 +1145,45 @@
       200000
     ],
     "var_path": [
-      157568.28733461208,
-      158737.119495312,
-      158779.89760375375,
-      158802.31155431113,
-      158692.57394790556
+      157579.265677644,
+      158752.6624693435,
+      158774.46070023716,
+      158814.7140460453,
+      158700.79724452086
     ],
     "es_path": [
-      160929.4066601175,
-      162486.31018929003,
-      162631.6552114612,
-      163009.5468595338,
-      163072.79637352444
+      160937.09472533705,
+      162493.44146763507,
+      162638.21655119394,
+      163016.40628107454,
+      163080.19058895242
     ],
-    "final_var": 158692.57394790556,
-    "final_es": 163072.79637352444,
+    "final_var": 158700.79724452086,
+    "final_es": 163080.19058895242,
     "var_ci": [
-      158408.9792750866,
-      158955.63798746254
+      158421.16800779037,
+      158960.60090166263
     ],
     "es_ci": [
-      162715.841499317,
-      163390.16441038603
+      162722.27905225175,
+      163400.0943843199
     ],
     "var_point": 232210.8836,
     "es_point": 250090.8156,
-    "var_se": 138.54391446020693,
-    "es_se": 182.29788063592767,
-    "sobol_ratio": 3.594705227741833,
+    "var_se": 139.5248703125423,
+    "es_se": 182.3743982659845,
+    "sobol_ratio": 3.573766304862665,
     "antithetic_ratio": 0.7765,
     "bootstrap_n": 200,
     "grid_label": "copula simulations",
     "grid_note": "Convergence grid is the gaussian-copula simulation count (10k-200k, CRN prefixes), not nested outer scenarios; the honest small-sample nested CI (n_outer=160) is disclosed separately.",
     "nested_var_ci": [
-      155624.5069199171,
-      165796.2892126513
+      155619.1898218842,
+      165808.52450750157
     ],
     "nested_n_outer": 160,
     "nested_disclosure": "n_outer=160 is SMALL for a 99.5% quantile; the nested CI is wide by construction and is disclosed, not hidden \u2014 the copula-simulated study above carries the convergence evidence (IA TAS M 3.6.4).",
-    "source": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json"
+    "source": "docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.json"
   },
   "proxy": {
     "verdict": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)",
@@ -2551,6 +2638,90 @@
       }
     },
     {
+      "driver": "Liquidity exposure + couplings (G-LIQX)",
+      "gate_id": "G-LIQX",
+      "market": "HKD",
+      "params": {
+        "exposure_notional": 22000.000000000004,
+        "backing_asset_mv": 100000.0,
+        "illiquid_share": 0.55,
+        "forced_sale_fraction": 0.4,
+        "coupling_tolerance": 0.12,
+        "correlation7_psd": true
+      },
+      "gate_status": "PASS",
+      "gate_evidence": "HKD: n=1200, notional=22000, couplings={'liq_rate': -0.0794, 'liq_equity': -0.2935, 'liq_spread': 0.4579, 'liq_lapse': 0.1081, 'liq_mortality': 0.016, 'liq_fx':",
+      "is_placeholder": false,
+      "source": "docs/validation/PHASE22_TASK3_LIQUIDITY_EXPOSURE_REPORT.json",
+      "lineage_id": "LINLIQX_HKD_20260101",
+      "diagnostics": {
+        "method": "Exposure notional = backing MV x illiquid share x forced-sale fraction (lineage-checksummed fixture); couplings estimated from a 1,200-month seeded joint synthesis, recovered within 0.12 of documented targets; 7x7 PSD-validated; capital sensitivity bounded (net-diversifying finding)",
+        "n_obs": 1200,
+        "fit_r2": null,
+        "converged": null,
+        "criteria": [
+          {
+            "name": "c1 lineage checksum ok",
+            "ok": true
+          },
+          {
+            "name": "c2 exposure reproducible in band",
+            "ok": true
+          },
+          {
+            "name": "c3 couplings recovered within tol",
+            "ok": true
+          },
+          {
+            "name": "c4 correlation7 psd validator pass",
+            "ok": true
+          },
+          {
+            "name": "c5 sensitivity bounded",
+            "ok": true
+          },
+          {
+            "name": "c6 not placeholder with audit",
+            "ok": true
+          }
+        ],
+        "fit_bars": {
+          "title": "Estimated liquidity couplings (7x7 row)",
+          "unit": "corr",
+          "items": [
+            {
+              "label": "liq-rate",
+              "value": -0.079389
+            },
+            {
+              "label": "liq-equity",
+              "value": -0.293458
+            },
+            {
+              "label": "liq-spread",
+              "value": 0.45791
+            },
+            {
+              "label": "liq-lapse",
+              "value": 0.108092
+            },
+            {
+              "label": "liq-mortality",
+              "value": 0.016042
+            },
+            {
+              "label": "liq-fx",
+              "value": 0.106986
+            }
+          ],
+          "threshold": {
+            "label": "recovery tolerance",
+            "value": 0.12
+          }
+        }
+      }
+    },
+    {
       "driver": "Mortality trend (OU)",
       "gate_id": "G-MORT (n/a)",
       "market": "HK_PAR",
@@ -2585,9 +2756,9 @@
     }
   ],
   "governance": {
-    "audit_entries": 52,
+    "audit_entries": 59,
     "audit_integrity_ok": true,
-    "audit_verified": 52,
+    "audit_verified": 59,
     "audit_failed": 0,
     "change_records": [
       {
@@ -3515,6 +3686,140 @@
             "comments": "Owner review requested. PHASE 21 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
           }
         ]
+      },
+      {
+        "record_id": "6f88fd2a1fa449908a7cd8236ea30d33",
+        "title": "Phase 22 Task 1 - Six-driver OOS proxy-validation remediation (hardened)",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T05:16:56.348929+00:00",
+        "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+        "author": "AutomatedModelDev_Phase22",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 7 section 3.3",
+          "SOA ASOP 25 section 3.3",
+          "SOA ASOP 56 section 3.1.3/3.5",
+          "IA TAS M section 3.2/3.6",
+          "IFoA proxy-modelling working party",
+          "Longstaff & Schwartz (2001)",
+          "Solvency II Delegated Regulation Article 188/234"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T05:16:56.348946+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "PEER_REVIEW",
+            "comments": "Remediated six-driver OOS validation staged with slice-stable CRN; n_inner=1 bit-identity to the governed Phase 21 kernel regression-tested; credentialled calibration and independent review required before approval."
+          },
+          {
+            "timestamp": "2026-06-07T05:16:56.348956+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 22 Tasks 2-5 and credentialled calibration."
+          }
+        ]
+      },
+      {
+        "record_id": "5d68c9b6a7694031b325bbb03dca630f",
+        "title": "Phase 22 Task 2 - seven-driver LSMC proxy extension + OOS validation",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T07:09:52.850795+00:00",
+        "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+        "author": "AutomatedModelDev_Phase22",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 7 section 3.3",
+          "SOA ASOP 25 section 3.3",
+          "SOA ASOP 56 section 3.1.3/3.5",
+          "IA TAS M section 3.2/3.6",
+          "IFoA proxy-modelling working party",
+          "Longstaff & Schwartz (2001)",
+          "Duffie-Singleton (1999)",
+          "Solvency II Delegated Regulation Article 188/234"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T07:09:52.850810+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "PEER_REVIEW",
+            "comments": "Seven-driver proxy OOS validation staged with exact liquidity offset; credentialled liquidity exposure/coupling calibration remains pending."
+          },
+          {
+            "timestamp": "2026-06-07T07:09:52.850818+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 22 Tasks 3-5 and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "39b5c559fc63426b830660cd7595a297",
+        "title": "MR-011/MR-012: Liquidity exposure notional + 7x7 couplings calibrated (Phase 22 Task 3)",
+        "status": "OWNER_REVIEW",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T08:25:03.761777+00:00",
+        "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+        "author": "AutomatedModelDev_Phase22",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.4",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "Solvency II Delegated Reg. Art. 142",
+          "Solvency II Delegated Reg. Art. 234",
+          "IFoA APS X2 \u00a74.2"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T08:25:03.761817+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "PEER_REVIEW",
+            "comments": "Liquidity exposure notional made reproducible from documented inputs; couplings recovered within tolerance by the CIR transition-residual estimator; submitting for review."
+          },
+          {
+            "timestamp": "2026-06-07T08:25:03.761836+00:00",
+            "actor": "APS_X2_Independent_Reviewer",
+            "status": "OWNER_REVIEW",
+            "comments": "Derivation, estimator recovery, PSD validation, and bounded SCR sensitivity reviewed; reasonable for educational use. Final approval withheld pending credentialled data and a genuine independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "5a9934acc1c64f91a4c94c77a5ae37fc",
+        "title": "Phase 22 Task 4 - seven-driver aggregation re-run with calibrated liquidity exposure + couplings",
+        "status": "OWNER_REVIEW",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T09:14:22.447286+00:00",
+        "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+        "author": "AutomatedModelDev_Phase22",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.5/3.6",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "EIOPA volatility-adjustment methodology (illiquidity premium)",
+          "Duffie-Singleton 1999; Brigo-Mercurio 2006; L'Ecuyer 2018 (RQMC)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T09:14:22.447325+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "PEER_REVIEW",
+            "comments": "Calibrated-input seven-driver aggregation re-run with verified CRN slice reuse, copula re-aggregation, tail diagnostics, and placeholder-vs-calibrated delta quantification."
+          },
+          {
+            "timestamp": "2026-06-07T09:14:22.447345+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 22 Task 5 (UI propagation), credentialled market data, and APS X2 review."
+          }
+        ]
       }
     ],
     "deployment_gates": [
@@ -3754,7 +4059,7 @@
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
         "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
-        "updated_at": "2026-06-07T02:21:44.686993+00:00"
+        "updated_at": "2026-06-07T09:14:22.446879+00:00"
       },
       {
         "risk_id": "MR-011",
@@ -3768,7 +4073,7 @@
         "description": "The Phase 15 multi-driver (short-rate + equity) nested/LSMC economic-capital proxy (Tasks 1-4) is fitted on PLACEHOLDER HW1F / GBM parameters, omits material risk drivers (lapse, mortality/longevity trend, credit spread, FX, liquidity, management action), uses an educational single-guarantee liability, and has NOT been independently reviewed (APS X2). The 99.5% VaR/ES and SCR-proxy figures it produces are illustrative only and must not be used for regulatory or internal economic-capital reporting until parameters are calibrated to credentialled market data, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all multi-driver capital output as EDUCATIONAL ONLY in the limitation card and at the API boundary; bound proxy error by the Task 2 out-of-sample validation (OOS R^2=0.9704, VaR rel err 3.21%) and outer-sampling error by the Task 4 bootstrap CI (SE ~1.66%); benchmark every aggregated figure to the Task 3 nested ground truth. Residual closure requires credentialled-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008).",
         "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5",
-        "updated_at": "2026-06-07T01:18:49.182068+00:00"
+        "updated_at": "2026-06-07T08:25:03.762431+00:00"
       },
       {
         "risk_id": "MR-012",
@@ -3782,7 +4087,7 @@
         "description": "Phase 17 adds a CIR++ mean-reverting credit-spread driver (par_model_v2/stochastic/credit_spread.py) as the third risk factor in the nested/LSMC economic-capital proxy (rate + equity + credit-spread), with a reduced-form hazard x LGD credit-loss component on spread-sensitive backing assets. The CIR++ parameters (mean-reversion, long-run spread, vol, risk premium) and the hazard/LGD assumptions are PLACEHOLDER educational defaults, NOT calibrated to credentialled credit-market data; the trivariate LSMC surface still omits material drivers (lapse, mortality/longevity trend, FX, liquidity, management action) and has NOT been independently reviewed (APS X2). The three-driver 99.5% VaR/ES and SCR-proxy figures are illustrative only and must not be used for regulatory or internal economic-capital reporting until the credit parameters are calibrated, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
         "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
-        "updated_at": "2026-06-07T02:21:44.687035+00:00"
+        "updated_at": "2026-06-07T09:14:22.447046+00:00"
       },
       {
         "risk_id": "MR-013",
@@ -3809,14 +4114,14 @@
     {
       "key": "aggregation",
       "label": "Correlated risk aggregation",
-      "verdict": "PASS - seven-driver copula aggregation (selected: gaussian) reconciles to nested capital within 14.6% vs var-covar understatement 40.5%; MR-010 seven-driver mitigation confirmed",
-      "source": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json"
+      "verdict": "PASS - seven-driver copula aggregation (selected: gaussian) with G-LIQX-CALIBRATED liquidity exposure + couplings reconciles to nested capital within 14.6% vs var-covar understatement 40.5%; MR-010 re-confirmed and mitigated",
+      "source": "docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.json"
     },
     {
       "key": "tail",
       "label": "Tail convergence & stability",
-      "verdict": "PASS - seven-driver 99.5% capital metric converges (copula-simulated), is bounded by simulated and honest small-sample nested bootstrap CIs, and benefits from Sobol-RQMC variance reduction",
-      "source": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json"
+      "verdict": "PASS - seven-driver 99.5% capital metric (G-LIQX-CALIBRATED liquidity inputs) converges (copula-simulated), is bounded by simulated and honest small-sample nested bootstrap CIs, and benefits from Sobol-RQMC variance reduction",
+      "source": "docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.json"
     },
     {
       "name": "G-MART market-consistency gate",
@@ -3837,10 +4142,10 @@
       "source": "docs/validation/PHASE21_TASK1_FX_DRIVER_REPORT.json"
     },
     {
-      "name": "Six-driver OOS proxy validation (FX included)",
-      "verdict": "PARTIAL",
-      "evidence": "PARTIAL \u2014 OOS R^2 0.9498 < 0.95",
-      "source": "docs/validation/PHASE21_TASK2_OOS_VALIDATION_REPORT.json"
+      "name": "Six-driver OOS proxy validation (REMEDIATED, Phase 22 Task 1)",
+      "verdict": "PASS",
+      "evidence": "Remediation: inner 96->256, staged-CRN outer uplift, targeted deg-2 basis; OOS R2=0.9985, max |rel err| 2.02%, overfit gap -0.0008 - prior honest PARTIAL superseded",
+      "source": "docs/validation/PHASE22_TASK1_OOS_REMEDIATION_REPORT.json"
     },
     {
       "name": "G-LIQ liquidity-calibration gate (7th driver)",
@@ -3849,10 +4154,22 @@
       "source": "docs/validation/PHASE21_TASK3_LIQUIDITY_CALIBRATION_REPORT.json"
     },
     {
-      "name": "Seven-driver tail-dependent capital aggregation",
+      "name": "Seven-driver capital aggregation (G-LIQX-CALIBRATED inputs, Phase 22 Task 4)",
       "verdict": "PASS",
-      "evidence": "var-covar understates nested by 40.5%; copula rel err 14.6%; tail diagnostics converged",
-      "source": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json"
+      "evidence": "Calibrated re-run: var-covar understates nested by 40.5%; copula rel err 14.6%; tail diagnostics re-run converged; capital impact of calibration bounded (liquidity SCR 63.5->45.1)",
+      "source": "docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.json"
+    },
+    {
+      "name": "Seven-driver OOS proxy validation (liquidity included)",
+      "verdict": "PASS",
+      "evidence": "PASS - seven-driver surface (analytic, deg 3, max_int 2, 46 terms) validated OOS (R2=0.9985, VaR/ES/SCR rel err 0.51%/0.18%/1.26%, liquidity offset exact, leakage-free)",
+      "source": "docs/validation/PHASE22_TASK2_7D_PROXY_VALIDATION_REPORT.json"
+    },
+    {
+      "name": "G-LIQX liquidity exposure + coupling calibration gate",
+      "verdict": "PASS",
+      "evidence": "HKD: n=1200, notional=22000, couplings={'liq_rate': -0.0794, 'liq_equity': -0.2935, 'liq_spread': 0.4579, 'liq_lapse': 0.1081, 'liq_mortality': 0.016, 'liq_fx':",
+      "source": "docs/validation/PHASE22_TASK3_LIQUIDITY_EXPOSURE_REPORT.json"
     }
   ]
 }

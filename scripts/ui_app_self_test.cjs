@@ -123,8 +123,12 @@ setTimeout(() => {
     gfxPresent: /G-FX/.test(bodyText),
     gliqPresent: /G-LIQ/.test(bodyText),
     sevenDriverCapitalPresent: /Seven-driver economic-capital aggregation/.test(bodyText),
-    sevenDriverVerdictPresent: /Seven-driver tail-dependent capital aggregation/.test(bodyText),
+    sevenDriverVerdictPresent: /Seven-driver (tail-dependent capital aggregation|capital aggregation \(G-LIQX-CALIBRATED)/.test(bodyText),
     oosPartialVerdictPresent: /Six-driver OOS proxy validation/.test(bodyText),
+    gliqxPanelPresent: /G-LIQX/.test(bodyText),
+    oosRemediatedPresent: /REMEDIATED, Phase 22 Task 1/.test(bodyText),
+    sevenDriverOosPassPresent: /Seven-driver OOS proxy validation/.test(bodyText),
+    calibratedLiquidityPresent: /G-LIQX-CALIBRATED/.test(bodyText),
     fxScrCardPresent: /FX SCR/.test(bodyText),
     liquidityScrCardPresent: /Liquidity SCR/.test(bodyText),
     nestedDisclosurePresent: /Honest small-sample disclosure/.test(bodyText),
@@ -173,6 +177,10 @@ setTimeout(() => {
     checks.sevenDriverCapitalPresent &&
     checks.sevenDriverVerdictPresent &&
     checks.oosPartialVerdictPresent &&
+    checks.gliqxPanelPresent &&
+    checks.oosRemediatedPresent &&
+    checks.sevenDriverOosPassPresent &&
+    checks.calibratedLiquidityPresent &&
     checks.fxScrCardPresent &&
     checks.liquidityScrCardPresent &&
     checks.nestedDisclosurePresent &&

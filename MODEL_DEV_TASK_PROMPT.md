@@ -1212,3 +1212,56 @@ keep consuming ONLY model output JSON, no pre-installation requirement).
 **Standing blockers (human action):** GitHub push (see GITHUB_PUSH_BLOCKER.md); production
 sign-off residual (credentialled data + independent APS X2 review) — by design for this
 educational model.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-07 (cycle 11, supersedes everything above)
+
+**PHASE 22 COMPLETE (Tasks 1–5).** Task 5 (this cycle): offline-UI propagation — `ui_data.json`
+contract bumped additively **1.3.0 → 1.4.0**; the UI now surfaces (a) the Task 1 six-driver OOS
+REMEDIATED PASS (R2 0.9985, replacing the displayed honest PARTIAL), (b) the Task 2 seven-driver
+OOS PASS, (c) the Task 3 **G-LIQX** calibrated exposure notional (22,000) + couplings as a
+first-class calibration panel, and (d) the Task 4 calibrated aggregation/tail read-outs
+(liquidity SCR 45.1, var-covar 28,991, gaussian copula 41,604, nested 48,707; MR-010 40.5%
+understatement) with calibrated-vs-placeholder deltas embedded. Capital/tail loaders prefer
+`PHASE22_TASK4_AGGREGATION_REPORT.json` with Phase 21 fallback. `viewer_data.json` rebuilt;
+self-test extended (+4 Phase 22 checks) → **ok:true, 0 network / 0 JS errors (56 checks)**.
+ChangeRecord `880aeb5d621645c9adc8d2eb1f2ea88a` OWNER_REVIEW; audit 59→60, changes 32→33,
+verify_all True. 16 new tests; regression **187 PASS / 0 FAIL**. Evidence:
+`docs/validation/PHASE22_TASK5_UI_PROPAGATION_REPORT.{json,md}`.
+
+**NEXT executable task: Phase 23 Task 1 — research + design note** for the new phase
+**"Phase 23: Tail-Dependence Upgrade + Management Actions"** (already set as `current_phase` in
+`.claude-dev/MODEL_DEV_STATE.json`), the further stochastic-model improvement researched per the
+scheduled-task standing instruction:
+
+1. **Student-t copula aggregation** — the selected gaussian copula has ZERO tail dependence,
+   which is the documented residual behind MR-010 (it reconciles to nested within 14.6% but
+   cannot capture joint-tail clustering). Calibrate the t-copula df by matching the empirical
+   joint-tail-dependence coefficient of the nested outer loss sample (the 7D CRN slices in
+   `/var/tmp/p21t4_stage` can be reused if intact — verify bit-identity first); compare
+   gaussian vs t vs nested; refresh MR-010. Candidate evidence: copula goodness-of-fit on the
+   PIT-transformed outer sample (tests exist in `par_model_v2/aggregation`).
+2. **Management-action driver** — ERM standards (and the Phase 2 standards block above) require
+   management-action risk; the par product currently has NO dynamic bonus response. Design a
+   governed rule: reversionary-bonus participation cut when the solvency ratio breaches a
+   trigger (with policyholder-reasonable-expectation floor), entering the NESTED ground truth
+   liability and the LSMC proxy (new basis features), then seven-driver OOS re-validation.
+   Document as design note first (Task 1 deliverable), implement in Tasks 2–4, UI in Task 5.
+
+Design-note deliverable: `docs/PHASE23_DESIGN_NOTE.md` + ChangeRecord (assumption_change,
+OWNER_REVIEW) + state/log updates. One task per cycle; keep walls <45 s; stage long runs.
+
+**Sandbox operating rules (CONFIRMED AGAIN cycle 11):**
+1. ~44 s hard wall per bash call; stage long computations; background `nohup` does NOT survive
+   the call boundary — poll via artifacts written by staged scripts instead.
+2. Python/pytest/scipy/pandas live in `/var/tmp/pylibs` — run with `PYTHONPATH=/var/tmp/pylibs:.`.
+3. Windows-side file-tool writes of LONG files silently truncate on sync — write long repo files
+   via bash heredoc/python and ALWAYS verify with `ast.parse`/`json.loads`/`cmp`.
+4. Git ghost locks persist — commit with the alt-`GIT_INDEX_FILE` workaround onto branch `p22c9`
+   (updating `main` is blocked by `refs/heads/main.lock`); push `p22c9:main`; see
+   GITHUB_PUSH_BLOCKER.md checklist.
+
+**Standing blockers (human action):** delete the three git ghost locks (see GITHUB_PUSH_BLOCKER.md);
+production sign-off residual (credentialled data + independent APS X2 review) — by design for
+this educational model.

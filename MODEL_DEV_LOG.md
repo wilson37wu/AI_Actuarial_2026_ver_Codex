@@ -7538,3 +7538,72 @@ re-run aggregation read-outs, and the Task 2 7D OOS PASS in `scripts/build_ui_da
 
 **Blockers:** git ghost locks persist (commit via alt-index/branch workaround; see
 GITHUB_PUSH_BLOCKER.md); `git push origin main` still needs human action.
+
+---
+
+## 2026-06-07 (cycle 11) — Phase 22 Task 5 COMPLETE (PASS) → **PHASE 22 COMPLETE (Tasks 1–5)**
+
+**Task:** Offline-UI propagation of the Phase 22 hardening results + PHASE 22 COMPLETE documentation.
+
+**What was done:**
+- `scripts/build_ui_data.py` contract bumped **additively 1.3.0 → 1.4.0**:
+  - `_build_capital`/`_build_tail` now PREFER `PHASE22_TASK4_AGGREGATION_REPORT.json` (calibrated
+    liquidity inputs) over the Phase 21 placeholder-input report, with fallback preserved; the
+    capital section adds `liquidity_exposure_notional` (22,000), `liquidity_inputs_calibrated`,
+    the embedded `calibrated_vs_placeholder` delta block, and a G-LIQX-CALIBRATED liquidity note.
+  - `_build_calibrations` adds a first-class **G-LIQX** calibration-explorer panel (exposure
+    notional decomposition, six estimated couplings as bars with the 0.12 recovery tolerance,
+    6/6 criteria, lineage, `is_placeholder=false`).
+  - `_build_verdicts`: the displayed six-driver OOS **PARTIAL** is replaced by the Task 1
+    **REMEDIATED PASS** (OOS R2=0.9985, max |rel err| 2.02%); new verdicts for the Task 2
+    seven-driver OOS PASS and the G-LIQX gate; the seven-driver aggregation verdict + keyed
+    headline aggregation/tail verdicts now carry the G-LIQX-CALIBRATED wording and Phase 22
+    numbers (var-covar understatement 40.5%, copula rel err 14.6%).
+- `viewer_data.json` rebuilt so governance reflects the live store (32 change records at build).
+- `scripts/ui_app_self_test.cjs` extended: 4 new Phase 22 checks (gliqxPanelPresent,
+  oosRemediatedPresent, sevenDriverOosPassPresent, calibratedLiquidityPresent); the
+  seven-driver-verdict regex accepts the calibrated wording.
+- New `scripts/build_phase22_task5_ui_propagation.py`: 21 read-only contract checks (ALL PASS) +
+  jsdom self-test gate + governance. Note: the self-test inside the wrapper was fed this cycle's
+  cached jsdom result (run on the byte-identical `ui_app.html`, sha-verified) because the
+  combined run exceeds the ~44 s sandbox wall; the standalone self-test run is the evidence.
+
+**Results:**
+- `ui_data.json`/`ui_app.html` (46 artifacts, 11 calibration panels): jsdom self-test **ok:true,
+  0 network / 0 JS errors over 56 checks**; external-reference scan clean.
+- Evidence report `docs/validation/PHASE22_TASK5_UI_PROPAGATION_REPORT.{json,md}` — verdict PASS,
+  **PHASE 22 COMPLETE (Tasks 1–5)**.
+
+**Governance:** ChangeRecord `880aeb5d621645c9adc8d2eb1f2ea88a` (code_change) OWNER_REVIEW;
+audit entries 59→60; change records 32→33; audit verify_all True.
+
+**Verification:** `tests/test_phase22_task5_ui_propagation.py` **16 passed** (contract bump,
+Task 1-4 surfacing, offline/no-external-ref, report + governance integrity). Regression:
+phase22 t1+t2 28 + t3+t4 28 + governance/p21-t4 67 + p21 liquidity 37 + p21 fx 11 = **187 PASS /
+0 FAIL**. ast.parse/py_compile/json.loads clean; off-mount build + cp + cmp write protocol observed.
+
+**PHASE 22 ROLL-UP (Tasks 1–5):** T1 six-driver OOS remediation PASS (R2 0.9985); T2 seven-driver
+OOS validation PASS (VaR/ES/SCR rel err 0.51%/0.18%/1.26%); T3 G-LIQX exposure+coupling
+calibration PASS (placeholders retired); T4 calibrated aggregation re-run PASS (MR-010
+re-confirmed, tail re-run converged); T5 offline-UI propagation PASS. MR-010/MR-011/MR-012
+MITIGATED. Production sign-off still withheld by design (credentialled data + APS X2 review).
+
+**Next Step (Phase 23, researched this cycle):** Tail-Dependence Upgrade + Management Actions —
+Task 1: research/design note for (i) replacing gaussian-only copula aggregation with a calibrated
+Student-t alternative (df by tail-dependence matching; addresses the known gaussian
+zero-tail-dependence limitation behind MR-010's residual) and (ii) a management-action (dynamic
+reversionary-bonus cut under solvency stress) rule per ERM management-action-risk standards,
+to enter the nested ground truth + proxy with OOS re-validation. UI keeps consuming ONLY model
+output JSON (zero install).
+
+**Industry Standards Progress:**
+- SOA ASOP 41 s3.2 / ASOP 56 s3.5: validated results communicated through the governed offline
+  UI with verdict provenance (every read-out carries its source report path).
+- IA TAS M s3.6: reproducibility — UI is a pure function of persisted model-output JSONs;
+  contract version + self-test evidence recorded.
+- Honest disclosures preserved: educational classification banner, small-liquidity-SCR finding,
+  nested small-sample CI, calibrated-vs-placeholder deltas shown rather than overwritten.
+
+**Blockers:** git ghost locks persist (commit via alt-index/branch `p22c9` workaround); local
+`main` ref still stale behind `refs/heads/main.lock`; `git push` of new commits needs the
+GITHUB_PUSH_BLOCKER.md checklist if the remote rejects.

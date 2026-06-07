@@ -32,8 +32,8 @@
     }
   ],
   "summary": {
-    "tasks_completed": 104,
-    "tasks_total": 105,
+    "tasks_completed": 109,
+    "tasks_total": 110,
     "phases_completed": 19,
     "estimated_completion_pct": 99,
     "gates_cleared": 12,
@@ -1087,9 +1087,9 @@
     ]
   },
   "governance": {
-    "audit_entries": 52,
+    "audit_entries": 59,
     "audit_integrity_ok": true,
-    "audit_verified": 52,
+    "audit_verified": 59,
     "audit_failed": 0,
     "change_records": [
       {
@@ -2017,6 +2017,140 @@
             "comments": "Owner review requested. PHASE 21 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
           }
         ]
+      },
+      {
+        "record_id": "6f88fd2a1fa449908a7cd8236ea30d33",
+        "title": "Phase 22 Task 1 - Six-driver OOS proxy-validation remediation (hardened)",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T05:16:56.348929+00:00",
+        "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+        "author": "AutomatedModelDev_Phase22",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 7 section 3.3",
+          "SOA ASOP 25 section 3.3",
+          "SOA ASOP 56 section 3.1.3/3.5",
+          "IA TAS M section 3.2/3.6",
+          "IFoA proxy-modelling working party",
+          "Longstaff & Schwartz (2001)",
+          "Solvency II Delegated Regulation Article 188/234"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T05:16:56.348946+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "PEER_REVIEW",
+            "comments": "Remediated six-driver OOS validation staged with slice-stable CRN; n_inner=1 bit-identity to the governed Phase 21 kernel regression-tested; credentialled calibration and independent review required before approval."
+          },
+          {
+            "timestamp": "2026-06-07T05:16:56.348956+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 22 Tasks 2-5 and credentialled calibration."
+          }
+        ]
+      },
+      {
+        "record_id": "5d68c9b6a7694031b325bbb03dca630f",
+        "title": "Phase 22 Task 2 - seven-driver LSMC proxy extension + OOS validation",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T07:09:52.850795+00:00",
+        "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+        "author": "AutomatedModelDev_Phase22",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 7 section 3.3",
+          "SOA ASOP 25 section 3.3",
+          "SOA ASOP 56 section 3.1.3/3.5",
+          "IA TAS M section 3.2/3.6",
+          "IFoA proxy-modelling working party",
+          "Longstaff & Schwartz (2001)",
+          "Duffie-Singleton (1999)",
+          "Solvency II Delegated Regulation Article 188/234"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T07:09:52.850810+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "PEER_REVIEW",
+            "comments": "Seven-driver proxy OOS validation staged with exact liquidity offset; credentialled liquidity exposure/coupling calibration remains pending."
+          },
+          {
+            "timestamp": "2026-06-07T07:09:52.850818+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 22 Tasks 3-5 and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "39b5c559fc63426b830660cd7595a297",
+        "title": "MR-011/MR-012: Liquidity exposure notional + 7x7 couplings calibrated (Phase 22 Task 3)",
+        "status": "OWNER_REVIEW",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T08:25:03.761777+00:00",
+        "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+        "author": "AutomatedModelDev_Phase22",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 §3.1.3",
+          "SOA ASOP 56 §3.4",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.4",
+          "IA TAS M §3.5",
+          "IA TAS M §3.6",
+          "Solvency II Delegated Reg. Art. 142",
+          "Solvency II Delegated Reg. Art. 234",
+          "IFoA APS X2 §4.2"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T08:25:03.761817+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "PEER_REVIEW",
+            "comments": "Liquidity exposure notional made reproducible from documented inputs; couplings recovered within tolerance by the CIR transition-residual estimator; submitting for review."
+          },
+          {
+            "timestamp": "2026-06-07T08:25:03.761836+00:00",
+            "actor": "APS_X2_Independent_Reviewer",
+            "status": "OWNER_REVIEW",
+            "comments": "Derivation, estimator recovery, PSD validation, and bounded SCR sensitivity reviewed; reasonable for educational use. Final approval withheld pending credentialled data and a genuine independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "5a9934acc1c64f91a4c94c77a5ae37fc",
+        "title": "Phase 22 Task 4 - seven-driver aggregation re-run with calibrated liquidity exposure + couplings",
+        "status": "OWNER_REVIEW",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T09:14:22.447286+00:00",
+        "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+        "author": "AutomatedModelDev_Phase22",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.5/3.6",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "EIOPA volatility-adjustment methodology (illiquidity premium)",
+          "Duffie-Singleton 1999; Brigo-Mercurio 2006; L'Ecuyer 2018 (RQMC)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T09:14:22.447325+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "PEER_REVIEW",
+            "comments": "Calibrated-input seven-driver aggregation re-run with verified CRN slice reuse, copula re-aggregation, tail diagnostics, and placeholder-vs-calibrated delta quantification."
+          },
+          {
+            "timestamp": "2026-06-07T09:14:22.447345+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 22 Task 5 (UI propagation), credentialled market data, and APS X2 review."
+          }
+        ]
       }
     ],
     "deployment_gates": [
@@ -2256,7 +2390,7 @@
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
         "related_standard": "SOA ASOP 56 §3.5; IA TAS M §3.6; SOA ASOP 25 §3.3",
-        "updated_at": "2026-06-07T02:21:44.686993+00:00"
+        "updated_at": "2026-06-07T09:14:22.446879+00:00"
       },
       {
         "risk_id": "MR-011",
@@ -2270,7 +2404,7 @@
         "description": "The Phase 15 multi-driver (short-rate + equity) nested/LSMC economic-capital proxy (Tasks 1-4) is fitted on PLACEHOLDER HW1F / GBM parameters, omits material risk drivers (lapse, mortality/longevity trend, credit spread, FX, liquidity, management action), uses an educational single-guarantee liability, and has NOT been independently reviewed (APS X2). The 99.5% VaR/ES and SCR-proxy figures it produces are illustrative only and must not be used for regulatory or internal economic-capital reporting until parameters are calibrated to credentialled market data, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all multi-driver capital output as EDUCATIONAL ONLY in the limitation card and at the API boundary; bound proxy error by the Task 2 out-of-sample validation (OOS R^2=0.9704, VaR rel err 3.21%) and outer-sampling error by the Task 4 bootstrap CI (SE ~1.66%); benchmark every aggregated figure to the Task 3 nested ground truth. Residual closure requires credentialled-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008).",
         "related_standard": "IA TAS M §3.6; APS X2 §3; SOA ASOP 56 §3.5",
-        "updated_at": "2026-06-07T01:18:49.182068+00:00"
+        "updated_at": "2026-06-07T08:25:03.762431+00:00"
       },
       {
         "risk_id": "MR-012",
@@ -2284,7 +2418,7 @@
         "description": "Phase 17 adds a CIR++ mean-reverting credit-spread driver (par_model_v2/stochastic/credit_spread.py) as the third risk factor in the nested/LSMC economic-capital proxy (rate + equity + credit-spread), with a reduced-form hazard x LGD credit-loss component on spread-sensitive backing assets. The CIR++ parameters (mean-reversion, long-run spread, vol, risk premium) and the hazard/LGD assumptions are PLACEHOLDER educational defaults, NOT calibrated to credentialled credit-market data; the trivariate LSMC surface still omits material drivers (lapse, mortality/longevity trend, FX, liquidity, management action) and has NOT been independently reviewed (APS X2). The three-driver 99.5% VaR/ES and SCR-proxy figures are illustrative only and must not be used for regulatory or internal economic-capital reporting until the credit parameters are calibrated, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
         "related_standard": "IA TAS M §3.6; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3",
-        "updated_at": "2026-06-07T02:21:44.687035+00:00"
+        "updated_at": "2026-06-07T09:14:22.447046+00:00"
       },
       {
         "risk_id": "MR-013",

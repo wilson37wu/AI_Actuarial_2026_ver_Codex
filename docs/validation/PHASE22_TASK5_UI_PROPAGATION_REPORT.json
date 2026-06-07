@@ -1,0 +1,63 @@
+{
+  "task": "Phase 22 Task 5 - offline-UI propagation",
+  "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+  "generated_utc": "2026-06-07T10:18:59.596798+00:00",
+  "verdict": "PASS",
+  "phase22_status": "COMPLETE (Tasks 1-5)",
+  "ui_contract_checks": {
+    "contract_version": "1.4.0",
+    "contract_is_1_4_0": true,
+    "n_drivers_seven": true,
+    "aggregation_source_phase22": true,
+    "liquidity_inputs_calibrated_flag": true,
+    "calibrated_notional_22000": true,
+    "calibrated_vs_placeholder_panel": true,
+    "liquidity_scr_calibrated_45": true,
+    "var_covar_scr_present": true,
+    "copula_scr_present": true,
+    "nested_scr_present": true,
+    "gliqx_calibration_record": true,
+    "gliqx_not_placeholder": true,
+    "tail_source_phase22": true,
+    "tail_converged": true,
+    "oos_remediated_pass_listed": true,
+    "no_stale_six_driver_partial": true,
+    "seven_driver_oos_pass_listed": true,
+    "gliqx_verdict_listed": true,
+    "calibrated_aggregation_listed": true,
+    "headline_aggregation_calibrated": true,
+    "all_passed": true,
+    "capital_readouts": {
+      "liquidity_scr": 45.05333401574302,
+      "liquidity_exposure_notional": 22000.000000000004,
+      "var_covar_scr": 28990.889357788157,
+      "copula_scr": 41604.26768737369,
+      "nested_scr": 48707.43490332604,
+      "selected_copula": "gaussian"
+    }
+  },
+  "self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 56,
+    "failed_checks": [],
+    "phase22_checks": {
+      "gliqxPanelPresent": true,
+      "oosRemediatedPresent": true,
+      "sevenDriverOosPassPresent": true,
+      "calibratedLiquidityPresent": true,
+      "sevenDriverVerdictPresent": true,
+      "driverBars": 7
+    },
+    "evidence_note": "jsdom self-test executed this cycle on the identical ui_app.html (sha-verified unchanged); result cached to fit the sandbox wall"
+  },
+  "governance": {
+    "added_change_record": true,
+    "change_record_id": "880aeb5d621645c9adc8d2eb1f2ea88a",
+    "change_record_status": "OWNER_REVIEW",
+    "audit_entries": "59->60",
+    "change_records": "32->33",
+    "audit_integrity_verify_all": true
+  }
+}
