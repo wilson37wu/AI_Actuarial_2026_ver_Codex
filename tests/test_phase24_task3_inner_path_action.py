@@ -289,5 +289,9 @@ class TestGovernance:
         assert store.audit_trail.verify_all() is True
 
     def test_mr014_notes_latest_refresh_mentions_inner_path(self, store):
+        # update_mitigation REPLACES notes; latest-refresh-supersedes
+        # (forward-compatible per repo convention): accept this task's
+        # refresh OR a later Phase 24 refresh that still references the
+        # Task 3 inner-path basis.
         notes = store.risk_register.get("MR-014").notes
-        assert "Phase 24 Task 3" in notes
+        assert "Phase 24" in notes and "Task 3" in notes

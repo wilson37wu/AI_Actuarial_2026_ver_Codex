@@ -1562,6 +1562,30 @@
       "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
       "digest": "9a86bd403168d81722b792b4dc6c99c490ee117931bef36ea42ecba90c7ded1e",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "bbb28ce6477a4d258a0c1eca20e7e943",
+      "timestamp": "2026-06-07T19:20:54.458212+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "AutomatedModelDev_Phase24",
+      "description": "Model run p24t4-taildiag-dd89036a: PASS",
+      "details": {
+        "run_id": "p24t4-taildiag-dd89036a",
+        "scenario_count": 200000,
+        "duration_seconds": 0.0,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/joint_action_tail_diagnostics.py",
+          "scripts/build_phase24_task4_joint_action_tail_diagnostics.py",
+          "tests/test_phase24_task4_joint_action_tail_diagnostics.py",
+          "docs/JOINT_ACTION_TAIL_DIAGNOSTICS_CARD.md",
+          "docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+        ],
+        "test_summary": "delta matrix complete (4 levels x 3 bases); vc understatement 56.4%/53.5%; sat995 100.0%; boot SE 5.8%; gates 3/3 PASS"
+      },
+      "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+      "digest": "75a999865b79ba0dd278b41e4fdd89fe20ae69f7bbfe58a8b079617670377741",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -4190,6 +4214,71 @@
         }
       ],
       "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"
+    },
+    {
+      "record_id": "d323ab685a4840169be0a1028e0721b9",
+      "created_at": "2026-06-07T19:20:54.458156+00:00",
+      "title": "Phase 24 Task 4 - joint-action tail diagnostics + with-vs-without / joint-vs-standalone capital-delta matrix",
+      "description": "Joint-action tail diagnostics + capital-delta matrix per the Phase 24 Task 1 design note: with-vs-without and joint-vs-standalone deltas at VaR/ES/SCR for nested, t-copula, gaussian and var-covar; var-covar understatement refreshed on the joint-action basis; confidence sweep with action-saturation profile, prefix convergence, copula-seed stability and a margin bootstrap over the realised outer losses. Archived Phase 24 Task 2 read-outs reproduced bit-identically before any new computation; copula frozen (SII Art. 234).",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/joint_action_tail_diagnostics.py",
+        "scripts/build_phase24_task4_joint_action_tail_diagnostics.py",
+        "tests/test_phase24_task4_joint_action_tail_diagnostics.py",
+        "docs/JOINT_ACTION_TAIL_DIAGNOSTICS_CARD.md",
+        "docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Regulation Article 23 (future management actions)",
+        "Solvency II Delegated Regulation Article 234 (aggregation)",
+        "SOA ASOP 56 section 3.1.3/3.4/3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M section 3.2/3.6",
+        "IFoA Life Aggregation & Simulation working party",
+        "McNeil-Frey-Embrechts 2015 ch.7"
+      ],
+      "before_snapshot": {
+        "var_covar_understatement_basis": "standalone-action only (Phase 23 Task 4)",
+        "tail_diagnostics_on_joint_action_basis": null,
+        "t_joint_scr": 31001.77628158343,
+        "nested_scr_with": 33117.77036621129
+      },
+      "after_snapshot": {
+        "var_covar_understatement_vs_nested_with": 0.5643203280561115,
+        "var_covar_understatement_vs_t_joint": 0.5345834639405698,
+        "tail_saturation_share_at_995": 1.0,
+        "scr_seed_max_rel_spread": 0.01976996396013771,
+        "bootstrap_scr_se_pct_of_mean": 0.05763106380290459,
+        "nested_with_inside_bootstrap_ci": true,
+        "gates": {
+          "G1_delta_matrix_complete_and_crosschecked": true,
+          "G2_var_covar_understatement_refreshed": true,
+          "G3_reproducibility_recorded": true
+        },
+        "verdict": "PASS",
+        "reproducibility_digest": "dd89036a3371f6a16b12dca96b68017276a178e4fdf4fd5b38423b4478d1a72d"
+      },
+      "impact_assessment": "Diagnostics/reporting-level change only: no governed upstream module altered; no capital basis changed. The delta matrix and tail diagnostics complete the Phase 24 evidence pack for the joint-action with-actions read-out; the nested run remains the capital reference.",
+      "quantitative_impact": "Var-covar with-actions 14,429 understates nested-with 33,118 by 56.4% and the t joint-action read-out 31,002 by 53.5%; 99.5% tail saturation 100.0%; seed spread 1.98%; bootstrap SCR SE 5.8% of mean.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase24",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T19:20:54.458173+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "PEER_REVIEW",
+          "comments": "Fixed pre-registered Task 4 gates (G1-G3) all PASS; 27 archive cross-checks; archived Task 2 read-outs reproduced bit-identically; diagnostics DISCLOSED (no post-hoc thresholds)."
+        },
+        {
+          "timestamp": "2026-06-07T19:20:54.458184+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"
     }
   ],
   "risk_register": [
@@ -4350,8 +4439,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
       "created_at": "2026-06-04T18:28:37.352914+00:00",
-      "updated_at": "2026-06-07T17:13:57.754616+00:00",
-      "notes": "Phase 24 Task 2 refresh: on the WITH-ACTIONS basis the correct copula read-out is the JOINT-action (action-after-aggregation) basis: t(2.9451) rel err vs nested-with 33118 is 6.4% (was 22.5% on the standalone-action basis; gaussian 20.7%); var-covar understatement 56.4% unchanged (refreshed). t-copula on the joint-action basis is the standing mitigation."
+      "updated_at": "2026-06-07T19:20:54.458022+00:00",
+      "notes": "Phase 24 Task 4 refresh: var-covar understatement quantified on the JOINT-action basis -- var-covar with-actions SCR 14,429 understates the nested-with reference 33,118 by 56.4% and the standing t(2.9451) joint-action read-out 31,002 by 53.5% (without-actions baseline 40.5%). Full with-vs-without / joint-vs-standalone delta matrix + tail diagnostics (saturation 100.0% in the 99.5% tail; margin-bootstrap SCR SE 5.8% of mean) in PHASE24_TASK4 report. t joint-action remains the standing with-actions copula mitigation; nested remains the reference."
     },
     {
       "risk_id": "MR-011",
@@ -4414,8 +4503,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
       "created_at": "2026-06-07T13:19:29.055501+00:00",
-      "updated_at": "2026-06-07T18:34:12.816727+00:00",
-      "notes": "Phase 24 Task 3 PASS: outer-node approximation relaxed - the bonus cut now enters the inner-path policyholder-benefit cashflows (credit-loss and FX/liquidity offsets carved out of the cuttable base); OOS R2 0.9984, VaR rel err 0.40% at the unchanged Phase 22 gates; nested with-actions SCR 39290.9 (outer-node) -> 40852.1 (inner-path basis, delta +1561.2 disclosed). Residual: full path-wise dynamic declaration out of scope; parameters remain educational placeholders."
+      "updated_at": "2026-06-07T19:20:54.458103+00:00",
+      "notes": "Phase 24 Task 4: joint-action tail diagnostics complete -- confidence sweep with saturation profile (99.5% tail saturated 100.0%, quantifying the Phase 23 Task 4 mechanism), prefix convergence (final SCR rel delta 0.00%), copula-seed spread 1.98%, and a margin bootstrap over the n_obs realised losses (SCR SE 5.8% of mean; nested reference inside the 95% CI: True). Archived Task 2 read-outs reproduced bit-identically. Residuals unchanged: outer-node-vs-inner-path basis (Task 3 disclosure), placeholder parameters, fixed A_ref proxy."
     }
   ]
 }

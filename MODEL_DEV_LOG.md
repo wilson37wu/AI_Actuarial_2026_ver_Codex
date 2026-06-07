@@ -8145,3 +8145,82 @@ SUPERSEDED post-reconciliation).
 **Next:** Phase 24 Task 4 — aggregation + tail diagnostics on the joint-action basis; capital
 deltas at every level; MR-010/MR-014 refresh; methodology/governance ChangeRecord. Optional
 disclosed extension: benefit-only cuttable base at the seven-driver aggregation level.
+
+---
+
+## 2026-06-07 (cycle 20) — Phase 24 Task 4: joint-action tail diagnostics + capital-delta matrix (PASS 3/3 + governance)
+
+**Task:** Phase 24 Task 4 — aggregation + tail diagnostics on the joint-action basis;
+with-vs-without and joint-vs-standalone capital deltas quantified at every level;
+var-covar understatement refreshed; MR-010/MR-014 refresh; methodology_change ChangeRecord.
+
+**Verdict: PASS 3/3 fixed pre-registered gates** (G1 delta matrix complete + archive
+cross-checked with BIT-IDENTICAL reproduction of the archived P24T2 read-outs; G2 var-covar
+understatement refreshed on the joint-action basis; G3 reproducibility recorded) **+ G4
+governance verify_all True**. Gates formalise the pre-registered Task 4 bullets (design note
+s5); the tail diagnostics are DISCLOSED evidence — no post-hoc numeric thresholds
+(no gate-shopping).
+
+**New code (additive):** `par_model_v2/projection/joint_action_tail_diagnostics.py`
+(confidence_sweep_with_saturation, prefix_convergence, seed_stability, bootstrap_margin_ci,
+build_delta_matrix) + staged builder
+`scripts/build_phase24_task4_joint_action_tail_diagnostics.py` (verify/diag/governance,
+each <45 s). 27/27 archive cross-checks PASS before any new computation; the archived
+Phase 24 Task 2 t/gaussian joint-action read-outs reproduced bit-identically (SCR abs diff
+<1e-9; digest equality).
+
+**Delta matrix (99.5% 1y SCR, without → with-standalone → with-joint):**
+- nested (reference): 48,707.4 → 33,117.8 (no standalone/joint split — rule on the full
+  conditional liability)
+- t(2.9451): 46,756.0 → 25,652.9 → **31,001.8** (joint-vs-standalone **+20.9%**;
+  joint-vs-without −33.7%)
+- gaussian: 41,472.4 → 23,921.8 → 26,267.1
+- var-covar: 28,990.9 → 14,428.7 (no joint-action analogue — formula on marginals, DISCLOSED)
+Standalone-action t/gaussian VaR/ES from P23T4 are on a different (summed) level convention —
+SCR-only in the matrix, DISCLOSED.
+
+**Var-covar understatement refreshed (MR-010):** 56.4% vs nested-with-actions 33,117.8;
+53.5% vs the standing t joint-action read-out 31,001.8 (without-actions baseline 40.5%).
+
+**Tail diagnostics (DISCLOSED):**
+- Confidence sweep 90/95/99/99.5/99.9% with action-saturation profile: the 99.5% joint tail
+  is **100.0% saturated** (every tail scenario at maximum relief 12%) — the Phase 23 Task 4
+  saturation mechanism now fully quantified on the joint basis; VaR monotone in confidence.
+- Prefix convergence (common random numbers): SCR rel delta 100k-vs-200k 0.19%.
+- Copula-seed stability: max SCR rel spread 1.98% across 5 seeds at n_sim 200k.
+- Margin bootstrap (200 replicates × 20k sims; JOINT row resample of the 160 realised outer
+  losses preserving cross-driver pairing; copula df/rho FROZEN, SII Art. 234): SCR_with mean
+  30,406, SE 1,752 (5.8% of mean), 95% CI [26,471, 33,637]; **nested-with reference INSIDE
+  the CI** — the disclosed n_obs=160 sampling-noise limitation quantified.
+
+**Governance:** ChangeRecord `d323ab685a4840169be0a1028e0721b9` (methodology_change)
+OWNER_REVIEW (sign-off withheld); MR-010 + MR-014 notes refreshed; audit 69→70; change
+records 42→43; verify_all True; second governance run idempotent ("already applied"); store
+backed up to /var/tmp/p24t4_build/GOV_BACKUP_pre_p24t4.json before the stage.
+
+**Tests:** 28 new PASS (`tests/test_phase24_task4_joint_action_tail_diagnostics.py`).
+Regression batches: p24t1+p24t2+p23t3+p23t4 104 + p24t3 (both) + governance + p23
+tail-dep/t-copula 146 + p22t5/p23t5 UI 36 + new 28 = **314 PASS / 0 FAIL**. DISCLOSED
+forward-compat fix: the two P24T3 tests pinned MR-014 notes to "Phase 24 Task 3" exactly;
+update_mitigation REPLACES notes (latest-refresh-supersedes, established repo convention) —
+both now assert MITIGATED + a Phase 24 refresh that still references the Task 3 inner-path
+basis (intent preserved). `node scripts/ui_app_self_test.cjs ui_app.html` ok:true
+(0 network / 0 JS errors); py_compile clean; off-mount build + cp + cmp protocol observed
+(one Windows-side Edit truncation on a test file caught by tail-check and repaired from bash).
+
+**Evidence:** `docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.{json,md}`
++ `docs/JOINT_ACTION_TAIL_DIAGNOSTICS_CARD.md`.
+
+**Next:** **Phase 24 Task 5 — offline-UI propagation** (ui_data.json contract 1.5.0 → 1.6.0
+ADDITIVE): joint-action panel (saturation-gap closure 22.54% → 6.39%, delta matrix,
+saturation profile, bootstrap CI), inner-path outer-vs-inner delta, Task 4 read-outs; UI
+consumes ONLY model output JSON; then PHASE 24 COMPLETE documentation.
+
+**Industry Standards Progress:**
+- Solvency II Art. 23 — with-vs-without action effect quantified at every aggregation level. Addressed.
+- Solvency II Art. 234 — copula frozen under bootstrap/diagnostics; saturation/tail behaviour evidenced. Addressed.
+- SOA ASOP 56 §3.1.3/§3.5 — pre-registered gates; bit-identical reproduction; disclosed diagnostics. Addressed.
+- IA TAS M §3.2/§3.6 — n_obs sampling-noise limitation quantified (bootstrap CI); reproducibility digests. Addressed.
+
+**Blockers:** unchanged — ghost git locks need a human shell (commit via alt-GIT_INDEX_FILE
+onto `p22c9`; push `p22c9:main`); serialise scheduled runs; disk /sessions ~89%.

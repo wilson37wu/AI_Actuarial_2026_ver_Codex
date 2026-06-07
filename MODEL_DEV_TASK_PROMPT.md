@@ -1567,3 +1567,52 @@ delta) + PHASE 24 COMPLETE docs.
 GITHUB_PUSH_BLOCKER.md) and push `p22c9:main`; serialise/stagger the scheduled automated runs
 (collision risk demonstrated); production sign-off residual (credentialled data + independent
 APS X2 review) — by design for this educational model; disk /sessions ~89%.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-08 +08 / 2026-06-07 UTC (cycle 20, supersedes everything above)
+
+**Phase 24 Task 4 COMPLETE (PASS 3/3 + governance).** NEW additive module
+`par_model_v2/projection/joint_action_tail_diagnostics.py` (confidence sweep with
+action-saturation profile, prefix convergence, copula-seed stability, margin bootstrap,
+delta-matrix builder) + staged builder
+`scripts/build_phase24_task4_joint_action_tail_diagnostics.py` (verify/diag/governance).
+27/27 archive cross-checks; archived P24T2 joint read-outs reproduced BIT-IDENTICALLY.
+**Delta matrix (99.5% SCR, without → with-standalone → with-joint):** nested 48,707.4 →
+33,117.8 (reference); t(2.9451) 46,756.0 → 25,652.9 → 31,001.8 (joint-vs-standalone +20.9%);
+gaussian 41,472.4 → 23,921.8 → 26,267.1; var-covar 28,990.9 → 14,428.7. **Var-covar
+understatement refreshed: 56.4% vs nested-with, 53.5% vs t-joint (MR-010).** Tail
+diagnostics (DISCLOSED, no post-hoc thresholds): **the 99.5% joint tail is 100.0% saturated**
+(max relief everywhere capital is measured — the P23T4 mechanism fully quantified); prefix
+convergence 0.19%; seed spread 1.98%; margin bootstrap (200×20k, copula FROZEN, SII Art. 234)
+SCR SE 5.8% of mean, 95% CI [26,471, 33,637], nested-with INSIDE the CI (n_obs=160 noise
+quantified per the Task 1 disclosed limitation). ChangeRecord
+`d323ab685a4840169be0a1028e0721b9` (methodology_change) OWNER_REVIEW; MR-010+MR-014
+refreshed; audit 69→70; changes 42→43; verify_all True. 28 new tests; regression 314 PASS /
+0 FAIL; ui_app self-test ok:true; py_compile clean. DISCLOSED forward-compat fix: two P24T3
+MR-014 note pins → "Phase 24" + "Task 3" (latest-refresh-supersedes). Evidence:
+`docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.{json,md}` +
+`docs/JOINT_ACTION_TAIL_DIAGNOSTICS_CARD.md`.
+
+**NEXT executable task: Phase 24 Task 5 — offline-UI propagation + PHASE 24 COMPLETE docs.**
+ui_data.json contract 1.5.0 → 1.6.0 ADDITIVE via `scripts/build_ui_data.py`; new
+joint-action / Phase 24 panel: saturation-gap closure 22.54% → 6.39% (Task 2), inner-path
+outer-vs-inner delta +4.0% SCR (Task 3), Task 4 delta matrix + saturation profile (100% at
+99.5%) + bootstrap CI + var-covar refresh; extend `scripts/ui_app_self_test.cjs` with Phase 24
+checks; new `scripts/build_phase24_task5_ui_propagation.py` contract-check script + evidence
+report; tests; governance code_change ChangeRecord OWNER_REVIEW; then PHASE 24 COMPLETE
+documentation (state/log/prompt). UI consumes ONLY model output JSON (no model code in UI).
+After Task 5: Phase 25 Task 1 research/design note (candidates: full path-wise bonus
+declaration dynamics; t-copula aggregation on the inner-path with-actions basis;
+credentialled-data calibration of action/copula parameters).
+
+**Sandbox operating rules (RE-CONFIRMED cycle 20):** unchanged from cycle 19 — 44 s bash
+wall; PYTHONPATH=/var/tmp/pylibs:. ; build long files OFF-MOUNT then cp + cmp (a Windows-side
+file-tool Edit truncated a test file THIS cycle; bash-side repair); back up
+GOVERNANCE_STORE.json before every governance stage; alt-`GIT_INDEX_FILE` commits onto
+`p22c9`, push `p22c9:main`; next free risk ID MR-015; check for parallel-run foreign writes
+before governance/commit.
+
+**Standing blockers (human action):** delete the three git ghost locks (GITHUB_PUSH_BLOCKER.md);
+serialise the scheduled runs; production sign-off residual (credentialled data + APS X2);
+disk /sessions ~89%.

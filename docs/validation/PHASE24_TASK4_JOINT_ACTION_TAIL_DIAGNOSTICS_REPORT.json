@@ -1,0 +1,430 @@
+{
+  "run_timestamp": "2026-06-07T19:20:29.386479+00:00",
+  "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+  "task": "Phase 24 Task 4 - joint-action tail diagnostics + with-vs-without / joint-vs-standalone capital-delta matrix",
+  "verdict": "PASS",
+  "gates": {
+    "G1_delta_matrix_complete_and_crosschecked": true,
+    "G2_var_covar_understatement_refreshed": true,
+    "G3_reproducibility_recorded": true
+  },
+  "gate_note": "Gates formalise the pre-registered Task 4 bullets (design note s5): completeness/cross-check, refresh, reproducibility. The tail diagnostics are DISCLOSED evidence -- no post-hoc numeric acceptance thresholds (no gate-shopping).",
+  "rule": {
+    "cr_trigger": 1.1,
+    "cr_floor": 0.9,
+    "bonus_share": 0.3,
+    "pre_floor": 0.6,
+    "reference_coverage": 1.12,
+    "max_relief": 0.12
+  },
+  "reference_assets": 129916.49144595393,
+  "fit_mean_liability": 115996.86736245886,
+  "df_matched": 2.9451,
+  "seed": 20260607,
+  "n_sim": 200000,
+  "n_obs": 160,
+  "drivers": [
+    "rate",
+    "equity",
+    "credit",
+    "lapse",
+    "mortality",
+    "fx",
+    "liquidity"
+  ],
+  "crosscheck_count": 27,
+  "reproduction_of_p24t2": {
+    "t_scr_abs_diff": 0.0,
+    "g_scr_abs_diff": 0.0,
+    "t_digest_match": true,
+    "g_digest_match": true
+  },
+  "delta_matrix": {
+    "nested": {
+      "without": {
+        "var": 165035.3729033077,
+        "es": 165808.52450750157,
+        "scr": 48707.43490332604
+      },
+      "standalone_action": {
+        "var": 145231.12815491078,
+        "es": 145911.5015666014,
+        "scr": 33117.77036621129
+      },
+      "joint_action": {
+        "var": 145231.12815491078,
+        "es": 145911.5015666014,
+        "scr": 33117.77036621129
+      },
+      "standalone_action_minus_without": {
+        "var_delta": -19804.244748396915,
+        "var_delta_pct": -0.11999999999999995,
+        "es_delta": -19897.022940900177,
+        "es_delta_pct": -0.11999999999999993,
+        "scr_delta": -15589.664537114746,
+        "scr_delta_pct": -0.3200674510586923
+      },
+      "joint_action_minus_without": {
+        "var_delta": -19804.244748396915,
+        "var_delta_pct": -0.11999999999999995,
+        "es_delta": -19897.022940900177,
+        "es_delta_pct": -0.11999999999999993,
+        "scr_delta": -15589.664537114746,
+        "scr_delta_pct": -0.3200674510586923
+      },
+      "joint_minus_standalone_scr": 0.0,
+      "joint_minus_standalone_scr_pct": 0.0
+    },
+    "t_copula": {
+      "without": {
+        "var": 164026.9467,
+        "es": 169381.4157,
+        "scr": 46755.963
+      },
+      "standalone_action": {
+        "var": null,
+        "es": null,
+        "scr": 25652.9228
+      },
+      "joint_action": {
+        "var": 143682.04744466447,
+        "es": 148496.34347728066,
+        "scr": 31001.77628158343
+      },
+      "standalone_action_minus_without": {
+        "scr_delta": -21103.040200000003,
+        "scr_delta_pct": -0.45134436007659606
+      },
+      "joint_action_minus_without": {
+        "var_delta": -20344.899255335535,
+        "var_delta_pct": -0.12403388385047305,
+        "es_delta": -20885.072222719347,
+        "es_delta_pct": -0.12330202895286904,
+        "scr_delta": -15754.186718416575,
+        "scr_delta_pct": -0.3369449735944178
+      },
+      "joint_minus_standalone_scr": 5348.853481583428,
+      "joint_minus_standalone_scr_pct": 0.20850854007105296
+    },
+    "gaussian": {
+      "without": {
+        "var": 158734.1029,
+        "es": 162894.5595,
+        "scr": 41472.429
+      },
+      "standalone_action": {
+        "var": null,
+        "es": null,
+        "scr": 23921.8205
+      },
+      "joint_action": {
+        "var": 138715.4062712376,
+        "es": 142380.81349575197,
+        "scr": 26267.06157714709
+      },
+      "standalone_action_minus_without": {
+        "scr_delta": -17550.608499999995,
+        "scr_delta_pct": -0.4231873782941432
+      },
+      "joint_action_minus_without": {
+        "var_delta": -20018.69662876241,
+        "var_delta_pct": -0.12611465503020403,
+        "es_delta": -20513.746004248038,
+        "es_delta_pct": -0.12593266507619635,
+        "scr_delta": -15205.367422852905,
+        "scr_delta_pct": -0.36663797586712144
+      },
+      "joint_minus_standalone_scr": 2345.2410771470895,
+      "joint_minus_standalone_scr_pct": 0.09803773409081008
+    },
+    "var_covar": {
+      "without": {
+        "var": null,
+        "es": null,
+        "scr": 28990.889357788157
+      },
+      "standalone_action": {
+        "var": null,
+        "es": null,
+        "scr": 14428.739328663964
+      },
+      "joint_action": {
+        "var": null,
+        "es": null,
+        "scr": null
+      },
+      "standalone_action_minus_without": {
+        "scr_delta": -14562.150029124194,
+        "scr_delta_pct": -0.5023009073439203
+      },
+      "joint_action_minus_without": {}
+    }
+  },
+  "var_covar_refresh": {
+    "var_covar_scr_with": 14428.739328663964,
+    "understatement_vs_nested_with": 0.5643203280561115,
+    "understatement_vs_t_joint": 0.5345834639405698,
+    "understatement_vs_nested_without_basis_p22t4": 0.40479539899136663
+  },
+  "tail_diagnostics": {
+    "confidence_sweep": [
+      {
+        "confidence": 0.9,
+        "var_with": 124305.26384134508,
+        "es_with": 129528.4018512137,
+        "scr_with": 11624.99267826404,
+        "var_without": 136339.32051109624,
+        "es_without": 145649.75176184587,
+        "scr_without": 20333.38882554107,
+        "tail_active_share": 1.0,
+        "tail_saturation_share": 0.44025,
+        "tail_mean_cut_factor": 0.0815303107256105,
+        "relief_at_var": 12034.056669751168
+      },
+      {
+        "confidence": 0.95,
+        "var_with": 126640.8491813261,
+        "es_with": 133711.682930763,
+        "scr_with": 13960.578018245069,
+        "var_without": 143208.6891580993,
+        "es_without": 151901.7802763623,
+        "scr_without": 27202.757472544123,
+        "tail_active_share": 1.0,
+        "tail_saturation_share": 0.8805,
+        "tail_mean_cut_factor": 0.002212294517434238,
+        "relief_at_var": 16567.83997677319
+      },
+      {
+        "confidence": 0.99,
+        "var_with": 138940.56566681495,
+        "es_with": 144806.58371083578,
+        "scr_with": 26260.29450373391,
+        "var_without": 157887.00643956245,
+        "es_without": 164552.93603504068,
+        "scr_without": 41881.07475400728,
+        "tail_active_share": 1.0,
+        "tail_saturation_share": 1.0,
+        "tail_mean_cut_factor": 0.0,
+        "relief_at_var": 18946.440772747505
+      },
+      {
+        "confidence": 0.995,
+        "var_with": 143682.04744466447,
+        "es_with": 148496.34347728066,
+        "scr_with": 31001.77628158343,
+        "var_without": 163275.05391439144,
+        "es_without": 168745.84486054623,
+        "scr_without": 47269.12222883626,
+        "tail_active_share": 1.0,
+        "tail_saturation_share": 1.0,
+        "tail_mean_cut_factor": 0.0,
+        "relief_at_var": 19593.00646972697
+      },
+      {
+        "confidence": 0.999,
+        "var_with": 151467.75108475913,
+        "es_with": 154255.4538378175,
+        "scr_with": 38787.479921678096,
+        "var_without": 172122.444414499,
+        "es_without": 175290.28845206532,
+        "scr_without": 56116.51272894384,
+        "tail_active_share": 1.0,
+        "tail_saturation_share": 1.0,
+        "tail_mean_cut_factor": 0.0,
+        "relief_at_var": 20654.69332973988
+      }
+    ],
+    "prefix_convergence": [
+      {
+        "n_sim": 25000,
+        "var_with": 143979.81662777925,
+        "es_with": 149175.774566488,
+        "scr_with": 31316.7107743338,
+        "var_rel_delta_vs_full": 0.0020724174551414332,
+        "scr_rel_delta_vs_full": 0.010158595104031389
+      },
+      {
+        "n_sim": 50000,
+        "var_with": 144038.22712265316,
+        "es_with": 149041.18275263958,
+        "scr_with": 31365.922680490956,
+        "var_rel_delta_vs_full": 0.002478943502846918,
+        "scr_rel_delta_vs_full": 0.011745984991313163
+      },
+      {
+        "n_sim": 100000,
+        "var_with": 143613.7626923139,
+        "es_with": 148682.72302207528,
+        "scr_with": 30944.192213675313,
+        "var_rel_delta_vs_full": 0.00047524902077178877,
+        "scr_rel_delta_vs_full": 0.0018574441472349905
+      },
+      {
+        "n_sim": 200000,
+        "var_with": 143682.04744466447,
+        "es_with": 148496.34347728066,
+        "scr_with": 31001.77628158343,
+        "var_rel_delta_vs_full": 0.0,
+        "scr_rel_delta_vs_full": 0.0
+      }
+    ],
+    "seed_stability": {
+      "rows": [
+        {
+          "seed": 20260607,
+          "scr_with": 31001.77628158343,
+          "var_with": 143682.04744466447
+        },
+        {
+          "seed": 11,
+          "scr_with": 31025.954577233104,
+          "var_with": 143734.41236941546
+        },
+        {
+          "seed": 1234,
+          "scr_with": 30584.66125793477,
+          "var_with": 143324.16170946357
+        },
+        {
+          "seed": 777,
+          "scr_with": 30908.779580493836,
+          "var_with": 143603.8308933352
+        },
+        {
+          "seed": 424242,
+          "scr_with": 31196.413474503774,
+          "var_with": 143891.68300735124
+        }
+      ],
+      "scr_mean": 30943.51703434978,
+      "scr_max_rel_spread": 0.01976996396013771
+    },
+    "bootstrap": {
+      "n_replicates": 200,
+      "n_sim_per_replicate": 20000,
+      "n_obs": 160,
+      "seed": 20260608,
+      "resampling": "joint row resample (preserves realised cross-driver pairing); copula df/rho frozen (SII Art. 234)",
+      "var_with": {
+        "mean": 143129.03379538073,
+        "se": 2004.4639032511743,
+        "ci_lo_95": 138654.58040071512,
+        "ci_hi_95": 146436.2784884476
+      },
+      "es_with": {
+        "mean": 147589.3419891622,
+        "se": 1892.7050994846065,
+        "ci_lo_95": 142887.66786601418,
+        "ci_hi_95": 150523.77300148786
+      },
+      "scr_with": {
+        "mean": 30406.472028341806,
+        "se": 1752.3573294866005,
+        "ci_lo_95": 26470.69591935813,
+        "ci_hi_95": 33636.79488208972
+      }
+    }
+  },
+  "diagnostic_config": {
+    "confidence_sweep": [
+      0.9,
+      0.95,
+      0.99,
+      0.995,
+      0.999
+    ],
+    "convergence_prefixes": [
+      25000,
+      50000,
+      100000,
+      200000
+    ],
+    "seed_stability_seeds": [
+      20260607,
+      11,
+      1234,
+      777,
+      424242
+    ],
+    "bootstrap_replicates": 200,
+    "bootstrap_n_sim": 20000
+  },
+  "diagnostic_findings": {
+    "sweep_var_monotone_in_confidence": true,
+    "tail_saturation_share_at_995": 1.0,
+    "scr_seed_max_rel_spread": 0.01976996396013771,
+    "scr_prefix_final_rel_delta": 0.0,
+    "nested_with_inside_bootstrap_ci": true,
+    "bootstrap_scr_se_pct_of_mean": 0.05763106380290459
+  },
+  "inner_path_disclosure": {
+    "note": "Phase 24 Task 3 inner-path basis is MORE conservative than the outer-node transform (over-relief of non-cuttable components corrected); its nested with-actions figures are disclosed alongside but the governed copula deltas here remain on the outer-node basis used by Tasks 2/3 archives.",
+    "nested_capital_with_inner_path": {
+      "confidence_level": 0.995,
+      "mean_liability": 112273.4771,
+      "var_liability": 153125.5312,
+      "es_liability": 157827.7702,
+      "scr_proxy": 40852.0541,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "nested_capital_with_outer_node": {
+      "confidence_level": 0.995,
+      "mean_liability": 111677.7373,
+      "var_liability": 150968.6358,
+      "es_liability": 155381.7999,
+      "scr_proxy": 39290.8985,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "outer_vs_inner_path_delta": {
+      "nested_var_99_5_outer_node": 150968.63582173127,
+      "nested_var_99_5_inner_path": 153125.53123738492,
+      "nested_var_99_5_delta": 2156.8954156536493,
+      "nested_scr_outer_node": 39290.89849045161,
+      "nested_scr_inner_path": 40852.05410858347,
+      "nested_scr_delta": 1561.1556181318592,
+      "interpretation": "The outer-node transform relieves the asset-side credit-loss component and the analytic FX/liquidity offsets as if they were cuttable bonus; the inner-path basis restricts the cut to policyholder-benefit cashflows, so it relieves LESS and is the more conservative (and more faithful) with-actions basis."
+    },
+    "source": "docs/validation/PHASE24_TASK3_INNER_PATH_ACTION_REPORT.json"
+  },
+  "anchoring_convention": "V = L_fit + sum_k (Q_k(U_k) - mean_k); W = rule(V, A_ref) ONCE (joint-action); standalone-action t/gaussian VaR/ES from P23T4 are on a different (summed) level convention -- SCR-only in the matrix, DISCLOSED",
+  "affected_components": [
+    "par_model_v2/projection/joint_action_tail_diagnostics.py",
+    "scripts/build_phase24_task4_joint_action_tail_diagnostics.py",
+    "tests/test_phase24_task4_joint_action_tail_diagnostics.py",
+    "docs/JOINT_ACTION_TAIL_DIAGNOSTICS_CARD.md",
+    "docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+  ],
+  "standard_references": [
+    "Solvency II Delegated Regulation Article 23 (future management actions)",
+    "Solvency II Delegated Regulation Article 234 (aggregation)",
+    "SOA ASOP 56 section 3.1.3/3.4/3.5",
+    "SOA ASOP 25 section 3.3",
+    "IA TAS M section 3.2/3.6",
+    "IFoA Life Aggregation & Simulation working party",
+    "McNeil-Frey-Embrechts 2015 ch.7"
+  ],
+  "use_restrictions": {
+    "classification": "EDUCATIONAL",
+    "restrictions": [
+      "NOT for production or regulatory capital decisions.",
+      "Joint anchoring V = L_fit + sum_k (Q_k - mean_k) is a first-order level approximation; cross-driver liability non-linearities beyond the action are not represented.",
+      "Action parameters are educational placeholders pending credentialled management-practice data and independent APS X2 review.",
+      "The copula consumes realised standalone losses; sampling noise at n_outer=160 propagates into the joint read-out (disclosed)."
+    ],
+    "standards": [
+      "Solvency II Delegated Reg. Art. 23 / Art. 234",
+      "SOA ASOP 56 s3.1.3/s3.4/s3.5",
+      "IA TAS M s3.2/s3.6"
+    ]
+  },
+  "reproducibility_digest": "dd89036a3371f6a16b12dca96b68017276a178e4fdf4fd5b38423b4478d1a72d",
+  "markdown_path": "docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.md",
+  "change_record_id": "d323ab685a4840169be0a1028e0721b9",
+  "change_record_status": "OWNER_REVIEW",
+  "mr010_refreshed": true,
+  "mr014_refreshed": true,
+  "audit_integrity_ok": true,
+  "change_records_total": 43
+}

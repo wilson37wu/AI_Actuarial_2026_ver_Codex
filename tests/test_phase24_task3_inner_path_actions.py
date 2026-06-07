@@ -165,5 +165,8 @@ class TestEvidence:
         assert rep["audit_integrity_ok"] is True
         assert store.audit_trail.verify_all() is True
         assert rep["mr014_refreshed"] is True
-        assert "Phase 24 Task 3" in store.risk_register.get("MR-014").notes
-
+        # latest-refresh-supersedes (forward-compatible per repo convention):
+        # accept this task's refresh OR a later Phase 24 refresh that still
+        # references the Task 3 inner-path basis.
+        notes = store.risk_register.get("MR-014").notes
+        assert "Phase 24" in notes and "Task 3" in notes
