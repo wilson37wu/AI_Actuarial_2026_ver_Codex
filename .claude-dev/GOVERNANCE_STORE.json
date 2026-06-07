@@ -1352,6 +1352,28 @@
       "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
       "digest": "854c181af806de665019aa455587055e7e1eed99a1e48812e10d8dfbf6c16757",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "a934cf7d9e754051b6c35a8c9e60fac7",
+      "timestamp": "2026-06-07T11:16:47.850973+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase23Task1DesignNote",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 23 Task 1 design note (t-copula tail matching + management actions)",
+      "details": {
+        "record_id": "cfdc0aef864c4494b94c68db83acbd69",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/projection/tail_dependence.py (NEW, tested helper module)",
+          "tests/test_phase23_tail_dependence.py (21 tests)",
+          "scripts/build_phase23_task1_design_note.py",
+          "docs/T_COPULA_MANAGEMENT_ACTION_DESIGN_CARD.md",
+          "docs/validation/PHASE23_TASK1_DESIGN_NOTE.{json,md}"
+        ]
+      },
+      "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+      "digest": "e75498506a4530ef7f1a4f91d987d63d368a5c91ac95c361dcd59e444b708834",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -3395,6 +3417,78 @@
         }
       ],
       "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation"
+    },
+    {
+      "record_id": "cfdc0aef864c4494b94c68db83acbd69",
+      "created_at": "2026-06-07T11:16:47.849898+00:00",
+      "title": "Phase 23 Task 1 - design note: t-copula tail-dependence calibration + management-action rule (gap analysis)",
+      "description": "Design note for Phase 23: (i) calibrate the Student-t copula df by TAIL-DEPENDENCE MATCHING on the realised standalone capital-loss vectors (new tested helper module par_model_v2/projection/tail_dependence.py: closed-form lambda_U, df inversion with disclosed bounds, threshold estimator, pooled-median matching), replacing AIC-only selection that pins df at the grid cap (Gaussian-equivalent, zero tail dependence); (ii) management-action gap analysis and design of a dynamic reversionary-bonus participation cut under solvency stress for the nested ground truth + proxy.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/projection/tail_dependence.py (NEW, tested helper module)",
+        "tests/test_phase23_tail_dependence.py (21 tests)",
+        "scripts/build_phase23_task1_design_note.py",
+        "docs/T_COPULA_MANAGEMENT_ACTION_DESIGN_CARD.md",
+        "docs/validation/PHASE23_TASK1_DESIGN_NOTE.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.2/\u00a73.6",
+        "Solvency II Delegated Reg. Art. 23 (future management actions)",
+        "Solvency II Delegated Reg. Art. 234 (empirically justified diversification)",
+        "Solvency II Delegated Reg. Art. 236",
+        "IFoA Life Aggregation & Simulation working party",
+        "Demarta-McNeil 2005",
+        "McNeil-Frey-Embrechts 2015 ch.7",
+        "Schmidt-Stadtmueller 2006"
+      ],
+      "before_snapshot": {
+        "copula_df_selection": "AIC/MLE over grid; df pinned at cap (Gaussian-equivalent)",
+        "management_actions": "none (static bonus participation)"
+      },
+      "after_snapshot": {
+        "design": "df by tail-dependence matching (Task 2); dynamic bonus-cut rule (Task 3)",
+        "pre_study_df_recovery": {
+          "0.97": {
+            "pooled_df": 2.851,
+            "capped_share": 0.0,
+            "lambda_hat": 0.381111
+          },
+          "0.98": {
+            "pooled_df": 3.014,
+            "capped_share": 0.0,
+            "lambda_hat": 0.37
+          },
+          "0.99": {
+            "pooled_df": 3.219,
+            "capped_share": 0.0,
+            "lambda_hat": 0.356667
+          }
+        },
+        "verdict": "PASS (design note)"
+      },
+      "impact_assessment": "No numeric output path changed this cycle (design note + additive helper module only). Sets fixed, non-gate-shopped acceptance criteria for Tasks 2-3. Educational classification retained; production sign-off withheld pending credentialled data + APS X2 review.",
+      "quantitative_impact": "Pre-study: tail-dependence matching recovers t(4) order-of-magnitude across thresholds; Gaussian control shows rising-df signature. No capital figures changed.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase23Task1DesignNote",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T11:16:47.850843+00:00",
+          "actor": "Phase23Task1DesignNote",
+          "status": "PEER_REVIEW",
+          "comments": "Design note + 21 new unit tests PASS; no existing module touched."
+        },
+        {
+          "timestamp": "2026-06-07T11:16:47.850904+00:00",
+          "actor": "Phase23Task1DesignNote",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: finite-threshold estimator noise + pooled-df exchangeability documented; sign-off withheld."
+        }
+      ],
+      "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions"
     }
   ],
   "risk_register": [

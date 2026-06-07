@@ -833,6 +833,42 @@ Do these **only once** disk space is freed, the ghost locks are removed, and `gi
 
 ---
 
+## LATEST STATUS - 2026-06-07 (cycle 12, supersedes earlier text) — **PHASE 23 TASK 1 COMPLETE (PASS)**
+
+**Phase 23 Task 1 is COMPLETE: research + design note for the t-copula tail-dependence calibration and the
+management-action rule, VERDICT PASS.** New tested module `par_model_v2/projection/tail_dependence.py`
+(closed-form lambda_U(nu,rho); df inversion by bisection on the DF INTERVAL with DISCLOSED bound-cap flag;
+threshold estimator on pseudo-observations; `match_t_df_to_losses` pooled-median df matching; 21 tests PASS).
+Pre-study: synthetic t(4, rho 0.6) recovered at pooled df 2.85-3.22 across thresholds 0.97-0.99 (capped-share 0);
+Gaussian control shows the RISING-df signature (7.5->9.5->13.2 as q 0.99->0.999) — the documented diagnostic for
+zero asymptotic tail dependence. 4-row management-action gap analysis (Solvency II Art. 23/234; ASOP 56
+§3.1.3/3.4; TAS M §3.2/3.6): design = dynamic reversionary-bonus cut
+cut_factor=clip((CR-CR_floor)/(CR_trigger-CR_floor),0,1), monotone/verifiable, entering nested conditional
+liability AND proxy basis; MR-013 planned for Task 3. FIXED Task 2/3 acceptance criteria recorded before any
+benchmark errors are seen (no gate-shopping). Evidence: `docs/validation/PHASE23_TASK1_DESIGN_NOTE.{json,md}`;
+`docs/T_COPULA_MANAGEMENT_ACTION_DESIGN_CARD.md`. Governance: ChangeRecord
+`cfdc0aef864c4494b94c68db83acbd69` (governance_change) OWNER_REVIEW; audit 60->61; change records 33->34;
+verify_all True; idempotent. Verification: 21 new + copula 22 + governance 54 PASS; ui_app self-test ok:true
+(0 net / 0 JS err); py_compile clean.
+
+**NEXT executable task: Phase 23 Task 2 — Student-t copula aggregation with df calibrated by
+tail-dependence matching.** Use `match_t_df_to_losses` on the realised seven-driver standalone capital-loss
+vectors (reuse the Phase 22 Task 4 calibrated aggregation primitives); >=3 thresholds with a sensitivity table;
+pooled MEDIAN df + capped-share disclosure; benchmark t(df_matched) vs gaussian vs nested (acceptance:
+rel err <= gaussian baseline or <=25%); MR-010 refresh; methodology_change ChangeRecord OWNER_REVIEW.
+
+## Phase 23: Tail-Dependence Upgrade + Management Actions (PLAN — one task per cycle)
+
+1. ✅ DONE (2026-06-07 cycle 12) — Research + design note: t-copula tail-dependence calibration +
+   management-action gap analysis (PASS; tail_dependence.py module + 21 tests; fixed Task 2/3 gates).
+2. ⭐ **NEXT** — Student-t copula aggregation (df by tail-dependence matching) vs gaussian vs nested; MR-010 refresh.
+3. Management-action rule (dynamic bonus participation cut under solvency stress) in nested ground truth + proxy;
+   seven-driver OOS re-validation; MR-013.
+4. Aggregation + tail-diagnostics re-run with management actions; capital impact quantified.
+5. Offline-UI propagation + PHASE 23 COMPLETE documentation.
+
+---
+
 ## LATEST STATUS - 2026-06-07 (cycle 7, supersedes earlier text) — **PHASE 22 TASK 1 COMPLETE (PASS)**
 
 **Phase 22 Task 1 is COMPLETE: six-driver OOS proxy-validation remediation, VERDICT PASS.**

@@ -1,0 +1,113 @@
+{
+  "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+  "task": "Task 1 - research + design note",
+  "verdict": "PASS",
+  "motivation_from_phase22": {
+    "var_covar_scr": 28990.889357788157,
+    "nested_scr": 48707.43490332604,
+    "copula_scr": 41604.26768737369,
+    "copula_rel_error_vs_nested": 0.14583332565245183,
+    "var_covar_understatement": 0.40479539899136663,
+    "selected_copula": "gaussian",
+    "source": "docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.json"
+  },
+  "pre_study": {
+    "t_copula_truth": {
+      "df": 4.0,
+      "rho": 0.6,
+      "lambda_u_closed_form": 0.314373
+    },
+    "n_obs": 150000,
+    "seed": 42,
+    "df_recovery_by_threshold": {
+      "0.97": {
+        "pooled_df": 2.851,
+        "capped_share": 0.0,
+        "lambda_hat": 0.381111
+      },
+      "0.98": {
+        "pooled_df": 3.014,
+        "capped_share": 0.0,
+        "lambda_hat": 0.37
+      },
+      "0.99": {
+        "pooled_df": 3.219,
+        "capped_share": 0.0,
+        "lambda_hat": 0.356667
+      }
+    },
+    "gaussian_control_rising_df": {
+      "0.99": 7.473,
+      "0.995": 9.496,
+      "0.999": 13.201
+    },
+    "conclusion": "df-by-tail-dependence matching recovers a heavy-tail df (true 4) to the right order of magnitude across thresholds, while a Gaussian control shows the documented RISING-df signature (finite-threshold bias decays as q->1). Feasible for Task 2; threshold sensitivity MUST be reported with the calibrated df."
+  },
+  "gap_analysis": [
+    {
+      "standard": "Solvency II Del. Reg. Art. 23; ERM management-action-risk (standing prompt)",
+      "requirement": "Future management actions may be allowed for only if objective, realistic, verifiable and consistent with current practice; their effect must be quantified.",
+      "current_state": "NO management actions anywhere in the nested ground truth or proxy: reversionary-bonus participation is STATIC; the liability does not respond to solvency stress.",
+      "gap": "Management-action risk is listed as an ERM coverage requirement in the standing prompt but is unmodelled; nested tail capital is overstated relative to a realistic with-management-action basis.",
+      "phase23_design": "Task 3: dynamic reversionary-bonus participation cut: cut_factor(t)=clip((CR(t)-CR_floor)/(CR_trigger-CR_floor),0,1) applied to the participating bonus share, where CR is an asset/liability coverage-ratio proxy at the outer node; enters the nested conditional liability AND the proxy basis; OOS re-validation gate R^2>=0.95, VaR rel err<=10%."
+    },
+    {
+      "standard": "SOA ASOP 56 \u00a73.1.3/\u00a73.4",
+      "requirement": "Model structure and assumptions (incl. policyholder/management behaviour) appropriate to the intended purpose; assumptions documented and supportable.",
+      "current_state": "Dynamic LAPSE behaviour modelled (Phase 18); management behaviour not modelled.",
+      "gap": "Asymmetry: policyholder options are modelled, insurer options are not \u2014 biases the guarantee cost (TVOG) and tail capital upward.",
+      "phase23_design": "Document the action rule as an explicit assumption (assumption_change ChangeRecord); educational trigger/floor parameters with disclosed placeholders; sensitivity to trigger level reported."
+    },
+    {
+      "standard": "IA TAS M \u00a73.2/\u00a73.6",
+      "requirement": "Material model limitations disclosed; validation evidence reproducible.",
+      "current_state": "Gaussian-copula aggregation disclosed as zero-tail-dependence limitation (MR-010 residual); management-action omission NOT yet on the risk register.",
+      "gap": "Risk register lacks an explicit management-action-omission entry.",
+      "phase23_design": "Task 3 governance: open MR-013 (management-action omission) at IN_PROGRESS, MITIGATED on PASS evidence; seed/threshold/config recorded for reproducibility."
+    },
+    {
+      "standard": "Solvency II Del. Reg. Art. 234; IFoA Life Aggregation & Simulation WP",
+      "requirement": "Diversification dependence assumptions must be empirically justified, including tail behaviour.",
+      "current_state": "Copula-on-realised-losses selected by AIC; Student-t df repeatedly pinned at grid cap -> Gaussian-equivalent; lambda_U effectively 0 while realised tail co-movement is strongly positive.",
+      "gap": "AIC on full-sample pseudo-observations is dominated by the body of the distribution; the TAIL is not the selection criterion.",
+      "phase23_design": "Task 2: calibrate df by TAIL-DEPENDENCE MATCHING (par_model_v2/projection/tail_dependence.py): empirical pairwise lambda_U on realised losses at q in {0.95,0.975,0.99}; invert lambda_U(nu,rho) per pair; pooled MEDIAN df; report capped-share + threshold sensitivity; benchmark t(df_matched) vs gaussian vs nested; acceptance: t-copula rel err <= gaussian baseline OR <=25%, with lambda_U disclosed."
+    }
+  ],
+  "task2_acceptance_criteria": [
+    "Empirical pairwise lambda_U on realised seven-driver standalone losses at >=3 thresholds",
+    "Pooled df by median pairwise inversion; capped-share disclosed; threshold sensitivity table",
+    "t(df_matched) copula SCR vs gaussian vs nested: rel err <= gaussian baseline or <= 25%",
+    "No gate-shopping: selection criterion (tail matching) fixed BEFORE seeing benchmark errors",
+    "MR-010 refresh + methodology_change ChangeRecord OWNER_REVIEW"
+  ],
+  "task3_acceptance_criteria": [
+    "Action rule monotone: bonus cut non-decreasing as coverage ratio falls; no action above trigger",
+    "Nested-with-actions capital <= nested-without-actions capital (sanity, documented)",
+    "Seven-driver OOS re-validation: R^2 >= 0.95, VaR rel err <= 10% (Phase 22 gates)",
+    "MR-013 opened; assumption_change ChangeRecord; trigger/floor sensitivity reported"
+  ],
+  "limitations": [
+    "Finite-threshold lambda_U estimators are sampling-noisy and biased upward under the Gaussian null (rising-df signature is the diagnostic, demonstrated in the pre-study).",
+    "A single pooled df imposes exchangeable tail strength across all 21 driver pairs; pairwise capped-share is the disclosure.",
+    "Management-action parameters (trigger/floor/cut depth) are educational placeholders pending credentialled practice data + APS X2 review."
+  ],
+  "standard_references": [
+    "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+    "SOA ASOP 25 \u00a73.3",
+    "IA TAS M \u00a73.2/\u00a73.6",
+    "Solvency II Delegated Reg. Art. 23 (future management actions)",
+    "Solvency II Delegated Reg. Art. 234 (empirically justified diversification)",
+    "Solvency II Delegated Reg. Art. 236",
+    "IFoA Life Aggregation & Simulation working party",
+    "Demarta-McNeil 2005",
+    "McNeil-Frey-Embrechts 2015 ch.7",
+    "Schmidt-Stadtmueller 2006"
+  ],
+  "governance": {
+    "added": false,
+    "reason": "already applied (idempotent)",
+    "audit_entries": 61,
+    "audit_integrity_ok": true,
+    "change_records_total": 34
+  }
+}

@@ -7607,3 +7607,63 @@ output JSON (zero install).
 **Blockers:** git ghost locks persist (commit via alt-index/branch `p22c9` workaround); local
 `main` ref still stale behind `refs/heads/main.lock`; `git push` of new commits needs the
 GITHUB_PUSH_BLOCKER.md checklist if the remote rejects.
+
+## Run 2026-06-07T11:20Z — Phase 23 (cycle 12)
+
+**Task Completed:** Phase 23 Task 1 — Research + design note: t-copula tail-dependence calibration
++ management-action gap analysis. **VERDICT PASS.**
+
+**Accomplishments:**
+- NEW tested module `par_model_v2/projection/tail_dependence.py`: closed-form t-copula
+  lambda_U(nu,rho) (Demarta-McNeil 2005); df inversion by bisection ON THE DF INTERVAL
+  (a lambda-tolerance exit is unsafe — the surface is flat in df for large df, which silently
+  mis-converged in the first draft and was caught by the round-trip test); bounds DISCLOSED
+  via a capped flag when hit (mirrors the liquidity lambda clamp); non-parametric threshold
+  estimator of lambda_U on pseudo-observations; `match_t_df_to_losses` = rank transform ->
+  pairwise lambda_hat -> Kendall-tau-implied rho=sin(pi/2*tau) -> per-pair df inversion ->
+  pooled MEDIAN df + capped-share disclosure. 21 tests PASS (`tests/test_phase23_tail_dependence.py`).
+- Numerical PRE-STUDY (`scripts/build_phase23_task1_design_note.py`): synthetic t-copula truth
+  (df=4, rho=0.6, n=150k, seed 42) recovered at pooled df 2.85/3.01/3.22 over thresholds
+  0.97/0.98/0.99 (capped-share 0); Gaussian control shows the documented RISING-df signature
+  (7.5 -> 9.5 -> 13.2 as q tightens 0.99 -> 0.999) — the finite-threshold-bias diagnostic that
+  separates Gaussian from genuinely heavy-tailed dependence. Feasibility for Task 2 demonstrated.
+- Management-action GAP ANALYSIS (4 rows): Solvency II Art. 23 / ERM management-action-risk
+  (no management actions modelled anywhere — static bonus participation); ASOP 56 3.1.3/3.4
+  (asymmetry: policyholder options modelled, insurer options not -> TVOG/tail capital biased up);
+  TAS M 3.2/3.6 (management-action omission not yet on the risk register -> MR-013 planned);
+  Art. 234 (AIC is body-dominated; tail must be the selection criterion). Design: dynamic
+  reversionary-bonus cut cut_factor=clip((CR-CR_floor)/(CR_trigger-CR_floor),0,1) at the outer
+  node, monotone + verifiable, enters nested conditional liability AND proxy basis.
+- FIXED acceptance criteria for Tasks 2/3 recorded BEFORE benchmark errors are seen (no
+  gate-shopping): Task 2 t(df_matched) rel err <= gaussian baseline or <=25%, lambda_U +
+  threshold sensitivity + capped-share disclosed; Task 3 OOS R2>=0.95, VaR rel err<=10%,
+  with-actions capital <= without-actions, MR-013 + assumption_change ChangeRecord.
+- Evidence: `docs/validation/PHASE23_TASK1_DESIGN_NOTE.{json,md}`;
+  `docs/T_COPULA_MANAGEMENT_ACTION_DESIGN_CARD.md`.
+
+**Governance:** ChangeRecord `cfdc0aef864c4494b94c68db83acbd69` (governance_change) OWNER_REVIEW
+(sign-off withheld); audit entries 60->61; change records 33->34; verify_all True; idempotent
+re-run confirmed ("already applied").
+
+**Verification:** new tests 21 PASS; regression copula 22 + governance 54 PASS (in <45s batches);
+`node scripts/ui_app_self_test.cjs ui_app.html` ok:true (0 network / 0 JS errors); py_compile
+clean; off-mount stage + cp + cmp write protocol observed.
+
+**Next Step:** Phase 23 Task 2 — Student-t copula aggregation with df calibrated by
+tail-dependence matching (use `match_t_df_to_losses` on the realised seven-driver standalone
+losses; >=3 thresholds; pooled median df; benchmark t(df_matched) vs gaussian vs nested;
+MR-010 refresh; methodology_change ChangeRecord OWNER_REVIEW).
+
+**Industry Standards Progress:**
+- Solvency II Art. 234: empirical justification of tail dependence moves from AIC (body-driven)
+  to explicit tail-dependence matching — design fixed this cycle, implementation next.
+- SOA ASOP 56 3.5 / IA TAS M 3.6: acceptance gates + reproducibility (seeds/thresholds) recorded
+  in the design note before implementation.
+- Honest-disclosure pattern continued: estimator noise, Gaussian finite-threshold bias, pooled-df
+  exchangeability, and placeholder management-action parameters all documented as limitations.
+
+**Blockers:** unchanged — ghost git locks (`.git/index.lock`, `.git/HEAD.lock`,
+`.git/refs/heads/main.lock`) still need a human shell; commit via alt-index + branch `p22c9`
+workaround; disk /sessions at ~90%.
+
+---
