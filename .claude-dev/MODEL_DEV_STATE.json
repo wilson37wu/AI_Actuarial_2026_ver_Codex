@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-07T22:30:00Z",
- "last_run_duration_minutes": 55,
- "last_run_note": "Phase 25 Task 2 complete: path-wise bonus declaration in the nested truth (PASS, 6/6 gates).",
+ "last_run": "2026-06-08T05:30:00Z",
+ "last_run_duration_minutes": 50,
+ "last_run_note": "Phase 25 Task 3 complete: matching path-wise proxy basis (smoothed-relief response surface, FIT-only sigma/alpha) + seven-driver OOS re-validation (PASS 5/5 gates).",
  "current_phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
- "overall_status": "PHASE24_COMPLETE_PHASE25_TASK1_NEXT",
+ "overall_status": "PHASE25_TASK3_COMPLETE_TASK4_NEXT",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -460,12 +460,13 @@
    ],
    "completed": [
     "Research + design note: full path-wise bonus declaration dynamics (cycle 22, ChangeRecord fe5846be)",
-    "Path-wise declaration in the nested truth (cycle 23, ChangeRecord 3cfaa30a, PASS 6/6 gates)"
+    "Path-wise declaration in the nested truth (cycle 23, ChangeRecord 3cfaa30a, PASS 6/6 gates)",
+    "Matching path-wise proxy basis feature + seven-driver OOS re-validation (cycle 24, ChangeRecord fc9fc911, PASS 5/5 gates)"
    ],
    "in_progress": [
-    "Matching path-wise proxy basis feature + seven-driver OOS re-validation"
+    "Tail diagnostics on the path-wise basis + MR-010/MR-014 refresh (REQUIRED: +14.17% SCR delta); rank invariance df 2.9451 frozen"
    ],
-   "next": "Tail diagnostics on the path-wise basis + MR-010/MR-014 refresh (REQUIRED: +14.17% SCR delta)"
+   "next": "Offline-UI propagation (contract 1.6.0 -> 1.7.0 ADDITIVE) + PHASE 25 COMPLETE documentation"
   }
  },
  "repository_info": {
@@ -476,15 +477,15 @@
   "commits_this_session": 72
  },
  "progress_metrics": {
-  "total_tasks": 117,
-  "tasks_completed": 117,
+  "total_tasks": 118,
+  "tasks_completed": 118,
   "phases_completed": 24,
   "estimated_completion_pct": 99,
   "average_cycle_duration_minutes": 53,
-  "cycles_run": 156,
+  "cycles_run": 157,
   "tasks_total": 116,
-  "last_task": "Phase 24 Task 4 - joint-action tail diagnostics + delta matrix PASS 3/3; saturation mechanism quantified (99.5% tail 100% saturated); var-covar understatement refreshed (56.4%/53.5%); MR-010/MR-014 refreshed; ChangeRecord OWNER_REVIEW",
-  "next_task": "Phase 24 Task 5 - offline-UI propagation (1.5.0 -> 1.6.0 additive) + PHASE 24 COMPLETE documentation",
+  "last_task": "Phase 25 Task 3 - matching path-wise proxy basis (sigma 0.225, alpha 0.757, FIT-only) + OOS re-validation PASS 5/5: OOS R^2 0.9978, VaR rel err 0.40%, SCR rel err 1.16%; candidate comparison disclosed; ChangeRecord fc9fc911 OWNER_REVIEW",
+  "next_task": "Phase 25 Task 4 - tail diagnostics on the path-wise basis + MR-010/MR-014 refresh (REQUIRED, trigger +14.17%); rank invariance df 2.9451 frozen",
   "phase20_complete": true,
   "offline_ui_contract_version": "1.2.0",
   "last_ui_self_test": "node scripts/ui_app_self_test.cjs ui_app.html -> ok:true; 0 network / 0 JS errors"

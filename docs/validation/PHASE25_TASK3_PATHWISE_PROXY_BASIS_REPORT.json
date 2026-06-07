@@ -1,0 +1,238 @@
+{
+  "task": "Phase 25 Task 3 - matching path-wise proxy basis feature (smoothed-relief response surface) + seven-driver OOS re-validation",
+  "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+  "run_timestamp": "2026-06-07T23:28:50.191644+00:00",
+  "run_id": "p25t3-2960b95e",
+  "verdict": "PASS",
+  "gates_definition": {
+    "oos_r2_gate": 0.95,
+    "var_rel_error_gate": 0.1,
+    "source": "Phase 25 Task 1 design note s5 (FIXED pre-registered, unchanged Phase 22 gates, no gate-shopping)"
+  },
+  "result": {
+    "rule": {
+      "cr_trigger": 1.1,
+      "cr_floor": 0.9,
+      "bonus_share": 0.3,
+      "pre_floor": 0.6,
+      "reference_coverage": 1.12,
+      "max_relief": 0.12
+    },
+    "reference_assets": 129916.49144595393,
+    "fit_mean_liability": 115996.86736245886,
+    "surface_calibration_fit_only": {
+      "sigma": 0.225,
+      "alpha": 0.7566891068509882,
+      "fit_r2_relieved": 0.8005548827236313,
+      "fit_truth_mean": 3672.9103347979944,
+      "fit_pred_mean": 3668.974519694361,
+      "sigma_grid_lo": 0.05,
+      "sigma_grid_hi": 0.8,
+      "sigma_interior": true,
+      "gh_order": 21
+    },
+    "kappa_credit_fit_calibrated": 1.0367919151090312,
+    "oos_r2_with_actions_pathwise": 0.9978478327117858,
+    "oos_r2_without_actions": 0.9984795801896779,
+    "var_rel_error_with_actions": 0.004014070709035068,
+    "es_rel_error_with_actions": 0.00014201088207899028,
+    "scr_rel_error_with_actions": 0.01164368805922599,
+    "nested_capital_without": {
+      "confidence_level": 0.995,
+      "mean_liability": 115994.0791,
+      "var_liability": 171555.268,
+      "es_liability": 176570.2272,
+      "scr_proxy": 55561.1889,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "nested_capital_with_pathwise": {
+      "confidence_level": 0.995,
+      "mean_liability": 112305.2089,
+      "var_liability": 158944.0748,
+      "es_liability": 163343.6077,
+      "scr_proxy": 46638.8659,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "proxy_capital_without": {
+      "confidence_level": 0.995,
+      "mean_liability": 115824.5598,
+      "var_liability": 170684.6123,
+      "es_liability": 176250.7804,
+      "scr_proxy": 54860.0525,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "proxy_capital_with_pathwise": {
+      "confidence_level": 0.995,
+      "mean_liability": 112210.2445,
+      "var_liability": 158306.062,
+      "es_liability": 163320.4112,
+      "scr_proxy": 46095.8175,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "clip_binding_share_truth_nested": 0.0,
+    "clip_binding_share_proxy_nested": 0.0,
+    "monotonicity": {
+      "rule_guard": true,
+      "surface_transform": true
+    },
+    "relieved_approximation_diagnostics": {
+      "val_nodes": {
+        "mean_abs_error": 334.20582084419607,
+        "mean_abs_rel_error_active": 0.16190180480571345,
+        "active_share_truth": 1.0,
+        "active_share_estimate": 1.0,
+        "corr": 0.9920649677754164
+      },
+      "nested_nodes": {
+        "mean_abs_error": 413.9758785451925,
+        "mean_abs_rel_error_active": 0.23267281577519894,
+        "active_share_truth": 1.0,
+        "active_share_estimate": 1.0,
+        "corr": 0.9842368942766154
+      }
+    },
+    "gates": {
+      "G1_identical_pathwise_action_basis_truth_and_proxy": true,
+      "G2_oos_r2_with_actions_ge_0p95": true,
+      "G3_var_rel_error_with_actions_le_0p10": true,
+      "G4_monotone_on_pathwise_basis": true,
+      "G5_leakage_free_calibration_and_no_action_above_trigger": true
+    },
+    "verdict": "PASS",
+    "candidate_comparison": {
+      "selected": "b_smoothed_relief_response_surface",
+      "selection_basis": "FIT sample only (leakage-free; no real-data OOS/nested evidence consumed in selection)",
+      "candidate_a_zero_shock_level_factor": {
+        "lambda": 6.012469606892377,
+        "fit_r2_relieved": -15.152494428892503,
+        "fit_active_share_det": 0.378,
+        "fit_active_share_truth": 0.9515,
+        "rejection_reason": "The zero-shock path misses diffusion-driven cuts at mid-coverage nodes (state-dependent bias: exact in the saturated deep tail, near-zero signal at mid coverage), so one level factor cannot match the per-node relieved amounts; disclosed and retained for the cadence sensitivity."
+      },
+      "candidate_b_smoothed_relief_surface": {
+        "sigma": 0.225,
+        "alpha": 0.7566891068509882,
+        "fit_r2_relieved": 0.8005548827236313
+      }
+    },
+    "declaration_cadence_sensitivity": {
+      "basis": "zero-shock deterministic relieved on the nested-eval states (proxy-side read-out; truth re-run not required)",
+      "monthly_mean_relieved": 609.6762475701688,
+      "annual_mean_relieved": 692.5424296537598,
+      "annual_over_monthly_mean_ratio": 1.1359183376650306,
+      "max_abs_node_delta": 1292.437637237225,
+      "active_nodes_monthly": 0.376
+    }
+  },
+  "p25t2_truth_consistency": {
+    "scr_pathwise_basis": 46638.8659,
+    "scr_p25t2_archived": 46638.8659,
+    "abs_diff": 0.0,
+    "match": true
+  },
+  "fit_truth_diagnostics": {
+    "fit_action_share_mean": 0.4145625,
+    "fit_restoration_share_mean": 0.296625,
+    "fit_relieved_mean": 3672.9103347979944,
+    "fit_nodes_with_any_action": 0.9515
+  },
+  "verify_stage": {
+    "checks": {
+      "p25t2_verdict_pass": true,
+      "p25t2_rule_unchanged": true,
+      "p25t2_digest_match": true,
+      "p25t1_task3_gates_pre_registered": true,
+      "nested_l7_consistent": true,
+      "fit_mean_match": true,
+      "p24t3_fit_components_complete": true,
+      "p24t3_val_components_complete": true,
+      "p25t2_scr_reference_match": true,
+      "gates_unchanged_phase22": true
+    },
+    "fit_mean_liability": 115996.86736245886,
+    "reference_assets": 129916.49144595393,
+    "p25t2_nested_scr_with_pathwise": 46638.8659,
+    "p25t2_nested_var_with_pathwise": 158944.0748,
+    "config": {
+      "n_fit": 2000,
+      "n_validation": 60,
+      "n_insample_heavy": 60,
+      "n_inner_heavy": 384,
+      "n_eval": 500,
+      "nested_n_inner": 256,
+      "fit_n_inner": 8,
+      "basis_grid": [
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "fx_modes": [
+        "analytic",
+        "learned"
+      ],
+      "selection_metric": "oos_rmse",
+      "confidence_level": 0.995,
+      "capital_horizon_months": 12,
+      "fit_seed": 42,
+      "validation_seed": 20260607,
+      "insample_heavy_seed": 7,
+      "eval_seed": 141,
+      "nested_inner_seed": 142,
+      "outer_measure": "P"
+    },
+    "duration_seconds": 0.045521419000579044
+  },
+  "primitives_provenance": "FIT/VALIDATION truth path-wise relieved amounts are BIT-IDENTICAL re-runs of the archived Phase 22 Task 2 inner paths (exact equality of total/benefit/credit vs the archived Phase 24 Task 3 decomposition enforced at every slice); the nested-eval truth relieved amounts are the archived Phase 25 Task 2 stage (report digest re-verified); the L7 arrays, fit-mean and selected proxy surface are the archived Phase 23 Task 3 stage; kappa reproduces the archived Phase 24 Task 3 credit carve-out.",
+  "method": "Proxy action basis: relieved_hat = alpha * phi_sigma(CR_hat) * clip(B_hat, 0, L_hat) with phi_sigma the governed relief curve smoothed over an effective lognormal dispersion of the path-wise coverage ratio (Gauss-Hermite order 21), CR_hat = a_ref / L_hat, and B_hat = clip(poly5 - kappa * C_det, 0, L_hat) the P24T3 carve-out base. (sigma, alpha) and kappa are calibrated on the FIT sample only. Truth and proxy apply the IDENTICAL node-level envelope transform relieved <= max_relief * clip(B, 0, L) (G1 convention).",
+  "residuals_documented": [
+    "Declaration cadence: the truth declares monthly; the annual-cadence sensitivity is quantified on the deterministic expected-path basis (see declaration_cadence_sensitivity).",
+    "Adaptedness: the truth coverage proxy discounts remaining cashflows with the realised inner path (perfect-foresight proxy); an adapted valuation would require nested-nested simulation.",
+    "The node-level analytic FX/liquidity offset enters the coverage proxy undecayed.",
+    "The effective dispersion sigma is constant across nodes; a (CR, vol)-state-dependent sigma is the documented refinement."
+  ],
+  "limitations": [
+    "Management-action parameters are educational placeholders pending credentialled data + APS X2 review.",
+    "The proxy relieved amount is an analytic approximation of the per-node inner-path mean; per-node error disclosed in relieved_approximation_diagnostics.",
+    "Tail diagnostics + MR-010/MR-014 refresh on the path-wise basis are Task 4 (refresh trigger MET at Task 2: +14.17%)."
+  ],
+  "use_restrictions": {
+    "classification": "EDUCATIONAL_DEMONSTRATION_ONLY",
+    "approved_uses": [
+      "Methodology demonstration of a matching analytic post-composition action basis for an LSMC proxy (identical path-wise action basis in truth and proxy, Solvency II Art. 23 consistency)",
+      "Quantification of the expected-path vs smoothed-response-surface approximation error of the per-node path-wise relieved amount"
+    ],
+    "prohibited_uses": [
+      "Production capital or solvency decisions",
+      "Policyholder bonus declarations",
+      "Regulatory submissions"
+    ],
+    "rationale": "Management-action parameters are educational placeholders; the proxy relieved amount is an analytic smoothed-relief response surface with two fit-calibrated scalars (sigma, alpha) - per-node approximation error disclosed; the truth coverage proxy uses realised-path (perfect-foresight) discounting; the node-level FX/liquidity offset enters undecayed; the effective dispersion sigma is constant across nodes; production sign-off withheld pending credentialled data and independent APS X2 review."
+  },
+  "reproducibility_digest": "2960b95ea36ffabeadc18c96cb1420e4c43a40a5380c47bd0d0f0499a9970675",
+  "duration_seconds": 0.10800839799048845,
+  "change_record_id": "fc9fc911fc51414abf0fc8e73cadc92c",
+  "change_record_status": "OWNER_REVIEW",
+  "audit_integrity_ok": true,
+  "change_records_total": 47
+}

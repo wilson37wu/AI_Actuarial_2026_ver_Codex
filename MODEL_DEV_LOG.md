@@ -8449,3 +8449,74 @@ and adaptedness residuals.
 **Blockers (human action, unchanged):** three git ghost locks (`GITHUB_PUSH_BLOCKER.md`) —
 commits land on `p22c9` via alt-index; push `p22c9:main` works; serialise scheduled runs;
 production sign-off residual (credentialled data + APS X2) by design; disk /sessions ~89%.
+
+---
+
+## 2026-06-08 (+08) — Cycle 24 — Phase 25 Task 3: Matching Path-Wise Proxy Basis + Seven-Driver OOS Re-Validation (PASS)
+
+**Health gate first (all green):** pytest batches p23/p24/p25t1+t2/governance/p22t2 (386 tests)
+and `node scripts/ui_app_self_test.cjs ui_app.html` ok:true BEFORE any change. No foreign writes
+(mtimes checked); governance store backed up to `/var/tmp/p25t3_build/GOV_BACKUP_pre_p25t3.json`
+and re-verified byte-identical immediately before the governance stage.
+
+**Task (pre-registered in the design note s5; Task 2 residual).** The LSMC proxy gains the
+MATCHING path-wise post-composition action basis so truth and proxy share an IDENTICAL action
+basis (G1 convention). NEW module `par_model_v2/projection/pathwise_proxy_basis.py`.
+
+- **Candidate selection (FIT evidence only, both candidates pre-registered, DISCLOSED):**
+  - (a) zero-shock expected-path relieved + single level factor (the P24T3 kappa pattern):
+    EVALUATED and REJECTED — the drift-only path misses diffusion-driven cuts at mid-coverage
+    nodes (state-dependent bias: exact in the saturated deep tail, near-zero signal at mid
+    coverage; lambda = 6.01, fit R^2 on per-node relieved -15.2). Retained for the
+    declaration-cadence sensitivity.
+  - (b) SELECTED: **smoothed-relief response surface** — relieved_hat = alpha *
+    phi_sigma(CR_hat) * clip(B_hat, 0, L_hat), phi_sigma = the governed relief curve smoothed
+    over an effective lognormal dispersion of the path-wise CR (Gauss-Hermite 21). Exactly two
+    scalars **(sigma = 0.225, alpha = 0.757)** calibrated on the FIT sample ONLY (leakage-free,
+    closed-form LS alpha on a fixed sigma grid; fit R^2 on per-node relieved 0.80; per-node
+    corr 0.98 nested / 0.99 val). kappa (credit carve-out) reproduced from P24T3 stage.
+- **Truth-side FIT/VAL path-wise relieved amounts:** BIT-IDENTICAL re-runs of the archived
+  Phase 22 Task 2 inner paths (exact equality of total/benefit/credit vs the archived P24T3
+  decomposition enforced at every slice: fit 3 slices x 2000 nodes @ n_inner 8, val 60 nodes
+  @ 384). Nested-eval truth relieved = archived P25T2 stage, report digest re-verified.
+- **RESULT (gates 5/5 PASS, unchanged Phase 22 gates):** OOS R^2 with actions (path-wise)
+  **0.9978** (gate >= 0.95; without-actions 0.9985); proxy-vs-nested **VaR99.5 rel err 0.40%**
+  (gate <= 10%); ES rel err 0.01%; SCR rel err 1.16% (proxy 46,095.8 vs nested 46,638.9).
+  Truth nested with-actions SCR reproduces the archived P25T2 report exactly (|diff| 0.0).
+- **Residual read-outs documented:** annual-vs-monthly declaration cadence ratio 1.136 on the
+  deterministic basis (annual declarations relieve MORE: stale cuts persist between
+  declaration dates); perfect-foresight discounting; node offset undecayed; constant sigma
+  across nodes (a (CR, vol)-state sigma is the documented refinement).
+- Deliverables: `docs/validation/PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT.{json,md}` +
+  `docs/PATHWISE_PROXY_BASIS_CARD.md` via staged
+  `scripts/build_phase25_task3_pathwise_proxy_basis.py` (verify -> pwfit x3 -> pwval ->
+  det x3 -> actions -> governance; idempotent re-run verified: "already applied").
+- **Governance:** ChangeRecord `fc9fc911fc51414abf0fc8e73cadc92c` (code_change) OWNER_REVIEW;
+  audit 73->74; changes 46->47; verify_all True.
+- **Tests:** 44 new PASS (`tests/test_phase25_task3_pathwise_proxy_basis.py`: gate pins,
+  surface maths incl. sigma->0 limit and trigger-spreading, calibration guards + leakage
+  determinism, monotonicity, gate failure paths, deterministic-basis contract, report
+  contract). Regression batches post-change: **430 PASS / 0 FAIL** (386 prior + 44 new);
+  compileall clean; ui self-test ok:true. Off-mount build + cp + cmp protocol observed (ONE
+  mount-staleness incident on a module rewrite, caught by py_compile and recovered off-mount;
+  zero data loss).
+
+**Industry Standards Progress:**
+- Solvency II Art. 23 — the with-actions basis is now IDENTICAL in valuation truth and capital
+  proxy (declaration timing consistent across model components). Addressed.
+- Solvency II Art. 234 — no silent re-tuning: copula untouched, gates unchanged, candidate
+  comparison disclosed. Addressed (rank-invariance re-check is Task 4, df 2.9451 frozen).
+- SOA ASOP 56 §3.1.3/§3.4 — consistency of modelled management behaviour across components;
+  approximation error of the proxy basis quantified per node. Addressed.
+- IA TAS M §3.2/§3.6 — quantified, reproducible proxy evidence (digests, bit-identical archive
+  reuse, idempotent build, FIT-only calibration provenance). Addressed.
+
+**Next cycle (Phase 25 Task 4):** tail diagnostics on the path-wise with-actions basis +
+**MR-010/MR-014 refresh (REQUIRED — trigger MET at Task 2: +14.17%)**; rank invariance re-check
+with df = 2.9451 frozen on without-actions losses (copula parameters frozen); then Task 5
+(UI contract 1.6.0 -> 1.7.0 ADDITIVE + PHASE 25 COMPLETE docs).
+
+**Blockers (human action, unchanged):** three git ghost locks (`GITHUB_PUSH_BLOCKER.md`) —
+commits land on `p22c9` via alt-index; push `p22c9:main` works from the sandbox; serialise the
+scheduled runs; production sign-off residual (credentialled data + APS X2) by design; disk
+/sessions ~89%.
