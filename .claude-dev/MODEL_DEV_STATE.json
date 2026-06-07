@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-07T04:18:40Z",
+ "last_run": "2026-06-07T05:30:00Z",
  "last_run_duration_minutes": 25,
- "last_run_note": "2026-06-07 cycle 6: Phase 21 Task 5 COMPLETE -> PHASE 21 COMPLETE (Tasks 1-5). Completed the cycle-5 undocumented UI propagation: fixed stale five-driver headline verdict wording to seven-driver (build_ui_data.py _build_tail/_build_verdicts), rebuilt viewer_data.json from the LIVE governance store (52/52 audit digest-verified, 28 change records incl. the new one), governance ChangeRecord 45cacebd910b440891f28b48fd30fedd OWNER_REVIEW (audit 51->52, changes 27->28, verify_all True), evidence report docs/validation/PHASE21_TASK5_UI_PROPAGATION_REPORT.{json,md}. ui_app.html contract v1.3.0: G-FX/G-LIQ panels, FX+liquidity SCR cards, seven-driver aggregation/tail read-outs; self-test ok:true 0 network/0 JS errors (52 checks); offline-viewer self-test ok:true; py_compile clean. Six-driver OOS PARTIAL stays honestly displayed. Next: Phase 22 Task 1 - six-driver OOS remediation (inner 96->256+, n_outer 500->2000+ staged CRN, targeted basis).",
- "current_phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
- "overall_status": "PHASE21_COMPLETE_seven_driver_capital_in_offline_UI__next_Phase22_Task1_OOS_remediation",
+ "last_run_note": "2026-06-07 cycle 7: Phase 22 Task 1 COMPLETE - six-driver OOS remediation VERDICT PASS. Cleared the Phase 21 Task 2 PARTIAL (OOS R2 0.9498 -> 0.9985) with no gate-shopping and the stricter Phase 22 gate (VaR/ES/SCR rel err 0.50%/0.19%/1.25%, all <=10%; SCR was 15.97%). All 3 recorded remediation options applied: de-noised fit targets (8 inner Q-paths/state; n_inner=1 bit-identical to Phase 21, regression-tested), n_fit 500->2000 staged CRN, eval benchmark 96->256 inner, plus targeted rate/equity deg-2 candidate (loses OOS-RMSE selection honestly at R2 0.9930). Final surface (analytic, deg 3, max_int 2, 46 terms). Key finding: noise, not basis capacity, bound - deg-2 OOS R2 0.794 -> 0.9984 once de-noised. New: multi_driver_proxy_validation_6d_remediation.py, build_phase22_task1_oos_remediation.py, test_phase22_task1_oos_remediation.py (21 PASS). ChangeRecord 6f88fd2a1fa449908a7cd8236ea30d33 OWNER_REVIEW; MR-011/MR-012 MITIGATED; audit 52->54, changes 28->29, verify_all True. Evidence: docs/validation/PHASE22_TASK1_OOS_REMEDIATION_REPORT.{json,md}; six-driver OOS card updated. UI propagation of refreshed verdict deferred to Phase 22 Task 5 by design. Next: Phase 22 Task 2 - seven-driver proxy extension (liquidity CIR-affine haircut feature) + OOS validation.",
+ "current_phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+ "overall_status": "PHASE22_TASK1_COMPLETE_OOS_remediation_PASS__next_Task2_seven_driver_proxy_OOS",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",

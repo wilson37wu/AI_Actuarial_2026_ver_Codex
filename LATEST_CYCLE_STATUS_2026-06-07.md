@@ -1,28 +1,34 @@
-# Latest Cycle Status — 2026-06-07 (cycle 6)
+# Latest Cycle Status — 2026-06-07 (cycle 7)
 
-**Phase 21 Task 5 COMPLETE — offline-UI propagation → PHASE 21 COMPLETE (Tasks 1–5).**
+**Phase 22 Task 1 COMPLETE — six-driver OOS remediation, VERDICT PASS.**
 
-- `ui_app.html` / `ui_data.json` contract **v1.3.0** (additive): G-FX + G-LIQ calibration-explorer
-  panels (criteria breakdowns + fit diagnostics); FX SCR 4,286 + liquidity SCR 63 cards/bars
-  (small-SCR finding note shown); seven-driver aggregation read-outs (standalone sum 62,408 /
-  var-covar 28,996 / gaussian copula 41,593 / nested 48,694; MR-010 finding) and seven-driver
-  tail diagnostics (convergence, simulated + honest nested bootstrap CIs, Sobol-RQMC 3.6×).
-- Cycle 5 did the bundler/self-test patch but left it undocumented; this cycle (6) fixed the stale
-  five-driver headline verdict wording → seven-driver, rebuilt `viewer_data.json` from the LIVE
-  governance store (UI governance tab now shows 52/52 digest-verified audit entries, 28 change
-  records), and persisted governance + evidence.
-- Governance: ChangeRecord `45cacebd910b440891f28b48fd30fedd` OWNER_REVIEW (code_change);
-  audit 51→52, change records 27→28, verify_all True.
-- Evidence: `docs/validation/PHASE21_TASK5_UI_PROPAGATION_REPORT.{json,md}` — 19/19 UI-contract
-  checks PASS; `node scripts/ui_app_self_test.cjs ui_app.html` ok:true, **0 network / 0 JS errors**
-  (52 checks, driverBars=7); offline-viewer self-test ok:true; py_compile clean.
-- Honest disclosures retained: six-driver OOS **PARTIAL** (R² 0.9498) listed; λ_l clamp; liquidity
-  exposure/couplings are educational placeholders.
+- The Phase 21 Task 2 honest PARTIAL (OOS R² 0.9498 < 0.95) is **CLEARED**: OOS R² **0.9985**,
+  OOS RMSE 816 (was 4,686), VaR/ES/SCR rel err **0.50% / 0.19% / 1.25%** vs the STRICTER Phase 22
+  gate (≤10% each; Phase 21 gated VaR only — SCR was 15.97%); overfit gap −0.0008; leakage-free;
+  FX axis exact.
+- All three recorded remediation options applied, no gate-shopping: de-noised fit targets
+  (8 inner Q-paths/state, n_inner=1 bit-identical to Phase 21 — regression-tested), n_fit 500→2,000
+  (staged CRN), eval benchmark 96→256 inner, PLUS a targeted rate/equity-curvature 9-term candidate
+  competing in the same OOS-RMSE selection (it clears the gate at R² 0.9930 but loses to the
+  engine's (analytic, deg 3, max_int 2, 46-term) surface).
+- Key finding: the Phase 21 diagnosis CONFIRMED — noise, not basis capacity, bound; with de-noised
+  targets deg-2/3 bases generalise (deg-2 was 0.794 OOS R², now 0.9984+).
+- New: `par_model_v2/projection/multi_driver_proxy_validation_6d_remediation.py`,
+  `scripts/build_phase22_task1_oos_remediation.py`, `tests/test_phase22_task1_oos_remediation.py`
+  (21 PASS). Regression: phase21 OOS 17 + governance 54 + FX 9 PASS; py_compile clean.
+- Governance: ChangeRecord `6f88fd2a1fa449908a7cd8236ea30d33` OWNER_REVIEW (methodology_change);
+  MR-011/MR-012 → MITIGATED; audit 52→54, change records 28→29, verify_all True.
+- Evidence: `docs/validation/PHASE22_TASK1_OOS_REMEDIATION_REPORT.{json,md}`;
+  `docs/SIX_DRIVER_OOS_VALIDATION_CARD.md` updated.
+- UI note: the offline UI still shows the Phase 21 PARTIAL — refreshed-verdict propagation is
+  deliberately deferred to Phase 22 Task 5 (one task per cycle).
 
-**Next:** Phase 22 Task 1 — six-driver OOS remediation (training inner 96→256+, n_outer
-500→2,000+ staged CRN, targeted deg-2 basis on rate/equity; gate OOS R² ≥ 0.95). Full Phase 22
-plan is in MODEL_DEV_TASK_PROMPT.md.
+**Next:** Phase 22 Task 2 — extend the LSMC proxy to the calibrated liquidity (7th) driver
+(analytic CIR-affine haircut feature); disjoint-seed seven-driver OOS validation vs the Phase 21
+Task 4 nested ground truth (R² ≥ 0.95, VaR rel-err ≤ 10%); overfit sweep. Plan in
+MODEL_DEV_TASK_PROMPT.md.
 
 **Blockers:** ghost git locks `.git/index.lock` + `.git/HEAD.lock` still unremovable from the
 sandbox — commits use the alt-`GIT_INDEX_FILE` + direct-ref-write workaround; a human shell delete
-remains the clean fix. Disk: /sessions at 88% (healthy).
+remains the clean fix. Disk: /sessions at 88% (healthy). pytest had to be reinstalled this cycle
+(fresh sandbox boot): `pip install pytest --break-system-packages`.

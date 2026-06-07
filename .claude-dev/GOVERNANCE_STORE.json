@@ -1134,6 +1134,56 @@
       "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
       "digest": "e02496fc4f5dfdabe0da959b6aa7df496ac7736d886ae7d5d04d2c3e3d689745",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "0846e53b94154c20927acf0380f5a361",
+      "timestamp": "2026-06-07T05:16:56.331780+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "AutomatedModelDev_Phase22",
+      "description": "Model run hx-proxyval-6501d1c4: PASS",
+      "details": {
+        "run_id": "hx-proxyval-6501d1c4",
+        "scenario_count": 176080,
+        "duration_seconds": 0.1723,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/multi_driver_proxy_validation_6d.py"
+        ],
+        "test_summary": "6D OOS proxy-val: selected (analytic, deg=3, max_int=2), OOS R2=0.9985, OOS RMSE=816.02, VaR rel err=0.50%, leakage_free=True, fx_slope_rel_err=0.00%"
+      },
+      "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+      "digest": "210a0a6957bbb66e48b26c585f4ceb54c6d6409220ba7eaf2695935c8171837c",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "c473dd3fbecb4ddf914ae10aa93d6e49",
+      "timestamp": "2026-06-07T05:16:56.348980+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase22",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - six-driver OOS remediation",
+      "details": {
+        "record_id": "6f88fd2a1fa449908a7cd8236ea30d33",
+        "verdict": "PASS \u2014 remediated six-driver surface (analytic, 46 terms) validated OOS (R^2=0.9985, VaR/ES/SCR rel err 0.50%/0.19%/1.25%, leakage-free, ove",
+        "final_surface": "analytic",
+        "targeted_wins": false,
+        "oos_r2": 0.998479,
+        "var_rel_error": 0.005023,
+        "scr_rel_error": 0.012454,
+        "affected_components": [
+          "par_model_v2/projection/multi_driver_proxy_validation_6d_remediation.py",
+          "tests/test_phase22_task1_oos_remediation.py",
+          "scripts/build_phase22_task1_oos_remediation.py",
+          "docs/SIX_DRIVER_OOS_VALIDATION_CARD.md",
+          "docs/validation/PHASE22_TASK1_OOS_REMEDIATION_REPORT.{json,md}"
+        ],
+        "risk_actions": {
+          "MR-011": "refreshed",
+          "MR-012": "refreshed"
+        }
+      },
+      "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+      "digest": "7c96f19bd1326aa60f8cd68ca33609833b955398aaebf06bff16113427e710c4",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -2823,6 +2873,68 @@
         }
       ],
       "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital"
+    },
+    {
+      "record_id": "6f88fd2a1fa449908a7cd8236ea30d33",
+      "created_at": "2026-06-07T05:16:56.348929+00:00",
+      "title": "Phase 22 Task 1 - Six-driver OOS proxy-validation remediation (hardened)",
+      "description": "Remediated re-run of the six-driver (G2++ rate, equity, credit, lapse, mortality, FX-translation) OOS LSMC proxy validation per the remediation options recorded after the Phase 21 Task 2 honest PARTIAL (OOS R^2 0.9498 vs 0.95): (1) de-noised regression targets - each fit state's target is the mean of 8 inner Q-paths (was 1), same SeedSequence protocol so n_inner=1 is bit-identical to Phase 21 (regression-tested); (2) training states 500 -> 2,000 via the staged slice-stable CRN protocol; (3) eval nested benchmark de-noised 96 -> 256 inner; plus a targeted rate/equity-curvature 9-term candidate basis (deg-1 all drivers + r^2, S^2, r*S; analytic CIP-exact FX offset) competing against the FULL governed sweep on the same fitting data and the same disjoint-seed hold-out. Selection stays by OOS RMSE - no gate-shopping. Stricter Phase 22 gate: OOS R^2 >= 0.95 AND VaR, ES AND SCR rel err <= 10%.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_proxy_validation_6d_remediation.py",
+        "tests/test_phase22_task1_oos_remediation.py",
+        "scripts/build_phase22_task1_oos_remediation.py",
+        "docs/SIX_DRIVER_OOS_VALIDATION_CARD.md",
+        "docs/validation/PHASE22_TASK1_OOS_REMEDIATION_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 7 section 3.3",
+        "SOA ASOP 25 section 3.3",
+        "SOA ASOP 56 section 3.1.3/3.5",
+        "IA TAS M section 3.2/3.6",
+        "IFoA proxy-modelling working party",
+        "Longstaff & Schwartz (2001)",
+        "Solvency II Delegated Regulation Article 188/234"
+      ],
+      "before_snapshot": {
+        "six_driver_oos": "PARTIAL - OOS R^2 0.949837 < 0.95 (Phase 21 Task 2, c2f29042b5f44dd7b3670d7de87e09a2)",
+        "fit_targets": "single inner Q-path (noisy)",
+        "n_fit": 500,
+        "nested_n_inner": 96
+      },
+      "after_snapshot": {
+        "six_driver_oos": "remediated (PASS)",
+        "final_surface": "analytic (46 terms)",
+        "targeted_wins": false,
+        "oos_r2": 0.998479,
+        "var_rel_error": 0.005023,
+        "es_rel_error": 0.001882,
+        "scr_rel_error": 0.012454,
+        "fit_n_inner": 8,
+        "n_fit": 2000,
+        "nested_n_inner": 256
+      },
+      "impact_assessment": "Validation-evidence change only: hardens the six-driver proxy OOS evidence without altering any production engine output (additive remediation module). Clears (or honestly re-documents) the recorded Phase 21 PARTIAL with a stricter capital-error gate.",
+      "quantitative_impact": "Final (analytic, 46 terms): OOS R^2 0.9985 (was 0.9498), OOS RMSE 816.0 (was 4686.0), VaR rel err 0.50% (was 5.99%), ES rel err 0.19% (was 4.63%), SCR rel err 1.25% (was 15.97%), overfit gap -0.0008; n_fit=2000, fit_n_inner=8, n_eval=500, nested_n_inner=256.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase22",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T05:16:56.348946+00:00",
+          "actor": "AutomatedModelDev_Phase22",
+          "status": "PEER_REVIEW",
+          "comments": "Remediated six-driver OOS validation staged with slice-stable CRN; n_inner=1 bit-identity to the governed Phase 21 kernel regression-tested; credentialled calibration and independent review required before approval."
+        },
+        {
+          "timestamp": "2026-06-07T05:16:56.348956+00:00",
+          "actor": "AutomatedModelDev_Phase22",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending Phase 22 Tasks 2-5 and credentialled calibration."
+        }
+      ],
+      "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation"
     }
   ],
   "risk_register": [
@@ -2999,8 +3111,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5",
       "created_at": "2026-06-04T20:15:59.122741+00:00",
-      "updated_at": "2026-06-07T01:18:49.182068+00:00",
-      "notes": "Phase 21 Task 3 (G-LIQ): CIR++ liquidity-premium / funding-spread driver added as the SEVENTH economic-capital-proxy driver \u2014 the LAST documented-but-omitted driver \u2014 and calibrated to HKD educational-proxy history. kappa_l=0.9345 (half-life 0.7yr), long_run_premium_p=0.0063 (63bp), sigma_l=0.0213, lambda_l=2.0000; Feller ratio 21.71. ChangeRecord APPROVED + one PARAM_CHANGE audit entry; G-LIQ PASS. Residual (keeps the risk open, not closed): seven-driver tail-dependent aggregation + tail diagnostics are Phase 21 Task 4; calibration is educational-proxy single-path OLS \u2014 credentialled data + a genuine independent APS X2 review are required."
+      "updated_at": "2026-06-07T05:16:56.348826+00:00",
+      "notes": "Phase 22 Task 1 remediated the six-driver OOS PARTIAL: final surface analytic (46 terms) OOS R^2 0.9985 (gate 0.95), VaR/ES/SCR rel err 0.50%/0.19%/1.25% (gate 10% each), leakage-free, overfit gap -0.0008; verdict PASS. De-noised fit targets (8 inner Q-paths/state) + training states 500->2000 + de-noised nested benchmark (256 inner) + targeted rate/equity-curvature candidate in the same OOS selection. Parameters remain educational placeholders pending credentialled calibration."
     },
     {
       "risk_id": "MR-012",
@@ -3015,8 +3127,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
       "created_at": "2026-06-05T07:10:02.898466+00:00",
-      "updated_at": "2026-06-07T02:21:44.687035+00:00",
-      "notes": "Phase 21 Task 4 CLOSED the driver-omission residual at the aggregation level: all SEVEN documented drivers (G2++ rate, equity, credit spread, dynamic lapse, mortality trend, FX, liquidity) now enter the correlated economic-capital aggregation. The liquidity driver uses the Task 3 G-LIQ-calibrated CIR++ parameters with an ANALYTIC, CIR-affine-exact forced-sale haircut conditioning (verified vs Monte Carlo within 0.03%); liquidity standalone SCR 63 vs rate 14486 / equity 15932 \u2014 small because the calibrated mean reversion (half-life ~0.74y) pulls the premium back over the ~19y workout horizon (documented finding). REMAINING residual is calibration quality, not coverage: liquidity exposure notional + 7x7 liquidity couplings are educational placeholders pending credentialled data and independent APS X2 review."
+      "updated_at": "2026-06-07T05:16:56.348848+00:00",
+      "notes": "Phase 22 Task 1 remediated the six-driver OOS PARTIAL: final surface analytic (46 terms) OOS R^2 0.9985 (gate 0.95), VaR/ES/SCR rel err 0.50%/0.19%/1.25% (gate 10% each), leakage-free, overfit gap -0.0008; verdict PASS. De-noised fit targets (8 inner Q-paths/state) + training states 500->2000 + de-noised nested benchmark (256 inner) + targeted rate/equity-curvature candidate in the same OOS selection. Parameters remain educational placeholders pending credentialled calibration."
     },
     {
       "risk_id": "MR-013",

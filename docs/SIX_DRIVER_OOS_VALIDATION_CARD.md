@@ -46,3 +46,33 @@ FX-axis slope recovered within 0.00% of the CIP-exact theoretical slope.
 * IFoA proxy-modelling working party
 * Longstaff & Schwartz (2001)
 * Solvency II Delegated Regulation Article 188/234
+
+---
+
+## Phase 22 Task 1 update (2026-06-07) — REMEDIATED, verdict PASS
+
+The Phase 21 Task 2 honest PARTIAL (OOS R² 0.9498 < 0.95) is **CLEARED** by the recorded
+remediation options, with NO gate-shopping (same disjoint-seed hold-out, selection still by
+OOS RMSE, and a STRICTER Phase 22 gate adding ES + SCR rel err ≤ 10% to the VaR criterion):
+
+1. **De-noised fitting targets** — 8 inner Q-paths/state (was 1), identical SeedSequence
+   protocol (n_inner=1 reproduces Phase 21 bit-for-bit; regression-tested).
+2. **4× training states** — n_fit 500 → 2,000 via the staged slice-stable CRN protocol.
+3. **De-noised eval benchmark** — nested_n_inner 96 → 256.
+4. **Targeted rate/equity-curvature candidate** (deg-1 all drivers + r², S², r·S; 9 terms,
+   analytic FX offset) competed in the same selection — it clears the gate itself
+   (OOS R² 0.9930) but LOSES by OOS RMSE to the engine's (analytic, deg 3, max_int 2) surface.
+
+**Final selected surface:** fx_mode=analytic, degree 3, max_interaction_order 2 (46 terms);
+OOS R² **0.9985**; OOS RMSE 816 (was 4,686); VaR/ES/SCR rel err **0.50% / 0.19% / 1.25%**
+(SCR was 15.97%); overfit gap −0.0008; FX-axis slope recovered exactly (0.00%).
+
+**Key finding:** the Phase 21 conclusion "training nested budget, not basis capacity, binds"
+is CONFIRMED — with de-noised targets the deg-2/3 bases that previously overfitted
+catastrophically (deg-2 OOS R² 0.794) now generalise (0.9984+), and the selected surface
+moved from deg-1 to deg-3.
+
+Evidence: `docs/validation/PHASE22_TASK1_OOS_REMEDIATION_REPORT.{json,md}`.
+ChangeRecord `6f88fd2a1fa449908a7cd8236ea30d33` (OWNER_REVIEW); MR-011/MR-012 refreshed →
+MITIGATED. Production sign-off remains withheld pending Phase 22 Tasks 2–5, credentialled
+calibration, and independent APS X2 review.

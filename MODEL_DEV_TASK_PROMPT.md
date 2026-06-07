@@ -833,7 +833,54 @@ Do these **only once** disk space is freed, the ghost locks are removed, and `gi
 
 ---
 
-## LATEST STATUS - 2026-06-07 (cycles 5-6, supersedes earlier text) — **PHASE 21 COMPLETE**
+## LATEST STATUS - 2026-06-07 (cycle 7, supersedes earlier text) — **PHASE 22 TASK 1 COMPLETE (PASS)**
+
+**Phase 22 Task 1 is COMPLETE: six-driver OOS proxy-validation remediation, VERDICT PASS.**
+The Phase 21 Task 2 honest PARTIAL (OOS R² 0.9498 < 0.95) is CLEARED with no gate-shopping and a
+STRICTER gate: OOS R² **0.9985**, OOS RMSE 816 (was 4,686), VaR/ES/SCR rel err
+**0.50% / 0.19% / 1.25%** (Phase 22 gate ≤10% EACH; Phase 21 gated VaR only — SCR was 15.97%);
+overfit gap −0.0008; leakage-free; FX axis exact. All three recorded remediation options applied:
+de-noised fit targets (mean of 8 inner Q-paths/state; `n_inner=1` reproduces Phase 21 bit-for-bit —
+regression-tested), n_fit 500→2,000 via staged slice-stable CRN, eval nested benchmark 96→256 inner,
+PLUS a targeted rate/equity-curvature 9-term candidate (deg-1 all drivers + r², S², r·S; analytic FX
+offset) competing in the same OOS-RMSE selection — it clears the gate itself (R² 0.9930) but LOSES
+to the engine's selected **(analytic, deg 3, max_int 2, 46 terms)** surface. Key finding: the Phase 21
+diagnosis CONFIRMED — target noise, not basis capacity, bound (deg-2 OOS R² 0.794 → 0.9984+ once
+de-noised). New module `par_model_v2/projection/multi_driver_proxy_validation_6d_remediation.py`
+(additive; subclasses the governed validator), staged build
+`scripts/build_phase22_task1_oos_remediation.py` (stage dir `/var/tmp/p22t1_stage`), tests
+`tests/test_phase22_task1_oos_remediation.py` (21 PASS; incl. bit-identity, staged==monolithic,
+selection-not-gate-shopped). Governance: ChangeRecord `6f88fd2a1fa449908a7cd8236ea30d33`
+OWNER_REVIEW (methodology_change); MR-011/MR-012 → MITIGATED; audit 52→54, change records 28→29,
+verify_all True. Evidence: `docs/validation/PHASE22_TASK1_OOS_REMEDIATION_REPORT.{json,md}`;
+`docs/SIX_DRIVER_OOS_VALIDATION_CARD.md` updated. Regression: phase21 OOS 17 + governance 54 + FX 9
+PASS; py_compile clean. NOTE: the offline UI still displays the Phase 21 PARTIAL — propagation is
+deliberately deferred to Phase 22 Task 5 (one task per cycle).
+
+**NEXT executable task: Phase 22 Task 2 — seven-driver proxy extension + OOS validation.** Extend the
+LSMC proxy surface to the calibrated liquidity (7th) driver via the analytic CIR-affine forced-sale-
+haircut feature (it enters the Phase 21 Task 4 inner nest analytically — mirror the FX control-variate
+offset design where exactness allows, else add the haircut as a basis feature); disjoint-seed
+seven-driver OOS validation vs the Phase 21 Task 4 nested ground truth (gate R² ≥ 0.95, VaR rel-err
+≤ 10%); overfit sweep; reuse the remediated sizing from Task 1 (de-noised targets, n_fit 2,000+,
+nested benchmark 256+ inner); ChangeRecord OWNER_REVIEW + MR-register refresh.
+
+## Phase 22: Proxy hardening + seven-driver OOS validation (PLAN — one task per cycle)
+
+1. ✅ DONE (2026-06-07 cycle 7) — Six-driver OOS remediation — PARTIAL cleared honestly (PASS,
+   OOS R² 0.9985, stricter VaR/ES/SCR ≤10% gate; no gate-shopping).
+2. ⭐ **NEXT** — Extend the LSMC proxy surface to the calibrated liquidity (7th) driver (analytic CIR-affine haircut
+   feature); disjoint-seed seven-driver OOS validation vs the Task 4 nested ground truth (R² ≥ 0.95,
+   VaR rel-err ≤ 10%); overfit sweep.
+3. Liquidity exposure-notional + 7×7 liquidity-coupling calibration to documented educational proxies
+   (replace placeholders; sensitivity table over couplings ±0.15); refresh the small-liquidity-SCR finding.
+4. Seven-driver aggregation re-run on the hardened proxy + refreshed couplings; MR-010/MR-012 refresh;
+   tail diagnostics.
+5. Offline-UI propagation + PHASE 22 COMPLETE documentation.
+
+---
+
+## LATEST STATUS - 2026-06-07 (cycles 5-6, superseded by cycle 7 above) — **PHASE 21 COMPLETE**
 
 **Phase 21 Task 5 is COMPLETE: offline-UI propagation of the seven-driver capital view → PHASE 21 COMPLETE (Tasks 1–5).**
 Work was split across two cycles: cycle 5 patched `scripts/build_ui_data.py` + `scripts/ui_app_self_test.cjs`
@@ -852,25 +899,6 @@ PASS; `node scripts/ui_app_self_test.cjs ui_app.html` **ok:true, 0 network / 0 J
 incl. gfxPresent/gliqPresent/sevenDriverCapitalPresent/sevenDriverVerdictPresent/fxScrCardPresent/
 liquidityScrCardPresent/oosPartialVerdictPresent, driverBars=7); offline-viewer self-test ok:true;
 py_compile clean. The six-driver OOS **PARTIAL** (R² 0.9498) remains honestly displayed.
-
-**NEXT executable task: Phase 22 Task 1 — proxy hardening (OOS remediation).** Re-run the six-driver
-LSMC OOS validation applying the recorded remediation options (MODEL_DEV_LOG 2026-06-07 cycle 2):
-raise training inner budget 96→256+, raise n_outer training states 500→2,000+ via the staged CRN
-protocol, and/or targeted deg-2 basis on rate/equity only; gate target OOS R² ≥ 0.95 with VaR/ES/SCR
-rel-err ≤ 10%; ChangeRecord OWNER_REVIEW + MR-register refresh; then offline-UI propagation of the
-refreshed verdict.
-
-## Phase 22: Proxy hardening + seven-driver OOS validation (PLAN — one task per cycle)
-
-1. ⭐ **NEXT** — Six-driver OOS remediation (see above) — clear the PARTIAL honestly, no gate-shopping.
-2. Extend the LSMC proxy surface to the calibrated liquidity (7th) driver (analytic CIR-affine haircut
-   feature); disjoint-seed seven-driver OOS validation vs the Task 4 nested ground truth (R² ≥ 0.95,
-   VaR rel-err ≤ 10%); overfit sweep.
-3. Liquidity exposure-notional + 7×7 liquidity-coupling calibration to documented educational proxies
-   (replace placeholders; sensitivity table over couplings ±0.15); refresh the small-liquidity-SCR finding.
-4. Seven-driver aggregation re-run on the hardened proxy + refreshed couplings; MR-010/MR-012 refresh;
-   tail diagnostics.
-5. Offline-UI propagation + PHASE 22 COMPLETE documentation.
 
 ---
 
