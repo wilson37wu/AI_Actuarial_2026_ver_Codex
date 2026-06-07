@@ -1,0 +1,328 @@
+{
+  "affected_components": [
+    "par_model_v2/projection/multi_driver_proxy_validation_7d.py",
+    "tests/test_phase22_task2_seven_driver_proxy.py",
+    "scripts/build_phase22_task2_7d_proxy_validation.py",
+    "docs/SEVEN_DRIVER_PROXY_VALIDATION_CARD.md",
+    "docs/validation/PHASE22_TASK2_7D_PROXY_VALIDATION_REPORT.{json,md}"
+  ],
+  "audit_integrity_ok": true,
+  "change_record_id": "5d68c9b6a7694031b325bbb03dca630f",
+  "change_record_status": "OWNER_REVIEW",
+  "change_records_total": 30,
+  "markdown": "# Phase 22 Task 2 - Seven-Driver Proxy OOS Validation\n\nRun: 2026-06-07T07:09:52.925817+00:00\n\n## Verdict: PASS - seven-driver surface (analytic, deg 3, max_int 2, 46 terms) validated OOS (R2=0.9985, VaR/ES/SCR rel err 0.51%/0.18%/1.26%, liquidity offset exact, leakage-free)\n\nSelected surface: **analytic**, degree 3, max interaction 2, 46 terms.\nLiquidity enters as an analytic CIR-affine forced-sale haircut offset; FX enters\nas the CIP-exact translation offset.\n\n| fx_mode | (deg, max_int) | terms | OOS R2 | OOS RMSE | overfit gap |\n| --- | --- | --- | --- | --- | --- |\n| analytic | (1, 3) | 6 | 0.9863 | 2449.6 | 0.0053 |\n| analytic | (2, 3) | 21 | 0.9984 | 835.2 | -0.0008 |\n| analytic | (3, 2) | 46 | 0.9985 | 816.0 | -0.0008 |\n| analytic | (3, 3) | 56 | 0.9984 | 842.1 | -0.0009 |\n| analytic | (4, 3) | 91 | 0.9980 | 934.8 | -0.0014 |\n| learned | (1, 3) | 7 | 0.9863 | 2445.7 | 0.0052 |\n| learned | (2, 3) | 28 | 0.9982 | 884.5 | -0.0011 |\n| learned | (3, 2) | 64 | 0.9981 | 923.2 | -0.0012 |\n| learned | (3, 3) | 84 | 0.9977 | 1012.4 | -0.0009 |\n| learned | (4, 3) | 135 | 0.9973 | 1084.2 | -0.0034 |\n\n## Capital comparison\n\n* Proxy VaR99.5: 170684.6 vs nested 171555.3 (rel err 0.51%)\n* Proxy ES: 176250.8 vs nested 176570.2 (rel err 0.18%)\n* SCR rel err: 1.26%\n* Nested benchmark: n_outer=500, nested_n_inner=256\n\n## Liquidity analytic feature\n\n* Offset max abs error: 0.000e+00\n* Baseline liquidity impact: 0.000e+00\n* Exposure notional: 30000; tau=19.0 years; initial premium=0.6177%\n\n## Leakage / reproducibility\n\n* Leakage-free: True\n* Reproducibility digest: `d383b9e106b0c9862b41ef6daeaf82a637950e5f8594e9ff59352285cdb24210`\n\n## Governance\n\n* ChangeRecord: 5d68c9b6a7694031b325bbb03dca630f (OWNER_REVIEW)\n* MR-011: refreshed; MR-012: refreshed\n* Audit integrity: True\n\n## Notes\n\n* Liquidity is an analytic CIR-affine offset, not a learned coefficient; the validation therefore tests the fitted stochastic-valuation surface plus the exact liquidity feature on the same disjoint hold-out.\n* Proxy and nested capital are evaluated on the SAME eval outer states (seed 141), isolating surface error; nested benchmark uses 256 inner Q-paths per state.\n",
+  "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+  "risk_actions": {
+    "MR-011": "refreshed",
+    "MR-012": "refreshed"
+  },
+  "run_timestamp": "2026-06-07T07:09:52.925817+00:00",
+  "standard_references": [
+    "SOA ASOP 7 section 3.3",
+    "SOA ASOP 25 section 3.3",
+    "SOA ASOP 56 section 3.1.3/3.5",
+    "IA TAS M section 3.2/3.6",
+    "IFoA proxy-modelling working party",
+    "Longstaff & Schwartz (2001)",
+    "Duffie-Singleton (1999)",
+    "Solvency II Delegated Regulation Article 188/234"
+  ],
+  "task": "Task 2 - Seven-driver LSMC proxy extension + OOS validation",
+  "use_restrictions": {
+    "key_limitations": [
+      "Liquidity exposure notional and liquidity correlation couplings are educational placeholders (process params are G-LIQ calibrated to an educational HKD proxy).",
+      "Single systemic liquidity factor; no asset-class segmentation, bid-ask microstructure, or funding-ladder granularity.",
+      "Analytic haircut ignores the simulation premium ceiling clamp (immaterial at calibrated parameters; verified < 0.03%).",
+      "n_outer for the nested benchmark is small for a 99.5% metric; the wide nested bootstrap CI is disclosed and the convergence evidence is carried by the copula-simulated study."
+    ],
+    "model": "SevenDriverLiquidityProxyValidator",
+    "permitted_uses": [
+      "Teaching multi-risk economic-capital aggregation with a liquidity/funding-spread driver",
+      "Demonstrating var-covar vs copula vs nested reconciliation across seven correlated drivers",
+      "Methodology prototyping for tail-dependent aggregation and RQMC tail diagnostics"
+    ],
+    "prohibited_uses": [
+      "Pricing, reserving, or regulatory capital for any real block of business",
+      "Any production use before credentialled-data calibration of the liquidity exposure notional and 7x7 liquidity couplings plus an independent APS X2 review"
+    ],
+    "residual_risk": "Valid only over the fitted state region. Liquidity exposure notional and 7x7 liquidity couplings remain educational placeholders pending Phase 22 Task 3 credentialled calibration and independent APS X2 review.",
+    "standards": [
+      "SOA ASOP 56 3.1.3/3.4/3.5",
+      "SOA ASOP 25 3.3",
+      "IA TAS M 3.2/3.5/3.6/3.7",
+      "Solvency II Delegated Reg. Art. 234",
+      "EIOPA volatility-adjustment methodology"
+    ],
+    "status": "EDUCATIONAL",
+    "what_it_validates": "Out-of-sample validation of the seven-driver LSMC capital proxy: five stochastic-valuation drivers fitted by polynomial surface, FX as a CIP-exact offset, and liquidity as a CIR-affine forced-sale haircut offset."
+  },
+  "validation": {
+    "audit_entry_id": "62016654f0514ec9a7d43350e3478808",
+    "basis_rows": [
+      {
+        "degree": 1,
+        "fx_mode": "analytic",
+        "in_sample_r2_heavy": 0.99157,
+        "in_sample_r2_noisy": 0.938875,
+        "max_interaction_order": 3,
+        "n_basis_terms": 6,
+        "oos_mae": 1695.771295,
+        "oos_max_abs_rel_error": 0.080588,
+        "oos_r2": 0.986299,
+        "oos_rmse": 2449.571837,
+        "overfit_gap": 0.005271
+      },
+      {
+        "degree": 2,
+        "fx_mode": "analytic",
+        "in_sample_r2_heavy": 0.997618,
+        "in_sample_r2_noisy": 0.94804,
+        "max_interaction_order": 3,
+        "n_basis_terms": 21,
+        "oos_mae": 618.94452,
+        "oos_max_abs_rel_error": 0.016415,
+        "oos_r2": 0.998407,
+        "oos_rmse": 835.188298,
+        "overfit_gap": -0.00079
+      },
+      {
+        "degree": 3,
+        "fx_mode": "analytic",
+        "in_sample_r2_heavy": 0.997668,
+        "in_sample_r2_noisy": 0.948766,
+        "max_interaction_order": 2,
+        "n_basis_terms": 46,
+        "oos_mae": 644.04201,
+        "oos_max_abs_rel_error": 0.020239,
+        "oos_r2": 0.99848,
+        "oos_rmse": 816.015041,
+        "overfit_gap": -0.000811
+      },
+      {
+        "degree": 3,
+        "fx_mode": "analytic",
+        "in_sample_r2_heavy": 0.997525,
+        "in_sample_r2_noisy": 0.948967,
+        "max_interaction_order": 3,
+        "n_basis_terms": 56,
+        "oos_mae": 661.645059,
+        "oos_max_abs_rel_error": 0.020814,
+        "oos_r2": 0.998381,
+        "oos_rmse": 842.061352,
+        "overfit_gap": -0.000856
+      },
+      {
+        "degree": 4,
+        "fx_mode": "analytic",
+        "in_sample_r2_heavy": 0.996602,
+        "in_sample_r2_noisy": 0.949631,
+        "max_interaction_order": 3,
+        "n_basis_terms": 91,
+        "oos_mae": 709.331683,
+        "oos_max_abs_rel_error": 0.029229,
+        "oos_r2": 0.998005,
+        "oos_rmse": 934.782457,
+        "overfit_gap": -0.001403
+      },
+      {
+        "degree": 1,
+        "fx_mode": "learned",
+        "in_sample_r2_heavy": 0.99154,
+        "in_sample_r2_noisy": 0.938479,
+        "max_interaction_order": 3,
+        "n_basis_terms": 7,
+        "oos_mae": 1693.401511,
+        "oos_max_abs_rel_error": 0.081174,
+        "oos_r2": 0.986343,
+        "oos_rmse": 2445.684864,
+        "overfit_gap": 0.005198
+      },
+      {
+        "degree": 2,
+        "fx_mode": "learned",
+        "in_sample_r2_heavy": 0.997133,
+        "in_sample_r2_noisy": 0.947802,
+        "max_interaction_order": 3,
+        "n_basis_terms": 28,
+        "oos_mae": 633.331047,
+        "oos_max_abs_rel_error": 0.018389,
+        "oos_r2": 0.998213,
+        "oos_rmse": 884.548187,
+        "overfit_gap": -0.001081
+      },
+      {
+        "degree": 3,
+        "fx_mode": "learned",
+        "in_sample_r2_heavy": 0.996865,
+        "in_sample_r2_noisy": 0.948662,
+        "max_interaction_order": 2,
+        "n_basis_terms": 64,
+        "oos_mae": 690.205024,
+        "oos_max_abs_rel_error": 0.026657,
+        "oos_r2": 0.998054,
+        "oos_rmse": 923.170098,
+        "overfit_gap": -0.001189
+      },
+      {
+        "degree": 3,
+        "fx_mode": "learned",
+        "in_sample_r2_heavy": 0.996711,
+        "in_sample_r2_noisy": 0.94906,
+        "max_interaction_order": 3,
+        "n_basis_terms": 84,
+        "oos_mae": 774.71826,
+        "oos_max_abs_rel_error": 0.026515,
+        "oos_r2": 0.99766,
+        "oos_rmse": 1012.378952,
+        "overfit_gap": -0.000948
+      },
+      {
+        "degree": 4,
+        "fx_mode": "learned",
+        "in_sample_r2_heavy": 0.99392,
+        "in_sample_r2_noisy": 0.950534,
+        "max_interaction_order": 3,
+        "n_basis_terms": 135,
+        "oos_mae": 796.155084,
+        "oos_max_abs_rel_error": 0.054353,
+        "oos_r2": 0.997316,
+        "oos_rmse": 1084.220043,
+        "overfit_gap": -0.003396
+      }
+    ],
+    "capital_comparison": {
+      "es_rel_error": 0.001809,
+      "nested_capital": {
+        "capital_horizon_months": 12,
+        "confidence_level": 0.995,
+        "es_liability": 176570.2272,
+        "mean_liability": 115994.0791,
+        "n_outer": 500,
+        "scr_proxy": 55561.1889,
+        "var_liability": 171555.268
+      },
+      "nested_n_inner": 256,
+      "nested_n_outer": 500,
+      "proxy_capital": {
+        "capital_horizon_months": 12,
+        "confidence_level": 0.995,
+        "es_liability": 176250.7804,
+        "mean_liability": 115824.5598,
+        "n_outer": 500,
+        "scr_proxy": 54860.0525,
+        "var_liability": 170684.6123
+      },
+      "scr_rel_error": 0.012619,
+      "var_rel_error": 0.005075
+    },
+    "config": {
+      "basis_grid": [
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "capital_horizon_months": 12,
+      "confidence_level": 0.995,
+      "eval_seed": 141,
+      "fit_n_inner": 8,
+      "fit_seed": 42,
+      "fx_modes": [
+        "analytic",
+        "learned"
+      ],
+      "insample_heavy_seed": 7,
+      "n_eval": 500,
+      "n_fit": 2000,
+      "n_inner_heavy": 384,
+      "n_insample_heavy": 60,
+      "n_validation": 60,
+      "nested_inner_seed": 142,
+      "nested_n_inner": 256,
+      "outer_measure": "P",
+      "selection_metric": "oos_rmse",
+      "validation_seed": 20260607
+    },
+    "drivers": [
+      "short_rate_g2pp_2f",
+      "equity_level",
+      "credit_spread",
+      "lapse_behaviour",
+      "mortality_trend",
+      "fx_translation",
+      "liquidity_premium"
+    ],
+    "duration_seconds": 0.2055,
+    "fx_axis_evidence": {
+      "recovered_fx_slope": -3846.153846,
+      "slope_rel_error": 0.0,
+      "theoretical_fx_slope": -3846.153846
+    },
+    "leakage": {
+      "fit_seed": 42,
+      "leakage_free": true,
+      "min_pairwise_distance": 0.505557552,
+      "n_exact_shared_states": 0,
+      "seeds_disjoint": true,
+      "validation_seed": 20260607
+    },
+    "liquidity_axis_evidence": {
+      "baseline_liquidity_impact": 0.0,
+      "exposure_notional": 30000.0,
+      "initial_premium": 0.006177431,
+      "max_abs_offset_error": 0.0,
+      "tau_years": 19.0
+    },
+    "notes": [
+      "Liquidity is an analytic CIR-affine offset, not a learned coefficient; the validation therefore tests the fitted stochastic-valuation surface plus the exact liquidity feature on the same disjoint hold-out.",
+      "Proxy and nested capital are evaluated on the SAME eval outer states (seed 141), isolating surface error; nested benchmark uses 256 inner Q-paths per state."
+    ],
+    "overfit_onset_terms": 56,
+    "reproducibility_digest": "d383b9e106b0c9862b41ef6daeaf82a637950e5f8594e9ff59352285cdb24210",
+    "run_id": "sept-proxyval-293443f5",
+    "selected_degree": 3,
+    "selected_fx_mode": "analytic",
+    "selected_max_interaction_order": 2,
+    "selected_row": {
+      "degree": 3,
+      "fx_mode": "analytic",
+      "in_sample_r2_heavy": 0.997668,
+      "in_sample_r2_noisy": 0.948766,
+      "max_interaction_order": 2,
+      "n_basis_terms": 46,
+      "oos_mae": 644.04201,
+      "oos_max_abs_rel_error": 0.020239,
+      "oos_r2": 0.99848,
+      "oos_rmse": 816.015041,
+      "overfit_gap": -0.000811
+    },
+    "selection_metric": "oos_rmse",
+    "standards": [
+      "SOA ASOP 7 section 3.3",
+      "SOA ASOP 25 section 3.3",
+      "SOA ASOP 56 section 3.1.3/3.5",
+      "IA TAS M section 3.2/3.6",
+      "IFoA proxy-modelling working party",
+      "Longstaff & Schwartz (2001)",
+      "Duffie-Singleton (1999)",
+      "Solvency II Delegated Regulation Article 188/234"
+    ],
+    "verdict": "PASS - seven-driver surface (analytic, deg 3, max_int 2, 46 terms) validated OOS (R2=0.9985, VaR/ES/SCR rel err 0.51%/0.18%/1.26%, liquidity offset exact, leakage-free)"
+  }
+}
