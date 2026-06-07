@@ -1669,3 +1669,52 @@ sandbox (origin/main = a149e37, Phase 24 COMPLETE tip; push at the end of every 
 locks remain only to fast-forward LOCAL main and restore normal git. Serialise the scheduled
 runs; production sign-off residual (credentialled data + APS X2) — by design for this
 educational model; disk /sessions ~89%.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-08 +08 (cycle 22, supersedes everything above)
+
+**Phase 25 Task 1 COMPLETE (design note, PASS).** Candidate chosen (design-note-first): **full
+path-wise bonus declaration dynamics** — the governed bonus-cut decision re-evaluated at EVERY
+inner time step on a path-wise coverage proxy, vs the P24T3 horizon-level convention (decision
+frozen at the outer node; relief constant across inner paths — the documented residual). NOT
+chosen: t-copula on the inner-path basis (deferred — Task 2 changes that basis; avoids evidence
+superseded within one phase); credentialled calibration (blocked on data — human action). NEW
+tested module `par_model_v2/projection/pathwise_bonus_dynamics.py` (four declaration bases on
+common random numbers; retained = pre_floor + (1-pre_floor)*cut_factor(CR), unchanged rule
+shape). **Synthetic recognition-lag pre-study (seed 42, 4000×100×10): the horizon-level basis
+UNDERSTATES the path-wise with-actions tail loss by 12.2% at VaR99.5; cut-then-restored share
+69.8%; two-sided lag (median diff negative on healthy nodes); sign/ordering/bounds checks all
+True. Mechanism, NOT magnitude (disclosed).** Deliverables:
+`docs/validation/PHASE25_TASK1_DESIGN_NOTE.{json,md}` +
+`docs/PATHWISE_BONUS_DECLARATION_DESIGN_CARD.md` + builder script (idempotent verified).
+Governance: ChangeRecord `fe5846be67a945a28fd60208f6b87972` (governance_change) OWNER_REVIEW;
+audit 71→72; changes 44→45; verify_all True. Tests: 29 new PASS
+(`tests/test_phase25_task1_design_note.py`); regression **368 PASS / 0 FAIL**; compileall clean;
+ui self-test ok:true.
+
+**NEXT executable task: Phase 25 Task 2 — path-wise declaration in the nested truth.**
+Extend `par_model_v2/projection/inner_path_action_dynamics.py` with a path-wise declaration
+mode: per-time-step retained-bonus factor from a path-wise coverage proxy (reference assets
+rolled forward on the inner path / pre-action path liability at t); P24T3 carve-outs preserved
+(ONLY in-force policyholder benefits cuttable; credit loss + analytic FX/liquidity offsets NOT
+cuttable); horizon-level basis retained as the sensitivity variant. Archive cross-check the
+without-actions basis BIT-IDENTICALLY before any new computation. **Gates (FIXED in the Task 1
+note s5 — no gate-shopping):** sign gate path-wise SCR >= horizon-level SCR at 99.5% (magnitude
+disclosed, not gated); monotonicity guard re-verified on the path-wise basis;
+assumption_change ChangeRecord OWNER_REVIEW. Then Task 3 (matching proxy basis feature + OOS
+R^2 >= 0.95, VaR rel err <= 10%), Task 4 (tail diagnostics; MR-010/MR-014 refresh if SCR delta
+> 1%; rank invariance df = 2.9451 frozen), Task 5 (UI contract 1.6.0 → 1.7.0 ADDITIVE +
+PHASE 25 COMPLETE docs).
+
+**Sandbox operating rules (RE-CONFIRMED cycle 22):** unchanged — ~44 s bash wall;
+PYTHONPATH=/var/tmp/pylibs:. ; build long files OFF-MOUNT then cp + cmp (zero truncation
+incidents this cycle); back up GOVERNANCE_STORE.json before every governance stage (backup at
+/var/tmp/p25t1_build/GOV_BACKUP_pre_p25t1.json this cycle); alt-`GIT_INDEX_FILE` commits onto
+`p22c9`, push `p22c9:main` at the end of every cycle; next free risk ID MR-015; re-check
+mtimes for parallel-run foreign writes before governance/commit.
+
+**Standing blockers (human action):** delete the three git ghost locks (GITHUB_PUSH_BLOCKER.md)
+— they only block fast-forwarding LOCAL main + normal git; push from the sandbox works.
+Serialise the scheduled runs; production sign-off residual (credentialled data + APS X2) — by
+design for this educational model; disk /sessions ~89%.

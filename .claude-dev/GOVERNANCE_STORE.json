@@ -1610,6 +1610,28 @@
       "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
       "digest": "49cf76fd134780b6c9f2421fca197ac21cdf9f2cdd80d1d6a8bd40970f5b06b0",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "859d371fbc914eb898febd18b76a303e",
+      "timestamp": "2026-06-07T21:19:23.030044+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase25Task1DesignNote",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 25 Task 1 design note (full path-wise bonus declaration dynamics)",
+      "details": {
+        "record_id": "fe5846be67a945a28fd60208f6b87972",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/projection/pathwise_bonus_dynamics.py (NEW, tested helper module)",
+          "tests/test_phase25_task1_design_note.py",
+          "scripts/build_phase25_task1_design_note.py",
+          "docs/validation/PHASE25_TASK1_DESIGN_NOTE.{json,md}",
+          "docs/PATHWISE_BONUS_DECLARATION_DESIGN_CARD.md"
+        ]
+      },
+      "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+      "digest": "d30db1aad3d24936f0ec40dc800d929e6b581b0f679677d58b4a1da5e2df213f",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -4368,6 +4390,63 @@
         }
       ],
       "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"
+    },
+    {
+      "record_id": "fe5846be67a945a28fd60208f6b87972",
+      "created_at": "2026-06-07T21:19:23.029960+00:00",
+      "title": "Phase 25 Task 1 - design note: full path-wise bonus declaration dynamics (per-time-step declared-rate response on the inner paths)",
+      "description": "Design note for Phase 25: full path-wise bonus declaration dynamics - the governed ManagementActionRule decision re-evaluated at EVERY inner time step on a path-wise coverage proxy (new tested helper module par_model_v2/projection/pathwise_bonus_dynamics.py: four-bases common-random-number simulator, retained-bonus-rate mapping, synthetic recognition-lag pre-study), addressing the residual DOCUMENTED in the Phase 24 Task 3 report (decision frozen at the outer node; relief factor constant across inner paths). Candidate selection rationale recorded (t-copula-on-new-basis deferred to avoid superseded evidence; credentialled calibration blocked on data). FIXED pre-registered acceptance gates for Tasks 2-4.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/projection/pathwise_bonus_dynamics.py (NEW, tested helper module)",
+        "tests/test_phase25_task1_design_note.py",
+        "scripts/build_phase25_task1_design_note.py",
+        "docs/validation/PHASE25_TASK1_DESIGN_NOTE.{json,md}",
+        "docs/PATHWISE_BONUS_DECLARATION_DESIGN_CARD.md"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable; consistent with how they would be exercised over time)",
+        "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour)",
+        "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.2/\u00a73.6",
+        "IFoA Life Aggregation & Simulation working party",
+        "CFO Forum MCEV Principle 7 (TVOG; dynamic management actions)"
+      ],
+      "before_snapshot": {
+        "action_dynamics": "inner-path cashflow cut with HORIZON-LEVEL decision (P24T3); relief factor constant across the inner paths of one outer node (documented residual)"
+      },
+      "after_snapshot": {
+        "design": "path-wise per-time-step declaration (Tasks 2-3); tail diagnostics + risk-register refresh (Task 4); UI 1.6.0 -> 1.7.0 (Task 5)",
+        "pre_study": {
+          "horizon_understatement_rel_at_var995": 0.12170593451079513,
+          "pathwise_restoration_share": 0.69808,
+          "understatement_sign_ok": true,
+          "bounds_ok": true
+        },
+        "verdict": "PASS (design note)"
+      },
+      "impact_assessment": "No numeric output path changed this cycle (design note + additive helper module only). Fixes non-gate-shopped acceptance criteria for Tasks 2-4 BEFORE any real-data path-wise benchmark; pre-registers the SIGN of the expected capital effect (path-wise SCR >= horizon-level SCR). Educational classification retained; production sign-off withheld pending credentialled data + APS X2 review.",
+      "quantitative_impact": "Synthetic pre-study: horizon-level basis understates the path-wise with-actions VaR99.5 by 12.2%; cut-then-restored share 69.8%. No capital figures changed.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase25Task1DesignNote",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T21:19:23.029997+00:00",
+          "actor": "Phase25Task1DesignNote",
+          "status": "PEER_REVIEW",
+          "comments": "Design note + new unit tests PASS; no existing module touched."
+        },
+        {
+          "timestamp": "2026-06-07T21:19:23.030015+00:00",
+          "actor": "Phase25Task1DesignNote",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: synthetic-mechanism scope + declaration-frequency residual documented; sign-off withheld."
+        }
+      ],
+      "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics"
     }
   ],
   "risk_register": [

@@ -8290,3 +8290,81 @@ Task 5 UI-propagates (contract 1.6.0 → 1.7.0 additive).
 **Blockers (human action, unchanged):** three git ghost locks (`GITHUB_PUSH_BLOCKER.md`) —
 commits land on `p22c9` via alt-index; push `p22c9:main`; serialise scheduled runs; production
 sign-off residual (credentialled data + APS X2) by design; disk /sessions ~89%.
+
+---
+
+## 2026-06-08 (+08) — Cycle 22 — Phase 25 Task 1: Design Note — Full Path-Wise Bonus Declaration Dynamics (PASS)
+
+**Health gate first (all green):** pytest batches p24/p23/governance (339 tests) and
+`node scripts/ui_app_self_test.cjs ui_app.html` ok:true BEFORE any change. No foreign writes
+(mtimes checked); governance store backed up to `/var/tmp/p25t1_build/GOV_BACKUP_pre_p25t1.json`
+before the governance stage.
+
+**Candidate selection (design-note-first, one task per cycle).** Chosen: **full path-wise
+bonus declaration dynamics** — the residual DOCUMENTED in the Phase 24 Task 3 report (decision
+frozen at the outer node; retained-bonus factor constant across the inner paths of one outer
+node). Not chosen, rationale recorded in the note: t-copula aggregation on the inner-path
+basis (DEFERRED — Phase 25 Task 2 changes the with-actions basis; running the copula read now
+would produce evidence superseded within one phase); credentialled-data calibration (BLOCKED
+on credentialled practice data — standing human-action blocker).
+
+**What this cycle did (design note + additive helper module — no numeric output path changed):**
+
+- NEW tested module `par_model_v2/projection/pathwise_bonus_dynamics.py`: retained-bonus-rate
+  mapping `retained = pre_floor + (1 - pre_floor) * cut_factor(CR)` (unchanged governed rule
+  shape, same monotonicity guard); four-bases common-random-number simulator (`without`,
+  `horizon` = P24T3 convention, `pathwise` = decision re-evaluated each step on the basis's
+  own path-wise CR, `max_cut` bound); synthetic single-fund reversionary-bonus product so NO
+  real archived benchmark is consumed before the Task 2 gates.
+- **Recognition-lag pre-study (seed 42, n_outer=4,000, n_inner=100, n_steps=10):**
+  VaR99.5 conditional net loss per 100 initial liability: without 21.38 / path-wise 14.07 /
+  horizon 12.36 / max-cut 12.36. The horizon-level basis **UNDERSTATES the path-wise
+  with-actions tail loss by 12.2% at VaR99.5** (stressed nodes keep maximum relief for the
+  whole projection while the path-wise truth restores bonus on recovering paths — at the deep
+  tail horizon == max-cut, i.e. relief is saturated, consistent with the P24T4 100%-saturation
+  finding). Cut-then-RESTORED share 69.8% — restoration is a real dynamic, not an edge case.
+  Median path-wise-minus-horizon difference NEGATIVE (healthy nodes: path-wise cuts MORE) —
+  the recognition-lag effect is two-sided. understatement_sign_ok / relief_ordering_ok /
+  bounds_ok (elementwise within [max_cut, without]) all True; reproducibility digest recorded.
+  DISCLOSED: the pre-study proves the mechanism and its SIGN, not the real-data magnitude.
+- **Design (Tasks 2-3):** extend `inner_path_action_dynamics.py` with a path-wise declaration
+  mode (per-step retained factor from a path-wise coverage proxy; reference assets rolled
+  forward on the inner path); P24T3 carve-outs preserved (only policyholder benefits cuttable);
+  horizon-level basis retained as the sensitivity variant; matching path-wise proxy basis
+  feature (G1 identical-basis convention); seven-driver OOS re-validation at the unchanged
+  Phase 22 gates.
+- **Pre-registered acceptance gates (s5; FIXED before any real-data benchmark):** OOS R^2 >=
+  0.95; VaR rel err <= 10%; SIGN gate path-wise SCR >= horizon-level SCR at 99.5% (magnitude
+  disclosed, NOT gated); MR-010/MR-014 refresh trigger at 1% SCR delta (disclosure trigger,
+  not pass/fail); rank invariance — df re-matched on WITHOUT-actions losses unchanged at
+  2.9451, copula parameters frozen. Task 5 = UI contract 1.6.0 -> 1.7.0 ADDITIVE.
+- Deliverables: `docs/validation/PHASE25_TASK1_DESIGN_NOTE.{json,md}` +
+  `docs/PATHWISE_BONUS_DECLARATION_DESIGN_CARD.md` via
+  `scripts/build_phase25_task1_design_note.py` (idempotent; ChangeRecord detected by title).
+- **Governance:** ChangeRecord `fe5846be67a945a28fd60208f6b87972` (governance_change)
+  OWNER_REVIEW; audit 71->72; changes 44->45; verify_all True; idempotent re-run verified
+  (audit 72->72, changes 45->45).
+- **Tests:** 29 new PASS (`tests/test_phase25_task1_design_note.py`: config guards, retained-
+  rate bounds/monotonicity, elementwise base bounds, CRN determinism, pre-study sign/ordering/
+  restoration/digest, gate pins, note/card contract). Regression batches post-change:
+  **368 PASS / 0 FAIL** (339 prior + 29 new); compileall clean; ui self-test ok:true.
+  Off-mount build + cp + cmp protocol observed throughout (zero truncation incidents).
+
+**Industry Standards Progress:**
+- Solvency II Art. 23 — declaration timing aligned with how the action would actually be
+  exercised (every declaration date, incl. restorations); design pre-registered. Addressed (design).
+- SOA ASOP 56 §3.1.3/§3.4 — time level of management behaviour in the model structure made
+  explicit; gates fixed before evidence. Addressed (design).
+- IA TAS M §3.2/§3.6 — documented residual converted into a quantified, reproducible design
+  with digests and a synthetic mechanism pre-study. Addressed (design).
+- Solvency II Art. 234 — no silent copula re-tuning when the action basis changes
+  (rank-invariance gate pre-registered). Addressed (design).
+
+**Next: Phase 25 Task 2 — path-wise declaration in the nested truth** (archive cross-check the
+without-actions basis bit-identically FIRST; gates per design-note s5; assumption_change
+ChangeRecord OWNER_REVIEW). Then Task 3 proxy basis + OOS, Task 4 tail diagnostics + MR refresh,
+Task 5 UI 1.6.0 -> 1.7.0 + PHASE 25 COMPLETE docs.
+
+**Blockers (human action, unchanged):** three git ghost locks (commits via alt-`GIT_INDEX_FILE`
+onto `p22c9`; push `p22c9:main` works from the sandbox — push every cycle); serialise the
+scheduled runs; production sign-off residual (credentialled data + APS X2); disk /sessions ~89%.
