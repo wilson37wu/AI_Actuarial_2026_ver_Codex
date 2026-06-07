@@ -1,0 +1,38 @@
+{
+  "fixture_id": "HKD_LIQUIDITY_PREMIUM_2026",
+  "description": "Educational-proxy HKD liquidity-premium / funding-spread series, 2006-2025 monthly, expressed in absolute terms (0.006 = 60 bp). Interpreted as the NON-credit illiquidity-premium component of HKD corporate/covered asset spreads (EIOPA volatility-adjustment-style decomposition) and the funding-roll spread faced when liquidating or refinancing illiquid backing assets. Used to drive the Phase 21 Task 3 CIR++ liquidity-premium calibration (risks MR-011 / MR-012). EDUCATIONAL PROXY approximating the documented level and dispersion of published illiquidity-premium estimates; NOT a credentialled vendor extract. Replace with a credentialled covered-bond / swap-basis or VA-component series and re-run sign-off before any regulatory, pricing, or capital-adequacy use.",
+  "market": "HKD",
+  "currency": "HKD",
+  "as_of_date": "2026-01-01",
+  "monthly_synthesis": {
+    "seed": 20260107,
+    "steps_per_year": 12,
+    "start_date": "2006-01-31",
+    "end_date": "2025-12-31",
+    "method": "A monthly square-root factor path x(t) is simulated from the documented target CIR parameters (target_mean_reversion kappa_l, long-run level b = target_long_run_premium - shift, target_premium_vol sigma_l) using full-truncation Euler x_{t+1} = x_t + kappa*(b - x_t)*dt + sigma*sqrt(max(x_t,0))*sqrt(dt)*Z, dt = 1/12, x_0 = initial_premium - shift. The realised premium = clip(x + shift, premium_floor, premium_ceiling). Fully deterministic given the seed. The homoscedastic CIR OLS calibrator recovers the long-run premium (sample-mean robust), the premium vol (residual-variance robust) and the mean-reversion speed (regression-slope, noisier) from this single path.",
+    "initial_premium_note": "x_0 set from initial_premium below"
+  },
+  "target_mean_reversion": 0.60,
+  "target_long_run_premium": 0.0060,
+  "target_premium_vol": 0.022,
+  "initial_premium": 0.0050,
+  "shift": 0.0010,
+  "risk_neutral_long_run_premium": 0.0075,
+  "risk_premium_upper": 2.0,
+  "premium_floor": 0.0,
+  "premium_ceiling": 0.10,
+  "documented_sources_note": "Published illiquidity-premium decompositions of investment-grade asset-swap spreads (EIOPA VA methodology; covered-bond vs swap basis; matching-adjustment literature) place the long-run illiquidity component for IG portfolios broadly in a 30-120 bp band, spiking to several hundred bp in funding stress (2008-09, Mar-2020) and compressing toward ~20-40 bp in benign markets. A CIR++ long-run level of 60 bp with sigma_l = 0.022 and kappa_l = 0.60 (half-life ~1.2 yr) reproduces that level, the slow stress-decay, and the non-negative skewed dispersion. The risk-neutral anchor of 75 bp reflects the documented premium that market-consistent (bond-implied) illiquidity components carry over real-world averages.",
+  "data_lineage": {
+    "provenance": "educational_historical_proxy",
+    "approved_by": "ModelGovernance_Phase21",
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "version": "1.0.0",
+    "checksum_sha256": "educational_fixture_no_checksum",
+    "primary_sources": [
+      "EIOPA volatility-adjustment / illiquidity-premium component methodology (educational proxy levels)",
+      "HKD investment-grade asset-swap and covered-bond vs swap basis history (educational proxy levels)"
+    ],
+    "production_restriction": "Proxy levels only. Replace with a credentialled liquidity-premium series (approved vendor, documented decomposition, with standard errors) and re-run sign-off before regulatory, pricing, or capital-adequacy use."
+  },
+  "notes": "20 calendar years of monthly synthesis (240 monthly observations; the liquidity calibration needs >= 60). The premium is non-negative by construction (square-root diffusion + shift), matching the economic constraint that an illiquidity premium earned for holding illiquid assets cannot be persistently negative."
+}

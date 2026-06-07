@@ -1,0 +1,54 @@
+{
+  "run_timestamp": "2026-06-07T01:18:49.161212+00:00",
+  "summary": {
+    "market": "HKD",
+    "calibration_date": "2026-01-01",
+    "kappa": 0.9345477332289048,
+    "long_run_premium_p": 0.006263716277336537,
+    "premium_vol": 0.02129008914879804,
+    "market_price_of_liquidity_risk": 2.0,
+    "shift": 0.001,
+    "initial_premium": 0.006177431329787912,
+    "half_life_years": 0.7416926454522449,
+    "feller_ratio": 21.705460100523712,
+    "feller_ok": true,
+    "n_obs": 240,
+    "fit_r2": 0.04264508100321396,
+    "is_placeholder": false,
+    "notes": "CIR++ liquidity-premium calibration on 240 monthly observations (dt=0.0833); delegated to the homoscedastic CIR OLS transition regression (CIRCalibrator): kappa_l from the mean-reversion regressor, P long-run premium from beta1/kappa + shift, sigma_l from the residual variance, lambda_l from the documented risk-neutral long-run anchor via the CIR risk-premium relation. One tested estimator serves both the credit and liquidity CIR++ drivers (SOA ASOP 56 3.4).",
+    "lineage": {
+      "lineage_id": "LINLIQ_HKD_20260101",
+      "market": "HKD",
+      "as_of_date": "2026-01-01",
+      "source_type": "educational_historical_proxy",
+      "source_detail": "/sessions/sharp-amazing-tesla/mnt/Auto_Actuarial_Model_Dev_May26/par_model_v2/calibration/fixtures/hkd_liquidity_premium_history_20260101.json",
+      "fixture_version": "1.0.0",
+      "approved_by": "ModelGovernance_Phase21",
+      "approval_timestamp": "2026-01-01T00:00:00Z",
+      "sha256_checksum": "5587b2c21ddc977091098ad22b038dade6ce98c8827c28751cad94ee90b9bbd2",
+      "produced_at": "2026-06-07T01:18:49.180070+00:00"
+    },
+    "criteria": {
+      "c1_min_obs": true,
+      "c2_kappa_in_band": true,
+      "c3_long_run_in_band": true,
+      "c4_sigma_in_band": true,
+      "c5_lambda_in_band": true,
+      "c6_not_placeholder_with_audit": true
+    }
+  },
+  "gate_gliq": {
+    "gate_id": "G-LIQ",
+    "gate_description": "CIR++ liquidity-premium parameters (kappa_l, long-run premium, sigma_l, lambda_l) calibrated to liquidity/funding-spread data (not placeholders); kappa in [0.05, 3.0], long-run in [10, 300]bp, sigma in [0.003, 0.30], lambda in [0.0, 2.0] (SOA ASOP 56 3.4; EIOPA VA illiquidity-premium component)",
+    "status": "PASS",
+    "evidence": "HKD: n=240, kappa=0.9345, long_run=0.0063 (63bp), sigma=0.0213, lambda=2.0000",
+    "evaluated_at": "2026-06-07T01:18:49.181772+00:00"
+  },
+  "change_record_id": "07880f42a2b84174a54b6261c0fd7131",
+  "change_record_status": "APPROVED",
+  "mr011_status": "MITIGATED",
+  "mr012_status": "MITIGATED",
+  "audit_entry_ids": [
+    "cb76cf75759a41e59eec55511057907c"
+  ]
+}

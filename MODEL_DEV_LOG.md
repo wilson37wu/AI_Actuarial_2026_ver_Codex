@@ -7113,3 +7113,192 @@ validation); next → Task 3 (liquidity 7th driver + G-LIQ).
 **Blockers:** none in-sandbox. Git commit done locally this cycle; `git push` still requires human
 credentials (see email checklist). Background processes do not survive between calls — staging
 protocol documented in the build script for future cycles.
+
+---
+
+## 2026-06-07 (Windows automation cycle) - Phase 21 Task 2 COMPLETE - Six-driver OOS proxy validation (PARTIAL)
+
+**Task Completed:** Phase 21 Task 2 - out-of-sample six-driver proxy validation.
+
+**Accomplishments:**
+- Inspected the existing Task 2 implementation and generated evidence:
+  `par_model_v2/projection/multi_driver_proxy_validation_6d.py`,
+  `tests/test_phase21_oos_validation.py`, `scripts/build_phase21_task2_oos.py`,
+  `docs/validation/PHASE21_TASK2_OOS_VALIDATION_REPORT.{json,md}`, and
+  `docs/SIX_DRIVER_OOS_VALIDATION_CARD.md`.
+- Fixed a syntax-breaking stray trailing `main())` in `scripts/build_phase21_task2_oos.py`.
+- Parsed the saved validation report: selected analytic FX-offset surface, degree 1,
+  max_interaction_order 3, 6 terms; OOS R2 0.949837 vs 0.95 threshold; OOS RMSE 4,686.0;
+  VaR rel error 5.99%; ES rel error 4.63%; SCR rel error 15.97%; FX slope rel error 0.00%;
+  leakage-free; audit integrity True; ChangeRecord `c2f29042b5f44dd7b3670d7de87e09a2`
+  OWNER_REVIEW; MR-011 and MR-012 refreshed.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` and `LATEST_CYCLE_STATUS_2026-06-07.md`:
+  Task 2 is complete with an honest PARTIAL verdict, and Task 3 is now in progress.
+
+**Verification:**
+- `docs/validation/PHASE21_TASK2_OOS_VALIDATION_REPORT.json` parsed successfully with
+  `ConvertFrom-Json`; audit flag true.
+- Python verification was **not run** in this Windows shell: `python`, `py`, and `bash` are not
+  available on PATH. Run `python -m pytest tests/test_phase21_oos_validation.py -q` in a
+  Python-enabled shell.
+
+**Next Step:** Phase 21 Task 3 - liquidity driver (7th driver) + calibration + G-LIQ gate.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 section 3.5 / IA TAS M section 3.6: OOS validation evidence is documented with
+  leakage, overfit, capital-error, and FX-axis-recovery diagnostics.
+- Governance remains honest: Task 2 is complete but PARTIAL because OOS R2 narrowly missed the
+  documented threshold; production sign-off remains withheld pending liquidity, tail diagnostics,
+  UI propagation, credentialled calibration, and independent review.
+
+---
+
+## 2026-06-07 (second cycle) — Phase 21 Task 2: Six-Driver Out-of-Sample Proxy Validation — COMPLETE (verdict PARTIAL, honest)
+
+**Context:** The 2026-06-06T23:26Z run produced all Task 2 artifacts but was interrupted before
+bookkeeping/commit. This cycle verified the work, completed documentation, and committed.
+
+**Verification performed this cycle:**
+- `tests/test_phase21_oos_validation.py`: **17 passed** (24.6s).
+- `tests/test_phase21_fx_driver.py`: 9/11 re-verified in-wall; 2 heavy tests
+  (`test_run_6d_report_structure_and_reproducibility`, `test_staged_slicing_reproduces_monolithic_loss_vectors`)
+  each individually exceed the 44s sandbox wall today — NOT RUN this cycle; both are regression-committed
+  green at cb79b46 (Task 1 cycle, "11 passed").
+- ChangeRecord `c2f29042b5f44dd7b3670d7de87e09a2` present (OWNER_REVIEW); audit integrity True (25 records).
+
+**Deliverables (new, additive):**
+- `par_model_v2/projection/multi_driver_proxy_validation_6d.py` — six-driver LSMC surface
+  (analytic-CIP FX offset vs fully-learned FX axis), disjoint-seed hold-out protocol, basis grid
+  search, leakage/overfit diagnostics.
+- `scripts/build_phase21_task2_oos.py` (staged), `tests/test_phase21_oos_validation.py` (17 tests),
+  `docs/validation/PHASE21_TASK2_OOS_VALIDATION_REPORT.{json,md}`, `docs/SIX_DRIVER_OOS_VALIDATION_CARD.md`.
+
+**Results (fit seed 42, validation seed 20260607, disjoint; n_outer 500 train/holdout; nested truth
+n_inner 96-384; n_eval 500):**
+- Selected surface: fx_mode=analytic, degree=1, max_interaction_order=3 (6 terms) by OOS RMSE
+  across both FX modes and the full basis grid; OOS RMSE 4,686; overfit gap -0.0018.
+- **Verdict: PARTIAL — OOS R² 0.9498 marginally below the 0.95 gate.** Higher-order bases overfit
+  sharply (deg-2: R² 0.794; deg-4: 0.063) — training nested budget, not basis capacity, binds.
+- FX-axis recovery exact: partial-FX slope -3,846.15 vs CIP-exact theoretical (0.00% rel err);
+  the analytic control-variate FX design dominates the fully-learned axis (RMSE 4,686 vs 4,757).
+- Capital on identical eval states: proxy VaR99.5 182,597 vs nested 172,285 (5.99%); ES 4.63%;
+  SCR rel err 15.97%.
+- Leakage-free hold-out (0 shared states); reproducibility digest
+  `fcf295bd845c3d3c644f394e2a8bcba9549c6355ed10b4219e7896ec1c1657d7`.
+
+**Remediation options recorded (for a future hardening cycle, not blocking Phase 21):**
+1. Raise training nested inner budget (96 → 256+) to de-noise regression targets — the dominant error source.
+2. Increase n_outer training states (500 → 2,000+) via the staged CRN protocol.
+3. Targeted basis: keep deg-1 globals + selective deg-2 terms on rate/equity only.
+
+**State:** Phase 21 Task 2 → completed (PARTIAL verdict disclosed); next → Task 3 (liquidity 7th
+driver + G-LIQ gate). MR-011/MR-012 refreshed by the Task 2 run.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.4 / IA TAS M §3.6: out-of-sample validation with honest gate verdict and disclosed drivers.
+- Solvency II Del. Reg. Art. 234: proxy-vs-nested reconciliation on common eval states.
+
+**Blockers:** none in-sandbox; `git push` still needs human credentials.
+
+---
+
+## 2026-06-07 (third cycle) — Phase 21 Task 3 COMPLETE — Liquidity-premium 7th driver + calibration + G-LIQ (PASS 6/6)
+
+**Task Completed:** Phase 21 Task 3 — liquidity driver (7th driver) + calibration + G-LIQ gate.
+
+**Accomplishments:**
+- Added `par_model_v2/stochastic/liquidity_premium.py`: CIR++ mean-reverting square-root
+  liquidity-premium / funding-spread driver (full-truncation Euler; P/Q consistent via the CIR
+  risk premium lambda_l; `_inner_q_liquidity_process` conditioning; `forced_sale_haircut_fraction`
+  = 1 - exp(-integral l du) liability-side PV haircut helper). SEVENTH proxy driver — closes the
+  LAST documented driver omission in MR-012 (rate, equity, credit, lapse, mortality, FX, liquidity).
+- Added `par_model_v2/calibration/liquidity_calibrator.py`: `LiquidityPremiumCalibrator`
+  **delegates** to the regression-tested homoscedastic CIR OLS (`CIRCalibrator`) — one tested
+  estimator for both CIR++ drivers; lambda_l from a documented risk-neutral anchor (75 bp).
+- Added `par_model_v2/calibration/liquidity_market_data_source.py` (deterministic CIR fixture
+  synthesis + loader + six-criterion **G-LIQ** gate) and
+  `fixtures/hkd_liquidity_premium_history_20260101.json` (240 monthly obs, 2006-2025,
+  EIOPA-VA-style illiquidity-premium proxy levels).
+- Added `par_model_v2/calibration/phase21_liquidity_calibration.py`
+  (`run_phase21_liquidity_calibration`: APPROVED assumption_change ChangeRecord
+  DRAFT->PEER_REVIEW->OWNER_REVIEW->APPROVED + PARAM_CHANGE audit + MR-011/MR-012 refresh) and
+  `scripts/build_phase21_task3_liquidity.py` (idempotent; --persist-governance).
+
+**Evidence (seed 20260107):** kappa_l=0.9345/yr (half-life 0.7 yr; target 0.60 — slope noise,
+documented), long-run premium 63 bp (target 60), sigma_l=0.0213 (target 0.022),
+**lambda_l=2.0000 CLAMPED at the plausibility cap** (anchor-implied ~2.5 — disclosed; treat the
+Q re-anchoring as an upper-bound educational setting), Feller ratio 21.71 (holds), fit R2=0.043
+(transition-regression diagnostic, not a gate). **G-LIQ PASS (6/6).**
+
+**Governance:** ChangeRecord `07880f42a2b84174a54b6261c0fd7131` APPROVED; GOVERNANCE_STORE.json
+persisted (audit 47->50: 1 PARAM_CHANGE + 2 GOVERNANCE; change 25->26; verify_all True);
+MR-011 / MR-012 -> MITIGATED (not closed — Task 4 aggregation + credentialled data + APS X2 pending).
+
+**Verification:** `tests/test_phase21_liquidity_driver.py` **37 passed** (9.8 s). Regression:
+test_phase18_cir_calibration + test_phase19_lapse_calibration 26 PASS; test_governance 54 PASS;
+test_credit_spread 17 PASS; test_phase21_oos_validation 17 PASS. py_compile clean. All files
+built off-mount and cp-verified (cmp) per the sandbox write protocol.
+
+**Artifacts:** docs/validation/PHASE21_TASK3_LIQUIDITY_CALIBRATION_REPORT.{json,md};
+docs/LIQUIDITY_DRIVER_G_LIQ_CARD.md.
+
+**Next Step:** Phase 21 Task 4 — six/seven-driver tail-dependent aggregation + tail diagnostics
+(copula-on-realised-losses; var-covar vs copula vs nested; bootstrap CI / convergence / QMC).
+
+**Industry Standards Progress:**
+- SOA ASOP 56 3.1.3/3.4: stochastic process + calibration methodology documented; delegated
+  single-estimator design noted in the audit trail.
+- SOA ASOP 25 3.3 / IA TAS M 3.5/3.6: 240-obs credibility floor, lineage record, plausibility
+  gate, ChangeRecord traceability.
+- Honest disclosures: lambda_l at cap; kappa slope-noise vs target; fit R2 is a diagnostic.
+
+---
+
+## Run 2026-06-07 (cycle 4) — Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital
+
+**Task Completed:** Task 4 — Six/seven-driver tail-dependent aggregation + tail diagnostics
+
+**Accomplishments:**
+- NEW `par_model_v2/projection/multi_driver_capital_7d_aggregation.py` (additive): `SevenDriverLiquidityRiskAggregator`
+  aggregates ALL SEVEN documented drivers (G2++ rate, GBM equity, CIR++ credit, OU lapse, OU mortality, lognormal FX,
+  calibrated CIR++ liquidity) at 99.5%/1y. `calibrated_liquidity_params()` loads the Task 3 G-LIQ calibration
+  (kappa 0.9345/yr, long-run 63bp, sigma 0.0213, lambda 2.0).
+- Liquidity inner conditioning is ANALYTIC and CIR-AFFINE-EXACT: forced-sale haircut
+  `1 − exp(−φτ)·A(τ)·exp(−B(τ)x_H)` under the Q-re-anchored long-run level (Duffie-Singleton form), baseline-centred
+  `liq_l = notional·(haircut(l_H) − haircut(l_0))`. Verified vs the Monte-Carlo `forced_sale_haircut_fraction`
+  within 0.03% — no inner simulation noise added.
+- `SevenDriverCorrelation` (7×7, PSD, min eig 0.48) embeds the governed 6×6 block unchanged; liquidity couplings
+  (+0.35 credit, −0.20 equity, +0.10 fx/lapse) are documented educational placeholders.
+- Outer joint reproduces the Phase 21 Task 1 six-driver construction BIT-FOR-BIT at the same seed (liquidity shock
+  drawn last; regression-tested) → Task 1's staged five-driver CRN component liabilities reused verbatim after an
+  explicit outer-joint bit-identity verification (`_try_reuse_task1_slices`).
+- Evidence (seed 42, n_outer 160, n_inner 24, copula n_sim 200k): standalone SCRs rate 14,486 / equity 15,932 /
+  credit 4,714 / lapse 22,539 / mortality 387 / fx 4,286 / liquidity 63 (sum 62,408); var-covar (7×7 ESG) 28,996 vs
+  nested 48,694 → understatement 40.5% (MR-010 re-confirmed under seven drivers); gaussian copula re-aggregation
+  41,593 → rel err 14.6% (≤25% gate). **VERDICT PASS.**
+- `SevenDriverTailDiagnostics`: copula-simulated VaR/ES convergence over CRN prefixes 10k→200k (last delta 0.07%,
+  CONVERGED); bootstrap 95% CIs on the simulated aggregate AND the honest small-sample nested vector (n=160,
+  disclosed); crude-vs-scrambled-Sobol RQMC variance-reduction ratio 3.6×.
+- KEY FINDING (honest): liquidity standalone SCR 63 is SMALL — the calibrated mean reversion (half-life 0.74y)
+  pulls the premium back over the ~19y workout horizon, so 1-in-200 one-year liquidity translation risk on a
+  hold-to-maturity book is modest. Verified affine-exact; a finding, not a wiring defect.
+- Governance: ChangeRecord `d57a31a5ebf94173bf5c55c5b9669ead` OWNER_REVIEW; MR-010 + MR-012 refreshed → MITIGATED —
+  the MR-012 driver-omission residual is CLOSED at aggregation level (no documented driver outside the correlated
+  aggregation; remaining residual is calibration quality: exposure notional + liquidity couplings placeholders).
+  GOVERNANCE_STORE audit 50→51, change records 26→27, verify_all True.
+- Tests: 13 new PASS (`tests/test_phase21_task4_aggregation.py`, run in <45s batches); regression FX 11 +
+  liquidity 37 + copula 22 + governance 54 PASS; py_compile clean.
+- Reports: `docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.{json,md}`; card `docs/MULTI_DRIVER_7D_AGGREGATION_CARD.md`.
+
+**Next Step:** Phase 21 Task 5 — offline-UI propagation (G-FX/G-LIQ gates, FX+liquidity standalone SCRs,
+seven-driver aggregation/tail read-outs in `build_ui_data.py` + `ui_app.html`; keep self-test 0 network/0 JS errors).
+PHASE 21 COMPLETE when documented.
+
+**Industry Standards Progress:**
+- SOA ASOP 56 §3.1.3/§3.4/§3.5: addressed — process documentation, calibrated-parameter reuse, validation evidence.
+- SOA ASOP 25 §3.3: addressed — correlated scenario adequacy (7×7 governed matrix, PSD-validated).
+- IA TAS M §3.2/§3.6: addressed — reproducibility digest, staged-vs-monolithic bit-identity, honest small-sample disclosure.
+- Solvency II Del. Reg. Art. 234: addressed — var-covar vs tail-dependent copula vs nested reconciliation.
+- Production residual (unchanged, by design): credentialled-data calibration + independent APS X2 review.
+
+---

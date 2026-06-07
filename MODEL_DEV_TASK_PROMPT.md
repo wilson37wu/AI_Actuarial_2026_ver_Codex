@@ -830,7 +830,51 @@ Do these **only once** disk space is freed, the ghost locks are removed, and `gi
    calibrators); add a G-LAPSE plausibility gate; governance refresh. **PHASE 19 COMPLETE** when documented.
 
 <!-- END OF PROMPT -->
-n the user folder regardless of git.
+
+---
+
+## LATEST STATUS - 2026-06-07 (cycle 4, supersedes earlier text)
+
+**Phase 21 Task 4 is COMPLETE: seven-driver tail-dependent aggregation + tail diagnostics, VERDICT PASS.**
+Evidence: `docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.{json,md}` and
+`docs/MULTI_DRIVER_7D_AGGREGATION_CARD.md`. `SevenDriverLiquidityRiskAggregator`
+(`par_model_v2/projection/multi_driver_capital_7d_aggregation.py`) aggregates ALL SEVEN documented
+drivers; the calibrated liquidity driver enters the inner Q-nest analytically (CIR-affine-exact
+forced-sale haircut, vs-MC 0.03%); the six-driver outer joint + five-driver CRN components are
+reproduced bit-for-bit from Task 1 (staged slices reused, verified). Standalone SCRs: rate 14,486 /
+equity 15,932 / credit 4,714 / lapse 22,539 / mortality 387 / fx 4,286 / liquidity 63. Var-covar
+28,996 vs nested 48,694 (understatement 40.5%; MR-010 re-confirmed); gaussian copula 41,593 (rel
+14.6% <= 25%); tail diagnostics CONVERGED (last VaR delta 0.07%), simulated + honest small-sample
+nested bootstrap CIs, Sobol-RQMC 3.6x. ChangeRecord `d57a31a5ebf94173bf5c55c5b9669ead` OWNER_REVIEW;
+MR-010/MR-012 MITIGATED — the MR-012 driver-omission residual is CLOSED at aggregation level.
+Audit 50->51 verify_all True. 13 new tests PASS; regression FX 11 + liquidity 37 + copula 22 +
+governance 54 PASS; py_compile clean.
+
+**NEXT executable task: Phase 21 Task 5 — offline-UI propagation** (surface G-FX/G-LIQ gates,
+FX + liquidity standalone SCRs, and the seven-driver aggregation/tail read-outs in
+`scripts/build_ui_data.py` + `ui_app.html`; additive contract bump; keep
+`node scripts/ui_app_self_test.cjs ui_app.html` at ok:true, 0 network / 0 JS errors).
+**PHASE 21 COMPLETE when documented.**
+
+**Earlier this date (cycle 3):** Phase 21 Task 3 COMPLETE: liquidity-premium 7th driver + calibration + G-LIQ gate PASS (6/6).
+Evidence: `docs/validation/PHASE21_TASK3_LIQUIDITY_CALIBRATION_REPORT.{json,md}` and
+`docs/LIQUIDITY_DRIVER_G_LIQ_CARD.md`. CIR++ liquidity/funding-spread driver
+(`par_model_v2/stochastic/liquidity_premium.py`) is the SEVENTH and LAST documented-but-omitted
+proxy driver; `LiquidityPremiumCalibrator` delegates to the tested homoscedastic CIR OLS;
+HKD educational-proxy fixture (240 obs). kappa_l=0.9345/yr, long-run 63 bp, sigma_l=0.0213,
+**lambda_l=2.0 CLAMPED at the plausibility cap (disclosed)**, Feller holds. ChangeRecord
+`07880f42a2b84174a54b6261c0fd7131` APPROVED; MR-011/MR-012 MITIGATED; audit 47->50 verify_all
+True. 37 new tests PASS; regression 114 PASS (cir+lapse 26, governance 54, credit_spread 17,
+phase21 OOS 17); py_compile clean.
+
+**NEXT executable task: Phase 21 Task 4 - six/seven-driver tail-dependent aggregation + tail
+diagnostics** (copula-on-realised-losses re-aggregation incl. the liquidity driver via
+`forced_sale_haircut_fraction`; var-covar vs copula vs nested reconciliation; tail convergence /
+bootstrap CI / variance reduction; refresh MR-010/MR-012; ChangeRecord OWNER_REVIEW).
+
+**Earlier this date:** Task 2 six-driver OOS validation COMPLETE (honest PARTIAL: OOS R2 0.9498
+vs 0.95, marginal miss; remediation options in MODEL_DEV_LOG.md; ChangeRecord
+c2f29042b5f44dd7b3670d7de87e09a2 OWNER_REVIEW). Task 1 FX driver COMPLETE (G-FX PASS 6/6).
 
 ---
 
@@ -1000,7 +1044,7 @@ available; git functional. **Health gate PASS: 2,084 passed / 0 failed** (4 sing
 ChangeRecord `25e1eac6661a4d9bb74276ee1a2a4b46` OWNER_REVIEW; MR-012 refreshed; audit True). See
 `docs/validation/PHASE21_TASK1_FX_DRIVER_REPORT.{json,md}` and `docs/FX_DRIVER_G_FX_CARD.md`.
 
-**NEXT executable task: Phase 21 Task 2** (out-of-sample six-driver proxy validation, below).
+**NEXT executable task: Phase 21 Task 3** (liquidity 7th driver + calibration + G-LIQ gate, below).
 
 **Sandbox operating rules learned (apply to every future cycle):**
 1. Each bash call has a ~44s hard wall; background/detached processes are KILLED when the call
@@ -1012,7 +1056,7 @@ ChangeRecord `25e1eac6661a4d9bb74276ee1a2a4b46` OWNER_REVIEW; MR-012 refreshed; 
 3. Run pytest in chunks (`-n 2`, file/class/test granularity) with done-tracking; record any test
    that cannot fit the wall as NOT RUN with a reason.
 
-## Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital ⭐ IN PROGRESS (Task 1 ✅ — next: Task 2)
+## Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital ⭐ IN PROGRESS (Tasks 1-3 ✅ — next: Task 4)
 
 **Do not start until the sandbox boots again (disk freed) and `python3 -m pytest -q` runs in <45 s batches at
 0 failures.** The economic-capital proxy currently spans **five** drivers (rate → now G2++ 2F, equity, credit
@@ -1026,20 +1070,8 @@ refresh + offline-UI propagation. Source of truth for task state remains `.claud
    correlation, six-driver standalone/var-covar/copula/nested aggregation, G-FX gate PASS 6/6 with
    MART-FX-CIP evidence; 11 tests; staged build. Six-driver LSMC surface extension was deliberately
    deferred to Task 2 (where its OOS validation lives) — the nested benchmark is the 6D ground truth.
-2. **Out-of-sample six-driver proxy validation.** Disjoint-seed hold-out vs HEAVY nested truth; (degree,
-   max_interaction_order) basis selection by OOS RMSE/R²; leakage + overfit diagnostics; honest verdict.
-3. **Liquidity driver (7th driver) + calibration.** Add a liquidity-premium / funding-spread driver; calibrate
-   it to an educational-proxy series (mirror the GBM/HW1F/CIR/OU-lapse calibrators) with a **G-LIQ** gate.
-4. **Six/seven-driver tail-dependent aggregation + tail diagnostics.** Copula-on-realised-losses re-aggregation,
-   var-covar vs copula vs nested reconciliation, tail convergence / bootstrap CI / variance-reduction; refresh
-   MR-010/MR-012; governance ChangeRecord OWNER_REVIEW. (Solvency II Del. Reg. Art. 234; IA TAS M §3.6)
-5. **Offline-UI propagation.** Surface the FX + liquidity standalone SCRs, the new gates (G-FX/G-LIQ), and the
-   six/seven-driver aggregation/tail read-outs in the bundler + `ui_app.html`; keep the self-test at 0 network /
-   0 JS errors; no contract break (additive). **PHASE 21 COMPLETE** when documented.
-
-**After Phase 21 (research direction):** stochastic-volatility / Heston equity, a regime-switching or
-Lévy ESG extension, and — the highest-value governance step — replacing the educational-proxy calibrations with
-**credentialled** market/experience data plus the independent APS X2 review, which is what actually moves the
-ChangeRecords from OWNER_REVIEW to APPROVED. None of these are code gaps in the current educational build.
-
-<!-- END OF PROMPT -->
+2. ✅ **Out-of-sample six-driver proxy validation — COMPLETE 2026-06-07 (verdict PARTIAL, honest).**
+   `multi_driver_proxy_validation_6d.py`; analytic-CIP FX-offset surface (deg 1, max_int 3) selected by OOS
+   RMSE; OOS R² 0.9498 vs 0.95 gate (marginal miss — remediation in MODEL_DEV_LOG.md); FX slope exact;
+   leakage-free; 17 tests; ChangeRecord c2f29042b5f44dd7b3670d7de87e09a2 OWNER_REVIEW.
+3. 

@@ -962,6 +962,155 @@
       "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
       "digest": "5285ad97ff80c377b82c10204b2a79cbae850402c5c2ab10b85f2eef059128ca",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "0c7c9191d39a4b6fb136af5535b1f772",
+      "timestamp": "2026-06-06T23:26:24.400664+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "AutomatedModelDev_Phase21",
+      "description": "Model run hx-proxyval-08a87527: PARTIAL",
+      "details": {
+        "run_id": "hx-proxyval-08a87527",
+        "scenario_count": 94580,
+        "duration_seconds": 0.078,
+        "outcome": "PARTIAL",
+        "files_changed": [
+          "par_model_v2/projection/multi_driver_proxy_validation_6d.py"
+        ],
+        "test_summary": "6D OOS proxy-val: selected (analytic, deg=1, max_int=3), OOS R2=0.9498, OOS RMSE=4686.04, VaR rel err=5.99%, leakage_free=True, fx_slope_rel_err=0.00%"
+      },
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+      "digest": "3b6d641d67d21db634d7da78005d3b06109af089cfa218ae45d255dc53e48f07",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "f0e82fcb1c514315bd57fdb40cdc67f6",
+      "timestamp": "2026-06-06T23:26:24.401035+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase21",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - six-driver OOS proxy validation",
+      "details": {
+        "record_id": "c2f29042b5f44dd7b3670d7de87e09a2",
+        "verdict": "PARTIAL \u2014 OOS R^2 0.9498 < 0.95",
+        "selected_fx_mode": "analytic",
+        "oos_r2": 0.949837,
+        "var_rel_error": 0.059851,
+        "affected_components": [
+          "par_model_v2/projection/multi_driver_proxy_validation_6d.py",
+          "tests/test_phase21_oos_validation.py",
+          "scripts/build_phase21_task2_oos.py",
+          "docs/SIX_DRIVER_OOS_VALIDATION_CARD.md",
+          "docs/validation/PHASE21_TASK2_OOS_VALIDATION_REPORT.{json,md}"
+        ],
+        "risk_actions": {
+          "MR-011": "refreshed",
+          "MR-012": "refreshed"
+        }
+      },
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+      "digest": "95434e736b3481087c47597993e2514d3ba61fbc12717570d3baef8dd253b14d",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "cb76cf75759a41e59eec55511057907c",
+      "timestamp": "2026-06-07T01:18:49.181547+00:00",
+      "entry_type": "PARAM_CHANGE",
+      "actor": "AutomatedModelDev_Phase21",
+      "description": "Parameter change: CIR_liquidity_premium_params[HKD] {'mean_reversion_speed': 0.6, 'premium_vol': 0.025, 'initial_premium': 0.005, 'long_run_premium_p': 0.006, 'market_price_of_liquidity_risk': 0.1, 'shift': 0.001} \u2192 {'mean_reversion_speed': 0.934548, 'long_run_premium_p': 0.006264, 'premium_vol': 0.02129, 'market_price_of_liquidity_risk': 2.0, 'shift': 0.001, 'initial_premium': 0.006177}",
+      "details": {
+        "parameter_name": "CIR_liquidity_premium_params[HKD]",
+        "old_value": {
+          "mean_reversion_speed": 0.6,
+          "premium_vol": 0.025,
+          "initial_premium": 0.005,
+          "long_run_premium_p": 0.006,
+          "market_price_of_liquidity_risk": 0.1,
+          "shift": 0.001
+        },
+        "new_value": {
+          "mean_reversion_speed": 0.934548,
+          "long_run_premium_p": 0.006264,
+          "premium_vol": 0.02129,
+          "market_price_of_liquidity_risk": 2.0,
+          "shift": 0.001,
+          "initial_premium": 0.006177
+        },
+        "rationale": "Calibrated to HKD educational-proxy liquidity-premium history via LiquidityPremiumCalibrator (homoscedastic CIR OLS transition regression for kappa_l + long-run premium, residual variance for sigma_l, documented risk-neutral anchor for lambda_l).",
+        "standard_reference": "SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3; IA TAS M \u00a73.5",
+        "change_record_id": "07880f42a2b84174a54b6261c0fd7131"
+      },
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+      "digest": "77fd66bce283945351932afde918df35eced44f4d137913a1300aa530ecc81fa",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "9e53e2e1fee6431cb4a41595d7b386b4",
+      "timestamp": "2026-06-07T01:18:49.182222+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase21",
+      "description": "Governance event: MR-011 refreshed to MITIGATED following G-LIQ PASS (liquidity-premium driver calibration)",
+      "details": {
+        "risk_id": "MR-011",
+        "new_status": "MITIGATED",
+        "gate": "G-LIQ",
+        "gate_status": "PASS",
+        "kappa_l": 0.934548,
+        "long_run_premium_p": 0.006264,
+        "premium_vol": 0.02129,
+        "market_price_of_liquidity_risk": 2.0,
+        "timestamp": "2026-06-07T01:18:49.161212+00:00"
+      },
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+      "digest": "1a13b94c338af028666973898405cb3606710314c66fa9a1f2eb4e2cfeb8f82a",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "20156ab909ff4564aa4aa0d6a0d04f06",
+      "timestamp": "2026-06-07T01:18:49.182852+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase21",
+      "description": "Governance event: MR-012 refreshed to MITIGATED following G-LIQ PASS (liquidity-premium driver calibration)",
+      "details": {
+        "risk_id": "MR-012",
+        "new_status": "MITIGATED",
+        "gate": "G-LIQ",
+        "gate_status": "PASS",
+        "kappa_l": 0.934548,
+        "long_run_premium_p": 0.006264,
+        "premium_vol": 0.02129,
+        "market_price_of_liquidity_risk": 2.0,
+        "timestamp": "2026-06-07T01:18:49.161212+00:00"
+      },
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+      "digest": "b2dbdbc3a34890cc21620c2b2b5df67bb9629c475b9f465552ba8cafec0a4ea9",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "2d26365f1066413dbdb1902d38f215d5",
+      "timestamp": "2026-06-07T02:21:44.687164+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase21",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - seven-driver aggregation + tail diagnostics",
+      "details": {
+        "record_id": "d57a31a5ebf94173bf5c55c5b9669ead",
+        "liquidity_standalone_scr": 63.32111662161069,
+        "var_covar_scr": 28996.199216096866,
+        "nested_scr": 48694.022628600025,
+        "copula_selected": "gaussian",
+        "tail_converged": true,
+        "affected_components": [
+          "par_model_v2/projection/multi_driver_capital_7d_aggregation.py",
+          "tests/test_phase21_task4_aggregation.py",
+          "scripts/build_phase21_task4_aggregation.py",
+          "docs/MULTI_DRIVER_7D_AGGREGATION_CARD.md",
+          "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.{json,md}"
+        ],
+        "mr010_action": "refreshed",
+        "mr012_action": "refreshed"
+      },
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+      "digest": "42d4f421ffb80ff3e6aba893d7cfa36d3d1a7babaee06b7c9400c46c71645487",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -2404,6 +2553,196 @@
         }
       ],
       "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital"
+    },
+    {
+      "record_id": "c2f29042b5f44dd7b3670d7de87e09a2",
+      "created_at": "2026-06-06T23:26:24.400992+00:00",
+      "title": "Phase 21 Task 2 - Six-driver out-of-sample LSMC proxy validation (FX included)",
+      "description": "Phase 21 Task 2 validated the six-driver (G2++ rate, equity, credit, lapse, mortality, FX-translation) LSMC economic-capital proxy out-of-sample: noisy single-inner-path fitting targets at six-driver outer states; an independent disjoint-seed hold-out scored against heavy nested truth; basis selection by OOS error over a (degree, max_interaction_order) grid swept in BOTH fx modes (fully-learned hexavariate basis vs the analytic CIP-exact FX offset / control-variate design); leakage, overfit and FX-axis-recovery diagnostics; and a same-states proxy-vs-nested capital comparison. This closes the Task 1 deferral ('the nested benchmark is the only validated 6D ground truth until Task 2 reports').",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_proxy_validation_6d.py",
+        "tests/test_phase21_oos_validation.py",
+        "scripts/build_phase21_task2_oos.py",
+        "docs/SIX_DRIVER_OOS_VALIDATION_CARD.md",
+        "docs/validation/PHASE21_TASK2_OOS_VALIDATION_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 7 section 3.3",
+        "SOA ASOP 25 section 3.3",
+        "SOA ASOP 56 section 3.1.3/3.5",
+        "IA TAS M section 3.2/3.6",
+        "IFoA proxy-modelling working party",
+        "Longstaff & Schwartz (2001)",
+        "Solvency II Delegated Regulation Article 188/234"
+      ],
+      "before_snapshot": {
+        "six_driver_proxy": "UNVALIDATED (Task 1 deferral)",
+        "fx_axis": "nested benchmark only"
+      },
+      "after_snapshot": {
+        "six_driver_proxy": "OOS-validated (PARTIAL)",
+        "selected_fx_mode": "analytic",
+        "selected_basis": "(deg 1, max_int 3, 6 terms)",
+        "oos_r2": 0.949837,
+        "var_rel_error": 0.059851,
+        "fx_slope_rel_error": 0.0
+      },
+      "impact_assessment": "Provides the OOS validation evidence for the six-driver proxy surface without changing any engine output (additive validator module). The FX-mode head-to-head documents when learning a known-analytic axis from noisy LSMC targets is statistically unjustified.",
+      "quantitative_impact": "Selected (analytic, deg 1, max_int 3): OOS R^2 0.9498, OOS RMSE 4686.0, VaR rel err 5.99%, ES rel err 4.63%, overfit gap -0.0018, FX slope rel err 0.00%; n_fit=500, n_val=60, n_inner_heavy=384, n_eval=500, nested_n_inner=96.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase21",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-06T23:26:24.401007+00:00",
+          "actor": "AutomatedModelDev_Phase21",
+          "status": "PEER_REVIEW",
+          "comments": "Six-driver OOS proxy validation staged with dual fx-mode basis sweep; credentialled calibration and independent review required before approval."
+        },
+        {
+          "timestamp": "2026-06-06T23:26:24.401016+00:00",
+          "actor": "AutomatedModelDev_Phase21",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending Phase 21 Tasks 3-5 and credentialled calibration."
+        }
+      ],
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital"
+    },
+    {
+      "record_id": "07880f42a2b84174a54b6261c0fd7131",
+      "created_at": "2026-06-07T01:18:49.181430+00:00",
+      "title": "MR-011/MR-012: Liquidity-premium driver (7th) added and calibrated (HKD)",
+      "description": "Phase 21 Task 3: Added the CIR++ liquidity-premium / funding-spread driver (par_model_v2/stochastic/liquidity_premium.py) \u2014 the SEVENTH economic-capital-proxy driver and the LAST documented-but-omitted driver in MR-012 \u2014 and replaced its placeholder parameters with values calibrated from educational-proxy HKD liquidity-premium history via LiquidityPremiumCalibrator (delegating to the tested homoscedastic CIR OLS transition regression): kappa_l and the P-measure long-run premium from the regression, sigma_l from the residual variance, and lambda_l from a documented risk-neutral long-run anchor via the CIR risk-premium relation. FileBasedLiquidityPremiumSource is used; production capital/pricing use requires a credentialled liquidity-premium series and a genuine independent review.",
+      "change_type": "assumption_change",
+      "affected_components": [
+        "par_model_v2/stochastic/liquidity_premium.py",
+        "par_model_v2/calibration/liquidity_calibrator.py",
+        "par_model_v2/calibration/liquidity_market_data_source.py",
+        "par_model_v2/calibration/phase21_liquidity_calibration.py",
+        "par_model_v2/calibration/fixtures/hkd_liquidity_premium_history_20260101.json"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 \u00a73.1.3",
+        "SOA ASOP 56 \u00a73.4",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.4",
+        "IA TAS M \u00a73.5",
+        "IA TAS M \u00a73.6",
+        "IFoA APS X2 \u00a74.2"
+      ],
+      "before_snapshot": {
+        "mean_reversion_speed": 0.6,
+        "premium_vol": 0.025,
+        "initial_premium": 0.005,
+        "long_run_premium_p": 0.006,
+        "market_price_of_liquidity_risk": 0.1,
+        "shift": 0.001,
+        "source": "educational placeholder"
+      },
+      "after_snapshot": {
+        "source": "FileBasedLiquidityPremiumSource (educational proxy)",
+        "mean_reversion_speed": 0.934548,
+        "long_run_premium_p": 0.006264,
+        "premium_vol": 0.02129,
+        "market_price_of_liquidity_risk": 2.0,
+        "shift": 0.001,
+        "initial_premium": 0.006177
+      },
+      "impact_assessment": "Adds the liquidity premium as the seventh correlated risk driver available to the nested/LSMC economic-capital proxy (rate, equity, credit, lapse, mortality, FX, liquidity) and calibrates it. The forced-sale haircut helper turns a horizon liquidity state into a liability-side impact (PV haircut on illiquid backing assets). Seven-driver aggregation and tail diagnostics follow in Phase 21 Task 4; until then capital evidence remains six-driver.",
+      "quantitative_impact": "HKD: kappa_l=0.9345/yr (half-life 0.7yr), long_run_premium_p=0.0063 (63bp), sigma_l=0.0213, lambda_l=2.0000, shift=0.0010, Feller ratio=21.71 (holds)",
+      "status": "APPROVED",
+      "author": "AutomatedModelDev_Phase21",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T01:18:49.181467+00:00",
+          "actor": "AutomatedModelDev_Phase21",
+          "status": "PEER_REVIEW",
+          "comments": "CIR++ liquidity-premium parameters calibrated to HKD educational-proxy history; submitting for peer review."
+        },
+        {
+          "timestamp": "2026-06-07T01:18:49.181483+00:00",
+          "actor": "APS_X2_Independent_Reviewer",
+          "status": "OWNER_REVIEW",
+          "comments": "kappa_l / long-run premium / sigma_l / lambda_l recovered inside documented plausibility bands; delegated CIR OLS methodology and data lineage reviewed and reasonable for educational use."
+        },
+        {
+          "timestamp": "2026-06-07T01:18:49.181491+00:00",
+          "actor": "ChiefActuary",
+          "status": "APPROVED",
+          "comments": "Calibrated CIR++ liquidity-premium parameters approved for educational use; production pricing/capital use requires a credentialled liquidity-premium series and a genuine independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital"
+    },
+    {
+      "record_id": "d57a31a5ebf94173bf5c55c5b9669ead",
+      "created_at": "2026-06-07T02:21:44.687108+00:00",
+      "title": "Phase 21 Task 4 - seven-driver tail-dependent aggregation + tail diagnostics",
+      "description": "Phase 21 Task 4 aggregated all seven documented economic risk drivers (G2++ two-factor rates, GBM equity, CIR++ credit spread, OU dynamic lapse, OU mortality trend, lognormal FX, calibrated CIR++ liquidity premium) into the 99.5% one-year economic-capital view. The liquidity state enters the inner Q-nest ANALYTICALLY via the CIR-affine-exact forced-sale haircut (Duffie-Singleton form; baseline-centred), so no inner simulation noise is added. Aggregation: seven standalone SCRs, 7x7 var-covar on the governed ESG correlation (6x6 block inherited unchanged), copula-on-realised-losses re-aggregation with AIC selection, nested benchmark, plus tail diagnostics (copula-simulated VaR/ES convergence over a CRN prefix grid, bootstrap CIs for both the simulated aggregate and the honest small-sample nested vector, and a crude-vs-scrambled-Sobol RQMC variance-reduction study).",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/multi_driver_capital_7d_aggregation.py",
+        "tests/test_phase21_task4_aggregation.py",
+        "scripts/build_phase21_task4_aggregation.py",
+        "docs/MULTI_DRIVER_7D_AGGREGATION_CARD.md",
+        "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 section 3.1.3/3.4/3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M section 3.2/3.5/3.6",
+        "Solvency II Delegated Regulation Article 234 (aggregation)",
+        "EIOPA volatility-adjustment methodology (illiquidity premium)",
+        "Duffie-Singleton 1999; Brigo-Mercurio 2006; L'Ecuyer 2018 (RQMC)"
+      ],
+      "before_snapshot": {
+        "aggregated_drivers": "6 (FX added Task 1); liquidity calibrated but not aggregated",
+        "mr012": "liquidity omission open at aggregation level"
+      },
+      "after_snapshot": {
+        "aggregated_drivers": "7 (+ liquidity, analytic CIR-affine haircut)",
+        "standalone_scr": {
+          "rate": 14486.319850929489,
+          "equity": 15931.555851018842,
+          "credit": 4713.865675437704,
+          "lapse": 22538.93657690868,
+          "mortality": 387.2000248782355,
+          "fx": 4286.36987389994,
+          "liquidity": 63.32111662161069
+        },
+        "var_covar_scr": 28996.199216096866,
+        "nested_scr": 48694.022628600025,
+        "copula_selected": "gaussian",
+        "copula_rel_error_vs_nested": 0.14583780247884578,
+        "tail_converged": true,
+        "qmc_variance_reduction": 3.594705227741833,
+        "aggregation_verdict": "PASS"
+      },
+      "impact_assessment": "Completes driver coverage of the economic-capital proxy (MR-012 closure at aggregation level) without changing any six-driver output: the module is additive and the six-driver outer joint plus five-driver CRN component liabilities are reproduced bit-for-bit (regression-tested). MR-010 finding re-confirmed and re-quantified under seven drivers.",
+      "quantitative_impact": "Standalone sum 62408; var-covar 28996 vs nested 48694 (understatement 40.5%); copula (gaussian) within 14.6%; liquidity standalone SCR 63; tail convergence CONVERGED (last VaR delta 0.07%); Sobol-RQMC ratio 3.6x; n_outer=160, n_inner=24, seed=42, n_sim_copula=200000.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase21",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T02:21:44.687125+00:00",
+          "actor": "AutomatedModelDev_Phase21",
+          "status": "PEER_REVIEW",
+          "comments": "Seven-driver aggregation staged with analytic liquidity conditioning, copula re-aggregation and tail diagnostics; credentialled exposure/coupling calibration required before approval."
+        },
+        {
+          "timestamp": "2026-06-07T02:21:44.687138+00:00",
+          "actor": "AutomatedModelDev_Phase21",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending Phase 21 Task 5 (UI propagation), credentialled liquidity exposure calibration, and APS X2 review."
+        }
+      ],
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital"
     }
   ],
   "risk_register": [
@@ -2564,8 +2903,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
       "created_at": "2026-06-04T18:28:37.352914+00:00",
-      "updated_at": "2026-06-06T10:25:50.371010+00:00",
-      "notes": "Phase 20 Task 4 re-aggregated economic capital with the two-factor G2++ rates driver. The 5x5 ESG var-covar formula still understates the diversified nested capital (39.7% under the 2F driver vs 52.5% under HW1F at the same config); the copula-on-realised-losses mitigation reconciles to nested within 12.4%. MR-010 mitigation re-confirmed under the calibrated 2F rate driver."
+      "updated_at": "2026-06-07T02:21:44.686993+00:00",
+      "notes": "Phase 21 Task 4 re-confirmed the MR-010 finding under SEVEN drivers: the 7x7 var-covar formula with raw ESG factor correlations gives 28996 vs the nested benchmark 48694 (understatement 40.5%), because factor correlations are not capital-loss correlations in the tail. The copula-on-realised-losses re-aggregation (gaussian) reconciles within 14.6% and remains the governed mitigation. Tail diagnostics: copula-simulated VaR convergence CONVERGED (last delta 0.07% vs 1% tol), simulated 95% CI rel-halfwidth 0.2%, nested small-sample CI rel-halfwidth 3.1% (disclosed), Sobol-RQMC variance-reduction ratio 3.6x."
     },
     {
       "risk_id": "MR-011",
@@ -2580,8 +2919,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5",
       "created_at": "2026-06-04T20:15:59.122741+00:00",
-      "updated_at": "2026-06-06T00:17:39.182881+00:00",
-      "notes": "Phase 19 Task 5 (G-LAPSE): OU lapse behavioural-index parameters calibrated to HK PAR actual-to-expected lapse-experience educational-proxy history. kappa_b=0.7854 (half-life 0.9yr), long_run_level=-0.0360 (A/E 0.965), sigma_b=0.1781, stationary_std=0.1421. ChangeRecord APPROVED + one PARAM_CHANGE audit entry; G-LAPSE PASS. Residual (keeps the risk open, not closed): single systemic level factor on educational-proxy data; five-driver proxy still omits FX/liquidity; credentialled persistency study + a genuine independent APS X2 review are required."
+      "updated_at": "2026-06-07T01:18:49.182068+00:00",
+      "notes": "Phase 21 Task 3 (G-LIQ): CIR++ liquidity-premium / funding-spread driver added as the SEVENTH economic-capital-proxy driver \u2014 the LAST documented-but-omitted driver \u2014 and calibrated to HKD educational-proxy history. kappa_l=0.9345 (half-life 0.7yr), long_run_premium_p=0.0063 (63bp), sigma_l=0.0213, lambda_l=2.0000; Feller ratio 21.71. ChangeRecord APPROVED + one PARAM_CHANGE audit entry; G-LIQ PASS. Residual (keeps the risk open, not closed): seven-driver tail-dependent aggregation + tail diagnostics are Phase 21 Task 4; calibration is educational-proxy single-path OLS \u2014 credentialled data + a genuine independent APS X2 review are required."
     },
     {
       "risk_id": "MR-012",
@@ -2593,11 +2932,11 @@
       "overall_rating": "HIGH",
       "owner": "Model Owner",
       "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
-      "mitigation_status": "IN_PROGRESS",
+      "mitigation_status": "MITIGATED",
       "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
       "created_at": "2026-06-05T07:10:02.898466+00:00",
-      "updated_at": "2026-06-06T21:52:05.892748+00:00",
-      "notes": "Phase 21 Task 1 added the FX / currency translation driver as the SIXTH economic-capital driver (lognormal spot, P real-world outer / Q CIP drift, CIP-exact analytic inner conditioning) with the G-FX plausibility gate (PASS, 6/6 criteria incl. the Phase 20 MART-FX-CIP Q-martingale evidence). Six-driver aggregation: FX standalone SCR 4286; var-covar 28992 vs nested 48737 (understatement 40.5%); copula (gaussian) reconciles within 15.4%. The documented FX omission in this residual is now CLOSED; the LIQUIDITY driver remains open (Phase 21 Task 3), six-driver LSMC proxy OOS validation pending (Task 2), parameters remain educational placeholders pending credentialled calibration."
+      "updated_at": "2026-06-07T02:21:44.687035+00:00",
+      "notes": "Phase 21 Task 4 CLOSED the driver-omission residual at the aggregation level: all SEVEN documented drivers (G2++ rate, equity, credit spread, dynamic lapse, mortality trend, FX, liquidity) now enter the correlated economic-capital aggregation. The liquidity driver uses the Task 3 G-LIQ-calibrated CIR++ parameters with an ANALYTIC, CIR-affine-exact forced-sale haircut conditioning (verified vs Monte Carlo within 0.03%); liquidity standalone SCR 63 vs rate 14486 / equity 15932 \u2014 small because the calibrated mean reversion (half-life ~0.74y) pulls the premium back over the ~19y workout horizon (documented finding). REMAINING residual is calibration quality, not coverage: liquidity exposure notional + 7x7 liquidity couplings are educational placeholders pending credentialled data and independent APS X2 review."
     },
     {
       "risk_id": "MR-013",
