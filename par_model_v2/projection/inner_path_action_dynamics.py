@@ -492,3 +492,379 @@ def inner_path_use_restrictions() -> Dict[str, object]:
             "credentialled data and independent APS X2 review."
         ),
     }
+
+
+# ---------------------------------------------------------------------------
+# Phase 25 Task 2 - path-wise declaration in the nested truth
+# ---------------------------------------------------------------------------
+# The Phase 24 Task 3 convention freezes the bonus-cut DECISION at the outer
+# node (horizon-level declared-rate response): the relief factor is constant
+# across the inner paths of one outer node.  Phase 25 Task 2 implements the
+# pre-registered refinement (PHASE25_TASK1_DESIGN_NOTE s3/s5): the governed
+# retained-bonus factor is re-evaluated at EVERY inner time step from a
+# path-wise coverage proxy
+#
+#     CR_t = A_t / L_t,   A_t = a_ref rolled forward at the inner short rate,
+#                         L_t = pre-action remaining path liability at t,
+#
+# and because both sides are deflated by the SAME path discount factor the
+# proxy reduces to the numerically clean time-0 form
+#
+#     CR_{i,t} = a_ref / RemPV0_{i,t}
+#
+# with RemPV0 the time-0-discounted remaining pre-action path liability
+# (in-force benefit + remaining credit-loss component + the node-level
+# analytic FX/liquidity offset, held constant - disclosed).  The relief in
+# force for the cashflow at month u is decided at the START of that month
+# (pre-step CR at t = u-1, the Task 1 pre-study convention).  P24T3
+# carve-outs are PRESERVED: only the in-force policyholder-benefit cashflows
+# (guaranteed + equity-guarantee) are cuttable; the asset-side credit-loss
+# PV and the analytic FX/liquidity offsets are NOT cuttable.  The
+# horizon-level basis is RETAINED as the sensitivity variant.
+#
+# DISCLOSED limitations (declaration-frequency / adaptedness residuals are
+# Task 3 documentation items): the coverage proxy discounts the remaining
+# cashflows with the realised inner path (perfect-foresight discounting - a
+# proxy, not an adapted valuation); declarations occur at every monthly
+# inner step (an annual declaration cadence is the documented sensitivity);
+# the node-level FX/liquidity offset enters the proxy undecayed.
+
+from par_model_v2.projection.pathwise_bonus_dynamics import (
+    PATHWISE_MATERIALITY_DISCLOSURE_THRESHOLD,
+)
+
+__all__ += [
+    "PATHWISE_MATERIALITY_DISCLOSURE_THRESHOLD",
+    "pathwise_declaration_components_5d",
+    "pathwise_declaration_heavy_sliced",
+    "apply_pathwise_declaration_node",
+    "validate_pathwise_declaration",
+    "pathwise_declaration_use_restrictions",
+]
+
+
+def pathwise_declaration_components_5d(
+    r, s, spread, b, m, n_inner, rem_months, product, base_hw_params,
+    gbm_params, spread_params, correlation, h_month, seed,
+    equity_guarantee, credit_exposure, lapse_exposure, mortality_exposure,
+    rule: ManagementActionRule, reference_assets: float,
+    node_offset: float = 0.0, horizon_relief: float = 0.0,
+    annual_qx_fn=None,
+) -> Dict[str, object]:
+    """Inner-path PV components plus path-wise / horizon relieved amounts.
+
+    The simulation block mirrors :func:`inner_pathwise_pv_components_5d`
+    operation-for-operation (identical RNG consumption order), so the
+    returned ``benefit`` and ``credit`` arrays are BIT-IDENTICAL to the
+    Phase 24 Task 3 decomposition (enforced at every build slice) and the
+    without-actions basis is unchanged by construction.
+
+    Returns a dict with per-inner-path arrays ``benefit``, ``credit``,
+    ``relieved_pathwise``, ``relieved_horizon`` and path-wise diagnostics
+    (action share, restoration share, initial path-wise CR stats).
+    """
+    rng = np.random.default_rng(seed)
+    chol = correlation.cholesky(gbm_params.rate_equity_correlation)
+    z_rate, z_equity, z_spread, _z_lapse, _z_mort = _correlated_shocks_5(
+        rng, n_inner, rem_months, chol
+    )
+
+    hw = _inner_q_process(r, base_hw_params)
+    inner_gbm_params = GBMParams(
+        equity_vol=gbm_params.equity_vol,
+        dividend_yield=gbm_params.dividend_yield,
+        equity_risk_premium=gbm_params.equity_risk_premium,
+        rate_equity_correlation=gbm_params.rate_equity_correlation,
+        initial_index_level=float(s),
+    )
+    gbm = GBMEquityProcess(inner_gbm_params, rate_process=hw)
+    csp = _inner_q_spread_process(spread, spread_params)
+
+    rate_paths = hw._simulate_array(n_inner, rem_months, Measure.Q, z_rate)
+    equity_paths, _ret = gbm._simulate_array(
+        n_inner, rem_months, Measure.Q, rate_paths, z_equity
+    )
+    spread_paths = csp._simulate_array(n_inner, rem_months, Measure.Q, z_spread)
+    disc = _vectorised_discount_factors(rate_paths)
+
+    inforce = lapse_exposure.inforce_factor(
+        float(r), float(b), h_month, product.term_months
+    )
+
+    scaled_qx = mortality_exposure.scaled_qx_fn(float(m), annual_qx_fn)
+    cf = _residual_cashflow_vector(product, h_month, scaled_qx)
+    guaranteed_pv = inforce * (disc @ cf)
+
+    units = equity_guarantee.units(product.sum_assured)
+    floor = equity_guarantee.floor(product.sum_assured)
+    fund_T = units * equity_paths[:, rem_months]
+    eq_payoff = np.maximum(floor - fund_T, 0.0)
+    eq_guarantee_pv = inforce * (disc[:, rem_months] * eq_payoff)
+
+    notional = credit_exposure.notional(product.sum_assured)
+    dt = 1.0 / 12.0
+    cum_hazard = spread_paths[:, :rem_months].sum(axis=1) * dt
+    loss_fraction = 1.0 - np.exp(-cum_hazard)
+    credit_loss_pv = disc[:, rem_months] * notional * loss_fraction
+
+    benefit = guaranteed_pv + eq_guarantee_pv
+    # --- end of the bit-identical Phase 24 Task 3 simulation block ---------
+
+    # Time-0-discounted benefit cashflows per month (cuttable base, cf >= 0).
+    g_cf = disc * cf[None, :]                                # (n, rem+1)
+    # tail[:, t] = sum_{u >= t} g_cf[:, u]; remaining AFTER t is tail[:, t+1]
+    tail = np.flip(np.cumsum(np.flip(g_cf, axis=1), axis=1), axis=1)
+    eq0 = disc[:, rem_months] * eq_payoff                    # (n,)
+
+    # Remaining in-force benefit at declaration times t = 0 .. rem-1.
+    rem_ben0 = inforce * (tail[:, 1:] + eq0[:, None])        # (n, rem)
+
+    # Remaining credit-loss component (hazard over [t, rem)).
+    cum = np.cumsum(spread_paths[:, :rem_months] * dt, axis=1)   # (n, rem)
+    cum_prev = np.concatenate(
+        [np.zeros((n_inner, 1)), cum[:, :-1]], axis=1)           # (n, rem)
+    rem_credit0 = (disc[:, rem_months] * notional)[:, None] * (
+        1.0 - np.exp(-(cum[:, -1][:, None] - cum_prev)))
+
+    rem_l0 = rem_ben0 + rem_credit0 + float(node_offset)
+    eps = 1e-9
+    cr_path = float(reference_assets) / np.maximum(rem_l0, eps)  # (n, rem)
+    relief = rule.relief_fraction(cr_path)                       # (n, rem)
+
+    # relief[:, t] is in force for the cashflow at month u = t + 1; the
+    # equity-guarantee payoff at u = rem uses the last declaration t = rem-1.
+    relieved_pathwise = inforce * (
+        (relief * g_cf[:, 1:]).sum(axis=1)
+        + relief[:, rem_months - 1] * eq0
+    )
+    relieved_horizon = float(horizon_relief) * benefit
+
+    tol = 1e-12
+    cut_any = relief > tol
+    had_cut = np.maximum.accumulate(cut_any, axis=1)
+    restored = np.any(
+        had_cut[:, :-1] & (relief[:, 1:] < relief[:, :-1] - tol), axis=1)
+
+    return {
+        "benefit": benefit,
+        "credit": credit_loss_pv,
+        "relieved_pathwise": relieved_pathwise,
+        "relieved_horizon": relieved_horizon,
+        "action_share": float(np.mean(cut_any.any(axis=1))),
+        "restoration_share": float(np.mean(restored)),
+        "cr_path0_mean": float(cr_path[:, 0].mean()),
+        "cr_path0_min": float(cr_path[:, 0].min()),
+        "mean_relief_step": float(relief.mean()),
+    }
+
+
+def pathwise_declaration_heavy_sliced(
+    validator, states7_full: np.ndarray, i0: int, i1: int,
+    n_inner: int, seed: int, rule: ManagementActionRule,
+    reference_assets: float, node_offsets: np.ndarray,
+    horizon_reliefs: np.ndarray,
+) -> Dict[str, np.ndarray]:
+    """Sliced per-node path-wise declaration run on the nested eval states.
+
+    Seeds mirror :func:`benefit_credit_heavy_sliced` (and therefore the
+    archived Phase 22 Task 2 heavy stage) EXACTLY: one spawned child seed
+    per outer node, consumed in the same order.
+    """
+    if n_inner < 1:
+        raise ValueError("n_inner must be >= 1")
+    child = np.random.SeedSequence(seed).spawn(len(states7_full))[i0:i1]
+    n = i1 - i0
+    out = {k: np.empty(n) for k in (
+        "total", "benefit", "credit", "relieved_pathwise",
+        "relieved_horizon", "action_share", "restoration_share",
+        "cr_path0_mean")}
+    v = validator
+    for j in range(n):
+        row = states7_full[i0 + j]
+        r, s, c, b, m = (float(x) for x in row[:5])
+        inner_seed = int(child[j].generate_state(1)[0])
+        res = pathwise_declaration_components_5d(
+            r, s, c, b, m, n_inner, v._rem,
+            v.product, v.agg.hw_params, v.agg.gbm_params,
+            v.agg.spread_params, v.agg.correlation,
+            v.capital_horizon_months, inner_seed,
+            v.agg.equity_guarantee, v.agg.credit_exposure,
+            v.agg.lapse_exposure, v.agg.mortality_exposure,
+            rule, reference_assets,
+            node_offset=float(node_offsets[i0 + j]),
+            horizon_relief=float(horizon_reliefs[i0 + j]),
+        )
+        ben = np.asarray(res["benefit"])
+        cre = np.asarray(res["credit"])
+        out["total"][j] = float((ben + cre).mean())
+        out["benefit"][j] = float(ben.mean())
+        out["credit"][j] = float(cre.mean())
+        out["relieved_pathwise"][j] = float(
+            np.asarray(res["relieved_pathwise"]).mean())
+        out["relieved_horizon"][j] = float(
+            np.asarray(res["relieved_horizon"]).mean())
+        out["action_share"][j] = res["action_share"]
+        out["restoration_share"][j] = res["restoration_share"]
+        out["cr_path0_mean"][j] = res["cr_path0_mean"]
+    return out
+
+
+def apply_pathwise_declaration_node(
+    rule: ManagementActionRule,
+    l7: np.ndarray,
+    benefit_node: np.ndarray,
+    relieved_node: np.ndarray,
+) -> Tuple[np.ndarray, float]:
+    """Node-level with-actions liabilities from per-node relieved amounts.
+
+    Guard (carve-out envelope): the relieved amount can never exceed
+    ``max_relief * clip(B, 0, L)`` - the same envelope as the Phase 24
+    Task 3 horizon basis.  Returns (L_with, clip_binding_share).
+    """
+    l = np.asarray(l7, dtype=float)
+    b = np.clip(np.asarray(benefit_node, dtype=float), 0.0, l)
+    cap = rule.max_relief * b
+    rel = np.asarray(relieved_node, dtype=float)
+    clip_share = float(np.mean(rel > cap + 1e-9))
+    return l - np.minimum(np.maximum(rel, 0.0), cap), clip_share
+
+
+def validate_pathwise_declaration(
+    rule: ManagementActionRule,
+    fit_mean_liability: float,
+    nested_l: np.ndarray,
+    benefit_nested: np.ndarray,
+    relieved_pathwise_node: np.ndarray,
+    relieved_horizon_node: np.ndarray,
+    without_actions_bit_identical: bool,
+    confidence_level: float,
+    capital_horizon_months: int,
+    action_share: float,
+    restoration_share: float,
+) -> Dict[str, object]:
+    """Phase 25 Task 2 gates (FIXED in the Task 1 design note s5).
+
+      G1  carve-outs preserved: relieved <= max_relief * clip(B, 0, L)
+          elementwise on BOTH bases (credit / FX / liquidity not cuttable)
+      G2  SIGN gate: path-wise with-actions SCR >= horizon-level
+          with-actions SCR at 99.5% (magnitude DISCLOSED, not gated)
+      G3  monotonicity guard re-verified on the path-wise basis
+      G4  without-actions basis unchanged BIT-IDENTICALLY (slice-enforced)
+      G5  horizon-level basis reproduced: node relieved equals
+          relief(CR(L7)) * B exactly (sensitivity variant retained)
+      G6  no action at/above the trigger coverage ratio
+    """
+    a_ref = rule.reference_assets(fit_mean_liability)
+    l = np.asarray(nested_l, dtype=float)
+    b = np.clip(np.asarray(benefit_nested, dtype=float), 0.0, l)
+    cap_env = rule.max_relief * b + 1e-6
+
+    nested_with_pw, clip_share_pw = apply_pathwise_declaration_node(
+        rule, l, benefit_nested, relieved_pathwise_node)
+    nested_with_hz, clip_share_hz = apply_pathwise_declaration_node(
+        rule, l, benefit_nested, relieved_horizon_node)
+    nested_with_hz_direct = apply_inner_path_action(
+        rule, a_ref, l, benefit_nested)
+
+    cap = dict(
+        confidence_level=float(confidence_level),
+        capital_horizon_months=int(capital_horizon_months),
+    )
+    cap_wo = capital_metrics_from_liabilities(l, **cap)
+    cap_pw = capital_metrics_from_liabilities(nested_with_pw, **cap)
+    cap_hz = capital_metrics_from_liabilities(nested_with_hz, **cap)
+
+    lo = float(l.min()) * 0.5
+    hi = float(l.max()) * 2.0
+    monotone = inner_path_monotonicity_check(rule, a_ref, lo, hi)
+
+    cr_probe = np.array([rule.cr_trigger, rule.cr_trigger + 1e-9, 10.0])
+    no_action_above_trigger = bool(
+        np.all(rule.relief_fraction(cr_probe) <= 1e-12))
+
+    scr_delta = float(cap_pw.scr_proxy - cap_hz.scr_proxy)
+    scr_delta_rel = scr_delta / abs(cap_hz.scr_proxy)
+    disclosure_required = bool(
+        abs(scr_delta_rel) > PATHWISE_MATERIALITY_DISCLOSURE_THRESHOLD)
+
+    gates = {
+        "G1_carveouts_preserved_relieved_within_envelope": bool(
+            np.all(np.asarray(relieved_pathwise_node) <= cap_env)
+            and np.all(np.asarray(relieved_horizon_node) <= cap_env)
+            and np.all(np.asarray(relieved_pathwise_node) >= -1e-9)
+        ),
+        "G2_sign_gate_pathwise_scr_ge_horizon_scr": bool(
+            cap_pw.scr_proxy >= cap_hz.scr_proxy - 1e-9),
+        "G3_monotonicity_guard_pathwise_basis": bool(monotone),
+        "G4_without_actions_bit_identical": bool(
+            without_actions_bit_identical),
+        "G5_horizon_basis_reproduced": bool(
+            np.allclose(nested_with_hz, nested_with_hz_direct,
+                        rtol=1e-9, atol=1e-6)),
+        "G6_no_action_above_trigger": no_action_above_trigger,
+    }
+    verdict = "PASS" if all(gates.values()) else "FAIL"
+
+    return {
+        "rule": rule.to_dict(),
+        "reference_assets": float(a_ref),
+        "fit_mean_liability": float(fit_mean_liability),
+        "pathwise_action_share": float(action_share),
+        "pathwise_restoration_share": float(restoration_share),
+        "clip_binding_share_pathwise": clip_share_pw,
+        "clip_binding_share_horizon": clip_share_hz,
+        "nested_capital_without": cap_wo.summary(),
+        "nested_capital_with_horizon": cap_hz.summary(),
+        "nested_capital_with_pathwise": cap_pw.summary(),
+        "pathwise_vs_horizon_delta": {
+            "var_99_5_delta": float(
+                cap_pw.var_liability - cap_hz.var_liability),
+            "es_delta": float(cap_pw.es_liability - cap_hz.es_liability),
+            "scr_delta": scr_delta,
+            "scr_delta_rel_to_horizon": scr_delta_rel,
+            "materiality_disclosure_threshold":
+                PATHWISE_MATERIALITY_DISCLOSURE_THRESHOLD,
+            "mr010_mr014_refresh_required_task4": disclosure_required,
+            "interpretation": (
+                "The horizon-level basis freezes the maximum cut at "
+                "stressed outer nodes for the whole projection while the "
+                "path-wise basis RESTORES the bonus on recovering inner "
+                "paths (and cuts on deteriorating paths from healthy "
+                "nodes), so the path-wise basis relieves LESS in the tail "
+                "and its with-actions SCR is the more conservative "
+                "read-out (recognition-lag effect, two-sided)."
+            ),
+        },
+        "gates": gates,
+        "verdict": verdict,
+    }
+
+
+def pathwise_declaration_use_restrictions() -> Dict[str, object]:
+    """Governed use restrictions for the path-wise declaration basis."""
+    return {
+        "classification": "EDUCATIONAL_DEMONSTRATION_ONLY",
+        "approved_uses": [
+            "Methodology demonstration of full path-wise management-action "
+            "declaration dynamics (Solvency II Art. 23: actions modelled "
+            "consistently with how they would be exercised over time) in "
+            "a nested-stochastic / LSMC-proxy framework",
+            "Quantification of the horizon-level vs path-wise declaration "
+            "recognition-lag effect on with-actions capital",
+        ],
+        "prohibited_uses": [
+            "Production capital or solvency decisions",
+            "Policyholder bonus declarations",
+            "Regulatory submissions",
+        ],
+        "rationale": (
+            "Management-action parameters are educational placeholders; "
+            "the path-wise coverage proxy uses realised-path discounting "
+            "(perfect-foresight proxy, not an adapted valuation); "
+            "declarations occur at every monthly inner step (annual "
+            "cadence is a documented sensitivity); the node-level "
+            "FX/liquidity offset enters the proxy undecayed; production "
+            "sign-off withheld pending credentialled data and independent "
+            "APS X2 review."
+        ),
+    }

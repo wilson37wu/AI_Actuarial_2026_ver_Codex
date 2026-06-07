@@ -1,0 +1,178 @@
+{
+  "task": "Phase 25 Task 2 - path-wise bonus declaration in the nested truth (per-time-step retained-bonus factor on a path-wise coverage proxy)",
+  "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+  "run_timestamp": "2026-06-07T22:22:26.222567+00:00",
+  "run_id": "p25t2-9f8f9b33",
+  "verdict": "PASS",
+  "gates_definition": {
+    "source": "Phase 25 Task 1 design note s5 (FIXED pre-registered, no gate-shopping)",
+    "sign_gate": "pathwise with-actions SCR >= horizon-level with-actions SCR at 99.5% (magnitude disclosed, not gated)",
+    "materiality_disclosure_threshold": 0.01
+  },
+  "result": {
+    "rule": {
+      "cr_trigger": 1.1,
+      "cr_floor": 0.9,
+      "bonus_share": 0.3,
+      "pre_floor": 0.6,
+      "reference_coverage": 1.12,
+      "max_relief": 0.12
+    },
+    "reference_assets": 129916.49144595393,
+    "fit_mean_liability": 115996.86736245886,
+    "pathwise_action_share": 0.4140390625,
+    "pathwise_restoration_share": 0.2936171875,
+    "clip_binding_share_pathwise": 0.0,
+    "clip_binding_share_horizon": 0.0,
+    "nested_capital_without": {
+      "confidence_level": 0.995,
+      "mean_liability": 115994.0791,
+      "var_liability": 171555.268,
+      "es_liability": 176570.2272,
+      "scr_proxy": 55561.1889,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "nested_capital_with_horizon": {
+      "confidence_level": 0.995,
+      "mean_liability": 112273.4771,
+      "var_liability": 153125.5312,
+      "es_liability": 157827.7702,
+      "scr_proxy": 40852.0541,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "nested_capital_with_pathwise": {
+      "confidence_level": 0.995,
+      "mean_liability": 112305.2089,
+      "var_liability": 158944.0748,
+      "es_liability": 163343.6077,
+      "scr_proxy": 46638.8659,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "pathwise_vs_horizon_delta": {
+      "var_99_5_delta": 5818.543556280725,
+      "es_delta": 5515.837503233895,
+      "scr_delta": 5786.811800840922,
+      "scr_delta_rel_to_horizon": 0.14165289670526135,
+      "materiality_disclosure_threshold": 0.01,
+      "mr010_mr014_refresh_required_task4": true,
+      "interpretation": "The horizon-level basis freezes the maximum cut at stressed outer nodes for the whole projection while the path-wise basis RESTORES the bonus on recovering inner paths (and cuts on deteriorating paths from healthy nodes), so the path-wise basis relieves LESS in the tail and its with-actions SCR is the more conservative read-out (recognition-lag effect, two-sided)."
+    },
+    "gates": {
+      "G1_carveouts_preserved_relieved_within_envelope": true,
+      "G2_sign_gate_pathwise_scr_ge_horizon_scr": true,
+      "G3_monotonicity_guard_pathwise_basis": true,
+      "G4_without_actions_bit_identical": true,
+      "G5_horizon_basis_reproduced": true,
+      "G6_no_action_above_trigger": true
+    },
+    "verdict": "PASS"
+  },
+  "p24t3_horizon_basis_consistency": {
+    "scr_horizon_basis": 40852.0541,
+    "scr_p24t3_archived": 40852.05410858347,
+    "abs_diff": 8.58346902532503e-06,
+    "match": true
+  },
+  "pathwise_diagnostics": {
+    "mean_action_share_inner_paths": 0.4140390625,
+    "mean_restoration_share_inner_paths": 0.2936171875,
+    "nodes_with_any_inner_action": 1.0,
+    "nodes_with_any_restoration": 1.0,
+    "mean_initial_pathwise_cr": 1.3444809355541416
+  },
+  "verify_stage": {
+    "checks": {
+      "p24t3_verdict_pass": true,
+      "p24t3_rule_unchanged": true,
+      "p25t1_note_pass": true,
+      "p25t1_task2_gates_pre_registered": true,
+      "nested_arrays_length_ok": true,
+      "nested_l7_consistent": true,
+      "fit_mean_positive": true,
+      "p24t3_scr_reference_match": true
+    },
+    "fit_mean_liability": 115996.86736245886,
+    "reference_assets": 129916.49144595393,
+    "p24t3_with_inner_path_scr": 40852.05410858347,
+    "p24t3_with_inner_path_var": 153125.53123738492,
+    "config": {
+      "n_fit": 2000,
+      "n_validation": 60,
+      "n_insample_heavy": 60,
+      "n_inner_heavy": 384,
+      "n_eval": 500,
+      "nested_n_inner": 256,
+      "fit_n_inner": 8,
+      "basis_grid": [
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "fx_modes": [
+        "analytic",
+        "learned"
+      ],
+      "selection_metric": "oos_rmse",
+      "confidence_level": 0.995,
+      "capital_horizon_months": 12,
+      "fit_seed": 42,
+      "validation_seed": 20260607,
+      "insample_heavy_seed": 7,
+      "eval_seed": 141,
+      "nested_inner_seed": 142,
+      "outer_measure": "P"
+    },
+    "duration_seconds": 0.033069795987103134
+  },
+  "primitives_provenance": "Per-node inner simulations are BIT-IDENTICAL re-runs of the archived Phase 22 Task 2 heavy stage (seeds 141/142, exact equality of total/benefit/credit vs the archived Phase 24 Task 3 decomposition enforced at every slice); the L7 array and fit-mean are the archived Phase 23 Task 3 stage.",
+  "method": "Path-wise basis: at every inner month t the retained-bonus factor is re-evaluated from CR_t = A_t / L_t with A_t the reference assets rolled forward at the inner short rate and L_t the pre-action remaining path liability; both deflate by the same path discount factor, so CR_{i,t} = a_ref / RemPV0_{i,t}. The relief in force for the cashflow at month u is decided at the start of that month (pre-step CR). Only in-force policyholder benefits (guaranteed + equity-guarantee) are cuttable; credit-loss and analytic FX/liquidity offsets are carved out (P24T3 convention). Horizon-level basis retained as the sensitivity variant.",
+  "residuals_documented": [
+    "Declaration frequency: monthly inner-step declarations; an annual declaration cadence (with board-discretion smoothing) is the Task 3 documentation item.",
+    "Adaptedness: the coverage proxy discounts remaining cashflows with the realised inner path (perfect-foresight proxy); an adapted valuation would require nested-nested simulation.",
+    "The node-level analytic FX/liquidity offset enters the path-wise proxy undecayed."
+  ],
+  "limitations": [
+    "Management-action parameters are educational placeholders pending credentialled data + APS X2 review.",
+    "The proxy (LSMC) side still uses the horizon-level basis; the matching path-wise proxy basis feature is Task 3.",
+    "Coverage ratio uses a fixed reference-asset proxy rolled forward at the inner short rate."
+  ],
+  "use_restrictions": {
+    "classification": "EDUCATIONAL_DEMONSTRATION_ONLY",
+    "approved_uses": [
+      "Methodology demonstration of full path-wise management-action declaration dynamics (Solvency II Art. 23: actions modelled consistently with how they would be exercised over time) in a nested-stochastic / LSMC-proxy framework",
+      "Quantification of the horizon-level vs path-wise declaration recognition-lag effect on with-actions capital"
+    ],
+    "prohibited_uses": [
+      "Production capital or solvency decisions",
+      "Policyholder bonus declarations",
+      "Regulatory submissions"
+    ],
+    "rationale": "Management-action parameters are educational placeholders; the path-wise coverage proxy uses realised-path discounting (perfect-foresight proxy, not an adapted valuation); declarations occur at every monthly inner step (annual cadence is a documented sensitivity); the node-level FX/liquidity offset enters the proxy undecayed; production sign-off withheld pending credentialled data and independent APS X2 review."
+  },
+  "reproducibility_digest": "9f8f9b33c998bb04920cd116824d48d97f225552eb49ed19ed574e85dd896450",
+  "duration_seconds": 0.009695508997538127,
+  "change_record_id": "3cfaa30a0f8044a8aaed419e6ab4ca31",
+  "change_record_status": "OWNER_REVIEW",
+  "audit_integrity_ok": true,
+  "change_records_total": 46
+}

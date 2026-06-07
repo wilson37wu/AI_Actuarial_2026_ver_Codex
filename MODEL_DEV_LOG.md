@@ -8368,3 +8368,84 @@ Task 5 UI 1.6.0 -> 1.7.0 + PHASE 25 COMPLETE docs.
 **Blockers (human action, unchanged):** three git ghost locks (commits via alt-`GIT_INDEX_FILE`
 onto `p22c9`; push `p22c9:main` works from the sandbox — push every cycle); serialise the
 scheduled runs; production sign-off residual (credentialled data + APS X2); disk /sessions ~89%.
+
+---
+
+## 2026-06-08 (+08) — Cycle 23 — Phase 25 Task 2: Path-Wise Bonus Declaration in the Nested Truth (PASS)
+
+**Health gate first (all green):** pytest batches p23/p24/p25t1/governance/p22t2 (358 tests)
+and `node scripts/ui_app_self_test.cjs ui_app.html` ok:true BEFORE any change. No foreign
+writes (mtimes checked); governance store backed up to
+`/var/tmp/p25t2_build/GOV_BACKUP_pre_p25t2.json` and re-verified unchanged immediately before
+the governance stage.
+
+**Task (pre-registered in the cycle-22 design note s5).** Extend
+`par_model_v2/projection/inner_path_action_dynamics.py` with the path-wise declaration mode:
+the governed retained-bonus factor re-evaluated at EVERY inner month on a path-wise coverage
+proxy, with the P24T3 carve-outs preserved and the horizon-level basis retained as the
+sensitivity variant.
+
+- **Coverage proxy:** CR_t = A_t / L_t with A_t = reference assets rolled forward at the
+  inner short rate and L_t = pre-action remaining path liability at t; both deflate by the
+  SAME path discount factor, so the proxy reduces to the numerically clean time-0 form
+  **CR_{i,t} = a_ref / RemPV0_{i,t}** (remaining in-force benefit + remaining credit-loss
+  component + node-level analytic FX/liquidity offset held constant — disclosed). The relief
+  in force for the cashflow at month u is decided at the START of that month (pre-step CR,
+  the Task 1 pre-study convention).
+- **Carve-outs preserved (P24T3):** only in-force policyholder benefits (guaranteed +
+  equity-guarantee cashflows) are cuttable; the asset-side credit-loss PV and the analytic
+  FX/liquidity offsets are NOT cuttable; node-level envelope guard
+  relieved <= max_relief * clip(B, 0, L) (never binds: clip share 0.0%).
+- **Bit-identical without-actions basis:** the simulation block mirrors the P24T3
+  decomposition operation-for-operation (same RNG consumption order); exact equality of
+  total/benefit/credit vs the archived decomposition ENFORCED at every slice (2 x 250 nodes,
+  ~10-11 s each) BEFORE any new number is consumed.
+- **RESULT (nested truth, n=500 x 256 inner, seeds 141/142):** path-wise with-actions
+  **SCR 46,638.9 vs horizon-level 40,852.1 (+5,786.8 = +14.17%)** — pre-registered SIGN gate
+  (pathwise >= horizon at 99.5%) PASS, magnitude DISCLOSED not gated; VaR99.5 158,944.1 vs
+  153,125.5 (+5,818.5); ES +5,515.8. Without-actions unchanged (SCR 55,561.2). The cycle-22
+  synthetic pre-study sign prediction is CONFIRMED on the real nested benchmark (12.2%
+  synthetic -> 14.17% realised).
+- **Recognition-lag diagnostics:** 41.4% of inner paths see at least one cut; **29.4%
+  cut-then-restore** (restoration is a real dynamic); every node shows both action and
+  restoration; mean initial path-wise CR 1.344.
+- **MR-010/MR-014 disclosure trigger (1% of horizon SCR) MET** (+14.17%) — Task 4 MUST
+  refresh both risk-register entries with the path-wise figures (recorded in the ChangeRecord
+  and the report; NOT performed this cycle — Task 4 scope, no scope creep).
+- **Gates: 6/6 PASS** (G1 carve-out envelope; G2 sign gate; G3 monotonicity guard re-verified
+  on the path-wise basis; G4 without-actions bit-identical; G5 horizon basis reproduced vs
+  archived P24T3 report, |SCR diff| 8.6e-6 ~ 2e-10 relative; G6 no action above trigger).
+- **Residuals documented (Task 3 items):** monthly (not annual) declaration cadence;
+  perfect-foresight discounting in the coverage proxy (adapted valuation would need
+  nested-nested simulation); node-level FX/liquidity offset undecayed in the proxy.
+- Deliverables: `docs/validation/PHASE25_TASK2_PATHWISE_DECLARATION_REPORT.{json,md}` +
+  `docs/PATHWISE_DECLARATION_CARD.md` via staged
+  `scripts/build_phase25_task2_pathwise_declaration.py` (verify -> pathwise x2 -> actions ->
+  governance; idempotent re-run verified: "already applied").
+- **Governance:** ChangeRecord `3cfaa30a0f8044a8aaed419e6ab4ca31` (assumption_change)
+  OWNER_REVIEW; audit 72->73; changes 45->46; verify_all True.
+- **Tests:** 28 new PASS (`tests/test_phase25_task2_pathwise_declaration.py`: bit-identical
+  basis, scalar-response equivalence, envelope bounds, degenerate-rule equivalences, node
+  guard, gate keys pinned, sign-gate failure path, report contract, governance). Regression
+  batches post-change: **386 PASS / 0 FAIL** (358 prior + 28 new); compileall clean; ui
+  self-test ok:true. Off-mount build + cp + cmp protocol observed (zero truncation incidents).
+
+**Industry Standards Progress:**
+- Solvency II Art. 23 — the action is now modelled at the timing at which it would actually
+  be exercised (every declaration date, including restorations) in the nested truth. Addressed
+  (nested side; proxy side is Task 3).
+- SOA ASOP 56 §3.1.3/§3.4 — time level of management behaviour implemented, not just designed;
+  evidence at pre-registered gates. Addressed.
+- IA TAS M §3.2/§3.6 — residual converted into quantified, reproducible evidence (digests,
+  bit-identical archive reuse, idempotent build). Addressed.
+- Solvency II Art. 234 — copula untouched; rank-invariance re-check is Task 4 (df 2.9451
+  frozen). Pending (Task 4).
+
+**Next cycle (Phase 25 Task 3):** matching path-wise proxy basis feature so truth and proxy
+share an IDENTICAL action basis (G1 convention), then seven-driver OOS re-validation at the
+unchanged Phase 22 gates (R^2 >= 0.95, VaR rel err <= 10%); document the declaration-cadence
+and adaptedness residuals.
+
+**Blockers (human action, unchanged):** three git ghost locks (`GITHUB_PUSH_BLOCKER.md`) —
+commits land on `p22c9` via alt-index; push `p22c9:main` works; serialise scheduled runs;
+production sign-off residual (credentialled data + APS X2) by design; disk /sessions ~89%.

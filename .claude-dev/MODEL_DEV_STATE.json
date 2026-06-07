@@ -1,9 +1,9 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-08T03:30:00Z",
- "last_run_duration_minutes": 35,
- "last_run_note": "2026-06-08 cycle 22 (Linux sandbox): Phase 25 Task 1 COMPLETE - design note: full path-wise bonus declaration dynamics chosen (P24T3 documented residual; t-copula-on-new-basis deferred, credentialled calibration blocked on data). New tested helper module par_model_v2/projection/pathwise_bonus_dynamics.py + synthetic recognition-lag pre-study (horizon-level basis understates path-wise with-actions VaR99.5 by 12.2% on the synthetic fund; cut-then-restored share 69.8%; sign/ordering/bounds checks all True). Pre-registered gates for Tasks 2-4 fixed. ChangeRecord fe5846be67a945a28fd60208f6b87972 OWNER_REVIEW; audit 71->72; changes 44->45; verify_all True. 29 new tests; regression 368 PASS / 0 FAIL. Next: Phase 25 Task 2 (path-wise declaration in the nested truth).",
+ "last_run": "2026-06-07T22:30:00Z",
+ "last_run_duration_minutes": 55,
+ "last_run_note": "Phase 25 Task 2 complete: path-wise bonus declaration in the nested truth (PASS, 6/6 gates).",
  "current_phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
  "overall_status": "PHASE24_COMPLETE_PHASE25_TASK1_NEXT",
  "phases": {
@@ -447,6 +447,25 @@
     "Offline-UI propagation (contract 1.5.0 -> 1.6.0 additive): joint-action + inner-path + Task 4 tail-diagnostics/delta-matrix panels; PHASE 24 COMPLETE documentation"
    ],
    "next": "Phase 25 Task 1 - research/design note for the next phase (candidates: full path-wise bonus declaration dynamics; t-copula on the inner-path with-actions basis; credentialled-data calibration residuals)"
+  },
+  "Phase 25: Path-Wise Bonus Declaration Dynamics": {
+   "status": "in_progress",
+   "description": "Research-driven follow-up to the P24T3 documented residual: the governed bonus-cut decision re-evaluated at EVERY inner time step on a path-wise coverage proxy (recognition-lag / restoration dynamics), vs the horizon-level convention. Design-note-first; gates pre-registered in Task 1 s5; UI consumes ONLY model output JSON.",
+   "tasks": [
+    "Research + design note: full path-wise bonus declaration dynamics; synthetic recognition-lag pre-study; fixed pre-registered gates (Tasks 2-4)",
+    "Path-wise declaration in the nested truth (per-time-step retained-bonus factor on a path-wise coverage proxy; carve-outs preserved; horizon basis retained as sensitivity)",
+    "Matching path-wise proxy basis feature + seven-driver OOS re-validation (R^2 >= 0.95, VaR rel err <= 10%)",
+    "Tail diagnostics on the path-wise basis; MR-010/MR-014 refresh (delta > 1% trigger MET at Task 2: +14.17%); rank invariance df = 2.9451 frozen",
+    "Offline-UI propagation (contract 1.6.0 -> 1.7.0 ADDITIVE) + PHASE 25 COMPLETE documentation"
+   ],
+   "completed": [
+    "Research + design note: full path-wise bonus declaration dynamics (cycle 22, ChangeRecord fe5846be)",
+    "Path-wise declaration in the nested truth (cycle 23, ChangeRecord 3cfaa30a, PASS 6/6 gates)"
+   ],
+   "in_progress": [
+    "Matching path-wise proxy basis feature + seven-driver OOS re-validation"
+   ],
+   "next": "Tail diagnostics on the path-wise basis + MR-010/MR-014 refresh (REQUIRED: +14.17% SCR delta)"
   }
  },
  "repository_info": {
@@ -731,5 +750,13 @@
   "evidence": "docs/validation/PHASE25_TASK1_DESIGN_NOTE.{json,md}; docs/PATHWISE_BONUS_DECLARATION_DESIGN_CARD.md",
   "change_record_id": "fe5846be67a945a28fd60208f6b87972",
   "tests": "29 new PASS; regression 368 PASS / 0 FAIL; ui self-test ok:true; compileall clean"
+ },
+ "cycle_2026_06_08_phase25_task2": {
+  "ran_at": "2026-06-07T22:30:00Z",
+  "environment": "Linux sandbox (python 3.10.12, /var/tmp/pylibs, node+jsdom)",
+  "summary": "Phase 25 Task 2 complete: path-wise bonus declaration in the nested truth. Retained-bonus factor re-evaluated at every inner month from CR_t = a_ref rolled forward at the inner short rate / pre-action remaining path liability (path deflator cancels: CR = a_ref / RemPV0). Carve-outs preserved (only in-force policyholder benefits cuttable). Without-actions basis bit-identical at every slice; horizon basis reproduced vs archived P24T3 (|diff| 8.6e-6). RESULT: path-wise with-actions SCR 46,638.9 vs horizon-level 40,852.1 (+5,786.8 = +14.17% - sign gate PASS, magnitude disclosed); VaR99.5 158,944.1 vs 153,125.5 (+5,818.5). 41.4% of inner paths see a cut; 29.4% cut-then-restore (restoration is a real dynamic); every node shows both. MR-010/MR-014 Task 4 refresh trigger (1%) MET. Residuals documented: monthly declaration cadence, perfect-foresight discounting in the proxy, undecayed node offset.",
+  "evidence": "docs/validation/PHASE25_TASK2_PATHWISE_DECLARATION_REPORT.{json,md}; docs/PATHWISE_DECLARATION_CARD.md; run_id p25t2-9f8f9b33",
+  "change_record_id": "3cfaa30a0f8044a8aaed419e6ab4ca31",
+  "tests": "28 new PASS; regression 386 PASS / 0 FAIL; ui self-test ok:true; compileall clean"
  }
 }
