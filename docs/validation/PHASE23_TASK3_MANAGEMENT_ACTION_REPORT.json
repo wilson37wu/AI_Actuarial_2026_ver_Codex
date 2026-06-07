@@ -1,0 +1,199 @@
+{
+  "task": "Phase 23 Task 3 - management-action rule (dynamic reversionary-bonus participation cut)",
+  "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+  "run_timestamp": "2026-06-07T13:17:47.606184+00:00",
+  "run_id": "p23t3-07f8bbd5",
+  "verdict": "PASS",
+  "result": {
+    "rule": {
+      "cr_trigger": 1.1,
+      "cr_floor": 0.9,
+      "bonus_share": 0.3,
+      "pre_floor": 0.6,
+      "reference_coverage": 1.12,
+      "max_relief": 0.12
+    },
+    "reference_assets": 129916.49144595393,
+    "fit_mean_liability": 115996.86736245886,
+    "active_share_nested": 0.442,
+    "floor_share_nested": 0.08,
+    "oos_r2_with_actions": 0.9982947893496629,
+    "oos_r2_without_actions": 0.9984795801896779,
+    "nested_capital_without": {
+      "confidence_level": 0.995,
+      "mean_liability": 115994.0791,
+      "var_liability": 171555.268,
+      "es_liability": 176570.2272,
+      "scr_proxy": 55561.1889,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "nested_capital_with": {
+      "confidence_level": 0.995,
+      "mean_liability": 111677.7373,
+      "var_liability": 150968.6358,
+      "es_liability": 155381.7999,
+      "scr_proxy": 39290.8985,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "proxy_capital_without": {
+      "confidence_level": 0.995,
+      "mean_liability": 115824.5598,
+      "var_liability": 170684.6123,
+      "es_liability": 176250.7804,
+      "scr_proxy": 54860.0525,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "proxy_capital_with": {
+      "confidence_level": 0.995,
+      "mean_liability": 111574.8098,
+      "var_liability": 150202.4588,
+      "es_liability": 155100.6867,
+      "scr_proxy": 38627.6491,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "var_rel_error_with_actions": 0.0050750739133509325,
+    "es_rel_error_with_actions": 0.0018091772290529352,
+    "scr_rel_error_with_actions": 0.01688048501459357,
+    "nested_var_reduction": 20586.632157508808,
+    "nested_scr_reduction": 16270.290429479996,
+    "gates": {
+      "G1_oos_r2_with_actions_ge_0p95": true,
+      "G2_var_rel_error_with_actions_le_0p10": true,
+      "G3_with_actions_capital_le_without": true,
+      "G4_rule_monotone": true,
+      "G5_no_action_above_trigger": true
+    },
+    "verdict": "PASS"
+  },
+  "trigger_sensitivity": [
+    {
+      "cr_trigger": 1.05,
+      "cr_floor": 0.8500000000000001,
+      "active_share_nested": 0.354,
+      "nested_var_with": 150968.6358,
+      "nested_var_reduction": 20586.632157508808,
+      "nested_scr_reduction": 17616.333357710115,
+      "oos_r2_with_actions": 0.9984856997333893,
+      "var_rel_error_with_actions": 0.0050750739133509325,
+      "verdict": "PASS"
+    },
+    {
+      "cr_trigger": 1.1,
+      "cr_floor": 0.9000000000000001,
+      "active_share_nested": 0.442,
+      "nested_var_with": 150968.6358,
+      "nested_var_reduction": 20586.632157508808,
+      "nested_scr_reduction": 16270.290429479996,
+      "oos_r2_with_actions": 0.9982947893496629,
+      "var_rel_error_with_actions": 0.0050750739133509325,
+      "verdict": "PASS"
+    },
+    {
+      "cr_trigger": 1.15,
+      "cr_floor": 0.95,
+      "active_share_nested": 0.56,
+      "nested_var_with": 150968.6358,
+      "nested_var_reduction": 20586.632157508808,
+      "nested_scr_reduction": 14850.033111130775,
+      "oos_r2_with_actions": 0.9978993335366533,
+      "var_rel_error_with_actions": 0.0050750739133509325,
+      "verdict": "PASS"
+    }
+  ],
+  "without_actions_crosscheck": {
+    "checks": {
+      "selected_surface_match": true,
+      "oos_r2_match": true,
+      "proxy_var_match": true,
+      "nested_var_match": true,
+      "verdict_pass_without_actions": true,
+      "refit_var_match": true
+    },
+    "archived_report": "docs/validation/PHASE22_TASK2_7D_PROXY_VALIDATION_REPORT.json",
+    "selected_surface": {
+      "fx_mode": "analytic",
+      "degree": 3,
+      "max_interaction_order": 2,
+      "n_basis_terms": 46,
+      "oos_r2_without_actions": 0.9984795801896779
+    },
+    "fit_mean_liability": 115996.86736245886,
+    "config": {
+      "n_fit": 2000,
+      "n_validation": 60,
+      "n_insample_heavy": 60,
+      "n_inner_heavy": 384,
+      "n_eval": 500,
+      "nested_n_inner": 256,
+      "fit_n_inner": 8,
+      "basis_grid": [
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "fx_modes": [
+        "analytic",
+        "learned"
+      ],
+      "selection_metric": "oos_rmse",
+      "confidence_level": 0.995,
+      "capital_horizon_months": 12,
+      "fit_seed": 42,
+      "validation_seed": 20260607,
+      "insample_heavy_seed": 7,
+      "eval_seed": 141,
+      "nested_inner_seed": 142,
+      "outer_measure": "P"
+    },
+    "duration_seconds": 0.9628286229999503
+  },
+  "primitives_provenance": "All inner-path arrays reused bit-identically from .phase22_task2_stage (Phase 22 Task 2, seeds 42/20260607/7, nested 500x256); cross-checked against the archived report before use; the selected surface (analytic, deg 3, max_int 2) was refit deterministically from the same staged fit targets.",
+  "method": "The management action is a deterministic outer-node transform L_with = L*(1 - bonus_share*(1-pre_floor)*(1-cut_factor(CR))) with CR = A_ref/L and cut_factor = clip((CR-CR_floor)/(CR_trigger-CR_floor),0,1); the cut decision uses the PRE-action coverage ratio. It enters the nested ground truth and, identically, the proxy prediction as an analytic post-composition basis feature (no new learned coefficients). A_ref is calibrated on the FIT-sample mean liability only (leakage-free).",
+  "limitations": [
+    "Trigger/floor/bonus-share/PRE/reference-coverage are educational placeholders pending credentialled management-practice data and APS X2 review.",
+    "The action is applied at the outer node as a transform of the conditional liability; a full inner-path bonus mechanism (per-path declared-bonus dynamics) is a documented future refinement.",
+    "Coverage ratio uses a fixed reference-asset proxy, not a projected asset portfolio at the horizon."
+  ],
+  "use_restrictions": {
+    "classification": "EDUCATIONAL_DEMONSTRATION_ONLY",
+    "approved_uses": [
+      "Methodology demonstration of Solvency II Art. 23 management actions in a nested-stochastic / LSMC-proxy framework",
+      "Training material on dynamic bonus-participation rules"
+    ],
+    "prohibited_uses": [
+      "Production capital or solvency decisions",
+      "Policyholder bonus declarations",
+      "Regulatory submissions"
+    ],
+    "rationale": "Trigger, floor, bonus-share, PRE and reference-coverage parameters are educational placeholders; no credentialled management-practice data; production sign-off withheld pending independent APS X2 review."
+  },
+  "reproducibility_digest": "07f8bbd52193a960b1c24310da22c26b301ecd1556f99d8647a1a1efbdc029c6",
+  "duration_seconds": 0.011913224996533245,
+  "change_record_id": "cf22c050bca44a84a843fb262a2efb84",
+  "change_record_status": "OWNER_REVIEW",
+  "audit_integrity_ok": true,
+  "change_records_total": 36,
+  "mr014_action": "opened+mitigated",
+  "risk_register_note": "Design note planned MR-013, but MR-013 was already the G2++ market-consistency risk; the management-action risk is MR-014. Original MR-013 restored from pre-stage backup."
+}

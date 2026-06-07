@@ -7760,3 +7760,79 @@ disk /sessions ~90% (this cycle hit TWO legacy/mount write-truncation artifacts:
 cycle-8 block and a truncated log append, both repaired and verified).
 
 ---
+## Run 2026-06-07T13:55Z — Phase 23 (cycle 14)
+
+**Task Completed:** Phase 23 Task 3 — management-action rule (dynamic reversionary-bonus
+participation cut) in nested ground truth + proxy basis; seven-driver OOS re-validation.
+**VERDICT PASS (5/5 fixed pre-registered gates).**
+
+**Accomplishments:**
+- NEW additive module `par_model_v2/projection/management_actions.py`:
+  `ManagementActionRule` per the Task 1 design (Solvency II Art. 23 — objective, realistic,
+  verifiable, MONOTONE): `cut_factor = clip((CR - CR_floor)/(CR_trigger - CR_floor), 0, 1)`
+  (retained-bonus factor), CR = A_ref / L_pre_action at the outer node, PRE
+  (policyholder-reasonable-expectation) floor retains >= 60% of the participating bonus, max
+  liability relief = bonus_share*(1-pre_floor) = 12%. A monotonicity GUARD at construction
+  rejects steep trigger-floor bands (sufficient condition max_relief*CR_trigger/band < 1-max_relief);
+  the first-draft calibration (band 0.05) was non-monotone and is now unconstructible by design.
+- The rule is a deterministic outer-node transform: it enters the NESTED conditional liability
+  (ground truth) and IDENTICALLY the LSMC proxy prediction as an analytic post-composition
+  basis feature (same pattern as the FX/liquidity analytic offsets; no new learned
+  coefficients; cut decision uses the PRE-action coverage ratio). A_ref is calibrated
+  leakage-free on the FIT-sample mean liability only (115,996.9 x 1.12 = 129,916.5).
+- Heavy arrays reused BIT-IDENTICALLY from `.phase22_task2_stage` (Phase 22 Task 2 staged
+  inner-path targets, seeds 42/20260607/7, nested 500x256): stage `validate` re-runs the
+  without-actions validation and cross-checks 6/6 against the archived report (selected
+  surface analytic/deg3/maxint2, OOS R2, proxy/nested VaR, refit VaR) BEFORE any action work.
+- **RESULTS (nested, n_outer=500, n_inner=256):** VaR99.5 171,555.3 -> 150,968.6 (-12.0%);
+  ES 176,570.2 -> 155,381.8 (-12.0%); SCR proxy 55,561.2 -> 39,290.9 (-29.3%);
+  action active on 44.2% of outer states (8.0% at/below floor — max cut). Proxy OOS
+  re-validation WITH actions: R2 0.9983 (gate >= 0.95), proxy-vs-nested VaR rel err 0.51%
+  (gate <= 10%); with-actions capital <= without-actions (gate G3); monotone (G4); no action
+  at/above trigger (G5). Trigger sensitivity 1.05/1.10/1.15 (floor = trigger - 0.20): all PASS,
+  active share 35.4%/44.2%/56.0%, identical deep-tail VaR relief (VaR state is below all floors).
+- Evidence: `docs/validation/PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.{json,md}`;
+  card `docs/MANAGEMENT_ACTION_RULE_CARD.md`; staged build
+  `scripts/build_phase23_task3_management_action.py` (validate/actions/governance; idempotent).
+
+**Governance:** ChangeRecord `cf22c050bca44a84a843fb262a2efb84` (assumption_change)
+OWNER_REVIEW (production sign-off withheld). **Risk-register correction disclosed:** the Task 1
+design note planned "MR-013" but MR-013 was ALREADY the Phase 20 G2++ market-consistency risk;
+the first governance run overwrote MR-013's mitigation notes — caught the same cycle, original
+MR-013 RESTORED from the pre-stage backup, and the management-action risk opened as **MR-014**
+(opened -> MITIGATED on PASS evidence, with the collision disclosed in its notes and in the
+report). Build script corrected to MR-014. Audit entries 62->63; change records 34->35;
+verify_all True; governance stage idempotent ("already applied").
+
+**Verification:** `tests/test_phase23_task3_management_actions.py` **29 PASS** (rule parameter
+validation incl. monotonicity guard, cut-factor boundaries/monotonicity, coverage-ratio and
+apply semantics, gates incl. FAIL path on a bad proxy, determinism, use restrictions).
+Regression: phase23 t3+tail_dependence+t2 78 + governance/p22t4 72 + p22 t1/t2/t3 38 +
+p22t5/p21 83 = **271 PASS / 0 FAIL** (<45 s batches). `node scripts/ui_app_self_test.cjs
+ui_app.html` ok:true (0 network / 0 JS errors). py_compile/ast/json.loads clean; off-mount
+stage + cp + cmp write protocol observed.
+
+**Next Step:** Phase 23 Task 4 — aggregation + tail-diagnostics re-run WITH management actions:
+realise with-actions standalone capital losses, re-run t(2.95) tail-matched copula vs gaussian
+vs var-covar vs nested-with-actions, quantify with-vs-without capital deltas, refresh
+MR-010/MR-014 notes (methodology_change ChangeRecord OWNER_REVIEW). Then Task 5: offline-UI
+propagation (management-action panel + with-actions capital read-outs; UI keeps consuming ONLY
+model output JSON) + PHASE 23 COMPLETE documentation.
+
+**Industry Standards Progress:**
+- Solvency II Art. 23: future management actions now modelled via an objective, verifiable,
+  monotone rule with the effect quantified — implemented, not just designed.
+- SOA ASOP 56 s3.1.3/s3.4: the policyholder/insurer option asymmetry is closed (dynamic lapse
+  AND dynamic bonus participation now both modelled); assumptions documented via
+  assumption_change ChangeRecord with disclosed educational placeholders.
+- IA TAS M s3.2/s3.6: management-action omission now ON the risk register (MR-014) with PASS
+  mitigation evidence; reproducibility digest + bit-identical primitive provenance recorded.
+- Honest-disclosure pattern continued: outer-node approximation (no inner-path bonus dynamics),
+  fixed reference-asset proxy, placeholder parameters, and the MR-013 ID collision/repair all
+  documented.
+
+**Blockers:** unchanged — ghost git locks (`.git/index.lock`, `.git/HEAD.lock`,
+`.git/refs/heads/main.lock`) need a human shell; commit via alt-`GIT_INDEX_FILE` workaround
+onto branch `p22c9`; disk /sessions ~90%.
+
+---

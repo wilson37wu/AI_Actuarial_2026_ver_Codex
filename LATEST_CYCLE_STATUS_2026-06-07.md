@@ -36,3 +36,64 @@ mount. Write long repo files from bash and verify with ast.parse / json.loads / 
   land on branch `p22c9` via the alt-index workaround; see GITHUB_PUSH_BLOCKER.md checklist.
 - Local main ref stale behind ghost locks; remote main updated via `p22c9:main` pushes.
 - Production sign-off residual: credentialled calibration + independent APS X2 review.
+
+---
+
+## Latest Cycle Status - 2026-06-07 (cycle 13 bookkeeping)
+
+**Phase 23 Task 2 is COMPLETE based on existing evidence already present in the tree.**
+Artifacts show the tail-matched Student-t copula aggregation ran at 2026-06-07T12:15:51Z:
+`docs/validation/PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.json` verdict **PASS**,
+df matched **2.9451**, t-copula SCR **46,756** vs nested **48,707** (4.0% rel error),
+Gaussian baseline **41,472** (14.9% rel error), var-covar **28,991** (40.5% understatement).
+MR-010 was refreshed, ChangeRecord `509699ae1f1d4adabe197bcf8419c92a` is OWNER_REVIEW,
+and audit integrity is true.
+
+This cycle did not rerun Python because this Windows shell has no `python`/`python3`/`py`, and
+WSL is not installed. Work was limited to reconciling the already-generated Task 2 artifacts and
+updating state/log bookkeeping. The active next task is **Phase 23 Task 3: management-action rule
+(dynamic bonus participation cut under solvency stress) in nested ground truth + proxy; seven-driver
+OOS re-validation**.
+
+---
+
+## Latest Cycle Status - 2026-06-07 (cycle 14)
+
+**Phase 23 Task 3 COMPLETE (PASS, 5/5 fixed pre-registered gates).
+Next: Phase 23 Task 4 (aggregation + tail diagnostics re-run WITH management actions).**
+
+What this cycle did:
+
+- NEW additive module `par_model_v2/projection/management_actions.py`: dynamic
+  reversionary-bonus participation cut per Solvency II Art. 23 —
+  `cut_factor = clip((CR - 0.90)/(1.10 - 0.90), 0, 1)`, CR = A_ref/L at the outer node,
+  PRE floor 60%, max liability relief 12%, monotonicity GUARD at construction (rejects steep
+  bands; the naive band-0.05 calibration is non-monotone and now unconstructible).
+- Rule enters the NESTED conditional liability AND identically the LSMC proxy prediction as an
+  analytic post-composition basis feature; A_ref leakage-free from the fit-sample mean
+  (115,997 x 1.12). Phase 22 Task 2 staged primitives reused bit-identically (6/6
+  archived-report cross-checks before any action work).
+- **Results (nested 500x256):** VaR99.5 171,555 -> 150,969 (-12.0%); ES 176,570 -> 155,382;
+  SCR proxy 55,561 -> 39,291 (-29.3%); action active on 44.2% of outer states. OOS R2 with
+  actions 0.9983 (gate >=0.95); proxy-vs-nested VaR rel err 0.51% (gate <=10%); trigger
+  sensitivity 1.05/1.10/1.15 all PASS.
+- Governance: MR-014 opened + MITIGATED. **Disclosure:** the design note planned "MR-013" but
+  that ID was already the G2++ market-consistency risk; the first governance run overwrote it,
+  was caught the same cycle, and the original MR-013 was RESTORED from the pre-stage backup.
+  ChangeRecord `cf22c050bca44a84a843fb262a2efb84` (assumption_change) OWNER_REVIEW;
+  audit 62->63; changes 34->35; verify_all True.
+- Tests: 29 new PASS (`tests/test_phase23_task3_management_actions.py`); regression
+  **271 PASS / 0 FAIL**; `node scripts/ui_app_self_test.cjs ui_app.html` ok:true (no UI change
+  this cycle — propagation is Task 5).
+- Evidence: `docs/validation/PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.{json,md}`;
+  `docs/MANAGEMENT_ACTION_RULE_CARD.md`.
+
+**Next executable action: Phase 23 Task 4** — aggregation + tail-diagnostics re-run WITH
+management actions: realise with-actions standalone capital losses, re-run the tail-matched
+t(2.95) copula vs gaussian vs var-covar vs nested-with-actions, quantify with-vs-without
+capital deltas, refresh MR-010/MR-014 (methodology_change ChangeRecord). Then Task 5:
+offline-UI propagation (management-action panel; UI consumes ONLY model output JSON) +
+PHASE 23 COMPLETE documentation.
+
+**Persisting blockers (human action):** git ghost locks (commit via alt-index workaround on
+branch `p22c9`); production sign-off residual (credentialled data + APS X2 review); disk ~90%.

@@ -1399,6 +1399,30 @@
       "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
       "digest": "7a17ffa0ac183adb8fb389a53846964690c48681f1e84b699f95ee15967a18b1",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "0e85a5ded19c4e96a7466b7a1c879d06",
+      "timestamp": "2026-06-07T13:18:17.756829+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "AutomatedModelDev_Phase23",
+      "description": "Model run p23t3-07f8bbd5: PASS",
+      "details": {
+        "run_id": "p23t3-07f8bbd5",
+        "scenario_count": 500,
+        "duration_seconds": 0.011913224996533245,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/management_actions.py",
+          "tests/test_phase23_task3_management_actions.py",
+          "scripts/build_phase23_task3_management_action.py",
+          "docs/MANAGEMENT_ACTION_RULE_CARD.md",
+          "docs/validation/PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.{json,md}"
+        ],
+        "test_summary": "with-actions nested VaR 150968.6 (was 171555.3); OOS R2 0.9983; VaR rel err 0.51%; gates 5/5 PASS"
+      },
+      "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+      "digest": "bbf087ad1d0858391610c6d90f9ec5739226a6294c3d09ef1205fc2ceed1248b",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -3574,6 +3598,77 @@
         }
       ],
       "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions"
+    },
+    {
+      "record_id": "cf22c050bca44a84a843fb262a2efb84",
+      "created_at": "2026-06-07T13:18:17.756725+00:00",
+      "title": "Phase 23 Task 3 - management-action rule (dynamic reversionary-bonus participation cut) in nested ground truth + proxy basis",
+      "description": "Implemented Method B of the Phase 23 Task 1 design note: a dynamic reversionary-bonus participation cut under solvency stress (cut_factor = clip((CR-CR_floor)/(CR_trigger-CR_floor),0,1), PRE floor retained). The rule is a deterministic, monotone outer-node transform entering the NESTED conditional liability and, identically, the LSMC proxy prediction as an analytic post-composition basis feature. Seven-driver OOS re-validation re-ran on bit-identical Phase 22 Task 2 staged primitives after cross-checking the archived report.",
+      "change_type": "assumption_change",
+      "affected_components": [
+        "par_model_v2/projection/management_actions.py",
+        "tests/test_phase23_task3_management_actions.py",
+        "scripts/build_phase23_task3_management_action.py",
+        "docs/MANAGEMENT_ACTION_RULE_CARD.md",
+        "docs/validation/PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Regulation Article 23 (future management actions)",
+        "SOA ASOP 56 section 3.1.3/3.4/3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M section 3.2/3.6",
+        "IFoA with-profits / management-actions practice notes"
+      ],
+      "before_snapshot": {
+        "management_actions": "none (static bonus participation)",
+        "nested_var_99_5": 171555.268,
+        "nested_scr_proxy": 55561.1889,
+        "risk_register": "no management-action entry"
+      },
+      "after_snapshot": {
+        "rule": {
+          "cr_trigger": 1.1,
+          "cr_floor": 0.9,
+          "bonus_share": 0.3,
+          "pre_floor": 0.6,
+          "reference_coverage": 1.12,
+          "max_relief": 0.12
+        },
+        "nested_var_99_5_with_actions": 150968.6358,
+        "nested_scr_proxy_with_actions": 39290.8985,
+        "oos_r2_with_actions": 0.9982947893496629,
+        "var_rel_error_with_actions": 0.0050750739133509325,
+        "gates": {
+          "G1_oos_r2_with_actions_ge_0p95": true,
+          "G2_var_rel_error_with_actions_le_0p10": true,
+          "G3_with_actions_capital_le_without": true,
+          "G4_rule_monotone": true,
+          "G5_no_action_above_trigger": true
+        },
+        "verdict": "PASS",
+        "reproducibility_digest": "07f8bbd52193a960b1c24310da22c26b301ecd1556f99d8647a1a1efbdc029c6"
+      },
+      "impact_assessment": "Additive assumption change: closes the ASOP 56 3.1.3 asymmetry (policyholder options modelled, insurer options not). No change to any governed upstream module; without-actions results remain the archived Phase 22 Task 2 evidence. Parameters are educational placeholders (disclosed).",
+      "quantitative_impact": "Nested VaR99.5 171555.3 -> 150968.6 (-20586.6); SCR proxy 55561.2 -> 39290.9 (-16270.3); action active on 44.2% of outer states; OOS R2 with actions 0.9983; proxy-vs-nested VaR rel err 0.51%.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase23",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T13:18:17.756744+00:00",
+          "actor": "AutomatedModelDev_Phase23",
+          "status": "PEER_REVIEW",
+          "comments": "Monotone Art.-23 bonus-cut rule with PRE floor; fixed pre-registered gates; bit-identical primitive reuse cross-checked; trigger sensitivity and placeholder parameters disclosed."
+        },
+        {
+          "timestamp": "2026-06-07T13:18:17.756757+00:00",
+          "actor": "AutomatedModelDev_Phase23",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data, inner-path bonus dynamics, and independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions"
     }
   ],
   "risk_register": [
@@ -3784,6 +3879,22 @@
       "created_at": "2026-06-06T07:10:34.351454+00:00",
       "updated_at": "2026-06-06T09:25:48.971900+00:00",
       "notes": "Phase 20 Task 3 added the G-MART market-consistency gate: the deflated-asset / forward martingale identities hold under Q within Monte-Carlo tolerance for the HW1F (exact dynamics) and G2++ rate drivers, GBM equity, and FX (covered interest parity). G-MART PASS (worst 1.22 sigma; max rel err 3.90e-04 over 40000 paths). A documented diagnostic shows the EDUCATIONAL monthly-Euler HW1F simulate() carries a ~7% martingale bias vs the exact dynamics (use exact simulation for market-consistent work). Residual: capital re-aggregation with the 2F driver (Task 4), UI surfacing (Task 5), recalibration to a validated market surface, and independent review remain pending."
+    },
+    {
+      "risk_id": "MR-014",
+      "title": "Management-action omission in liability / capital model",
+      "description": "Policyholder options (dynamic lapse) are modelled but insurer management actions are not: reversionary-bonus participation is static, so TVOG and tail capital are biased upward relative to a realistic with-management-action basis (ASOP 56 3.1.3 asymmetry; Solvency II Art. 23).",
+      "category": "assumption_error",
+      "likelihood": "HIGH",
+      "impact": "MEDIUM",
+      "overall_rating": "HIGH",
+      "owner": "ChiefActuary",
+      "mitigation": "Phase 23 Task 3: governed dynamic reversionary-bonus participation cut entering the nested ground truth and the proxy basis, validated OOS at fixed pre-registered gates.",
+      "mitigation_status": "MITIGATED",
+      "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
+      "created_at": "2026-06-07T13:19:29.055501+00:00",
+      "updated_at": "2026-06-07T13:19:29.055585+00:00",
+      "notes": "Phase 23 Task 3 PASS: monotone Art.-23 bonus-cut rule (trigger 1.10, floor 0.90, PRE floor 60%, max relief 12.0%) applied to nested truth + proxy; nested VaR99.5 171555 -> 150969, SCR reduction 16270; OOS R2 with actions 0.9983; VaR rel err 0.51%; all 5 pre-registered gates PASS. Parameters remain educational placeholders (residual risk: parameter realism, outer-node approximation). NOTE: design note said MR-013 but that ID was already taken by the G2++ market-consistency risk; opened as MR-014 (MR-013 briefly overwritten by the Task 3 governance stage and restored from the pre-stage backup this run)."
     }
   ]
 }

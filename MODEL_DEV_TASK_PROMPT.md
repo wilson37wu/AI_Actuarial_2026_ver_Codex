@@ -1335,3 +1335,58 @@ OWNER_REVIEW) + state/log updates. One task per cycle; keep walls <45 s; stage l
 **Standing blockers (human action):** delete the three git ghost locks (see GITHUB_PUSH_BLOCKER.md);
 production sign-off residual (credentialled data + independent APS X2 review) — by design for
 this educational model.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-07 (cycle 14, supersedes everything above)
+
+**Phase 23 progress: Tasks 1–3 ✅. Task 3 (this cycle): management-action rule — dynamic
+reversionary-bonus participation cut (Solvency II Art. 23) — VERDICT PASS (5/5 fixed
+pre-registered gates).** New additive module `par_model_v2/projection/management_actions.py`:
+`cut_factor = clip((CR - CR_floor)/(CR_trigger - CR_floor), 0, 1)` (retained-bonus factor),
+CR = A_ref/L at the outer node, trigger 1.10 / floor 0.90, PRE floor 60%, max liability relief
+12%, MONOTONICITY GUARD at construction. The rule enters the NESTED conditional liability and
+IDENTICALLY the LSMC proxy prediction as an analytic post-composition basis feature (FX/LIQ
+offset pattern; cut decision uses the PRE-action CR; A_ref leakage-free from the fit-sample
+mean). Phase 22 Task 2 staged primitives (`.phase22_task2_stage`) reused bit-identically after
+6/6 archived-report cross-checks. Results (nested 500x256): VaR99.5 171,555 → 150,969 (−12.0%);
+ES 176,570 → 155,382; SCR proxy 55,561 → 39,291 (−29.3%); active on 44.2% of outer states; OOS
+R2 with actions 0.9983; VaR rel err 0.51%; trigger sensitivity 1.05/1.10/1.15 all PASS.
+Evidence: `docs/validation/PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.{json,md}` +
+`docs/MANAGEMENT_ACTION_RULE_CARD.md`. ChangeRecord `cf22c050bca44a84a843fb262a2efb84`
+(assumption_change) OWNER_REVIEW; **MR-014** opened+MITIGATED (the design note's "MR-013" ID was
+already the G2++ market-consistency risk — the first governance run overwrote it, caught same
+cycle, MR-013 restored from the pre-stage backup; collision disclosed in MR-014 notes, the
+report, and the build script now uses MR-014). Audit 62→63; changes 34→35; verify_all True.
+29 new tests; regression **271 PASS / 0 FAIL**; ui_app self-test ok:true.
+
+**NEXT executable task: Phase 23 Task 4 — aggregation + tail-diagnostics re-run WITH management
+actions.** Realise the with-actions standalone capital losses (apply
+`ManagementActionRule.apply_to_liabilities` with the SAME A_ref convention to the per-driver
+conditional-liability primitives — reuse `/var/tmp/p22t4_stage` + `/var/tmp/p23t2_stage` slices
+bit-identically, verify against the archived Phase 22 Task 4 / Phase 23 Task 2 reports first);
+re-run the tail-matched t(2.95) copula vs gaussian vs var-covar vs nested-with-actions; quantify
+with-vs-without capital deltas at every level; refresh MR-010/MR-014 notes; methodology_change
+ChangeRecord OWNER_REVIEW. Then **Task 5: offline-UI propagation** (management-action panel:
+rule parameters, gates, with/without capital read-outs, trigger sensitivity; additive
+`ui_data.json` contract bump 1.4.0 → 1.5.0; keep `node scripts/ui_app_self_test.cjs ui_app.html`
+ok:true; rebuild `viewer_data.json`) + PHASE 23 COMPLETE documentation. The UI must keep
+consuming ONLY model output JSON (zero install).
+
+**Sandbox operating rules (CONFIRMED AGAIN cycle 14):**
+1. ~44 s hard wall per bash call; stage long computations; poll via artifacts.
+2. Python/pytest/scipy/pandas live in `/var/tmp/pylibs` — run with `PYTHONPATH=/var/tmp/pylibs:.`.
+3. Long-file writes truncate on the mount EVEN from bash `>>` appends when disk is ~90% — build
+   files OFF-MOUNT (/var/tmp), then `cp` + `cmp` verify (a status-file append truncated mid-line
+   this cycle and was rebuilt off-mount; MODEL_DEV_LOG.md append verified intact via wc/tail).
+4. Git ghost locks persist — commit with the alt-`GIT_INDEX_FILE` workaround onto branch `p22c9`
+   (updating `main` is blocked by `refs/heads/main.lock`); push `p22c9:main`; see
+   GITHUB_PUSH_BLOCKER.md checklist.
+5. Risk-register IDs: ALWAYS check the next free MR-0xx in `.claude-dev/GOVERNANCE_STORE.json`
+   before opening a new risk (MR-013 collision this cycle); back up the store before any
+   governance stage.
+
+**Standing blockers (human action):** delete the three git ghost locks (see
+GITHUB_PUSH_BLOCKER.md); production sign-off residual (credentialled data + independent APS X2
+review) — by design for this educational model; disk /sessions ~90% — consider pruning
+`/var/tmp` build dirs and `.git.old-repo-*`.
