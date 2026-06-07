@@ -1,0 +1,203 @@
+{
+  "task": "Phase 24 Task 3 - inner-path management-action dynamics prototype (bonus cut on inner-path benefit cashflows)",
+  "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+  "run_timestamp": "2026-06-07T18:33:42.725563+00:00",
+  "run_id": "p24t3-46b51c6b",
+  "verdict": "PASS",
+  "gates_definition": {
+    "oos_r2_gate": 0.95,
+    "var_rel_error_gate": 0.1,
+    "source": "Phase 24 Task 1 design note s5 (pre-registered, module constants in joint_action_aggregation.py)"
+  },
+  "result": {
+    "rule": {
+      "cr_trigger": 1.1,
+      "cr_floor": 0.9,
+      "bonus_share": 0.3,
+      "pre_floor": 0.6,
+      "reference_coverage": 1.12,
+      "max_relief": 0.12
+    },
+    "reference_assets": 129916.49144595393,
+    "fit_mean_liability": 115996.86736245886,
+    "active_share_nested": 0.442,
+    "floor_share_nested": 0.08,
+    "oos_r2_with_actions_inner_path": 0.9983693595038885,
+    "oos_r2_without_actions": 0.9984795801896779,
+    "nested_capital_without": {
+      "confidence_level": 0.995,
+      "mean_liability": 115994.0791,
+      "var_liability": 171555.268,
+      "es_liability": 176570.2272,
+      "scr_proxy": 55561.1889,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "nested_capital_with_inner_path": {
+      "confidence_level": 0.995,
+      "mean_liability": 112273.4771,
+      "var_liability": 153125.5312,
+      "es_liability": 157827.7702,
+      "scr_proxy": 40852.0541,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "nested_capital_with_outer_node": {
+      "confidence_level": 0.995,
+      "mean_liability": 111677.7373,
+      "var_liability": 150968.6358,
+      "es_liability": 155381.7999,
+      "scr_proxy": 39290.8985,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "proxy_capital_with_inner_path": {
+      "confidence_level": 0.995,
+      "mean_liability": 112164.5301,
+      "var_liability": 152517.5729,
+      "es_liability": 157629.4669,
+      "scr_proxy": 40353.0428,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "proxy_capital_with_outer_node": {
+      "confidence_level": 0.995,
+      "mean_liability": 111574.8098,
+      "var_liability": 150202.4588,
+      "es_liability": 155100.6867,
+      "scr_proxy": 38627.6491,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "var_rel_error_with_actions": 0.003970326589534059,
+    "es_rel_error_with_actions": 0.001256453968916591,
+    "scr_rel_error_with_actions": 0.012215085554297378,
+    "outer_vs_inner_path_delta": {
+      "nested_var_99_5_outer_node": 150968.63582173127,
+      "nested_var_99_5_inner_path": 153125.53123738492,
+      "nested_var_99_5_delta": 2156.8954156536493,
+      "nested_scr_outer_node": 39290.89849045161,
+      "nested_scr_inner_path": 40852.05410858347,
+      "nested_scr_delta": 1561.1556181318592,
+      "interpretation": "The outer-node transform relieves the asset-side credit-loss component and the analytic FX/liquidity offsets as if they were cuttable bonus; the inner-path basis restricts the cut to policyholder-benefit cashflows, so it relieves LESS and is the more conservative (and more faithful) with-actions basis."
+    },
+    "gates": {
+      "G1_identical_action_basis_truth_and_proxy": true,
+      "G2_oos_r2_with_actions_ge_0p95": true,
+      "G3_var_rel_error_with_actions_le_0p10": true,
+      "G4_monotone_on_inner_path_basis": true,
+      "G5_with_le_without_and_no_action_above_trigger": true
+    },
+    "verdict": "PASS"
+  },
+  "credit_carveout_diagnostics": {
+    "kappa_fit_calibrated": 1.0367919151090312,
+    "val_nodes": {
+      "mean_abs_rel_error": 0.008209698168726434,
+      "max_abs_rel_error": 0.021798735708450905,
+      "corr": 0.998261529389918
+    },
+    "nested_nodes": {
+      "mean_abs_rel_error": 0.008939983972938232,
+      "max_abs_rel_error": 0.0367982164037043,
+      "corr": 0.9962712631953287
+    },
+    "credit_share_of_liability_nested": 0.15870974759017167,
+    "benefit_share_of_liability_nested": 0.8412902524098284
+  },
+  "verify_stage": {
+    "checks": {
+      "p23t3_digest_match": true,
+      "p23t3_verdict_pass": true,
+      "p23t3_crosscheck_all_pass": true,
+      "fit_mean_match": true,
+      "staged_fit_complete": true,
+      "staged_val_complete": true,
+      "staged_nested_complete": true,
+      "arrays_lengths_ok": true
+    },
+    "p23t3_digest": "07f8bbd52193a960b1c24310da22c26b301ecd1556f99d8647a1a1efbdc029c6",
+    "fit_mean_liability": 115996.86736245886,
+    "config": {
+      "n_fit": 2000,
+      "n_validation": 60,
+      "n_insample_heavy": 60,
+      "n_inner_heavy": 384,
+      "n_eval": 500,
+      "nested_n_inner": 256,
+      "fit_n_inner": 8,
+      "basis_grid": [
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "fx_modes": [
+        "analytic",
+        "learned"
+      ],
+      "selection_metric": "oos_rmse",
+      "confidence_level": 0.995,
+      "capital_horizon_months": 12,
+      "fit_seed": 42,
+      "validation_seed": 20260607,
+      "insample_heavy_seed": 7,
+      "eval_seed": 141,
+      "nested_inner_seed": 142,
+      "outer_measure": "P"
+    },
+    "duration_seconds": 0.2090909869875759
+  },
+  "parallel_run_reconciliation": {
+    "event": "2026-06-07 ~18:08-18:22 UTC: a parallel automated run implemented Task 3 as a scalar bonus-cashflow-response variant (relief = response_factor * rule_relief * L; response 1.0 recovers the Phase 23 outer-node transform exactly) and its governance write left .claude-dev/GOVERNANCE_STORE.json truncated/corrupt.",
+    "remediation": [
+      "Store restored from the verified cycle-18 commit on branch p22c9 (40 change records / 67 audit entries / verify_all True); corrupted file preserved at /var/tmp/p24t3_build/GOV_STORE_CORRUPTED_20260607T1822.json.",
+      "The variant's ChangeRecord was faithfully re-applied (6b16ab1d99ed49dca866a8e295108635, incl. MR-014 refresh) and then SUPERSEDED with documented reason: it does not implement the pre-registered Task 3 basis (bonus cut entering horizon-level inner cashflows in the nested truth).",
+      "Variant evidence retained as a disclosed recognition-lag sensitivity at docs/validation/PHASE24_TASK3_INNER_PATH_SCALAR_RESPONSE_VARIANT_REPORT.{json,md}; its module/script/tests remain in the repo."
+    ]
+  },
+  "primitives_provenance": "All inner-path component decompositions are BIT-IDENTICAL re-runs of the archived Phase 22 Task 2 stage (.phase22_task2_stage; seeds 42/20260607/142; exact equality of the per-node total enforced at every slice); the L7 arrays and fit-mean are the archived Phase 23 Task 3 stage (/var/tmp/p23t3_stage), digest-matched to the archived report.",
+  "method": "Inner-path basis: PV_with_i = PV_i - relief(CR_outer) * B_i with B_i = guaranteed_pv_i + eq_guarantee_pv_i (in-force policyholder benefits); asset-side credit-loss PV and analytic FX/liquidity offsets are NOT cuttable. The action decision remains the PRE-action outer-node coverage ratio CR = A_ref / L7 (declared-rate response at horizon level). Proxy: matching analytic post-composition base B_hat = clip(poly5 - kappa * C_det(r,s), 0, L_hat); kappa calibrated on the FIT sample only.",
+  "residual_documented": "Full path-wise dynamic declaration (action re-evaluated at every inner time step on a path-wise solvency position) remains OUT of scope (Phase 24 Task 1 design note, Method B scope note); the relief factor is constant across the inner paths of one outer node. A per-time-step declared-rate mechanism is the documented future refinement.",
+  "limitations": [
+    "Management-action parameters are educational placeholders pending credentialled data + APS X2 review.",
+    "Declared-rate response is horizon-level (outer-node decision); full path-wise declaration is a documented residual.",
+    "The proxy credit carve-out is an expected-path approximation with a single fit-calibrated level factor; per-node approximation error is disclosed in credit_carveout_diagnostics.",
+    "Coverage ratio uses a fixed reference-asset proxy."
+  ],
+  "use_restrictions": {
+    "classification": "EDUCATIONAL_DEMONSTRATION_ONLY",
+    "approved_uses": [
+      "Methodology demonstration of inner-path management-action dynamics (Solvency II Art. 23) in a nested-stochastic / LSMC-proxy framework",
+      "Quantification of the outer-node vs inner-path with-actions approximation gap"
+    ],
+    "prohibited_uses": [
+      "Production capital or solvency decisions",
+      "Policyholder bonus declarations",
+      "Regulatory submissions"
+    ],
+    "rationale": "Management-action parameters are educational placeholders; the declared-rate response is horizon-level (full path-wise dynamic declaration is a documented residual); the proxy credit carve-out uses a fit-calibrated expected-path approximation; production sign-off withheld pending credentialled data and independent APS X2 review."
+  },
+  "reproducibility_digest": "46b51c6ba1db103572e132293e82bf0e1b07eb84cd85832f6007e41aae2b4b85",
+  "duration_seconds": 0.06154701000195928,
+  "change_record_id": "418dafcfbbaf4258b0c56ae3745eec89",
+  "change_record_status": "OWNER_REVIEW",
+  "audit_integrity_ok": true,
+  "change_records_total": 42
+}

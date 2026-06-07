@@ -8091,3 +8091,57 @@ truth + proxy basis-feature update; OOS re-validation at the unchanged Phase 22 
 branch `p22c9`; disk /sessions ~89%.
 
 ---
+
+---
+
+## 2026-06-08 (cycle 19) — Phase 24 Task 3: inner-path management-action dynamics prototype (PASS 5/5) + parallel-run incident recovery
+
+**Task:** Phase 24 Task 3 — bonus cut INSIDE the inner-path cashflow projection; nested ground
+truth on that basis; proxy basis-feature update; OOS re-validation at the unchanged Phase 22
+gates (R^2 >= 0.95, VaR rel err <= 10%); action monotonicity preserved.
+
+**Verdict: PASS 5/5 pre-registered gates** (G1 identical action basis truth/proxy; G2 OOS R^2
+0.99837; G3 VaR rel err 0.40%; G4 monotone on the B <= L envelope; G5 with <= without + no
+action above trigger).
+
+**Method (canonical):** per inner path i at each outer node,
+`PV_with_i = PV_i - relief(CR_outer) * B_i`, `B_i = guaranteed_pv_i + eq_guarantee_pv_i`
+(in-force policyholder benefits only — credit-loss PV and analytic FX/liquidity offsets
+excluded from the cuttable base). Decision at the pre-action outer-node coverage ratio
+(horizon-level declared-rate response per the Task 1 design note; full path-wise declaration
+remains the documented residual). Components recomputed from BIT-IDENTICAL re-runs of the
+archived Phase 22 Task 2 inner paths (exact equality of recomposed totals enforced on all
+2,560 nodes: fit 2000 / val 60 / nested 500). Proxy: matching analytic post-composition base
+`B_hat = clip(poly5 - kappa*C_det, 0, L_hat)`; C_det = zero-shock expected-path credit PV on
+the simulator's own discretisation; kappa = 1.0368 fit-calibrated (leakage-free); carve-out
+corr 0.998/0.996, mean abs rel err < 0.9% (disclosed). No new learned coefficients.
+
+**Capital finding:** the Phase 23 outer-node transform OVER-RELIEVED non-cuttable components
+(credit ~15.9% of the 5d liability): nested with-actions VaR99.5 150,968.6 -> 153,125.5
+(+2,156.9), SCR 39,290.9 -> 40,852.1 (+1,561.2, +4.0%) on the inner-path basis. The inner-path
+basis is more conservative and more faithful; without-actions reference unchanged.
+
+**INCIDENT (disclosed):** a parallel automated run implemented Task 3 concurrently as a
+scalar-response variant (relief = 0.85 * rule_relief * L; reduces to a rescaled Phase 23
+outer-node transform; no inner-path cashflow basis) and its governance write left
+GOVERNANCE_STORE.json truncated. Recovery: store restored from the verified cycle-18 p22c9
+commit; corrupted file preserved off-repo; the variant ChangeRecord faithfully re-applied
+(6b16ab1d) then SUPERSEDED with documented reason (pre-registered basis criterion not met);
+variant evidence retained at PHASE24_TASK3_INNER_PATH_SCALAR_RESPONSE_VARIANT_REPORT.{json,md}
+as a recognition-lag sensitivity. Root cause consistent with the known Windows-side long-file
+truncation; operating rules re-confirmed (off-mount build + cp/cmp; store backup before any
+governance stage; serialise scheduled runs).
+
+**Governance:** canonical ChangeRecord `418dafcfbbaf4258b0c56ae3745eec89` (assumption_change)
+OWNER_REVIEW; audit 67 -> 69; change records 40 -> 42; verify_all True; MR-014 refreshed.
+Evidence: docs/validation/PHASE24_TASK3_INNER_PATH_ACTION_REPORT.{json,md} +
+docs/INNER_PATH_ACTION_CARD.md.
+
+**Tests:** 28 new canonical + 12 variant PASS; regression 367 PASS / 0 FAIL; ui_app self-test
+ok:true (0 network / 0 JS errors); py_compile clean. Disclosed forward-compat fixes: P24T2
+MR-notes pin (latest-refresh-supersedes) and the variant governance-status test (accepts
+SUPERSEDED post-reconciliation).
+
+**Next:** Phase 24 Task 4 — aggregation + tail diagnostics on the joint-action basis; capital
+deltas at every level; MR-010/MR-014 refresh; methodology/governance ChangeRecord. Optional
+disclosed extension: benefit-only cuttable base at the seven-driver aggregation level.

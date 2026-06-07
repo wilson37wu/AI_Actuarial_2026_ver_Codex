@@ -1498,3 +1498,72 @@ offline-UI propagation (contract 1.5.0 → 1.6.0 additive) + PHASE 24 COMPLETE d
 **Standing blockers (human action):** delete the three git ghost locks (see
 GITHUB_PUSH_BLOCKER.md); production sign-off residual (credentialled data + independent APS X2
 review) — by design for this educational model; disk /sessions ~89%.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-08 (cycle 19, supersedes everything above)
+
+**Phase 24 Task 3 COMPLETE (PASS 5/5).** NEW canonical module
+`par_model_v2/projection/inner_path_action_dynamics.py`: the governed bonus cut applies to the
+INNER-PATH policyholder-benefit cashflows (PV_with_i = PV_i − relief(CR_outer)·B_i,
+B_i = guaranteed + equity-guarantee PV; asset-side credit loss and analytic FX/liquidity
+offsets excluded from the cuttable base). Nested truth rebuilt from BIT-IDENTICAL re-runs of
+the archived Phase 22 Task 2 inner paths (exact equality enforced on all 2,560 nodes); proxy
+gains the matching analytic post-composition base B_hat = clip(poly5 − kappa·C_det, 0, L_hat),
+kappa = 1.0368 fit-calibrated leakage-free (carve-out corr ≥ 0.996, mae < 0.9%, disclosed).
+RESULTS at the unchanged Phase 22 gates: OOS R² 0.99837 (≥ 0.95), VaR rel err 0.40% (≤ 10%),
+monotone, with ≤ without. **Outer-node over-relief disclosed:** nested with-actions VaR99.5
+150,968.6 → 153,125.5 (+2,156.9); SCR 39,290.9 → 40,852.1 (+1,561.2, +4.0%) — the inner-path
+basis is the more conservative, more faithful with-actions basis. Evidence:
+`docs/validation/PHASE24_TASK3_INNER_PATH_ACTION_REPORT.{json,md}` +
+`docs/INNER_PATH_ACTION_CARD.md`. ChangeRecord `418dafcfbbaf4258b0c56ae3745eec89`
+(assumption_change) OWNER_REVIEW; audit 67→69; changes 40→42; verify_all True; MR-014
+refreshed. 28 new tests + 12 variant tests PASS; regression 367 PASS / 0 FAIL; ui_app
+self-test ok:true; py_compile clean.
+
+**INCIDENT handled (cycle 19):** a PARALLEL automated run implemented Task 3 concurrently as a
+scalar-response variant (relief = 0.85·rule_relief·L — a rescaled outer-node transform, no
+inner-path cashflow basis) and its governance write left `.claude-dev/GOVERNANCE_STORE.json`
+TRUNCATED. Recovery: store restored from the verified cycle-18 `p22c9` commit; corrupted file
+preserved at /var/tmp/p24t3_build/GOV_STORE_CORRUPTED_20260607T1822.json; variant ChangeRecord
+faithfully re-applied (`6b16ab1d`) then SUPERSEDED with documented reason; variant evidence
+retained at `docs/validation/PHASE24_TASK3_INNER_PATH_SCALAR_RESPONSE_VARIANT_REPORT.{json,md}`
+(recognition-lag sensitivity); its module/script/tests remain in the repo. Disclosed
+forward-compat test fixes: P24T2 MR-notes pin → "Phase 24" (latest-refresh-supersedes); variant
+governance-status test accepts SUPERSEDED.
+
+**NEXT executable task: Phase 24 Task 4 — aggregation + tail diagnostics on the joint-action
+basis.** Per the Task 1 design note: with-vs-without and joint-vs-standalone capital deltas
+quantified at EVERY level (standalone per-driver, joint t/gaussian, var-covar comparator,
+nested reference); tail diagnostics (tail-correlation / exceedance overlap) on the
+joint-action basis vs the without-actions archive; MR-010 + MR-014 refresh; governance
+ChangeRecord OWNER_REVIEW. Reuse /var/tmp/p24t2_stage/verified_inputs.npz +
+/var/tmp/p23t2_stage/losses.npz + /var/tmp/p23t4_stage/losses_with_actions.npz after archive
+cross-checks (P24T2 report digests). OPTIONAL disclosed extension: quantify the Task 3
+benefit-only cuttable base at the seven-driver aggregation level (joint-action SCR 31,001.8
+may shift slightly). Then Task 5 = offline-UI propagation (contract 1.5.0 → 1.6.0 additive:
+joint-action + inner-path sections, saturation-gap closure 22.54% → 6.39%, outer-vs-inner
+delta) + PHASE 24 COMPLETE docs.
+
+**Sandbox operating rules (RE-CONFIRMED cycle 19 — the truncation rule is NOT optional):**
+1. ~44 s hard wall per bash call; stage long computations (`--stage cdet` pattern); run heavy
+   pytest batches solo.
+2. Python/pytest/scipy/pandas live in `/var/tmp/pylibs` — run with `PYTHONPATH=/var/tmp/pylibs:.`.
+3. Long-file writes truncate on the mount — even bash `>>` appends of ~50 lines truncated
+   MODEL_DEV_LOG.md this cycle. Build files OFF-MOUNT (/var/tmp/p24t3_build pattern), then
+   `cp` + `cmp`; verify with ast.parse / json.loads / wc + tail. NEVER use Windows file-tools
+   for long repo files. The governance store corrupted this cycle via this failure mode —
+   ALWAYS back it up before any governance stage and re-verify verify_all after writing.
+4. Git ghost locks persist — commit with the alt-`GIT_INDEX_FILE` workaround onto branch
+   `p22c9`; push `p22c9:main`; the default index shows phantom deletions — IGNORE it, always
+   read-tree p22c9 into a fresh index.
+5. Risk-register IDs: next free is MR-015; check `.claude-dev/GOVERNANCE_STORE.json` first.
+6. CONCURRENCY: scheduled runs can overlap (two agents both executed Task 3 this cycle).
+   Before committing or writing governance, re-check file mtimes for foreign writes; if a
+   parallel run already landed the task, reconcile via the governance API
+   (supersede/disclose), never by deleting the other run's work.
+
+**Standing blockers (human action):** delete the three git ghost locks (see
+GITHUB_PUSH_BLOCKER.md) and push `p22c9:main`; serialise/stagger the scheduled automated runs
+(collision risk demonstrated); production sign-off residual (credentialled data + independent
+APS X2 review) — by design for this educational model; disk /sessions ~89%.

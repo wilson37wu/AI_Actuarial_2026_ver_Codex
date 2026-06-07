@@ -1514,6 +1514,54 @@
       "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
       "digest": "ff7633ad1f1087c5fe5cbbf8181fc6274497f9f08488875e287dd6d81a43d20d",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "146366dc74024434b1b4be1ce9161f1b",
+      "timestamp": "2026-06-07T18:31:33.360798+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "AutomatedModelDev_Phase24",
+      "description": "Model run p24t3-22aa9ee1: PASS",
+      "details": {
+        "run_id": "p24t3-22aa9ee1",
+        "scenario_count": 500,
+        "duration_seconds": 0,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/inner_path_actions.py",
+          "scripts/build_phase24_task3_inner_path_actions.py",
+          "tests/test_phase24_task3_inner_path_actions.py",
+          "docs/INNER_PATH_ACTION_DYNAMICS_CARD.md",
+          "docs/validation/PHASE24_TASK3_INNER_PATH_SCALAR_RESPONSE_VARIANT_REPORT.{json,md}"
+        ],
+        "test_summary": "inner-path action: OOS R2 0.9983; VaR rel err 0.51%; nested SCR 41731.4; gates 4/4 PASS"
+      },
+      "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+      "digest": "3df293bd1cdeb8442b6e8c2d52624ca50475f0dc182282bc8e5abb45f3bd5aef",
+      "corrects_entry_id": null
+    },
+    {
+      "entry_id": "e7682073a9dc4bcbac2552af2fe6d958",
+      "timestamp": "2026-06-07T18:34:12.816925+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "AutomatedModelDev_Phase24",
+      "description": "Model run p24t3-46b51c6b: PASS",
+      "details": {
+        "run_id": "p24t3-46b51c6b",
+        "scenario_count": 500,
+        "duration_seconds": 0.06154701000195928,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/inner_path_action_dynamics.py",
+          "tests/test_phase24_task3_inner_path_action.py",
+          "scripts/build_phase24_task3_inner_path_action.py",
+          "docs/INNER_PATH_ACTION_CARD.md",
+          "docs/validation/PHASE24_TASK3_INNER_PATH_ACTION_REPORT.{json,md}"
+        ],
+        "test_summary": "inner-path with-actions nested SCR 40852.1 (outer-node 39290.9, delta +1561.2); OOS R2 0.9984; VaR rel err 0.40%; gates 5/5 PASS"
+      },
+      "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+      "digest": "9a86bd403168d81722b792b4dc6c99c490ee117931bef36ea42ecba90c7ded1e",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -4010,6 +4058,138 @@
         }
       ],
       "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"
+    },
+    {
+      "record_id": "6b16ab1d99ed49dca866a8e295108635",
+      "created_at": "2026-06-07T18:31:33.360695+00:00",
+      "title": "Phase 24 Task 3 - inner-path management-action dynamics prototype (bonus cashflow response)",
+      "description": "Implemented the Phase 24 Task 3 horizon-level inner-path management-action prototype: the governed bonus-cut decision is applied to cuttable projected bonus-cashflow PV inside the conditional liability decomposition, with the same analytic basis applied to nested truth and proxy prediction.",
+      "change_type": "assumption_change",
+      "affected_components": [
+        "par_model_v2/projection/inner_path_actions.py",
+        "scripts/build_phase24_task3_inner_path_actions.py",
+        "tests/test_phase24_task3_inner_path_actions.py",
+        "docs/INNER_PATH_ACTION_DYNAMICS_CARD.md",
+        "docs/validation/PHASE24_TASK3_INNER_PATH_SCALAR_RESPONSE_VARIANT_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Regulation Article 23 (future management actions)",
+        "SOA ASOP 56 section 3.1.3/3.4/3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M section 3.2/3.6",
+        "IFoA with-profits / management-actions practice notes"
+      ],
+      "before_snapshot": {
+        "basis": "Phase 23 outer-node full-liability transform",
+        "nested_scr_outer_node": 39290.8985,
+        "oos_r2_outer_node": 0.9982947893496629
+      },
+      "after_snapshot": {
+        "basis": "Phase 24 inner-path cuttable bonus-cashflow response",
+        "response_factor": 0.85,
+        "nested_scr_inner_path": 41731.4421,
+        "oos_r2_inner_path": 0.998323425,
+        "var_rel_error_inner_path": 0.00507507399684754,
+        "gates": {
+          "G1_inner_path_oos_r2_ge_0p95": true,
+          "G2_inner_path_var_rel_error_le_0p10": true,
+          "G3_inner_path_capital_le_without_actions": true,
+          "G4_inner_path_monotone": true
+        },
+        "verdict": "PASS",
+        "reproducibility_digest": "22aa9ee12d7562f9a40bb0a368a8731f779e817add529d11e00277ffb6349aec"
+      },
+      "impact_assessment": "Additive assumption-method prototype. It relaxes the immediate outer-node action approximation while preserving the archived without-actions and Phase 23 with-actions evidence. Production use remains prohibited.",
+      "quantitative_impact": "Nested SCR inner-path 41731.4 vs outer-node 39290.9; VaR rel err 0.51%; OOS R2 0.9983; active share 44.2%.",
+      "status": "SUPERSEDED",
+      "author": "AutomatedModelDev_Phase24",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T18:31:33.360730+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "PEER_REVIEW",
+          "comments": "Task 1 pre-registered inner-path OOS gates pass; outer-node vs inner-path delta disclosed; residual monthly declaration loop noted."
+        },
+        {
+          "timestamp": "2026-06-07T18:31:33.360749+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and APS X2 review."
+        },
+        {
+          "timestamp": "2026-06-07T18:31:52.522446+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "SUPERSEDED",
+          "comments": "Parallel-run reconciliation (2026-06-07): this scalar-response variant applies relief = response_factor * rule_relief * L, i.e. a rescaled outer-node full-liability transform (response 1.0 recovers Phase 23 exactly); it does not implement the pre-registered Task 3 basis ('bonus cut enters horizon-level inner cashflows in the nested truth AND the proxy basis', Phase 24 Task 1 design note s'Method B'/s5). Superseded by the inner-path cashflow-decomposition implementation (par_model_v2/projection/inner_path_action_dynamics.py; see Phase 24 Task 3 canonical ChangeRecord). The variant evidence is retained as a disclosed recognition-lag sensitivity at docs/validation/PHASE24_TASK3_INNER_PATH_SCALAR_RESPONSE_VARIANT_REPORT.{json,md}."
+        }
+      ],
+      "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"
+    },
+    {
+      "record_id": "418dafcfbbaf4258b0c56ae3745eec89",
+      "created_at": "2026-06-07T18:34:12.816845+00:00",
+      "title": "Phase 24 Task 3 - inner-path management-action dynamics prototype (bonus cut on inner-path benefit cashflows)",
+      "description": "Implemented Method B of the Phase 24 Task 1 design note: the governed reversionary-bonus participation cut applies to the inner-path projected policyholder-benefit cashflows (PV_with_i = PV_i - relief(CR_outer) * B_i, B_i = guaranteed + equity-guarantee PV) instead of uniformly rescaling the outer-node conditional liability; the asset-side credit-loss PV and analytic FX/liquidity offsets are excluded from the cuttable base. Nested ground truth rebuilt from bit-identical re-runs of the archived Phase 22 Task 2 inner paths; the LSMC proxy gains the matching analytic post-composition benefit base (expected-path credit carve-out, fit-calibrated kappa, leakage-free). Seven-driver OOS re-validation at the unchanged Phase 22 gates.",
+      "change_type": "assumption_change",
+      "affected_components": [
+        "par_model_v2/projection/inner_path_action_dynamics.py",
+        "tests/test_phase24_task3_inner_path_action.py",
+        "scripts/build_phase24_task3_inner_path_action.py",
+        "docs/INNER_PATH_ACTION_CARD.md",
+        "docs/validation/PHASE24_TASK3_INNER_PATH_ACTION_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Regulation Article 23 (future management actions)",
+        "SOA ASOP 56 section 3.1.3/3.4/3.5 (outer-node vs inner-path dynamics)",
+        "IA TAS M section 3.2/3.6",
+        "IFoA proxy-modelling working party (analytic post-composition features)",
+        "Longstaff & Schwartz (2001)"
+      ],
+      "before_snapshot": {
+        "with_actions_basis": "outer-node uniform liability transform (Phase 23 Task 3)",
+        "nested_var_99_5_with_outer_node": 150968.63582173127,
+        "nested_scr_with_outer_node": 39290.89849045161
+      },
+      "after_snapshot": {
+        "with_actions_basis": "inner-path benefit-cashflow cut (horizon-level declared-rate response)",
+        "nested_var_99_5_with_inner_path": 153125.53123738492,
+        "nested_scr_with_inner_path": 40852.05410858347,
+        "oos_r2_with_actions": 0.9983693595038885,
+        "var_rel_error_with_actions": 0.003970326589534059,
+        "kappa": 1.0367919151090312,
+        "gates": {
+          "G1_identical_action_basis_truth_and_proxy": true,
+          "G2_oos_r2_with_actions_ge_0p95": true,
+          "G3_var_rel_error_with_actions_le_0p10": true,
+          "G4_monotone_on_inner_path_basis": true,
+          "G5_with_le_without_and_no_action_above_trigger": true
+        },
+        "verdict": "PASS",
+        "reproducibility_digest": "46b51c6ba1db103572e132293e82bf0e1b07eb84cd85832f6007e41aae2b4b85"
+      },
+      "impact_assessment": "Refinement of the with-actions valuation basis (ASOP 56 3.1.3 outer-node vs inner-path; SII Art. 23 realism): the outer-node transform over-relieved non-cuttable components (asset-side credit loss, FX/liquidity offsets). The inner-path basis relieves less and is more conservative; the delta is disclosed at every capital level. Without-actions results unchanged (archived Phase 22 evidence intact).",
+      "quantitative_impact": "Nested with-actions VaR99.5 150968.6 (outer-node) -> 153125.5 (inner-path, +2156.9); SCR 39290.9 -> 40852.1 (+1561.2); OOS R2 with actions 0.9984; proxy-vs-nested VaR rel err 0.40%; action active on 44.2% of outer states.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase24",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T18:34:12.816870+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "PEER_REVIEW",
+          "comments": "Inner-path action basis at fixed pre-registered gates; bit-identical primitive reuse exact-equality checked at every slice; outer-vs-inner delta and carve-out approximation error disclosed."
+        },
+        {
+          "timestamp": "2026-06-07T18:34:12.816885+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data, full path-wise dynamic declaration, and independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"
     }
   ],
   "risk_register": [
@@ -4234,8 +4414,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
       "created_at": "2026-06-07T13:19:29.055501+00:00",
-      "updated_at": "2026-06-07T17:13:57.754662+00:00",
-      "notes": "Phase 24 Task 2: action-exercise consistency restored (SII Art. 23) - the governed rule is applied ONCE to the simulated JOINT liability; saturation gap closed 22.5% -> 6.4% (t-copula SCR 25653 -> 31002 vs nested-with 33118). Copula NOT re-tuned on the action basis (df re-matched 2.9451 unchanged). Residual: outer-node approximation (Task 3 inner-path prototype), placeholder parameters, fixed A_ref proxy."
+      "updated_at": "2026-06-07T18:34:12.816727+00:00",
+      "notes": "Phase 24 Task 3 PASS: outer-node approximation relaxed - the bonus cut now enters the inner-path policyholder-benefit cashflows (credit-loss and FX/liquidity offsets carved out of the cuttable base); OOS R2 0.9984, VaR rel err 0.40% at the unchanged Phase 22 gates; nested with-actions SCR 39290.9 (outer-node) -> 40852.1 (inner-path basis, delta +1561.2 disclosed). Residual: full path-wise dynamic declaration out of scope; parameters remain educational placeholders."
     }
   ]
 }

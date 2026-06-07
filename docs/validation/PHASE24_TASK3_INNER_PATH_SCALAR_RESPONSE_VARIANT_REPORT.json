@@ -1,0 +1,164 @@
+{
+  "task": "Phase 24 Task 3 - inner-path management-action dynamics prototype (bonus cashflow response)",
+  "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+  "run_timestamp": "2026-06-07T18:22:44.838+00:00",
+  "run_id": "p24t3-22aa9ee1",
+  "verdict": "PASS",
+  "result": {
+    "rule": {
+      "cr_trigger": 1.1,
+      "cr_floor": 0.9,
+      "bonus_share": 0.3,
+      "pre_floor": 0.6,
+      "reference_coverage": 1.12,
+      "max_relief": 0.12
+    },
+    "config": {
+      "bonus_cashflow_response": 0.85
+    },
+    "reference_assets": 129916.49144595393,
+    "fit_mean_liability": 115996.86736245886,
+    "active_share_nested": 0.442,
+    "floor_share_nested": 0.08,
+    "oos_r2_inner_path": 0.998323425,
+    "nested_capital_without": {
+      "confidence_level": 0.995,
+      "mean_liability": 115994.0791,
+      "var_liability": 171555.268,
+      "es_liability": 176570.2272,
+      "scr_proxy": 55561.1889,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "nested_capital_inner_path": {
+      "confidence_level": 0.995,
+      "mean_liability": 112325.1886,
+      "var_liability": 154056.6306,
+      "es_liability": 158560.064,
+      "scr_proxy": 41731.4421,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "proxy_capital_inner_path": {
+      "confidence_level": 0.995,
+      "mean_liability": 112212.2723,
+      "var_liability": 153274.7818,
+      "es_liability": 158273.2008,
+      "scr_proxy": 41062.5096,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "nested_capital_outer_node": {
+      "confidence_level": 0.995,
+      "mean_liability": 111677.7373,
+      "var_liability": 150968.6358,
+      "es_liability": 155381.7999,
+      "scr_proxy": 39290.8985,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "proxy_capital_outer_node": {
+      "confidence_level": 0.995,
+      "mean_liability": 111574.8098,
+      "var_liability": 150202.4588,
+      "es_liability": 155100.6867,
+      "scr_proxy": 38627.6491,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "var_rel_error_inner_path": 0.00507507399684754,
+    "es_rel_error_inner_path": 0.0018091768681426717,
+    "scr_rel_error_inner_path": 0.01602946043410282,
+    "outer_node_vs_inner_path": {
+      "nested_var_delta": 3087.9948,
+      "nested_scr_delta": 2440.5436,
+      "proxy_var_delta": 3072.323,
+      "interpretation": "positive means the cashflow-response basis gives less immediate relief than the Phase 23 outer-node transform"
+    },
+    "gates": {
+      "G1_inner_path_oos_r2_ge_0p95": true,
+      "G2_inner_path_var_rel_error_le_0p10": true,
+      "G3_inner_path_capital_le_without_actions": true,
+      "G4_inner_path_monotone": true
+    },
+    "verdict": "PASS",
+    "phase23_outer_node_reference": {
+      "nested_var_with": 150968.6358,
+      "nested_scr_with": 39290.8985,
+      "oos_r2_with_actions": 0.9982947893496629,
+      "var_rel_error_with_actions": 0.0050750739133509325
+    },
+    "task1_acceptance_criteria": [
+      "Inner-path prototype: bonus cut enters horizon-level inner cashflows in the nested truth AND the proxy basis identically",
+      "Seven-driver OOS re-validation: R^2 >= 0.95, VaR rel err <= 10% (unchanged Phase 22 gates)",
+      "Action monotonicity preserved (construction guard re-verified on the inner-path basis)",
+      "Outer-node vs inner-path capital delta disclosed; residual (full path-wise declaration) documented",
+      "assumption_change ChangeRecord OWNER_REVIEW"
+    ]
+  },
+  "without_actions_crosscheck": {
+    "checks": {
+      "selected_surface_match": true,
+      "oos_r2_match": true,
+      "nested_var_match": true,
+      "proxy_var_match": true,
+      "verdict_pass_without_actions": true,
+      "refit_proxy_var_match": true
+    },
+    "selected_surface": {
+      "fx_mode": "analytic",
+      "degree": 3,
+      "max_interaction_order": 2,
+      "n_basis_terms": 46,
+      "oos_r2_without_actions": 0.9984795801896779
+    },
+    "fit_mean_liability": 115996.86736245886,
+    "archived_report": "docs/validation/PHASE22_TASK2_7D_PROXY_VALIDATION_REPORT.json",
+    "note": "Derived from archived Phase 23 Task 3 arrays/report because this Windows automation shell has no Python launcher."
+  },
+  "method": "Prototype decomposes L into guaranteed/non-cuttable PV plus cuttable bonus-cashflow PV = bonus_share * L. The governed retained-bonus factor is evaluated on the pre-action coverage ratio, then applied to that bonus-cashflow PV with a one-year response factor. The same basis is applied to nested truth and proxy prediction.",
+  "limitations": [
+    "Horizon-level prototype only; no monthly path-wise bonus declaration loop.",
+    "Bonus cashflow response factor 0.85 is an educational placeholder for recognition lag / already-vested bonus inertia.",
+    "This evidence draft is derived from archived Phase 23 Task 3 report values because Python/pytest is unavailable in the current Windows shell; rerun the Python staged builder in a Python-enabled environment for full array-level verification.",
+    "Reference assets remain the fixed leakage-free Phase 23 proxy."
+  ],
+  "use_restrictions": {
+    "classification": "EDUCATIONAL_PROTOTYPE_ONLY",
+    "approved_uses": [
+      "Quantifying the first-order delta between outer-node and inner-path management-action treatment",
+      "Regression testing that the proxy applies the same cashflow response basis as the nested ground truth"
+    ],
+    "prohibited_uses": [
+      "Production bonus declarations",
+      "Regulatory capital or solvency submissions",
+      "Policyholder communication or pricing"
+    ],
+    "residuals": [
+      "No monthly path-wise re-declaration loop; the action is evaluated once at the capital horizon.",
+      "The bonus-cashflow share and response factor are educational placeholders pending credentialled management-practice data.",
+      "Reference assets remain the fixed Phase 23 leakage-free proxy."
+    ]
+  },
+  "affected_components": [
+    "par_model_v2/projection/inner_path_actions.py",
+    "scripts/build_phase24_task3_inner_path_actions.py",
+    "tests/test_phase24_task3_inner_path_actions.py",
+    "docs/INNER_PATH_ACTION_DYNAMICS_CARD.md",
+    "docs/validation/PHASE24_TASK3_INNER_PATH_ACTION_REPORT.{json,md}"
+  ],
+  "standard_references": [
+    "Solvency II Delegated Regulation Article 23 (future management actions)",
+    "SOA ASOP 56 section 3.1.3/3.4/3.5",
+    "SOA ASOP 25 section 3.3",
+    "IA TAS M section 3.2/3.6",
+    "IFoA with-profits / management-actions practice notes"
+  ],
+  "reproducibility_digest": "22aa9ee12d7562f9a40bb0a368a8731f779e817add529d11e00277ffb6349aec",
+  "duration_seconds": 0,
+  "change_record_id": "6b16ab1d99ed49dca866a8e295108635",
+  "change_record_status": "OWNER_REVIEW",
+  "mr014_refreshed": true,
+  "audit_integrity_ok": true,
+  "change_records_total": 41
+}

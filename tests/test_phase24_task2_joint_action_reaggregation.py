@@ -166,9 +166,14 @@ class TestGovernance:
         assert store.audit_trail.verify_all() is True
 
     def test_mr_refresh_flags_and_notes(self, rep, store):
+        # Forward-compatible (latest-refresh-supersedes, same pattern as the
+        # P23T4 fix in cycle 18): MR notes hold the LATEST refresh, so later
+        # tasks legitimately overwrite them.  The Task 2 refresh itself is
+        # asserted via the report flags; the register must still carry a
+        # Phase 24 refresh and remain MITIGATED.
         assert rep["mr010_refreshed"] and rep["mr014_refreshed"]
-        assert "Phase 24 Task 2" in store.risk_register.get("MR-010").notes
-        assert "Phase 24 Task 2" in store.risk_register.get("MR-014").notes
+        assert "Phase 24" in store.risk_register.get("MR-010").notes
+        assert "Phase 24" in store.risk_register.get("MR-014").notes
 
     def test_change_snapshots_quantified(self, store):
         rec = next(r for r in store.change_records if r.title == CHANGE_TITLE)
