@@ -48,8 +48,11 @@ def html():
 
 
 class TestContract:
-    def test_contract_version_1_5_0(self, ui):
-        assert ui["contract_version"] == "1.5.0"
+    def test_contract_version_at_least_1_5_0(self, ui):
+        # DISCLOSED forward-compat fix (Phase 24 Task 5): later phases bump the
+        # contract ADDITIVELY (1.5.0 -> 1.6.0), so pin a floor, not equality.
+        version = tuple(int(p) for p in ui["contract_version"].split("."))
+        assert version >= (1, 5, 0)
 
     def test_management_actions_section_present(self, ma):
         assert isinstance(ma, dict) and ma
@@ -131,7 +134,9 @@ class TestHtml:
         start = html.index(marker) + len(marker)
         end = html.index("</script>", start)
         data = json.loads(html[start:end])
-        assert data["contract_version"] == "1.5.0"
+        # DISCLOSED forward-compat fix (Phase 24 Task 5): additive bumps OK.
+        assert tuple(int(p) for p in
+                     data["contract_version"].split(".")) >= (1, 5, 0)
         assert data["management_actions"]["aggregation"][
             "nested_scr_with"] == pytest.approx(33117.7704)
 

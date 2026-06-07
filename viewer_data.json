@@ -32,9 +32,9 @@
     }
   ],
   "summary": {
-    "tasks_completed": 110,
-    "tasks_total": 110,
-    "phases_completed": 19,
+    "tasks_completed": 115,
+    "tasks_total": 116,
+    "phases_completed": 20,
     "estimated_completion_pct": 99,
     "gates_cleared": 12,
     "gates_total": 12,
@@ -1087,9 +1087,9 @@
     ]
   },
   "governance": {
-    "audit_entries": 65,
+    "audit_entries": 71,
     "audit_integrity_ok": true,
-    "audit_verified": 65,
+    "audit_verified": 71,
     "audit_failed": 0,
     "change_records": [
       {
@@ -2342,6 +2342,204 @@
             "comments": "Owner review requested. PHASE 23 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
           }
         ]
+      },
+      {
+        "record_id": "479ec5cc7ed94d1eb434c0739cdff25d",
+        "title": "Phase 24 Task 1 - design note: joint-scenario (action-after-aggregation) copula re-aggregation + inner-path action dynamics (gap analysis)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-07T16:17:55.039106+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "Phase24Task1DesignNote",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable; effect quantified)",
+          "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour)",
+          "SOA ASOP 56 §3.1.3/§3.4/§3.5",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.2/§3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "McNeil-Frey-Embrechts 2015 ch.7",
+          "Demarta-McNeil 2005"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T16:17:55.039447+00:00",
+            "actor": "Phase24Task1DesignNote",
+            "status": "PEER_REVIEW",
+            "comments": "Design note + new unit tests PASS; no existing module touched."
+          },
+          {
+            "timestamp": "2026-06-07T16:17:55.039479+00:00",
+            "actor": "Phase24Task1DesignNote",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: anchoring approximation + margin sampling noise documented; sign-off withheld."
+          }
+        ]
+      },
+      {
+        "record_id": "3a1a74bef1c24fa8ac9121e56a4bb24f",
+        "title": "Phase 24 Task 2 - joint-scenario (action-after-aggregation) t-copula re-aggregation vs nested-with-actions",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T17:13:57.754743+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "AutomatedModelDev_Phase24",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "IA TAS M section 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "Demarta-McNeil 2005; McNeil-Frey-Embrechts 2015 ch.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T17:13:57.754772+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "PEER_REVIEW",
+            "comments": "Fixed pre-registered gates (G1-G4, Task 1 design note s5) all PASS; 25 archive cross-checks; rank invariance verified (df 2.9451); placeholders disclosed."
+          },
+          {
+            "timestamp": "2026-06-07T17:13:57.754790+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "6b16ab1d99ed49dca866a8e295108635",
+        "title": "Phase 24 Task 3 - inner-path management-action dynamics prototype (bonus cashflow response)",
+        "status": "SUPERSEDED",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T18:31:33.360695+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "AutomatedModelDev_Phase24",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6",
+          "IFoA with-profits / management-actions practice notes"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T18:31:33.360730+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "PEER_REVIEW",
+            "comments": "Task 1 pre-registered inner-path OOS gates pass; outer-node vs inner-path delta disclosed; residual monthly declaration loop noted."
+          },
+          {
+            "timestamp": "2026-06-07T18:31:33.360749+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and APS X2 review."
+          },
+          {
+            "timestamp": "2026-06-07T18:31:52.522446+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "SUPERSEDED",
+            "comments": "Parallel-run reconciliation (2026-06-07): this scalar-response variant applies relief = response_factor * rule_relief * L, i.e. a rescaled outer-node full-liability transform (response 1.0 recovers Phase 23 exactly); it does not implement the pre-registered Task 3 basis ('bonus cut enters horizon-level inner cashflows in the nested truth AND the proxy basis', Phase 24 Task 1 design note s'Method B'/s5). Superseded by the inner-path cashflow-decomposition implementation (par_model_v2/projection/inner_path_action_dynamics.py; see Phase 24 Task 3 canonical ChangeRecord). The variant evidence is retained as a disclosed recognition-lag sensitivity at docs/validation/PHASE24_TASK3_INNER_PATH_SCALAR_RESPONSE_VARIANT_REPORT.{json,md}."
+          }
+        ]
+      },
+      {
+        "record_id": "418dafcfbbaf4258b0c56ae3745eec89",
+        "title": "Phase 24 Task 3 - inner-path management-action dynamics prototype (bonus cut on inner-path benefit cashflows)",
+        "status": "OWNER_REVIEW",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T18:34:12.816845+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "AutomatedModelDev_Phase24",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5 (outer-node vs inner-path dynamics)",
+          "IA TAS M section 3.2/3.6",
+          "IFoA proxy-modelling working party (analytic post-composition features)",
+          "Longstaff & Schwartz (2001)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T18:34:12.816870+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "PEER_REVIEW",
+            "comments": "Inner-path action basis at fixed pre-registered gates; bit-identical primitive reuse exact-equality checked at every slice; outer-vs-inner delta and carve-out approximation error disclosed."
+          },
+          {
+            "timestamp": "2026-06-07T18:34:12.816885+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data, full path-wise dynamic declaration, and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "d323ab685a4840169be0a1028e0721b9",
+        "title": "Phase 24 Task 4 - joint-action tail diagnostics + with-vs-without / joint-vs-standalone capital-delta matrix",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T19:20:54.458156+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "AutomatedModelDev_Phase24",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "McNeil-Frey-Embrechts 2015 ch.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T19:20:54.458173+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "PEER_REVIEW",
+            "comments": "Fixed pre-registered Task 4 gates (G1-G3) all PASS; 27 archive cross-checks; archived Task 2 read-outs reproduced bit-identically; diagnostics DISCLOSED (no post-hoc thresholds)."
+          },
+          {
+            "timestamp": "2026-06-07T19:20:54.458184+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "a66844b709f848d78bdee7553e1e49db",
+        "title": "Phase 24 Task 5 - offline-UI propagation of the joint-action + inner-path view",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-07T20:19:20.693759+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "AutomatedModelDev_Phase24",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+          "Solvency II Art. 23 (future management actions - joint effect displayed)",
+          "Solvency II Art. 234 (dependence justification - frozen-copula bootstrap displayed)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T20:19:20.693846+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by 31 contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only; the saturation-gap closure, outer-node over-relief and tail-saturation findings are carried into the display verbatim."
+          },
+          {
+            "timestamp": "2026-06-07T20:19:20.693860+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. PHASE 24 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
+          }
+        ]
       }
     ],
     "deployment_gates": [
@@ -2581,7 +2779,7 @@
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
         "related_standard": "SOA ASOP 56 §3.5; IA TAS M §3.6; SOA ASOP 25 §3.3",
-        "updated_at": "2026-06-07T14:16:28.962072+00:00"
+        "updated_at": "2026-06-07T19:20:54.458022+00:00"
       },
       {
         "risk_id": "MR-011",
@@ -2637,7 +2835,7 @@
         "description": "Policyholder options (dynamic lapse) are modelled but insurer management actions are not: reversionary-bonus participation is static, so TVOG and tail capital are biased upward relative to a realistic with-management-action basis (ASOP 56 3.1.3 asymmetry; Solvency II Art. 23).",
         "mitigation": "Phase 23 Task 3: governed dynamic reversionary-bonus participation cut entering the nested ground truth and the proxy basis, validated OOS at fixed pre-registered gates.",
         "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
-        "updated_at": "2026-06-07T14:16:28.962124+00:00"
+        "updated_at": "2026-06-07T19:20:54.458103+00:00"
       }
     ]
   }

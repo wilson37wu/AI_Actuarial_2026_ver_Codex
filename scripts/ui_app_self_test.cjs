@@ -1,4 +1,4 @@
-// Offline self-test for ui_app.html (UI Tasks 1-5 + Phase 21-23 propagation).
+// Offline self-test for ui_app.html (UI Tasks 1-5 + Phase 21-24 propagation).
 // Loads the standalone HTML under jsdom, blocks fetch/XHR, clicks every tab and
 // sub-view, and asserts: embedded data parsed; inventory + calibration explorer +
 // capital dashboard + governance view render; ZERO network calls; ZERO JS errors.
@@ -70,6 +70,16 @@ setTimeout(() => {
   const maTrigRows = document.querySelectorAll("#actions table.trigtable tbody tr").length;
   const maStandaloneRows = document.querySelectorAll("#actions table.matable tbody tr").length;
   const maRuleRows = document.querySelectorAll("#actions table.ruletable tbody tr").length;
+
+  // Phase 24 Task 5: open the Joint Actions (P24) panel and count its elements.
+  const p24Tab = tabs.find(t => t.getAttribute("data-target") === "phase24");
+  if (p24Tab) p24Tab.click();
+  const p24Cards = document.querySelectorAll("#phase24 .card").length;
+  const p24GateCrits = document.querySelectorAll("#phase24 .crit").length;
+  const p24DeltaRows = document.querySelectorAll("#phase24 table.dmtable tbody tr").length;
+  const p24SweepRows = document.querySelectorAll("#phase24 table.swtable tbody tr").length;
+  const p24InnerRows = document.querySelectorAll("#phase24 table.iptable tbody tr").length;
+  const p24BarRects = document.querySelectorAll("#phase24 svg.chart rect.bar").length;
 
   // UI Task 4: open the Governance & assumptions view and click through every sub-view.
   const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
@@ -166,6 +176,16 @@ setTimeout(() => {
     saturationFindingPresent: /saturates/.test(bodyText),
     tCopulaVerdictPresent: /Student-t copula aggregation/.test(bodyText),
     withActionsVerdictPresent: /WITH management actions/.test(bodyText),
+    phase24TabPresent: !!p24Tab,
+    p24Cards, p24GateCrits, p24DeltaRows, p24SweepRows, p24InnerRows, p24BarRects,
+    jointActionScrPresent: /31,00[12]/.test(bodyText),
+    saturationGapClosurePresent: /22\.54% to 6\.39%/.test(bodyText),
+    tailSaturationPresent: /100\.0% saturated/.test(bodyText),
+    bootstrapCiPresent: /26,471/.test(bodyText) && /33,637/.test(bodyText),
+    innerPathDeltaPresent: /inner-path basis is the more conservative/.test(bodyText),
+    varCovarRefreshPresent: /56\.4%/.test(bodyText),
+    jointActionVerdictPresent: /action-after-aggregation t-copula/.test(bodyText),
+    innerPathVerdictPresent: /Inner-path management-action dynamics/.test(bodyText),
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -236,6 +256,21 @@ setTimeout(() => {
     checks.saturationFindingPresent &&
     checks.tCopulaVerdictPresent &&
     checks.withActionsVerdictPresent &&
+    checks.phase24TabPresent &&
+    checks.p24Cards >= 12 &&
+    checks.p24GateCrits >= 12 &&
+    checks.p24DeltaRows === 4 &&
+    checks.p24SweepRows === 5 &&
+    checks.p24InnerRows === 2 &&
+    checks.p24BarRects >= 7 &&
+    checks.jointActionScrPresent &&
+    checks.saturationGapClosurePresent &&
+    checks.tailSaturationPresent &&
+    checks.bootstrapCiPresent &&
+    checks.innerPathDeltaPresent &&
+    checks.varCovarRefreshPresent &&
+    checks.jointActionVerdictPresent &&
+    checks.innerPathVerdictPresent &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

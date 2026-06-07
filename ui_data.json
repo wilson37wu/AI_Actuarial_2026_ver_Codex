@@ -1,9 +1,9 @@
 {
-  "contract_version": "1.5.0",
+  "contract_version": "1.6.0",
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-07T15:18:41.437340+00:00",
+    "generated_utc": "2026-06-07T20:19:40.383445+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -16,16 +16,16 @@
     "classification": "EDUCATIONAL ONLY -- NOT a regulatory capital model"
   },
   "summary": {
-    "tasks_completed": 110,
-    "tasks_total": 110,
-    "phases_completed": 19,
+    "tasks_completed": 115,
+    "tasks_total": 116,
+    "phases_completed": 20,
     "estimated_completion_pct": 99,
     "gates_cleared": 12,
     "gates_total": 12,
     "risks_open": 1,
     "risks_mitigated": 10,
     "production_status": "NOT CLEARED FOR PRODUCTION",
-    "contract_artifacts": 52,
+    "contract_artifacts": 58,
     "calibrated_drivers": 11
   },
   "inventory": [
@@ -438,9 +438,63 @@
       "id": "PHASE23_TASK5_UI_PROPAGATION_REPORT",
       "path": "docs/validation/PHASE23_TASK5_UI_PROPAGATION_REPORT.json",
       "category": "other",
-      "bytes": 2324,
-      "sha256": "5f5403f14d429b0ed7498c8b5564a7aaff0a352488aa3ffc22da6a8d03946911",
-      "mtime_utc": "2026-06-07T15:18:27Z",
+      "bytes": 2325,
+      "sha256": "57de1ba33ed361aeb1228ebd9aed64b27de8c4b801f4d738c21785aaa9429526",
+      "mtime_utc": "2026-06-07T15:19:17Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE24_TASK1_DESIGN_NOTE",
+      "path": "docs/validation/PHASE24_TASK1_DESIGN_NOTE.json",
+      "category": "other",
+      "bytes": 9421,
+      "sha256": "9f92b1956b79378a729f2026a28a48da7143a27dccca4fdba23c80cf2623bc97",
+      "mtime_utc": "2026-06-07T16:17:54Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT",
+      "path": "docs/validation/PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.json",
+      "category": "risk_aggregation",
+      "bytes": 4211,
+      "sha256": "8a89c66f3d97e12aeac4c07474deed9aab213bd4002e0a365233ba43cb7b770a",
+      "mtime_utc": "2026-06-07T17:13:57Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE24_TASK3_INNER_PATH_ACTION_REPORT",
+      "path": "docs/validation/PHASE24_TASK3_INNER_PATH_ACTION_REPORT.json",
+      "category": "other",
+      "bytes": 9338,
+      "sha256": "f5c798831abc4430ec9c723a5ac0d56f0e7b82b03631825bcd9774c50e3ea286",
+      "mtime_utc": "2026-06-07T18:34:12Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE24_TASK3_INNER_PATH_SCALAR_RESPONSE_VARIANT_REPORT",
+      "path": "docs/validation/PHASE24_TASK3_INNER_PATH_SCALAR_RESPONSE_VARIANT_REPORT.json",
+      "category": "other",
+      "bytes": 6870,
+      "sha256": "e1c2f3df99e38f61a4f0b60d034dee77f405e29f3bb8185b0aa31ab0b2a7c603",
+      "mtime_utc": "2026-06-07T18:31:34Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT",
+      "path": "docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.json",
+      "category": "tail_diagnostics",
+      "bytes": 14513,
+      "sha256": "4fb05e3324f6867ed21049db9cebf5721e45bdf97f68d5c388224188a19b18d4",
+      "mtime_utc": "2026-06-07T19:20:54Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE24_TASK5_UI_PROPAGATION_REPORT",
+      "path": "docs/validation/PHASE24_TASK5_UI_PROPAGATION_REPORT.json",
+      "category": "other",
+      "bytes": 2868,
+      "sha256": "7cd1f5ab077caebf4e0e23ecb315cfb802bf6217a2f331cfef88e0d381203fbc",
+      "mtime_utc": "2026-06-07T20:19:20Z",
       "headline": "PASS"
     },
     {
@@ -1189,7 +1243,9 @@
     "t_copula_scr": 46755.963,
     "t_copula_df": 2.9451,
     "t_copula_rel_error": 0.040065,
-    "nested_scr_with_actions": 33117.7704
+    "nested_scr_with_actions": 33117.7704,
+    "t_copula_scr_joint_action": 31001.77628158343,
+    "nested_scr_with_inner_path": 40852.0541
   },
   "tail": {
     "verdict": "PASS - seven-driver 99.5% capital metric converges (copula-simulated, last VaR delta < 0.5%), is bounded by simulated and honest small-sample nested bootstrap CIs, and benefits from Sobol-RQMC variance reduction",
@@ -2966,10 +3022,410 @@
     "task4_source": "docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.json",
     "task4_change_record_id": "912ef3f92e714188baec4377ab59474d"
   },
+  "phase24": {
+    "joint_action": {
+      "t_scr_joint": 31001.77628158343,
+      "t_var_joint": 143682.04744466447,
+      "t_es_joint": 148496.34347728066,
+      "t_rel_error_joint": 0.06389301155329964,
+      "gaussian_scr_joint": 26267.06157714709,
+      "gaussian_rel_error_joint": 0.2068589978525154,
+      "t_scr_standalone_baseline": 25652.9228,
+      "t_rel_error_standalone_baseline": 0.225403,
+      "nested_scr_with": 33117.77036621129,
+      "df_matched": 2.9451,
+      "df_rematched": 2.9450930033094664,
+      "active_share": 0.44035,
+      "floor_share": 0.044025,
+      "joint_action_only_relieves": true,
+      "gates": {
+        "G1_joint_t_rel_error_le_10pct": true,
+        "G2_joint_t_strictly_below_standalone_baseline": true,
+        "G3_df_rank_invariance": true,
+        "G4_archive_crosschecks_pass": true
+      },
+      "verdict": "PASS",
+      "anchoring_convention": "V = L_fit + sum_k (Q_k(U_k) - mean_k); W = rule(V, A_ref) applied ONCE to the joint liability; L_fit/A_ref identical to Phase 23 Task 3/4 (leakage-free)",
+      "saturation_gap_closure": "Saturation-gap closure (disclosed): applying the SAME governed bonus-cut rule ONCE to the t-copula JOINT liability (action-after-aggregation) instead of to each standalone driver loss closes the copula-on-standalone understatement vs the nested with-actions benchmark from 22.54% to 6.39%; the joint action only ever relieves (W <= V pathwise) and rank invariance is re-gated (df re-matched, unchanged to 5 dp). The nested run remains the capital reference.",
+      "source": "docs/validation/PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.json",
+      "change_record_id": "3a1a74bef1c24fa8ac9121e56a4bb24f"
+    },
+    "inner_path": {
+      "oos_r2_with_actions": 0.9983693595038885,
+      "oos_r2_without_actions": 0.9984795801896779,
+      "var_rel_error_with_actions": 0.003970326589534059,
+      "es_rel_error_with_actions": 0.001256453968916591,
+      "active_share_nested": 0.442,
+      "floor_share_nested": 0.08,
+      "nested_capital_without": {
+        "confidence_level": 0.995,
+        "mean_liability": 115994.0791,
+        "var_liability": 171555.268,
+        "es_liability": 176570.2272,
+        "scr_proxy": 55561.1889,
+        "n_outer": 500,
+        "capital_horizon_months": 12
+      },
+      "nested_capital_with_inner_path": {
+        "confidence_level": 0.995,
+        "mean_liability": 112273.4771,
+        "var_liability": 153125.5312,
+        "es_liability": 157827.7702,
+        "scr_proxy": 40852.0541,
+        "n_outer": 500,
+        "capital_horizon_months": 12
+      },
+      "nested_capital_with_outer_node": {
+        "confidence_level": 0.995,
+        "mean_liability": 111677.7373,
+        "var_liability": 150968.6358,
+        "es_liability": 155381.7999,
+        "scr_proxy": 39290.8985,
+        "n_outer": 500,
+        "capital_horizon_months": 12
+      },
+      "outer_vs_inner_path_delta": {
+        "nested_var_99_5_outer_node": 150968.63582173127,
+        "nested_var_99_5_inner_path": 153125.53123738492,
+        "nested_var_99_5_delta": 2156.8954156536493,
+        "nested_scr_outer_node": 39290.89849045161,
+        "nested_scr_inner_path": 40852.05410858347,
+        "nested_scr_delta": 1561.1556181318592,
+        "interpretation": "The outer-node transform relieves the asset-side credit-loss component and the analytic FX/liquidity offsets as if they were cuttable bonus; the inner-path basis restricts the cut to policyholder-benefit cashflows, so it relieves LESS and is the more conservative (and more faithful) with-actions basis."
+      },
+      "kappa_fit_calibrated": 1.0367919151090312,
+      "credit_share_of_liability": 0.15870974759017167,
+      "benefit_share_of_liability": 0.8412902524098284,
+      "gates": {
+        "G1_identical_action_basis_truth_and_proxy": true,
+        "G2_oos_r2_with_actions_ge_0p95": true,
+        "G3_var_rel_error_with_actions_le_0p10": true,
+        "G4_monotone_on_inner_path_basis": true,
+        "G5_with_le_without_and_no_action_above_trigger": true
+      },
+      "verdict": "PASS",
+      "method": "Inner-path basis: PV_with_i = PV_i - relief(CR_outer) * B_i with B_i = guaranteed_pv_i + eq_guarantee_pv_i (in-force policyholder benefits); asset-side credit-loss PV and analytic FX/liquidity offsets are NOT cuttable. The action decision remains the PRE-action outer-node coverage ratio CR = A_ref / L7 (declared-rate response at horizon level). Proxy: matching analytic post-composition base B_hat = clip(poly5 - kappa * C_det(r,s), 0, L_hat); kappa calibrated on the FIT sample only.",
+      "source": "docs/validation/PHASE24_TASK3_INNER_PATH_ACTION_REPORT.json",
+      "change_record_id": "418dafcfbbaf4258b0c56ae3745eec89"
+    },
+    "tail_diagnostics": {
+      "delta_matrix": {
+        "nested": {
+          "without": {
+            "var": 165035.3729033077,
+            "es": 165808.52450750157,
+            "scr": 48707.43490332604
+          },
+          "standalone_action": {
+            "var": 145231.12815491078,
+            "es": 145911.5015666014,
+            "scr": 33117.77036621129
+          },
+          "joint_action": {
+            "var": 145231.12815491078,
+            "es": 145911.5015666014,
+            "scr": 33117.77036621129
+          },
+          "standalone_action_minus_without": {
+            "var_delta": -19804.244748396915,
+            "var_delta_pct": -0.11999999999999995,
+            "es_delta": -19897.022940900177,
+            "es_delta_pct": -0.11999999999999993,
+            "scr_delta": -15589.664537114746,
+            "scr_delta_pct": -0.3200674510586923
+          },
+          "joint_action_minus_without": {
+            "var_delta": -19804.244748396915,
+            "var_delta_pct": -0.11999999999999995,
+            "es_delta": -19897.022940900177,
+            "es_delta_pct": -0.11999999999999993,
+            "scr_delta": -15589.664537114746,
+            "scr_delta_pct": -0.3200674510586923
+          },
+          "joint_minus_standalone_scr": 0.0,
+          "joint_minus_standalone_scr_pct": 0.0
+        },
+        "t_copula": {
+          "without": {
+            "var": 164026.9467,
+            "es": 169381.4157,
+            "scr": 46755.963
+          },
+          "standalone_action": {
+            "var": null,
+            "es": null,
+            "scr": 25652.9228
+          },
+          "joint_action": {
+            "var": 143682.04744466447,
+            "es": 148496.34347728066,
+            "scr": 31001.77628158343
+          },
+          "standalone_action_minus_without": {
+            "scr_delta": -21103.040200000003,
+            "scr_delta_pct": -0.45134436007659606
+          },
+          "joint_action_minus_without": {
+            "var_delta": -20344.899255335535,
+            "var_delta_pct": -0.12403388385047305,
+            "es_delta": -20885.072222719347,
+            "es_delta_pct": -0.12330202895286904,
+            "scr_delta": -15754.186718416575,
+            "scr_delta_pct": -0.3369449735944178
+          },
+          "joint_minus_standalone_scr": 5348.853481583428,
+          "joint_minus_standalone_scr_pct": 0.20850854007105296
+        },
+        "gaussian": {
+          "without": {
+            "var": 158734.1029,
+            "es": 162894.5595,
+            "scr": 41472.429
+          },
+          "standalone_action": {
+            "var": null,
+            "es": null,
+            "scr": 23921.8205
+          },
+          "joint_action": {
+            "var": 138715.4062712376,
+            "es": 142380.81349575197,
+            "scr": 26267.06157714709
+          },
+          "standalone_action_minus_without": {
+            "scr_delta": -17550.608499999995,
+            "scr_delta_pct": -0.4231873782941432
+          },
+          "joint_action_minus_without": {
+            "var_delta": -20018.69662876241,
+            "var_delta_pct": -0.12611465503020403,
+            "es_delta": -20513.746004248038,
+            "es_delta_pct": -0.12593266507619635,
+            "scr_delta": -15205.367422852905,
+            "scr_delta_pct": -0.36663797586712144
+          },
+          "joint_minus_standalone_scr": 2345.2410771470895,
+          "joint_minus_standalone_scr_pct": 0.09803773409081008
+        },
+        "var_covar": {
+          "without": {
+            "var": null,
+            "es": null,
+            "scr": 28990.889357788157
+          },
+          "standalone_action": {
+            "var": null,
+            "es": null,
+            "scr": 14428.739328663964
+          },
+          "joint_action": {
+            "var": null,
+            "es": null,
+            "scr": null
+          },
+          "standalone_action_minus_without": {
+            "scr_delta": -14562.150029124194,
+            "scr_delta_pct": -0.5023009073439203
+          },
+          "joint_action_minus_without": {}
+        }
+      },
+      "var_covar_refresh": {
+        "var_covar_scr_with": 14428.739328663964,
+        "understatement_vs_nested_with": 0.5643203280561115,
+        "understatement_vs_t_joint": 0.5345834639405698,
+        "understatement_vs_nested_without_basis_p22t4": 0.40479539899136663
+      },
+      "confidence_sweep": [
+        {
+          "confidence": 0.9,
+          "var_with": 124305.26384134508,
+          "es_with": 129528.4018512137,
+          "scr_with": 11624.99267826404,
+          "var_without": 136339.32051109624,
+          "es_without": 145649.75176184587,
+          "scr_without": 20333.38882554107,
+          "tail_active_share": 1.0,
+          "tail_saturation_share": 0.44025,
+          "tail_mean_cut_factor": 0.0815303107256105,
+          "relief_at_var": 12034.056669751168
+        },
+        {
+          "confidence": 0.95,
+          "var_with": 126640.8491813261,
+          "es_with": 133711.682930763,
+          "scr_with": 13960.578018245069,
+          "var_without": 143208.6891580993,
+          "es_without": 151901.7802763623,
+          "scr_without": 27202.757472544123,
+          "tail_active_share": 1.0,
+          "tail_saturation_share": 0.8805,
+          "tail_mean_cut_factor": 0.002212294517434238,
+          "relief_at_var": 16567.83997677319
+        },
+        {
+          "confidence": 0.99,
+          "var_with": 138940.56566681495,
+          "es_with": 144806.58371083578,
+          "scr_with": 26260.29450373391,
+          "var_without": 157887.00643956245,
+          "es_without": 164552.93603504068,
+          "scr_without": 41881.07475400728,
+          "tail_active_share": 1.0,
+          "tail_saturation_share": 1.0,
+          "tail_mean_cut_factor": 0.0,
+          "relief_at_var": 18946.440772747505
+        },
+        {
+          "confidence": 0.995,
+          "var_with": 143682.04744466447,
+          "es_with": 148496.34347728066,
+          "scr_with": 31001.77628158343,
+          "var_without": 163275.05391439144,
+          "es_without": 168745.84486054623,
+          "scr_without": 47269.12222883626,
+          "tail_active_share": 1.0,
+          "tail_saturation_share": 1.0,
+          "tail_mean_cut_factor": 0.0,
+          "relief_at_var": 19593.00646972697
+        },
+        {
+          "confidence": 0.999,
+          "var_with": 151467.75108475913,
+          "es_with": 154255.4538378175,
+          "scr_with": 38787.479921678096,
+          "var_without": 172122.444414499,
+          "es_without": 175290.28845206532,
+          "scr_without": 56116.51272894384,
+          "tail_active_share": 1.0,
+          "tail_saturation_share": 1.0,
+          "tail_mean_cut_factor": 0.0,
+          "relief_at_var": 20654.69332973988
+        }
+      ],
+      "prefix_convergence": [
+        {
+          "n_sim": 25000,
+          "var_with": 143979.81662777925,
+          "es_with": 149175.774566488,
+          "scr_with": 31316.7107743338,
+          "var_rel_delta_vs_full": 0.0020724174551414332,
+          "scr_rel_delta_vs_full": 0.010158595104031389
+        },
+        {
+          "n_sim": 50000,
+          "var_with": 144038.22712265316,
+          "es_with": 149041.18275263958,
+          "scr_with": 31365.922680490956,
+          "var_rel_delta_vs_full": 0.002478943502846918,
+          "scr_rel_delta_vs_full": 0.011745984991313163
+        },
+        {
+          "n_sim": 100000,
+          "var_with": 143613.7626923139,
+          "es_with": 148682.72302207528,
+          "scr_with": 30944.192213675313,
+          "var_rel_delta_vs_full": 0.00047524902077178877,
+          "scr_rel_delta_vs_full": 0.0018574441472349905
+        },
+        {
+          "n_sim": 200000,
+          "var_with": 143682.04744466447,
+          "es_with": 148496.34347728066,
+          "scr_with": 31001.77628158343,
+          "var_rel_delta_vs_full": 0.0,
+          "scr_rel_delta_vs_full": 0.0
+        }
+      ],
+      "seed_stability": {
+        "rows": [
+          {
+            "seed": 20260607,
+            "scr_with": 31001.77628158343,
+            "var_with": 143682.04744466447
+          },
+          {
+            "seed": 11,
+            "scr_with": 31025.954577233104,
+            "var_with": 143734.41236941546
+          },
+          {
+            "seed": 1234,
+            "scr_with": 30584.66125793477,
+            "var_with": 143324.16170946357
+          },
+          {
+            "seed": 777,
+            "scr_with": 30908.779580493836,
+            "var_with": 143603.8308933352
+          },
+          {
+            "seed": 424242,
+            "scr_with": 31196.413474503774,
+            "var_with": 143891.68300735124
+          }
+        ],
+        "scr_mean": 30943.51703434978,
+        "scr_max_rel_spread": 0.01976996396013771
+      },
+      "bootstrap": {
+        "n_replicates": 200,
+        "n_sim_per_replicate": 20000,
+        "n_obs": 160,
+        "seed": 20260608,
+        "resampling": "joint row resample (preserves realised cross-driver pairing); copula df/rho frozen (SII Art. 234)",
+        "var_with": {
+          "mean": 143129.03379538073,
+          "se": 2004.4639032511743,
+          "ci_lo_95": 138654.58040071512,
+          "ci_hi_95": 146436.2784884476
+        },
+        "es_with": {
+          "mean": 147589.3419891622,
+          "se": 1892.7050994846065,
+          "ci_lo_95": 142887.66786601418,
+          "ci_hi_95": 150523.77300148786
+        },
+        "scr_with": {
+          "mean": 30406.472028341806,
+          "se": 1752.3573294866005,
+          "ci_lo_95": 26470.69591935813,
+          "ci_hi_95": 33636.79488208972
+        }
+      },
+      "diagnostic_findings": {
+        "sweep_var_monotone_in_confidence": true,
+        "tail_saturation_share_at_995": 1.0,
+        "scr_seed_max_rel_spread": 0.01976996396013771,
+        "scr_prefix_final_rel_delta": 0.0,
+        "nested_with_inside_bootstrap_ci": true,
+        "bootstrap_scr_se_pct_of_mean": 0.05763106380290459
+      },
+      "crosscheck_count": 27,
+      "reproduction_of_p24t2": {
+        "t_scr_abs_diff": 0.0,
+        "g_scr_abs_diff": 0.0,
+        "t_digest_match": true,
+        "g_digest_match": true
+      },
+      "n_obs": 160,
+      "n_sim": 200000,
+      "gates": {
+        "G1_delta_matrix_complete_and_crosschecked": true,
+        "G2_var_covar_understatement_refreshed": true,
+        "G3_reproducibility_recorded": true
+      },
+      "verdict": "PASS",
+      "inner_path_disclosure_note": "Phase 24 Task 3 inner-path basis is MORE conservative than the outer-node transform (over-relief of non-cuttable components corrected); its nested with-actions figures are disclosed alongside but the governed copula deltas here remain on the outer-node basis used by Tasks 2/3 archives.",
+      "source": "docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.json",
+      "change_record_id": "d323ab685a4840169be0a1028e0721b9"
+    },
+    "narrative": "Phase 24 quantified HOW management actions and dependence interact: the joint-scenario (action-after-aggregation) basis closes the disclosed Phase 23 saturation gap 22.54% -> 6.39%; the inner-path cashflow basis corrects an outer-node over-relief (+4.0% nested SCR, the more conservative and more faithful with-actions basis); and the tail diagnostics show the 99.5% joint tail is 100% saturated (max relief everywhere capital is measured), with margin-bootstrap CI quantifying the n_obs=160 small-sample noise. Nested with-actions remains the capital reference; all copula read-outs are diagnostics on that basis."
+  },
   "governance": {
-    "audit_entries": 65,
+    "audit_entries": 71,
     "audit_integrity_ok": true,
-    "audit_verified": 65,
+    "audit_verified": 71,
     "audit_failed": 0,
     "change_records": [
       {
@@ -4222,6 +4678,204 @@
             "comments": "Owner review requested. PHASE 23 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
           }
         ]
+      },
+      {
+        "record_id": "479ec5cc7ed94d1eb434c0739cdff25d",
+        "title": "Phase 24 Task 1 - design note: joint-scenario (action-after-aggregation) copula re-aggregation + inner-path action dynamics (gap analysis)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-07T16:17:55.039106+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "Phase24Task1DesignNote",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable; effect quantified)",
+          "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour)",
+          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2/\u00a73.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "McNeil-Frey-Embrechts 2015 ch.7",
+          "Demarta-McNeil 2005"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T16:17:55.039447+00:00",
+            "actor": "Phase24Task1DesignNote",
+            "status": "PEER_REVIEW",
+            "comments": "Design note + new unit tests PASS; no existing module touched."
+          },
+          {
+            "timestamp": "2026-06-07T16:17:55.039479+00:00",
+            "actor": "Phase24Task1DesignNote",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: anchoring approximation + margin sampling noise documented; sign-off withheld."
+          }
+        ]
+      },
+      {
+        "record_id": "3a1a74bef1c24fa8ac9121e56a4bb24f",
+        "title": "Phase 24 Task 2 - joint-scenario (action-after-aggregation) t-copula re-aggregation vs nested-with-actions",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T17:13:57.754743+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "AutomatedModelDev_Phase24",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "IA TAS M section 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "Demarta-McNeil 2005; McNeil-Frey-Embrechts 2015 ch.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T17:13:57.754772+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "PEER_REVIEW",
+            "comments": "Fixed pre-registered gates (G1-G4, Task 1 design note s5) all PASS; 25 archive cross-checks; rank invariance verified (df 2.9451); placeholders disclosed."
+          },
+          {
+            "timestamp": "2026-06-07T17:13:57.754790+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "6b16ab1d99ed49dca866a8e295108635",
+        "title": "Phase 24 Task 3 - inner-path management-action dynamics prototype (bonus cashflow response)",
+        "status": "SUPERSEDED",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T18:31:33.360695+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "AutomatedModelDev_Phase24",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6",
+          "IFoA with-profits / management-actions practice notes"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T18:31:33.360730+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "PEER_REVIEW",
+            "comments": "Task 1 pre-registered inner-path OOS gates pass; outer-node vs inner-path delta disclosed; residual monthly declaration loop noted."
+          },
+          {
+            "timestamp": "2026-06-07T18:31:33.360749+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and APS X2 review."
+          },
+          {
+            "timestamp": "2026-06-07T18:31:52.522446+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "SUPERSEDED",
+            "comments": "Parallel-run reconciliation (2026-06-07): this scalar-response variant applies relief = response_factor * rule_relief * L, i.e. a rescaled outer-node full-liability transform (response 1.0 recovers Phase 23 exactly); it does not implement the pre-registered Task 3 basis ('bonus cut enters horizon-level inner cashflows in the nested truth AND the proxy basis', Phase 24 Task 1 design note s'Method B'/s5). Superseded by the inner-path cashflow-decomposition implementation (par_model_v2/projection/inner_path_action_dynamics.py; see Phase 24 Task 3 canonical ChangeRecord). The variant evidence is retained as a disclosed recognition-lag sensitivity at docs/validation/PHASE24_TASK3_INNER_PATH_SCALAR_RESPONSE_VARIANT_REPORT.{json,md}."
+          }
+        ]
+      },
+      {
+        "record_id": "418dafcfbbaf4258b0c56ae3745eec89",
+        "title": "Phase 24 Task 3 - inner-path management-action dynamics prototype (bonus cut on inner-path benefit cashflows)",
+        "status": "OWNER_REVIEW",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T18:34:12.816845+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "AutomatedModelDev_Phase24",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5 (outer-node vs inner-path dynamics)",
+          "IA TAS M section 3.2/3.6",
+          "IFoA proxy-modelling working party (analytic post-composition features)",
+          "Longstaff & Schwartz (2001)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T18:34:12.816870+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "PEER_REVIEW",
+            "comments": "Inner-path action basis at fixed pre-registered gates; bit-identical primitive reuse exact-equality checked at every slice; outer-vs-inner delta and carve-out approximation error disclosed."
+          },
+          {
+            "timestamp": "2026-06-07T18:34:12.816885+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data, full path-wise dynamic declaration, and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "d323ab685a4840169be0a1028e0721b9",
+        "title": "Phase 24 Task 4 - joint-action tail diagnostics + with-vs-without / joint-vs-standalone capital-delta matrix",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T19:20:54.458156+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "AutomatedModelDev_Phase24",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "McNeil-Frey-Embrechts 2015 ch.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T19:20:54.458173+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "PEER_REVIEW",
+            "comments": "Fixed pre-registered Task 4 gates (G1-G3) all PASS; 27 archive cross-checks; archived Task 2 read-outs reproduced bit-identically; diagnostics DISCLOSED (no post-hoc thresholds)."
+          },
+          {
+            "timestamp": "2026-06-07T19:20:54.458184+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "a66844b709f848d78bdee7553e1e49db",
+        "title": "Phase 24 Task 5 - offline-UI propagation of the joint-action + inner-path view",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-07T20:19:20.693759+00:00",
+        "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+        "author": "AutomatedModelDev_Phase24",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+          "Solvency II Art. 23 (future management actions - joint effect displayed)",
+          "Solvency II Art. 234 (dependence justification - frozen-copula bootstrap displayed)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T20:19:20.693846+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by 31 contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only; the saturation-gap closure, outer-node over-relief and tail-saturation findings are carried into the display verbatim."
+          },
+          {
+            "timestamp": "2026-06-07T20:19:20.693860+00:00",
+            "actor": "AutomatedModelDev_Phase24",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. PHASE 24 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
+          }
+        ]
       }
     ],
     "deployment_gates": [
@@ -4461,7 +5115,7 @@
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
         "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
-        "updated_at": "2026-06-07T14:16:28.962072+00:00"
+        "updated_at": "2026-06-07T19:20:54.458022+00:00"
       },
       {
         "risk_id": "MR-011",
@@ -4517,7 +5171,7 @@
         "description": "Policyholder options (dynamic lapse) are modelled but insurer management actions are not: reversionary-bonus participation is static, so TVOG and tail capital are biased upward relative to a realistic with-management-action basis (ASOP 56 3.1.3 asymmetry; Solvency II Art. 23).",
         "mitigation": "Phase 23 Task 3: governed dynamic reversionary-bonus participation cut entering the nested ground truth and the proxy basis, validated OOS at fixed pre-registered gates.",
         "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
-        "updated_at": "2026-06-07T14:16:28.962124+00:00"
+        "updated_at": "2026-06-07T19:20:54.458103+00:00"
       }
     ]
   },
@@ -4604,6 +5258,24 @@
       "verdict": "PASS",
       "evidence": "nested SCR 48707 -> 33118 (-32.0%); rank invariance gated (df 2.9451 unchanged); DISCLOSED: copula-on-standalone understates nested-with (t rel err 22.5%) - the action saturates in the joint tail; the nested run remains the capital reference",
       "source": "docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.json"
+    },
+    {
+      "name": "Joint-scenario action-after-aggregation t-copula (Phase 24 Task 2)",
+      "verdict": "PASS",
+      "evidence": "governed rule applied ONCE to the t(2.9451) joint liability: t-SCR 31001.8 vs nested-with 33117.8 (rel err 6.39% vs standalone-action baseline 22.54% - saturation gap closed); joint action only relieves; rank invariance re-gated",
+      "source": "docs/validation/PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.json"
+    },
+    {
+      "name": "Inner-path management-action dynamics prototype (Phase 24 Task 3)",
+      "verdict": "PASS",
+      "evidence": "bonus cut applied to INNER-PATH benefit cashflows (credit loss + analytic offsets non-cuttable): OOS R2 0.9984, VaR rel err 0.40%; outer-node over-relief disclosed - nested SCR 39290.9 -> 40852.1 (+1561.2, +4.0%); the inner-path basis is the more conservative, more faithful with-actions basis",
+      "source": "docs/validation/PHASE24_TASK3_INNER_PATH_ACTION_REPORT.json"
+    },
+    {
+      "name": "Joint-action tail diagnostics + capital-delta matrix (Phase 24 Task 4)",
+      "verdict": "PASS",
+      "evidence": "delta matrix complete (27/27 archive cross-checks, P24T2 reproduced bit-identically); 99.5% joint tail 100.0% saturated; var-covar understatement refreshed 56.4% vs nested-with / 53.5% vs t-joint (MR-010); margin-bootstrap 95% CI [26471, 33637] contains the nested-with reference (n_obs=160 noise quantified)",
+      "source": "docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.json"
     }
   ]
 }

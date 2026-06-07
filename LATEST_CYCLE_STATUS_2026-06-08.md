@@ -1,45 +1,41 @@
-# Latest Cycle Status - 2026-06-08 (+08) / 2026-06-07 UTC (cycle 20) - READ FIRST
+# Latest Cycle Status - 2026-06-08 (+08) / 2026-06-07 UTC (cycle 21) - READ FIRST
 
-**Phase 24 Task 4 COMPLETE (PASS 3/3 fixed pre-registered gates + governance).
-Next: Phase 24 Task 5 (offline-UI propagation 1.5.0 -> 1.6.0 + PHASE 24 COMPLETE docs).**
+**Phase 24 Task 5 COMPLETE -> PHASE 24 COMPLETE (Tasks 1-5).
+Next: Phase 25 Task 1 (research/design note - pick ONE candidate).**
 
-What this cycle did:
+What this cycle did (display layer only - no model calculation):
 
-- Health gate first: pytest batches (p24/p23/governance/tail-dep/t-copula/UI-prop) all green;
-  `node scripts/ui_app_self_test.cjs ui_app.html` ok:true (0 network / 0 JS errors).
-- NEW additive module `par_model_v2/projection/joint_action_tail_diagnostics.py` + staged
-  builder `scripts/build_phase24_task4_joint_action_tail_diagnostics.py`
-  (verify / diag / governance, each < 45 s). 27/27 archive cross-checks BEFORE any new
-  computation; archived Phase 24 Task 2 t/gaussian joint read-outs reproduced
-  BIT-IDENTICALLY (SCR abs diff < 1e-9; digest equality).
-- **Delta matrix (99.5% SCR, without -> with-standalone -> with-joint):** nested 48,707.4 ->
-  33,117.8 (reference); t(2.9451) 46,756.0 -> 25,652.9 -> **31,001.8** (joint-vs-standalone
-  +20.9%); gaussian 41,472.4 -> 23,921.8 -> 26,267.1; var-covar 28,990.9 -> 14,428.7.
-  **Var-covar understatement refreshed: 56.4% vs nested-with, 53.5% vs t-joint (MR-010).**
-- **Tail diagnostics (DISCLOSED, no post-hoc thresholds):** 99.5% joint tail **100.0%
-  saturated** (max relief everywhere capital is measured - the P23T4 mechanism fully
-  quantified); prefix-convergence SCR delta 0.19% (100k vs 200k); copula-seed spread 1.98%;
-  margin bootstrap (200 x 20k, copula FROZEN per SII Art. 234) SCR SE 5.8% of mean, 95% CI
-  [26,471, 33,637] with the nested-with reference INSIDE the CI (n_obs=160 noise quantified).
-- Governance: ChangeRecord `d323ab685a4840169be0a1028e0721b9` (methodology_change)
-  OWNER_REVIEW; MR-010 + MR-014 refreshed; audit 69->70; changes 42->43; verify_all True;
-  idempotent re-run verified; store backed up pre-stage.
-- Tests: 28 new PASS; regression **314 PASS / 0 FAIL**. DISCLOSED forward-compat fix: two
-  P24T3 tests pinned MR-014 notes to "Phase 24 Task 3" exactly; latest-refresh-supersedes
-  (repo convention) - now assert MITIGATED + Phase 24 refresh referencing the Task 3 basis.
-- Evidence: `docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.{json,md}` +
-  `docs/JOINT_ACTION_TAIL_DIAGNOSTICS_CARD.md`.
+- Health gate first: pytest batches green (331 tests); ui_app self-test ok:true; no foreign
+  writes; governance store backed up pre-stage.
+- `scripts/build_ui_data.py` contract **1.5.0 -> 1.6.0 ADDITIVE**: new `phase24` section
+  (joint_action / inner_path / tail_diagnostics / narrative) + 3 Phase 24 verdicts +
+  additive capital read-outs (t_copula_scr_joint_action 31,001.8;
+  nested_scr_with_inner_path 40,852.1). viewer_data.json rebuilt, then ui_data.json +
+  ui_app.html regenerated.
+- New **Joint Actions (P24)** tab: delta matrix (without -> with-standalone -> with-joint,
+  4 benchmarks), saturation-gap closure 22.54% -> 6.39%, action-saturation profile (100.0%
+  saturated at 99.5%), frozen-copula bootstrap CI [26,471, 33,637] (nested-with INSIDE),
+  outer-vs-inner-path table (+1,561 SCR, +4.0%), 12 gate crits, var-covar 56.4% (MR-010).
+- `ui_app_self_test.cjs` +15 Phase 24 checks: ok:true, 0 network / 0 JS errors (87 checks).
+- New `scripts/build_phase24_task5_ui_propagation.py` (31 contract checks ALL PASS) +
+  evidence `docs/validation/PHASE24_TASK5_UI_PROPAGATION_REPORT.{json,md}`; idempotent
+  re-run verified.
+- Governance: ChangeRecord `a66844b709f848d78bdee7553e1e49db` (code_change) OWNER_REVIEW;
+  audit 70->71; changes 43->44; verify_all True.
+- Tests: 24 new PASS (`tests/test_phase24_task5_ui_propagation.py`); regression
+  **376 PASS / 0 FAIL**; compileall clean. DISCLOSED forward-compat fix: two P23T5 contract
+  pins ("1.5.0" equality) relaxed to a version floor - additive bumps are the repo
+  convention.
 
-**Next executable action: Phase 24 Task 5** - offline-UI propagation (ui_data.json contract
-1.5.0 -> 1.6.0 ADDITIVE): joint-action panel (saturation-gap closure 22.54% -> 6.39%, Task 4
-delta matrix + saturation profile + bootstrap CI), inner-path outer-vs-inner delta; UI keeps
-consuming ONLY model output JSON; then PHASE 24 COMPLETE documentation.
+**Next executable action: Phase 25 Task 1 - research/design note** (ONE candidate,
+design-note-first): full path-wise bonus declaration dynamics; t-copula aggregation on the
+inner-path with-actions basis; or credentialled-data calibration of action/copula
+parameters. Then Tasks 2-4 implement/validate; Task 5 UI-propagation (1.6.0 -> 1.7.0).
 
 **Operating warnings (unchanged):** ~44 s bash wall; PYTHONPATH=/var/tmp/pylibs:. ;
-long-file writes truncate on the mount (build OFF-MOUNT then cp + cmp; a Windows-side Edit
-truncated a test file this cycle - caught and repaired from bash); back up the governance
-store before any governance stage; scheduled runs can overlap - re-check mtimes before
-governance/commit.
+long-file writes truncate on the mount (build OFF-MOUNT then cp + cmp - zero incidents this
+cycle); back up the governance store before any governance stage; re-check mtimes for
+parallel-run foreign writes before governance/commit.
 
 **Persisting blockers (human action):**
 - Git ghost locks (`.git/index.lock`, `.git/HEAD.lock`, `.git/refs/heads/main.lock`) -

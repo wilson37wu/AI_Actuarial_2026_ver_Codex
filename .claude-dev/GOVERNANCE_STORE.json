@@ -1586,6 +1586,30 @@
       "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
       "digest": "75a999865b79ba0dd278b41e4fdd89fe20ae69f7bbfe58a8b079617670377741",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "ceb65dcff3e4466e888a3918247ae147",
+      "timestamp": "2026-06-07T20:19:20.693889+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase24",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 24 Task 5 offline-UI propagation; PHASE 24 COMPLETE",
+      "details": {
+        "record_id": "a66844b709f848d78bdee7553e1e49db",
+        "ui_contract": "1.6.0",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html",
+          "viewer_data.json"
+        ]
+      },
+      "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
+      "digest": "49cf76fd134780b6c9f2421fca197ac21cdf9f2cdd80d1d6a8bd40970f5b06b0",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -4276,6 +4300,71 @@
           "actor": "AutomatedModelDev_Phase24",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"
+    },
+    {
+      "record_id": "a66844b709f848d78bdee7553e1e49db",
+      "created_at": "2026-06-07T20:19:20.693759+00:00",
+      "title": "Phase 24 Task 5 - offline-UI propagation of the joint-action + inner-path view",
+      "description": "Phase 24 Task 5 propagated the with-actions aggregation-consistency results to the zero-install offline UI. scripts/build_ui_data.py (contract bumped ADDITIVELY to v1.6.0) now surfaces a first-class Joint Actions (P24) panel: (1) the Task 2 joint-scenario (action-after-aggregation) t-copula re-aggregation - joint t-SCR 31,001.8 vs nested-with 33,117.8, rel err 6.39% vs the 22.54% standalone-action baseline (saturation gap closed), rank invariance re-gated, 4/4 gates; (2) the Task 3 inner-path action dynamics - bonus cut on inner-path benefit cashflows (credit loss + analytic offsets non-cuttable), OOS R2 0.9984, VaR rel err 0.40%, and the DISCLOSED outer-node over-relief (nested SCR 39,290.9 -> 40,852.1, +4.0%; the inner-path basis is the more conservative, more faithful with-actions basis), 5/5 gates; and (3) the Task 4 joint-action tail diagnostics - the without -> with-standalone -> with-joint capital-delta matrix across all four benchmarks, the action-saturation profile (99.5% tail 100.0% saturated), the frozen-copula margin bootstrap (95% CI [26,471, 33,637] containing the nested-with reference), and the MR-010 var-covar refresh (56.4%/53.5%), 3/3 gates. viewer_data.json was rebuilt so governance reflects the live store. The UI performs no calculation; it consumes only already-produced model output JSONs.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html",
+        "viewer_data.json"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "Solvency II Art. 23 (future management actions - joint effect displayed)",
+        "Solvency II Art. 234 (dependence justification - frozen-copula bootstrap displayed)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.5.0 (management-action panel on the standalone-action basis only; no joint-action, inner-path or tail-diagnostics view)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.6.0 (additive)",
+        "headline_readouts": {
+          "nested_scr_with": 33117.77036621129,
+          "t_scr_joint": 31001.77628158343,
+          "t_rel_error_joint": 0.06389301155329964,
+          "t_rel_error_standalone_baseline": 0.225403,
+          "inner_path_scr_delta": 1561.1556181318592,
+          "tail_saturation_at_995": 1.0,
+          "bootstrap_ci": [
+            26470.69591935813,
+            33636.79488208972
+          ],
+          "df_matched": 2.9451
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 84
+      },
+      "impact_assessment": "Display-layer only: the UI bundler reads validation-report JSONs and performs no model calculation, so no model output changes. Additive contract bump keeps existing consumers working (two Phase 23 test pins relaxed to a version floor - DISCLOSED forward-compat fix per repo convention). Completes the Phase 24 per-task offline-UI propagation requirement; PHASE 24 COMPLETE (Tasks 1-5).",
+      "quantitative_impact": "UI now displays: joint-action t-SCR 31002 vs nested-with 33118 (rel err 6.39% vs standalone baseline 22.54%); inner-path SCR delta +1561 (+4.0%); 99.5% tail saturation 100%; bootstrap 95% CI [26471, 33637]; jsdom self-test ok with 0 network calls and 0 JS errors over 84 checks.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase24",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T20:19:20.693846+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "PEER_REVIEW",
+          "comments": "UI propagation verified by 31 contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only; the saturation-gap closure, outer-node over-relief and tail-saturation findings are carried into the display verbatim."
+        },
+        {
+          "timestamp": "2026-06-07T20:19:20.693860+00:00",
+          "actor": "AutomatedModelDev_Phase24",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. PHASE 24 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
         }
       ],
       "phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"

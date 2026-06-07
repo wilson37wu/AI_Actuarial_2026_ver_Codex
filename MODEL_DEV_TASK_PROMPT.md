@@ -1616,3 +1616,54 @@ before governance/commit.
 **Standing blockers (human action):** delete the three git ghost locks (GITHUB_PUSH_BLOCKER.md);
 serialise the scheduled runs; production sign-off residual (credentialled data + APS X2);
 disk /sessions ~89%.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-08 +08 / 2026-06-07 UTC (cycle 21, supersedes everything above)
+
+**Phase 24 Task 5 COMPLETE → PHASE 24 COMPLETE (Tasks 1–5).** Offline-UI propagation,
+display layer ONLY: `scripts/build_ui_data.py` contract **1.5.0 → 1.6.0 ADDITIVE** — new
+top-level `phase24` section (joint_action / inner_path / tail_diagnostics / narrative)
+normalised from the Task 2/3/4 reports; 3 Phase 24 PASS verdicts; additive capital
+read-outs (`t_copula_scr_joint_action` 31,001.8; `nested_scr_with_inner_path` 40,852.1).
+New **Joint Actions (P24)** tab in `ui_app.html`: capital-delta matrix (without →
+with-standalone → with-joint, all four benchmarks), saturation-gap closure 22.54% → 6.39%,
+action-saturation profile (99.5% tail 100.0% saturated), frozen-copula margin-bootstrap CI
+[26,471, 33,637] with nested-with INSIDE, outer-vs-inner-path delta (+1,561 SCR, +4.0%),
+12 gate criteria, MR-010 var-covar refresh 56.4%/53.5%, sources + ChangeRecord ids.
+`viewer_data.json` rebuilt; `ui_app_self_test.cjs` +15 Phase 24 checks (ok:true, 0 net /
+0 JS err, 87 checks). New `scripts/build_phase24_task5_ui_propagation.py` — 31 contract
+checks ALL PASS; evidence `docs/validation/PHASE24_TASK5_UI_PROPAGATION_REPORT.{json,md}`;
+idempotent re-run verified. Governance: ChangeRecord `a66844b709f848d78bdee7553e1e49db`
+(code_change) OWNER_REVIEW; audit 70→71; changes 43→44; verify_all True. Tests: 24 new
+PASS; post-change regression **376 PASS / 0 FAIL**; compileall clean. DISCLOSED
+forward-compat fix (repo convention, latest-refresh-supersedes): two P23T5 pins on
+contract "1.5.0" equality relaxed to a version floor.
+
+**NEXT executable task: Phase 25 Task 1 — research/design note (pick ONE, design-note-first
+discipline, one task per cycle):**
+1. **Full path-wise bonus declaration dynamics** — action re-evaluated at every inner time
+   step on a path (the residual documented in P24T3), vs the current single outer-node
+   relief on inner-path cashflows; expect recognition-lag effects (the superseded P24T3
+   scalar-response variant is retained as sensitivity evidence).
+2. **t-copula aggregation on the inner-path with-actions basis** — joins the T3 inner-path
+   basis with the T2 joint-scenario mechanism so the copula diagnostics inherit the more
+   conservative basis (joint-action SCR may shift; gates must be pre-registered).
+3. **Credentialled-data calibration of action/copula parameters** — replaces educational
+   placeholders (cr_trigger/floor, bonus share, df) with a documented calibration to a
+   credentialled series; reduces the production sign-off residual.
+Deliverable: design note (docs/validation/PHASE25_TASK1_DESIGN_NOTE.{json,md} + card +
+tests + governance ChangeRecord OWNER_REVIEW). Then Tasks 2–4 implement/validate; Task 5 =
+offline-UI propagation (contract 1.6.0 → 1.7.0 ADDITIVE) + PHASE 25 COMPLETE docs.
+
+**Sandbox operating rules (RE-CONFIRMED cycle 21):** unchanged — ~44 s bash wall;
+PYTHONPATH=/var/tmp/pylibs:. ; build long files OFF-MOUNT then cp + cmp (zero truncation
+incidents this cycle; the protocol works); back up GOVERNANCE_STORE.json before every
+governance stage (backup at /var/tmp/p24t5_build/GOV_BACKUP_pre_p24t5.json this cycle);
+alt-`GIT_INDEX_FILE` commits onto `p22c9`, push `p22c9:main`; next free risk ID MR-015;
+re-check mtimes for parallel-run foreign writes before governance/commit.
+
+**Standing blockers (human action):** delete the three git ghost locks
+(GITHUB_PUSH_BLOCKER.md) and push `p22c9:main`; serialise the scheduled runs; production
+sign-off residual (credentialled data + APS X2) — by design for this educational model;
+disk /sessions ~89%.

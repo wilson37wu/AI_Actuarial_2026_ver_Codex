@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.5.0"
+CONTRACT_VERSION = "1.6.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -974,7 +974,75 @@ def _build_verdicts(base: Any) -> List[Dict[str, Any]]:
             "source": ("docs/validation/"
                        "PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.json"),
         })
+    j2 = _load(os.path.join(
+        VAL, "PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.json"))
+    if isinstance(j2, dict) and isinstance(j2.get("joint_action"), dict):
+        ja2 = j2["joint_action"]
+        verdicts.append({
+            "name": ("Joint-scenario action-after-aggregation t-copula "
+                     "(Phase 24 Task 2)"),
+            "verdict": str(j2.get("verdict", "")),
+            "evidence": ("governed rule applied ONCE to the t(%.4f) joint "
+                         "liability: t-SCR %.1f vs nested-with %.1f (rel err "
+                         "%.2f%% vs standalone-action baseline 22.54%% - "
+                         "saturation gap closed); joint action only relieves; "
+                         "rank invariance re-gated")
+            % (_num(j2.get("df_matched")) or 0.0,
+               _num(ja2.get("t_scr")) or 0.0,
+               _num(j2.get("nested_scr_with")) or 0.0,
+               100.0 * (_num(ja2.get("t_rel")) or 0.0)),
+            "source": ("docs/validation/"
+                       "PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.json"),
+        })
+    j3 = _load(os.path.join(VAL, "PHASE24_TASK3_INNER_PATH_ACTION_REPORT.json"))
+    if isinstance(j3, dict) and isinstance(j3.get("result"), dict):
+        r3 = j3["result"]
+        d3 = r3.get("outer_vs_inner_path_delta", {}) or {}
+        verdicts.append({
+            "name": ("Inner-path management-action dynamics prototype "
+                     "(Phase 24 Task 3)"),
+            "verdict": str(r3.get("verdict", "")),
+            "evidence": ("bonus cut applied to INNER-PATH benefit cashflows "
+                         "(credit loss + analytic offsets non-cuttable): OOS "
+                         "R2 %.4f, VaR rel err %.2f%%; outer-node over-relief "
+                         "disclosed - nested SCR %.1f -> %.1f (+%.1f, +4.0%%); "
+                         "the inner-path basis is the more conservative, more "
+                         "faithful with-actions basis")
+            % (_num(r3.get("oos_r2_with_actions_inner_path")) or 0.0,
+               100.0 * (_num(r3.get("var_rel_error_with_actions")) or 0.0),
+               _num(d3.get("nested_scr_outer_node")) or 0.0,
+               _num(d3.get("nested_scr_inner_path")) or 0.0,
+               _num(d3.get("nested_scr_delta")) or 0.0),
+            "source": ("docs/validation/"
+                       "PHASE24_TASK3_INNER_PATH_ACTION_REPORT.json"),
+        })
+    j4 = _load(os.path.join(
+        VAL, "PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.json"))
+    if isinstance(j4, dict) and isinstance(j4.get("delta_matrix"), dict):
+        f4 = j4.get("diagnostic_findings", {}) or {}
+        vc4 = j4.get("var_covar_refresh", {}) or {}
+        bt4 = ((j4.get("tail_diagnostics", {}) or {})
+               .get("bootstrap", {}) or {}).get("scr_with", {}) or {}
+        verdicts.append({
+            "name": ("Joint-action tail diagnostics + capital-delta matrix "
+                     "(Phase 24 Task 4)"),
+            "verdict": str(j4.get("verdict", "")),
+            "evidence": ("delta matrix complete (27/27 archive cross-checks, "
+                         "P24T2 reproduced bit-identically); 99.5%% joint tail "
+                         "%.1f%% saturated; var-covar understatement refreshed "
+                         "%.1f%% vs nested-with / %.1f%% vs t-joint (MR-010); "
+                         "margin-bootstrap 95%% CI [%.0f, %.0f] contains the "
+                         "nested-with reference (n_obs=160 noise quantified)")
+            % (100.0 * (_num(f4.get("tail_saturation_share_at_995")) or 0.0),
+               100.0 * (_num(vc4.get("understatement_vs_nested_with")) or 0.0),
+               100.0 * (_num(vc4.get("understatement_vs_t_joint")) or 0.0),
+               _num(bt4.get("ci_lo_95")) or 0.0,
+               _num(bt4.get("ci_hi_95")) or 0.0),
+            "source": ("docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_"
+                       "DIAGNOSTICS_REPORT.json"),
+        })
     return verdicts
+
 
 
 
@@ -1060,6 +1128,118 @@ def _build_management_actions() -> Dict[str, Any]:
     return out
 
 
+def _build_phase24() -> Dict[str, Any]:
+    """Phase 24 (contract 1.6.0, additive): joint-scenario action-after-
+    aggregation, inner-path action dynamics, and joint-action tail
+    diagnostics. Pure display-layer normalisation of the already-produced
+    Phase 24 Task 2/3/4 validation reports - no model calculation."""
+    out: Dict[str, Any] = {}
+    t2 = _load(os.path.join(
+        VAL, "PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.json"))
+    if isinstance(t2, dict) and isinstance(t2.get("joint_action"), dict):
+        ja = t2["joint_action"]
+        base = t2.get("standalone_action_baseline_p23t4", {}) or {}
+        out["joint_action"] = {
+            "t_scr_joint": ja.get("t_scr"),
+            "t_var_joint": ja.get("t_var"),
+            "t_es_joint": ja.get("t_es"),
+            "t_rel_error_joint": ja.get("t_rel"),
+            "gaussian_scr_joint": ja.get("g_scr"),
+            "gaussian_rel_error_joint": ja.get("g_rel"),
+            "t_scr_standalone_baseline": base.get("t_matched_scr"),
+            "t_rel_error_standalone_baseline":
+                base.get("t_matched_rel_error_vs_nested"),
+            "nested_scr_with": t2.get("nested_scr_with"),
+            "df_matched": t2.get("df_matched"),
+            "df_rematched": t2.get("df_rematched"),
+            "active_share": ja.get("active_share"),
+            "floor_share": ja.get("floor_share"),
+            "joint_action_only_relieves": ja.get("joint_action_only_relieves"),
+            "gates": t2.get("gates", {}),
+            "verdict": t2.get("verdict"),
+            "anchoring_convention": t2.get("anchoring_convention"),
+            "saturation_gap_closure": (
+                "Saturation-gap closure (disclosed): applying the SAME governed "
+                "bonus-cut rule ONCE to the t-copula JOINT liability "
+                "(action-after-aggregation) instead of to each standalone "
+                "driver loss closes the copula-on-standalone understatement vs "
+                "the nested with-actions benchmark from 22.54% to 6.39%; the "
+                "joint action only ever relieves (W <= V pathwise) and rank "
+                "invariance is re-gated (df re-matched, unchanged to 5 dp). "
+                "The nested run remains the capital reference."),
+            "source": ("docs/validation/"
+                       "PHASE24_TASK2_JOINT_ACTION_REAGGREGATION_REPORT.json"),
+            "change_record_id": t2.get("change_record_id"),
+        }
+    t3 = _load(os.path.join(VAL, "PHASE24_TASK3_INNER_PATH_ACTION_REPORT.json"))
+    if isinstance(t3, dict) and isinstance(t3.get("result"), dict):
+        res = t3["result"]
+        cc = t3.get("credit_carveout_diagnostics", {}) or {}
+        out["inner_path"] = {
+            "oos_r2_with_actions": res.get("oos_r2_with_actions_inner_path"),
+            "oos_r2_without_actions": res.get("oos_r2_without_actions"),
+            "var_rel_error_with_actions": res.get("var_rel_error_with_actions"),
+            "es_rel_error_with_actions": res.get("es_rel_error_with_actions"),
+            "active_share_nested": res.get("active_share_nested"),
+            "floor_share_nested": res.get("floor_share_nested"),
+            "nested_capital_without": res.get("nested_capital_without", {}),
+            "nested_capital_with_inner_path":
+                res.get("nested_capital_with_inner_path", {}),
+            "nested_capital_with_outer_node":
+                res.get("nested_capital_with_outer_node", {}),
+            "outer_vs_inner_path_delta":
+                res.get("outer_vs_inner_path_delta", {}),
+            "kappa_fit_calibrated": cc.get("kappa_fit_calibrated"),
+            "credit_share_of_liability":
+                cc.get("credit_share_of_liability_nested"),
+            "benefit_share_of_liability":
+                cc.get("benefit_share_of_liability_nested"),
+            "gates": res.get("gates", {}),
+            "verdict": res.get("verdict"),
+            "method": t3.get("method"),
+            "source": ("docs/validation/"
+                       "PHASE24_TASK3_INNER_PATH_ACTION_REPORT.json"),
+            "change_record_id": t3.get("change_record_id"),
+        }
+    t4 = _load(os.path.join(
+        VAL, "PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.json"))
+    if isinstance(t4, dict) and isinstance(t4.get("delta_matrix"), dict):
+        td = t4.get("tail_diagnostics", {}) or {}
+        out["tail_diagnostics"] = {
+            "delta_matrix": t4.get("delta_matrix", {}),
+            "var_covar_refresh": t4.get("var_covar_refresh", {}),
+            "confidence_sweep": td.get("confidence_sweep", []),
+            "prefix_convergence": td.get("prefix_convergence", []),
+            "seed_stability": td.get("seed_stability", {}),
+            "bootstrap": td.get("bootstrap", {}),
+            "diagnostic_findings": t4.get("diagnostic_findings", {}),
+            "crosscheck_count": t4.get("crosscheck_count"),
+            "reproduction_of_p24t2": t4.get("reproduction_of_p24t2", {}),
+            "n_obs": t4.get("n_obs"),
+            "n_sim": t4.get("n_sim"),
+            "gates": t4.get("gates", {}),
+            "verdict": t4.get("verdict"),
+            "inner_path_disclosure_note":
+                (t4.get("inner_path_disclosure", {}) or {}).get("note"),
+            "source": ("docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_"
+                       "DIAGNOSTICS_REPORT.json"),
+            "change_record_id": t4.get("change_record_id"),
+        }
+    if out:
+        out["narrative"] = (
+            "Phase 24 quantified HOW management actions and dependence "
+            "interact: the joint-scenario (action-after-aggregation) basis "
+            "closes the disclosed Phase 23 saturation gap 22.54% -> 6.39%; "
+            "the inner-path cashflow basis corrects an outer-node over-relief "
+            "(+4.0% nested SCR, the more conservative and more faithful "
+            "with-actions basis); and the tail diagnostics show the 99.5% "
+            "joint tail is 100% saturated (max relief everywhere capital is "
+            "measured), with margin-bootstrap CI quantifying the n_obs=160 "
+            "small-sample noise. Nested with-actions remains the capital "
+            "reference; all copula read-outs are diagnostics on that basis.")
+    return out
+
+
 # --------------------------------------------------------------------------- #
 def build_ui_data() -> Dict[str, Any]:
     base = _load(VIEWER_DATA) or {}
@@ -1088,6 +1268,17 @@ def build_ui_data() -> Dict[str, Any]:
         capital["t_copula_rel_error"] = _ma_agg.get("t_rel_error_without")
         capital["nested_scr_with_actions"] = _ma_agg.get("nested_scr_with")
 
+    phase24 = _build_phase24()
+    _p24_ja = phase24.get("joint_action") or {}
+    if _p24_ja:
+        # Additive capital read-out: joint-action (action-after-aggregation)
+        # t-copula SCR (Phase 24 Task 2).
+        capital["t_copula_scr_joint_action"] = _p24_ja.get("t_scr_joint")
+    _p24_ipc = ((phase24.get("inner_path") or {})
+                .get("nested_capital_with_inner_path") or {})
+    if _p24_ipc:
+        capital["nested_scr_with_inner_path"] = _p24_ipc.get("scr_proxy")
+
     summary = dict(base.get("summary", {}))
     summary["contract_artifacts"] = len(inventory)
     summary["calibrated_drivers"] = len(calibrations)
@@ -1103,6 +1294,7 @@ def build_ui_data() -> Dict[str, Any]:
         "loss": base.get("loss", {}),
         "calibrations": calibrations,
         "management_actions": management_actions,
+        "phase24": phase24,
         "governance": base.get("governance", {}),
         "verdicts": _build_verdicts(base.get("verdicts", [])),
     }
@@ -1255,6 +1447,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="calibrations" class="panel" data-title="Calibrations"></div>
   <div id="capital" class="panel" data-title="Capital &amp; Tail"></div>
   <div id="actions" class="panel" data-title="Management Actions"></div>
+  <div id="phase24" class="panel" data-title="Joint Actions (P24)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
 </div>
 
@@ -1288,6 +1481,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["calibrations","Calibrations"],
     ["capital","Capital & Tail"],
     ["actions","Management Actions"],
+    ["phase24","Joint Actions (P24)"],
     ["governance","Governance"]
   ];
 
@@ -1844,6 +2038,119 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  function renderPhase24(){
+    var el=document.getElementById("phase24"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var p=DATA.phase24||{};
+    var ja=p.joint_action||{}, ip=p.inner_path||{}, td=p.tail_diagnostics||{};
+    if(!Object.keys(ja).length&&!Object.keys(td).length){
+      el.innerHTML='<p class="muted">No Phase 24 joint-action data in this snapshot (requires contract v1.6.0+).</p>';
+      return;
+    }
+    var fnd=td.diagnostic_findings||{}, bt=(td.bootstrap||{}).scr_with||{};
+    var ipd=ip.outer_vs_inner_path_delta||{};
+    var html='<div class="cards">';
+    [
+      ["Nested SCR with actions (reference)",num(ja.nested_scr_with)],
+      ["Joint-action t-SCR",num(ja.t_scr_joint)],
+      ["t rel err - joint action",ja.t_rel_error_joint!=null?(100*ja.t_rel_error_joint).toFixed(2)+"%":"--"],
+      ["t rel err - standalone action",ja.t_rel_error_standalone_baseline!=null?(100*ja.t_rel_error_standalone_baseline).toFixed(2)+"%":"--"],
+      ["Inner-path SCR delta (vs outer-node)",ipd.nested_scr_delta!=null?"+"+num(ipd.nested_scr_delta)+" (+4.0%)":"--"],
+      ["99.5% tail saturation share",fnd.tail_saturation_share_at_995!=null?(100*fnd.tail_saturation_share_at_995).toFixed(1)+"%":"--"],
+      ["Bootstrap SCR SE (% of mean)",fnd.bootstrap_scr_se_pct_of_mean!=null?(100*fnd.bootstrap_scr_se_pct_of_mean).toFixed(1)+"%":"--"],
+      ["Matched t df (rank-invariant)",ja.df_matched!=null?String(ja.df_matched):"--"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+esc(c[0])+
+      '</div><div class="v">'+esc(c[1])+'</div></div>'; });
+    html+='</div>';
+    html+='<p class="note">'+esc(ja.saturation_gap_closure||"")+'</p>';
+    var dm=td.delta_matrix||{};
+    function dmc(m,k){ var r=(dm[m]||{})[k]||{}; return r.scr; }
+    var rows=[["Nested (reference)","nested"],["t-copula (df matched)","t_copula"],
+              ["Gaussian copula","gaussian"],["Var-covar","var_covar"]];
+    if(Object.keys(dm).length){
+      html+='<div class="subh">Capital-delta matrix (99.5% / 1y SCR) &mdash; without &rarr; with-standalone &rarr; with-joint (Task 4)</div>'+
+        '<table class="ptable dmtable"><thead><tr><th>Benchmark</th><th>Without actions</th>'+
+        '<th>With (standalone action)</th><th>With (joint action)</th><th>Joint &minus; standalone</th></tr></thead><tbody>';
+      rows.forEach(function(r){
+        var w=dmc(r[1],"without"), s=dmc(r[1],"standalone_action"), j=dmc(r[1],"joint_action");
+        var d=(dm[r[1]]||{}).joint_minus_standalone_scr;
+        html+='<tr><td>'+esc(r[0])+'</td><td>'+num(w)+'</td><td>'+num(s)+'</td><td>'+num(j)+'</td>'+
+          '<td>'+(d!=null?num(d):"--")+'</td></tr>';
+      });
+      html+='</tbody></table>';
+      var D=[];
+      [["Nested w/o",dmc("nested","without"),"#39d98a"],
+       ["Nested WITH",dmc("nested","joint_action"),"#1f8a5c"],
+       ["t standalone",dmc("t_copula","standalone_action"),"#2b5d99"],
+       ["t JOINT",dmc("t_copula","joint_action"),"#4f9cff"],
+       ["Gauss standalone",dmc("gaussian","standalone_action"),"#5d49a6"],
+       ["Gauss JOINT",dmc("gaussian","joint_action"),"#9a7bff"],
+       ["Var-covar WITH",dmc("var_covar","standalone_action"),"#ffb454"]
+      ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+        tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      if(D.length){
+        html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; joint-action vs standalone-action basis</h4>'+
+          '<p class="cap">The joint-action basis (rule applied ONCE to the aggregated liability) sits '+
+          num(ja.t_scr_joint)+' vs nested-with '+num(ja.nested_scr_with)+' &mdash; rel err '+
+          (ja.t_rel_error_joint!=null?(100*ja.t_rel_error_joint).toFixed(2)+"%":"--")+
+          ' against 22.54% on the standalone-action basis. Var-covar understates nested-with by 56.4% (MR-010 refresh).</p>'+
+          barChart(D,{w:760,h:300,mB:64})+'</div>';
+      }
+    }
+    var sw=td.confidence_sweep||[];
+    if(sw.length){
+      html+='<div class="subh">Action-saturation profile across the tail (Task 4, disclosed)</div>'+
+        '<table class="swtable"><thead><tr><th>Confidence</th><th>SCR without</th><th>SCR with (joint)</th>'+
+        '<th>Tail saturation share</th><th>Mean residual cut factor</th><th>Relief at VaR</th></tr></thead><tbody>';
+      sw.forEach(function(s){
+        html+='<tr><td>'+(100*s.confidence).toFixed(1)+'%</td><td>'+num(s.scr_without)+'</td>'+
+          '<td>'+num(s.scr_with)+'</td><td>'+(100*s.tail_saturation_share).toFixed(1)+'%</td>'+
+          '<td>'+(s.tail_mean_cut_factor!=null?Number(s.tail_mean_cut_factor).toFixed(4):"--")+'</td>'+
+          '<td>'+num(s.relief_at_var)+'</td></tr>';
+      });
+      html+='</tbody></table>'+
+        '<p class="note">At 99.5% the joint tail is 100.0% saturated &mdash; the action delivers max relief (12%) '+
+        'everywhere capital is measured, which is exactly the Phase 23 Task 4 saturation mechanism, now fully quantified.</p>';
+    }
+    if(bt.mean!=null){
+      html+='<div class="subh">Margin bootstrap (copula FROZEN per SII Art. 234; 200 &times; 20k; n_obs=160)</div>'+
+        '<div class="cards">'+
+        '<div class="card"><div class="k">Bootstrap SCR mean</div><div class="v">'+num(bt.mean)+'</div></div>'+
+        '<div class="card"><div class="k">SCR SE</div><div class="v">'+num(bt.se)+'</div></div>'+
+        '<div class="card"><div class="k">95% CI</div><div class="v">['+num(bt.ci_lo_95)+', '+num(bt.ci_hi_95)+']</div></div>'+
+        '<div class="card"><div class="k">Nested-with inside CI</div><div class="v">'+(fnd.nested_with_inside_bootstrap_ci?"✓ yes":"✗ no")+'</div></div>'+
+        '</div>'+
+        '<p class="note">Prefix-convergence SCR delta '+(fnd.scr_prefix_final_rel_delta!=null?(100*fnd.scr_prefix_final_rel_delta).toFixed(2)+"%":"--")+
+        ' (100k vs 200k); copula-seed max spread '+(fnd.scr_seed_max_rel_spread!=null?(100*fnd.scr_seed_max_rel_spread).toFixed(2)+"%":"--")+
+        ' across 5 seeds. The n_obs=160 small-sample noise is the dominant uncertainty (disclosed Task 1 limitation).</p>';
+    }
+    if(Object.keys(ipd).length){
+      html+='<div class="subh">Inner-path action dynamics (Task 3) &mdash; outer-node vs inner-path basis</div>'+
+        '<table class="ptable iptable"><thead><tr><th>Read-out (nested, 500 outer nodes)</th>'+
+        '<th>Outer-node transform</th><th>Inner-path basis</th><th>Delta</th></tr></thead><tbody>'+
+        '<tr><td>VaR 99.5</td><td>'+num(ipd.nested_var_99_5_outer_node)+'</td><td>'+num(ipd.nested_var_99_5_inner_path)+'</td>'+
+        '<td>+'+num(ipd.nested_var_99_5_delta)+'</td></tr>'+
+        '<tr><td>SCR</td><td>'+num(ipd.nested_scr_outer_node)+'</td><td>'+num(ipd.nested_scr_inner_path)+'</td>'+
+        '<td>+'+num(ipd.nested_scr_delta)+' (+4.0%)</td></tr>'+
+        '</tbody></table>'+
+        '<p class="note">The bonus cut applies to the INNER-PATH policyholder-benefit cashflows only (guaranteed + '+
+        'equity-guarantee PV); the asset-side credit loss and analytic FX/liquidity offsets are non-cuttable. The '+
+        'outer-node transform over-relieves those components, so the inner-path basis is the more conservative, more '+
+        'faithful with-actions basis. OOS R2 with actions '+(ip.oos_r2_with_actions!=null?Number(ip.oos_r2_with_actions).toFixed(4):"--")+
+        '; VaR rel err '+(ip.var_rel_error_with_actions!=null?(100*ip.var_rel_error_with_actions).toFixed(2)+"%":"--")+
+        '; carve-out kappa '+(ip.kappa_fit_calibrated!=null?Number(ip.kappa_fit_calibrated).toFixed(4):"--")+
+        ' (fit-calibrated, leakage-free).</p>';
+    }
+    html+=maGateGrid(ja.gates,"Task 2 pre-registered gates (joint-scenario re-aggregation)");
+    html+=maGateGrid(ip.gates,"Task 3 pre-registered gates (inner-path action dynamics)");
+    html+=maGateGrid(td.gates,"Task 4 pre-registered gates (tail diagnostics + delta matrix)");
+    html+='<p class="note">'+esc(p.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(ja.source||"")+' &middot; '+esc(ip.source||"")+' &middot; '+esc(td.source||"")+
+      ' &middot; ChangeRecords '+esc(ja.change_record_id||"")+' / '+esc(ip.change_record_id||"")+' / '+esc(td.change_record_id||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
   // ---- Governance & assumptions view (UI Task 4) ----
   var GLIK=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
   var GIMP=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
@@ -2195,7 +2502,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

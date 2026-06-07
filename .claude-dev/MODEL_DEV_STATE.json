@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-07T19:30:00Z",
-  "last_run_duration_minutes": 55,
-  "last_run_note": "2026-06-08 cycle 19 (Linux sandbox): Phase 24 Task 3 COMPLETE (PASS 5/5 gates). Inner-path action dynamics: bonus cut on inner-path benefit cashflows (credit/FX/liq carved out of the cuttable base); nested truth rebuilt from bit-identical P22T2 re-runs (exact equality, 2,560 nodes); proxy matching analytic base (kappa 1.0368 fit-calibrated). OOS R2 0.99837 / VaR rel err 0.40% at unchanged Phase 22 gates. DISCLOSED: outer-node transform over-relieved non-cuttable components - nested with-actions SCR 39,290.9 -> 40,852.1 (+4.0%) on the inner-path basis. INCIDENT recovered: parallel run produced a scalar-response variant and corrupted GOVERNANCE_STORE.json + MODEL_DEV_STATE.json (truncated writes); both restored from p22c9; variant ChangeRecord re-applied (6b16ab1d) then SUPERSEDED with documented reason; variant evidence retained. Canonical ChangeRecord 418dafcf OWNER_REVIEW; audit 67->69; changes 40->42; verify_all True; 28+12 tests; regression 367 PASS / 0 FAIL; ui self-test ok:true. Next: Phase 24 Task 4 aggregation + tail diagnostics on the joint-action basis.",
+  "last_run": "2026-06-07T20:40:00Z",
+  "last_run_duration_minutes": 35,
+  "last_run_note": "2026-06-08 cycle 21 (Linux sandbox): Phase 24 Task 5 COMPLETE -> PHASE 24 COMPLETE (Tasks 1-5). Offline-UI propagation: ui_data.json contract 1.5.0 -> 1.6.0 ADDITIVE (new phase24 section + 3 verdicts + additive capital read-outs); new Joint Actions (P24) tab (delta matrix, saturation profile 100% at 99.5%, bootstrap CI [26,471, 33,637], outer-vs-inner +4.0%); self-test +15 checks ok:true 0/0; 31 contract checks ALL PASS; ChangeRecord a66844b709f848d78bdee7553e1e49db OWNER_REVIEW; audit 70->71, changes 43->44, verify_all True; 24 new tests, regression 376 PASS / 0 FAIL. Next: Phase 25 Task 1 research/design note.",
   "current_phase": "Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics",
-  "overall_status": "PHASE24_TASK3_COMPLETE_TASK4_NEXT",
+  "overall_status": "PHASE24_COMPLETE_PHASE25_TASK1_NEXT",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -457,9 +457,9 @@
     "commits_this_session": 72
   },
   "progress_metrics": {
-    "total_tasks": 116,
-    "tasks_completed": 115,
-    "phases_completed": 20,
+    "total_tasks": 117,
+    "tasks_completed": 117,
+    "phases_completed": 24,
     "estimated_completion_pct": 99,
     "average_cycle_duration_minutes": 53,
     "cycles_run": 156,
@@ -715,5 +715,13 @@
     "report": "docs/validation/PHASE22_TASK2_7D_PROXY_VALIDATION_REPORT.{json,md}",
     "tests": "tests/test_phase22_task2_seven_driver_proxy.py: 6 passed, 1 skipped",
     "governance": "ChangeRecord 5d68c9b6a7694031b325bbb03dca630f (OWNER_REVIEW); MR-011/MR-012 refreshed; verify_all True"
+  },
+  "cycle_2026_06_08_phase24_task5": {
+    "ran_at": "2026-06-07T20:40:00Z",
+    "environment": "Linux sandbox (python 3.10.12, /var/tmp/pylibs, node+jsdom)",
+    "summary": "Phase 24 Task 5 complete: offline UI surfaces the joint-action (saturation gap 22.54%->6.39%), inner-path (+4.0% SCR over-relief correction) and tail-diagnostic (100% saturation at 99.5%; frozen-copula bootstrap CI) results; contract 1.6.0 additive; PHASE 24 COMPLETE.",
+    "evidence": "docs/validation/PHASE24_TASK5_UI_PROPAGATION_REPORT.{json,md}",
+    "change_record_id": "a66844b709f848d78bdee7553e1e49db",
+    "tests": "24 new PASS; regression 376 PASS / 0 FAIL; ui self-test ok:true 0 net / 0 JS err (87 checks)"
   }
 }

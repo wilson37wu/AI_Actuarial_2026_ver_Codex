@@ -8224,3 +8224,69 @@ consumes ONLY model output JSON; then PHASE 24 COMPLETE documentation.
 
 **Blockers:** unchanged — ghost git locks need a human shell (commit via alt-GIT_INDEX_FILE
 onto `p22c9`; push `p22c9:main`); serialise scheduled runs; disk /sessions ~89%.
+
+---
+
+## 2026-06-08 (+08) / 2026-06-07 UTC — Cycle 21 — Phase 24 Task 5: Offline-UI Propagation — **PHASE 24 COMPLETE (Tasks 1–5)**
+
+**Health gate first (all green):** pytest batches p24/p23/governance/UI-prop (331 tests) and
+`node scripts/ui_app_self_test.cjs ui_app.html` ok:true (0 network / 0 JS errors) BEFORE any
+change. No foreign writes detected (mtimes checked); governance store backed up to
+`/var/tmp/p24t5_build/GOV_BACKUP_pre_p24t5.json` before the governance stage.
+
+**What this cycle did (display layer ONLY — no model calculation):**
+
+- `scripts/build_ui_data.py` contract **1.5.0 → 1.6.0 ADDITIVE**: new top-level `phase24`
+  section (`joint_action` / `inner_path` / `tail_diagnostics` / `narrative`) normalised from
+  the already-produced Task 2/3/4 validation reports; three Phase 24 PASS verdicts appended;
+  additive capital read-outs `t_copula_scr_joint_action` (31,001.8) and
+  `nested_scr_with_inner_path` (40,852.1). All existing keys untouched.
+- New **Joint Actions (P24)** tab in `ui_app.html`: headline cards (joint t-SCR 31,001.8 vs
+  nested-with 33,117.8; rel err 6.39% vs standalone baseline 22.54%; inner-path +4.0%;
+  99.5% tail saturation 100.0%; bootstrap SE 5.8%); the without → with-standalone →
+  with-joint **capital-delta matrix** across all four benchmarks + joint-vs-standalone bar
+  chart (var-covar understatement 56.4% surfaced, MR-010); the **action-saturation profile**
+  table (90%→99.9% sweep; 100.0% saturated at 99.5%); the **frozen-copula margin bootstrap**
+  cards (95% CI [26,471, 33,637] containing the nested-with reference; prefix 0.19%; seed
+  spread 1.98%); the **outer-vs-inner-path** table (VaR +2,157; SCR +1,561, +4.0%) with the
+  non-cuttable-component interpretation; 12 gate criteria (4+5+3) rendered; sources +
+  ChangeRecord ids. UI consumes ONLY `ui_data.json`.
+- `viewer_data.json` rebuilt (governance reflects the live store), then `ui_data.json` +
+  `ui_app.html` regenerated.
+- `scripts/ui_app_self_test.cjs` extended with **15 Phase 24 checks** (tab, 12 cards, 12 gate
+  crits, 4 delta-matrix rows, 5 sweep rows, 2 inner-path rows, 7 bars, text probes for
+  31,001.8 / gap closure / 100.0% saturated / bootstrap CI / 56.4% / verdicts) — ok:true,
+  0 network / 0 JS errors, 87 checks.
+- New `scripts/build_phase24_task5_ui_propagation.py`: 31 ui_data contract checks (all PASS)
+  + self-test re-run + governance + evidence report
+  `docs/validation/PHASE24_TASK5_UI_PROPAGATION_REPORT.{json,md}`. Idempotent re-run verified
+  (audit 71→71, changes 44→44).
+- **Governance:** ChangeRecord `a66844b709f848d78bdee7553e1e49db` (code_change) OWNER_REVIEW;
+  one audit entry; audit 70→71; changes 43→44; verify_all True.
+- **Tests:** new `tests/test_phase24_task5_ui_propagation.py` (24 tests). DISCLOSED
+  forward-compat fix per repo convention: two Phase 23 Task 5 pins on contract "1.5.0"
+  relaxed to a version floor (additive bumps). Regression batches post-change:
+  **376 PASS / 0 FAIL**; compileall clean; off-mount build + cp + cmp protocol observed
+  throughout (zero truncation incidents this cycle).
+
+**PHASE 24 COMPLETE (Tasks 1–5).** The phase's central findings, now all user-visible
+offline: (1) action-after-aggregation closes the saturation gap 22.54% → 6.39%; (2) the
+inner-path cashflow basis corrects a +4.0% outer-node over-relief and is the more faithful
+with-actions basis; (3) the 99.5% joint tail is 100% saturated; nested-with remains the
+capital reference with the n_obs=160 noise quantified by a frozen-copula bootstrap CI.
+
+**Industry Standards Progress:**
+- SOA ASOP 41 §3.2 — findings communicated with disclosed limitations in the offline UI. Addressed.
+- SOA ASOP 56 §3.5 — output validation propagated to the presentation layer with executable checks. Addressed.
+- IA TAS M §3.6 — reproducibility digests + sources displayed verbatim. Addressed.
+- Solvency II Art. 23 / Art. 234 — joint-action effect and frozen-copula dependence evidence displayed. Addressed.
+
+**Next: Phase 25 Task 1 — research/design note.** Candidates (pick ONE, design-note-first
+discipline): full path-wise bonus declaration dynamics (action re-evaluated at every inner
+time step); t-copula aggregation on the inner-path with-actions basis (joins T3+T2);
+credentialled-data calibration of action/copula parameters. Then Tasks 2–4 implement/validate,
+Task 5 UI-propagates (contract 1.6.0 → 1.7.0 additive).
+
+**Blockers (human action, unchanged):** three git ghost locks (`GITHUB_PUSH_BLOCKER.md`) —
+commits land on `p22c9` via alt-index; push `p22c9:main`; serialise scheduled runs; production
+sign-off residual (credentialled data + APS X2) by design; disk /sessions ~89%.
