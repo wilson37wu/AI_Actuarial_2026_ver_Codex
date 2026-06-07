@@ -48,7 +48,10 @@ def html():
 # ---- contract ---------------------------------------------------------------
 
 def test_contract_version_bumped_additively(ui):
-    assert ui["contract_version"] == "1.4.0"
+    # Phase 22 shipped 1.4.0; later phases may bump ADDITIVELY (1.5.0 in
+    # Phase 23), so assert >= 1.4.0 rather than pinning the exact string.
+    version = tuple(int(p) for p in ui["contract_version"].split("."))
+    assert version >= (1, 4, 0)
 
 
 def test_contract_sections_unchanged(ui):
@@ -147,10 +150,12 @@ def test_headline_keyed_verdicts_calibrated(ui):
 
 # ---- offline html ------------------------------------------------------------
 
-def test_html_embeds_same_contract_offline(html):
+def test_html_embeds_same_contract_offline(html, ui):
     assert "/*__UI_DATA__*/" in html
-    assert '"contract_version": "1.4.0"' in html.replace('": "', '": "') or \
-        '"contract_version":"1.4.0"' in html.replace(" ", "")
+    # Embedded snapshot must carry the SAME (>=1.4.0, additive) contract
+    # version as ui_data.json; Phase 23 bumped it to 1.5.0.
+    needle = '"contract_version": "%s"' % ui["contract_version"]
+    assert needle in html or needle.replace(": ", ":") in html.replace(" ", "")
     assert "G-LIQX" in html
 
 

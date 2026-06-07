@@ -1,4 +1,4 @@
-// Offline self-test for ui_app.html (UI Tasks 1-4).
+// Offline self-test for ui_app.html (UI Tasks 1-5 + Phase 21-23 propagation).
 // Loads the standalone HTML under jsdom, blocks fetch/XHR, clicks every tab and
 // sub-view, and asserts: embedded data parsed; inventory + calibration explorer +
 // capital dashboard + governance view render; ZERO network calls; ZERO JS errors.
@@ -60,6 +60,16 @@ setTimeout(() => {
   const calibCrit = document.querySelectorAll("#calibrations .crit").length;
   const calibParamRows = document.querySelectorAll("#calibrations table.ptable tbody tr").length;
   calibBtns.forEach(b => { if (b.getAttribute("data-idx") === "0") b.click(); });
+
+  // Phase 23 Task 5: open the Management Actions panel and count its elements.
+  const maTab = tabs.find(t => t.getAttribute("data-target") === "actions");
+  if (maTab) maTab.click();
+  const maCards = document.querySelectorAll("#actions .card").length;
+  const maGateCrits = document.querySelectorAll("#actions .crit").length;
+  const maBarRects = document.querySelectorAll("#actions svg.chart rect.bar").length;
+  const maTrigRows = document.querySelectorAll("#actions table.trigtable tbody tr").length;
+  const maStandaloneRows = document.querySelectorAll("#actions table.matable tbody tr").length;
+  const maRuleRows = document.querySelectorAll("#actions table.ruletable tbody tr").length;
 
   // UI Task 4: open the Governance & assumptions view and click through every sub-view.
   const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
@@ -148,6 +158,14 @@ setTimeout(() => {
     invCsvRows, riskCsvRows, chgCsvRows,
     tablistRoles, tabRoleCount, ariaSelectedTabs, segTabRoles,
     printCssPresent, dataTitlePanels,
+    managementTabPresent: !!maTab,
+    maCards, maGateCrits, maBarRects, maTrigRows, maStandaloneRows, maRuleRows,
+    mgmtRulePresent: /reversionary-bonus/.test(bodyText),
+    withActionsNestedPresent: /33,11[78]/.test(bodyText),
+    tCopulaDfPresent: /2\.9451/.test(bodyText),
+    saturationFindingPresent: /saturates/.test(bodyText),
+    tCopulaVerdictPresent: /Student-t copula aggregation/.test(bodyText),
+    withActionsVerdictPresent: /WITH management actions/.test(bodyText),
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -204,7 +222,20 @@ setTimeout(() => {
     checks.ariaSelectedTabs === 1 &&
     checks.segTabRoles >= 4 &&
     checks.printCssPresent &&
-    checks.dataTitlePanels >= 5 &&
+    checks.dataTitlePanels >= 6 &&
+    checks.managementTabPresent &&
+    checks.maCards >= 6 &&
+    checks.maGateCrits >= 9 &&
+    checks.maBarRects >= 8 &&
+    checks.maTrigRows >= 3 &&
+    checks.maStandaloneRows >= 7 &&
+    checks.maRuleRows >= 6 &&
+    checks.mgmtRulePresent &&
+    checks.withActionsNestedPresent &&
+    checks.tCopulaDfPresent &&
+    checks.saturationFindingPresent &&
+    checks.tCopulaVerdictPresent &&
+    checks.withActionsVerdictPresent &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

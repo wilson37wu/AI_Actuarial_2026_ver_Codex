@@ -1,9 +1,9 @@
 {
-  "contract_version": "1.4.0",
+  "contract_version": "1.5.0",
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-07T10:13:02.053278+00:00",
+    "generated_utc": "2026-06-07T15:18:41.437340+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -16,7 +16,7 @@
     "classification": "EDUCATIONAL ONLY -- NOT a regulatory capital model"
   },
   "summary": {
-    "tasks_completed": 109,
+    "tasks_completed": 110,
     "tasks_total": 110,
     "phases_completed": 19,
     "estimated_completion_pct": 99,
@@ -25,7 +25,7 @@
     "risks_open": 1,
     "risks_mitigated": 10,
     "production_status": "NOT CLEARED FOR PRODUCTION",
-    "contract_artifacts": 46,
+    "contract_artifacts": 52,
     "calibrated_drivers": 11
   },
   "inventory": [
@@ -388,6 +388,60 @@
       "sha256": "72be26d7b8b96f00ea8d85573e3c1ab8b58363d318e54f39868a59562a0bc302",
       "mtime_utc": "2026-06-07T09:14:22Z",
       "headline": ""
+    },
+    {
+      "id": "PHASE22_TASK5_UI_PROPAGATION_REPORT",
+      "path": "docs/validation/PHASE22_TASK5_UI_PROPAGATION_REPORT.json",
+      "category": "other",
+      "bytes": 2158,
+      "sha256": "ee832a9364d2220e20dd1b390cf91b5f417a5c8482e0a014dd50dadcda39ef03",
+      "mtime_utc": "2026-06-07T10:18:59Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE23_TASK1_DESIGN_NOTE",
+      "path": "docs/validation/PHASE23_TASK1_DESIGN_NOTE.json",
+      "category": "other",
+      "bytes": 6923,
+      "sha256": "896ca5ab2782ce5cf1331a681b948a5f72d3e0fd1694e457f49bc570608fcccb",
+      "mtime_utc": "2026-06-07T11:17:07Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT",
+      "path": "docs/validation/PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.json",
+      "category": "risk_aggregation",
+      "bytes": 10099,
+      "sha256": "e4ebe2e829910a4c52eeeab8bb58b8e275511a37e33ac1a101617ee0c3e35f09",
+      "mtime_utc": "2026-06-07T12:21:08Z",
+      "headline": ""
+    },
+    {
+      "id": "PHASE23_TASK3_MANAGEMENT_ACTION_REPORT",
+      "path": "docs/validation/PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.json",
+      "category": "other",
+      "bytes": 7440,
+      "sha256": "d8b0f03a93ce4af2a5df5ed4292e01be93164bf043d7d882b66866a0925c074e",
+      "mtime_utc": "2026-06-07T13:19:29Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT",
+      "path": "docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.json",
+      "category": "risk_aggregation",
+      "bytes": 9971,
+      "sha256": "b28edd5222ace4103d47ec439f1530e1efdd8a48a92d27bf72e5a5bba42ed3d0",
+      "mtime_utc": "2026-06-07T14:16:29Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE23_TASK5_UI_PROPAGATION_REPORT",
+      "path": "docs/validation/PHASE23_TASK5_UI_PROPAGATION_REPORT.json",
+      "category": "other",
+      "bytes": 2324,
+      "sha256": "5f5403f14d429b0ed7498c8b5564a7aaff0a352488aa3ffc22da6a8d03946911",
+      "mtime_utc": "2026-06-07T15:18:27Z",
+      "headline": "PASS"
     },
     {
       "id": "PROJECTION_REFERENCE_RUN",
@@ -1131,7 +1185,11 @@
         "rel_delta": -3.0697297393835186e-05
       }
     },
-    "aggregation_verdict": "PASS"
+    "aggregation_verdict": "PASS",
+    "t_copula_scr": 46755.963,
+    "t_copula_df": 2.9451,
+    "t_copula_rel_error": 0.040065,
+    "nested_scr_with_actions": 33117.7704
   },
   "tail": {
     "verdict": "PASS - seven-driver 99.5% capital metric converges (copula-simulated, last VaR delta < 0.5%), is bounded by simulated and honest small-sample nested bootstrap CIs, and benefits from Sobol-RQMC variance reduction",
@@ -2755,10 +2813,163 @@
       }
     }
   ],
+  "management_actions": {
+    "rule": {
+      "cr_trigger": 1.1,
+      "cr_floor": 0.9,
+      "bonus_share": 0.3,
+      "pre_floor": 0.6,
+      "reference_coverage": 1.12,
+      "max_relief": 0.12
+    },
+    "rule_description": "Dynamic reversionary-bonus participation cut (Solvency II Art. 23): cut_factor = clip((CR - 0.90)/(1.10 - 0.90), 0, 1) with CR = A_ref/L at the outer node; PRE floor 60% of the bonus share; max liability relief 12%; monotonicity guarded at construction. The rule enters the nested conditional liability AND identically the LSMC proxy prediction as an analytic post-composition basis feature (A_ref leakage-free from the fit-sample mean).",
+    "reference_assets": 129916.49144595393,
+    "active_share_nested": 0.442,
+    "floor_share_nested": 0.08,
+    "oos_r2_with_actions": 0.9982947893496629,
+    "oos_r2_without_actions": 0.9984795801896779,
+    "var_rel_error_with_actions": 0.0050750739133509325,
+    "nested_capital_without": {
+      "confidence_level": 0.995,
+      "mean_liability": 115994.0791,
+      "var_liability": 171555.268,
+      "es_liability": 176570.2272,
+      "scr_proxy": 55561.1889,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "nested_capital_with": {
+      "confidence_level": 0.995,
+      "mean_liability": 111677.7373,
+      "var_liability": 150968.6358,
+      "es_liability": 155381.7999,
+      "scr_proxy": 39290.8985,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "proxy_capital_with": {
+      "confidence_level": 0.995,
+      "mean_liability": 111574.8098,
+      "var_liability": 150202.4588,
+      "es_liability": 155100.6867,
+      "scr_proxy": 38627.6491,
+      "n_outer": 500,
+      "capital_horizon_months": 12
+    },
+    "gates_task3": {
+      "G1_oos_r2_with_actions_ge_0p95": true,
+      "G2_var_rel_error_with_actions_le_0p10": true,
+      "G3_with_actions_capital_le_without": true,
+      "G4_rule_monotone": true,
+      "G5_no_action_above_trigger": true
+    },
+    "trigger_sensitivity": [
+      {
+        "cr_trigger": 1.05,
+        "cr_floor": 0.8500000000000001,
+        "active_share_nested": 0.354,
+        "nested_var_with": 150968.6358,
+        "nested_var_reduction": 20586.632157508808,
+        "nested_scr_reduction": 17616.333357710115,
+        "oos_r2_with_actions": 0.9984856997333893,
+        "var_rel_error_with_actions": 0.0050750739133509325,
+        "verdict": "PASS"
+      },
+      {
+        "cr_trigger": 1.1,
+        "cr_floor": 0.9000000000000001,
+        "active_share_nested": 0.442,
+        "nested_var_with": 150968.6358,
+        "nested_var_reduction": 20586.632157508808,
+        "nested_scr_reduction": 16270.290429479996,
+        "oos_r2_with_actions": 0.9982947893496629,
+        "var_rel_error_with_actions": 0.0050750739133509325,
+        "verdict": "PASS"
+      },
+      {
+        "cr_trigger": 1.15,
+        "cr_floor": 0.95,
+        "active_share_nested": 0.56,
+        "nested_var_with": 150968.6358,
+        "nested_var_reduction": 20586.632157508808,
+        "nested_scr_reduction": 14850.033111130775,
+        "oos_r2_with_actions": 0.9978993335366533,
+        "var_rel_error_with_actions": 0.0050750739133509325,
+        "verdict": "PASS"
+      }
+    ],
+    "task3_verdict": "PASS",
+    "task3_source": "docs/validation/PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.json",
+    "task3_change_record_id": "cf22c050bca44a84a843fb262a2efb84",
+    "aggregation": {
+      "df_matched": 2.9451,
+      "active_share_full": 0.46875,
+      "floor_share_full": 0.075,
+      "nested_scr_with": 33117.7704,
+      "t_copula_scr_with": 25652.9228,
+      "gaussian_scr_with": 23921.8205,
+      "var_covar_scr_with": 14428.7393,
+      "nested_scr_without": 48707.43490332604,
+      "t_copula_scr_without": 46755.963,
+      "gaussian_scr_without": 41472.429,
+      "var_covar_scr_without": 28990.889357788157,
+      "var_covar_understatement_with": 0.56432,
+      "t_rel_error_with": 0.225403,
+      "t_rel_error_without": 0.040065,
+      "gaussian_rel_error_with": 0.277674,
+      "gaussian_rel_error_without": 0.14854,
+      "deltas": {
+        "nested_scr": -15589.664503326036,
+        "var_covar_scr": -14562.150057788158,
+        "gaussian_scr": -17550.608499999995,
+        "t_matched_scr": -21103.040200000003,
+        "nested_var_with": 145231.12815491078,
+        "nested_es_with": 145911.5015666014
+      },
+      "standalone_drivers": [
+        "rate",
+        "equity",
+        "credit",
+        "lapse",
+        "mortality",
+        "fx",
+        "liquidity"
+      ],
+      "standalone_scr_with": [
+        7299.389698290179,
+        8026.65283796376,
+        3090.9508545374556,
+        11131.77937241891,
+        387.2000248782424,
+        2919.257064799036,
+        45.05333401572716
+      ],
+      "standalone_scr_without": [
+        14486.319850929489,
+        15931.555851018842,
+        4713.865675437704,
+        22538.93657690868,
+        387.2000248782355,
+        4286.36987389994,
+        45.05333401574302
+      ],
+      "anchoring_convention": "V_k = L_fit + (vec_k - mean(vec_k)); nested = rule(full); A_ref identical to Task 3 (leakage-free)"
+    },
+    "gates_task4": {
+      "G1_t_copula_with_actions_gate": true,
+      "G2_nested_with_le_without": true,
+      "G3_all_standalone_with_le_without": true,
+      "G4_df_rank_invariance": true
+    },
+    "task4_verdict": "PASS",
+    "saturation_finding": "MATERIAL FINDING (disclosed): copula-on-standalone-losses understates the nested with-actions benchmark (t rel err 4.0% -> 22.5%; gaussian 14.9% -> 27.8%) because the action saturates (max relief 12%) in the joint tail while standalone tails sit in the steeper partial-cut band. The nested run remains the capital reference; copula read-outs are diagnostics on this basis. Rank invariance gated: the action is a monotone marginal transform, so the empirical copula and matched df are identical with/without actions.",
+    "task4_source": "docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.json",
+    "task4_change_record_id": "912ef3f92e714188baec4377ab59474d"
+  },
   "governance": {
-    "audit_entries": 59,
+    "audit_entries": 65,
     "audit_integrity_ok": true,
-    "audit_verified": 59,
+    "audit_verified": 65,
     "audit_failed": 0,
     "change_records": [
       {
@@ -3820,6 +4031,197 @@
             "comments": "Owner review requested. Production sign-off withheld pending Phase 22 Task 5 (UI propagation), credentialled market data, and APS X2 review."
           }
         ]
+      },
+      {
+        "record_id": "880aeb5d621645c9adc8d2eb1f2ea88a",
+        "title": "Phase 22 Task 5 - offline-UI propagation of the calibrated seven-driver view",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-07T10:18:59.506483+00:00",
+        "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+        "author": "AutomatedModelDev_Phase22",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T10:18:59.506911+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only."
+          },
+          {
+            "timestamp": "2026-06-07T10:18:59.506960+00:00",
+            "actor": "AutomatedModelDev_Phase22",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. PHASE 22 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "cfdc0aef864c4494b94c68db83acbd69",
+        "title": "Phase 23 Task 1 - design note: t-copula tail-dependence calibration + management-action rule (gap analysis)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-07T11:16:47.849898+00:00",
+        "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+        "author": "Phase23Task1DesignNote",
+        "peer_reviewer": null,
+        "standard_references": [
+          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2/\u00a73.6",
+          "Solvency II Delegated Reg. Art. 23 (future management actions)",
+          "Solvency II Delegated Reg. Art. 234 (empirically justified diversification)",
+          "Solvency II Delegated Reg. Art. 236",
+          "IFoA Life Aggregation & Simulation working party",
+          "Demarta-McNeil 2005",
+          "McNeil-Frey-Embrechts 2015 ch.7",
+          "Schmidt-Stadtmueller 2006"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T11:16:47.850843+00:00",
+            "actor": "Phase23Task1DesignNote",
+            "status": "PEER_REVIEW",
+            "comments": "Design note + 21 new unit tests PASS; no existing module touched."
+          },
+          {
+            "timestamp": "2026-06-07T11:16:47.850904+00:00",
+            "actor": "Phase23Task1DesignNote",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: finite-threshold estimator noise + pooled-df exchangeability documented; sign-off withheld."
+          }
+        ]
+      },
+      {
+        "record_id": "509699ae1f1d4adabe197bcf8419c92a",
+        "title": "Phase 23 Task 2 - Student-t copula aggregation with df calibrated by tail-dependence matching",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T12:21:07.990992+00:00",
+        "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+        "author": "AutomatedModelDev_Phase23",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.6",
+          "Solvency II Delegated Regulation Article 234",
+          "IFoA Life Aggregation & Simulation working party",
+          "Demarta-McNeil 2005; McNeil-Frey-Embrechts 2015 ch.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T12:21:07.991079+00:00",
+            "actor": "AutomatedModelDev_Phase23",
+            "status": "PEER_REVIEW",
+            "comments": "Tail-matched t-copula aggregation with pre-registered gate, threshold sensitivity, capped-share disclosure, and same-seed gaussian baseline."
+          },
+          {
+            "timestamp": "2026-06-07T12:21:07.991100+00:00",
+            "actor": "AutomatedModelDev_Phase23",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled data, management-action modelling (Task 3), and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "cf22c050bca44a84a843fb262a2efb84",
+        "title": "Phase 23 Task 3 - management-action rule (dynamic reversionary-bonus participation cut) in nested ground truth + proxy basis",
+        "status": "OWNER_REVIEW",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T13:18:17.756725+00:00",
+        "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+        "author": "AutomatedModelDev_Phase23",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6",
+          "IFoA with-profits / management-actions practice notes"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T13:18:17.756744+00:00",
+            "actor": "AutomatedModelDev_Phase23",
+            "status": "PEER_REVIEW",
+            "comments": "Monotone Art.-23 bonus-cut rule with PRE floor; fixed pre-registered gates; bit-identical primitive reuse cross-checked; trigger sensitivity and placeholder parameters disclosed."
+          },
+          {
+            "timestamp": "2026-06-07T13:18:17.756757+00:00",
+            "actor": "AutomatedModelDev_Phase23",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data, inner-path bonus dynamics, and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "912ef3f92e714188baec4377ab59474d",
+        "title": "Phase 23 Task 4 - seven-driver aggregation + tail read-outs re-run WITH management actions",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T14:16:28.962208+00:00",
+        "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+        "author": "AutomatedModelDev_Phase23",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "IA TAS M section 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "Demarta-McNeil 2005; McNeil-Frey-Embrechts 2015 ch.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T14:16:28.962232+00:00",
+            "actor": "AutomatedModelDev_Phase23",
+            "status": "PEER_REVIEW",
+            "comments": "Fixed pre-registered gates (G1-G4) all PASS; bit-identical primitive reuse with 13 archive cross-checks; anchoring convention and rank invariance disclosed; placeholders disclosed."
+          },
+          {
+            "timestamp": "2026-06-07T14:16:28.962249+00:00",
+            "actor": "AutomatedModelDev_Phase23",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "9df7b0fc63464614bc87b3c7b77cfff9",
+        "title": "Phase 23 Task 5 - offline-UI propagation of the t-copula + management-action view",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-07T15:18:27.082841+00:00",
+        "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+        "author": "AutomatedModelDev_Phase23",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+          "Solvency II Art. 23 (future management actions - effect displayed)",
+          "Solvency II Art. 234 (dependence justification - t-copula displayed)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T15:18:27.082908+00:00",
+            "actor": "AutomatedModelDev_Phase23",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by 24 contract checks + jsdom self-test (0 network / 0 JS errors over 69 checks); display-layer change only; saturation finding carried into the display verbatim."
+          },
+          {
+            "timestamp": "2026-06-07T15:18:27.082925+00:00",
+            "actor": "AutomatedModelDev_Phase23",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. PHASE 23 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
+          }
+        ]
       }
     ],
     "deployment_gates": [
@@ -4059,7 +4461,7 @@
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
         "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
-        "updated_at": "2026-06-07T09:14:22.446879+00:00"
+        "updated_at": "2026-06-07T14:16:28.962072+00:00"
       },
       {
         "risk_id": "MR-011",
@@ -4102,6 +4504,20 @@
         "mitigation": "Complete Phase 20 Tasks 2-4: swaption-surface calibration, market-consistency martingale gate, and capital re-aggregation/tail diagnostics with independent review.",
         "related_standard": "SOA ASOP 56 section 3.5; IA TAS M section 3.6",
         "updated_at": "2026-06-06T09:25:48.971900+00:00"
+      },
+      {
+        "risk_id": "MR-014",
+        "title": "Management-action omission in liability / capital model",
+        "overall_rating": "HIGH",
+        "mitigation_status": "MITIGATED",
+        "category": "assumption_error",
+        "owner": "ChiefActuary",
+        "likelihood": "HIGH",
+        "impact": "MEDIUM",
+        "description": "Policyholder options (dynamic lapse) are modelled but insurer management actions are not: reversionary-bonus participation is static, so TVOG and tail capital are biased upward relative to a realistic with-management-action basis (ASOP 56 3.1.3 asymmetry; Solvency II Art. 23).",
+        "mitigation": "Phase 23 Task 3: governed dynamic reversionary-bonus participation cut entering the nested ground truth and the proxy basis, validated OOS at fixed pre-registered gates.",
+        "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
+        "updated_at": "2026-06-07T14:16:28.962124+00:00"
       }
     ]
   },
@@ -4170,6 +4586,24 @@
       "verdict": "PASS",
       "evidence": "HKD: n=1200, notional=22000, couplings={'liq_rate': -0.0794, 'liq_equity': -0.2935, 'liq_spread': 0.4579, 'liq_lapse': 0.1081, 'liq_mortality': 0.016, 'liq_fx':",
       "source": "docs/validation/PHASE22_TASK3_LIQUIDITY_EXPOSURE_REPORT.json"
+    },
+    {
+      "name": "Tail-matched Student-t copula aggregation (Phase 23 Task 2)",
+      "verdict": "PASS",
+      "evidence": "df matched 2.9451 from pooled tail-dependence; t-copula SCR 46756 vs nested 48707 (rel err 4.0%) vs gaussian 14.9% and var-covar understatement 40.5%",
+      "source": "docs/validation/PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.json"
+    },
+    {
+      "name": "Management-action rule - dynamic reversionary-bonus cut (Phase 23 Task 3)",
+      "verdict": "PASS",
+      "evidence": "5/5 pre-registered gates; nested VaR99.5 -20587, SCR -16270; active on 44.2% of outer states; OOS R2 with actions 0.9983; proxy-vs-nested VaR rel err 0.51%; trigger sensitivity 1.05/1.10/1.15 all PASS",
+      "source": "docs/validation/PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.json"
+    },
+    {
+      "name": "Seven-driver aggregation WITH management actions (Phase 23 Task 4)",
+      "verdict": "PASS",
+      "evidence": "nested SCR 48707 -> 33118 (-32.0%); rank invariance gated (df 2.9451 unchanged); DISCLOSED: copula-on-standalone understates nested-with (t rel err 22.5%) - the action saturates in the joint tail; the nested run remains the capital reference",
+      "source": "docs/validation/PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.json"
     }
   ]
 }

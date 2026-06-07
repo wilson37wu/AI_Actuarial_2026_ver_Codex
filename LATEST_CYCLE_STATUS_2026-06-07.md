@@ -134,3 +134,54 @@ capital read-outs and the Task 4 saturation finding; contract bump 1.4.0 -> 1.5.
 **Persisting blockers (human action):** git ghost locks (commit via alt-index workaround on
 branch `p22c9`); production sign-off residual (credentialled data + APS X2 review); disk
 /sessions ~90%; sandbox kills background shells between tool calls (run long tests solo).
+
+---
+
+## Latest Cycle Status - 2026-06-07 (cycle 16)
+
+**Phase 23 Task 5 COMPLETE (PASS) -> PHASE 23 COMPLETE (Tasks 1-5).
+Next: Phase 24 Task 1 (research/design note: joint-scenario action-after-aggregation
+re-aggregation + inner-path action dynamics).**
+
+What this cycle did:
+
+- Offline-UI propagation: `scripts/build_ui_data.py` contract bumped additively
+  1.4.0 -> 1.5.0. NEW `management_actions` section + **Management Actions tab**:
+  rule card (1.10/0.90/30%/60%/12%), Task 3 gates 5/5 + Task 4 gates 4/4, active
+  46.9% / floor 7.5%, trigger sensitivity 1.05/1.10/1.15, with/without SCR bars for
+  all four benchmarks (nested 48,707->33,118; t(2.9451) 46,756->25,653; gaussian
+  41,472->23,922; var-covar 28,991->14,429), per-driver standalone deltas + anchoring
+  convention, and the Task 4 SATURATION FINDING disclosed verbatim. Capital section
+  augmented (t_copula_scr/df, nested_scr_with_actions); 3 new headline verdicts.
+- `viewer_data.json` rebuilt (governance = live store, 38 records). Self-test
+  extended with 13 Phase 23 checks: `node scripts/ui_app_self_test.cjs ui_app.html`
+  -> **ok:true, 0 network / 0 JS errors (69 checks)**.
+- New `scripts/build_phase23_task5_ui_propagation.py` (24 contract checks ALL PASS) +
+  evidence report `docs/validation/PHASE23_TASK5_UI_PROPAGATION_REPORT.{json,md}`.
+- Governance: ChangeRecord `9df7b0fc63464614bc87b3c7b77cfff9` OWNER_REVIEW
+  (code_change); audit 64->65; change records 37->38; verify_all True.
+- Tests: 20 new PASS (`tests/test_phase23_task5_ui_propagation.py`); regression
+  **348 PASS / 0 FAIL**. DISCLOSED: two P22T5 tests pinned contract=="1.4.0" exactly;
+  made forward-compatible (>=1.4.0 + embedded==ui_data.json) preserving intent.
+
+**Next executable action: Phase 24 Task 1** - research/design note for the
+With-Actions Aggregation Consistency phase: (i) joint-scenario
+(action-after-aggregation) copula re-aggregation - apply the governed rule INSIDE
+the copula simulation to the joint liability, directly addressing the disclosed
+22.5% saturation gap (nested remains the reference); (ii) inner-path
+action-dynamics gap analysis (Solvency II Art. 23 / ASOP 56 / TAS M); (iii) fixed
+pre-registered gates for Tasks 2-4 (no gate-shopping). State file updated
+(`current_phase` = Phase 24). The offline UI continues to consume ONLY model
+output JSON.
+
+**Operating warning:** Windows-side file-tool writes of long files truncate on sync
+to the Linux mount. Write long repo files from bash off-mount then cp + cmp, and
+verify with ast.parse / json.loads.
+
+**Persisting blockers (human action):**
+- Git ghost locks (`.git/index.lock`, `.git/HEAD.lock`, `.git/refs/heads/main.lock`)
+  - commits land on branch `p22c9` via the alt-index workaround; see
+  GITHUB_PUSH_BLOCKER.md checklist.
+- Production sign-off residual: credentialled calibration + independent APS X2
+  review.
+- Disk /sessions ~89%.

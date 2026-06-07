@@ -7909,3 +7909,68 @@ PHASE 23 COMPLETE documentation.
 onto branch `p22c9`; disk /sessions ~90%.
 
 ---
+## Run 2026-06-07T15:55Z — Phase 23 (cycle 16)
+
+**Task Completed:** Phase 23 Task 5 — offline-UI propagation of the t-copula +
+management-action view. **VERDICT PASS — PHASE 23 COMPLETE (Tasks 1–5).**
+
+**Accomplishments:**
+- `scripts/build_ui_data.py` contract bumped ADDITIVELY 1.4.0 → 1.5.0. New
+  `management_actions` section normalises the Task 3/4 reports for display: rule card
+  (trigger 1.10 / floor 0.90 / bonus share 30% / PRE floor 60% / max relief 12% /
+  A_ref anchor 1.12), Task 3 gates 5/5 + Task 4 gates 4/4, active/floor shares,
+  trigger sensitivity 1.05/1.10/1.15, nested/proxy with-without capital, the full
+  with/without benchmark set (nested 48,707→33,118; t(2.9451) 46,756→25,653;
+  gaussian 41,472→23,922; var-covar 28,991→14,429), per-driver standalone deltas
+  with the disclosed anchoring convention, and the Task 4 SATURATION FINDING
+  verbatim. Capital section augmented additively (t_copula_scr/df,
+  nested_scr_with_actions); three new Phase 23 headline verdicts (Tasks 2/3/4).
+- NEW **Management Actions tab** in `ui_app.html` (zero-install, consumes ONLY the
+  embedded model-output snapshot): cards, rule-parameter table, with/without SCR
+  bar chart (8 bars, reuses the tooltip/barChart machinery), gate grids,
+  trigger-sensitivity + standalone tables, saturation-finding note, source +
+  ChangeRecord provenance line. `viewer_data.json` rebuilt (governance = live store,
+  38 change records).
+- Self-test extended with 13 Phase 23 checks (panel cards, gate crits, bar rects,
+  trigger/standalone/rule rows, regex probes for the rule, 33,118, df 2.9451,
+  saturation, verdicts): `node scripts/ui_app_self_test.cjs ui_app.html` →
+  **ok:true, 0 network / 0 JS errors (69 checks)**.
+- New `scripts/build_phase23_task5_ui_propagation.py` (24 contract checks ALL PASS,
+  idempotent governance) + evidence `docs/validation/PHASE23_TASK5_UI_PROPAGATION_REPORT.{json,md}`.
+
+**Governance:** ChangeRecord `9df7b0fc63464614bc87b3c7b77cfff9` (code_change)
+OWNER_REVIEW (production sign-off withheld); audit entries 64→65; change records
+37→38; verify_all True; second run idempotent ("already applied").
+
+**Verification:** `tests/test_phase23_task5_ui_propagation.py` **20 PASS** (contract,
+rule params, gates, with<without monotonicity, report-vs-ui_data numeric identity,
+embedded-snapshot parse, no external refs, evidence + governance store). Regression:
+p23 t2/t3/t4 82 + p23 tail-dep/p22t5/governance/p22t4 109 + p22 t1/t2/t3 + p21 fx 49
++ p21 liq/oos 54 + offline viewer 21 + p21 task4 (solo) 13 + new 20 =
+**348 PASS / 0 FAIL**. DISCLOSED: two Phase 22 Task 5 tests pinned the contract at
+exactly "1.4.0"; they were made forward-compatible (>= 1.4.0, embedded version must
+equal ui_data.json) — intent (additive bump) preserved. py_compile clean; off-mount
+stage + cp + cmp write protocol observed.
+
+**Next Step:** **Phase 24 Task 1** — research + design note for the With-Actions
+Aggregation Consistency phase: joint-scenario (action-after-aggregation) copula
+re-aggregation — apply the governed rule INSIDE the copula simulation to the joint
+liability instead of to standalone marginals — directly addressing the disclosed
+22.5% saturation gap; plus an inner-path action-dynamics gap analysis
+(Solvency II Art. 23 / ASOP 56 / TAS M) and fixed pre-registered gates for
+Tasks 2–4. State file updated (`current_phase` = Phase 24).
+
+**Industry Standards Progress:**
+- SOA ASOP 41 s3.2 / ASOP 56 s3.5: the management-action effect, its gates, its
+  sensitivity AND its disclosed limitation (saturation) are now communicated in the
+  result UI itself — findings travel with the numbers.
+- Solvency II Art. 23/234: rule parameters, with/without quantification and the
+  rank-invariance dependence argument are first-class display objects.
+- IA TAS M s3.6: UI propagation evidenced by a persisted report + 69-check
+  executable self-test; additive contract versioning keeps reproducibility.
+
+**Blockers:** unchanged — ghost git locks (`.git/index.lock`, `.git/HEAD.lock`,
+`.git/refs/heads/main.lock`) need a human shell; commit via alt-`GIT_INDEX_FILE`
+workaround onto branch `p22c9`; disk /sessions ~89%.
+
+---

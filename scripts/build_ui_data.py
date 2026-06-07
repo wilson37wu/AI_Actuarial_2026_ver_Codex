@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.4.0"
+CONTRACT_VERSION = "1.5.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -912,7 +912,152 @@ def _build_verdicts(base: Any) -> List[Dict[str, Any]]:
                     "simulated and honest small-sample nested bootstrap CIs, and "
                     "benefits from Sobol-RQMC variance reduction")
                 v["source"] = src22
+
+    # ---- Phase 23 verdicts: tail-dependence upgrade + management actions ----
+    t2 = _load(os.path.join(VAL, "PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.json"))
+    if isinstance(t2, dict) and isinstance(t2.get("aggregation"), dict):
+        a2 = t2["aggregation"]
+        verdicts.append({
+            "name": "Tail-matched Student-t copula aggregation (Phase 23 Task 2)",
+            "verdict": str(a2.get("verdict", "")),
+            "evidence": ("df matched %.4f from pooled tail-dependence; t-copula "
+                         "SCR %.0f vs nested %.0f (rel err %.1f%%) vs gaussian "
+                         "%.1f%% and var-covar understatement %.1f%%")
+            % (_num(a2.get("df_matched")) or 0.0,
+               _num(a2.get("t_matched_scr")) or 0.0,
+               _num(a2.get("nested_scr")) or 0.0,
+               100.0 * (_num(a2.get("t_matched_rel_error_vs_nested")) or 0.0),
+               100.0 * (_num(a2.get("gaussian_rel_error_vs_nested")) or 0.0),
+               100.0 * (_num(a2.get("var_covar_rel_error_vs_nested")) or 0.0)),
+            "source": ("docs/validation/"
+                       "PHASE23_TASK2_T_COPULA_AGGREGATION_REPORT.json"),
+        })
+    t3v = _load(os.path.join(VAL, "PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.json"))
+    if isinstance(t3v, dict) and isinstance(t3v.get("result"), dict):
+        r3 = t3v["result"]
+        verdicts.append({
+            "name": ("Management-action rule - dynamic reversionary-bonus cut "
+                     "(Phase 23 Task 3)"),
+            "verdict": str(t3v.get("verdict", "")),
+            "evidence": ("5/5 pre-registered gates; nested VaR99.5 -%.0f, SCR "
+                         "-%.0f; active on %.1f%% of outer states; OOS R2 with "
+                         "actions %.4f; proxy-vs-nested VaR rel err %.2f%%; "
+                         "trigger sensitivity 1.05/1.10/1.15 all PASS")
+            % (_num(r3.get("nested_var_reduction")) or 0.0,
+               _num(r3.get("nested_scr_reduction")) or 0.0,
+               100.0 * (_num(r3.get("active_share_nested")) or 0.0),
+               _num(r3.get("oos_r2_with_actions")) or 0.0,
+               100.0 * (_num(r3.get("var_rel_error_with_actions")) or 0.0)),
+            "source": ("docs/validation/"
+                       "PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.json"),
+        })
+    t4v = _load(os.path.join(VAL,
+                             "PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.json"))
+    if isinstance(t4v, dict) and isinstance(t4v.get("aggregation_with_actions"),
+                                            dict):
+        a4 = t4v["aggregation_with_actions"]
+        b4 = t4v.get("without_actions_baseline", {}) or {}
+        _nw = _num(b4.get("nested_scr")) or 0.0
+        _na = _num(a4.get("nested_scr")) or 0.0
+        verdicts.append({
+            "name": ("Seven-driver aggregation WITH management actions "
+                     "(Phase 23 Task 4)"),
+            "verdict": str(t4v.get("verdict", "")),
+            "evidence": ("nested SCR %.0f -> %.0f (%.1f%%); rank invariance "
+                         "gated (df %.4f unchanged); DISCLOSED: "
+                         "copula-on-standalone understates nested-with (t rel "
+                         "err %.1f%%) - the action saturates in the joint "
+                         "tail; the nested run remains the capital reference")
+            % (_nw, _na, (100.0 * (_na - _nw) / _nw) if _nw else 0.0,
+               _num(a4.get("df_matched")) or 0.0,
+               100.0 * (_num(a4.get("t_matched_rel_error_vs_nested")) or 0.0)),
+            "source": ("docs/validation/"
+                       "PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.json"),
+        })
     return verdicts
+
+
+
+def _build_management_actions() -> Dict[str, Any]:
+    """Phase 23 (contract 1.5.0, additive): management-action rule + the
+    with-actions aggregation/tail read-outs. Pure display-layer normalisation of
+    the already-produced Task 3/4 validation reports - no model calculation."""
+    out: Dict[str, Any] = {}
+    t3 = _load(os.path.join(VAL, "PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.json"))
+    if isinstance(t3, dict) and isinstance(t3.get("result"), dict):
+        res = t3["result"]
+        out["rule"] = res.get("rule", {})
+        out["rule_description"] = (
+            "Dynamic reversionary-bonus participation cut (Solvency II Art. 23): "
+            "cut_factor = clip((CR - 0.90)/(1.10 - 0.90), 0, 1) with CR = A_ref/L "
+            "at the outer node; PRE floor 60% of the bonus share; max liability "
+            "relief 12%; monotonicity guarded at construction. The rule enters the "
+            "nested conditional liability AND identically the LSMC proxy "
+            "prediction as an analytic post-composition basis feature "
+            "(A_ref leakage-free from the fit-sample mean).")
+        out["reference_assets"] = res.get("reference_assets")
+        out["active_share_nested"] = res.get("active_share_nested")
+        out["floor_share_nested"] = res.get("floor_share_nested")
+        out["oos_r2_with_actions"] = res.get("oos_r2_with_actions")
+        out["oos_r2_without_actions"] = res.get("oos_r2_without_actions")
+        out["var_rel_error_with_actions"] = res.get("var_rel_error_with_actions")
+        out["nested_capital_without"] = res.get("nested_capital_without", {})
+        out["nested_capital_with"] = res.get("nested_capital_with", {})
+        out["proxy_capital_with"] = res.get("proxy_capital_with", {})
+        out["gates_task3"] = res.get("gates", {})
+        out["trigger_sensitivity"] = t3.get("trigger_sensitivity", [])
+        out["task3_verdict"] = t3.get("verdict")
+        out["task3_source"] = ("docs/validation/"
+                               "PHASE23_TASK3_MANAGEMENT_ACTION_REPORT.json")
+        out["task3_change_record_id"] = t3.get("change_record_id")
+    t4 = _load(os.path.join(VAL,
+                            "PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT.json"))
+    if isinstance(t4, dict) and isinstance(t4.get("aggregation_with_actions"),
+                                           dict):
+        agg = t4["aggregation_with_actions"]
+        base = t4.get("without_actions_baseline", {}) or {}
+        out["aggregation"] = {
+            "df_matched": agg.get("df_matched"),
+            "active_share_full": t4.get("active_share_full"),
+            "floor_share_full": t4.get("floor_share_full"),
+            "nested_scr_with": agg.get("nested_scr"),
+            "t_copula_scr_with": agg.get("t_matched_scr"),
+            "gaussian_scr_with": agg.get("gaussian_scr"),
+            "var_covar_scr_with": agg.get("var_covar_scr"),
+            "nested_scr_without": base.get("nested_scr"),
+            "t_copula_scr_without": base.get("t_matched_scr"),
+            "gaussian_scr_without": base.get("gaussian_scr"),
+            "var_covar_scr_without": base.get("var_covar_scr"),
+            "var_covar_understatement_with":
+                agg.get("var_covar_rel_error_vs_nested"),
+            "t_rel_error_with": agg.get("t_matched_rel_error_vs_nested"),
+            "t_rel_error_without": base.get("t_matched_rel_error_vs_nested"),
+            "gaussian_rel_error_with": agg.get("gaussian_rel_error_vs_nested"),
+            "gaussian_rel_error_without":
+                base.get("gaussian_rel_error_vs_nested"),
+            "deltas": t4.get("deltas", {}),
+            "standalone_drivers": t4.get("standalone_drivers", []),
+            "standalone_scr_with": t4.get("standalone_scr_with_actions", []),
+            "standalone_scr_without": base.get("standalone_scr", []),
+            "anchoring_convention": t4.get("anchoring_convention"),
+        }
+        out["gates_task4"] = t4.get("gates", {})
+        out["task4_verdict"] = t4.get("verdict")
+        out["saturation_finding"] = (
+            "MATERIAL FINDING (disclosed): copula-on-standalone-losses "
+            "understates the nested with-actions benchmark (t rel err 4.0% -> "
+            "22.5%; gaussian 14.9% -> 27.8%) because the action saturates (max "
+            "relief 12%) in the joint tail while standalone tails sit in the "
+            "steeper partial-cut band. The nested run remains the capital "
+            "reference; copula read-outs are diagnostics on this basis. Rank "
+            "invariance gated: the action is a monotone marginal transform, so "
+            "the empirical copula and matched df are identical with/without "
+            "actions.")
+        out["task4_source"] = ("docs/validation/"
+                               "PHASE23_TASK4_AGGREGATION_WITH_ACTIONS_REPORT"
+                               ".json")
+        out["task4_change_record_id"] = t4.get("change_record_id")
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -933,6 +1078,15 @@ def build_ui_data() -> Dict[str, Any]:
     calibrations = _build_calibrations()
     capital = _build_capital(base.get("capital", {}))
     tail = _build_tail(base.get("tail", {}))
+    management_actions = _build_management_actions()
+    _ma_agg = management_actions.get("aggregation") or {}
+    if _ma_agg:
+        # Additive capital read-outs: tail-matched t-copula (without-actions
+        # basis) + the nested with-actions headline (Phase 23 Tasks 2-4).
+        capital["t_copula_scr"] = _ma_agg.get("t_copula_scr_without")
+        capital["t_copula_df"] = _ma_agg.get("df_matched")
+        capital["t_copula_rel_error"] = _ma_agg.get("t_rel_error_without")
+        capital["nested_scr_with_actions"] = _ma_agg.get("nested_scr_with")
 
     summary = dict(base.get("summary", {}))
     summary["contract_artifacts"] = len(inventory)
@@ -948,6 +1102,7 @@ def build_ui_data() -> Dict[str, Any]:
         "proxy": base.get("proxy", {}),
         "loss": base.get("loss", {}),
         "calibrations": calibrations,
+        "management_actions": management_actions,
         "governance": base.get("governance", {}),
         "verdicts": _build_verdicts(base.get("verdicts", [])),
     }
@@ -1099,6 +1254,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="inventory" class="panel" data-title="Inventory &amp; Contract"></div>
   <div id="calibrations" class="panel" data-title="Calibrations"></div>
   <div id="capital" class="panel" data-title="Capital &amp; Tail"></div>
+  <div id="actions" class="panel" data-title="Management Actions"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
 </div>
 
@@ -1131,6 +1287,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["inventory","Inventory & Contract"],
     ["calibrations","Calibrations"],
     ["capital","Capital & Tail"],
+    ["actions","Management Actions"],
     ["governance","Governance"]
   ];
 
@@ -1583,6 +1740,110 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  // ---- Management Actions view (Phase 23 Task 5) ----
+  function maGateGrid(g,label){
+    var keys=Object.keys(g||{});
+    if(!keys.length) return "";
+    var h='<div class="subh">'+esc(label)+'</div><div class="critgrid">';
+    keys.forEach(function(k){
+      var ok=g[k]===true;
+      h+='<div class="crit '+(ok?"pass":"fail")+'"><span class="cic">'+(ok?"✓":"✗")+
+        '</span><span class="mono">'+esc(k)+'</span></div>';
+    });
+    return h+'</div>';
+  }
+  function renderActions(){
+    var el=document.getElementById("actions"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var ma=DATA.management_actions||{};
+    var a=ma.aggregation||{}, r=ma.rule||{};
+    if(!Object.keys(a).length&&!Object.keys(r).length){
+      el.innerHTML='<p class="muted">No management-action data in this snapshot (requires contract v1.5.0+).</p>';
+      return;
+    }
+    var ncw=ma.nested_capital_without||{}, ncwa=ma.nested_capital_with||{};
+    var html='<div class="cards">';
+    [
+      ["Nested SCR without actions",num(a.nested_scr_without)],
+      ["Nested SCR with actions",num(a.nested_scr_with)],
+      ["Nested VaR 99.5 without",num(ncw.var_liability)],
+      ["Nested VaR 99.5 with",num(ncwa.var_liability)],
+      ["Action active (outer nodes)",a.active_share_full!=null?(100*a.active_share_full).toFixed(1)+"%":"--"],
+      ["At max-relief floor",a.floor_share_full!=null?(100*a.floor_share_full).toFixed(1)+"%":"--"],
+      ["OOS R2 with actions",ma.oos_r2_with_actions!=null?Number(ma.oos_r2_with_actions).toFixed(4):"--"],
+      ["Matched t df (rank-invariant)",a.df_matched!=null?String(a.df_matched):"--"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+esc(c[0])+
+      '</div><div class="v">'+esc(c[1])+'</div></div>'; });
+    html+='</div>';
+    html+='<p class="note">'+esc(ma.rule_description||"")+'</p>';
+    html+='<div class="subh">Rule parameters (educational placeholders, disclosed)</div>'+
+      '<table class="ptable ruletable"><thead><tr><th>Parameter</th><th>Value</th></tr></thead><tbody>'+
+      [["CR trigger (action starts below)",r.cr_trigger],
+       ["CR floor (full cut at/below)",r.cr_floor],
+       ["Bonus share of liability",r.bonus_share],
+       ["PRE floor (min retained bonus share)",r.pre_floor],
+       ["Max liability relief",r.max_relief],
+       ["Reference coverage (A_ref anchor)",r.reference_coverage]
+      ].map(function(p){ return '<tr><td>'+esc(p[0])+'</td><td class="mono">'+
+        (p[1]!=null?esc(p[1]):"--")+'</td></tr>'; }).join("")+
+      '</tbody></table>';
+    var D=[];
+    [["Nested w/o",a.nested_scr_without,"#39d98a"],
+     ["Nested WITH",a.nested_scr_with,"#1f8a5c"],
+     ["t-copula w/o",a.t_copula_scr_without,"#4f9cff"],
+     ["t-copula WITH",a.t_copula_scr_with,"#2b5d99"],
+     ["Gaussian w/o",a.gaussian_scr_without,"#9a7bff"],
+     ["Gaussian WITH",a.gaussian_scr_with,"#5d49a6"],
+     ["Var-covar w/o",a.var_covar_scr_without,"#ffb454"],
+     ["Var-covar WITH",a.var_covar_scr_with,"#a8762f"]
+    ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; with vs without management actions</h4>'+
+        '<p class="cap">Nested (with-actions '+num(a.nested_scr_with)+') is the capital reference. '+
+        'Copula and var-covar read-outs on the with-actions basis are diagnostics &mdash; see the '+
+        'saturation finding below. Matched t df '+esc(a.df_matched)+' is identical with/without actions '+
+        '(rank invariance: the action is a monotone marginal transform).</p>'+
+        barChart(D,{w:760,h:300,mB:64})+'</div>';
+    }
+    html+=maGateGrid(ma.gates_task3,"Task 3 pre-registered gates (rule + seven-driver OOS re-validation)");
+    html+=maGateGrid(ma.gates_task4,"Task 4 pre-registered gates (aggregation with actions)");
+    var ts=ma.trigger_sensitivity||[];
+    if(ts.length){
+      html+='<div class="subh">Trigger sensitivity (Task 3)</div>'+
+        '<table class="trigtable"><thead><tr><th>CR trigger</th><th>CR floor</th>'+
+        '<th>Active share</th><th>Nested SCR reduction</th><th>OOS R2</th><th>Verdict</th></tr></thead><tbody>';
+      ts.forEach(function(t){
+        html+='<tr><td>'+esc(num(t.cr_trigger,2))+'</td><td>'+esc(num(t.cr_floor,2))+'</td>'+
+          '<td>'+(t.active_share_nested!=null?(100*t.active_share_nested).toFixed(1)+"%":"--")+'</td>'+
+          '<td>'+num(t.nested_scr_reduction)+'</td>'+
+          '<td>'+(t.oos_r2_with_actions!=null?Number(t.oos_r2_with_actions).toFixed(4):"--")+'</td>'+
+          '<td>'+chip(t.verdict)+'</td></tr>';
+      });
+      html+='</tbody></table>';
+    }
+    var drv=a.standalone_drivers||[], sw=a.standalone_scr_with||[], swo=a.standalone_scr_without||[];
+    if(drv.length&&sw.length===drv.length&&swo.length===drv.length){
+      html+='<div class="subh">Standalone driver SCRs &mdash; with vs without actions</div>'+
+        '<table class="matable"><thead><tr><th>Driver</th><th>Without</th><th>With</th>'+
+        '<th>Delta</th></tr></thead><tbody>';
+      drv.forEach(function(d,i){
+        html+='<tr><td>'+esc(d)+'</td><td>'+num(swo[i])+'</td><td>'+num(sw[i])+'</td>'+
+          '<td>'+num(sw[i]-swo[i])+'</td></tr>';
+      });
+      html+='</tbody></table>';
+      if(a.anchoring_convention)
+        html+='<p class="note">Anchoring convention (disclosed): <span class="mono">'+
+          esc(a.anchoring_convention)+'</span>. Mortality/liquidity are unchanged by construction '+
+          '(anchored CR 1.12 &gt; trigger 1.10).</p>';
+    }
+    html+='<p class="note">'+esc(ma.saturation_finding||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(ma.task3_source||"")+' &middot; '+esc(ma.task4_source||"")+
+      ' &middot; ChangeRecords '+esc(ma.task3_change_record_id||"")+' / '+esc(ma.task4_change_record_id||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
   // ---- Governance & assumptions view (UI Task 4) ----
   var GLIK=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
   var GIMP=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
@@ -1934,7 +2195,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

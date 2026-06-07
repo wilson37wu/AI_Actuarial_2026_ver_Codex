@@ -1390,3 +1390,63 @@ consuming ONLY model output JSON (zero install).
 GITHUB_PUSH_BLOCKER.md); production sign-off residual (credentialled data + independent APS X2
 review) — by design for this educational model; disk /sessions ~90% — consider pruning
 `/var/tmp` build dirs and `.git.old-repo-*`.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-07 (cycle 16, supersedes everything above)
+
+**PHASE 23 COMPLETE (Tasks 1–5).** Task 4 (cycle 15) re-ran the seven-driver aggregation WITH
+the governed management-action rule: nested SCR 48,707.4 → **33,117.8** (−32.0%); tail-matched
+t(2.9451) 46,756.0 → 25,652.9; gaussian 41,472.4 → 23,921.8; var-covar 28,990.9 → 14,428.7
+(56.4% understatement vs nested-with; MR-010 refreshed); RANK INVARIANCE gated (df re-matched at
+exactly 2.9451); **MATERIAL FINDING disclosed:** copula-on-standalone-losses understates the
+nested with-actions benchmark (t rel err 4.0% → 22.5%) because the action saturates (max relief
+12%) in the joint tail — nested remains the capital reference. Task 5 (cycle 16) propagated all
+of Phase 23 to the zero-install offline UI: `ui_data.json` contract **1.4.0 → 1.5.0 ADDITIVE**;
+new `management_actions` section + **Management Actions tab** (rule card 1.10/0.90/30%/60%/12%,
+5/5 + 4/4 gates, active/floor shares, trigger sensitivity, with/without SCR bars for all four
+benchmarks, per-driver standalone deltas + anchoring convention, saturation finding verbatim);
+capital section augmented (t_copula_scr 46,756 / df 2.9451 / nested_scr_with_actions 33,118);
+3 new headline verdicts; `viewer_data.json` rebuilt (38 change records). jsdom self-test
+**ok:true, 0 network / 0 JS errors over 69 checks** (13 new Phase 23 checks). Evidence:
+`docs/validation/PHASE23_TASK5_UI_PROPAGATION_REPORT.{json,md}`. ChangeRecord
+`9df7b0fc63464614bc87b3c7b77cfff9` (code_change) OWNER_REVIEW; audit 64→65; changes 37→38;
+verify_all True. 20 new tests; regression **348 PASS / 0 FAIL** (DISCLOSED: two P22T5 tests
+pinned contract=="1.4.0" exactly; made forward-compatible >=1.4.0 with embedded==ui_data.json,
+intent preserved).
+
+**NEXT executable task: Phase 24 Task 1 — research + design note** for the new phase
+**"Phase 24: With-Actions Aggregation Consistency + Inner-Path Action Dynamics"** (opened in the
+state file; research-driven per the scheduled-task standing instruction, motivated by the
+disclosed Phase 23 Task 4 saturation gap):
+1. Joint-scenario (action-after-aggregation) re-aggregation: apply the governed
+   `ManagementActionRule` INSIDE the copula simulation to the simulated JOINT liability
+   (V = L_fit + sum_k (vec_k − mean_k) pattern, action on the joint coverage ratio) instead of
+   to standalone marginals — the design hypothesis is that this collapses the 22.5% t-copula
+   rel err vs nested-with-actions because saturation is then modelled at the joint level.
+2. Inner-path action-dynamics gap analysis (bonus cut affecting inner-path cashflows rather than
+   the outer-node liability transform only) vs Solvency II Art. 23 / SOA ASOP 56 / IA TAS M.
+3. Fixed pre-registered acceptance gates for Tasks 2–4 (no gate-shopping), mirroring the Phase 23
+   Task 1 design-note pattern (tested module scaffolding + governance ChangeRecord OWNER_REVIEW).
+Then Task 2 = joint-scenario t/gaussian re-aggregation vs nested-with-actions; Task 3 =
+inner-path prototype + OOS re-validation; Task 4 = tail diagnostics + MR refresh; Task 5 =
+offline-UI propagation (contract 1.5.0 → 1.6.0 additive) + PHASE 24 COMPLETE docs.
+
+**Sandbox operating rules (CONFIRMED AGAIN cycle 16):**
+1. ~44 s hard wall per bash call; stage long computations; run heavy pytest batches solo
+   (`test_phase21_task4_aggregation.py` alone takes ~21 s).
+2. Python/pytest/scipy/pandas live in `/var/tmp/pylibs` — run with `PYTHONPATH=/var/tmp/pylibs:.`.
+3. Long-file writes truncate on the mount — build files OFF-MOUNT (/var/tmp/p23t5_build pattern),
+   then `cp` + `cmp` verify; validate with ast.parse / json.loads. NEVER use the Windows
+   file-tools for long repo files.
+4. Git ghost locks persist — commit with the alt-`GIT_INDEX_FILE` workaround onto branch `p22c9`
+   (updating `main` directly is blocked by `refs/heads/main.lock`); push `p22c9:main`; see
+   GITHUB_PUSH_BLOCKER.md checklist.
+5. Risk-register IDs: ALWAYS check the next free MR-0xx in `.claude-dev/GOVERNANCE_STORE.json`
+   before opening a new risk; back up the store before any governance stage (backup at
+   /var/tmp/p23t5_build/GOV_BACKUP_pre_p23t5.json this cycle).
+
+**Standing blockers (human action):** delete the three git ghost locks (see
+GITHUB_PUSH_BLOCKER.md); production sign-off residual (credentialled data + independent APS X2
+review) — by design for this educational model; disk /sessions ~89% — consider pruning
+`/var/tmp` build dirs and `.git.old-repo-*`.

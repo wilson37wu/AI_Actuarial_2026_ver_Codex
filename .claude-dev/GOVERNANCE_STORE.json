@@ -1446,6 +1446,30 @@
       "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
       "digest": "c5a403dc7dd927a687c87103ea19c57f38d80ee3e1859a75d23fac998cebce4f",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "42f6407c37924cbe8343775508c26e3c",
+      "timestamp": "2026-06-07T15:18:27.082964+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase23",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 23 Task 5 offline-UI propagation; PHASE 23 COMPLETE",
+      "details": {
+        "record_id": "9df7b0fc63464614bc87b3c7b77cfff9",
+        "ui_contract": "1.5.0",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html",
+          "viewer_data.json"
+        ]
+      },
+      "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions",
+      "digest": "8e9ecd63069342a07ad3833381a7bb093519716be8b9edfc82acda5c4abb688d",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -3755,6 +3779,67 @@
           "actor": "AutomatedModelDev_Phase23",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions"
+    },
+    {
+      "record_id": "9df7b0fc63464614bc87b3c7b77cfff9",
+      "created_at": "2026-06-07T15:18:27.082841+00:00",
+      "title": "Phase 23 Task 5 - offline-UI propagation of the t-copula + management-action view",
+      "description": "Phase 23 Task 5 propagated the tail-dependence upgrade and the management-action results to the zero-install offline UI. scripts/build_ui_data.py (contract bumped additively to v1.5.0) now surfaces: (1) the Task 2 tail-matched Student-t copula aggregation (df=2.9451 by pooled tail-dependence matching; t-SCR 46,756 vs nested 48,707, rel err 4.0%, vs gaussian 14.9% and var-covar understatement 40.5%); (2) the Task 3 management-action rule (dynamic reversionary-bonus cut, Solvency II Art. 23) as a first-class Management Actions panel - rule card, 5/5 pre-registered gates, active/floor shares, trigger sensitivity 1.05/1.10/1.15, OOS R2 with actions 0.9983; and (3) the Task 4 with-actions aggregation read-outs - nested SCR 48,707->33,118 (-32.0%), all four benchmarks with/without, per-driver standalone deltas, rank invariance (df unchanged), and the DISCLOSED saturation finding (copula-on-standalone understates the nested with-actions benchmark; nested remains the capital reference). viewer_data.json was rebuilt so governance reflects the live store. The UI performs no calculation; it consumes only already-produced model output JSONs.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html",
+        "viewer_data.json"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "Solvency II Art. 23 (future management actions - effect displayed)",
+        "Solvency II Art. 234 (dependence justification - t-copula displayed)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.4.0 (gaussian-copula aggregation view only; no management-action panel; no t-copula or with-actions read-outs)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.5.0 (additive)",
+        "headline_readouts": {
+          "nested_scr_without": 48707.43490332604,
+          "nested_scr_with": 33117.7704,
+          "t_copula_scr_without": 46755.963,
+          "t_copula_scr_with": 25652.9228,
+          "df_matched": 2.9451,
+          "active_share_full": 0.46875,
+          "floor_share_full": 0.075
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 69
+      },
+      "impact_assessment": "Display-layer only: the UI bundler reads validation-report JSONs and performs no model calculation, so no model output changes. Additive contract bump keeps existing consumers working. Completes the Phase 23 per-task offline-UI propagation requirement; PHASE 23 COMPLETE (Tasks 1-5).",
+      "quantitative_impact": "UI now displays: nested SCR without/with actions 48707/33118; tail-matched t(df=2.9451) copula 46756/25653; action active on 46.9% of outer nodes (7.5% at floor); jsdom self-test ok with 0 network calls and 0 JS errors over 69 checks.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase23",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T15:18:27.082908+00:00",
+          "actor": "AutomatedModelDev_Phase23",
+          "status": "PEER_REVIEW",
+          "comments": "UI propagation verified by 24 contract checks + jsdom self-test (0 network / 0 JS errors over 69 checks); display-layer change only; saturation finding carried into the display verbatim."
+        },
+        {
+          "timestamp": "2026-06-07T15:18:27.082925+00:00",
+          "actor": "AutomatedModelDev_Phase23",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. PHASE 23 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
         }
       ],
       "phase": "Phase 23: Tail-Dependence Upgrade + Management Actions"
