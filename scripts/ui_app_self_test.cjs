@@ -120,6 +120,14 @@ setTimeout(() => {
     capitalTipElems: document.querySelectorAll("#capital [data-tip]").length,
     g2ppCapitalPresent: /G2\+\+ two-factor rates/.test(bodyText),
     gmartVerdictPresent: /G-MART market-consistency gate/.test(bodyText),
+    gfxPresent: /G-FX/.test(bodyText),
+    gliqPresent: /G-LIQ/.test(bodyText),
+    sevenDriverCapitalPresent: /Seven-driver economic-capital aggregation/.test(bodyText),
+    sevenDriverVerdictPresent: /Seven-driver tail-dependent capital aggregation/.test(bodyText),
+    oosPartialVerdictPresent: /Six-driver OOS proxy validation/.test(bodyText),
+    fxScrCardPresent: /FX SCR/.test(bodyText),
+    liquidityScrCardPresent: /Liquidity SCR/.test(bodyText),
+    nestedDisclosurePresent: /Honest small-sample disclosure/.test(bodyText),
     governancePresent: /Audit integrity/.test(bodyText),
     govSubnavBtns: govBtns.length,
     govGateCards,
@@ -148,18 +156,26 @@ setTimeout(() => {
     checks.calibrationGates >= 4 &&
     checks.glapsePresent &&
     checks.gswpnPresent &&
-    checks.calibDrivers >= 6 &&
-    checks.calibPanels >= 6 &&
+    checks.calibDrivers >= 8 &&
+    checks.calibPanels >= 8 &&
     checks.calibCharts >= 1 &&
     checks.calibCrit >= 3 &&
     checks.calibParamRows >= 1 &&
-    checks.capitalCards >= 5 &&
+    checks.capitalCards >= 7 &&
     checks.capitalSubnavBtns === 4 &&
     checks.capitalSvgCharts >= 4 &&
-    checks.driverBars >= 5 &&
+    checks.driverBars >= 7 &&
     checks.capitalTipElems >= 10 &&
     checks.g2ppCapitalPresent &&
     checks.gmartVerdictPresent &&
+    checks.gfxPresent &&
+    checks.gliqPresent &&
+    checks.sevenDriverCapitalPresent &&
+    checks.sevenDriverVerdictPresent &&
+    checks.oosPartialVerdictPresent &&
+    checks.fxScrCardPresent &&
+    checks.liquidityScrCardPresent &&
+    checks.nestedDisclosurePresent &&
     checks.governancePresent &&
     checks.govSubnavBtns === 4 &&
     checks.govGateCards >= 5 &&

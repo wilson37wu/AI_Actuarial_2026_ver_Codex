@@ -32,10 +32,10 @@
     }
   ],
   "summary": {
-    "tasks_completed": 97,
-    "tasks_total": 100,
-    "phases_completed": 18,
-    "estimated_completion_pct": 97.0,
+    "tasks_completed": 104,
+    "tasks_total": 105,
+    "phases_completed": 19,
+    "estimated_completion_pct": 99,
     "gates_cleared": 12,
     "gates_total": 12,
     "risks_open": 1,
@@ -1087,9 +1087,9 @@
     ]
   },
   "governance": {
-    "audit_entries": 37,
+    "audit_entries": 52,
     "audit_integrity_ok": true,
-    "audit_verified": 37,
+    "audit_verified": 52,
     "audit_failed": 0,
     "change_records": [
       {
@@ -1680,6 +1680,343 @@
             "comments": "Owner review: lapse-behaviour index is a single systemic OU factor with placeholder parameters; mortality-trend / FX / liquidity drivers still omitted; copula marginals do not extrapolate; credentialled calibration + independent APS X2 review pending. Production sign-off withheld."
           }
         ]
+      },
+      {
+        "record_id": "9dbd97f031f7412f941ca07793e2d3be",
+        "title": "MR-003/MR-011: Lapse behavioural-index parameters calibrated to experience (HK PAR)",
+        "status": "APPROVED",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-06T00:17:39.179720+00:00",
+        "phase": "Phase 19: Recovery Completion and Driver Expansion",
+        "author": "AutomatedModelDev_Phase19",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 7 §3.3",
+          "SOA ASOP 56 §3.4",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.5",
+          "IA TAS M §3.6",
+          "IFoA APS X2 §4.2"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T00:17:39.179769+00:00",
+            "actor": "AutomatedModelDev_Phase19",
+            "status": "PEER_REVIEW",
+            "comments": "OU lapse behavioural-index parameters calibrated to HK PAR A/E proxy history; submitting for peer review."
+          },
+          {
+            "timestamp": "2026-06-06T00:17:39.179861+00:00",
+            "actor": "APS_X2_Independent_Reviewer",
+            "status": "OWNER_REVIEW",
+            "comments": "kappa_b / long-run level / sigma_b / stationary std recovered inside documented plausibility bands; OU AR(1) methodology and data lineage reviewed and reasonable for educational use."
+          },
+          {
+            "timestamp": "2026-06-06T00:17:39.179871+00:00",
+            "actor": "ChiefActuary",
+            "status": "APPROVED",
+            "comments": "Calibrated OU lapse behavioural-index parameters approved for educational use; production pricing/capital use requires a credentialled actual-vs-expected persistency study and a genuine independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "1d7737af2f634c438b4f84a9d76e2b00",
+        "title": "Phase 20 Task 1 - enhanced G2++ rates driver and G-RATE2 gate",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T07:10:34.351551+00:00",
+        "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+        "author": "AutomatedModelDev_Phase20",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3",
+          "SOA ASOP 56 section 3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.5",
+          "IA TAS M section 3.6",
+          "Solvency II Delegated Regulation Article 77",
+          "Solvency II Delegated Regulation Article 234"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T07:10:34.351568+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "PEER_REVIEW",
+            "comments": "Additive G2++ engine and G-RATE2 gate staged; tests and calibration evidence required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T07:10:34.351582+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 20 Tasks 2-4."
+          }
+        ]
+      },
+      {
+        "record_id": "6c7d5354530c451a9a6ab46f33a8dba0",
+        "title": "Phase 20 Task 2 - G2++ swaption-surface calibration and G-SWPN gate",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T08:25:30.126630+00:00",
+        "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+        "author": "AutomatedModelDev_Phase20",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3",
+          "SOA ASOP 56 section 3.5",
+          "SOA ASOP 56 section 4.1",
+          "IA TAS M section 3.5",
+          "IA TAS M section 3.6",
+          "Solvency II Delegated Regulation Article 22",
+          "Solvency II Delegated Regulation Article 77"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T08:25:30.126656+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "PEER_REVIEW",
+            "comments": "Analytic swaption pricer (MC-cross-checked), calibration, and G-SWPN gate staged; market-surface recalibration required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T08:25:30.126672+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 20 Tasks 3-4 and a validated market swaption surface."
+          }
+        ]
+      },
+      {
+        "record_id": "955fe35ce8034a9cb98904a7b6d79c62",
+        "title": "Phase 20 Task 3 - market-consistency martingale validation gate (G-MART)",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T09:25:48.971996+00:00",
+        "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+        "author": "AutomatedModelDev_Phase20",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3",
+          "SOA ASOP 56 section 3.5",
+          "IA TAS M section 3.6",
+          "Solvency II Delegated Regulation Article 22",
+          "Solvency II Delegated Regulation Article 234",
+          "Brigo-Mercurio 2006"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T09:25:48.972017+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "PEER_REVIEW",
+            "comments": "Martingale gate (exact HW1F + G2++ + GBM + FX) staged with MC tolerance; market-surface recalibration required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T09:25:48.972033+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 20 Tasks 4-5 and a validated market surface."
+          }
+        ]
+      },
+      {
+        "record_id": "a869696aa8be4bea975d5113005e9b21",
+        "title": "Phase 20 Task 4 - capital re-aggregation with the two-factor G2++ rates driver",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T10:25:50.371101+00:00",
+        "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+        "author": "AutomatedModelDev_Phase20",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.5",
+          "SOA ASOP 56 section 3.1",
+          "SOA ASOP 25 section 3.3",
+          "SOA ASOP 7 section 3.3",
+          "IA TAS M section 3.2",
+          "IA TAS M section 3.5",
+          "IA TAS M section 3.6",
+          "Solvency II Delegated Regulation Article 234",
+          "Brigo-Mercurio 2006",
+          "IFoA Life Aggregation & Simulation WP"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T10:25:50.371115+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "PEER_REVIEW",
+            "comments": "2F G2++ capital re-aggregation staged; inner nest remains HW1F; larger outer sample and market-surface recalibration required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T10:25:50.371126+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Task 5 UI surfacing, G2++-consistent inner nest, and a validated market surface."
+          }
+        ]
+      },
+      {
+        "record_id": "25e1eac6661a4d9bb74276ee1a2a4b46",
+        "title": "Phase 21 Task 1 - FX / currency sixth capital driver + G-FX plausibility gate",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T21:52:05.892828+00:00",
+        "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+        "author": "AutomatedModelDev_Phase21",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3",
+          "SOA ASOP 56 section 3.4/3.5",
+          "IA TAS M section 3.5/3.6",
+          "Solvency II Delegated Regulation Article 188 (currency risk)",
+          "Solvency II Delegated Regulation Article 234",
+          "Brigo-Mercurio 2006"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T21:52:05.892844+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "PEER_REVIEW",
+            "comments": "FX sixth driver staged with G-FX gate + CIP-exact inner conditioning; credentialled calibration and six-driver OOS proxy validation required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T21:52:05.892856+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 21 Tasks 2-5 and credentialled FX calibration."
+          }
+        ]
+      },
+      {
+        "record_id": "c2f29042b5f44dd7b3670d7de87e09a2",
+        "title": "Phase 21 Task 2 - Six-driver out-of-sample LSMC proxy validation (FX included)",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T23:26:24.400992+00:00",
+        "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+        "author": "AutomatedModelDev_Phase21",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 7 section 3.3",
+          "SOA ASOP 25 section 3.3",
+          "SOA ASOP 56 section 3.1.3/3.5",
+          "IA TAS M section 3.2/3.6",
+          "IFoA proxy-modelling working party",
+          "Longstaff & Schwartz (2001)",
+          "Solvency II Delegated Regulation Article 188/234"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T23:26:24.401007+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "PEER_REVIEW",
+            "comments": "Six-driver OOS proxy validation staged with dual fx-mode basis sweep; credentialled calibration and independent review required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T23:26:24.401016+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 21 Tasks 3-5 and credentialled calibration."
+          }
+        ]
+      },
+      {
+        "record_id": "07880f42a2b84174a54b6261c0fd7131",
+        "title": "MR-011/MR-012: Liquidity-premium driver (7th) added and calibrated (HKD)",
+        "status": "APPROVED",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T01:18:49.181430+00:00",
+        "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+        "author": "AutomatedModelDev_Phase21",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 §3.1.3",
+          "SOA ASOP 56 §3.4",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.4",
+          "IA TAS M §3.5",
+          "IA TAS M §3.6",
+          "IFoA APS X2 §4.2"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T01:18:49.181467+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "PEER_REVIEW",
+            "comments": "CIR++ liquidity-premium parameters calibrated to HKD educational-proxy history; submitting for peer review."
+          },
+          {
+            "timestamp": "2026-06-07T01:18:49.181483+00:00",
+            "actor": "APS_X2_Independent_Reviewer",
+            "status": "OWNER_REVIEW",
+            "comments": "kappa_l / long-run premium / sigma_l / lambda_l recovered inside documented plausibility bands; delegated CIR OLS methodology and data lineage reviewed and reasonable for educational use."
+          },
+          {
+            "timestamp": "2026-06-07T01:18:49.181491+00:00",
+            "actor": "ChiefActuary",
+            "status": "APPROVED",
+            "comments": "Calibrated CIR++ liquidity-premium parameters approved for educational use; production pricing/capital use requires a credentialled liquidity-premium series and a genuine independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "d57a31a5ebf94173bf5c55c5b9669ead",
+        "title": "Phase 21 Task 4 - seven-driver tail-dependent aggregation + tail diagnostics",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T02:21:44.687108+00:00",
+        "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+        "author": "AutomatedModelDev_Phase21",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.5/3.6",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "EIOPA volatility-adjustment methodology (illiquidity premium)",
+          "Duffie-Singleton 1999; Brigo-Mercurio 2006; L'Ecuyer 2018 (RQMC)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T02:21:44.687125+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "PEER_REVIEW",
+            "comments": "Seven-driver aggregation staged with analytic liquidity conditioning, copula re-aggregation and tail diagnostics; credentialled exposure/coupling calibration required before approval."
+          },
+          {
+            "timestamp": "2026-06-07T02:21:44.687138+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 21 Task 5 (UI propagation), credentialled liquidity exposure calibration, and APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "45cacebd910b440891f28b48fd30fedd",
+        "title": "Phase 21 Task 5 - offline-UI propagation of the seven-driver capital view",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-07T04:14:41.663675+00:00",
+        "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+        "author": "AutomatedModelDev_Phase21",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T04:14:41.663773+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only."
+          },
+          {
+            "timestamp": "2026-06-07T04:14:41.663788+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. PHASE 21 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
+          }
+        ]
       }
     ],
     "deployment_gates": [
@@ -1813,7 +2150,7 @@
         "risk_id": "MR-003",
         "title": "Dynamic lapse assumption absent",
         "overall_rating": "CRITICAL",
-        "mitigation_status": "IN_PROGRESS",
+        "mitigation_status": "MITIGATED",
         "category": "model_error",
         "owner": "Model Developer",
         "likelihood": "MEDIUM",
@@ -1821,7 +2158,7 @@
         "description": "No dynamic lapse function is implemented. Dynamic lapse is the single most impactful assumption for TVOG and ALM under stressed rate scenarios. Static lapse at current flat rates will materially understate TVOG sensitivity (estimated ±15–30% TVOG per ±25% lapse shock per Phase 1 assessment).",
         "mitigation": "Dynamic lapse implemented and calibrated (Phase 13 Task 2); ChangeRecord assumption=\"dynamic_lapse\" APPROVED.",
         "related_standard": "SOA ASOP 7 §3.3; IA TAS M §3.5",
-        "updated_at": "2026-05-18T02:18:55.749015+00:00"
+        "updated_at": "2026-06-06T00:17:39.182600+00:00"
       },
       {
         "risk_id": "MR-004",
@@ -1919,13 +2256,13 @@
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
         "related_standard": "SOA ASOP 56 §3.5; IA TAS M §3.6; SOA ASOP 25 §3.3",
-        "updated_at": "2026-06-05T11:35:58.078824+00:00"
+        "updated_at": "2026-06-07T02:21:44.686993+00:00"
       },
       {
         "risk_id": "MR-011",
         "title": "Multi-driver economic-capital proxy is educational, not production capital",
         "overall_rating": "HIGH",
-        "mitigation_status": "IN_PROGRESS",
+        "mitigation_status": "MITIGATED",
         "category": "model_error",
         "owner": "Model Owner",
         "likelihood": "MEDIUM",
@@ -1933,7 +2270,7 @@
         "description": "The Phase 15 multi-driver (short-rate + equity) nested/LSMC economic-capital proxy (Tasks 1-4) is fitted on PLACEHOLDER HW1F / GBM parameters, omits material risk drivers (lapse, mortality/longevity trend, credit spread, FX, liquidity, management action), uses an educational single-guarantee liability, and has NOT been independently reviewed (APS X2). The 99.5% VaR/ES and SCR-proxy figures it produces are illustrative only and must not be used for regulatory or internal economic-capital reporting until parameters are calibrated to credentialled market data, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all multi-driver capital output as EDUCATIONAL ONLY in the limitation card and at the API boundary; bound proxy error by the Task 2 out-of-sample validation (OOS R^2=0.9704, VaR rel err 3.21%) and outer-sampling error by the Task 4 bootstrap CI (SE ~1.66%); benchmark every aggregated figure to the Task 3 nested ground truth. Residual closure requires credentialled-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008).",
         "related_standard": "IA TAS M §3.6; APS X2 §3; SOA ASOP 56 §3.5",
-        "updated_at": "2026-06-04T20:15:59.122741+00:00"
+        "updated_at": "2026-06-07T01:18:49.182068+00:00"
       },
       {
         "risk_id": "MR-012",
@@ -1947,7 +2284,21 @@
         "description": "Phase 17 adds a CIR++ mean-reverting credit-spread driver (par_model_v2/stochastic/credit_spread.py) as the third risk factor in the nested/LSMC economic-capital proxy (rate + equity + credit-spread), with a reduced-form hazard x LGD credit-loss component on spread-sensitive backing assets. The CIR++ parameters (mean-reversion, long-run spread, vol, risk premium) and the hazard/LGD assumptions are PLACEHOLDER educational defaults, NOT calibrated to credentialled credit-market data; the trivariate LSMC surface still omits material drivers (lapse, mortality/longevity trend, FX, liquidity, management action) and has NOT been independently reviewed (APS X2). The three-driver 99.5% VaR/ES and SCR-proxy figures are illustrative only and must not be used for regulatory or internal economic-capital reporting until the credit parameters are calibrated, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
         "related_standard": "IA TAS M §3.6; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3",
-        "updated_at": "2026-06-05T11:35:58.079068+00:00"
+        "updated_at": "2026-06-07T02:21:44.687035+00:00"
+      },
+      {
+        "risk_id": "MR-013",
+        "title": "Two-factor rates market consistency not fully calibrated",
+        "overall_rating": "HIGH",
+        "mitigation_status": "IN_PROGRESS",
+        "category": "model_error",
+        "owner": "Assumption Owner",
+        "likelihood": "MEDIUM",
+        "impact": "HIGH",
+        "description": "The G2++ rates driver now has analytic zero-coupon and bond-option formulas, but parameters are educational until calibrated to a swaption volatility surface and validated through martingale and capital-impact gates.",
+        "mitigation": "Complete Phase 20 Tasks 2-4: swaption-surface calibration, market-consistency martingale gate, and capital re-aggregation/tail diagnostics with independent review.",
+        "related_standard": "SOA ASOP 56 section 3.5; IA TAS M section 3.6",
+        "updated_at": "2026-06-06T09:25:48.971900+00:00"
       }
     ]
   }

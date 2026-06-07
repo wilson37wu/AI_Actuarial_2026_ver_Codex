@@ -833,6 +833,47 @@ Do these **only once** disk space is freed, the ghost locks are removed, and `gi
 
 ---
 
+## LATEST STATUS - 2026-06-07 (cycles 5-6, supersedes earlier text) — **PHASE 21 COMPLETE**
+
+**Phase 21 Task 5 is COMPLETE: offline-UI propagation of the seven-driver capital view → PHASE 21 COMPLETE (Tasks 1–5).**
+Work was split across two cycles: cycle 5 patched `scripts/build_ui_data.py` + `scripts/ui_app_self_test.cjs`
+(via `scripts/_phase21_task5_patch.py`, off-mount + cp protocol) — contract bumped additively to **v1.3.0**;
+G-FX + G-LIQ calibration-explorer panels; FX + liquidity standalone-SCR bars/cards; seven-driver
+aggregation read-outs (standalone sum / 7×7 var-covar 28,996 / gaussian copula 41,593 / nested 48,694)
+and seven-driver tail diagnostics (convergence, simulated + honest nested bootstrap CIs, Sobol-RQMC) —
+but left it undocumented. Cycle 6 finished the task: refreshed the stale five-driver headline
+aggregation/tail verdict wording to seven-driver (`_build_tail` verdict + keyed-verdict refresh in
+`_build_verdicts`), rebuilt `viewer_data.json` via `scripts/build_offline_viewer.py` so the UI governance
+tab reflects the LIVE store (52/52 audit entries digest-verified, 28 change records), opened ChangeRecord
+`45cacebd910b440891f28b48fd30fedd` (OWNER_REVIEW, code_change; audit 51→52, changes 27→28, verify_all
+True) via `scripts/build_phase21_task5_ui_propagation.py`, and wrote
+`docs/validation/PHASE21_TASK5_UI_PROPAGATION_REPORT.{json,md}`. Verification: 19/19 UI-contract checks
+PASS; `node scripts/ui_app_self_test.cjs ui_app.html` **ok:true, 0 network / 0 JS errors** (52 checks,
+incl. gfxPresent/gliqPresent/sevenDriverCapitalPresent/sevenDriverVerdictPresent/fxScrCardPresent/
+liquidityScrCardPresent/oosPartialVerdictPresent, driverBars=7); offline-viewer self-test ok:true;
+py_compile clean. The six-driver OOS **PARTIAL** (R² 0.9498) remains honestly displayed.
+
+**NEXT executable task: Phase 22 Task 1 — proxy hardening (OOS remediation).** Re-run the six-driver
+LSMC OOS validation applying the recorded remediation options (MODEL_DEV_LOG 2026-06-07 cycle 2):
+raise training inner budget 96→256+, raise n_outer training states 500→2,000+ via the staged CRN
+protocol, and/or targeted deg-2 basis on rate/equity only; gate target OOS R² ≥ 0.95 with VaR/ES/SCR
+rel-err ≤ 10%; ChangeRecord OWNER_REVIEW + MR-register refresh; then offline-UI propagation of the
+refreshed verdict.
+
+## Phase 22: Proxy hardening + seven-driver OOS validation (PLAN — one task per cycle)
+
+1. ⭐ **NEXT** — Six-driver OOS remediation (see above) — clear the PARTIAL honestly, no gate-shopping.
+2. Extend the LSMC proxy surface to the calibrated liquidity (7th) driver (analytic CIR-affine haircut
+   feature); disjoint-seed seven-driver OOS validation vs the Task 4 nested ground truth (R² ≥ 0.95,
+   VaR rel-err ≤ 10%); overfit sweep.
+3. Liquidity exposure-notional + 7×7 liquidity-coupling calibration to documented educational proxies
+   (replace placeholders; sensitivity table over couplings ±0.15); refresh the small-liquidity-SCR finding.
+4. Seven-driver aggregation re-run on the hardened proxy + refreshed couplings; MR-010/MR-012 refresh;
+   tail diagnostics.
+5. Offline-UI propagation + PHASE 22 COMPLETE documentation.
+
+---
+
 ## LATEST STATUS - 2026-06-07 (cycle 4, supersedes earlier text)
 
 **Phase 21 Task 4 is COMPLETE: seven-driver tail-dependent aggregation + tail diagnostics, VERDICT PASS.**
@@ -1056,7 +1097,7 @@ ChangeRecord `25e1eac6661a4d9bb74276ee1a2a4b46` OWNER_REVIEW; MR-012 refreshed; 
 3. Run pytest in chunks (`-n 2`, file/class/test granularity) with done-tracking; record any test
    that cannot fit the wall as NOT RUN with a reason.
 
-## Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital ⭐ IN PROGRESS (Tasks 1-3 ✅ — next: Task 4)
+## Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital ✅ COMPLETE (Tasks 1-5, 2026-06-07)
 
 **Do not start until the sandbox boots again (disk freed) and `python3 -m pytest -q` runs in <45 s batches at
 0 failures.** The economic-capital proxy currently spans **five** drivers (rate → now G2++ 2F, equity, credit

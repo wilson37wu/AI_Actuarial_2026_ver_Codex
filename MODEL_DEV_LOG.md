@@ -7302,3 +7302,44 @@ PHASE 21 COMPLETE when documented.
 - Production residual (unchanged, by design): credentialled-data calibration + independent APS X2 review.
 
 ---
+
+## Run 2026-06-07 (cycle 6) — Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital
+
+**Task Completed:** Task 5 — Offline-UI propagation of the seven-driver capital view → **PHASE 21 COMPLETE (Tasks 1–5)**
+
+**Accomplishments:**
+- Picked up the cycle-5 state: `scripts/_phase21_task5_patch.py` had already patched `scripts/build_ui_data.py`
+  + `scripts/ui_app_self_test.cjs` (contract v1.3.0; G-FX/G-LIQ panels; FX + liquidity SCR cards; seven-driver
+  aggregation/tail read-outs; extended self-test) and rebuilt `ui_app.html`/`ui_data.json` — but undocumented,
+  with no governance entry and with stale FIVE-driver headline verdict wording inherited from the Phase 19
+  `viewer_data.json` baseline.
+- Fixed the stale wording in `scripts/build_ui_data.py` (off-mount build + cp + cmp + compile verification):
+  `_build_tail` now sets a seven-driver verdict when the Phase 21 Task 4 source is loaded;
+  `_build_verdicts` refreshes the keyed `aggregation`/`tail` headline verdicts (seven-driver, gaussian copula
+  rel err 14.6% vs var-covar understatement 40.5%) with sources repointed to PHASE21_TASK4; docstring fixed.
+- Rebuilt `viewer_data.json` + `model_result_viewer.html` via `scripts/build_offline_viewer.py` so the UI
+  governance tab reflects the LIVE store: 52/52 audit entries digest-verified at build time, 28 change records
+  (62 sign-off steps) — previously a stale Phase 19 snapshot (18 records).
+- NEW `scripts/build_phase21_task5_ui_propagation.py` (evidence + governance; no model calculation):
+  19/19 UI-contract checks PASS (contract 1.3.0, n_drivers 7, FX/liquidity SCRs, PHASE21_TASK4 sources,
+  G-FX/G-LIQ records, seven-driver verdicts, OOS PARTIAL honestly listed); re-runs the jsdom self-test.
+- Governance: ChangeRecord `45cacebd910b440891f28b48fd30fedd` (code_change) at OWNER_REVIEW; one governance
+  audit entry; audit 51→52, change records 27→28; verify_all True. Display-layer change only — no model output
+  changes; production sign-off remains withheld (credentialled-data calibration + APS X2 review residual).
+- Verification: `node scripts/ui_app_self_test.cjs ui_app.html` **ok:true, 0 network / 0 JS errors** (52 checks,
+  driverBars=7, gfx/gliq/sevenDriver/fxScr/liquidityScr/oosPartial checks all true);
+  `node scripts/offline_viewer_self_test.cjs model_result_viewer.html` ok:true; py_compile clean.
+- Reports: `docs/validation/PHASE21_TASK5_UI_PROPAGATION_REPORT.{json,md}`.
+
+**Next Step:** Phase 22 Task 1 — six-driver OOS remediation (training inner budget 96→256+, n_outer
+500→2,000+ via staged CRN, targeted deg-2 basis on rate/equity; gate OOS R² ≥ 0.95, VaR/ES/SCR rel-err
+≤ 10%); then Phase 22 Tasks 2–5 per the plan in MODEL_DEV_TASK_PROMPT.md (seven-driver proxy OOS,
+liquidity exposure/coupling calibration, re-aggregation, UI propagation).
+
+**Industry Standards Progress:**
+- SOA ASOP 41 §3.2: addressed — results communication carries verdicts, CIs, and honest PARTIAL/clamp disclosures.
+- SOA ASOP 56 §3.5: addressed — output presentation validated by executable contract checks + jsdom self-test.
+- IA TAS M §3.6/§3.7: addressed — UI reproducible from persisted artifacts only; audit-chain integrity recomputed
+  offline at build time (52/52) and surfaced as a computed badge.
+
+---

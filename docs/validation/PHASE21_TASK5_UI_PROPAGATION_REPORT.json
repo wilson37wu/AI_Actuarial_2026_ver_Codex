@@ -1,0 +1,63 @@
+{
+  "task": "Phase 21 Task 5 - offline-UI propagation",
+  "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+  "generated_utc": "2026-06-07T04:14:41.753055+00:00",
+  "verdict": "PASS",
+  "phase21_status": "COMPLETE (Tasks 1-5)",
+  "ui_contract_checks": {
+    "contract_version": "1.3.0",
+    "contract_is_1_3_0": true,
+    "n_drivers_seven": true,
+    "fx_scr_present": true,
+    "liquidity_scr_present": true,
+    "var_covar_scr_present": true,
+    "copula_scr_present": true,
+    "nested_scr_present": true,
+    "aggregation_source_phase21": true,
+    "liquidity_note_present": true,
+    "gfx_calibration_record": true,
+    "gliq_calibration_record": true,
+    "tail_source_phase21": true,
+    "tail_verdict_seven_driver": true,
+    "headline_aggregation_seven_driver": true,
+    "gfx_verdict_listed": true,
+    "gliq_verdict_listed": true,
+    "seven_driver_verdict_listed": true,
+    "oos_partial_honestly_listed": true,
+    "all_passed": true,
+    "capital_readouts": {
+      "fx_scr": 4286.36987389994,
+      "liquidity_scr": 63.32111662161069,
+      "var_covar_scr": 28996.199216096866,
+      "copula_scr": 41592.59337458981,
+      "nested_scr": 48694.022628600025,
+      "selected_copula": "gaussian"
+    }
+  },
+  "self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 52,
+    "failed_checks": [],
+    "seven_driver_checks": {
+      "gfxPresent": true,
+      "gliqPresent": true,
+      "sevenDriverCapitalPresent": true,
+      "sevenDriverVerdictPresent": true,
+      "oosPartialVerdictPresent": true,
+      "fxScrCardPresent": true,
+      "liquidityScrCardPresent": true,
+      "nestedDisclosurePresent": true,
+      "driverBars": 7
+    }
+  },
+  "governance": {
+    "added_change_record": true,
+    "change_record_id": "45cacebd910b440891f28b48fd30fedd",
+    "change_record_status": "OWNER_REVIEW",
+    "audit_entries": "51->52",
+    "change_records": "27->28",
+    "audit_integrity_verify_all": true
+  }
+}

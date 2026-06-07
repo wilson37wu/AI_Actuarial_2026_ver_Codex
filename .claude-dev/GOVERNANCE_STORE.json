@@ -1111,6 +1111,29 @@
       "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
       "digest": "42d4f421ffb80ff3e6aba893d7cfa36d3d1a7babaee06b7c9400c46c71645487",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "cc35ccfe33944581b5f9c3f64f33ac81",
+      "timestamp": "2026-06-07T04:14:41.663818+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase21",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 21 Task 5 offline-UI propagation; PHASE 21 COMPLETE",
+      "details": {
+        "record_id": "45cacebd910b440891f28b48fd30fedd",
+        "ui_contract": "1.3.0",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+      "digest": "e02496fc4f5dfdabe0da959b6aa7df496ac7736d886ae7d5d04d2c3e3d689745",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -2740,6 +2763,63 @@
           "actor": "AutomatedModelDev_Phase21",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Production sign-off withheld pending Phase 21 Task 5 (UI propagation), credentialled liquidity exposure calibration, and APS X2 review."
+        }
+      ],
+      "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital"
+    },
+    {
+      "record_id": "45cacebd910b440891f28b48fd30fedd",
+      "created_at": "2026-06-07T04:14:41.663675+00:00",
+      "title": "Phase 21 Task 5 - offline-UI propagation of the seven-driver capital view",
+      "description": "Phase 21 Task 5 propagated the seven-driver economic-capital view to the zero-install offline UI. scripts/build_ui_data.py (contract bumped additively to v1.3.0) now surfaces: (1) the G-FX and G-LIQ calibration gates as first-class calibration-explorer panels with criteria breakdowns and fit diagnostics; (2) the FX and liquidity standalone SCR read-outs (driver bars + KPI cards) alongside the five prior drivers; (3) the seven-driver tail-dependent aggregation read-outs (standalone sum / 7x7 var-covar / gaussian copula / nested benchmark, with the MR-010 understatement finding and the documented small-liquidity-SCR finding); and (4) the seven-driver tail diagnostics (copula-simulated convergence, simulated + honest small-sample nested bootstrap CIs, Sobol-RQMC variance reduction) with the headline aggregation/tail verdicts refreshed from the five-driver baseline wording. The six-driver OOS PARTIAL verdict remains honestly disclosed. No calculation is performed by the UI; it consumes only already-produced model output JSONs.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.2.0 (five-driver capital view; no G-FX/G-LIQ panels)",
+        "headline_verdicts": "five-driver aggregation/tail wording"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.3.0 (additive)",
+        "capital_readouts": {
+          "fx_scr": 4286.36987389994,
+          "liquidity_scr": 63.32111662161069,
+          "var_covar_scr": 28996.199216096866,
+          "copula_scr": 41592.59337458981,
+          "nested_scr": 48694.022628600025,
+          "selected_copula": "gaussian"
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0
+      },
+      "impact_assessment": "Display-layer only: the UI bundler reads validation-report JSONs and performs no model calculation, so no model output changes. Additive contract bump keeps existing consumers working. Completes the Phase 21 per-task offline-UI propagation requirement; PHASE 21 COMPLETE.",
+      "quantitative_impact": "UI now displays: FX SCR 4286; liquidity SCR 63; var-covar 28996 vs nested 48694; copula 41593 (gaussian); jsdom self-test ok with 0 network calls and 0 JS errors over 52 checks.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase21",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-07T04:14:41.663773+00:00",
+          "actor": "AutomatedModelDev_Phase21",
+          "status": "PEER_REVIEW",
+          "comments": "UI propagation verified by contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only."
+        },
+        {
+          "timestamp": "2026-06-07T04:14:41.663788+00:00",
+          "actor": "AutomatedModelDev_Phase21",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. PHASE 21 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
         }
       ],
       "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital"

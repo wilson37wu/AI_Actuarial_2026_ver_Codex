@@ -1,9 +1,9 @@
 {
-  "contract_version": "1.2.0",
+  "contract_version": "1.3.0",
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-06T12:12:46.936Z",
+    "generated_utc": "2026-06-07T04:16:23.687532+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -16,17 +16,17 @@
     "classification": "EDUCATIONAL ONLY -- NOT a regulatory capital model"
   },
   "summary": {
-    "tasks_completed": 97,
-    "tasks_total": 100,
-    "phases_completed": 18,
-    "estimated_completion_pct": 97,
+    "tasks_completed": 104,
+    "tasks_total": 105,
+    "phases_completed": 19,
+    "estimated_completion_pct": 99,
     "gates_cleared": 12,
     "gates_total": 12,
     "risks_open": 1,
     "risks_mitigated": 10,
     "production_status": "NOT CLEARED FOR PRODUCTION",
-    "contract_artifacts": 37,
-    "calibrated_drivers": 8
+    "contract_artifacts": 42,
+    "calibrated_drivers": 10
   },
   "inventory": [
     {
@@ -35,7 +35,7 @@
       "category": "independent_review",
       "bytes": 3563,
       "sha256": "508174a1c195524fb29921dad324d790642b21757af2774fa59f4837a9f802b4",
-      "mtime_utc": "2026-06-04T09:19:55Z",
+      "mtime_utc": "2026-06-04T09:19:55.569034Z",
       "headline": ""
     },
     {
@@ -44,7 +44,7 @@
       "category": "ia_validation",
       "bytes": 10020,
       "sha256": "59737f5bbccca3d5a2607ac0b3da73c361868410a0fd2e5a77e62767ef42f155",
-      "mtime_utc": "2026-06-04T07:45:38Z",
+      "mtime_utc": "2026-06-04T07:45:38.942327Z",
       "headline": ""
     },
     {
@@ -53,7 +53,7 @@
       "category": "backtest",
       "bytes": 2889,
       "sha256": "d1c14118e4e79202ccd1d49fcc91c271169527b883781f59c1bb76993cd89dbb",
-      "mtime_utc": "2026-06-04T08:30:22Z",
+      "mtime_utc": "2026-06-04T08:30:22.028110Z",
       "headline": ""
     },
     {
@@ -62,7 +62,7 @@
       "category": "ia_validation",
       "bytes": 12560,
       "sha256": "f3ed3fce0b1eaf03a5e318f3c7bfdb127627d8977fff708f02f8bfe7fea14b3e",
-      "mtime_utc": "2026-06-04T13:30:25Z",
+      "mtime_utc": "2026-06-04T13:30:25.071014Z",
       "headline": ""
     },
     {
@@ -71,7 +71,7 @@
       "category": "capital_evidence",
       "bytes": 4954,
       "sha256": "8cca9214e12db0b018f5c97808098c0e1f05989839173e74491d68000b100efc",
-      "mtime_utc": "2026-06-04T16:28:03Z",
+      "mtime_utc": "2026-06-04T16:28:03.739809Z",
       "headline": ""
     },
     {
@@ -80,25 +80,25 @@
       "category": "proxy_validation",
       "bytes": 3411,
       "sha256": "4fbe78d9cf3c907bd04632ed720030f8643f404118192e1a63e9c0980db51188",
-      "mtime_utc": "2026-06-04T17:19:17Z",
-      "headline": "PASS — selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"
+      "mtime_utc": "2026-06-04T17:19:17.657341Z",
+      "headline": "PASS \u2014 selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"
     },
     {
       "id": "PHASE15_RISK_AGGREGATION_REPORT",
       "path": "docs/validation/PHASE15_RISK_AGGREGATION_REPORT.json",
-      "category": "model_output",
+      "category": "risk_aggregation",
       "bytes": 2385,
       "sha256": "4fb8421f8be265d29a2f5013c931d5f7b02099eec0b4c0a12e8f0e5d143d5d2a",
-      "mtime_utc": "2026-06-04T18:16:45Z",
+      "mtime_utc": "2026-06-04T18:16:45.264122Z",
       "headline": "PASS - correlated aggregation reconciles to nested diversified capital"
     },
     {
       "id": "PHASE15_TAIL_DIAGNOSTICS_REPORT",
       "path": "docs/validation/PHASE15_TAIL_DIAGNOSTICS_REPORT.json",
-      "category": "model_output",
+      "category": "tail_diagnostics",
       "bytes": 4065,
       "sha256": "e2d8665353732faabb6d5ce5f9c8344c95e75dba64a261df2d8d814e6d43714d",
-      "mtime_utc": "2026-06-04T19:43:56Z",
+      "mtime_utc": "2026-06-04T19:43:56.791095Z",
       "headline": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -107,7 +107,7 @@
       "category": "governance",
       "bytes": 2946,
       "sha256": "57aa0ca3af79d41580a04e72729c0e30714b6c86eda971d856e3fc4dec4146f7",
-      "mtime_utc": "2026-06-04T20:23:29Z",
+      "mtime_utc": "2026-06-04T20:23:29.824038Z",
       "headline": ""
     },
     {
@@ -116,7 +116,7 @@
       "category": "loss_distribution",
       "bytes": 12457,
       "sha256": "863fd04d40b4684ce6be5a5bdc98be8afbea06f577c61aafb651e542eb73fb95",
-      "mtime_utc": "2026-06-04T21:12:15Z",
+      "mtime_utc": "2026-06-04T21:12:15.518484Z",
       "headline": ""
     },
     {
@@ -125,25 +125,25 @@
       "category": "proxy_validation",
       "bytes": 4261,
       "sha256": "e1bb0aecd491f8ba012dffa91d77eb562b97909c6de98d30db20fd5fc7a19953",
-      "mtime_utc": "2026-06-05T04:21:39Z",
-      "headline": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)"
+      "mtime_utc": "2026-06-05T04:21:39.480240Z",
+      "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)"
     },
     {
       "id": "PHASE17_RISK_AGGREGATION_REPORT",
       "path": "docs/validation/PHASE17_RISK_AGGREGATION_REPORT.json",
-      "category": "model_output",
+      "category": "risk_aggregation",
       "bytes": 3616,
       "sha256": "d730c2f93172f766afd27e85d6a6a7b1acf49a85a52cbe149ab45ba5ccfc9de6",
-      "mtime_utc": "2026-06-05T05:14:50Z",
+      "mtime_utc": "2026-06-05T05:14:50.279048Z",
       "headline": "PARTIAL - three-driver aggregation evidence generated with review items"
     },
     {
       "id": "PHASE17_TAIL_DIAGNOSTICS_REPORT",
       "path": "docs/validation/PHASE17_TAIL_DIAGNOSTICS_REPORT.json",
-      "category": "model_output",
+      "category": "tail_diagnostics",
       "bytes": 4848,
       "sha256": "0597ab9b22ff571fa06020359ede2da792271b1920519a07c197fc82f7e70acd",
-      "mtime_utc": "2026-06-05T06:17:39Z",
+      "mtime_utc": "2026-06-05T06:17:39.219767Z",
       "headline": "PASS - three-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -152,7 +152,7 @@
       "category": "governance",
       "bytes": 3698,
       "sha256": "a0465ceb9af67ac5313dfda30d009ae7ab8a5cfb26140ee0d1953370c846c917",
-      "mtime_utc": "2026-06-05T07:10:03Z",
+      "mtime_utc": "2026-06-05T07:10:03.671948Z",
       "headline": ""
     },
     {
@@ -161,16 +161,16 @@
       "category": "calibration",
       "bytes": 2318,
       "sha256": "fb72bedf5afa3390ad029ec2a85ac8e7b9ffa1d6eb6f459400494dc06669f6d3",
-      "mtime_utc": "2026-06-05T09:16:34Z",
+      "mtime_utc": "2026-06-05T09:16:34.402158Z",
       "headline": ""
     },
     {
       "id": "PHASE18_COPULA_AGGREGATION_REPORT",
       "path": "docs/validation/PHASE18_COPULA_AGGREGATION_REPORT.json",
-      "category": "model_output",
+      "category": "risk_aggregation",
       "bytes": 4674,
       "sha256": "12cb7a6749a5a20f8c1190ab484588f4247872b8a5916a3b19b84d0e57ecf360",
-      "mtime_utc": "2026-06-05T08:19:29Z",
+      "mtime_utc": "2026-06-05T08:19:29.124449Z",
       "headline": "PASS - copula aggregation (selected: gaussian) reconciles to nested capital within 1.4% (best 1.4%) vs var-covar 34.5%; MR-010 mitigated"
     },
     {
@@ -179,7 +179,7 @@
       "category": "governance",
       "bytes": 1425,
       "sha256": "27a51932177d00b6cee815cfb6ac9528a6bff5dac951044f59c9b5fdaf5ab54a",
-      "mtime_utc": "2026-06-05T08:22:23Z",
+      "mtime_utc": "2026-06-05T08:22:23.487269Z",
       "headline": ""
     },
     {
@@ -188,16 +188,16 @@
       "category": "proxy_validation",
       "bytes": 4336,
       "sha256": "8e37e976170f3d125e8adb0010bc5b1c2cde27daafd30fac3b097335e2039bb7",
-      "mtime_utc": "2026-06-05T10:32:02Z",
-      "headline": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9638, VaR rel err=2.33%, leakage-free, overfit gap=0.0057)"
+      "mtime_utc": "2026-06-05T10:32:02.363431Z",
+      "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9638, VaR rel err=2.33%, leakage-free, overfit gap=0.0057)"
     },
     {
       "id": "PHASE18_TASK4_AGGREGATION_REPORT",
       "path": "docs/validation/PHASE18_TASK4_AGGREGATION_REPORT.json",
-      "category": "model_output",
+      "category": "risk_aggregation",
       "bytes": 10681,
       "sha256": "0caf2126cb3ce2809b191ba7bb19ebabf5f7b9d2681be8b7c3ec44ca6b43e933",
-      "mtime_utc": "2026-06-05T11:33:11Z",
+      "mtime_utc": "2026-06-05T11:33:11.308810Z",
       "headline": "PASS - four-driver copula aggregation (selected: gaussian) reconciles to nested capital within 9.4% vs var-covar 47.4%; MR-010 four-driver mitigation confirmed"
     },
     {
@@ -206,16 +206,16 @@
       "category": "governance",
       "bytes": 1908,
       "sha256": "22b30c94c127fc46450a8f199cd2e98c7962e015879806e7b6b643a0f76eecb8",
-      "mtime_utc": "2026-06-05T11:35:58Z",
+      "mtime_utc": "2026-06-05T11:35:58.190562Z",
       "headline": ""
     },
     {
       "id": "PHASE18_TASK4_TAIL_DIAGNOSTICS_REPORT",
       "path": "docs/validation/PHASE18_TASK4_TAIL_DIAGNOSTICS_REPORT.json",
-      "category": "model_output",
+      "category": "tail_diagnostics",
       "bytes": 5414,
       "sha256": "070ad3d1f7dc4f0d8b9129c3d57d66fa605fd6851e51a9cff5b32600602f2ce1",
-      "mtime_utc": "2026-06-05T11:33:59Z",
+      "mtime_utc": "2026-06-05T11:33:59.936209Z",
       "headline": "PASS - four-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -224,8 +224,8 @@
       "category": "calibration",
       "bytes": 2525,
       "sha256": "76301095fa676fd0258dacfc5c5c190badbc4fc265391d1e23fe3a8e1806239f",
-      "mtime_utc": "2026-06-06T00:17:38Z",
-      "headline": ""
+      "mtime_utc": "2026-06-06T00:17:38.999427Z",
+      "headline": "gate_glapse: PASS"
     },
     {
       "id": "PHASE19_TASK3_PROXY_VALIDATION_REPORT",
@@ -233,16 +233,16 @@
       "category": "proxy_validation",
       "bytes": 4005,
       "sha256": "a81154ba3ed62036702497128c15f65b504d21083ae88ad6a5629bc4c03e5233",
-      "mtime_utc": "2026-06-05T21:15:52Z",
-      "headline": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
+      "mtime_utc": "2026-06-05T21:15:52.604204Z",
+      "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
     },
     {
       "id": "PHASE19_TASK4_AGGREGATION_REPORT",
       "path": "docs/validation/PHASE19_TASK4_AGGREGATION_REPORT.json",
-      "category": "model_output",
+      "category": "risk_aggregation",
       "bytes": 12824,
       "sha256": "b398fd41fb010059db7d771fc1594d2bdbedd27e5215f40c806b38e7a735efb0",
-      "mtime_utc": "2026-06-05T22:16:11Z",
+      "mtime_utc": "2026-06-05T22:16:11.222442Z",
       "headline": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
     },
     {
@@ -251,70 +251,115 @@
       "category": "governance",
       "bytes": 2166,
       "sha256": "b66145bf609b485ca7312ce4f0f3c966e8a1a9b2a4caf16dd65f64ae2b962fc2",
-      "mtime_utc": "2026-06-05T22:16:11Z",
+      "mtime_utc": "2026-06-05T22:16:11.242324Z",
       "headline": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
     },
     {
       "id": "PHASE19_TASK4_TAIL_DIAGNOSTICS_REPORT",
       "path": "docs/validation/PHASE19_TASK4_TAIL_DIAGNOSTICS_REPORT.json",
-      "category": "model_output",
+      "category": "tail_diagnostics",
       "bytes": 5770,
       "sha256": "91b284b7861fc22a0b6cbfbb3f35ebe07cbf5375a8dd2b0d48b84f0c7baa0e14",
-      "mtime_utc": "2026-06-05T23:12:23Z",
+      "mtime_utc": "2026-06-05T23:12:23.442712Z",
       "headline": "PASS - five-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
       "id": "PHASE20_TASK1_G2PP_RATE_REPORT",
       "path": "docs/validation/PHASE20_TASK1_G2PP_RATE_REPORT.json",
-      "category": "calibration",
+      "category": "other",
       "bytes": 5066,
       "sha256": "f84531c134068c6135adeffad6da0fe51269b9cb4648fdc5f7fa7893d5bd33cd",
-      "mtime_utc": "2026-06-06T07:10:34Z",
-      "headline": "G-RATE2 PASS"
+      "mtime_utc": "2026-06-06T07:10:34.397427Z",
+      "headline": "gate: PASS"
     },
     {
       "id": "PHASE20_TASK2_G2PP_SWAPTION_REPORT",
       "path": "docs/validation/PHASE20_TASK2_G2PP_SWAPTION_REPORT.json",
-      "category": "calibration",
+      "category": "other",
       "bytes": 19031,
       "sha256": "d50b6f01f0219d9eca9fb9b2defa8523d556972e0554c72620a67c1bfdf9ef2b",
-      "mtime_utc": "2026-06-06T08:25:30Z",
-      "headline": "G-SWPN PASS"
+      "mtime_utc": "2026-06-06T08:25:30.102151Z",
+      "headline": "gate: PASS"
     },
     {
       "id": "PHASE20_TASK3_G_MART_REPORT",
       "path": "docs/validation/PHASE20_TASK3_G_MART_REPORT.json",
-      "category": "governance",
+      "category": "other",
       "bytes": 8264,
       "sha256": "40943a84a25f2911cee32f4b43ee0b69e14a0605eb8313c3a5c10616de0d59de",
-      "mtime_utc": "2026-06-06T09:25:50Z",
-      "headline": ""
+      "mtime_utc": "2026-06-06T09:25:50.377215Z",
+      "headline": "gate: PASS"
     },
     {
       "id": "PHASE20_TASK4_AGGREGATION_REPORT",
       "path": "docs/validation/PHASE20_TASK4_AGGREGATION_REPORT.json",
-      "category": "model_output",
+      "category": "risk_aggregation",
       "bytes": 30876,
       "sha256": "9f1416c8c88b5ca7386e3484c9b03bce412b67478e4e909d3fbad982fec15c6c",
-      "mtime_utc": "2026-06-06T10:25:51Z",
+      "mtime_utc": "2026-06-06T10:25:51.367728Z",
       "headline": ""
     },
     {
       "id": "PHASE20_TASK4_TAIL_DIAGNOSTICS_REPORT",
       "path": "docs/validation/PHASE20_TASK4_TAIL_DIAGNOSTICS_REPORT.json",
-      "category": "model_output",
+      "category": "tail_diagnostics",
       "bytes": 1309,
       "sha256": "a6aa3debdbfaf84dbb5aa1862ec0fb0dc4d2a8ce01c5122f6661d7dbf3263b87",
-      "mtime_utc": "2026-06-06T10:25:51Z",
+      "mtime_utc": "2026-06-06T10:25:51.397802Z",
       "headline": ""
+    },
+    {
+      "id": "PHASE21_TASK1_FX_DRIVER_REPORT",
+      "path": "docs/validation/PHASE21_TASK1_FX_DRIVER_REPORT.json",
+      "category": "other",
+      "bytes": 9138,
+      "sha256": "16bce5e2b90cb8a19819143055614581bd049566995361281d45c580915343f7",
+      "mtime_utc": "2026-06-06T21:52:05Z",
+      "headline": ""
+    },
+    {
+      "id": "PHASE21_TASK2_OOS_VALIDATION_REPORT",
+      "path": "docs/validation/PHASE21_TASK2_OOS_VALIDATION_REPORT.json",
+      "category": "other",
+      "bytes": 13135,
+      "sha256": "7fe3cab55cf7fe89e2392b8719736fba00fc9c171f889e4e81a072d554d16ef8",
+      "mtime_utc": "2026-06-06T23:26:24Z",
+      "headline": ""
+    },
+    {
+      "id": "PHASE21_TASK3_LIQUIDITY_CALIBRATION_REPORT",
+      "path": "docs/validation/PHASE21_TASK3_LIQUIDITY_CALIBRATION_REPORT.json",
+      "category": "calibration",
+      "bytes": 2655,
+      "sha256": "05dc5f9253a49f7e747a724cf1aa01325e1c425e656de77cfc45acbbfd351408",
+      "mtime_utc": "2026-06-07T01:18:49Z",
+      "headline": ""
+    },
+    {
+      "id": "PHASE21_TASK4_AGGREGATION_REPORT",
+      "path": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json",
+      "category": "risk_aggregation",
+      "bytes": 22693,
+      "sha256": "f62c12f74b3d07a6ff4e75466620bed322a0867500433f3d77876a681848c79b",
+      "mtime_utc": "2026-06-07T02:21:44Z",
+      "headline": ""
+    },
+    {
+      "id": "PHASE21_TASK5_UI_PROPAGATION_REPORT",
+      "path": "docs/validation/PHASE21_TASK5_UI_PROPAGATION_REPORT.json",
+      "category": "other",
+      "bytes": 1983,
+      "sha256": "47d87418a722ad1cc6f21382e5db8a004103473bf619db3007d5fd40fd8826fc",
+      "mtime_utc": "2026-06-07T04:14:41Z",
+      "headline": "PASS"
     },
     {
       "id": "PROJECTION_REFERENCE_RUN",
       "path": "docs/validation/PROJECTION_REFERENCE_RUN.json",
-      "category": "model_output",
+      "category": "other",
       "bytes": 246277,
       "sha256": "a6f80968ddb150c773aa18ad219bc13cf88e245247f0fab5a57924859169e6ec",
-      "mtime_utc": "2026-06-05T15:43:43Z",
+      "mtime_utc": "2026-06-05T15:43:43.589146Z",
       "headline": ""
     },
     {
@@ -323,7 +368,7 @@
       "category": "calibration",
       "bytes": 3288,
       "sha256": "442bf6bd3590268050c694fd07cfe717a9c3d81677db8ba77ee61926eece5790",
-      "mtime_utc": "2026-06-04T03:20:27Z",
+      "mtime_utc": "2026-06-04T03:20:27.874288Z",
       "headline": ""
     },
     {
@@ -332,7 +377,7 @@
       "category": "calibration",
       "bytes": 3428,
       "sha256": "cb6dd8337583aa0e0f40505405b73b270455b8bbba691a0e7e8785fa20213717",
-      "mtime_utc": "2026-06-04T11:27:32Z",
+      "mtime_utc": "2026-06-04T11:27:32.099206Z",
       "headline": ""
     },
     {
@@ -341,16 +386,16 @@
       "category": "calibration",
       "bytes": 4593,
       "sha256": "5695186798439b586ac29e2cc0b4aa138bad3c0fc2dd0290a0889fc8c7d99d36",
-      "mtime_utc": "2026-06-04T04:31:06Z",
+      "mtime_utc": "2026-06-04T04:31:06.252270Z",
       "headline": ""
     },
     {
       "id": "PHASE13_MR001_DISCOUNT_RATE_REPORT",
       "path": "docs/PHASE13_MR001_DISCOUNT_RATE_REPORT.json",
-      "category": "model_output",
+      "category": "model_risk",
       "bytes": 2444,
       "sha256": "0b0e821f0561a923967319f1ef2560d0e1d4749d93751ff4b1daa41c4f5b0838",
-      "mtime_utc": "2026-06-04T05:31:05Z",
+      "mtime_utc": "2026-06-04T05:31:05.524272Z",
       "headline": ""
     },
     {
@@ -359,35 +404,37 @@
       "category": "dashboard",
       "bytes": 10986,
       "sha256": "4e261345fea5c885217d6beb6998bc4f31faaa00c195bc5b9dbfbd6a182be91b",
-      "mtime_utc": "2026-06-05T02:18:10Z",
+      "mtime_utc": "2026-06-05T02:18:10.118238Z",
       "headline": ""
     }
   ],
   "capital": {
     "drivers": [
-      "short_rate",
-      "equity_guarantee",
-      "credit_spread",
-      "lapse_behaviour",
-      "mortality_trend"
+      "rate",
+      "equity",
+      "credit",
+      "lapse",
+      "mortality",
+      "fx",
+      "liquidity"
     ],
-    "n_drivers": 5,
+    "n_drivers": 7,
     "confidence_level": 0.995,
     "horizon_months": 12,
-    "rate_scr": 14924.8338,
-    "equity_scr": 18845.4591,
-    "credit_scr": 4785.1031,
-    "lapse_scr": 25888.5466,
-    "mortality_scr": 321.1991,
-    "standalone_sum": 64765.1416,
+    "rate_scr": 14486.319850929489,
+    "equity_scr": 15931.555851018842,
+    "credit_scr": 4713.865675437704,
+    "lapse_scr": 22538.93657690868,
+    "mortality_scr": 387.2000248782355,
+    "standalone_sum": 62407.5689696945,
     "correlated_scr": 47292.85,
-    "nested_scr": 55115.7528,
+    "nested_scr": 48694.022628600025,
     "diversification_benefit_formula": 53389.4085,
     "diversification_benefit_nested": 8233.6537,
     "component_loss_correlation": 0.3870458,
     "loss_correlation_matrix": [
       [
-        1,
+        1.0,
         0.839762,
         0.967533,
         0.368116,
@@ -395,7 +442,7 @@
       ],
       [
         0.839762,
-        1,
+        1.0,
         0.863011,
         0.328634,
         0.017918
@@ -403,7 +450,7 @@
       [
         0.967533,
         0.863011,
-        1,
+        1.0,
         0.379653,
         -0.02457
       ],
@@ -411,7 +458,7 @@
         0.368116,
         0.328634,
         0.379653,
-        1,
+        1.0,
         0.127506
       ],
       [
@@ -419,282 +466,370 @@
         0.017918,
         -0.02457,
         0.127506,
-        1
+        1.0
       ]
     ],
     "esg_correlation_matrix": [
       [
-        1,
+        1.0,
         -0.15,
         -0.2,
-        0,
-        0
+        0.0,
+        0.0
       ],
       [
         -0.15,
-        1,
+        1.0,
         -0.3,
-        0,
-        0
+        0.0,
+        0.0
       ],
       [
         -0.2,
         -0.3,
-        1,
-        0,
-        0
+        1.0,
+        0.0,
+        0.0
       ],
       [
-        0,
-        0,
-        0,
-        1,
-        0
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0
       ],
       [
-        0,
-        0,
-        0,
-        0,
-        1
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
       ]
     ],
-    "esg_understatement_pct": 39.71,
-    "formula_vs_nested_rel_error": 0.397133,
+    "esg_understatement_pct": 40.45,
+    "formula_vs_nested_rel_error": 0.40452241053779375,
     "esg_rate_equity_correlation": -0.15,
     "copula": {
-      "run_id": "copula-agg-0d77be71",
+      "run_id": "copula-agg-0b663fe1",
       "verdict": "PARTIAL - copula aggregation evidence generated with review items",
       "drivers": [
         "rate",
         "equity",
         "credit",
         "lapse",
-        "mortality"
+        "mortality",
+        "fx",
+        "liquidity"
       ],
-      "nested_scr": 55115.7528,
-      "var_covar_scr": 33227.4944,
-      "var_covar_rel_error_vs_nested": 0.397133,
+      "nested_scr": 48694.0226,
+      "var_covar_scr": 28996.1992,
+      "var_covar_rel_error_vs_nested": 0.404522,
       "standalone_scr": [
-        14924.8338,
-        18845.4591,
-        4785.1031,
-        25888.5466,
-        321.1991
+        14486.3199,
+        15931.5559,
+        4713.8657,
+        22538.9366,
+        387.2,
+        4286.3699,
+        63.3211
       ],
-      "standalone_scr_sum": 64765.1416,
+      "standalone_scr_sum": 62407.569,
       "realised_loss_correlation": [
         [
+          1.0,
+          0.5088878100052604,
+          0.8878723336825546,
+          0.1618376140146465,
+          -0.030362006981267717,
+          -0.1673015668209978,
+          -0.14864594387541802
+        ],
+        [
+          0.5088878100052605,
+          1.0,
+          0.5509591379061576,
+          -0.047203615944372154,
+          -0.16506753666442653,
+          -0.10228586354408357,
+          0.10879339979262162
+        ],
+        [
+          0.8878723336825546,
+          0.5509591379061576,
           0.9999999999999999,
-          0.6086355100417347,
-          0.9137484205228662,
-          0.27095814414309954,
-          -0.0629850568395454
+          0.1506311175112681,
+          -0.038878618390426445,
+          -0.1312072093018077,
+          0.018418216055976978
         ],
         [
-          0.6086355100417347,
-          1,
-          0.5986702418823662,
-          0.22020429766462196,
-          -0.003955739183641884
+          0.16183761401464647,
+          -0.04720361594437216,
+          0.1506311175112681,
+          1.0,
+          0.06600443159184158,
+          -0.17597717011317135,
+          -0.05643884711305155
         ],
         [
-          0.9137484205228661,
-          0.5986702418823662,
+          -0.030362006981267713,
+          -0.16506753666442653,
+          -0.03887861839042644,
+          0.06600443159184158,
           0.9999999999999999,
-          0.2844273336142059,
-          -0.0628231582352482
+          0.01642021764472774,
+          0.10335583086303582
         ],
         [
-          0.27095814414309954,
-          0.22020429766462196,
-          0.2844273336142059,
-          1,
-          -0.008600636552487039
+          -0.1673015668209978,
+          -0.10228586354408359,
+          -0.1312072093018077,
+          -0.17597717011317135,
+          0.01642021764472774,
+          1.0,
+          -0.10722125324165775
         ],
         [
-          -0.0629850568395454,
-          -0.003955739183641883,
-          -0.0628231582352482,
-          -0.008600636552487039,
-          0.9999999999999999
+          -0.14864594387541802,
+          0.10879339979262162,
+          0.018418216055976978,
+          -0.05643884711305155,
+          0.10335583086303582,
+          -0.10722125324165775,
+          1.0
         ]
       ],
       "selected_copula": "gaussian",
       "copulas": [
         {
           "name": "gaussian",
-          "n_params": 10,
-          "loglik": 274.487,
-          "aic": -528.9741,
-          "upper_tail_dependence": 0,
+          "n_params": 21,
+          "loglik": 180.5868,
+          "aic": -319.1736,
+          "upper_tail_dependence": 0.0,
           "params": {
             "correlation": [
               [
-                1,
-                0.6022158868859888,
-                0.9058015217079466,
-                0.2829224715356142,
-                -0.04920153009613249
+                1.0,
+                0.5100164609374879,
+                0.8889420455976548,
+                0.17072757474834546,
+                0.005916588761979716,
+                -0.14545445036918667,
+                -0.14948828648912305
               ],
               [
-                0.6022158868859888,
-                1,
-                0.5916753735724254,
-                0.22914211145255794,
-                0.002844083907282194
+                0.510016460937488,
+                1.0,
+                0.5462780044537353,
+                -0.028588150207344412,
+                -0.13606526369994806,
+                -0.10506787357003979,
+                0.09604464878404649
               ],
               [
-                0.9058015217079466,
-                0.5916753735724254,
-                1,
-                0.2911103796668013,
-                -0.05783386241897297
+                0.8889420455976548,
+                0.5462780044537352,
+                1.0,
+                0.15799910787531818,
+                -0.0062661816671566945,
+                -0.11765203241040986,
+                0.016141270944703065
               ],
               [
-                0.2829224715356142,
-                0.22914211145255794,
-                0.2911103796668013,
-                1,
-                -0.008348458085751772
+                0.1707275747483455,
+                -0.028588150207344447,
+                0.15799910787531818,
+                1.0,
+                0.09155832399824981,
+                -0.1527119981077046,
+                -0.05129181393891281
               ],
               [
-                -0.049201530096132484,
-                0.0028440839072821915,
-                -0.05783386241897296,
-                -0.008348458085751766,
-                1
+                0.0059165887619797115,
+                -0.13606526369994806,
+                -0.00626618166715671,
+                0.09155832399824988,
+                1.0,
+                0.014601853270014765,
+                0.08624233656193626
+              ],
+              [
+                -0.14545445036918667,
+                -0.10506787357003976,
+                -0.11765203241040983,
+                -0.15271199810770464,
+                0.014601853270014809,
+                1.0,
+                -0.14508772401829514
+              ],
+              [
+                -0.14948828648912302,
+                0.09604464878404649,
+                0.016141270944703086,
+                -0.05129181393891281,
+                0.08624233656193625,
+                -0.14508772401829517,
+                1.0
               ]
             ]
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117022.5647,
-            "var_liability": 165315.1456,
-            "es_liability": 170665.0118,
-            "scr_proxy": 48292.5809,
-            "n_outer": 120000,
+            "mean_liability": 117317.7052,
+            "var_liability": 158910.2986,
+            "es_liability": 162731.4924,
+            "scr_proxy": 41592.5934,
+            "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 48292.5809,
-          "scr_rel_error_vs_nested": 0.123797,
-          "diversification_benefit": 16472.5607
+          "aggregated_scr": 41592.5934,
+          "scr_rel_error_vs_nested": 0.145838,
+          "diversification_benefit": 20814.9756
         },
         {
           "name": "student_t",
-          "n_params": 11,
-          "loglik": 271.513,
-          "aic": -521.0261,
-          "upper_tail_dependence": 0.015122,
+          "n_params": 22,
+          "loglik": 177.2907,
+          "aic": -310.5814,
+          "upper_tail_dependence": 0.004586,
           "params": {
             "correlation": [
               [
-                1,
-                0.5988949469466903,
-                0.9194601061591682,
-                0.28264968504344234,
-                -0.041394097888562936
+                1.0,
+                0.5559808788758446,
+                0.8927935918243628,
+                0.11925410113197915,
+                0.02222641947449137,
+                -0.1212156114234272,
+                -0.1104216540751302
               ],
               [
-                0.5988949469466903,
-                1,
-                0.6010857547808162,
-                0.2299289203595122,
-                -0.01599208421682831
+                0.5559808788758446,
+                1.0,
+                0.5879850458290623,
+                -0.020991805135309172,
+                -0.08412084089488903,
+                -0.11115803437777859,
+                0.11704684594200107
               ],
               [
-                0.9194601061591682,
-                0.601085754780816,
-                1,
-                0.29303507085208985,
-                -0.04938221858859071
+                0.8927935918243628,
+                0.5879850458290624,
+                1.0,
+                0.1305261922200523,
+                0.019757158783946367,
+                -0.1266073016534903,
+                0.06417082092294628
               ],
               [
-                0.2826496850434424,
-                0.22992892035951223,
-                0.29303507085208985,
-                1,
-                -0.04095631150439369
+                0.11925410113197918,
+                -0.02099180513530919,
+                0.13052619222005227,
+                1.0,
+                0.09273127084763683,
+                -0.08977987160077061,
+                -0.06909944820287803
               ],
               [
-                -0.04139409788856294,
-                -0.01599208421682831,
-                -0.04938221858859071,
-                -0.04095631150439368,
-                1
+                0.022226419474491374,
+                -0.08412084089488907,
+                0.01975715878394638,
+                0.09273127084763684,
+                1.0,
+                0.04345488978562261,
+                0.10010614864718753
+              ],
+              [
+                -0.12121561142342718,
+                -0.1111580343777786,
+                -0.12660730165349027,
+                -0.08977987160077057,
+                0.0434548897856226,
+                1.0,
+                -0.15106550628125937
+              ],
+              [
+                -0.1104216540751302,
+                0.11704684594200108,
+                0.06417082092294628,
+                -0.069099448202878,
+                0.10010614864718756,
+                -0.15106550628125928,
+                1.0
               ]
             ],
-            "df": 50
+            "df": 50.0
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117204.4665,
-            "var_liability": 165785.526,
-            "es_liability": 171457.55,
-            "scr_proxy": 48581.0595,
-            "n_outer": 120000,
+            "mean_liability": 117290.6636,
+            "var_liability": 159158.03,
+            "es_liability": 163531.4495,
+            "scr_proxy": 41867.3664,
+            "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 48581.0595,
-          "scr_rel_error_vs_nested": 0.118563,
-          "diversification_benefit": 16184.0821
+          "aggregated_scr": 41867.3664,
+          "scr_rel_error_vs_nested": 0.140195,
+          "diversification_benefit": 20540.2025
         },
         {
           "name": "survival_clayton",
           "n_params": 1,
-          "loglik": 35.576,
-          "aic": -69.152,
-          "upper_tail_dependence": 0.247279,
+          "loglik": 4.9361,
+          "aic": -7.8722,
+          "upper_tail_dependence": 0.006865,
           "params": {
-            "theta": 0.4960835509138383,
-            "tau_bar": 0.19874476987447703
+            "theta": 0.1391504901018643,
+            "tau_bar": 0.06504941599281222
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117205.6059,
-            "var_liability": 172256.4357,
-            "es_liability": 179044.8829,
-            "scr_proxy": 55050.8298,
-            "n_outer": 120000,
+            "mean_liability": 117269.5414,
+            "var_liability": 159540.6009,
+            "es_liability": 164231.3077,
+            "scr_proxy": 42271.0595,
+            "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 55050.8298,
-          "scr_rel_error_vs_nested": 0.001178,
-          "diversification_benefit": 9714.3118
+          "aggregated_scr": 42271.0595,
+          "scr_rel_error_vs_nested": 0.131905,
+          "diversification_benefit": 20136.5094
         }
       ],
-      "reproducibility_digest": "f97004034c649889f2de9414e6f272a8df0d53cd7d83cc3472b05a2f991e00f4",
-      "duration_seconds": 0.9864,
+      "reproducibility_digest": "cf099c770c7aae08ff8e83fd982f9fa8c8c800367ae72b892177b4ae26b74aac",
+      "duration_seconds": 1.5202,
       "config": {
-        "n_sim": 120000,
-        "seed": 53,
+        "n_sim": 200000,
+        "seed": 55,
         "confidence_level": 0.995,
         "capital_horizon_months": 12,
         "rel_error_tolerance": 0.1,
         "t_df_grid": [
-          3,
-          4,
-          5,
-          6,
-          8,
-          10,
-          15,
-          25,
-          50
+          3.0,
+          4.0,
+          5.0,
+          6.0,
+          8.0,
+          10.0,
+          15.0,
+          25.0,
+          50.0
         ]
       },
       "notes": [
         "Marginals are the empirical loss distributions; the copula supplies only the dependence structure.",
         "Copula correlation/df/theta are fitted to the REALISED standalone capital-loss vectors, not the ESG factor matrix.",
         "Best copula selected by AIC on the pseudo-observations (empirical justification per Solvency II Art. 234).",
-        "var-covar (ESG factor) SCR understates nested capital by 39.7% (MR-010); copula aggregation closes most of that gap.",
+        "var-covar (ESG factor) SCR understates nested capital by 40.5% (MR-010); copula aggregation closes most of that gap.",
         "AIC-selected copula SCR rel. error exceeds tolerance; review marginal/copula fit."
       ],
       "audit_entry_id": null,
       "standards": [
-        "SOA ASOP 56 §3.5",
-        "SOA ASOP 25 §3.3",
-        "IA TAS M §3.6",
+        "SOA ASOP 56 \u00a73.5",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.6",
         "Solvency II Delegated Reg. Art. 234",
         "IFoA Life Aggregation & Simulation WP",
         "Demarta-McNeil 2005 (t-copula)"
@@ -702,264 +837,269 @@
       "candidates": [
         {
           "name": "gaussian",
-          "n_params": 10,
-          "loglik": 274.487,
-          "aic": -528.9741,
-          "upper_tail_dependence": 0,
+          "n_params": 21,
+          "loglik": 180.5868,
+          "aic": -319.1736,
+          "upper_tail_dependence": 0.0,
           "params": {
             "correlation": [
               [
-                1,
-                0.6022158868859888,
-                0.9058015217079466,
-                0.2829224715356142,
-                -0.04920153009613249
+                1.0,
+                0.5100164609374879,
+                0.8889420455976548,
+                0.17072757474834546,
+                0.005916588761979716,
+                -0.14545445036918667,
+                -0.14948828648912305
               ],
               [
-                0.6022158868859888,
-                1,
-                0.5916753735724254,
-                0.22914211145255794,
-                0.002844083907282194
+                0.510016460937488,
+                1.0,
+                0.5462780044537353,
+                -0.028588150207344412,
+                -0.13606526369994806,
+                -0.10506787357003979,
+                0.09604464878404649
               ],
               [
-                0.9058015217079466,
-                0.5916753735724254,
-                1,
-                0.2911103796668013,
-                -0.05783386241897297
+                0.8889420455976548,
+                0.5462780044537352,
+                1.0,
+                0.15799910787531818,
+                -0.0062661816671566945,
+                -0.11765203241040986,
+                0.016141270944703065
               ],
               [
-                0.2829224715356142,
-                0.22914211145255794,
-                0.2911103796668013,
-                1,
-                -0.008348458085751772
+                0.1707275747483455,
+                -0.028588150207344447,
+                0.15799910787531818,
+                1.0,
+                0.09155832399824981,
+                -0.1527119981077046,
+                -0.05129181393891281
               ],
               [
-                -0.049201530096132484,
-                0.0028440839072821915,
-                -0.05783386241897296,
-                -0.008348458085751766,
-                1
+                0.0059165887619797115,
+                -0.13606526369994806,
+                -0.00626618166715671,
+                0.09155832399824988,
+                1.0,
+                0.014601853270014765,
+                0.08624233656193626
+              ],
+              [
+                -0.14545445036918667,
+                -0.10506787357003976,
+                -0.11765203241040983,
+                -0.15271199810770464,
+                0.014601853270014809,
+                1.0,
+                -0.14508772401829514
+              ],
+              [
+                -0.14948828648912302,
+                0.09604464878404649,
+                0.016141270944703086,
+                -0.05129181393891281,
+                0.08624233656193625,
+                -0.14508772401829517,
+                1.0
               ]
             ]
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117022.5647,
-            "var_liability": 165315.1456,
-            "es_liability": 170665.0118,
-            "scr_proxy": 48292.5809,
-            "n_outer": 120000,
+            "mean_liability": 117317.7052,
+            "var_liability": 158910.2986,
+            "es_liability": 162731.4924,
+            "scr_proxy": 41592.5934,
+            "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 48292.5809,
-          "scr_rel_error_vs_nested": 0.123797,
-          "diversification_benefit": 16472.5607
+          "aggregated_scr": 41592.5934,
+          "scr_rel_error_vs_nested": 0.145838,
+          "diversification_benefit": 20814.9756
         },
         {
           "name": "student_t",
-          "n_params": 11,
-          "loglik": 271.513,
-          "aic": -521.0261,
-          "upper_tail_dependence": 0.015122,
+          "n_params": 22,
+          "loglik": 177.2907,
+          "aic": -310.5814,
+          "upper_tail_dependence": 0.004586,
           "params": {
             "correlation": [
               [
-                1,
-                0.5988949469466903,
-                0.9194601061591682,
-                0.28264968504344234,
-                -0.041394097888562936
+                1.0,
+                0.5559808788758446,
+                0.8927935918243628,
+                0.11925410113197915,
+                0.02222641947449137,
+                -0.1212156114234272,
+                -0.1104216540751302
               ],
               [
-                0.5988949469466903,
-                1,
-                0.6010857547808162,
-                0.2299289203595122,
-                -0.01599208421682831
+                0.5559808788758446,
+                1.0,
+                0.5879850458290623,
+                -0.020991805135309172,
+                -0.08412084089488903,
+                -0.11115803437777859,
+                0.11704684594200107
               ],
               [
-                0.9194601061591682,
-                0.601085754780816,
-                1,
-                0.29303507085208985,
-                -0.04938221858859071
+                0.8927935918243628,
+                0.5879850458290624,
+                1.0,
+                0.1305261922200523,
+                0.019757158783946367,
+                -0.1266073016534903,
+                0.06417082092294628
               ],
               [
-                0.2826496850434424,
-                0.22992892035951223,
-                0.29303507085208985,
-                1,
-                -0.04095631150439369
+                0.11925410113197918,
+                -0.02099180513530919,
+                0.13052619222005227,
+                1.0,
+                0.09273127084763683,
+                -0.08977987160077061,
+                -0.06909944820287803
               ],
               [
-                -0.04139409788856294,
-                -0.01599208421682831,
-                -0.04938221858859071,
-                -0.04095631150439368,
-                1
+                0.022226419474491374,
+                -0.08412084089488907,
+                0.01975715878394638,
+                0.09273127084763684,
+                1.0,
+                0.04345488978562261,
+                0.10010614864718753
+              ],
+              [
+                -0.12121561142342718,
+                -0.1111580343777786,
+                -0.12660730165349027,
+                -0.08977987160077057,
+                0.0434548897856226,
+                1.0,
+                -0.15106550628125937
+              ],
+              [
+                -0.1104216540751302,
+                0.11704684594200108,
+                0.06417082092294628,
+                -0.069099448202878,
+                0.10010614864718756,
+                -0.15106550628125928,
+                1.0
               ]
             ],
-            "df": 50
+            "df": 50.0
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117204.4665,
-            "var_liability": 165785.526,
-            "es_liability": 171457.55,
-            "scr_proxy": 48581.0595,
-            "n_outer": 120000,
+            "mean_liability": 117290.6636,
+            "var_liability": 159158.03,
+            "es_liability": 163531.4495,
+            "scr_proxy": 41867.3664,
+            "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 48581.0595,
-          "scr_rel_error_vs_nested": 0.118563,
-          "diversification_benefit": 16184.0821
+          "aggregated_scr": 41867.3664,
+          "scr_rel_error_vs_nested": 0.140195,
+          "diversification_benefit": 20540.2025
         },
         {
           "name": "survival_clayton",
           "n_params": 1,
-          "loglik": 35.576,
-          "aic": -69.152,
-          "upper_tail_dependence": 0.247279,
+          "loglik": 4.9361,
+          "aic": -7.8722,
+          "upper_tail_dependence": 0.006865,
           "params": {
-            "theta": 0.4960835509138383,
-            "tau_bar": 0.19874476987447703
+            "theta": 0.1391504901018643,
+            "tau_bar": 0.06504941599281222
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
-            "mean_liability": 117205.6059,
-            "var_liability": 172256.4357,
-            "es_liability": 179044.8829,
-            "scr_proxy": 55050.8298,
-            "n_outer": 120000,
+            "mean_liability": 117269.5414,
+            "var_liability": 159540.6009,
+            "es_liability": 164231.3077,
+            "scr_proxy": 42271.0595,
+            "n_outer": 200000,
             "capital_horizon_months": 12
           },
-          "aggregated_scr": 55050.8298,
-          "scr_rel_error_vs_nested": 0.001178,
-          "diversification_benefit": 9714.3118
+          "aggregated_scr": 42271.0595,
+          "scr_rel_error_vs_nested": 0.131905,
+          "diversification_benefit": 20136.5094
         }
       ]
     },
     "var": 230879.3385,
     "es": 246336.757,
-    "var_covar_scr": 33227.4944,
+    "fx_scr": 4286.36987389994,
+    "liquidity_scr": 63.32111662161069,
+    "var_covar_scr": 28996.199216096866,
     "selected_copula": "gaussian",
-    "aggregation_source": "docs/validation/PHASE20_TASK4_AGGREGATION_REPORT.json",
+    "copula_scr": 41592.59337458981,
+    "copula_vs_nested_rel_error": 0.14583780247884578,
     "rate_driver": "G2++ two-factor rates",
-    "aggregation_verdict": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 12.4% vs var-covar 39.7%; MR-010 five-driver mitigation confirmed",
-    "comparison": {
-      "standalone": [
-        {
-          "driver": "rate",
-          "hw1f": 33268.3,
-          "g2pp": 14924.8,
-          "delta": -18343.4,
-          "rel_delta": -0.5514
-        },
-        {
-          "driver": "equity",
-          "hw1f": 32994.6,
-          "g2pp": 18845.5,
-          "delta": -14149.1,
-          "rel_delta": -0.4288
-        },
-        {
-          "driver": "credit",
-          "hw1f": 9490.9,
-          "g2pp": 4785.1,
-          "delta": -4705.8,
-          "rel_delta": -0.4958
-        },
-        {
-          "driver": "lapse",
-          "hw1f": 28306.7,
-          "g2pp": 25888.5,
-          "delta": -2418.1,
-          "rel_delta": -0.0854
-        },
-        {
-          "driver": "mortality",
-          "hw1f": 350.7,
-          "g2pp": 321.2,
-          "delta": -29.5,
-          "rel_delta": -0.0842
-        }
-      ],
-      "var_covar_scr": {
-        "driver": "var_covar",
-        "hw1f": 49430.7,
-        "g2pp": 33227.5,
-        "delta": -16203.2,
-        "rel_delta": -0.3278
-      },
-      "copula_scr": {
-        "driver": "copula",
-        "hw1f": 93414.6,
-        "g2pp": 48292.6,
-        "delta": -45122,
-        "rel_delta": -0.483
-      },
-      "nested_scr": {
-        "driver": "nested",
-        "hw1f": 104131.6,
-        "g2pp": 55115.8,
-        "delta": -49015.8,
-        "rel_delta": -0.4707
-      },
-      "hw1f_copula": "gaussian",
-      "g2pp_copula": "gaussian",
-      "hw1f_understatement_pct": 52.53,
-      "g2pp_understatement_pct": 39.71,
-      "hw1f_copula_rel_err": 0.1029,
-      "g2pp_copula_rel_err": 0.1238
-    },
-    "nested_scr_reduction_pct": 47.07
+    "liquidity_note": "Liquidity standalone SCR is small under the calibrated mean reversion (half-life 0.74y over a ~19y workout) \u2014 documented finding, verified CIR-affine-exact.",
+    "aggregation_source": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json",
+    "aggregation_verdict": "PASS"
   },
   "tail": {
-    "verdict": "PASS - five-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction",
+    "verdict": "PASS - seven-driver 99.5% capital metric converges (copula-simulated, last VaR delta < 0.5%), is bounded by simulated and honest small-sample nested bootstrap CIs, and benefits from Sobol-RQMC variance reduction",
     "converged": true,
-    "recommended_n_outer": 240,
+    "recommended_n_outer": 200000,
     "outer_grid": [
-      60,
-      120,
-      180,
-      240
+      10000,
+      25000,
+      50000,
+      100000,
+      200000
     ],
     "var_path": [
-      42313.6857,
-      50961.0114,
-      54176.7574,
-      55115.7528
+      157568.28733461208,
+      158737.119495312,
+      158779.89760375375,
+      158802.31155431113,
+      158692.57394790556
     ],
     "es_path": [
-      42313.6857,
-      50961.0114,
-      54176.7574,
-      55115.7528
+      160929.4066601175,
+      162486.31018929003,
+      162631.6552114612,
+      163009.5468595338,
+      163072.79637352444
     ],
-    "final_var": 55115.7528,
-    "final_es": 60040.1592,
+    "final_var": 158692.57394790556,
+    "final_es": 163072.79637352444,
     "var_ci": [
-      45679.9994,
-      65408.8107
+      158408.9792750866,
+      158955.63798746254
     ],
     "es_ci": [
-      242967.2155,
-      255989.4701
+      162715.841499317,
+      163390.16441038603
     ],
     "var_point": 232210.8836,
     "es_point": 250090.8156,
-    "var_se": 0.179,
-    "es_se": 3317.5938,
-    "sobol_ratio": 4.7976,
+    "var_se": 138.54391446020693,
+    "es_se": 182.29788063592767,
+    "sobol_ratio": 3.594705227741833,
     "antithetic_ratio": 0.7765,
-    "bootstrap_n": 2000,
-    "source": "docs/validation/PHASE20_TASK4_TAIL_DIAGNOSTICS_REPORT.json"
+    "bootstrap_n": 200,
+    "grid_label": "copula simulations",
+    "grid_note": "Convergence grid is the gaussian-copula simulation count (10k-200k, CRN prefixes), not nested outer scenarios; the honest small-sample nested CI (n_outer=160) is disclosed separately.",
+    "nested_var_ci": [
+      155624.5069199171,
+      165796.2892126513
+    ],
+    "nested_n_outer": 160,
+    "nested_disclosure": "n_outer=160 is SMALL for a 99.5% quantile; the nested CI is wide by construction and is disclosed, not hidden \u2014 the copula-simulated study above carries the convergence evidence (IA TAS M 3.6.4).",
+    "source": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json"
   },
   "proxy": {
-    "verdict": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)",
+    "verdict": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)",
     "selected_degree": 1,
     "overfit_onset_degree": 2,
     "overfit_onset_terms": 21,
@@ -1832,7 +1972,7 @@
       "gate_id": "G-02",
       "market": "CNY",
       "params": {
-        "a": 3,
+        "a": 3.0,
         "sigma_r": 0.03375264636530553,
         "r0": 0.0207,
         "swaption_rmse_bps": 8.897
@@ -1853,7 +1993,7 @@
             "ok": true
           },
           {
-            "name": "Swaption RMSE within G-02 band (≤ 25 bps)",
+            "name": "Swaption RMSE within G-02 band (\u2264 25 bps)",
             "ok": true
           },
           {
@@ -1876,7 +2016,7 @@
           ],
           "threshold": {
             "label": "G-02 band (25 bps)",
-            "value": 25
+            "value": 25.0
           }
         }
       }
@@ -1886,7 +2026,7 @@
       "gate_id": "G-02",
       "market": "HKD",
       "params": {
-        "a": 3,
+        "a": 3.0,
         "sigma_r": 0.04190188244229688,
         "r0": 0.045,
         "swaption_rmse_bps": 13.331
@@ -1907,7 +2047,7 @@
             "ok": true
           },
           {
-            "name": "Swaption RMSE within G-02 band (≤ 25 bps)",
+            "name": "Swaption RMSE within G-02 band (\u2264 25 bps)",
             "ok": true
           },
           {
@@ -1930,7 +2070,84 @@
           ],
           "threshold": {
             "label": "G-02 band (25 bps)",
-            "value": 25
+            "value": 25.0
+          }
+        }
+      }
+    },
+    {
+      "driver": "Interest rate (G2++ 2F)",
+      "gate_id": "G-SWPN",
+      "market": "HKD",
+      "params": {
+        "a": 0.0345437806981911,
+        "b": 0.9582779369460774,
+        "sigma": 0.006369513208373254,
+        "eta": 0.0024001097598661688,
+        "rho": -0.9082136050335214,
+        "rmse_vol_bps": 54.67058361346492,
+        "max_abs_vol_bps": 172.98761081990298
+      },
+      "gate_status": "PASS",
+      "gate_evidence": "G2++ swaption gate PASS; RMSE 54.7 bps, max error 173.0 bps, converged=True",
+      "is_placeholder": false,
+      "source": "docs/validation/PHASE20_TASK2_G2PP_SWAPTION_REPORT.json",
+      "lineage_id": null,
+      "diagnostics": {
+        "method": "Two-factor G2++ calibration to the educational ATM swaption surface",
+        "n_obs": 24,
+        "fit_r2": null,
+        "converged": true,
+        "criteria": [
+          {
+            "name": "ATM payer/receiver swaption prices satisfy put-call (swap) parity",
+            "ok": true
+          },
+          {
+            "name": "Calibration converged (mean relative price objective below 1)",
+            "ok": true
+          },
+          {
+            "name": "Implied-vol RMSE across the surface within educational tolerance",
+            "ok": true
+          },
+          {
+            "name": "Worst-point implied-vol error within educational tolerance",
+            "ok": true
+          },
+          {
+            "name": "Calibrated parameters lie in the admissible G2++ region (b != a, vols>0, |rho|<1)",
+            "ok": true
+          },
+          {
+            "name": "All calibrated ATM swaption model prices are strictly positive",
+            "ok": true
+          },
+          {
+            "name": "Calibrated engine still reprices the input curve (affine ZCB identity)",
+            "ok": true
+          }
+        ],
+        "fit_bars": {
+          "title": "G2++ swaption calibration diagnostics",
+          "unit": "bps / scaled objective",
+          "items": [
+            {
+              "label": "RMSE vol error",
+              "value": 54.67058361346492
+            },
+            {
+              "label": "Max vol error",
+              "value": 172.98761081990298
+            },
+            {
+              "label": "Objective x10k",
+              "value": 7.27136232865106
+            }
+          ],
+          "threshold": {
+            "label": "G-SWPN RMSE band (75 bps)",
+            "value": 75.0
           }
         }
       }
@@ -1986,15 +2203,15 @@
           "unit": "%",
           "items": [
             {
-              "label": "σ implied",
-              "value": 21
+              "label": "\u03c3 implied",
+              "value": 21.0
             },
             {
-              "label": "σ historical",
+              "label": "\u03c3 historical",
               "value": 22.445663963362207
             },
             {
-              "label": "σ blended",
+              "label": "\u03c3 blended",
               "value": 21.578265585344887
             }
           ],
@@ -2053,15 +2270,15 @@
           "unit": "%",
           "items": [
             {
-              "label": "σ implied",
-              "value": 24
+              "label": "\u03c3 implied",
+              "value": 24.0
             },
             {
-              "label": "σ historical",
+              "label": "\u03c3 historical",
               "value": 27.08879953559915
             },
             {
-              "label": "σ blended",
+              "label": "\u03c3 blended",
               "value": 25.23551981423966
             }
           ],
@@ -2121,7 +2338,7 @@
           "unit": "bp",
           "items": [
             {
-              "label": "Initial s₀",
+              "label": "Initial s\u2080",
               "value": 109.47427402090742
             },
             {
@@ -2130,7 +2347,7 @@
             },
             {
               "label": "Long-run Q",
-              "value": 140
+              "value": 140.0
             }
           ],
           "threshold": null
@@ -2194,12 +2411,139 @@
               "value": 0.882541419596922
             },
             {
-              "label": "Stationary σ",
+              "label": "Stationary \u03c3",
               "value": 0.1421001689894605
             },
             {
               "label": "Long-run A/E",
               "value": 0.9646092663137327
+            }
+          ],
+          "threshold": null
+        }
+      }
+    },
+    {
+      "driver": "FX / currency (lognormal)",
+      "gate_id": "G-FX",
+      "market": "USD/HKD",
+      "params": {
+        "fx_vol": 0.06,
+        "rate_spread": 0.02,
+        "initial_spot": 7.8,
+        "real_world_drift": 0.0
+      },
+      "gate_status": "PASS",
+      "gate_evidence": "G-FX PASS (6/6 criteria); CIP martingale z=0.076 sigma",
+      "is_placeholder": false,
+      "source": "docs/validation/PHASE21_TASK1_FX_DRIVER_REPORT.json",
+      "lineage_id": null,
+      "diagnostics": {
+        "method": "Lognormal FX spot; P-measure outer drift, CIP-exact analytic Q conditioning (MART-FX-CIP martingale evidence)",
+        "n_obs": 4000,
+        "fit_r2": null,
+        "converged": null,
+        "criteria": [
+          {
+            "name": "FX 01 positive spots",
+            "ok": true
+          },
+          {
+            "name": "FX 02 lognormal moments",
+            "ok": true
+          },
+          {
+            "name": "FX 03 pq measure separation",
+            "ok": true
+          },
+          {
+            "name": "FX 04 q cip martingale",
+            "ok": true
+          },
+          {
+            "name": "FX 05 correlation wiring",
+            "ok": true
+          },
+          {
+            "name": "FX 06 exposure mapping",
+            "ok": true
+          }
+        ],
+        "fit_bars": {
+          "title": "Q-measure CIP martingale evidence",
+          "unit": "sigma",
+          "items": [
+            {
+              "label": "CIP martingale |z|",
+              "value": 0.07582118025605618
+            }
+          ],
+          "threshold": {
+            "label": "G-FX tolerance (4 sigma)",
+            "value": 4.0
+          }
+        }
+      }
+    },
+    {
+      "driver": "Liquidity premium (CIR++)",
+      "gate_id": "G-LIQ",
+      "market": "HKD",
+      "params": {
+        "kappa_l": 0.9345477332289048,
+        "long_run_premium": 0.006263716277336537,
+        "sigma_l": 0.02129008914879804,
+        "lambda_l": 2.0,
+        "half_life_years": 0.7416926454522449,
+        "feller_ok": true
+      },
+      "gate_status": "PASS",
+      "gate_evidence": "HKD: n=240, kappa=0.9345, long_run=0.0063 (63bp), sigma=0.0213, lambda=2.0000",
+      "is_placeholder": false,
+      "source": "docs/validation/PHASE21_TASK3_LIQUIDITY_CALIBRATION_REPORT.json",
+      "lineage_id": "LINLIQ_HKD_20260101",
+      "diagnostics": {
+        "method": "CIR++ OLS transition regression (delegated to the tested CIR estimator); Feller checked; lambda_l clamped at plausibility cap (disclosed)",
+        "n_obs": 240,
+        "fit_r2": 0.04264508100321396,
+        "converged": null,
+        "criteria": [
+          {
+            "name": "Sufficient observations",
+            "ok": true
+          },
+          {
+            "name": "Mean-reversion speed in band",
+            "ok": true
+          },
+          {
+            "name": "Long-run level in band",
+            "ok": true
+          },
+          {
+            "name": "Volatility within band",
+            "ok": true
+          },
+          {
+            "name": "Market price of risk in band",
+            "ok": true
+          },
+          {
+            "name": "Not a placeholder; change audited",
+            "ok": true
+          }
+        ],
+        "fit_bars": {
+          "title": "Liquidity-premium level structure",
+          "unit": "bp",
+          "items": [
+            {
+              "label": "Initial premium",
+              "value": 61.77431329787912
+            },
+            {
+              "label": "Long-run P",
+              "value": 62.637162773365375
             }
           ],
           "threshold": null
@@ -2213,11 +2557,11 @@
       "params": {
         "kappa_m": 0.3,
         "sigma_m": 0.15,
-        "initial_index": 0,
+        "initial_index": 0.0,
         "stationary_std": 0.19364916731037082
       },
       "gate_status": "PLACEHOLDER",
-      "gate_evidence": "Educational placeholder — illustrative kappa_m/sigma_m, not calibrated to a mortality-experience series; no G-MORT plausibility gate defined.",
+      "gate_evidence": "Educational placeholder \u2014 illustrative kappa_m/sigma_m, not calibrated to a mortality-experience series; no G-MORT plausibility gate defined.",
       "is_placeholder": true,
       "source": "par_model_v2/stochastic/mortality_trend.py",
       "lineage_id": null,
@@ -2238,89 +2582,12 @@
         ],
         "fit_bars": null
       }
-    },
-    {
-      "driver": "Interest rate (G2++ 2F)",
-      "gate_id": "G-SWPN",
-      "market": "HKD",
-      "params": {
-        "a": 0.0345437806981911,
-        "b": 0.9582779369460774,
-        "sigma": 0.006369513208373254,
-        "eta": 0.0024001097598661688,
-        "rho": -0.9082136050335214,
-        "rmse_vol_bps": 54.67058361346492,
-        "max_abs_vol_bps": 172.98761081990298
-      },
-      "gate_status": "PASS",
-      "gate_evidence": "G2++ swaption gate PASS; RMSE 54.7 bps, max error 173.0 bps, converged=true",
-      "is_placeholder": false,
-      "source": "docs/validation/PHASE20_TASK2_G2PP_SWAPTION_REPORT.json",
-      "lineage_id": null,
-      "diagnostics": {
-        "method": "Two-factor G2++ calibration to the educational ATM swaption surface",
-        "n_obs": 24,
-        "fit_r2": null,
-        "converged": true,
-        "criteria": [
-          {
-            "name": "ATM payer/receiver swaption prices satisfy put-call (swap) parity",
-            "ok": true
-          },
-          {
-            "name": "Calibration converged (mean relative price objective below 1)",
-            "ok": true
-          },
-          {
-            "name": "Implied-vol RMSE across the surface within educational tolerance",
-            "ok": true
-          },
-          {
-            "name": "Worst-point implied-vol error within educational tolerance",
-            "ok": true
-          },
-          {
-            "name": "Calibrated parameters lie in the admissible G2++ region (b != a, vols>0, |rho|<1)",
-            "ok": true
-          },
-          {
-            "name": "All calibrated ATM swaption model prices are strictly positive",
-            "ok": true
-          },
-          {
-            "name": "Calibrated engine still reprices the input curve (affine ZCB identity)",
-            "ok": true
-          }
-        ],
-        "fit_bars": {
-          "title": "G2++ swaption calibration diagnostics",
-          "unit": "bps / scaled objective",
-          "items": [
-            {
-              "label": "RMSE vol error",
-              "value": 54.67058361346492
-            },
-            {
-              "label": "Max vol error",
-              "value": 172.98761081990298
-            },
-            {
-              "label": "Objective x10k",
-              "value": 7.27136232865106
-            }
-          ],
-          "threshold": {
-            "label": "G-SWPN RMSE band (75 bps)",
-            "value": 75
-          }
-        }
-      }
     }
   ],
   "governance": {
-    "audit_entries": 37,
+    "audit_entries": 52,
     "audit_integrity_ok": true,
-    "audit_verified": 37,
+    "audit_verified": 52,
     "audit_failed": 0,
     "change_records": [
       {
@@ -2333,12 +2600,12 @@
         "author": "AutomatedModelDev_Phase13",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 7 §3.3",
-          "SOA ASOP 25 §3.3",
-          "SOA ASOP 56 §3.1",
-          "IA TAS M §3.5",
-          "IA TAS M §3.6",
-          "IFoA APS X2 §4.2"
+          "SOA ASOP 7 \u00a73.3",
+          "SOA ASOP 25 \u00a73.3",
+          "SOA ASOP 56 \u00a73.1",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "IFoA APS X2 \u00a74.2"
         ],
         "sign_off_history": [
           {
@@ -2372,10 +2639,10 @@
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
           "CBIRC C-ROSS Reserve Valuation Guidance (2023)",
-          "IA TAS M §3.5",
-          "IA TAS M §3.7",
-          "SOA ASOP 25 §3.3",
-          "SOA ASOP 56 §3.5"
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.7",
+          "SOA ASOP 25 \u00a73.3",
+          "SOA ASOP 56 \u00a73.5"
         ],
         "sign_off_history": [
           {
@@ -2400,7 +2667,7 @@
       },
       {
         "record_id": "20d0fe588afa4c74a2ee814e219e8f82",
-        "title": "Phase 13 Task 4: IA TAS M §3.6 validation suite executed (G-06)",
+        "title": "Phase 13 Task 4: IA TAS M \u00a73.6 validation suite executed (G-06)",
         "status": "APPROVED",
         "change_type": "governance_change",
         "created_at": "2026-06-04T07:42:31.873044+00:00",
@@ -2408,17 +2675,17 @@
         "author": "AutomatedModelDev_Phase13",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "IA TAS M §3.6",
-          "IA TAS M §3.6.5",
-          "APS X2 §3",
-          "SOA ASOP 56 §3.5"
+          "IA TAS M \u00a73.6",
+          "IA TAS M \u00a73.6.5",
+          "APS X2 \u00a73",
+          "SOA ASOP 56 \u00a73.5"
         ],
         "sign_off_history": [
           {
             "timestamp": "2026-06-04T07:42:31.873066+00:00",
             "actor": "AutomatedModelDev_Phase13",
             "status": "PEER_REVIEW",
-            "comments": "IA TAS M §3.6 suite executed; per-requirement evidence attached in validation report."
+            "comments": "IA TAS M \u00a73.6 suite executed; per-requirement evidence attached in validation report."
           },
           {
             "timestamp": "2026-06-04T07:42:31.873081+00:00",
@@ -2436,7 +2703,7 @@
       },
       {
         "record_id": "c518f45fe332426bad7a35b95ea2a82c",
-        "title": "APS X2 Independent Model Review (educational) — Phase 13 Task 6 (G-08)",
+        "title": "APS X2 Independent Model Review (educational) \u2014 Phase 13 Task 6 (G-08)",
         "status": "APPROVED",
         "change_type": "governance_change",
         "created_at": "2026-06-04T09:16:43.835696+00:00",
@@ -2444,10 +2711,10 @@
         "author": "APS_X2_Independent_Reviewer",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "IFoA APS X2 §4.2",
-          "IA TAS M §3.6.5",
-          "IFoA Modelling Practice Note §4",
-          "SOA ASOP 56 §3.5"
+          "IFoA APS X2 \u00a74.2",
+          "IA TAS M \u00a73.6.5",
+          "IFoA Modelling Practice Note \u00a74",
+          "SOA ASOP 56 \u00a73.5"
         ],
         "sign_off_history": [
           {
@@ -2472,7 +2739,7 @@
       },
       {
         "record_id": "592109f8874f461d8137611cb7e14bba",
-        "title": "Runtime P/Q measure enforcement in all simulation paths (G-05 / MR-004) — Phase 14 Task 1",
+        "title": "Runtime P/Q measure enforcement in all simulation paths (G-05 / MR-004) \u2014 Phase 14 Task 1",
         "status": "IMPLEMENTED",
         "change_type": "MODEL_CODE_CONTROL",
         "created_at": "2026-06-04T10:30:44+00:00",
@@ -2480,8 +2747,8 @@
         "author": "Automated model-dev cycle (Claude)",
         "peer_reviewer": "PENDING_INDEPENDENT_REVIEW",
         "standard_references": [
-          "SOA ASOP 56 §3.1.3",
-          "IA TAS M §3.4"
+          "SOA ASOP 56 \u00a73.1.3",
+          "IA TAS M \u00a73.4"
         ],
         "sign_off_history": [
           {
@@ -2502,12 +2769,12 @@
         "author": "AutomatedModelDev_Phase14",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 56 §3.4",
-          "SOA ASOP 25 §3.3",
-          "IA TAS M §3.5",
-          "IA TAS M §3.6",
-          "IA TAS M §3.7",
-          "IFoA APS X2 §4.2"
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "IA TAS M \u00a73.7",
+          "IFoA APS X2 \u00a74.2"
         ],
         "sign_off_history": [
           {
@@ -2532,7 +2799,7 @@
       },
       {
         "record_id": "CR-MR009-CLOSE-20260604",
-        "title": "Close MR-009 — migrate educational guided_examples.py to current model APIs",
+        "title": "Close MR-009 \u2014 migrate educational guided_examples.py to current model APIs",
         "status": "IMPLEMENTED",
         "change_type": "CORRECTION",
         "created_at": "2026-06-04T12:37:49.737472+00:00",
@@ -2540,9 +2807,9 @@
         "author": "Claude Actuarial Agent",
         "peer_reviewer": null,
         "standard_references": [
-          "IA TAS M §3.6",
-          "SOA ASOP 56 §3.5",
-          "SOA ASOP 56 §3.2"
+          "IA TAS M \u00a73.6",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 56 \u00a73.2"
         ],
         "sign_off_history": [
           {
@@ -2555,7 +2822,7 @@
       },
       {
         "record_id": "05f624242d144ba6bd06f5e4f3484777",
-        "title": "Phase 14 Task 4: IA TAS M §3.6 re-validation against Phase 13 Task 5 backtest (G-06)",
+        "title": "Phase 14 Task 4: IA TAS M \u00a73.6 re-validation against Phase 13 Task 5 backtest (G-06)",
         "status": "OWNER_REVIEW",
         "change_type": "governance_change",
         "created_at": "2026-06-04T13:27:04.938789+00:00",
@@ -2563,13 +2830,13 @@
         "author": "AutomatedModelDev_Phase14",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "IA TAS M §3.6",
-          "IA TAS M §3.6.4",
-          "IA TAS M §3.6.5",
-          "APS X2 §3",
-          "SOA ASOP 56 §3.5",
-          "SOA ASOP 25 §3.3",
-          "SOA ASOP 7 §3.3"
+          "IA TAS M \u00a73.6",
+          "IA TAS M \u00a73.6.4",
+          "IA TAS M \u00a73.6.5",
+          "APS X2 \u00a73",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "SOA ASOP 7 \u00a73.3"
         ],
         "sign_off_history": [
           {
@@ -2596,10 +2863,10 @@
         "author": "Claude Actuarial Agent",
         "peer_reviewer": "APS X2 Independent Reviewer (pending)",
         "standard_references": [
-          "SOA ASOP 56 §3.1.3",
-          "SOA ASOP 56 §3.4",
-          "SOA ASOP 56 §3.5",
-          "IA TAS M §3.6"
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 56 \u00a73.5",
+          "IA TAS M \u00a73.6"
         ],
         "sign_off_history": [
           {
@@ -2618,7 +2885,7 @@
       },
       {
         "record_id": "916e55220ddd42eca3f43ccb95b6b536",
-        "title": "Phase 14 Task 6 — Nested-stochastic / LSMC TVOG capital proxy",
+        "title": "Phase 14 Task 6 \u2014 Nested-stochastic / LSMC TVOG capital proxy",
         "status": "OWNER_REVIEW",
         "change_type": "methodology_change",
         "created_at": "2026-06-04T15:27:41.800519+00:00",
@@ -2626,12 +2893,12 @@
         "author": "LSMCProxyEngine (automated Phase 14 Task 6)",
         "peer_reviewer": "automated-regression",
         "standard_references": [
-          "SOA ASOP 56 §3.1.3",
-          "SOA ASOP 56 §3.5",
-          "SOA ASOP 25 §3.3",
-          "IA TAS M §3.2",
-          "IA TAS M §3.6",
-          "IFoA MCEV Principles §7"
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2",
+          "IA TAS M \u00a73.6",
+          "IFoA MCEV Principles \u00a77"
         ],
         "sign_off_history": [
           {
@@ -2650,7 +2917,7 @@
       },
       {
         "record_id": "81fe2cedd71747e198ba055bf021e453",
-        "title": "Phase 15 Task 1 — Two-driver (rates+equity) nested/LSMC capital proxy",
+        "title": "Phase 15 Task 1 \u2014 Two-driver (rates+equity) nested/LSMC capital proxy",
         "status": "OWNER_REVIEW",
         "change_type": "code_change",
         "created_at": "2026-06-04T16:26:28.886561+00:00",
@@ -2658,12 +2925,12 @@
         "author": "MultiDriverCapital-AutoDev",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 §3.1.3",
-          "SOA ASOP 56 §3.5",
-          "SOA ASOP 25 §3.3",
-          "IA TAS M §3.2",
-          "IA TAS M §3.6",
-          "IFoA MCEV Principles §7",
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2",
+          "IA TAS M \u00a73.6",
+          "IFoA MCEV Principles \u00a77",
           "Longstaff-Schwartz 2001"
         ],
         "sign_off_history": [
@@ -2683,7 +2950,7 @@
       },
       {
         "record_id": "5e21202bf5a843ffb63dce5ad28099a5",
-        "title": "Phase 15 Task 3 — Correlated risk aggregation (rates + equity guarantee)",
+        "title": "Phase 15 Task 3 \u2014 Correlated risk aggregation (rates + equity guarantee)",
         "status": "OWNER_REVIEW",
         "change_type": "methodology_change",
         "created_at": "2026-06-04T18:28:37.351932+00:00",
@@ -2691,11 +2958,11 @@
         "author": "Claude (automated 12h cycle)",
         "peer_reviewer": "APS X2 independent reviewer (PENDING)",
         "standard_references": [
-          "SOA ASOP 56 §3.5",
-          "SOA ASOP 56 §3.1.3",
-          "SOA ASOP 25 §3.3",
-          "IA TAS M §3.2",
-          "IA TAS M §3.6"
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2",
+          "IA TAS M \u00a73.6"
         ],
         "sign_off_history": [
           {
@@ -2722,12 +2989,12 @@
         "author": "MultiDriverTailDiagnostics",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 §3.5",
-          "SOA ASOP 56 §3.1.3",
-          "SOA ASOP 25 §3.3",
-          "IA TAS M §3.6",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.6",
           "L'Ecuyer (2018) RQMC",
-          "Glasserman (2003) §4"
+          "Glasserman (2003) \u00a74"
         ],
         "sign_off_history": [
           {
@@ -2754,12 +3021,12 @@
         "author": "Phase15Task5GovernanceRefresh",
         "peer_reviewer": null,
         "standard_references": [
-          "IA TAS M §3.6",
-          "IA TAS M §3.7",
-          "APS X2 §3",
-          "SOA ASOP 56 §3.5",
-          "SOA ASOP 25 §3.3",
-          "IFoA Modelling Practice Note §4"
+          "IA TAS M \u00a73.6",
+          "IA TAS M \u00a73.7",
+          "APS X2 \u00a73",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IFoA Modelling Practice Note \u00a74"
         ],
         "sign_off_history": [
           {
@@ -2786,11 +3053,11 @@
         "author": "Phase17Task5GovernanceRefresh",
         "peer_reviewer": null,
         "standard_references": [
-          "IA TAS M §3.6",
-          "IA TAS M §3.7",
-          "APS X2 §3",
-          "SOA ASOP 56 §3.5",
-          "SOA ASOP 25 §3.3",
+          "IA TAS M \u00a73.6",
+          "IA TAS M \u00a73.7",
+          "APS X2 \u00a73",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
           "IFoA proxy-modelling working party"
         ],
         "sign_off_history": [
@@ -2818,9 +3085,9 @@
         "author": "Phase18Task1CopulaAggregation",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 §3.5",
-          "SOA ASOP 25 §3.3",
-          "IA TAS M §3.6",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.6",
           "Solvency II Delegated Reg. Art. 234",
           "IFoA Life Aggregation & Simulation working party",
           "Demarta-McNeil 2005 (t-copula)"
@@ -2850,11 +3117,11 @@
         "author": "AutomatedModelDev_Phase18",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 56 §3.4",
-          "SOA ASOP 25 §3.3",
-          "IA TAS M §3.5",
-          "IA TAS M §3.6",
-          "IFoA APS X2 §4.2"
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "IFoA APS X2 \u00a74.2"
         ],
         "sign_off_history": [
           {
@@ -2887,12 +3154,12 @@
         "author": "Phase18Task4GovernanceRefresh",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 §3.5",
-          "SOA ASOP 56 §3.1.3",
-          "SOA ASOP 25 §3.3",
-          "SOA ASOP 7 §3.3",
-          "IA TAS M §3.2",
-          "IA TAS M §3.6",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 25 \u00a73.3",
+          "SOA ASOP 7 \u00a73.3",
+          "IA TAS M \u00a73.2",
+          "IA TAS M \u00a73.6",
           "Solvency II Delegated Reg. Art. 234",
           "IFoA Life Aggregation & Simulation working party",
           "L'Ecuyer (2018) RQMC"
@@ -2911,12 +3178,349 @@
             "comments": "Owner review: lapse-behaviour index is a single systemic OU factor with placeholder parameters; mortality-trend / FX / liquidity drivers still omitted; copula marginals do not extrapolate; credentialled calibration + independent APS X2 review pending. Production sign-off withheld."
           }
         ]
+      },
+      {
+        "record_id": "9dbd97f031f7412f941ca07793e2d3be",
+        "title": "MR-003/MR-011: Lapse behavioural-index parameters calibrated to experience (HK PAR)",
+        "status": "APPROVED",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-06T00:17:39.179720+00:00",
+        "phase": "Phase 19: Recovery Completion and Driver Expansion",
+        "author": "AutomatedModelDev_Phase19",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 7 \u00a73.3",
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "IFoA APS X2 \u00a74.2"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T00:17:39.179769+00:00",
+            "actor": "AutomatedModelDev_Phase19",
+            "status": "PEER_REVIEW",
+            "comments": "OU lapse behavioural-index parameters calibrated to HK PAR A/E proxy history; submitting for peer review."
+          },
+          {
+            "timestamp": "2026-06-06T00:17:39.179861+00:00",
+            "actor": "APS_X2_Independent_Reviewer",
+            "status": "OWNER_REVIEW",
+            "comments": "kappa_b / long-run level / sigma_b / stationary std recovered inside documented plausibility bands; OU AR(1) methodology and data lineage reviewed and reasonable for educational use."
+          },
+          {
+            "timestamp": "2026-06-06T00:17:39.179871+00:00",
+            "actor": "ChiefActuary",
+            "status": "APPROVED",
+            "comments": "Calibrated OU lapse behavioural-index parameters approved for educational use; production pricing/capital use requires a credentialled actual-vs-expected persistency study and a genuine independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "1d7737af2f634c438b4f84a9d76e2b00",
+        "title": "Phase 20 Task 1 - enhanced G2++ rates driver and G-RATE2 gate",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T07:10:34.351551+00:00",
+        "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+        "author": "AutomatedModelDev_Phase20",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3",
+          "SOA ASOP 56 section 3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.5",
+          "IA TAS M section 3.6",
+          "Solvency II Delegated Regulation Article 77",
+          "Solvency II Delegated Regulation Article 234"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T07:10:34.351568+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "PEER_REVIEW",
+            "comments": "Additive G2++ engine and G-RATE2 gate staged; tests and calibration evidence required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T07:10:34.351582+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 20 Tasks 2-4."
+          }
+        ]
+      },
+      {
+        "record_id": "6c7d5354530c451a9a6ab46f33a8dba0",
+        "title": "Phase 20 Task 2 - G2++ swaption-surface calibration and G-SWPN gate",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T08:25:30.126630+00:00",
+        "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+        "author": "AutomatedModelDev_Phase20",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3",
+          "SOA ASOP 56 section 3.5",
+          "SOA ASOP 56 section 4.1",
+          "IA TAS M section 3.5",
+          "IA TAS M section 3.6",
+          "Solvency II Delegated Regulation Article 22",
+          "Solvency II Delegated Regulation Article 77"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T08:25:30.126656+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "PEER_REVIEW",
+            "comments": "Analytic swaption pricer (MC-cross-checked), calibration, and G-SWPN gate staged; market-surface recalibration required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T08:25:30.126672+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 20 Tasks 3-4 and a validated market swaption surface."
+          }
+        ]
+      },
+      {
+        "record_id": "955fe35ce8034a9cb98904a7b6d79c62",
+        "title": "Phase 20 Task 3 - market-consistency martingale validation gate (G-MART)",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T09:25:48.971996+00:00",
+        "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+        "author": "AutomatedModelDev_Phase20",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3",
+          "SOA ASOP 56 section 3.5",
+          "IA TAS M section 3.6",
+          "Solvency II Delegated Regulation Article 22",
+          "Solvency II Delegated Regulation Article 234",
+          "Brigo-Mercurio 2006"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T09:25:48.972017+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "PEER_REVIEW",
+            "comments": "Martingale gate (exact HW1F + G2++ + GBM + FX) staged with MC tolerance; market-surface recalibration required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T09:25:48.972033+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 20 Tasks 4-5 and a validated market surface."
+          }
+        ]
+      },
+      {
+        "record_id": "a869696aa8be4bea975d5113005e9b21",
+        "title": "Phase 20 Task 4 - capital re-aggregation with the two-factor G2++ rates driver",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T10:25:50.371101+00:00",
+        "phase": "Phase 20: Market-Consistency and Multi-Factor Uplift",
+        "author": "AutomatedModelDev_Phase20",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.5",
+          "SOA ASOP 56 section 3.1",
+          "SOA ASOP 25 section 3.3",
+          "SOA ASOP 7 section 3.3",
+          "IA TAS M section 3.2",
+          "IA TAS M section 3.5",
+          "IA TAS M section 3.6",
+          "Solvency II Delegated Regulation Article 234",
+          "Brigo-Mercurio 2006",
+          "IFoA Life Aggregation & Simulation WP"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T10:25:50.371115+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "PEER_REVIEW",
+            "comments": "2F G2++ capital re-aggregation staged; inner nest remains HW1F; larger outer sample and market-surface recalibration required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T10:25:50.371126+00:00",
+            "actor": "AutomatedModelDev_Phase20",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Task 5 UI surfacing, G2++-consistent inner nest, and a validated market surface."
+          }
+        ]
+      },
+      {
+        "record_id": "25e1eac6661a4d9bb74276ee1a2a4b46",
+        "title": "Phase 21 Task 1 - FX / currency sixth capital driver + G-FX plausibility gate",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T21:52:05.892828+00:00",
+        "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+        "author": "AutomatedModelDev_Phase21",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3",
+          "SOA ASOP 56 section 3.4/3.5",
+          "IA TAS M section 3.5/3.6",
+          "Solvency II Delegated Regulation Article 188 (currency risk)",
+          "Solvency II Delegated Regulation Article 234",
+          "Brigo-Mercurio 2006"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T21:52:05.892844+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "PEER_REVIEW",
+            "comments": "FX sixth driver staged with G-FX gate + CIP-exact inner conditioning; credentialled calibration and six-driver OOS proxy validation required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T21:52:05.892856+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 21 Tasks 2-5 and credentialled FX calibration."
+          }
+        ]
+      },
+      {
+        "record_id": "c2f29042b5f44dd7b3670d7de87e09a2",
+        "title": "Phase 21 Task 2 - Six-driver out-of-sample LSMC proxy validation (FX included)",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-06T23:26:24.400992+00:00",
+        "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+        "author": "AutomatedModelDev_Phase21",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 7 section 3.3",
+          "SOA ASOP 25 section 3.3",
+          "SOA ASOP 56 section 3.1.3/3.5",
+          "IA TAS M section 3.2/3.6",
+          "IFoA proxy-modelling working party",
+          "Longstaff & Schwartz (2001)",
+          "Solvency II Delegated Regulation Article 188/234"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-06T23:26:24.401007+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "PEER_REVIEW",
+            "comments": "Six-driver OOS proxy validation staged with dual fx-mode basis sweep; credentialled calibration and independent review required before approval."
+          },
+          {
+            "timestamp": "2026-06-06T23:26:24.401016+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 21 Tasks 3-5 and credentialled calibration."
+          }
+        ]
+      },
+      {
+        "record_id": "07880f42a2b84174a54b6261c0fd7131",
+        "title": "MR-011/MR-012: Liquidity-premium driver (7th) added and calibrated (HKD)",
+        "status": "APPROVED",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T01:18:49.181430+00:00",
+        "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+        "author": "AutomatedModelDev_Phase21",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.4",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "IFoA APS X2 \u00a74.2"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T01:18:49.181467+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "PEER_REVIEW",
+            "comments": "CIR++ liquidity-premium parameters calibrated to HKD educational-proxy history; submitting for peer review."
+          },
+          {
+            "timestamp": "2026-06-07T01:18:49.181483+00:00",
+            "actor": "APS_X2_Independent_Reviewer",
+            "status": "OWNER_REVIEW",
+            "comments": "kappa_l / long-run premium / sigma_l / lambda_l recovered inside documented plausibility bands; delegated CIR OLS methodology and data lineage reviewed and reasonable for educational use."
+          },
+          {
+            "timestamp": "2026-06-07T01:18:49.181491+00:00",
+            "actor": "ChiefActuary",
+            "status": "APPROVED",
+            "comments": "Calibrated CIR++ liquidity-premium parameters approved for educational use; production pricing/capital use requires a credentialled liquidity-premium series and a genuine independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "d57a31a5ebf94173bf5c55c5b9669ead",
+        "title": "Phase 21 Task 4 - seven-driver tail-dependent aggregation + tail diagnostics",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-07T02:21:44.687108+00:00",
+        "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+        "author": "AutomatedModelDev_Phase21",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.5/3.6",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "EIOPA volatility-adjustment methodology (illiquidity premium)",
+          "Duffie-Singleton 1999; Brigo-Mercurio 2006; L'Ecuyer 2018 (RQMC)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T02:21:44.687125+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "PEER_REVIEW",
+            "comments": "Seven-driver aggregation staged with analytic liquidity conditioning, copula re-aggregation and tail diagnostics; credentialled exposure/coupling calibration required before approval."
+          },
+          {
+            "timestamp": "2026-06-07T02:21:44.687138+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending Phase 21 Task 5 (UI propagation), credentialled liquidity exposure calibration, and APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "45cacebd910b440891f28b48fd30fedd",
+        "title": "Phase 21 Task 5 - offline-UI propagation of the seven-driver capital view",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-07T04:14:41.663675+00:00",
+        "phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
+        "author": "AutomatedModelDev_Phase21",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T04:14:41.663773+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only."
+          },
+          {
+            "timestamp": "2026-06-07T04:14:41.663788+00:00",
+            "actor": "AutomatedModelDev_Phase21",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. PHASE 21 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
+          }
+        ]
       }
     ],
     "deployment_gates": [
       {
         "gate_id": "G-01",
-        "description": "Discount rate ≤ 3.0% in all defaults",
+        "description": "Discount rate \u2264 3.0% in all defaults",
         "status": "CLEARED (educational)",
         "level": "educational",
         "blocking": "Regulatory reserve, pricing",
@@ -2956,7 +3560,7 @@
       },
       {
         "gate_id": "G-06",
-        "description": "IA validation suite ≥ 80% PASS",
+        "description": "IA validation suite \u2265 80% PASS",
         "status": "CLEARED (educational, 80.6%)",
         "level": "educational",
         "blocking": "All regulatory use cases",
@@ -2991,7 +3595,7 @@
         "description": "MR-005 formally closed in risk register",
         "status": "CLEARED",
         "level": "production",
-        "blocking": "— (admin only)",
+        "blocking": "\u2014 (admin only)",
         "cleared": true
       },
       {
@@ -3022,8 +3626,8 @@
         "likelihood": "HIGH",
         "impact": "CRITICAL",
         "description": "Current discount rate assumption is 3.5%, exceeding the CBIRC regulatory cap of 3.0% (effective 2023 reserve valuation guidance). This produces an understated liability reserve and overstated solvency margin.",
-        "mitigation": "Reduce discount rate to ≤3.0% in Phase 4 calibration; document deviation formally per ASOP 25 §3.3.",
-        "related_standard": "SOA ASOP 25 §3.3; CBIRC Reserve Valuation Guidance 2023",
+        "mitigation": "Reduce discount rate to \u22643.0% in Phase 4 calibration; document deviation formally per ASOP 25 \u00a73.3.",
+        "related_standard": "SOA ASOP 25 \u00a73.3; CBIRC Reserve Valuation Guidance 2023",
         "updated_at": "2026-06-04T05:28:13.393982+00:00"
       },
       {
@@ -3035,24 +3639,24 @@
         "owner": "Assumption Owner",
         "likelihood": "HIGH",
         "impact": "HIGH",
-        "description": "Bond return assumptions (4.0–5.0%) are 100–180 bps above current CNY government bond yields (2.2–2.6% as of calibration date). Equity ERP has not been calibrated. This systematically understates TVOG and liability PV.",
+        "description": "Bond return assumptions (4.0\u20135.0%) are 100\u2013180 bps above current CNY government bond yields (2.2\u20132.6% as of calibration date). Equity ERP has not been calibrated. This systematically understates TVOG and liability PV.",
         "mitigation": "Recalibrate bond returns and ERP to CNY market data in Phase 4 (GBMCalibrator); interim sensitivity analysis required.",
-        "related_standard": "SOA ASOP 56 §3.4; SOA ASOP 25 §3.3",
+        "related_standard": "SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3",
         "updated_at": "2026-06-04T11:24:19.652316+00:00"
       },
       {
         "risk_id": "MR-003",
         "title": "Dynamic lapse assumption absent",
         "overall_rating": "CRITICAL",
-        "mitigation_status": "IN_PROGRESS",
+        "mitigation_status": "MITIGATED",
         "category": "model_error",
         "owner": "Model Developer",
         "likelihood": "MEDIUM",
         "impact": "CRITICAL",
-        "description": "No dynamic lapse function is implemented. Dynamic lapse is the single most impactful assumption for TVOG and ALM under stressed rate scenarios. Static lapse at current flat rates will materially understate TVOG sensitivity (estimated ±15–30% TVOG per ±25% lapse shock per Phase 1 assessment).",
+        "description": "No dynamic lapse function is implemented. Dynamic lapse is the single most impactful assumption for TVOG and ALM under stressed rate scenarios. Static lapse at current flat rates will materially understate TVOG sensitivity (estimated \u00b115\u201330% TVOG per \u00b125% lapse shock per Phase 1 assessment).",
         "mitigation": "Dynamic lapse implemented and calibrated (Phase 13 Task 2); ChangeRecord assumption=\"dynamic_lapse\" APPROVED.",
-        "related_standard": "SOA ASOP 7 §3.3; IA TAS M §3.5",
-        "updated_at": "2026-05-18T02:18:55.749015+00:00"
+        "related_standard": "SOA ASOP 7 \u00a73.3; IA TAS M \u00a73.5",
+        "updated_at": "2026-06-06T00:17:39.182600+00:00"
       },
       {
         "risk_id": "MR-004",
@@ -3065,7 +3669,7 @@
         "impact": "CRITICAL",
         "description": "Prior to Phase 2, the codebase did not enforce or document the distinction between real-world (P) and risk-neutral (Q) scenario sets. Mixing measures is a critical actuarial error that invalidates both VaR/ES and TVOG outputs.",
         "mitigation": "Measure enum implemented in esg_process.py (Phase 2). LossDistribution enforces Measure.P for VaR/ES (risk_metrics.py); TVOGEngine enforces Measure.Q (tvog.py). Phase 14 Task 1: runtime guard _enforce_simulation_measure() now validates the requested measure against each generator's declared SUPPORTED_MEASURES in every simulate()/generate() execution path (HullWhite, G2++, GBM, FX, ScenarioSet), and _assert_output_measure() verifies the output measure stamp. 30 dedicated runtime tests (tests/test_measure_enforcement.py) PASS with genuine runtime execution evidence (numpy/scipy/pandas/pytest available in automation sandbox).",
-        "related_standard": "SOA ASOP 56 §3.1.3; IA TAS M §3.4",
+        "related_standard": "SOA ASOP 56 \u00a73.1.3; IA TAS M \u00a73.4",
         "updated_at": "2026-06-04T10:30:44+00:00"
       },
       {
@@ -3078,8 +3682,8 @@
         "likelihood": "HIGH",
         "impact": "HIGH",
         "description": "DistributedExecutor fails to serialise complex model objects for multiprocessing, causing 7 test failures in the original repository test suite. This blocks all distributed scenario execution, TVOG computation, and VaR/ES integration.",
-        "mitigation": "RESOLVED — module-level `_execute_task_spec` callable + `make_partial_task` binder; verified by 63 tests.",
-        "related_standard": "SOA ASOP 56 §3.5 (scenario adequacy requires successful batch execution)",
+        "mitigation": "RESOLVED \u2014 module-level `_execute_task_spec` callable + `make_partial_task` binder; verified by 63 tests.",
+        "related_standard": "SOA ASOP 56 \u00a73.5 (scenario adequacy requires successful batch execution)",
         "updated_at": "2026-06-04T09:16:43.834338+00:00"
       },
       {
@@ -3092,8 +3696,8 @@
         "likelihood": "HIGH",
         "impact": "CRITICAL",
         "description": "Overall validation readiness assessed at 2/5 (development-grade). Stochastic validation (scenario convergence, martingale test, VaR/ES integration) is entirely absent. Model is not fit for regulatory reporting or production use in current state.",
-        "mitigation": "4-layer validation framework implementation across Phases 3–4. Full validation cadence in Phase 5.",
-        "related_standard": "SOA ASOP 56 §3.5; IA TAS M §3.6; APS X2",
+        "mitigation": "4-layer validation framework implementation across Phases 3\u20134. Full validation cadence in Phase 5.",
+        "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; APS X2",
         "updated_at": "2026-05-18T02:18:55.749042+00:00"
       },
       {
@@ -3105,9 +3709,9 @@
         "owner": "Assumption Owner",
         "likelihood": "HIGH",
         "impact": "HIGH",
-        "description": "The model has no documented assumption change control process. Any assumption can be changed without sign-off, impact assessment, or audit trail. This is a material IA TAS M §3.7 gap.",
+        "description": "The model has no documented assumption change control process. Any assumption can be changed without sign-off, impact assessment, or audit trail. This is a material IA TAS M \u00a73.7 gap.",
         "mitigation": "GovernanceStore + ChangeRecord + SignOffWorkflow implemented in Phase 2, Task 4 (this module). Requires organisational adoption.",
-        "related_standard": "IA TAS M §3.7; IA TAS M §3.3",
+        "related_standard": "IA TAS M \u00a73.7; IA TAS M \u00a73.3",
         "updated_at": "2026-05-18T02:18:55.749049+00:00"
       },
       {
@@ -3119,9 +3723,9 @@
         "owner": "Model Developer",
         "likelihood": "HIGH",
         "impact": "CRITICAL",
-        "description": "HullWhiteCalibrator.calibrate() is a NotImplementedError stub. HW1F parameters (a=0.10, σ_r=0.012) are placeholders producing model swaption vol ~250 bps vs ~42 bps market — a 6x error. All interest rate paths and ZCB prices derived from these parameters are unreliable.",
+        "description": "HullWhiteCalibrator.calibrate() is a NotImplementedError stub. HW1F parameters (a=0.10, \u03c3_r=0.012) are placeholders producing model swaption vol ~250 bps vs ~42 bps market \u2014 a 6x error. All interest rate paths and ZCB prices derived from these parameters are unreliable.",
         "mitigation": "Implement L-BFGS-B calibration in Phase 4 using CNY swaption market data.",
-        "related_standard": "SOA ASOP 56 §3.4; SOA ASOP 25 §3.3",
+        "related_standard": "SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3",
         "updated_at": "2026-05-18T02:18:55.749056+00:00"
       },
       {
@@ -3133,9 +3737,9 @@
         "owner": "Model Developer",
         "likelihood": "LOW",
         "impact": "LOW",
-        "description": "par_model_v2/examples/guided_examples.py references attributes removed from RiskFreeCurve (calibration_date/model_label/discount_factors) and FixedIncomeInstrument (term_months/par_value/oas_bps) and an outdated project_fixed_income_cashflows signature; tests/test_guided_examples.py errors (3 failed / 46 errors). Surfaced by the Phase 13 Task 4 IA TAS M §3.6 validation run. Educational wrapper only; backs no IA TAS M §3.6 requirement; production reporting engine (reporting_cycle.py) is tested separately and passes.",
+        "description": "par_model_v2/examples/guided_examples.py references attributes removed from RiskFreeCurve (calibration_date/model_label/discount_factors) and FixedIncomeInstrument (term_months/par_value/oas_bps) and an outdated project_fixed_income_cashflows signature; tests/test_guided_examples.py errors (3 failed / 46 errors). Surfaced by the Phase 13 Task 4 IA TAS M \u00a73.6 validation run. Educational wrapper only; backs no IA TAS M \u00a73.6 requirement; production reporting engine (reporting_cycle.py) is tested separately and passes.",
         "mitigation": "Migrate the fixed-income / TVOG / HK-liability sections of guided_examples.py to the current APIs in a dedicated change-controlled cycle; re-run tests/test_guided_examples.py to green.",
-        "related_standard": "IA TAS M §3.6; SOA ASOP 56 §3.5",
+        "related_standard": "IA TAS M \u00a73.6; SOA ASOP 56 \u00a73.5",
         "updated_at": "2026-06-04T12:37:49.737472+00:00"
       },
       {
@@ -3149,22 +3753,22 @@
         "impact": "HIGH",
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
-        "related_standard": "SOA ASOP 56 §3.5; IA TAS M §3.6; SOA ASOP 25 §3.3",
-        "updated_at": "2026-06-05T11:35:58.078824+00:00"
+        "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
+        "updated_at": "2026-06-07T02:21:44.686993+00:00"
       },
       {
         "risk_id": "MR-011",
         "title": "Multi-driver economic-capital proxy is educational, not production capital",
         "overall_rating": "HIGH",
-        "mitigation_status": "IN_PROGRESS",
+        "mitigation_status": "MITIGATED",
         "category": "model_error",
         "owner": "Model Owner",
         "likelihood": "MEDIUM",
         "impact": "HIGH",
         "description": "The Phase 15 multi-driver (short-rate + equity) nested/LSMC economic-capital proxy (Tasks 1-4) is fitted on PLACEHOLDER HW1F / GBM parameters, omits material risk drivers (lapse, mortality/longevity trend, credit spread, FX, liquidity, management action), uses an educational single-guarantee liability, and has NOT been independently reviewed (APS X2). The 99.5% VaR/ES and SCR-proxy figures it produces are illustrative only and must not be used for regulatory or internal economic-capital reporting until parameters are calibrated to credentialled market data, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all multi-driver capital output as EDUCATIONAL ONLY in the limitation card and at the API boundary; bound proxy error by the Task 2 out-of-sample validation (OOS R^2=0.9704, VaR rel err 3.21%) and outer-sampling error by the Task 4 bootstrap CI (SE ~1.66%); benchmark every aggregated figure to the Task 3 nested ground truth. Residual closure requires credentialled-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008).",
-        "related_standard": "IA TAS M §3.6; APS X2 §3; SOA ASOP 56 §3.5",
-        "updated_at": "2026-06-04T20:15:59.122741+00:00"
+        "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5",
+        "updated_at": "2026-06-07T01:18:49.182068+00:00"
       },
       {
         "risk_id": "MR-012",
@@ -3177,8 +3781,22 @@
         "impact": "HIGH",
         "description": "Phase 17 adds a CIR++ mean-reverting credit-spread driver (par_model_v2/stochastic/credit_spread.py) as the third risk factor in the nested/LSMC economic-capital proxy (rate + equity + credit-spread), with a reduced-form hazard x LGD credit-loss component on spread-sensitive backing assets. The CIR++ parameters (mean-reversion, long-run spread, vol, risk premium) and the hazard/LGD assumptions are PLACEHOLDER educational defaults, NOT calibrated to credentialled credit-market data; the trivariate LSMC surface still omits material drivers (lapse, mortality/longevity trend, FX, liquidity, management action) and has NOT been independently reviewed (APS X2). The three-driver 99.5% VaR/ES and SCR-proxy figures are illustrative only and must not be used for regulatory or internal economic-capital reporting until the credit parameters are calibrated, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
-        "related_standard": "IA TAS M §3.6; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3",
-        "updated_at": "2026-06-05T11:35:58.079068+00:00"
+        "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
+        "updated_at": "2026-06-07T02:21:44.687035+00:00"
+      },
+      {
+        "risk_id": "MR-013",
+        "title": "Two-factor rates market consistency not fully calibrated",
+        "overall_rating": "HIGH",
+        "mitigation_status": "IN_PROGRESS",
+        "category": "model_error",
+        "owner": "Assumption Owner",
+        "likelihood": "MEDIUM",
+        "impact": "HIGH",
+        "description": "The G2++ rates driver now has analytic zero-coupon and bond-option formulas, but parameters are educational until calibrated to a swaption volatility surface and validated through martingale and capital-impact gates.",
+        "mitigation": "Complete Phase 20 Tasks 2-4: swaption-surface calibration, market-consistency martingale gate, and capital re-aggregation/tail diagnostics with independent review.",
+        "related_standard": "SOA ASOP 56 section 3.5; IA TAS M section 3.6",
+        "updated_at": "2026-06-06T09:25:48.971900+00:00"
       }
     ]
   },
@@ -3186,17 +3804,25 @@
     {
       "key": "proxy",
       "label": "Out-of-sample proxy validation",
-      "verdict": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
+      "verdict": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
     },
     {
       "key": "aggregation",
       "label": "Correlated risk aggregation",
-      "verdict": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
+      "verdict": "PASS - seven-driver copula aggregation (selected: gaussian) reconciles to nested capital within 14.6% vs var-covar understatement 40.5%; MR-010 seven-driver mitigation confirmed",
+      "source": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json"
     },
     {
       "key": "tail",
       "label": "Tail convergence & stability",
-      "verdict": "PASS - five-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
+      "verdict": "PASS - seven-driver 99.5% capital metric converges (copula-simulated), is bounded by simulated and honest small-sample nested bootstrap CIs, and benefits from Sobol-RQMC variance reduction",
+      "source": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json"
+    },
+    {
+      "name": "G-MART market-consistency gate",
+      "verdict": "PASS",
+      "evidence": "worst 1.22 sigma; max rel error 0.0003903; 40000 scenarios",
+      "source": "docs/validation/PHASE20_TASK3_G_MART_REPORT.json"
     },
     {
       "name": "G2++ five-driver capital re-aggregation",
@@ -3205,10 +3831,28 @@
       "source": "docs/validation/PHASE20_TASK4_AGGREGATION_REPORT.json"
     },
     {
-      "name": "G-MART market-consistency gate",
+      "name": "G-FX FX-driver plausibility gate (6th driver)",
       "verdict": "PASS",
-      "evidence": "worst 1.22 sigma; max rel error 3.90e-4; 40000 scenarios",
-      "source": "docs/validation/PHASE20_TASK3_G_MART_REPORT.json"
+      "evidence": "6/6 criteria passed incl. MART-FX-CIP Q-measure martingale",
+      "source": "docs/validation/PHASE21_TASK1_FX_DRIVER_REPORT.json"
+    },
+    {
+      "name": "Six-driver OOS proxy validation (FX included)",
+      "verdict": "PARTIAL",
+      "evidence": "PARTIAL \u2014 OOS R^2 0.9498 < 0.95",
+      "source": "docs/validation/PHASE21_TASK2_OOS_VALIDATION_REPORT.json"
+    },
+    {
+      "name": "G-LIQ liquidity-calibration gate (7th driver)",
+      "verdict": "PASS",
+      "evidence": "HKD: n=240, kappa=0.9345, long_run=0.0063 (63bp), sigma=0.0213, lambda=2.0000",
+      "source": "docs/validation/PHASE21_TASK3_LIQUIDITY_CALIBRATION_REPORT.json"
+    },
+    {
+      "name": "Seven-driver tail-dependent capital aggregation",
+      "verdict": "PASS",
+      "evidence": "var-covar understates nested by 40.5%; copula rel err 14.6%; tail diagnostics converged",
+      "source": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json"
     }
   ]
 }

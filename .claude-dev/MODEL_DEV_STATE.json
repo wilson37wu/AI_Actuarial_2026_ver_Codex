@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-07T02:24:12Z",
- "last_run_duration_minutes": 40,
- "last_run_note": "2026-06-07 cycle 4: Phase 21 Task 4 COMPLETE - seven-driver tail-dependent aggregation + tail diagnostics. New multi_driver_capital_7d_aggregation.py (SevenDriverCorrelation 7x7 PSD embedding the governed 6x6; analytic CIR-affine forced-sale haircut conditioning for the calibrated liquidity driver; SevenDriverTailDiagnostics: copula-simulated convergence, bootstrap CIs, crude-vs-Sobol RQMC). Verdict PASS; var-covar understates nested 40.5%; gaussian copula within 14.6%; liquidity standalone SCR 63 (small under calibrated mean reversion - documented finding). ChangeRecord d57a31a5 OWNER_REVIEW; MR-010/MR-012 MITIGATED; audit 50->51 True. 13 new + 124 regression tests PASS. Next: Phase 21 Task 5 - offline-UI propagation -> PHASE 21 COMPLETE.",
+ "last_run": "2026-06-07T04:18:40Z",
+ "last_run_duration_minutes": 25,
+ "last_run_note": "2026-06-07 cycle 6: Phase 21 Task 5 COMPLETE -> PHASE 21 COMPLETE (Tasks 1-5). Completed the cycle-5 undocumented UI propagation: fixed stale five-driver headline verdict wording to seven-driver (build_ui_data.py _build_tail/_build_verdicts), rebuilt viewer_data.json from the LIVE governance store (52/52 audit digest-verified, 28 change records incl. the new one), governance ChangeRecord 45cacebd910b440891f28b48fd30fedd OWNER_REVIEW (audit 51->52, changes 27->28, verify_all True), evidence report docs/validation/PHASE21_TASK5_UI_PROPAGATION_REPORT.{json,md}. ui_app.html contract v1.3.0: G-FX/G-LIQ panels, FX+liquidity SCR cards, seven-driver aggregation/tail read-outs; self-test ok:true 0 network/0 JS errors (52 checks); offline-viewer self-test ok:true; py_compile clean. Six-driver OOS PARTIAL stays honestly displayed. Next: Phase 22 Task 1 - six-driver OOS remediation (inner 96->256+, n_outer 500->2000+ staged CRN, targeted basis).",
  "current_phase": "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital",
- "overall_status": "PHASE21_TASK4_COMPLETE_7_DRIVER_AGGREGATION_PASS__next_Task5_offline_UI_propagation",
+ "overall_status": "PHASE21_COMPLETE_seven_driver_capital_in_offline_UI__next_Phase22_Task1_OOS_remediation",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -368,7 +368,7 @@
    "next": "PHASE 20 COMPLETE; continue maintaining the fully offline interactive UI and model-output bundle as new model evidence is produced."
   },
   "Phase 21: FX + Liquidity Drivers and Six/Seven-Driver Economic Capital": {
-   "status": "in_progress",
+   "status": "completed",
    "description": "Add FX/currency and liquidity drivers to the economic-capital proxy: six/seven-driver standalone SCRs, var-covar, copula-on-realised-losses, nested benchmark, OOS proxy validation, tail diagnostics, offline-UI propagation (one task per cycle).",
    "tasks": [
     "FX / currency driver (6th driver) + G-FX gate + Q-measure CIP martingale evidence",
@@ -379,14 +379,27 @@
    ],
    "completed": [
     "FX / currency driver (6th driver) + G-FX gate + Q-measure CIP martingale evidence",
-    "Out-of-sample six-driver proxy validation (PARTIAL honest verdict: selected analytic FX-offset surface degree 1/max_interaction_order 3; OOS R2 0.949837 vs 0.95 threshold; VaR rel err 5.99%; ES rel err 4.63%; FX slope recovered exactly; leakage-free; ChangeRecord c2f29042b5f44dd7b3670d7de87e09a2 OWNER_REVIEW; MR-011/MR-012 refreshed)",
-    "Liquidity driver (7th driver) + calibration + G-LIQ gate \u2014 COMPLETE 2026-06-07: CIR++ liquidity-premium/funding-spread driver (par_model_v2/stochastic/liquidity_premium.py) added as the SEVENTH and LAST documented-but-omitted proxy driver; LiquidityPremiumCalibrator delegates to the tested homoscedastic CIR OLS; HKD educational-proxy fixture (240 obs); kappa_l=0.9345/yr, long-run 63bp, sigma_l=0.0213, lambda_l=2.0 (CLAMPED at cap, disclosed), Feller holds; G-LIQ PASS 6/6; ChangeRecord 07880f42a2b84174a54b6261c0fd7131 APPROVED; MR-011/MR-012 MITIGATED; audit 47->50 verify_all True; 37 new tests PASS; regression 114 PASS",
-    "Six/seven-driver tail-dependent aggregation + tail diagnostics \u2014 COMPLETE 2026-06-07 (cycle 4): SevenDriverLiquidityRiskAggregator (par_model_v2/projection/multi_driver_capital_7d_aggregation.py) aggregates ALL SEVEN documented drivers; liquidity enters the inner Q-nest ANALYTICALLY via the CIR-affine-exact forced-sale haircut (verified vs MC within 0.03%); six-driver outer joint + five-driver CRN components reproduced bit-for-bit from Task 1 (slices reused, verified). Evidence (seed 42, n_outer 160, n_inner 24): standalone rate 14486/equity 15932/credit 4714/lapse 22539/mortality 387/fx 4286/liquidity 63; var-covar 28996 vs nested 48694 (understatement 40.5%, MR-010 re-confirmed); gaussian copula 41593 (rel err 14.6% <= 25%); tail diagnostics CONVERGED (last VaR delta 0.07%), simulated bootstrap CI + honest small-sample nested CI disclosed, Sobol-RQMC ratio 3.6x; VERDICT PASS. ChangeRecord d57a31a5ebf94173bf5c55c5b9669ead OWNER_REVIEW; MR-010/MR-012 MITIGATED (driver-omission residual CLOSED at aggregation level); audit 50->51 verify_all True; 13 new tests PASS; regression FX 11 + liquidity 37 + copula 22 + governance 54 PASS"
-   ],
-   "in_progress": [
+    "Out-of-sample six-driver proxy validation",
+    "Liquidity driver (7th driver) + calibration + G-LIQ gate",
+    "Six/seven-driver tail-dependent aggregation + tail diagnostics",
     "Offline-UI propagation (G-FX/G-LIQ, FX+liquidity SCRs, 6/7-driver read-outs)"
    ],
-   "next": "PHASE 21 COMPLETE when Task 5 (offline-UI propagation) is documented"
+   "in_progress": [],
+   "next": null
+  },
+  "Phase 22: Proxy Hardening + Seven-Driver OOS Validation": {
+   "status": "planned",
+   "description": "Harden the LSMC proxy: remediate the six-driver OOS PARTIAL (R2 0.9498 vs 0.95) per the recorded options; extend the proxy to the liquidity 7th driver with seven-driver OOS validation; calibrate liquidity exposure notional + couplings; re-aggregate; UI propagation.",
+   "tasks": [
+    "Six-driver OOS remediation (inner 96->256+, n_outer 500->2000+ staged CRN, targeted deg-2 basis)",
+    "Seven-driver LSMC proxy extension + disjoint-seed OOS validation",
+    "Liquidity exposure-notional + coupling calibration (replace placeholders) + sensitivity",
+    "Seven-driver aggregation re-run + MR-010/MR-012 refresh + tail diagnostics",
+    "Offline-UI propagation + PHASE 22 COMPLETE documentation"
+   ],
+   "completed": [],
+   "in_progress": [],
+   "next": "Six-driver OOS remediation"
   }
  },
  "repository_info": {
