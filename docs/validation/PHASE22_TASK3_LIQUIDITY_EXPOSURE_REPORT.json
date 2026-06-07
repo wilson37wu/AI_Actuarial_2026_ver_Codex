@@ -1,0 +1,107 @@
+{
+  "run_timestamp": "2026-06-07T08:25:03.632686+00:00",
+  "phase": "Phase 22: Proxy Hardening + Seven-Driver OOS Validation",
+  "task": "Task 3 \u2014 Liquidity exposure-notional + coupling calibration (G-LIQX)",
+  "market": "HKD",
+  "lineage": {
+    "lineage_id": "LINLIQX_HKD_20260101",
+    "market": "HKD",
+    "as_of_date": "2026-01-01",
+    "source_type": "educational_documented_targets",
+    "source_detail": "/sessions/busy-pensive-albattani/mnt/Auto_Actuarial_Model_Dev_May26/par_model_v2/calibration/fixtures/hkd_liquidity_exposure_couplings_20260101.json",
+    "fixture_version": "1.0.0",
+    "approved_by": "ModelGovernance_Phase22",
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "sha256_checksum": "6f3dc3e15605a545b6f6bfda9010f05a90771910093d977beef44c7386079166",
+    "produced_at": "2026-06-07T08:25:03.741961+00:00"
+  },
+  "exposure": {
+    "backing_asset_mv": 100000.0,
+    "illiquid_share": 0.55,
+    "forced_sale_fraction": 0.4,
+    "exposure_notional": 22000.000000000004
+  },
+  "target_couplings": {
+    "liq_rate": -0.1,
+    "liq_equity": -0.3,
+    "liq_spread": 0.5,
+    "liq_lapse": 0.15,
+    "liq_mortality": 0.0,
+    "liq_fx": 0.15
+  },
+  "estimated_couplings": {
+    "liq_rate": -0.079389,
+    "liq_equity": -0.293458,
+    "liq_spread": 0.45791,
+    "liq_lapse": 0.108092,
+    "liq_mortality": 0.016042,
+    "liq_fx": 0.106986
+  },
+  "coupling_tolerance": 0.12,
+  "n_obs": 1200,
+  "correlation7_psd_passed": true,
+  "sensitivity": {
+    "var_covar_scr_placeholder": 28996.199216096866,
+    "var_covar_scr_calibrated": 28990.855002601416,
+    "calibrated_vs_placeholder_rel_change": 0.00018430737958520423,
+    "notional_multipliers": [
+      0.5,
+      1.0,
+      1.5
+    ],
+    "var_covar_scr_grid": [
+      28991.440848116214,
+      28990.855002601416,
+      28990.287739880318
+    ],
+    "monotone_in_notional": false,
+    "grid_spread_rel": 3.9774895766013084e-05,
+    "net_liquidity_cross_term": -766.3505247857331,
+    "liquidity_net_diversifying": true,
+    "coupling_perturbations": {
+      "liq_spread+0.10": 28991.610026180417,
+      "liq_spread-0.10": 28990.09995935844,
+      "liq_equity+0.10": 28993.406693385892,
+      "liq_equity-0.10": 28988.303087204764
+    },
+    "max_perturbation_rel_change": 8.802484081354228e-05,
+    "max_allowed_rel_change": 0.25,
+    "standalone_scr_source": "/sessions/busy-pensive-albattani/mnt/Auto_Actuarial_Model_Dev_May26/docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json"
+  },
+  "gate_gliqx": {
+    "gate_id": "G-LIQX",
+    "gate_description": "Liquidity exposure notional reproducible from documented balance-sheet inputs and 7x7 liquidity couplings calibrated (recovered within tolerance, PSD, bounded SCR sensitivity)",
+    "status": "PASS",
+    "evidence": "HKD: n=1200, notional=22000, couplings={'liq_rate': -0.0794, 'liq_equity': -0.2935, 'liq_spread': 0.4579, 'liq_lapse': 0.1081, 'liq_mortality': 0.016, 'liq_fx': 0.107}",
+    "evaluated_at": "2026-06-07T08:25:03.762381+00:00"
+  },
+  "criteria": {
+    "c1_lineage_checksum_ok": true,
+    "c2_exposure_reproducible_in_band": true,
+    "c3_couplings_recovered_within_tol": true,
+    "c4_correlation7_psd_validator_pass": true,
+    "c5_sensitivity_bounded": true,
+    "c6_not_placeholder_with_audit": true
+  },
+  "is_placeholder": false,
+  "change_record_id": "39b5c559fc63426b830660cd7595a297",
+  "change_record_status": "OWNER_REVIEW",
+  "mr011_status": "MITIGATED",
+  "mr012_status": "MITIGATED",
+  "audit_entry_ids": [
+    "a7e9a48281af43e9b5b42e17988721aa"
+  ],
+  "audit_integrity_ok": true,
+  "change_records_total": 31,
+  "use_restrictions": {
+    "status": "EDUCATIONAL",
+    "classification": "EDUCATIONAL ONLY \u2014 NOT a regulatory capital model",
+    "restrictions": [
+      "Documented-targets fixture, NOT credentialled joint market data.",
+      "Exposure notional derived from an educational GMMB balance-sheet anchor.",
+      "Coupling recovery is a seeded-synthesis estimator test, not a market joint estimation.",
+      "Automation-driven sign-off stops at OWNER_REVIEW; production use requires credentialled data and an independent APS X2 review."
+    ]
+  },
+  "markdown": "# Phase 22 Task 3 \u2014 Liquidity Exposure-Notional + 7x7 Coupling Calibration (G-LIQX)\n\n**Run:** 2026-06-07 08:25:03 UTC\n**Market:** HKD (documented-targets educational fixture)\n**Gate G-LIQX:** PASS \u2705\n\n## What this replaces\n\nThe LAST liquidity placeholders: the `LiquidityExposureSpec` notional\n(placeholder 30,000) and the six `SevenDriverCorrelation` liquidity couplings\n(placeholders 0.05, -0.20, 0.35, 0.10, 0.0, 0.10) flagged in MR-011/MR-012.\n\n## Exposure notional (reproducible)\n\n`exposure_notional = backing_asset_mv x illiquid_share x forced_sale_fraction`\n= 100,000 x 0.55 x 0.40 = **22,000**\n(GMMB backing-portfolio anchor; HK par-fund illiquid allocation; Solvency II\nArt. 142 mass-lapse 40% forced-sale analogue.)\n\n## Couplings (CIR transition-residual estimator, 1200 monthly joint obs)\n\n| Coupling | Target | Estimated | Error |\n|---|---|---|---|\n| liq_rate | -0.1000 | -0.0794 | +0.0206 |\n| liq_equity | -0.3000 | -0.2935 | +0.0065 |\n| liq_spread | +0.5000 | +0.4579 | -0.0421 |\n| liq_lapse | +0.1500 | +0.1081 | -0.0419 |\n| liq_mortality | +0.0000 | +0.0160 | +0.0160 |\n| liq_fx | +0.1500 | +0.1070 | -0.0430 |\n\nTolerance +/-0.12; 7x7 PSD validator: **PASS** (no repair allowed).\n\n## Var-covar SCR sensitivity (standalone SCRs from Phase 21 Task 4)\n\n- Placeholder config: 28,996 -> calibrated config: 28,991 (-0.02%)\n- Notional grid (monotone=False; net liquidity cross-term -766 \u2014 the\n  liquidity driver is **net-diversifying** at this scale, so var-covar SCR can\n  legitimately fall as the notional rises): 0.5x -> 28991, 1.0x -> 28991, 1.5x -> 28990\n- Max coupling-perturbation effect (+/-0.10 on liq_spread/liq_equity): 0.01%\n- Full nested + copula re-aggregation with these values is **Phase 22 Task 4**.\n\n## G-LIQX criteria\n\n| Criterion | Outcome |\n|---|---|\n| c1_lineage_checksum_ok | PASS |\n| c2_exposure_reproducible_in_band | PASS |\n| c3_couplings_recovered_within_tol | PASS |\n| c4_correlation7_psd_validator_pass | PASS |\n| c5_sensitivity_bounded | PASS |\n| c6_not_placeholder_with_audit | PASS |\n\n**Evidence:** HKD: n=1200, notional=22000, couplings={'liq_rate': -0.0794, 'liq_equity': -0.2935, 'liq_spread': 0.4579, 'liq_lapse': 0.1081, 'liq_mortality': 0.016, 'liq_fx': 0.107}\n\n## Governance\n\n- ChangeRecord `39b5c559fc63426b830660cd7595a297` \u2014 status **OWNER_REVIEW** (assumption_change)\n- PARAM_CHANGE audit entries: a7e9a48281af43e9b5b42e17988721aa\n- MR-011: **MITIGATED** | MR-012: **MITIGATED** | audit integrity: **True**\n\n## Model-use restrictions\n\nEDUCATIONAL ONLY. Documented-targets fixture, not credentialled joint market\ndata; seeded-synthesis estimator recovery, not market joint estimation;\nautomation-driven sign-off stops at OWNER_REVIEW. Production use requires a\ncredentialled joint dataset and an independent APS X2 review.\n\n*Standards: SOA ASOP 56 3.1.3/3.4; SOA ASOP 25 3.3; IA TAS M 3.4/3.5/3.6;\nSolvency II Delegated Reg. Art. 142/234; Dick-Nielsen, Feldhutter & Lando\n(2012); Amihud (2002); Pastor & Stambaugh (2003).*\n"
+}

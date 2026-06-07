@@ -1144,3 +1144,29 @@ refresh + offline-UI propagation. Source of truth for task state remains `.claud
    RMSE; OOS R² 0.9498 vs 0.95 gate (marginal miss — remediation in MODEL_DEV_LOG.md); FX slope exact;
    leakage-free; 17 tests; ChangeRecord c2f29042b5f44dd7b3670d7de87e09a2 OWNER_REVIEW.
 3. 
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-07 (cycle 9, supersedes everything above)
+
+**Phase 22 progress: Task 1 ✅ (OOS remediation, R² 0.9985), Task 2 ✅ VERIFIED (7D OOS validation PASS,
+R² 0.9985, VaR/ES/SCR rel err 0.51%/0.18%/1.26%), Task 3 ✅ (liquidity exposure + couplings calibrated,
+G-LIQX PASS 6/6: notional 30,000 placeholder → 22,000 reproducible; couplings recovered within 0.12 of
+documented targets from a 1,200-month seeded joint synthesis; PSD-validated; sensitivity bounded;
+ChangeRecord `39b5c559fc63426b830660cd7595a297` OWNER_REVIEW; MR-011/MR-012 MITIGATED).**
+
+**NEXT executable task: Phase 22 Task 4 — seven-driver aggregation re-run with the CALIBRATED exposure
+notional + couplings.** Consume `calibrated_liquidity_exposure_notional()` and
+`calibrated_seven_driver_correlation()` from `multi_driver_capital_7d_aggregation.py` (they read the
+Task 3 report with placeholder fallback). Use the staged-build pattern (<45 s walls, slice-stable CRN)
+as in `scripts/build_phase21_task4_aggregation*`/Task 1; refresh MR-010/MR-012; re-run tail diagnostics;
+ChangeRecord at OWNER_REVIEW; then Task 5 = offline-UI propagation + PHASE 22 COMPLETE documentation.
+
+**Sandbox operating rules (CONFIRMED AGAIN cycle 9):**
+1. ~44 s hard wall per bash call; stage long computations; verify liveness via artifacts.
+2. Python/pytest/scipy/pandas live in `/var/tmp/pylibs` — run with `PYTHONPATH=/var/tmp/pylibs:.`.
+3. **Windows-side file-tool writes of LONG files silently truncate on sync to the Linux mount** —
+   write long repo files via bash heredoc/python and ALWAYS verify with `ast.parse`/`json.loads`.
+
+**Standing blockers (human action):** GitHub push (see GITHUB_PUSH_BLOCKER.md); production sign-off
+residual (credentialled data + independent APS X2 review) — by design for this educational model.

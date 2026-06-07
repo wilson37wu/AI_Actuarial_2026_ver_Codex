@@ -1,0 +1,53 @@
+{
+  "fixture_id": "HKD_LIQUIDITY_EXPOSURE_COUPLINGS_2026",
+  "description": "Educational documented-targets fixture for the Phase 22 Task 3 liquidity exposure-notional derivation and 7x7 liquidity-coupling calibration. Exposure inputs anchor the forced-sale haircut notional to the educational GMMB backing portfolio; coupling targets encode documented stress co-movement of funding/liquidity spreads with the other six drivers and are recovered from a seeded joint monthly synthesis by a CIR transition-residual correlation estimator.",
+  "market": "HKD",
+  "currency": "HKD",
+  "as_of_date": "2026-01-01",
+  "exposure_inputs": {
+    "backing_asset_mv": 100000.0,
+    "illiquid_share": 0.55,
+    "forced_sale_fraction": 0.4,
+    "notional_band": [
+      5000.0,
+      60000.0
+    ],
+    "rationale": "backing_asset_mv = units * S0 = sum_assured of the educational equity-linked GMMB book (the policyholder fund at issue, matching EquityGuaranteeSpec initial_index_level 100); illiquid_share = 0.55 documented HK participating-fund style allocation to corporate-bond / illiquid credit assets; forced_sale_fraction = 0.40 mass-lapse forced-sale analogue (Solvency II Delegated Reg. Art. 142 mass-lapse 40% shock). exposure_notional = backing_asset_mv * illiquid_share * forced_sale_fraction = 22000."
+  },
+  "target_couplings": {
+    "liq_rate": -0.1,
+    "liq_equity": -0.3,
+    "liq_spread": 0.5,
+    "liq_lapse": 0.15,
+    "liq_mortality": 0.0,
+    "liq_fx": 0.15
+  },
+  "coupling_tolerance": 0.12,
+  "coupling_sources_note": "liq_spread +0.50: corporate-bond illiquidity and credit spreads co-move strongly in stress (Dick-Nielsen, Feldhutter & Lando 2012; EIOPA volatility-adjustment basis); liq_equity -0.30: flight-to-liquidity against equity drawdowns (Amihud 2002; Pastor & Stambaugh 2003); liq_rate -0.10: flight-to-quality lowers risk-free rates when liquidity premia spike; liq_lapse +0.15: funding stress historically coincides with elevated surrender / policy-loan activity; liq_fx +0.15: HKD funding-spread stress episodes coincide with peg-pressure FX stress (HKMA); liq_mortality 0.00: no documented dependence between mortality trend and funding liquidity.",
+  "monthly_synthesis": {
+    "seed": 20260607,
+    "n_months": 1200,
+    "steps_per_year": 12,
+    "method": "Correlated standard-normal monthly innovations for the seven drivers via the Cholesky factor of the governed 6x6 block extended by the target liquidity couplings; the liquidity premium path is generated from its innovation column with the full-truncation Euler CIR++ scheme at the Phase 21 Task 3 G-LIQ calibrated parameters; the estimator must recover the couplings from the PATH via CIR transition residuals (not from the latent innovations). 1200 synthetic months keeps the recovery sampling SE near 0.029, i.e. 4-sigma headroom against the 0.12 tolerance (no seed selection)."
+  },
+  "gbm_rate_equity_corr": -0.15,
+  "min_obs": 120,
+  "sensitivity": {
+    "notional_multipliers": [
+      0.5,
+      1.0,
+      1.5
+    ],
+    "coupling_perturbation": 0.1,
+    "max_var_covar_scr_change_rel": 0.25
+  },
+  "documented_sources_note": "Educational documented-targets fixture, NOT credentialled market data. Production use requires a credentialled joint liquidity/credit/equity/rate/FX/lapse dataset and an independent APS X2 review.",
+  "data_lineage": {
+    "lineage_id": "LINLIQX_HKD_20260101",
+    "source_type": "educational_documented_targets",
+    "fixture_version": "1.0.0",
+    "approved_by": "ModelGovernance_Phase22",
+    "approval_timestamp": "2026-01-01T00:00:00Z"
+  },
+  "notes": "Replaces the SevenDriverCorrelation liquidity-coupling educational placeholders (0.05, -0.20, 0.35, 0.10, 0.0, 0.10) and the LiquidityExposureSpec placeholder notional (30000)."
+}

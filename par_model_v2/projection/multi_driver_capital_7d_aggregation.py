@@ -133,6 +133,49 @@ def calibrated_liquidity_params() -> LiquidityPremiumParams:
     return LiquidityPremiumParams()
 
 
+_TASK22_3_REPORT = (
+    Path(__file__).resolve().parents[2]
+    / "docs" / "validation" / "PHASE22_TASK3_LIQUIDITY_EXPOSURE_REPORT.json"
+)
+
+
+def calibrated_liquidity_exposure_notional() -> Tuple[float, bool]:
+    """Return ``(exposure_notional, is_placeholder)``.
+
+    Loads the Phase 22 Task 3 G-LIQX-gated exposure notional (reproducible
+    from documented balance-sheet inputs: backing_asset_mv x illiquid_share x
+    forced_sale_fraction) from the Task 3 report; falls back to the
+    documented educational placeholder (30,000) if absent.
+    """
+    if _TASK22_3_REPORT.exists():
+        r = json.loads(_TASK22_3_REPORT.read_text(encoding="utf-8"))
+        if r.get("gate_gliqx", {}).get("status") == "PASS":
+            return float(r["exposure"]["exposure_notional"]), False
+    return 30_000.0, True
+
+
+def calibrated_seven_driver_correlation() -> Tuple["SevenDriverCorrelation", bool]:
+    """Return ``(SevenDriverCorrelation, is_placeholder)``.
+
+    Loads the Phase 22 Task 3 G-LIQX-calibrated liquidity couplings (CIR
+    transition-residual estimator recovery, PSD-validated) from the Task 3
+    report; falls back to the documented placeholder couplings if absent.
+    """
+    if _TASK22_3_REPORT.exists():
+        r = json.loads(_TASK22_3_REPORT.read_text(encoding="utf-8"))
+        if r.get("gate_gliqx", {}).get("status") == "PASS":
+            est = r["estimated_couplings"]
+            return SevenDriverCorrelation(
+                liq_rate=round(float(est["liq_rate"]), 4),
+                liq_equity=round(float(est["liq_equity"]), 4),
+                liq_spread=round(float(est["liq_spread"]), 4),
+                liq_lapse=round(float(est["liq_lapse"]), 4),
+                liq_mortality=round(float(est["liq_mortality"]), 4),
+                liq_fx=round(float(est["liq_fx"]), 4),
+            ), False
+    return SevenDriverCorrelation(), True
+
+
 # ---------------------------------------------------------------------------
 # Analytic CIR++ forced-sale haircut (Q-measure, affine-exact)
 # ---------------------------------------------------------------------------
