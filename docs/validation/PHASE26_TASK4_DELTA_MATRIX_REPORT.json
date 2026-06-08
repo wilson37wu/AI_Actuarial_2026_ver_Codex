@@ -1,0 +1,224 @@
+{
+ "run_timestamp": "2026-06-08T06:15:40.399472+00:00",
+ "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+ "task": "Task 4 - full-vs-reanchored delta matrix + MR trigger re-check",
+ "verdict": "PASS",
+ "df_rematched": 2.9450930033094664,
+ "rho_max_abs_diff": 7.216449660063518e-16,
+ "pathwise_basis_params": {
+  "sigma": 0.225,
+  "alpha": 0.7566891068509882,
+  "benefit_share_fit": 0.8449827924965548,
+  "provenance": "governed P25T3 FIT values, frozen (NO re-tuning)"
+ },
+ "result": {
+  "config": {
+   "n_replicates": 200,
+   "df_frozen": 2.9451,
+   "ci_level": 0.95,
+   "mr_trigger_fraction": 0.01,
+   "nested_pathwise_reference": 46638.9,
+   "method": "paired common-random-number bootstrap deltas over the Task 3 frozen-copula replicates; point matrix from the Task 2 re-aggregation"
+  },
+  "rank_invariance": {
+   "df_rematched": 2.9450930033094664,
+   "df_target": 2.9451,
+   "df_within_tol": true,
+   "rho_max_abs_diff": 7.216449660063518e-16,
+   "rho_frozen": true,
+   "rank_invariant": true
+  },
+  "point_matrix": {
+   "without": {
+    "t": 47269.12222883626,
+    "g": 41629.106321465515
+   },
+   "level": {
+    "t": 39794.3216670548,
+    "g": 35210.084673414254
+   },
+   "component": {
+    "t": 39975.654628199336,
+    "g": 35391.468763848694
+   }
+  },
+  "marginal_cis": {
+   "without": {
+    "t": {
+     "n": 200,
+     "mean": 46725.32698605153,
+     "se": 1899.576340761883,
+     "se_frac_of_mean": 0.04065410481405397,
+     "ci_level": 0.95,
+     "ci_lo": 43139.40954178635,
+     "ci_hi": 50441.03642975602,
+     "min": 40584.27655071195,
+     "max": 51511.377150436834
+    },
+    "g": null
+   },
+   "level": {
+    "t": {
+     "n": 200,
+     "mean": 39383.54688293961,
+     "se": 1596.3650326520726,
+     "se_frac_of_mean": 0.0405338055863017,
+     "ci_level": 0.95,
+     "ci_lo": 36492.66444004359,
+     "ci_hi": 42556.8046363615,
+     "min": 34341.827497340506,
+     "max": 43526.26674345255
+    },
+    "g": null
+   },
+   "component": {
+    "t": {
+     "n": 200,
+     "mean": 39595.06073760496,
+     "se": 1609.9712359341195,
+     "se_frac_of_mean": 0.04066091087985294,
+     "ci_level": 0.95,
+     "ci_lo": 36676.24172248241,
+     "ci_hi": 42943.093413623916,
+     "min": 34445.85077822741,
+     "max": 43759.03650033423
+    },
+    "g": {
+     "n": 200,
+     "mean": 35140.65714221947,
+     "se": 1217.4701392429768,
+     "se_frac_of_mean": 0.034645628120034695,
+     "ci_level": 0.95,
+     "ci_lo": 32889.55004982064,
+     "ci_hi": 37509.92360510155,
+     "min": 31755.79221439363,
+     "max": 37797.531757127246
+    }
+   }
+  },
+  "paired_deltas": {
+   "composition_correction_t": {
+    "n": 200,
+    "mean": 211.5138546653521,
+    "se": 90.01295009479335,
+    "ci_level": 0.95,
+    "ci_lo": 46.07614898741779,
+    "ci_hi": 381.8135878535294,
+    "excludes_zero": true,
+    "mean_rel_to_subtrahend": 0.005370614670487611
+   },
+   "composition_correction_g": {
+    "n": 200,
+    "mean": 192.55889529781837,
+    "se": 66.37346511139887,
+    "ci_level": 0.95,
+    "ci_lo": 60.179263388411734,
+    "ci_hi": 312.6086008394756,
+    "excludes_zero": true,
+    "mean_rel_to_subtrahend": 0.005509853324129865
+   },
+   "management_relief_t": {
+    "n": 200,
+    "mean": 7130.266248446568,
+    "se": 311.9036075159398,
+    "ci_level": 0.95,
+    "ci_lo": 6496.382116937927,
+    "ci_hi": 7630.366371365373,
+    "excludes_zero": true,
+    "mean_rel_to_subtrahend": 0.18007968962842577
+   },
+   "dependence_form_component": {
+    "n": 200,
+    "mean": 4454.40359538549,
+    "se": 842.3748514822197,
+    "ci_level": 0.95,
+    "ci_lo": 2743.135687175017,
+    "ci_hi": 5967.097865181036,
+    "excludes_zero": true,
+    "mean_rel_to_subtrahend": 0.12675925715782307
+   },
+   "dependence_form_level": {
+    "n": 200,
+    "mean": 4435.448636017956,
+    "se": 838.530048584195,
+    "ci_level": 0.95,
+    "ci_lo": 2626.9322001947994,
+    "ci_hi": 6058.020229759826,
+    "excludes_zero": true,
+    "mean_rel_to_subtrahend": 0.12691530751343946
+   }
+  },
+  "mr_trigger": {
+   "threshold": 0.01,
+   "composition_correction_rel_t": 0.005370614670487611,
+   "composition_correction_rel_g": 0.005509853324129865,
+   "max_abs_rel": 0.005509853324129865,
+   "trigger_fired": false,
+   "statistically_significant_t": true,
+   "statistically_significant_g": true,
+   "interpretation": "Composition correction (full minus re-anchored) is statistically significant (paired 95% CI excludes zero) but economically immaterial (max |move| 0.55% vs the 1% MR trigger) -> MR-010/MR-014 numeric refresh NOT required."
+  },
+  "gap_to_nested": {
+   "without": {
+    "t": 0.013512802163778754,
+    "g": -0.10741663458045722
+   },
+   "level": {
+    "t": -0.14675685603530964,
+    "g": -0.24504898971857714
+   },
+   "component": {
+    "t": -0.14286883635335879,
+    "g": -0.24115987375669895
+   }
+  },
+  "gates": {
+   "D1_rank_invariance_reverified": true,
+   "D2_delta_matrix_assembled_with_cis": true,
+   "D3_mr_trigger_rechecked": true,
+   "D3_mr_refresh_required": false,
+   "D4_idempotent_digest_stable": true
+  },
+  "digest": "38d321047292"
+ },
+ "use_restrictions": {
+  "classification": "EDUCATIONAL",
+  "production_use": "PROHIBITED pending credentialled data + independent APS X2 review",
+  "frozen": [
+   "copula df = 2.9451 (rank invariance; SII Art. 234)",
+   "rho correlation matrix (max|diff| <= 1e-12)",
+   "governed sigma/alpha/beta_fit (P25T3 FIT values; no re-tuning)"
+  ],
+  "scope": [
+   "Delta matrix REDUCES already-staged Task 2/Task 3 evidence; it runs NO new simulation and changes NO governed parameter.",
+   "Paired deltas use common-random-number replicate pairing; the CIs are frozen-copula sampling bands, NOT calibration uncertainty.",
+   "The material gap to the nested truth (Task 3: copula-form dominated) is NOT a basis-choice effect and is unchanged by this task."
+  ],
+  "standards": [
+   "Solvency II Delegated Regulation Article 234",
+   "SOA ASOP 56 section 3.5; ASOP 25 section 3.3",
+   "IA TAS M section 3.6",
+   "Efron & Tibshirani (1993) paired bootstrap"
+  ]
+ },
+ "standard_references": [
+  "Solvency II Delegated Regulation Article 234 (aggregation)",
+  "SOA ASOP 56 section 3.5",
+  "SOA ASOP 25 section 3.3",
+  "IA TAS M section 3.6",
+  "Efron & Tibshirani (1993) paired bootstrap"
+ ],
+ "affected_components": [
+  "par_model_v2/projection/pathwise_delta_matrix.py",
+  "scripts/build_phase26_task4_delta_matrix.py",
+  "tests/test_phase26_task4_delta_matrix.py",
+  "docs/DELTA_MATRIX_CARD.md",
+  "docs/validation/PHASE26_TASK4_DELTA_MATRIX_REPORT.{json,md}"
+ ],
+ "markdown_path": "docs/validation/PHASE26_TASK4_DELTA_MATRIX_REPORT.md",
+ "change_record_id": "09ef1e360a70456c9c93f84c81bee4bf",
+ "change_record_status": "OWNER_REVIEW",
+ "audit_integrity_ok": true,
+ "change_records_total": 53,
+ "audit_entries_total": 80
+}

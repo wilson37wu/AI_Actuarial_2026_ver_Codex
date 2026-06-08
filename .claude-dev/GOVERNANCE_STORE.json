@@ -1794,6 +1794,29 @@
       "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
       "digest": "6e20b2ff1728eda07bc3749895dd1302e6d06ec6e73a22187e5dfb3e11a3a29a",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "6800b74199f542dbb94a7c16807e6f78",
+      "timestamp": "2026-06-08T06:18:40.556436+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase26",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 26 Task 4 full-vs-reanchored delta matrix + MR-010/MR-014 1% trigger re-check + rank-invariance re-verification",
+      "details": {
+        "record_id": "09ef1e360a70456c9c93f84c81bee4bf",
+        "change_type": "methodology_change",
+        "status": "OWNER_REVIEW",
+        "mr_trigger_fired": false,
+        "affected_components": [
+          "par_model_v2/projection/pathwise_delta_matrix.py",
+          "scripts/build_phase26_task4_delta_matrix.py",
+          "tests/test_phase26_task4_delta_matrix.py",
+          "docs/DELTA_MATRIX_CARD.md",
+          "docs/validation/PHASE26_TASK4_DELTA_MATRIX_REPORT.{json,md}"
+        ]
+      },
+      "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+      "digest": "76f1e06f2e4bf973aa8357cc75cface5f1ef7512ab3bc8597efc794a7096357c",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -5049,6 +5072,65 @@
           "actor": "AutomatedModelDev_Phase26",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: methodology addition (uncertainty band + disclosed gap decomposition); copula/scalars frozen; sign-off withheld pending Task 4 delta-matrix refresh."
+        }
+      ],
+      "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation"
+    },
+    {
+      "record_id": "09ef1e360a70456c9c93f84c81bee4bf",
+      "created_at": "2026-06-08T06:18:40.556306+00:00",
+      "title": "Phase 26 Task 4 - full-vs-reanchored delta matrix + MR-010/MR-014 1% trigger re-check + rank-invariance re-verification",
+      "description": "Assembled the full-vs-reanchored delta matrix across {without, level (re-anchored), component (full)} x {t, gaussian} on the FROZEN copula, with the Task 3 frozen-copula bootstrap CIs attached and PAIRED common-random-number delta CIs for every pre-registered contrast. The composition correction (full minus re-anchored) is statistically significant (paired 95% CI excludes zero) but economically immaterial (+0.54% t / +0.55% g, max |move| 0.55% < 1% MR trigger). Re-verified rank invariance (df 2.9451 within 1e-4; rho frozen). No simulation; no governed-parameter change.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/pathwise_delta_matrix.py",
+        "scripts/build_phase26_task4_delta_matrix.py",
+        "tests/test_phase26_task4_delta_matrix.py",
+        "docs/DELTA_MATRIX_CARD.md",
+        "docs/validation/PHASE26_TASK4_DELTA_MATRIX_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Regulation Article 234 (aggregation)",
+        "SOA ASOP 56 section 3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M section 3.6",
+        "Efron & Tibshirani (1993) paired bootstrap"
+      ],
+      "before_snapshot": {
+        "task3_residual": "nested 46,638.9 OUTSIDE component 95% CI; gap decomposed copula-form dominant (Task 3); delta matrix + MR re-check deferred to Task 4"
+      },
+      "after_snapshot": {
+        "composition_correction_t_mean": 211.5138546653521,
+        "composition_correction_t_95ci": [
+          46.07614898741779,
+          381.8135878535294
+        ],
+        "composition_correction_rel_t": 0.005370614670487611,
+        "composition_correction_rel_g": 0.005509853324129865,
+        "composition_correction_significant": true,
+        "mr_trigger_fired": false,
+        "rank_invariant": true,
+        "verdict": "PASS",
+        "digest": "38d321047292"
+      },
+      "impact_assessment": "The full path-wise re-aggregation moves SCR by a statistically real but sub-1% amount versus the P25T4 re-anchoring, so MR-010/MR-014 require NO numeric refresh and no new risk ID is opened (MR-015 stays free). The material gap to the nested truth remains the Task 3 copula-form residual, unchanged by the basis choice. Copula/scalars FROZEN; educational classification retained; production sign-off withheld.",
+      "quantitative_impact": "full-vs-reanchored t +211.5 95%CI [+46.1,+381.8] (+0.54%); gaussian +0.55%; max |move| 0.55% < 1% MR trigger (fired=False); rank invariant df 2.9451, rho max|diff| 7.2e-16.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase26",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-08T06:18:40.556349+00:00",
+          "actor": "AutomatedModelDev_Phase26",
+          "status": "PEER_REVIEW",
+          "comments": "Delta matrix assembled; paired CRN delta CIs computed; MR 1% trigger re-checked (sub-1%); rank invariance re-verified; new unit tests PASS."
+        },
+        {
+          "timestamp": "2026-06-08T06:18:40.556368+00:00",
+          "actor": "AutomatedModelDev_Phase26",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: methodology synthesis (delta matrix + MR re-check); copula/scalars frozen; sign-off withheld pending Task 5 UI propagation + Phase 26 completion docs."
         }
       ],
       "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation"

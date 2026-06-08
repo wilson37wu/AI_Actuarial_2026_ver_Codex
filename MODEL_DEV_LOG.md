@@ -8895,3 +8895,43 @@ docs/COMPOSITION_BOOTSTRAP_CARD.md.
 (next free risk ID MR-015) + rank-invariance re-verify; then Task 5 (UI 1.7.0→1.8.0 ADDITIVE +
 PHASE 26 COMPLETE). Production sign-off withheld — educational model pending credentialled data
 + independent APS X2 review.
+
+---
+
+## 2026-06-08 (cycle 30) — Phase 26 Task 4 COMPLETE (PASS)
+
+**Full-vs-reanchored delta matrix on the FROZEN copula.** Assembled the point SCR matrix across
+{without, level (re-anchored, P25T4 analytic), component (full path-wise re-aggregation)} × {t, gaussian}
+from the Task 2 re-aggregation, attached the Task 3 frozen-copula bootstrap 95% CIs to every staged
+cell, and computed PAIRED common-random-number bootstrap delta CIs off the 200 Task 3 replicates
+(pairing isolates the basis/copula contrast from the shared sampling noise that makes the marginal
+CIs overlap). Pure reduction of staged evidence — NO simulation, NO governed-parameter change.
+
+Results (paired 95% CI):
+- Composition correction (full − re-anchored): t **+211.5 [+46.1, +381.8]**, gaussian **+192.6 [+60.2, +312.6]** —
+  STATISTICALLY SIGNIFICANT (excludes zero) but ECONOMICALLY IMMATERIAL (**+0.54% t / +0.55% g**).
+- Management-action relief (without − full, t): **+7,130.3 [+6,496.4, +7,630.4]** (dominant).
+- Gaussian→t dependence-form: **+4,454** (component) / **+4,435** (level), both significant.
+
+MR-010/MR-014 **1% disclosure trigger RE-CHECKED**: max |move| 0.55% < 1% → numeric refresh NOT
+required; no new disclosure opened (MR-015 stays free). Rank invariance RE-VERIFIED: df 2.9451 within
+1e-4; rho max|diff| 7.2e-16 frozen; governed σ/α/β_fit unchanged. Material 14.29% gap to nested
+remains COPULA-FORM (Task 3), NOT basis-choice. Idempotent digest **38d321047292**.
+
+Governance: ChangeRecord `09ef1e360a70456c9c93f84c81bee4bf` (methodology_change) OWNER_REVIEW;
+audit 79→80; changes 52→53; verify_all True; idempotent. Tests: 11 new PASS
+(tests/test_phase26_task4_delta_matrix.py); Phase 26 + governance regression **147 PASS / 0 FAIL**;
+compileall clean.
+
+**DISCLOSED + REPAIRED (mount-write corruption):** the cycle-29 commit `ba3596c` carried TRUNCATED
+working copies of BOTH `.claude-dev/GOVERNANCE_STORE.json` (line 5334) and `.claude-dev/MODEL_DEV_STATE.json`.
+The gov store was restored bit-good from the committed blob `ba3596c` (changes 52 / audit 79 /
+verify_all True; Task 3 record intact); the state file was rebuilt from the last clean commit
+`fc48a8a` (Task 2) folding in Tasks 3–4. Both parse and read back clean off the mount. Root cause:
+Python-less Windows-shell scheduled runs truncating governed JSON on the mount — serialise/stagger
+the runs (GITHUB_PUSH_BLOCKER.md).
+
+NEW: `par_model_v2/projection/pathwise_delta_matrix.py`, `scripts/build_phase26_task4_delta_matrix.py`,
+`docs/validation/PHASE26_TASK4_DELTA_MATRIX_REPORT.{json,md}`, `docs/DELTA_MATRIX_CARD.md`.
+Next: Task 5 — offline-UI propagation (contract 1.7.0 → 1.8.0 ADDITIVE) + PHASE 26 COMPLETE docs.
+Educational model; production sign-off withheld.
