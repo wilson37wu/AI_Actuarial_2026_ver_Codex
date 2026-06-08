@@ -8601,4 +8601,116 @@ MR-010/MR-014 refresh (trigger MET at Task 2: +14.17%), rank invariance df froze
   nested 55,561.2 → 40,852.1 → 46,638.9 (+14.17% pw-vs-hz);
   t(2.9451) 46,756.0 → 31,001.8 → 39,794.3 (+28.4%);
   gaussian 41,472.4 → 26,267.1 → 35,210.1 (+34.0%);
-  var
+  var-covar 28,990.9 → 14,428.7 → n/a (no path-wise analogue of the formula; DISCLOSED).
+  The path-wise basis relieves LESS capital at every level and every confidence (restoration
+  effect) — the horizon basis UNDERSTATES the with-actions SCR across the whole matrix.
+- Var-covar understatement refreshed (MR-010): 69.1% vs nested path-wise (was 56.4% on the
+  horizon basis); 63.7% vs the t path-wise read-out.
+- Rank invariance (G3, Art. 234): df re-matched on the WITHOUT-actions staged losses
+  2.9451 (|diff| 7.0e-6 ≤ 5e-5 4-dp tolerance); rho max|diff| 7.2e-16; copula NOT re-tuned.
+- Tail saturation: raw governed cut saturates 100% of the 99.5% tail (P24T4 finding
+  reproduced), but the smoothed path-wise relief fraction averages 0.0838 < max_relief 0.12 —
+  quantifying HOW restoration caps realised relief in the tail.
+- Bootstrap (DISCLOSED): SCR_pw mean 39,252, SE 4.1% of mean, 95% CI [35,793, 42,496] —
+  the nested path-wise reference 46,638.9 is OUTSIDE the CI: the analytic re-anchoring
+  understates the nested path-wise truth by 14.7% BEYOND margin noise. This is the
+  quantified motivation for the next-phase candidate (full path-wise copula re-aggregation).
+- Reproducibility: P24T2 horizon t/g read-outs reproduced bit-identically (digest equality);
+  36 archive cross-checks PASS before any new computation.
+
+**Governance:** ChangeRecord `a68dd3b9df114d07bfa4103d0ac1be2b` (methodology_change)
+OWNER_REVIEW; MR-010 + MR-014 refreshed with the path-wise figures (pins now "Phase 25 Task 4",
+supersede the P24T4 refresh); audit 74→75; changes 47→48; verify_all True.
+
+**Tests:** 39 new PASS (`tests/test_phase25_task4_pathwise_tail_diagnostics.py`); phase-25
+modules 111 PASS together; compileall clean; ui self-test ok:true.
+
+**Next:** Phase 25 Task 5 — UI contract 1.6.0 → 1.7.0 ADDITIVE (path-wise declaration panel:
+pathwise-vs-horizon delta matrix, restoration-share diagnostics, tail-diagnostics + gates;
+UI consumes ONLY model-output JSON) + PHASE 25 COMPLETE documentation. Then next-phase
+candidate selection (design-note-first): full path-wise copula re-aggregation (now with
+quantified 14.7%-beyond-noise motivation) vs credentialled-data calibration (blocked).
+
+---
+
+## 2026-06-08 (+08) — Cycle 26 — Phase 25 Task 5: offline-UI propagation (contract 1.7.0) — PASS — **PHASE 25 COMPLETE (Tasks 1-5)**
+
+**Health gate first (targeted — DISCLOSED choice):** full 94-file regression was green 8 hours
+ago (cycle 25: 2,684/0) and this cycle touches ONLY the display layer, so the gate was scoped
+to the touched area: compileall clean over `par_model_v2`/`scripts`/`tests`; Phase 25 T1-T4
+suites + all UI-propagation suites + governance/audit suites 200 tests PASS / 0 FAIL;
+ui_app self-test ok:true (0 network / 0 JS errors). No foreign writes since cycle 25 (mtime
+sweep clean; one stale-state Windows run recorded between cycles — no files advanced).
+Governance store backed up to `/var/tmp/p25t5_build/GOV_BACKUP_pre_p25t5.json` and
+hash-verified (sha256 a3d57288...) before the governance stage.
+
+**Task (P21T5→P24T5 pattern):** propagate the Phase 25 path-wise action results to the
+zero-install offline UI as a first-class panel; UI consumes ONLY already-produced model-output
+JSONs (no computation in the UI); then PHASE 25 COMPLETE documentation.
+
+**Build:**
+- `scripts/build_ui_data.py`: contract **1.6.0 → 1.7.0 ADDITIVE** — new `_build_phase25()`
+  (declaration / proxy_basis / tail_diagnostics / narrative normalised from the Task 2/3/4
+  validation reports); additive capital read-outs `nested_scr_with_pathwise` 46,638.9 and
+  `t_copula_scr_pathwise_readout` 39,794.3; three Phase 25 verdicts appended; new
+  **Path-wise Actions (P25)** tab (8 tabs total) rendering: 8 headline cards, the
+  pathwise-vs-horizon capital-delta matrix across all four benchmarks (var-covar
+  "no path-wise analogue" DISCLOSED in-table), an 8-bar SCR comparison chart, the tail
+  saturation/restoration profile (raw cut saturates 100% of the 99.5% tail; mean smoothed
+  relief fraction 0.0811 < 0.12 — recognition-lag mechanism quantified in-panel), the
+  frozen-copula margin bootstrap with the nested path-wise reference **OUTSIDE the 95% CI**
+  (14.7% beyond-noise understatement disclosed verbatim — the Phase 26 motivation), the
+  Task 3 proxy-basis table (OOS R2 0.9978, sigma 0.225/alpha 0.7567, cadence ratio 1.136),
+  and the 15 pre-registered gate criteria (6+5+4). Off-mount patcher with exact-anchor
+  assertions (9 substitutions); cp + cmp verified.
+- `scripts/ui_app_self_test.cjs`: 17 new Phase 25 checks (panel cards/tables/bars/gates +
+  verbatim-disclosure regexes incl. `OUTSIDE`, `relieves LESS`, `69.1%`, CI bounds) —
+  **ok:true, 0 network calls / 0 JS errors over 101 checks**.
+- `viewer_data.json` + `model_result_viewer.html` rebuilt pre-governance (governance = live
+  store, 48 records at build); `ui_data.json` + `ui_app.html` rebuilt from it.
+- NEW `scripts/build_phase25_task5_ui_propagation.py` (P24T5 pattern): 40 contract checks →
+  jsdom self-test → governance → evidence report; **idempotent re-run confirmed (49→49
+  records, 76→76 audit)**.
+
+**Governance:** ChangeRecord `3fa4394e568b48fc9ee06dd8a64dd44b` (code_change) OWNER_REVIEW;
+audit 75→76; change records 48→49; audit-chain integrity verify_all = True.
+
+**Tests:** 27 new PASS (`tests/test_phase25_task5_ui_propagation.py` — contract↔report
+consistency incl. bit-equality vs the T2/T3/T4 report JSONs, conservatism ordering across the
+matrix, OUTSIDE-CI disclosure, additive-contract non-regression for P23/P24 read-outs, HTML
+embed + no-external-references, governance record). DISCLOSED forward-compat fix: the two
+P24T5 pins on contract "1.6.0" relaxed to a version floor `>= (1,6,0)` (additive bumps are
+the repo convention; same fix P24T5 applied to the P23 pins). All four UI-propagation suites
+87 PASS / 0 FAIL post-change.
+
+**PHASE 25 COMPLETE (Tasks 1-5)** — path-wise bonus-declaration dynamics:
+1. Task 1 design note (candidate selection, pre-registered gates).
+2. Task 2 path-wise declaration in the nested truth: with-actions SCR 46,638.9 (path-wise)
+   vs 40,852.1 (horizon) = **+14.17%** — the path-wise basis relieves LESS (recognition-lag,
+   two-sided) and is the more conservative, more faithful read-out; without-actions
+   bit-identical; 6/6 gates.
+3. Task 3 matching path-wise proxy basis: smoothed-relief surface (sigma 0.225, alpha 0.7567,
+   FIT-only leakage-free); OOS R2 0.9978, VaR rel err 0.40%, SCR rel err 1.16%; 5/5 gates.
+4. Task 4 path-wise tail diagnostics + delta matrix + REQUIRED MR-010/MR-014 refresh:
+   var-covar understatement 69.1% vs nested path-wise; copula FROZEN (df 2.9451, rho 7.2e-16);
+   bootstrap CI [35,793, 42,496] with nested path-wise OUTSIDE (re-anchoring understates
+   nested by 14.7% beyond noise); 4/4 gates.
+5. Task 5 offline-UI propagation (this cycle): contract 1.7.0; 40/40 checks; self-test 101
+   checks ok:true; 27 new tests.
+
+**Next Step:** Phase 26 Task 1 — design-note-first candidate selection:
+(a) **full path-wise copula re-aggregation** (front-runner: quantified 14.7% beyond-noise
+motivation; rank-invariance machinery staged in `/var/tmp/p25t4_stage`),
+(b) credentialled-data calibration (human-blocked),
+(c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived).
+
+**Industry Standards Progress:** SOA ASOP 41 s3.2 (findings communicated in the offline UI
+verbatim incl. adverse disclosures); ASOP 56 s3.5 (display-layer validation: 40 contract
+checks + 101-check jsdom self-test); IA TAS M s3.6 (idempotent rebuild, reproducible digests);
+Solvency II Art. 23 (path-wise future management actions displayed) / Art. 234 (frozen-copula
+bootstrap + rank invariance displayed).
+
+**Blockers:** unchanged — git ghost locks (push `p22c9:main` works; local `main` fast-forward
+blocked); serialise/stagger scheduled runs (a Windows-shell run with no Python recorded a
+blocked cycle between 25 and 26); production sign-off residual (credentialled data + APS X2);
+disk /sessions ~89%.

@@ -55,10 +55,11 @@ def html():
 
 
 class TestContract:
-    def test_contract_version_1_6_0(self, ui):
-        # Equality is intentional for THIS phase's deliverable; future phases
-        # bump additively and may relax this to a floor (repo convention).
-        assert ui["contract_version"] == "1.6.0"
+    def test_contract_version_at_least_1_6_0(self, ui):
+        # Relaxed to a version floor by Phase 25 Task 5 (additive 1.7.0 bump;
+        # repo convention - DISCLOSED forward-compat fix).
+        version = tuple(int(p) for p in ui["contract_version"].split("."))
+        assert version >= (1, 6, 0)
 
     def test_phase24_section_present(self, p24):
         assert isinstance(p24, dict) and p24
@@ -201,12 +202,13 @@ class TestContract:
 
 
 class TestHtml:
-    def test_embedded_snapshot_is_contract_1_6_0(self, html):
+    def test_embedded_snapshot_is_contract_1_6_0_plus(self, html):
         marker = "/*__UI_DATA__*/"
         start = html.index(marker) + len(marker)
         end = html.index("</script>", start)
         data = json.loads(html[start:end])
-        assert data["contract_version"] == "1.6.0"
+        assert tuple(int(p) for p in
+                     data["contract_version"].split(".")) >= (1, 6, 0)
         assert data["phase24"]["joint_action"]["t_scr_joint"] == \
             pytest.approx(31001.776, abs=1.0)
 

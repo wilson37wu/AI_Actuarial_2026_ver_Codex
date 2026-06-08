@@ -1704,6 +1704,30 @@
       "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
       "digest": "042767a6bd7597f7b42415e072d578bab9200ee66afcce2563480039a8029726",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "9525f15f53c2481693d461ca74f7c632",
+      "timestamp": "2026-06-08T01:56:53.018731+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase25",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 25 Task 5 offline-UI propagation; PHASE 25 COMPLETE",
+      "details": {
+        "record_id": "3fa4394e568b48fc9ee06dd8a64dd44b",
+        "ui_contract": "1.7.0",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html",
+          "viewer_data.json"
+        ]
+      },
+      "phase": "Phase 25: Path-wise Management-Action Declaration + Matching Proxy Basis",
+      "digest": "15c65c60a4b32b428ea9773f635fe955c5665c3a5b4138b52f8a02da01c6124d",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -4715,6 +4739,73 @@
         }
       ],
       "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics"
+    },
+    {
+      "record_id": "3fa4394e568b48fc9ee06dd8a64dd44b",
+      "created_at": "2026-06-08T01:56:53.018521+00:00",
+      "title": "Phase 25 Task 5 - offline-UI propagation of the path-wise action view",
+      "description": "Phase 25 Task 5 propagated the path-wise management-action results to the zero-install offline UI. scripts/build_ui_data.py (contract bumped ADDITIVELY to v1.7.0) now surfaces a first-class Path-wise Actions (P25) panel: (1) the Task 2 path-wise bonus declaration in the nested truth - per-time-step retained-bonus factor on the path-wise coverage proxy; with-actions SCR 46,638.9 (path-wise) vs 40,852.1 (horizon) = +14.17%; the path-wise basis relieves LESS (recognition-lag effect, two-sided) and is the more conservative, more faithful read-out; without-actions bit-identical; 6/6 gates; (2) the Task 3 matching path-wise proxy basis - smoothed-relief response surface (sigma 0.225, alpha 0.7567; FIT-only, leakage-free); OOS R2 0.9978, VaR rel err 0.40%, SCR rel err 1.16%; annual/monthly declaration-cadence sensitivity 1.136 disclosed; 5/5 gates; and (3) the Task 4 path-wise tail diagnostics - the without -> with-horizon -> with-path-wise capital-delta matrix across all four benchmarks (var-covar: no path-wise analogue, DISCLOSED), the saturation profile (raw cut saturates 100% of the 99.5% tail but mean smoothed relief fraction 0.0811 < 0.12 - restoration caps realised relief), the frozen-copula margin bootstrap (95% CI [35,793, 42,496]; the nested path-wise reference 46,638.9 sits OUTSIDE the CI - the analytic re-anchoring understates nested by 14.7% beyond noise, the quantified motivation for the next-phase full path-wise copula re-aggregation), and the MR-010/MR-014 refresh (var-covar understatement 69.1% vs nested path-wise); 4/4 gates. viewer_data.json was rebuilt so governance reflects the live store. The UI performs no calculation; it consumes only already-produced model output JSONs.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html",
+        "viewer_data.json"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "Solvency II Art. 23 (future management actions - path-wise declaration displayed)",
+        "Solvency II Art. 234 (dependence justification - frozen-copula bootstrap + rank-invariance displayed)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.6.0 (joint-action/inner-path panel; no path-wise declaration, delta-matrix or tail-diagnostics view)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.7.0 (additive)",
+        "headline_readouts": {
+          "nested_scr_without": 55561.1889,
+          "nested_scr_with_horizon": 40852.0541,
+          "nested_scr_with_pathwise": 46638.8659,
+          "pathwise_minus_horizon_rel": 0.14165289670526135,
+          "restoration_share": 0.2936171875,
+          "oos_r2_pathwise": 0.9978478327117858,
+          "var_covar_understatement": 0.6906284265230394,
+          "bootstrap_ci": [
+            35793.20732227234,
+            42496.39977793105
+          ],
+          "reanchoring_understatement": 0.1467562321867093,
+          "df_rematched": 2.9450930033094664
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 101
+      },
+      "impact_assessment": "Display-layer only: the UI bundler reads validation-report JSONs and performs no model calculation, so no model output changes. Additive contract bump keeps existing consumers working (two Phase 24 test pins relaxed to a version floor - DISCLOSED forward-compat fix per repo convention). Completes the Phase 25 per-task offline-UI propagation requirement; PHASE 25 COMPLETE (Tasks 1-5).",
+      "quantitative_impact": "UI now displays: nested with-actions SCR 46639 (path-wise) vs 40852 (horizon) = +14.17%; restoration share 29.4%; proxy OOS R2 0.9978 on the identical path-wise basis; var-covar understatement 69.1% (MR-010); bootstrap 95% CI [35793, 42496] with the nested path-wise reference OUTSIDE (14.7% beyond-noise understatement disclosed); jsdom self-test ok with 0 network calls and 0 JS errors over 101 checks.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase25",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-08T01:56:53.018647+00:00",
+          "actor": "AutomatedModelDev_Phase25",
+          "status": "PEER_REVIEW",
+          "comments": "UI propagation verified by 40 contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only; the recognition-lag conservatism, the var-covar no-analogue disclosure and the OUTSIDE-CI re-anchoring understatement are carried into the display verbatim."
+        },
+        {
+          "timestamp": "2026-06-08T01:56:53.018685+00:00",
+          "actor": "AutomatedModelDev_Phase25",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. PHASE 25 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 25: Path-wise Management-Action Declaration + Matching Proxy Basis"
     }
   ],
   "risk_register": [

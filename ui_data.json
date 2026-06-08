@@ -1,9 +1,9 @@
 {
-  "contract_version": "1.6.0",
+  "contract_version": "1.7.0",
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-07T20:19:40.383445+00:00",
+    "generated_utc": "2026-06-08T01:54:01.570591+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -16,16 +16,16 @@
     "classification": "EDUCATIONAL ONLY -- NOT a regulatory capital model"
   },
   "summary": {
-    "tasks_completed": 115,
-    "tasks_total": 116,
-    "phases_completed": 20,
+    "tasks_completed": 118,
+    "tasks_total": 118,
+    "phases_completed": 24,
     "estimated_completion_pct": 99,
     "gates_cleared": 12,
     "gates_total": 12,
     "risks_open": 1,
     "risks_mitigated": 10,
     "production_status": "NOT CLEARED FOR PRODUCTION",
-    "contract_artifacts": 58,
+    "contract_artifacts": 62,
     "calibrated_drivers": 11
   },
   "inventory": [
@@ -492,9 +492,45 @@
       "id": "PHASE24_TASK5_UI_PROPAGATION_REPORT",
       "path": "docs/validation/PHASE24_TASK5_UI_PROPAGATION_REPORT.json",
       "category": "other",
-      "bytes": 2868,
-      "sha256": "7cd1f5ab077caebf4e0e23ecb315cfb802bf6217a2f331cfef88e0d381203fbc",
-      "mtime_utc": "2026-06-07T20:19:20Z",
+      "bytes": 2869,
+      "sha256": "d05a79497b5824a2b3f8e2a2bbcdbf7f9f112a2b5b3320f2f6f542a07d0f6209",
+      "mtime_utc": "2026-06-07T20:20:00Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE25_TASK1_DESIGN_NOTE",
+      "path": "docs/validation/PHASE25_TASK1_DESIGN_NOTE.json",
+      "category": "other",
+      "bytes": 13044,
+      "sha256": "d507cb15944cbc4b2ab20a83a1f2eb9c6f25baf064b89753fa25105268568dbe",
+      "mtime_utc": "2026-06-07T21:19:34Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE25_TASK2_PATHWISE_DECLARATION_REPORT",
+      "path": "docs/validation/PHASE25_TASK2_PATHWISE_DECLARATION_REPORT.json",
+      "category": "other",
+      "bytes": 7901,
+      "sha256": "867470aeb5ed6ed5b9cad07b602cf809e5a71475969469e0eb5046161f581929",
+      "mtime_utc": "2026-06-07T22:24:29Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT",
+      "path": "docs/validation/PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT.json",
+      "category": "other",
+      "bytes": 10232,
+      "sha256": "ec67b248aadfa61e939d36626af594fb4b41a175f435e0ff026d027d30427b0e",
+      "mtime_utc": "2026-06-07T23:31:06Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT",
+      "path": "docs/validation/PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.json",
+      "category": "tail_diagnostics",
+      "bytes": 18339,
+      "sha256": "c6a97f5ee23e999aa10036c3257a6726db1a9b3102cfb8891a798bbbb0f8a508",
+      "mtime_utc": "2026-06-08T01:32:38Z",
       "headline": "PASS"
     },
     {
@@ -1245,7 +1281,9 @@
     "t_copula_rel_error": 0.040065,
     "nested_scr_with_actions": 33117.7704,
     "t_copula_scr_joint_action": 31001.77628158343,
-    "nested_scr_with_inner_path": 40852.0541
+    "nested_scr_with_inner_path": 40852.0541,
+    "nested_scr_with_pathwise": 46638.8659,
+    "t_copula_scr_pathwise_readout": 39794.3216670548
   },
   "tail": {
     "verdict": "PASS - seven-driver 99.5% capital metric converges (copula-simulated, last VaR delta < 0.5%), is bounded by simulated and honest small-sample nested bootstrap CIs, and benefits from Sobol-RQMC variance reduction",
@@ -3422,10 +3460,485 @@
     },
     "narrative": "Phase 24 quantified HOW management actions and dependence interact: the joint-scenario (action-after-aggregation) basis closes the disclosed Phase 23 saturation gap 22.54% -> 6.39%; the inner-path cashflow basis corrects an outer-node over-relief (+4.0% nested SCR, the more conservative and more faithful with-actions basis); and the tail diagnostics show the 99.5% joint tail is 100% saturated (max relief everywhere capital is measured), with margin-bootstrap CI quantifying the n_obs=160 small-sample noise. Nested with-actions remains the capital reference; all copula read-outs are diagnostics on that basis."
   },
+  "phase25": {
+    "declaration": {
+      "rule": {
+        "cr_trigger": 1.1,
+        "cr_floor": 0.9,
+        "bonus_share": 0.3,
+        "pre_floor": 0.6,
+        "reference_coverage": 1.12,
+        "max_relief": 0.12
+      },
+      "nested_capital_without": {
+        "confidence_level": 0.995,
+        "mean_liability": 115994.0791,
+        "var_liability": 171555.268,
+        "es_liability": 176570.2272,
+        "scr_proxy": 55561.1889,
+        "n_outer": 500,
+        "capital_horizon_months": 12
+      },
+      "nested_capital_with_horizon": {
+        "confidence_level": 0.995,
+        "mean_liability": 112273.4771,
+        "var_liability": 153125.5312,
+        "es_liability": 157827.7702,
+        "scr_proxy": 40852.0541,
+        "n_outer": 500,
+        "capital_horizon_months": 12
+      },
+      "nested_capital_with_pathwise": {
+        "confidence_level": 0.995,
+        "mean_liability": 112305.2089,
+        "var_liability": 158944.0748,
+        "es_liability": 163343.6077,
+        "scr_proxy": 46638.8659,
+        "n_outer": 500,
+        "capital_horizon_months": 12
+      },
+      "pathwise_vs_horizon_delta": {
+        "var_99_5_delta": 5818.543556280725,
+        "es_delta": 5515.837503233895,
+        "scr_delta": 5786.811800840922,
+        "scr_delta_rel_to_horizon": 0.14165289670526135,
+        "materiality_disclosure_threshold": 0.01,
+        "mr010_mr014_refresh_required_task4": true,
+        "interpretation": "The horizon-level basis freezes the maximum cut at stressed outer nodes for the whole projection while the path-wise basis RESTORES the bonus on recovering inner paths (and cuts on deteriorating paths from healthy nodes), so the path-wise basis relieves LESS in the tail and its with-actions SCR is the more conservative read-out (recognition-lag effect, two-sided)."
+      },
+      "pathwise_action_share": 0.4140390625,
+      "pathwise_restoration_share": 0.2936171875,
+      "clip_binding_share_pathwise": 0.0,
+      "clip_binding_share_horizon": 0.0,
+      "gates": {
+        "G1_carveouts_preserved_relieved_within_envelope": true,
+        "G2_sign_gate_pathwise_scr_ge_horizon_scr": true,
+        "G3_monotonicity_guard_pathwise_basis": true,
+        "G4_without_actions_bit_identical": true,
+        "G5_horizon_basis_reproduced": true,
+        "G6_no_action_above_trigger": true
+      },
+      "verdict": "PASS",
+      "interpretation": "The horizon-level basis freezes the maximum cut at stressed outer nodes for the whole projection while the path-wise basis RESTORES the bonus on recovering inner paths (and cuts on deteriorating paths from healthy nodes), so the path-wise basis relieves LESS in the tail and its with-actions SCR is the more conservative read-out (recognition-lag effect, two-sided).",
+      "source": "docs/validation/PHASE25_TASK2_PATHWISE_DECLARATION_REPORT.json",
+      "change_record_id": "3cfaa30a0f8044a8aaed419e6ab4ca31"
+    },
+    "proxy_basis": {
+      "oos_r2_with_actions": 0.9978478327117858,
+      "oos_r2_without_actions": 0.9984795801896779,
+      "var_rel_error_with_actions": 0.004014070709035068,
+      "es_rel_error_with_actions": 0.00014201088207899028,
+      "scr_rel_error_with_actions": 0.01164368805922599,
+      "surface": {
+        "sigma": 0.225,
+        "alpha": 0.7566891068509882,
+        "fit_r2_relieved": 0.8005548827236313,
+        "fit_truth_mean": 3672.9103347979944,
+        "fit_pred_mean": 3668.974519694361,
+        "sigma_grid_lo": 0.05,
+        "sigma_grid_hi": 0.8,
+        "sigma_interior": true,
+        "gh_order": 21
+      },
+      "cadence_sensitivity": {
+        "basis": "zero-shock deterministic relieved on the nested-eval states (proxy-side read-out; truth re-run not required)",
+        "monthly_mean_relieved": 609.6762475701688,
+        "annual_mean_relieved": 692.5424296537598,
+        "annual_over_monthly_mean_ratio": 1.1359183376650306,
+        "max_abs_node_delta": 1292.437637237225,
+        "active_nodes_monthly": 0.376
+      },
+      "gates": {
+        "G1_identical_pathwise_action_basis_truth_and_proxy": true,
+        "G2_oos_r2_with_actions_ge_0p95": true,
+        "G3_var_rel_error_with_actions_le_0p10": true,
+        "G4_monotone_on_pathwise_basis": true,
+        "G5_leakage_free_calibration_and_no_action_above_trigger": true
+      },
+      "verdict": "PASS",
+      "source": "docs/validation/PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT.json",
+      "change_record_id": "fc9fc911fc51414abf0fc8e73cadc92c"
+    },
+    "tail_diagnostics": {
+      "delta_matrix": {
+        "nested": {
+          "without": {
+            "var": 171555.268,
+            "es": 176570.2272,
+            "scr": 55561.1889
+          },
+          "with_horizon": {
+            "var": 153125.5312,
+            "es": 157827.7702,
+            "scr": 40852.0541
+          },
+          "with_pathwise": {
+            "var": 158944.0748,
+            "es": 163343.6077,
+            "scr": 46638.8659
+          },
+          "with_horizon_minus_without": {
+            "var_delta": -18429.736800000013,
+            "var_delta_pct": -0.10742740234593094,
+            "es_delta": -18742.456999999995,
+            "es_delta_pct": -0.10614732334670743,
+            "scr_delta": -14709.1348,
+            "scr_delta_pct": -0.2647375819562421
+          },
+          "with_pathwise_minus_without": {
+            "var_delta": -12611.193200000009,
+            "var_delta_pct": -0.07351096440827459,
+            "es_delta": -13226.6195,
+            "es_delta_pct": -0.07490854890852178,
+            "scr_delta": -8922.323000000004,
+            "scr_delta_pct": -0.16058553059508063
+          },
+          "pathwise_minus_horizon": {
+            "var_delta": 5818.5436000000045,
+            "var_delta_pct": 0.03799852026243945,
+            "es_delta": 5515.837499999994,
+            "es_delta_pct": 0.0349484599130451,
+            "scr_delta": 5786.811799999996,
+            "scr_delta_pct": 0.14165289671443954
+          }
+        },
+        "t_copula": {
+          "without": {
+            "var": 164026.9467,
+            "es": 169381.4157,
+            "scr": 46755.963
+          },
+          "with_horizon": {
+            "var": 143682.04744466447,
+            "es": 148496.34347728066,
+            "scr": 31001.77628158343
+          },
+          "with_pathwise": {
+            "var": 152354.34627818983,
+            "es": 157170.80867159332,
+            "scr": 39794.3216670548
+          },
+          "with_horizon_minus_without": {
+            "var_delta": -20344.899255335535,
+            "var_delta_pct": -0.12403388385047305,
+            "es_delta": -20885.072222719347,
+            "es_delta_pct": -0.12330202895286904,
+            "scr_delta": -15754.186718416575,
+            "scr_delta_pct": -0.3369449735944178
+          },
+          "with_pathwise_minus_without": {
+            "var_delta": -11672.600421810173,
+            "var_delta_pct": -0.07116270013340542,
+            "es_delta": -12210.607028406695,
+            "es_delta_pct": -0.07208941416591723,
+            "scr_delta": -6961.641332945204,
+            "scr_delta_pct": -0.14889312263646892
+          },
+          "pathwise_minus_horizon": {
+            "var_delta": 8672.298833525361,
+            "var_delta_pct": 0.060357567196175146,
+            "es_delta": 8674.465194312652,
+            "es_delta_pct": 0.05841534539629799,
+            "scr_delta": 8792.54538547137,
+            "scr_delta_pct": 0.2836142453777583
+          }
+        },
+        "gaussian": {
+          "without": {
+            "var": 158734.1029,
+            "es": 162894.5595,
+            "scr": 41472.429
+          },
+          "with_horizon": {
+            "var": 138715.4062712376,
+            "es": 142380.81349575197,
+            "scr": 26267.06157714709
+          },
+          "with_pathwise": {
+            "var": 147756.4941283347,
+            "es": 151202.3436620259,
+            "scr": 35210.084673414254
+          },
+          "with_horizon_minus_without": {
+            "var_delta": -20018.69662876241,
+            "var_delta_pct": -0.12611465503020403,
+            "es_delta": -20513.746004248038,
+            "es_delta_pct": -0.12593266507619635,
+            "scr_delta": -15205.367422852905,
+            "scr_delta_pct": -0.36663797586712144
+          },
+          "with_pathwise_minus_without": {
+            "var_delta": -10977.608771665284,
+            "var_delta_pct": -0.0691572168242952,
+            "es_delta": -11692.215837974101,
+            "es_delta_pct": -0.07177781672919592,
+            "scr_delta": -6262.344326585742,
+            "scr_delta_pct": -0.1510001819904434
+          },
+          "pathwise_minus_horizon": {
+            "var_delta": 9041.087857097125,
+            "var_delta_pct": 0.06517724382696617,
+            "es_delta": 8821.530166273937,
+            "es_delta_pct": 0.061957295717636376,
+            "scr_delta": 8943.023096267163,
+            "scr_delta_pct": 0.3404653036656291
+          }
+        },
+        "var_covar": {
+          "without": {
+            "var": null,
+            "es": null,
+            "scr": 28990.889357788157
+          },
+          "with_horizon": {
+            "var": null,
+            "es": null,
+            "scr": 14428.739328663964
+          },
+          "with_pathwise": {
+            "var": null,
+            "es": null,
+            "scr": null
+          },
+          "with_horizon_minus_without": {
+            "scr_delta": -14562.150029124194,
+            "scr_delta_pct": -0.5023009073439203
+          },
+          "with_pathwise_minus_without": {}
+        }
+      },
+      "var_covar_refresh": {
+        "var_covar_scr_with": 14428.739328663964,
+        "understatement_vs_nested_with_pathwise": 0.6906284265230394,
+        "understatement_vs_t_pathwise_readout": 0.6374171307810147,
+        "understatement_vs_nested_with_horizon_basis_p24t4": 0.5643203280561115,
+        "basis_note": "vc_with is the P23T4 standalone-action formula figure (no path-wise analogue exists); nested path-wise reference is the n_eval=500 proxy-validation nested run; t path-wise read-out is on the n_obs=160 dependence basis (DISCLOSED)."
+      },
+      "pathwise_basis_params": {
+        "sigma": 0.225,
+        "alpha": 0.7566891068509882,
+        "benefit_share_fit": 0.8449827924965548,
+        "provenance": "sigma/alpha: governed Phase 25 Task 3 FIT-only calibration (archive cross-checked); benefit_share_fit: FIT-sample mean benefit share from the P25T3 staged arrays (leakage-free; ONE additional scalar)"
+      },
+      "df_matched": 2.9451,
+      "df_rematched": 2.9450930033094664,
+      "rho_max_abs_diff_vs_archived": 7.216449660063518e-16,
+      "mr_refresh_trigger": {
+        "threshold": 0.01,
+        "nested_scr_delta_rel_to_horizon": 0.14165289671443954,
+        "met": true
+      },
+      "t_scr_pathwise_readout": 39794.3216670548,
+      "g_scr_pathwise_readout": 35210.084673414254,
+      "confidence_sweep": [
+        {
+          "confidence": 0.9,
+          "var_pathwise": 129905.7676783103,
+          "es_pathwise": 137564.09061289945,
+          "scr_pathwise": 17345.743067175266,
+          "var_horizon": 124305.26384134508,
+          "scr_horizon": 11624.99267826404,
+          "var_without": 136339.32051109624,
+          "scr_without": 20333.38882554107,
+          "tail_active_share": 1.0,
+          "tail_saturation_share": 0.44025,
+          "tail_mean_smoothed_relief_fraction": 0.06533671453708577,
+          "relief_at_var_pathwise": 6433.55283278595,
+          "relief_at_var_horizon": 12034.056669751168,
+          "pathwise_minus_horizon_scr": 5720.750388911227
+        },
+        {
+          "confidence": 0.95,
+          "var_pathwise": 135405.1846068737,
+          "es_pathwise": 142844.55713074285,
+          "scr_pathwise": 22845.159995738664,
+          "var_horizon": 126640.8491813261,
+          "scr_horizon": 13960.578018245069,
+          "var_without": 143208.6891580993,
+          "scr_without": 27202.757472544123,
+          "tail_active_share": 1.0,
+          "tail_saturation_share": 0.8805,
+          "tail_mean_smoothed_relief_fraction": 0.07031347567090589,
+          "relief_at_var_pathwise": 7803.504551225604,
+          "relief_at_var_horizon": 16567.83997677319,
+          "pathwise_minus_horizon_scr": 8884.581977493595
+        },
+        {
+          "confidence": 0.99,
+          "var_pathwise": 147964.93471722896,
+          "es_pathwise": 153575.20375754952,
+          "scr_pathwise": 35404.91010609393,
+          "var_horizon": 138940.56566681495,
+          "scr_horizon": 26260.29450373391,
+          "var_without": 157887.00643956245,
+          "scr_without": 41881.07475400728,
+          "tail_active_share": 1.0,
+          "tail_saturation_share": 1.0,
+          "tail_mean_smoothed_relief_fraction": 0.07887120649202937,
+          "relief_at_var_pathwise": 9922.071722333494,
+          "relief_at_var_horizon": 18946.440772747505,
+          "pathwise_minus_horizon_scr": 9144.61560236002
+        },
+        {
+          "confidence": 0.995,
+          "var_pathwise": 152354.34627818983,
+          "es_pathwise": 157170.80867159332,
+          "scr_pathwise": 39794.3216670548,
+          "var_horizon": 143682.04744466447,
+          "scr_horizon": 31001.77628158343,
+          "var_without": 163275.05391439144,
+          "scr_without": 47269.12222883626,
+          "tail_active_share": 1.0,
+          "tail_saturation_share": 1.0,
+          "tail_mean_smoothed_relief_fraction": 0.08114847162497607,
+          "relief_at_var_pathwise": 10920.707636201609,
+          "relief_at_var_horizon": 19593.00646972697,
+          "pathwise_minus_horizon_scr": 8792.54538547137
+        },
+        {
+          "confidence": 0.999,
+          "var_pathwise": 160170.29158921618,
+          "es_pathwise": 162986.52235147328,
+          "scr_pathwise": 47610.266978081156,
+          "var_horizon": 151467.75108475913,
+          "scr_horizon": 38787.479921678096,
+          "var_without": 172122.444414499,
+          "scr_without": 56116.51272894384,
+          "tail_active_share": 1.0,
+          "tail_saturation_share": 1.0,
+          "tail_mean_smoothed_relief_fraction": 0.0830585956164448,
+          "relief_at_var_pathwise": 11952.152825282828,
+          "relief_at_var_horizon": 20654.69332973988,
+          "pathwise_minus_horizon_scr": 8822.78705640306
+        }
+      ],
+      "prefix_convergence": [
+        {
+          "n_sim": 25000,
+          "var_pathwise": 152630.00514520644,
+          "scr_pathwise": 40082.4563328745,
+          "var_rel_delta_vs_full": 0.0018093272279431586,
+          "scr_rel_delta_vs_full": 0.0072405974960553935
+        },
+        {
+          "n_sim": 50000,
+          "var_pathwise": 152684.0784736496,
+          "scr_pathwise": 40126.04924076072,
+          "var_rel_delta_vs_full": 0.0021642454154717767,
+          "scr_rel_delta_vs_full": 0.008336052979653058
+        },
+        {
+          "n_sim": 100000,
+          "var_pathwise": 152291.13188753137,
+          "scr_pathwise": 39747.06038851835,
+          "var_rel_delta_vs_full": 0.00041491688424186916,
+          "scr_rel_delta_vs_full": 0.0011876387523794432
+        },
+        {
+          "n_sim": 200000,
+          "var_pathwise": 152354.34627818983,
+          "scr_pathwise": 39794.3216670548,
+          "var_rel_delta_vs_full": 0.0,
+          "scr_rel_delta_vs_full": 0.0
+        }
+      ],
+      "seed_stability": {
+        "rows": [
+          {
+            "seed": 20260607,
+            "scr_pathwise": 39794.3216670548,
+            "var_pathwise": 152354.34627818983
+          },
+          {
+            "seed": 11,
+            "scr_pathwise": 39813.66366822949,
+            "var_pathwise": 152402.82293946578
+          },
+          {
+            "seed": 1234,
+            "scr_pathwise": 39416.368022819035,
+            "var_pathwise": 152023.0347057332
+          },
+          {
+            "seed": 777,
+            "scr_pathwise": 39704.81679428984,
+            "var_pathwise": 152281.93755645497
+          },
+          {
+            "seed": 424242,
+            "scr_pathwise": 39977.84519349765,
+            "var_pathwise": 152548.41572853437
+          }
+        ],
+        "scr_mean": 39741.403069178166,
+        "scr_max_rel_spread": 0.014128267431858021
+      },
+      "bootstrap": {
+        "n_replicates": 200,
+        "n_sim_per_replicate": 20000,
+        "n_obs": 160,
+        "seed": 20260608,
+        "resampling": "joint row resample (preserves realised cross-driver pairing); copula df/rho frozen (SII Art. 234)",
+        "var_pathwise": {
+          "mean": 151868.54131861014,
+          "se": 1896.3236045049073,
+          "ci_lo_95": 147700.18477362537,
+          "ci_hi_95": 155087.32932229564
+        },
+        "es_pathwise": {
+          "mean": 156280.69936409092,
+          "se": 1866.0338097578099,
+          "ci_lo_95": 151701.4230513519,
+          "ci_hi_95": 159216.6532882573
+        },
+        "scr_pathwise": {
+          "mean": 39251.8358570035,
+          "se": 1614.6123602667278,
+          "ci_lo_95": 35793.20732227234,
+          "ci_hi_95": 42496.39977793105
+        }
+      },
+      "diagnostic_findings": {
+        "sweep_var_monotone_in_confidence": true,
+        "pathwise_relieves_less_at_every_confidence": true,
+        "tail_saturation_share_at_995": 1.0,
+        "tail_mean_smoothed_relief_fraction_at_995": 0.08114847162497607,
+        "t_pathwise_minus_horizon_scr": 8792.54538547137,
+        "t_pathwise_minus_horizon_scr_rel": 0.2836142453777583,
+        "t_pathwise_vs_nested_pathwise_rel_err": 0.1467562321867093,
+        "scr_seed_max_rel_spread": 0.014128267431858021,
+        "scr_prefix_final_rel_delta": 0.0,
+        "nested_pathwise_inside_bootstrap_ci": false,
+        "bootstrap_scr_se_pct_of_mean": 0.04113469663301471
+      },
+      "reproduction_of_p24t2": {
+        "t_scr_abs_diff": 0.0,
+        "g_scr_abs_diff": 0.0,
+        "t_digest_match": true,
+        "g_digest_match": true
+      },
+      "crosscheck_count": 36,
+      "n_obs": 160,
+      "n_sim": 200000,
+      "readout_convention": "t/gaussian path-wise read-outs are an ANALYTIC RE-ANCHORING: V = L_fit + sum_k (Q_k(U_k) - mean_k); relieved = alpha * phi_sigma(CR(V)) * clip(beta_fit * V, 0, V); W = V - clip(relieved, 0, max_relief * clip(beta_fit * V, 0, V)) -- the IDENTICAL node-level envelope transform of the truth and the proxy, applied ONCE to the joint level under the FROZEN t(2.9451)/Gaussian dependence basis. NOT a full path-wise copula re-aggregation (documented next-phase candidate). Nested rows are on the n_eval=500 proxy-validation outer sample; t/gaussian/var-covar rows on the n_obs=160 aggregation dependence basis (DISCLOSED).",
+      "gates": {
+        "G1_delta_matrix_complete_and_crosschecked": true,
+        "G2_var_covar_understatement_refreshed_pathwise": true,
+        "G3_df_rank_invariance_copula_frozen": true,
+        "G4_reproducibility_recorded": true
+      },
+      "verdict": "PASS",
+      "mr010_refreshed": true,
+      "mr014_refreshed": true,
+      "source": "docs/validation/PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.json",
+      "change_record_id": "a68dd3b9df114d07bfa4103d0ac1be2b"
+    },
+    "narrative": "Phase 25 moved the management action from a horizon-level declaration to a PATH-WISE declaration: the bonus cut (and restoration) responds to each inner path's own coverage, introducing the recognition-lag effect - the path-wise basis relieves LESS in the tail and its with-actions SCR (46,638.9 vs 40,852.1 on the horizon basis, +14.17%) is the more conservative, more faithful read-out. The matching proxy basis re-validates OOS on the identical action basis (R2 0.9978, VaR rel err 0.40%); the tail diagnostics refresh MR-010/MR-014 (var-covar understatement 69.1% vs nested path-wise) and DISCLOSE that the analytic re-anchoring understates the nested path-wise reference by 14.7% beyond bootstrap noise - the quantified motivation for a full path-wise copula re-aggregation next phase. Nested with-actions (path-wise declaration) remains the capital reference."
+  },
   "governance": {
-    "audit_entries": 71,
+    "audit_entries": 75,
     "audit_integrity_ok": true,
-    "audit_verified": 71,
+    "audit_verified": 75,
     "audit_failed": 0,
     "change_records": [
       {
@@ -4876,6 +5389,134 @@
             "comments": "Owner review requested. PHASE 24 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
           }
         ]
+      },
+      {
+        "record_id": "fe5846be67a945a28fd60208f6b87972",
+        "title": "Phase 25 Task 1 - design note: full path-wise bonus declaration dynamics (per-time-step declared-rate response on the inner paths)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-07T21:19:23.029960+00:00",
+        "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+        "author": "Phase25Task1DesignNote",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable; consistent with how they would be exercised over time)",
+          "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour)",
+          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2/\u00a73.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "CFO Forum MCEV Principle 7 (TVOG; dynamic management actions)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T21:19:23.029997+00:00",
+            "actor": "Phase25Task1DesignNote",
+            "status": "PEER_REVIEW",
+            "comments": "Design note + new unit tests PASS; no existing module touched."
+          },
+          {
+            "timestamp": "2026-06-07T21:19:23.030015+00:00",
+            "actor": "Phase25Task1DesignNote",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: synthetic-mechanism scope + declaration-frequency residual documented; sign-off withheld."
+          }
+        ]
+      },
+      {
+        "record_id": "3cfaa30a0f8044a8aaed419e6ab4ca31",
+        "title": "Phase 25 Task 2 - path-wise bonus declaration in the nested truth (per-time-step retained-bonus factor on a path-wise coverage proxy)",
+        "status": "OWNER_REVIEW",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T22:24:29.303391+00:00",
+        "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+        "author": "AutomatedModelDev_Phase25",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions consistent with how they would be exercised over time)",
+          "SOA ASOP 56 section 3.1.3/3.4 (time level of modelled management behaviour)",
+          "IA TAS M section 3.2/3.6 (documented residual converted to quantified evidence)",
+          "Phase 25 Task 1 design note s5 (fixed pre-registered gates)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T22:24:29.303439+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "PEER_REVIEW",
+            "comments": "Path-wise declaration at the FIXED pre-registered Task 1 s5 gates; without-actions basis bit-identical at every slice; horizon basis reproduced vs the archived P24T3 report; sign gate and recognition-lag diagnostics disclosed."
+          },
+          {
+            "timestamp": "2026-06-07T22:24:29.303457+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending the matching path-wise proxy basis (Task 3), tail diagnostics (Task 4), credentialled management-practice data, and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "fc9fc911fc51414abf0fc8e73cadc92c",
+        "title": "Phase 25 Task 3 - matching path-wise proxy basis feature (smoothed-relief response surface) + seven-driver OOS re-validation",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-07T23:31:05.992064+00:00",
+        "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+        "author": "AutomatedModelDev_Phase25",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (management actions modelled consistently in valuation and capital bases)",
+          "Solvency II Delegated Regulation Article 234 (no silent copula/proxy re-tuning; identical action basis convention)",
+          "SOA ASOP 56 section 3.1.3/3.4 (consistency of modelled management behaviour across model components)",
+          "IA TAS M section 3.2/3.6 (quantified, reproducible proxy evidence)",
+          "IFoA proxy-modelling working party (analytic post-composition features)",
+          "Phase 25 Task 1 design note s5 (fixed pre-registered gates)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T23:31:05.992096+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "PEER_REVIEW",
+            "comments": "Matching path-wise proxy basis at the FIXED pre-registered Task 1 s5 gates (unchanged Phase 22 gates); FIT-only calibration (leakage-free); candidate comparison disclosed; truth arrays digest-verified against the archived P25T2 stage."
+          },
+          {
+            "timestamp": "2026-06-07T23:31:05.992110+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending tail diagnostics + MR-010/MR-014 refresh (Task 4, trigger MET), credentialled management-practice data, and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "a68dd3b9df114d07bfa4103d0ac1be2b",
+        "title": "Phase 25 Task 4 - path-wise tail diagnostics + pathwise-vs-horizon / with-vs-without capital-delta matrix + MR-010/MR-014 refresh",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-08T01:31:12.922541+00:00",
+        "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+        "author": "AutomatedModelDev_Phase25",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "McNeil-Frey-Embrechts 2015 ch.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T01:31:12.922562+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "PEER_REVIEW",
+            "comments": "Fixed pre-registered Task 4 gates (G1-G4) all PASS; 36 archive cross-checks; archived Phase 24 Task 2 horizon read-outs reproduced bit-identically; rank invariance verified; diagnostics DISCLOSED (no post-hoc thresholds)."
+          },
+          {
+            "timestamp": "2026-06-08T01:31:12.922575+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+          }
+        ]
       }
     ],
     "deployment_gates": [
@@ -5115,7 +5756,7 @@
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
         "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
-        "updated_at": "2026-06-07T19:20:54.458022+00:00"
+        "updated_at": "2026-06-08T01:31:12.922427+00:00"
       },
       {
         "risk_id": "MR-011",
@@ -5171,7 +5812,7 @@
         "description": "Policyholder options (dynamic lapse) are modelled but insurer management actions are not: reversionary-bonus participation is static, so TVOG and tail capital are biased upward relative to a realistic with-management-action basis (ASOP 56 3.1.3 asymmetry; Solvency II Art. 23).",
         "mitigation": "Phase 23 Task 3: governed dynamic reversionary-bonus participation cut entering the nested ground truth and the proxy basis, validated OOS at fixed pre-registered gates.",
         "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
-        "updated_at": "2026-06-07T19:20:54.458103+00:00"
+        "updated_at": "2026-06-08T01:31:12.922476+00:00"
       }
     ]
   },
@@ -5276,6 +5917,24 @@
       "verdict": "PASS",
       "evidence": "delta matrix complete (27/27 archive cross-checks, P24T2 reproduced bit-identically); 99.5% joint tail 100.0% saturated; var-covar understatement refreshed 56.4% vs nested-with / 53.5% vs t-joint (MR-010); margin-bootstrap 95% CI [26471, 33637] contains the nested-with reference (n_obs=160 noise quantified)",
       "source": "docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_DIAGNOSTICS_REPORT.json"
+    },
+    {
+      "name": "Path-wise bonus declaration in the nested truth (Phase 25 Task 2)",
+      "verdict": "PASS",
+      "evidence": "per-time-step retained-bonus factor on the path-wise coverage proxy: nested with-actions SCR 46638.9 (path-wise) vs 40852.1 (horizon basis) = +14.17%; restoration share 29.4%; without-actions bit-identical; the path-wise basis relieves LESS - the more conservative with-actions read-out (recognition-lag effect, two-sided)",
+      "source": "docs/validation/PHASE25_TASK2_PATHWISE_DECLARATION_REPORT.json"
+    },
+    {
+      "name": "Matching path-wise proxy basis + seven-driver OOS re-validation (Phase 25 Task 3)",
+      "verdict": "PASS",
+      "evidence": "smoothed-relief response surface (sigma 0.225, alpha 0.7567; FIT-only, leakage-free): OOS R2 0.9978, VaR rel err 0.40%, SCR rel err 1.16% on the path-wise with-actions basis; truth and proxy use the IDENTICAL path-wise action basis",
+      "source": "docs/validation/PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT.json"
+    },
+    {
+      "name": "Path-wise tail diagnostics + capital-delta matrix (Phase 25 Task 4)",
+      "verdict": "PASS",
+      "evidence": "path-wise relieves LESS at every confidence level (the horizon basis understates the with-actions SCR across the matrix); var-covar understatement refreshed 69.1% vs nested path-wise (MR-010); copula FROZEN (df 2.9451 re-matched); margin-bootstrap 95% CI [35793, 42496] - nested path-wise reference OUTSIDE the CI (the analytic re-anchoring understates nested by 14.7% beyond noise; DISCLOSED motivation for full path-wise copula re-aggregation)",
+      "source": "docs/validation/PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.json"
     }
   ]
 }

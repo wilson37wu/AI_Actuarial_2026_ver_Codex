@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.6.0"
+CONTRACT_VERSION = "1.7.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -1041,6 +1041,85 @@ def _build_verdicts(base: Any) -> List[Dict[str, Any]]:
             "source": ("docs/validation/PHASE24_TASK4_JOINT_ACTION_TAIL_"
                        "DIAGNOSTICS_REPORT.json"),
         })
+    # Phase 25 verdicts: path-wise declaration in the nested truth, matching
+    # path-wise proxy basis, and path-wise tail diagnostics + delta matrix.
+    k2 = _load(os.path.join(
+        VAL, "PHASE25_TASK2_PATHWISE_DECLARATION_REPORT.json"))
+    if isinstance(k2, dict) and isinstance(k2.get("result"), dict):
+        kr = k2["result"]
+        kd = kr.get("pathwise_vs_horizon_delta", {}) or {}
+        ncp = kr.get("nested_capital_with_pathwise", {}) or {}
+        nch = kr.get("nested_capital_with_horizon", {}) or {}
+        verdicts.append({
+            "name": ("Path-wise bonus declaration in the nested truth "
+                     "(Phase 25 Task 2)"),
+            "verdict": str(kr.get("verdict", "")),
+            "evidence": ("per-time-step retained-bonus factor on the "
+                         "path-wise coverage proxy: nested with-actions SCR "
+                         "%.1f (path-wise) vs %.1f (horizon basis) = +%.2f%%; "
+                         "restoration share %.1f%%; without-actions "
+                         "bit-identical; the path-wise basis relieves LESS - "
+                         "the more conservative with-actions read-out "
+                         "(recognition-lag effect, two-sided)")
+            % (_num(ncp.get("scr_proxy")) or 0.0,
+               _num(nch.get("scr_proxy")) or 0.0,
+               100.0 * (_num(kd.get("scr_delta_rel_to_horizon")) or 0.0),
+               100.0 * (_num(kr.get("pathwise_restoration_share")) or 0.0)),
+            "source": ("docs/validation/"
+                       "PHASE25_TASK2_PATHWISE_DECLARATION_REPORT.json"),
+        })
+    k3 = _load(os.path.join(
+        VAL, "PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT.json"))
+    if isinstance(k3, dict) and isinstance(k3.get("result"), dict):
+        kr = k3["result"]
+        sf = kr.get("surface_calibration_fit_only", {}) or {}
+        verdicts.append({
+            "name": ("Matching path-wise proxy basis + seven-driver OOS "
+                     "re-validation (Phase 25 Task 3)"),
+            "verdict": str(kr.get("verdict", "")),
+            "evidence": ("smoothed-relief response surface (sigma %.3f, "
+                         "alpha %.4f; FIT-only, leakage-free): OOS R2 %.4f, "
+                         "VaR rel err %.2f%%, SCR rel err %.2f%% on the "
+                         "path-wise with-actions basis; truth and proxy use "
+                         "the IDENTICAL path-wise action basis")
+            % (_num(sf.get("sigma")) or 0.0, _num(sf.get("alpha")) or 0.0,
+               _num(kr.get("oos_r2_with_actions_pathwise")) or 0.0,
+               100.0 * (_num(kr.get("var_rel_error_with_actions")) or 0.0),
+               100.0 * (_num(kr.get("scr_rel_error_with_actions")) or 0.0)),
+            "source": ("docs/validation/"
+                       "PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT.json"),
+        })
+    k4 = _load(os.path.join(
+        VAL, "PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.json"))
+    if isinstance(k4, dict) and isinstance(k4.get("delta_matrix"), dict):
+        kf = k4.get("diagnostic_findings", {}) or {}
+        kv = k4.get("var_covar_refresh", {}) or {}
+        kb = ((k4.get("tail_diagnostics", {}) or {})
+              .get("bootstrap", {}) or {}).get("scr_pathwise", {}) or {}
+        verdicts.append({
+            "name": ("Path-wise tail diagnostics + capital-delta matrix "
+                     "(Phase 25 Task 4)"),
+            "verdict": str(k4.get("verdict", "")),
+            "evidence": ("path-wise relieves LESS at every confidence level "
+                         "(the horizon basis understates the with-actions "
+                         "SCR across the matrix); var-covar understatement "
+                         "refreshed %.1f%% vs nested path-wise (MR-010); "
+                         "copula FROZEN (df %.4f re-matched); margin-"
+                         "bootstrap 95%% CI [%.0f, %.0f] - nested path-wise "
+                         "reference OUTSIDE the CI (the analytic re-anchoring "
+                         "understates nested by %.1f%% beyond noise; "
+                         "DISCLOSED motivation for full path-wise copula "
+                         "re-aggregation)")
+            % (100.0 * (_num(kv.get(
+                   "understatement_vs_nested_with_pathwise")) or 0.0),
+               _num(k4.get("df_rematched")) or 0.0,
+               _num(kb.get("ci_lo_95")) or 0.0,
+               _num(kb.get("ci_hi_95")) or 0.0,
+               100.0 * (_num(kf.get(
+                   "t_pathwise_vs_nested_pathwise_rel_err")) or 0.0)),
+            "source": ("docs/validation/PHASE25_TASK4_PATHWISE_TAIL_"
+                       "DIAGNOSTICS_REPORT.json"),
+        })
     return verdicts
 
 
@@ -1240,6 +1319,117 @@ def _build_phase24() -> Dict[str, Any]:
     return out
 
 
+def _build_phase25() -> Dict[str, Any]:
+    """Phase 25 (contract 1.7.0, additive): path-wise management-action
+    declaration in the nested truth, the matching path-wise proxy basis, and
+    the path-wise tail diagnostics + capital-delta matrix. Pure display-layer
+    normalisation of the already-produced Phase 25 Task 2/3/4 validation
+    reports - no model calculation."""
+    out: Dict[str, Any] = {}
+    t2 = _load(os.path.join(
+        VAL, "PHASE25_TASK2_PATHWISE_DECLARATION_REPORT.json"))
+    if isinstance(t2, dict) and isinstance(t2.get("result"), dict):
+        r = t2["result"]
+        dl = r.get("pathwise_vs_horizon_delta", {}) or {}
+        out["declaration"] = {
+            "rule": r.get("rule", {}),
+            "nested_capital_without": r.get("nested_capital_without", {}),
+            "nested_capital_with_horizon":
+                r.get("nested_capital_with_horizon", {}),
+            "nested_capital_with_pathwise":
+                r.get("nested_capital_with_pathwise", {}),
+            "pathwise_vs_horizon_delta": dl,
+            "pathwise_action_share": r.get("pathwise_action_share"),
+            "pathwise_restoration_share":
+                r.get("pathwise_restoration_share"),
+            "clip_binding_share_pathwise":
+                r.get("clip_binding_share_pathwise"),
+            "clip_binding_share_horizon":
+                r.get("clip_binding_share_horizon"),
+            "gates": r.get("gates", {}),
+            "verdict": r.get("verdict"),
+            "interpretation": dl.get("interpretation"),
+            "source": ("docs/validation/"
+                       "PHASE25_TASK2_PATHWISE_DECLARATION_REPORT.json"),
+            "change_record_id": t2.get("change_record_id"),
+        }
+    t3 = _load(os.path.join(
+        VAL, "PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT.json"))
+    if isinstance(t3, dict) and isinstance(t3.get("result"), dict):
+        r = t3["result"]
+        out["proxy_basis"] = {
+            "oos_r2_with_actions": r.get("oos_r2_with_actions_pathwise"),
+            "oos_r2_without_actions": r.get("oos_r2_without_actions"),
+            "var_rel_error_with_actions":
+                r.get("var_rel_error_with_actions"),
+            "es_rel_error_with_actions": r.get("es_rel_error_with_actions"),
+            "scr_rel_error_with_actions":
+                r.get("scr_rel_error_with_actions"),
+            "surface": r.get("surface_calibration_fit_only", {}),
+            "cadence_sensitivity":
+                r.get("declaration_cadence_sensitivity", {}),
+            "gates": r.get("gates", {}),
+            "verdict": r.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT.json"),
+            "change_record_id": t3.get("change_record_id"),
+        }
+    t4 = _load(os.path.join(
+        VAL, "PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.json"))
+    if isinstance(t4, dict) and isinstance(t4.get("delta_matrix"), dict):
+        td = t4.get("tail_diagnostics", {}) or {}
+        out["tail_diagnostics"] = {
+            "delta_matrix": t4.get("delta_matrix", {}),
+            "var_covar_refresh": t4.get("var_covar_refresh", {}),
+            "pathwise_basis_params": t4.get("pathwise_basis_params", {}),
+            "df_matched": t4.get("df_matched"),
+            "df_rematched": t4.get("df_rematched"),
+            "rho_max_abs_diff_vs_archived":
+                t4.get("rho_max_abs_diff_vs_archived"),
+            "mr_refresh_trigger": t4.get("mr_refresh_trigger", {}),
+            "t_scr_pathwise_readout":
+                (t4.get("t_pathwise_readout", {}) or {}).get("scr_pathwise"),
+            "g_scr_pathwise_readout":
+                (t4.get("g_pathwise_readout", {}) or {}).get("scr_pathwise"),
+            "confidence_sweep": td.get("confidence_sweep", []),
+            "prefix_convergence": td.get("prefix_convergence", []),
+            "seed_stability": td.get("seed_stability", {}),
+            "bootstrap": td.get("bootstrap", {}),
+            "diagnostic_findings": t4.get("diagnostic_findings", {}),
+            "reproduction_of_p24t2":
+                t4.get("reproduction_of_p24t2_horizon_basis", {}),
+            "crosscheck_count": t4.get("crosscheck_count"),
+            "n_obs": t4.get("n_obs"),
+            "n_sim": t4.get("n_sim"),
+            "readout_convention": t4.get("readout_convention"),
+            "gates": t4.get("gates", {}),
+            "verdict": t4.get("verdict"),
+            "mr010_refreshed": t4.get("mr010_refreshed"),
+            "mr014_refreshed": t4.get("mr014_refreshed"),
+            "source": ("docs/validation/PHASE25_TASK4_PATHWISE_TAIL_"
+                       "DIAGNOSTICS_REPORT.json"),
+            "change_record_id": t4.get("change_record_id"),
+        }
+    if out:
+        out["narrative"] = (
+            "Phase 25 moved the management action from a horizon-level "
+            "declaration to a PATH-WISE declaration: the bonus cut (and "
+            "restoration) responds to each inner path's own coverage, "
+            "introducing the recognition-lag effect - the path-wise basis "
+            "relieves LESS in the tail and its with-actions SCR (46,638.9 vs "
+            "40,852.1 on the horizon basis, +14.17%) is the more "
+            "conservative, more faithful read-out. The matching proxy basis "
+            "re-validates OOS on the identical action basis (R2 0.9978, VaR "
+            "rel err 0.40%); the tail diagnostics refresh MR-010/MR-014 "
+            "(var-covar understatement 69.1% vs nested path-wise) and "
+            "DISCLOSE that the analytic re-anchoring understates the nested "
+            "path-wise reference by 14.7% beyond bootstrap noise - the "
+            "quantified motivation for a full path-wise copula "
+            "re-aggregation next phase. Nested with-actions (path-wise "
+            "declaration) remains the capital reference.")
+    return out
+
+
 # --------------------------------------------------------------------------- #
 def build_ui_data() -> Dict[str, Any]:
     base = _load(VIEWER_DATA) or {}
@@ -1279,6 +1469,18 @@ def build_ui_data() -> Dict[str, Any]:
     if _p24_ipc:
         capital["nested_scr_with_inner_path"] = _p24_ipc.get("scr_proxy")
 
+    phase25 = _build_phase25()
+    _p25_ncp = ((phase25.get("declaration") or {})
+                .get("nested_capital_with_pathwise") or {})
+    if _p25_ncp:
+        # Additive capital read-out: nested with-actions SCR on the path-wise
+        # declaration basis (Phase 25 Task 2 - the more conservative basis).
+        capital["nested_scr_with_pathwise"] = _p25_ncp.get("scr_proxy")
+    _p25_td = phase25.get("tail_diagnostics") or {}
+    if _p25_td.get("t_scr_pathwise_readout") is not None:
+        capital["t_copula_scr_pathwise_readout"] = _p25_td.get(
+            "t_scr_pathwise_readout")
+
     summary = dict(base.get("summary", {}))
     summary["contract_artifacts"] = len(inventory)
     summary["calibrated_drivers"] = len(calibrations)
@@ -1295,6 +1497,7 @@ def build_ui_data() -> Dict[str, Any]:
         "calibrations": calibrations,
         "management_actions": management_actions,
         "phase24": phase24,
+        "phase25": phase25,
         "governance": base.get("governance", {}),
         "verdicts": _build_verdicts(base.get("verdicts", [])),
     }
@@ -1448,6 +1651,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="capital" class="panel" data-title="Capital &amp; Tail"></div>
   <div id="actions" class="panel" data-title="Management Actions"></div>
   <div id="phase24" class="panel" data-title="Joint Actions (P24)"></div>
+  <div id="phase25" class="panel" data-title="Path-wise Actions (P25)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
 </div>
 
@@ -1482,6 +1686,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["capital","Capital & Tail"],
     ["actions","Management Actions"],
     ["phase24","Joint Actions (P24)"],
+    ["phase25","Path-wise Actions (P25)"],
     ["governance","Governance"]
   ];
 
@@ -2151,6 +2356,134 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  function renderPhase25(){
+    var el=document.getElementById("phase25"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var p=DATA.phase25||{};
+    var dc=p.declaration||{}, px=p.proxy_basis||{}, td=p.tail_diagnostics||{};
+    if(!Object.keys(dc).length&&!Object.keys(td).length){
+      el.innerHTML='<p class="muted">No Phase 25 path-wise action data in this snapshot (requires contract v1.7.0+).</p>';
+      return;
+    }
+    var fnd=td.diagnostic_findings||{}, bt=(td.bootstrap||{}).scr_pathwise||{};
+    var dl=dc.pathwise_vs_horizon_delta||{};
+    var ncw=(dc.nested_capital_without||{}).scr_proxy;
+    var nch=(dc.nested_capital_with_horizon||{}).scr_proxy;
+    var ncp=(dc.nested_capital_with_pathwise||{}).scr_proxy;
+    var html='<div class="cards">';
+    [
+      ["Nested SCR without actions",num(ncw)],
+      ["Nested SCR with (horizon basis)",num(nch)],
+      ["Nested SCR with (PATH-WISE) - reference",num(ncp)],
+      ["Path-wise &minus; horizon SCR",dl.scr_delta!=null?"+"+num(dl.scr_delta)+" (+"+(100*dl.scr_delta_rel_to_horizon).toFixed(2)+"%)":"--"],
+      ["Path-wise action share",dc.pathwise_action_share!=null?(100*dc.pathwise_action_share).toFixed(1)+"%":"--"],
+      ["Cut-then-restore share",dc.pathwise_restoration_share!=null?(100*dc.pathwise_restoration_share).toFixed(1)+"%":"--"],
+      ["Proxy OOS R2 (path-wise basis)",px.oos_r2_with_actions!=null?Number(px.oos_r2_with_actions).toFixed(4):"--"],
+      ["t df (copula FROZEN)",td.df_rematched!=null?Number(td.df_rematched).toFixed(4):"--"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+c[0]+
+      '</div><div class="v">'+esc(c[1])+'</div></div>'; });
+    html+='</div>';
+    html+='<p class="note">'+esc(dl.interpretation||"")+'</p>';
+    var dm=td.delta_matrix||{};
+    function dmc(m,k){ var r=(dm[m]||{})[k]||{}; return r.scr; }
+    function dmp(m){ return (dm[m]||{}).pathwise_minus_horizon||{}; }
+    var rows=[["Nested (reference)","nested"],["t-copula (df matched)","t_copula"],
+              ["Gaussian copula","gaussian"],["Var-covar","var_covar"]];
+    if(Object.keys(dm).length){
+      html+='<div class="subh">Capital-delta matrix (99.5% / 1y SCR) &mdash; without &rarr; with-horizon &rarr; with-path-wise (Task 4)</div>'+
+        '<table class="ptable pwtable"><thead><tr><th>Benchmark</th><th>Without actions</th>'+
+        '<th>With (horizon basis)</th><th>With (path-wise)</th><th>Path-wise &minus; horizon</th></tr></thead><tbody>';
+      rows.forEach(function(r){
+        var w=dmc(r[1],"without"), h=dmc(r[1],"with_horizon"), q=dmc(r[1],"with_pathwise");
+        var d=dmp(r[1]).scr_delta, dp=dmp(r[1]).scr_delta_pct;
+        html+='<tr><td>'+esc(r[0])+'</td><td>'+num(w)+'</td><td>'+num(h)+'</td>'+
+          '<td>'+(q!=null?num(q):"-- (no path-wise analogue, DISCLOSED)")+'</td>'+
+          '<td>'+(d!=null?"+"+num(d)+" (+"+(100*dp).toFixed(1)+"%)":"--")+'</td></tr>';
+      });
+      html+='</tbody></table>';
+      var D=[];
+      [["Nested w/o",dmc("nested","without"),"#39d98a"],
+       ["Nested horizon",dmc("nested","with_horizon"),"#1f8a5c"],
+       ["Nested PATH-WISE",dmc("nested","with_pathwise"),"#2fd0a8"],
+       ["t horizon",dmc("t_copula","with_horizon"),"#2b5d99"],
+       ["t PATH-WISE",dmc("t_copula","with_pathwise"),"#4f9cff"],
+       ["Gauss horizon",dmc("gaussian","with_horizon"),"#5d49a6"],
+       ["Gauss PATH-WISE",dmc("gaussian","with_pathwise"),"#9a7bff"],
+       ["Var-covar horizon",dmc("var_covar","with_horizon"),"#ffb454"]
+      ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+        tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      if(D.length){
+        html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; path-wise vs horizon declaration basis</h4>'+
+          '<p class="cap">The path-wise basis relieves LESS at every level and confidence &mdash; the horizon basis '+
+          'understates the with-actions SCR across the matrix (nested +'+
+          (dl.scr_delta_rel_to_horizon!=null?(100*dl.scr_delta_rel_to_horizon).toFixed(2)+"%":"--")+
+          '). Var-covar has no path-wise analogue and understates nested path-wise by 69.1% (MR-010 refresh).</p>'+
+          barChart(D,{w:760,h:300,mB:64})+'</div>';
+      }
+    }
+    var sw=td.confidence_sweep||[];
+    if(sw.length){
+      html+='<div class="subh">Path-wise action profile across the tail (Task 4, disclosed)</div>'+
+        '<table class="pwswtable"><thead><tr><th>Confidence</th><th>SCR without</th><th>SCR with (horizon)</th>'+
+        '<th>SCR with (path-wise)</th><th>Tail saturation share</th><th>Mean smoothed relief fraction</th>'+
+        '<th>Path-wise &minus; horizon</th></tr></thead><tbody>';
+      sw.forEach(function(s){
+        html+='<tr><td>'+(100*s.confidence).toFixed(1)+'%</td><td>'+num(s.scr_without)+'</td>'+
+          '<td>'+num(s.scr_horizon)+'</td><td>'+num(s.scr_pathwise)+'</td>'+
+          '<td>'+(100*s.tail_saturation_share).toFixed(1)+'%</td>'+
+          '<td>'+(s.tail_mean_smoothed_relief_fraction!=null?Number(s.tail_mean_smoothed_relief_fraction).toFixed(4):"--")+'</td>'+
+          '<td>+'+num(s.pathwise_minus_horizon_scr)+'</td></tr>';
+      });
+      html+='</tbody></table>'+
+        '<p class="note">At 99.5% the raw governed cut saturates 100.0% of the tail, but the mean smoothed relief '+
+        'fraction is '+(fnd.tail_mean_smoothed_relief_fraction_at_995!=null?Number(fnd.tail_mean_smoothed_relief_fraction_at_995).toFixed(4):"--")+
+        ' &lt; max relief 0.12 &mdash; restoration on recovering inner paths caps the realised relief '+
+        '(the recognition-lag mechanism, quantified).</p>';
+    }
+    if(bt.mean!=null){
+      html+='<div class="subh">Margin bootstrap (copula FROZEN per SII Art. 234; 200 &times; 20k; n_obs=160)</div>'+
+        '<div class="cards">'+
+        '<div class="card"><div class="k">Bootstrap SCR mean (t path-wise)</div><div class="v">'+num(bt.mean)+'</div></div>'+
+        '<div class="card"><div class="k">SCR SE</div><div class="v">'+num(bt.se)+'</div></div>'+
+        '<div class="card"><div class="k">95% CI</div><div class="v">['+num(bt.ci_lo_95)+', '+num(bt.ci_hi_95)+']</div></div>'+
+        '<div class="card"><div class="k">Nested path-wise inside CI</div><div class="v">'+(fnd.nested_pathwise_inside_bootstrap_ci?"✓ yes":"✗ no (OUTSIDE)")+'</div></div>'+
+        '</div>'+
+        '<p class="note">The nested path-wise reference '+num(ncp)+' sits OUTSIDE the 95% CI &mdash; the analytic '+
+        're-anchoring understates the nested path-wise SCR by '+
+        (fnd.t_pathwise_vs_nested_pathwise_rel_err!=null?(100*fnd.t_pathwise_vs_nested_pathwise_rel_err).toFixed(1)+"%":"--")+
+        ' beyond margin noise: the quantified, DISCLOSED motivation for the next-phase full path-wise copula '+
+        're-aggregation. Bootstrap SCR SE '+
+        (fnd.bootstrap_scr_se_pct_of_mean!=null?(100*fnd.bootstrap_scr_se_pct_of_mean).toFixed(1)+"%":"--")+
+        ' of mean; copula-seed max spread '+
+        (fnd.scr_seed_max_rel_spread!=null?(100*fnd.scr_seed_max_rel_spread).toFixed(2)+"%":"--")+
+        ' across 5 seeds; prefix-convergence final delta '+
+        (fnd.scr_prefix_final_rel_delta!=null?(100*fnd.scr_prefix_final_rel_delta).toFixed(2)+"%":"--")+'.</p>';
+    }
+    if(Object.keys(px).length){
+      var sf=px.surface||{}, cd=px.cadence_sensitivity||{};
+      html+='<div class="subh">Matching path-wise proxy basis (Task 3) &mdash; seven-driver OOS re-validation</div>'+
+        '<table class="ptable pxtable"><thead><tr><th>Read-out</th><th>Value</th><th>Gate / note</th></tr></thead><tbody>'+
+        '<tr><td>OOS R2 with actions (path-wise)</td><td>'+(px.oos_r2_with_actions!=null?Number(px.oos_r2_with_actions).toFixed(4):"--")+'</td><td>&ge; 0.95</td></tr>'+
+        '<tr><td>OOS R2 without actions</td><td>'+(px.oos_r2_without_actions!=null?Number(px.oos_r2_without_actions).toFixed(4):"--")+'</td><td>unchanged basis</td></tr>'+
+        '<tr><td>VaR 99.5 rel error (with actions)</td><td>'+(px.var_rel_error_with_actions!=null?(100*px.var_rel_error_with_actions).toFixed(2)+"%":"--")+'</td><td>&le; 10%</td></tr>'+
+        '<tr><td>ES rel error (with actions)</td><td>'+(px.es_rel_error_with_actions!=null?(100*px.es_rel_error_with_actions).toFixed(2)+"%":"--")+'</td><td>disclosed</td></tr>'+
+        '<tr><td>SCR rel error (with actions)</td><td>'+(px.scr_rel_error_with_actions!=null?(100*px.scr_rel_error_with_actions).toFixed(2)+"%":"--")+'</td><td>disclosed</td></tr>'+
+        '<tr><td>Surface sigma (smoothing width)</td><td>'+(sf.sigma!=null?Number(sf.sigma).toFixed(3):"--")+'</td><td>grid-interior, FIT-only</td></tr>'+
+        '<tr><td>Surface alpha (level match)</td><td>'+(sf.alpha!=null?Number(sf.alpha).toFixed(4):"--")+'</td><td>FIT-only, leakage-free</td></tr>'+
+        '<tr><td>FIT R2 (relieved amount)</td><td>'+(sf.fit_r2_relieved!=null?Number(sf.fit_r2_relieved).toFixed(4):"--")+'</td><td>response-surface fit</td></tr>'+
+        '<tr><td>Annual/monthly cadence ratio</td><td>'+(cd.annual_over_monthly_mean_ratio!=null?Number(cd.annual_over_monthly_mean_ratio).toFixed(3):"--")+'</td><td>cadence sensitivity, disclosed</td></tr>'+
+        '</tbody></table>';
+    }
+    html+=maGateGrid(dc.gates,"Task 2 pre-registered gates (path-wise declaration in the nested truth)");
+    html+=maGateGrid(px.gates,"Task 3 pre-registered gates (matching path-wise proxy basis)");
+    html+=maGateGrid(td.gates,"Task 4 pre-registered gates (path-wise tail diagnostics + delta matrix)");
+    html+='<p class="note">'+esc(p.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(dc.source||"")+' &middot; '+esc(px.source||"")+' &middot; '+esc(td.source||"")+
+      ' &middot; ChangeRecords '+esc(dc.change_record_id||"")+' / '+esc(px.change_record_id||"")+' / '+esc(td.change_record_id||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
   // ---- Governance & assumptions view (UI Task 4) ----
   var GLIK=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
   var GIMP=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
@@ -2502,7 +2835,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

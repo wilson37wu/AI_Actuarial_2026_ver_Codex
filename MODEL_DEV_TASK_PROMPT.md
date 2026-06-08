@@ -1895,3 +1895,56 @@ df re-match, beta_fit, sigma/alpha, vc figures), /var/tmp/p25t3_stage, /var/tmp/
 — push from the sandbox works; serialise/stagger the scheduled runs; production sign-off
 residual (credentialled data + APS X2) — by design for this educational model; disk /sessions
 ~89%.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-08 +08 (cycle 26, supersedes everything above)
+
+**Phase 25 Task 5 COMPLETE (PASS 40/40 contract checks; governance verify_all True) —
+offline-UI propagation; PHASE 25 COMPLETE (Tasks 1-5).** ui_data.json contract
+**1.6.0 → 1.7.0 ADDITIVE**: new `phase25` section (declaration / proxy_basis /
+tail_diagnostics / narrative), additive capital read-outs `nested_scr_with_pathwise`
+46,638.9 + `t_copula_scr_pathwise_readout` 39,794.3, three Phase 25 PASS verdicts, and a
+first-class **Path-wise Actions (P25)** tab (8 tabs total): pathwise-vs-horizon capital-delta
+matrix across all four benchmarks (var-covar "no path-wise analogue" DISCLOSED in-table),
+8-bar SCR chart, tail saturation/restoration profile (raw 100% saturation but smoothed
+relief fraction 0.0811 < 0.12 — recognition-lag quantified), frozen-copula bootstrap with
+the nested path-wise reference OUTSIDE the 95% CI disclosed verbatim (14.7% beyond-noise —
+the Phase 26 motivation), Task 3 proxy-basis table, 15 gate criteria (6+5+4).
+
+`ui_app_self_test.cjs` +17 Phase 25 checks → **ok:true, 0 network / 0 JS errors over 101
+checks**; `viewer_data.json` rebuilt pre-governance (48 records at build); NEW
+`scripts/build_phase25_task5_ui_propagation.py` (40 checks → self-test → governance →
+report; idempotent 49→49). Governance: ChangeRecord `3fa4394e568b48fc9ee06dd8a64dd44b`
+(code_change) OWNER_REVIEW; audit 75→76; changes 48→49; verify_all True. Tests: 27 new PASS
+(`tests/test_phase25_task5_ui_propagation.py`); DISCLOSED forward-compat fix: two P24T5
+contract pins relaxed to a version floor ≥ (1,6,0) (repo convention); all four
+UI-propagation suites 87/0; targeted health gate disclosed in the log (cycle 25 closed the
+full 2,684/0 regression 8 h earlier; this cycle touched only the display layer).
+
+**NEXT executable task: Phase 26 Task 1 — research/design note (pick ONE, design-note-first
+per repo convention, with pre-registered gates):**
+(a) **full path-wise copula re-aggregation — FRONT-RUNNER** (the P25T4 analytic re-anchoring
+understates the nested path-wise reference by 14.7% BEYOND bootstrap noise — outside the
+95% CI [35,793, 42,496]; rank-invariance machinery + scalars staged in /var/tmp/p25t4_stage);
+(b) credentialled-data calibration (human-blocked);
+(c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived).
+
+**Sandbox operating rules (RE-CONFIRMED cycle 26):** ~44 s bash wall — long heredoc appends
+can TRUNCATE mid-write (hit MODEL_DEV_LOG.md this cycle; verify tail after EVERY append and
+chunk to <2 KB); PYTHONPATH=/var/tmp/pylibs:. ; build long files OFF-MOUNT (heredoc to
+/var/tmp) then cp + cmp; NEVER rewrite an existing large mounted file via the file tool;
+nohup does NOT survive between bash calls — chunk instead; back up + hash-verify
+GOVERNANCE_STORE.json before every governance stage (backup
+/var/tmp/p25t5_build/GOV_BACKUP_pre_p25t5.json); alt-`GIT_INDEX_FILE` commits onto `p22c9`,
+push `p22c9:main` at the end of every cycle; next free risk ID MR-015; re-check mtimes for
+parallel-run foreign writes before governance/commit (a Python-less Windows-shell run
+recorded a blocked cycle between 25 and 26 — advanced nothing but rewrote state-file header
+fields). Stage data: /var/tmp/p25t5_build, /var/tmp/p25t4_stage, /var/tmp/p25t3_stage,
+/var/tmp/p25t2_stage, /var/tmp/p24t3_stage, /var/tmp/p23t2_stage (losses.npz),
+/var/tmp/p23t4_stage, .phase22_task2_stage.
+
+**Standing blockers (human action):** delete the three git ghost locks
+(GITHUB_PUSH_BLOCKER.md) — push from the sandbox works; serialise/stagger the scheduled runs
+(Python-less Windows runs waste cycles); production sign-off residual (credentialled data +
+APS X2) — by design for this educational model; disk /sessions ~89%.

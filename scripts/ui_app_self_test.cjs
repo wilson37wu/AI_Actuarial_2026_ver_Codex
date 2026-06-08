@@ -1,4 +1,4 @@
-// Offline self-test for ui_app.html (UI Tasks 1-5 + Phase 21-24 propagation).
+// Offline self-test for ui_app.html (UI Tasks 1-5 + Phase 21-25 propagation).
 // Loads the standalone HTML under jsdom, blocks fetch/XHR, clicks every tab and
 // sub-view, and asserts: embedded data parsed; inventory + calibration explorer +
 // capital dashboard + governance view render; ZERO network calls; ZERO JS errors.
@@ -80,6 +80,16 @@ setTimeout(() => {
   const p24SweepRows = document.querySelectorAll("#phase24 table.swtable tbody tr").length;
   const p24InnerRows = document.querySelectorAll("#phase24 table.iptable tbody tr").length;
   const p24BarRects = document.querySelectorAll("#phase24 svg.chart rect.bar").length;
+
+  // Phase 25 Task 5: open the Path-wise Actions (P25) panel and count its elements.
+  const p25Tab = tabs.find(t => t.getAttribute("data-target") === "phase25");
+  if (p25Tab) p25Tab.click();
+  const p25Cards = document.querySelectorAll("#phase25 .card").length;
+  const p25GateCrits = document.querySelectorAll("#phase25 .crit").length;
+  const p25DeltaRows = document.querySelectorAll("#phase25 table.pwtable tbody tr").length;
+  const p25SweepRows = document.querySelectorAll("#phase25 table.pwswtable tbody tr").length;
+  const p25ProxyRows = document.querySelectorAll("#phase25 table.pxtable tbody tr").length;
+  const p25BarRects = document.querySelectorAll("#phase25 svg.chart rect.bar").length;
 
   // UI Task 4: open the Governance & assumptions view and click through every sub-view.
   const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
@@ -186,6 +196,18 @@ setTimeout(() => {
     varCovarRefreshPresent: /56\.4%/.test(bodyText),
     jointActionVerdictPresent: /action-after-aggregation t-copula/.test(bodyText),
     innerPathVerdictPresent: /Inner-path management-action dynamics/.test(bodyText),
+    phase25TabPresent: !!p25Tab,
+    p25Cards, p25GateCrits, p25DeltaRows, p25SweepRows, p25ProxyRows, p25BarRects,
+    pathwiseScrPresent: /46,639/.test(bodyText),
+    pathwiseDeltaPresent: /\+14\.17%/.test(bodyText),
+    pathwiseRelievesLessPresent: /relieves LESS/.test(bodyText),
+    restorationSharePresent: /29\.4%/.test(bodyText),
+    varCovarPathwiseRefreshPresent: /69\.1%/.test(bodyText),
+    bootstrapOutsideCiPresent: /35,793/.test(bodyText) && /42,496/.test(bodyText) && /OUTSIDE/.test(bodyText),
+    copulaFrozenPresent: /FROZEN/.test(bodyText),
+    pathwiseDeclVerdictPresent: /Path-wise bonus declaration in the nested truth/.test(bodyText),
+    pathwiseProxyVerdictPresent: /Matching path-wise proxy basis/.test(bodyText),
+    pathwiseTailVerdictPresent: /Path-wise tail diagnostics/.test(bodyText),
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -271,6 +293,23 @@ setTimeout(() => {
     checks.varCovarRefreshPresent &&
     checks.jointActionVerdictPresent &&
     checks.innerPathVerdictPresent &&
+    checks.phase25TabPresent &&
+    checks.p25Cards >= 12 &&
+    checks.p25GateCrits >= 15 &&
+    checks.p25DeltaRows === 4 &&
+    checks.p25SweepRows === 5 &&
+    checks.p25ProxyRows >= 8 &&
+    checks.p25BarRects >= 8 &&
+    checks.pathwiseScrPresent &&
+    checks.pathwiseDeltaPresent &&
+    checks.pathwiseRelievesLessPresent &&
+    checks.restorationSharePresent &&
+    checks.varCovarPathwiseRefreshPresent &&
+    checks.bootstrapOutsideCiPresent &&
+    checks.copulaFrozenPresent &&
+    checks.pathwiseDeclVerdictPresent &&
+    checks.pathwiseProxyVerdictPresent &&
+    checks.pathwiseTailVerdictPresent &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

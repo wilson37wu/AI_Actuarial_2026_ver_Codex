@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-08T00:09:37Z",
- "last_run_duration_minutes": 39,
- "last_run_note": "Blocked runtime cycle: Phase 25 Task 4 remains next. This Windows shell has no Python launcher and no WSL/bash runtime, so the required numpy/governance tail-diagnostics build and pytest verification could not be executed.",
- "current_phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
- "overall_status": "PHASE25_TASK3_COMPLETE_TASK4_BLOCKED_RUNTIME",
+ "last_run": "2026-06-08T (cycle 26, Linux sandbox)",
+ "last_run_duration_minutes": null,
+ "last_run_note": "Phase 25 Task 5 complete (PASS): offline-UI propagation of the path-wise action view, ui_data.json contract 1.6.0 -> 1.7.0 ADDITIVE. PHASE 25 COMPLETE (Tasks 1-5). Next: design-note-first candidate selection for Phase 26 (full path-wise copula re-aggregation is the quantified front-runner: 14.7% beyond-noise understatement).",
+ "current_phase": "Phase 25: Path-Wise Bonus Declaration Dynamics - COMPLETE (Tasks 1-5)",
+ "overall_status": "PHASE25_COMPLETE_NEXT_PHASE26_DESIGN_NOTE",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -776,5 +776,14 @@
   "evidence": "docs/validation/PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.{json,md}; docs/PATHWISE_TAIL_DIAGNOSTICS_CARD.md",
   "change_record_id": "a68dd3b9df114d07bfa4103d0ac1be2b",
   "tests": "39 new PASS; regression 2,684 PASS / 0 FAIL across 94 files (full-file recount); ui self-test ok:true; compileall clean"
+ },
+ "cycle_2026_06_08_phase25_task5": {
+  "ran_at": "2026-06-08T (cycle 26)",
+  "environment": "Linux sandbox (python 3.10.12, /var/tmp/pylibs, node+jsdom)",
+  "summary": "Phase 25 Task 5 complete: offline-UI propagation of the path-wise action view. ui_data.json contract 1.6.0 -> 1.7.0 ADDITIVE: new phase25 section (declaration / proxy_basis / tail_diagnostics / narrative), additive capital read-outs nested_scr_with_pathwise 46,638.9 and t_copula_scr_pathwise_readout 39,794.3, three Phase 25 PASS verdicts. ui_app.html: new Path-wise Actions (P25) tab (8 tabs total) - headline cards, pathwise-vs-horizon capital-delta matrix (var-covar no-analogue DISCLOSED), 8-bar SCR chart, tail saturation/restoration profile, frozen-copula bootstrap with the nested path-wise reference OUTSIDE the 95% CI (14.7% beyond-noise understatement disclosed - Phase 26 motivation), Task 3 proxy-basis table, 15 gate criteria (6+5+4). ui_app_self_test.cjs extended with 17 Phase 25 checks: ok:true, 0 network / 0 JS errors over 101 checks. 40/40 contract checks PASS; idempotent re-run (49->49 records). DISCLOSED forward-compat fix: two P24T5 contract pins relaxed to a version floor (repo convention). viewer_data.json rebuilt pre-governance (48 records at build). PHASE 25 COMPLETE.",
+  "evidence": "docs/validation/PHASE25_TASK5_UI_PROPAGATION_REPORT.{json,md}",
+  "change_record_id": "3fa4394e568b48fc9ee06dd8a64dd44b",
+  "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
+  "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
  }
 }

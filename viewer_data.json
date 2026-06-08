@@ -32,9 +32,9 @@
     }
   ],
   "summary": {
-    "tasks_completed": 115,
-    "tasks_total": 116,
-    "phases_completed": 20,
+    "tasks_completed": 118,
+    "tasks_total": 118,
+    "phases_completed": 24,
     "estimated_completion_pct": 99,
     "gates_cleared": 12,
     "gates_total": 12,
@@ -1087,9 +1087,9 @@
     ]
   },
   "governance": {
-    "audit_entries": 71,
+    "audit_entries": 75,
     "audit_integrity_ok": true,
-    "audit_verified": 71,
+    "audit_verified": 75,
     "audit_failed": 0,
     "change_records": [
       {
@@ -2540,6 +2540,134 @@
             "comments": "Owner review requested. PHASE 24 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
           }
         ]
+      },
+      {
+        "record_id": "fe5846be67a945a28fd60208f6b87972",
+        "title": "Phase 25 Task 1 - design note: full path-wise bonus declaration dynamics (per-time-step declared-rate response on the inner paths)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-07T21:19:23.029960+00:00",
+        "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+        "author": "Phase25Task1DesignNote",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable; consistent with how they would be exercised over time)",
+          "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour)",
+          "SOA ASOP 56 §3.1.3/§3.4/§3.5",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.2/§3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "CFO Forum MCEV Principle 7 (TVOG; dynamic management actions)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T21:19:23.029997+00:00",
+            "actor": "Phase25Task1DesignNote",
+            "status": "PEER_REVIEW",
+            "comments": "Design note + new unit tests PASS; no existing module touched."
+          },
+          {
+            "timestamp": "2026-06-07T21:19:23.030015+00:00",
+            "actor": "Phase25Task1DesignNote",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: synthetic-mechanism scope + declaration-frequency residual documented; sign-off withheld."
+          }
+        ]
+      },
+      {
+        "record_id": "3cfaa30a0f8044a8aaed419e6ab4ca31",
+        "title": "Phase 25 Task 2 - path-wise bonus declaration in the nested truth (per-time-step retained-bonus factor on a path-wise coverage proxy)",
+        "status": "OWNER_REVIEW",
+        "change_type": "assumption_change",
+        "created_at": "2026-06-07T22:24:29.303391+00:00",
+        "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+        "author": "AutomatedModelDev_Phase25",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions consistent with how they would be exercised over time)",
+          "SOA ASOP 56 section 3.1.3/3.4 (time level of modelled management behaviour)",
+          "IA TAS M section 3.2/3.6 (documented residual converted to quantified evidence)",
+          "Phase 25 Task 1 design note s5 (fixed pre-registered gates)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T22:24:29.303439+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "PEER_REVIEW",
+            "comments": "Path-wise declaration at the FIXED pre-registered Task 1 s5 gates; without-actions basis bit-identical at every slice; horizon basis reproduced vs the archived P24T3 report; sign gate and recognition-lag diagnostics disclosed."
+          },
+          {
+            "timestamp": "2026-06-07T22:24:29.303457+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending the matching path-wise proxy basis (Task 3), tail diagnostics (Task 4), credentialled management-practice data, and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "fc9fc911fc51414abf0fc8e73cadc92c",
+        "title": "Phase 25 Task 3 - matching path-wise proxy basis feature (smoothed-relief response surface) + seven-driver OOS re-validation",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-07T23:31:05.992064+00:00",
+        "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+        "author": "AutomatedModelDev_Phase25",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (management actions modelled consistently in valuation and capital bases)",
+          "Solvency II Delegated Regulation Article 234 (no silent copula/proxy re-tuning; identical action basis convention)",
+          "SOA ASOP 56 section 3.1.3/3.4 (consistency of modelled management behaviour across model components)",
+          "IA TAS M section 3.2/3.6 (quantified, reproducible proxy evidence)",
+          "IFoA proxy-modelling working party (analytic post-composition features)",
+          "Phase 25 Task 1 design note s5 (fixed pre-registered gates)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-07T23:31:05.992096+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "PEER_REVIEW",
+            "comments": "Matching path-wise proxy basis at the FIXED pre-registered Task 1 s5 gates (unchanged Phase 22 gates); FIT-only calibration (leakage-free); candidate comparison disclosed; truth arrays digest-verified against the archived P25T2 stage."
+          },
+          {
+            "timestamp": "2026-06-07T23:31:05.992110+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending tail diagnostics + MR-010/MR-014 refresh (Task 4, trigger MET), credentialled management-practice data, and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "a68dd3b9df114d07bfa4103d0ac1be2b",
+        "title": "Phase 25 Task 4 - path-wise tail diagnostics + pathwise-vs-horizon / with-vs-without capital-delta matrix + MR-010/MR-014 refresh",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-08T01:31:12.922541+00:00",
+        "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+        "author": "AutomatedModelDev_Phase25",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "McNeil-Frey-Embrechts 2015 ch.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T01:31:12.922562+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "PEER_REVIEW",
+            "comments": "Fixed pre-registered Task 4 gates (G1-G4) all PASS; 36 archive cross-checks; archived Phase 24 Task 2 horizon read-outs reproduced bit-identically; rank invariance verified; diagnostics DISCLOSED (no post-hoc thresholds)."
+          },
+          {
+            "timestamp": "2026-06-08T01:31:12.922575+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+          }
+        ]
       }
     ],
     "deployment_gates": [
@@ -2779,7 +2907,7 @@
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
         "related_standard": "SOA ASOP 56 §3.5; IA TAS M §3.6; SOA ASOP 25 §3.3",
-        "updated_at": "2026-06-07T19:20:54.458022+00:00"
+        "updated_at": "2026-06-08T01:31:12.922427+00:00"
       },
       {
         "risk_id": "MR-011",
@@ -2835,7 +2963,7 @@
         "description": "Policyholder options (dynamic lapse) are modelled but insurer management actions are not: reversionary-bonus participation is static, so TVOG and tail capital are biased upward relative to a realistic with-management-action basis (ASOP 56 3.1.3 asymmetry; Solvency II Art. 23).",
         "mitigation": "Phase 23 Task 3: governed dynamic reversionary-bonus participation cut entering the nested ground truth and the proxy basis, validated OOS at fixed pre-registered gates.",
         "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
-        "updated_at": "2026-06-07T19:20:54.458103+00:00"
+        "updated_at": "2026-06-08T01:31:12.922476+00:00"
       }
     ]
   }
