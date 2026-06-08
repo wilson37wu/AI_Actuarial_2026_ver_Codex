@@ -8520,3 +8520,85 @@ with df = 2.9451 frozen on without-actions losses (copula parameters frozen); th
 commits land on `p22c9` via alt-index; push `p22c9:main` works from the sandbox; serialise the
 scheduled runs; production sign-off residual (credentialled data + APS X2) by design; disk
 /sessions ~89%.
+
+---
+
+## 2026-06-08 (+08) - Cycle 25 - Runtime Blocker, Phase 25 Task 4 Not Executed
+
+**Task Status:** Phase 25 Task 4 remains NEXT and was not started in this runtime.
+
+**Context:** The canonical next task is tail diagnostics on the path-wise with-actions basis
+plus the required MR-010/MR-014 refresh. The trigger remains met from Phase 25 Task 2:
+path-wise with-actions SCR 46,638.9 vs horizon-level 40,852.1 (+14.17%). The frozen
+rank-invariance convention remains df = 2.9451 on WITHOUT-actions losses with no copula
+re-tuning.
+
+**What this cycle did:**
+- Read automation memory, prompt, latest status, state, governance store, and Phase 25 Task
+  2/3 evidence.
+- Reviewed the Phase 24 Task 4 diagnostic pattern and confirmed Phase 25 Task 4 should reuse
+  the existing confidence sweep, prefix convergence, seed-stability, margin-bootstrap, and
+  delta-matrix primitives against the path-wise basis.
+- Checked the runtime: `python`/`python3`/`py` unavailable, `bash` unavailable, and
+  `wsl.exe --status` reports WSL is not installed. Node is available, but it is not sufficient
+  for the governed numpy/GovernanceStore/pytest evidence chain.
+- Updated `.claude-dev/MODEL_DEV_STATE.json` header and `LATEST_CYCLE_STATUS_2026-06-08.md`
+  to record the runtime blocker without advancing the phase.
+
+**Verification:** No Python model build or pytest run was possible in this Windows shell. No
+Phase 25 Task 4 report, governance ChangeRecord, MR refresh, or commit was created.
+
+**Next Step:** Resume in a Python-enabled shell and execute Phase 25 Task 4:
+`scripts/build_phase25_task4_pathwise_tail_diagnostics.py --stage verify`, `--stage diag`,
+and `--stage governance`, then run focused tests and `node scripts/ui_app_self_test.cjs
+ui_app.html`.
+
+**Industry Standards Progress:** No new model evidence this cycle. Solvency II Art. 234
+rank-invariance, SOA ASOP 56 section 3.5 validation evidence, and IA TAS M section 3.6
+reproducibility remain pending for Phase 25 Task 4.
+
+**Blockers:** Python/WSL runtime unavailable in this shell; local git ghost locks still block
+normal local `main` updates; serialise scheduled runs; production sign-off residual remains
+credentialled data + independent APS X2 review.
+
+---
+
+## 2026-06-08 (+08) — Cycle 25 — Phase 25 Task 4: path-wise tail diagnostics + delta matrix + MR-010/MR-014 refresh — PASS 4/4 gates
+
+**Health gate first:** full regression green — 2,684 tests PASS / 0 FAIL across all 94 test files
+(file-/class-/node-chunked under the 44 s bash wall; counts now reported as the true pytest
+totals — earlier cycles' "386/430" figures undercounted by tallying only a subset of batches);
+ui_app self-test ok:true; no foreign writes since cycle 24 (only `.claude-dev/MODEL_DEV_STATE.json`,
+mtime 23:34, from the cycle-24 writer); governance store backed up to
+`/var/tmp/p25t4_build/GOV_BACKUP_pre_p25t4.json` and hash-verified unchanged immediately before
+the governance stage.
+
+**Repair:** `.claude-dev/MODEL_DEV_STATE.json` was found CORRUPTED (unterminated string at line
+761 + duplicated truncated tail) — the cycle-24 mount-staleness incident hit this file's rewrite.
+Repaired by truncating at the last clean line, closing the P25T2 entry, and reconstructing the
+P25T3 entry from the archived report; now `json.loads`-valid. (Lesson re-confirmed: NEVER rewrite
+an existing large mounted file via the file tool; use bash heredoc + cp + cmp.)
+
+**Task (pre-registered, design note s5):** joint-scenario tail diagnostics on the path-wise
+with-actions basis (P24T4 pattern), with-vs-without AND pathwise-vs-horizon capital deltas at
+VaR/ES/SCR for nested / t / gaussian / var-covar, var-covar understatement refresh, REQUIRED
+MR-010/MR-014 refresh (trigger MET at Task 2: +14.17%), rank invariance df frozen at 2.9451.
+
+**Build:**
+- NEW `par_model_v2/projection/pathwise_tail_diagnostics.py` (475 lines): the t/gaussian
+  path-wise read-outs are an ANALYTIC RE-ANCHORING — the governed P25T3 smoothed-relief surface
+  (sigma 0.225, alpha 0.7567) + the FIT-sample benefit share (beta_fit 0.8450, ONE extra
+  leakage-free scalar) applied ONCE to the anchored joint level V through the IDENTICAL
+  node-level envelope transform (`apply_pathwise_declaration_node`) used by truth and proxy;
+  CRN against the horizon basis (same copula draw). NOT a full path-wise copula re-aggregation
+  (documented next-phase candidate). Sweep/convergence/seed-stability/bootstrap mirror the
+  P24T4 conventions exactly (same seeds, 200x20k bootstrap, joint row resample, copula frozen).
+- Staged `scripts/build_phase25_task4_pathwise_tail_diagnostics.py`
+  (verify → diag → boot → governance; each < 45 s; idempotent re-run digest-identical).
+
+**RESULT (verdict PASS, 4/4 fixed pre-registered gates + G5 governance verify_all True):**
+- 99.5% SCR delta matrix (without → horizon → path-wise):
+  nested 55,561.2 → 40,852.1 → 46,638.9 (+14.17% pw-vs-hz);
+  t(2.9451) 46,756.0 → 31,001.8 → 39,794.3 (+28.4%);
+  gaussian 41,472.4 → 26,267.1 → 35,210.1 (+34.0%);
+  var

@@ -1,53 +1,63 @@
-# Latest Cycle Status - 2026-06-08 (+08) (cycle 24) - READ FIRST
+# Latest Cycle Status - 2026-06-08 (+08) (cycle 25) - READ FIRST
 
-**Phase 25 Task 3 COMPLETE (PASS 5/5 gates).
-Next: Phase 25 Task 4 - tail diagnostics on the path-wise basis + MR-010/MR-014 refresh
-(REQUIRED - trigger MET at Task 2: +14.17%); rank invariance df 2.9451 frozen.**
+**Phase 25 Task 4 COMPLETE (PASS 4/4 gates + governance verify_all True).
+Next: Phase 25 Task 5 - UI contract 1.6.0 -> 1.7.0 ADDITIVE (path-wise declaration +
+delta-matrix + tail-diagnostics panels consume ONLY model-output JSON) + PHASE 25 COMPLETE
+documentation.**
 
-What this cycle did (matching path-wise proxy basis - truth and proxy now share an
-IDENTICAL action basis, G1 convention):
+What this cycle did (path-wise tail diagnostics + capital-delta matrix + REQUIRED
+MR-010/MR-014 refresh; trigger was MET at Task 2 with +14.17%):
 
-- Health gate first: pytest batches green (386 tests); ui_app self-test ok:true; no foreign
-  writes; governance store backed up (/var/tmp/p25t3_build/GOV_BACKUP_pre_p25t3.json) and
-  re-verified unchanged before governance.
-- NEW `par_model_v2/projection/pathwise_proxy_basis.py`: proxy relieved amount
-  **relieved_hat = alpha * phi_sigma(CR_hat) * clip(B_hat, 0, L_hat)** - the governed relief
-  curve smoothed over an effective lognormal dispersion of the path-wise CR (Gauss-Hermite
-  21). TWO scalars (sigma 0.225, alpha 0.757) calibrated on the FIT sample ONLY
-  (leakage-free); kappa reproduced from P24T3. Both candidates pre-registered in the design
-  note were evaluated on FIT evidence; the zero-shock + level-factor candidate REJECTED
-  (lambda 6.01, fit R^2 -15.2, state-dependent bias) and DISCLOSED; retained for the
-  cadence sensitivity.
-- Truth relieved amounts: FIT (2000 nodes @ 8 inner, 3 slices) and VAL (60 @ 384) are
-  BIT-IDENTICAL re-runs of the archived Phase 22 Task 2 inner paths (exact equality of
-  total/benefit/credit vs the archived P24T3 decomposition enforced at every slice);
-  nested-eval truth = archived P25T2 stage (report digest re-verified).
-- **RESULT (5/5 gates, unchanged Phase 22 gates): OOS R^2 with actions 0.9978 (>= 0.95);
-  VaR99.5 rel err 0.40% (<= 10%); ES rel err 0.01%; SCR rel err 1.16% (proxy 46,095.8 vs
-  nested 46,638.9). Truth nested with-actions SCR reproduces the archived P25T2 report
-  exactly.** Annual-vs-monthly cadence sensitivity ratio 1.136 (deterministic basis).
-- Deliverables: `docs/validation/PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT.{json,md}` +
-  `docs/PATHWISE_PROXY_BASIS_CARD.md` + staged
-  `scripts/build_phase25_task3_pathwise_proxy_basis.py` (verify -> pwfit x3 -> pwval ->
-  det x3 -> actions -> governance; idempotent re-run verified).
-- Governance: ChangeRecord `fc9fc911fc51414abf0fc8e73cadc92c` (code_change) OWNER_REVIEW;
-  audit 73->74; changes 46->47; verify_all True.
-- Tests: 44 new PASS (`tests/test_phase25_task3_pathwise_proxy_basis.py`); regression
-  **430 PASS / 0 FAIL**; compileall clean; ui self-test ok:true.
+- Health gate first: full regression green - **2,684 tests PASS / 0 FAIL across all 94 files**
+  (file/class/node-chunked under the 44 s wall; this is the TRUE pytest total - prior cycles'
+  "386/430" tallied only a subset); ui_app self-test ok:true; governance store backed up +
+  hash-verified before governance.
+- REPAIRED `.claude-dev/MODEL_DEV_STATE.json` - corrupted by the cycle-24 mount-staleness
+  rewrite (unterminated string + duplicated tail); truncated at last clean line, P25T2 entry
+  closed, P25T3 entry reconstructed from the archived report; json-valid again.
+- NEW `par_model_v2/projection/pathwise_tail_diagnostics.py`: t/gaussian path-wise read-outs
+  via ANALYTIC RE-ANCHORING - governed P25T3 surface (sigma 0.225, alpha 0.7567) + FIT benefit
+  share (beta_fit 0.8450, leakage-free) applied ONCE to the anchored joint level through the
+  IDENTICAL envelope transform as truth/proxy; CRN vs horizon basis; NOT a full path-wise
+  copula re-aggregation (documented next-phase candidate).
+- **RESULT: 99.5% SCR (without -> horizon -> path-wise): nested 55,561.2 -> 40,852.1 ->
+  46,638.9 (+14.17%); t(2.9451) 46,756.0 -> 31,001.8 -> 39,794.3 (+28.4%); gaussian 41,472.4
+  -> 26,267.1 -> 35,210.1 (+34.0%); var-covar with: no path-wise analogue (DISCLOSED).
+  Path-wise relieves LESS everywhere - horizon basis understates with-actions SCR across the
+  matrix. Var-covar understatement refreshed: 69.1% vs nested path-wise (was 56.4%).
+  Rank invariance: df re-matched 2.9451 (|diff| 7.0e-6), rho 7.2e-16 - copula FROZEN.**
+- Tail: raw cut saturates 100% of the 99.5% tail but mean smoothed relief fraction 0.0838 <
+  max_relief 0.12 (restoration caps realised relief). Bootstrap SCR SE 4.1%; **nested
+  path-wise reference OUTSIDE the 95% CI [35,793, 42,496] - the re-anchoring understates
+  nested by 14.7% beyond margin noise: quantified motivation for the next-phase full
+  path-wise copula re-aggregation.**
+- Deliverables: `docs/validation/PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.{json,md}` +
+  `docs/PATHWISE_TAIL_DIAGNOSTICS_CARD.md` + staged
+  `scripts/build_phase25_task4_pathwise_tail_diagnostics.py` (verify -> diag -> boot ->
+  governance; idempotent re-run digest-identical; 36 archive cross-checks; P24T2 horizon
+  read-outs reproduced bit-identically).
+- Governance: ChangeRecord `a68dd3b9df114d07bfa4103d0ac1be2b` (methodology_change)
+  OWNER_REVIEW; MR-010 + MR-014 refreshed (pins -> "Phase 25 Task 4"); audit 74->75; changes
+  47->48; verify_all True.
+- Tests: 39 new PASS (`tests/test_phase25_task4_pathwise_tail_diagnostics.py`); compileall
+  clean; ui self-test ok:true.
 
-**Next executable action: Phase 25 Task 4** - joint-scenario tail diagnostics on the
-path-wise with-actions basis (P24T4 pattern: saturation profile, delta matrix, var-covar
-understatement refresh); **MR-010/MR-014 refresh REQUIRED** (trigger met +14.17% at Task 2);
-rank invariance: df re-matched on WITHOUT-actions losses must remain 2.9451, copula
-parameters FROZEN (Art. 234). Then Task 5 (UI 1.6.0 -> 1.7.0 ADDITIVE + PHASE 25 COMPLETE).
+**Next executable action: Phase 25 Task 5** - ui_data.json contract 1.6.0 -> 1.7.0 ADDITIVE:
+path-wise declaration panel (pathwise-vs-horizon delta matrix, restoration-share diagnostics
+41.4%/29.4%, smoothed-relief-fraction profile, gates + bootstrap disclosure), then PHASE 25
+COMPLETE documentation. After that: design-note-first candidate selection for the next phase -
+full path-wise copula re-aggregation (quantified motivation: 14.7% beyond-noise understatement)
+vs credentialled-data calibration (human-blocked).
 
-**Operating warnings (cycle 24):** ~44 s bash wall; PYTHONPATH=/var/tmp/pylibs:. ;
-build long files OFF-MOUNT then cp + cmp; NEW: rewriting an EXISTING large file via the file
-tool can leave the Linux mount view STALE (old byte length, new partial content) - caught by
-py_compile; prefer bash-side heredoc writes for rewrites; back up the governance store before
-any governance stage; re-check mtimes for parallel-run foreign writes before
-governance/commit; next free risk ID MR-015. Stage data: /var/tmp/p25t3_stage,
-/var/tmp/p25t2_stage, /var/tmp/p24t3_stage, /var/tmp/p23t3_stage, .phase22_task2_stage.
+**Operating warnings (cycle 25):** ~44 s bash wall; PYTHONPATH=/var/tmp/pylibs:. ; build long
+files OFF-MOUNT then cp + cmp; NEVER rewrite an existing large mounted file via the file tool
+(cycle-24 staleness corrupted MODEL_DEV_STATE.json - repaired this cycle; use bash heredoc +
+cp + cmp); back up + hash-verify the governance store before any governance stage; re-check
+mtimes for parallel-run foreign writes before governance/commit; nohup background jobs do NOT
+survive between bash calls (each call is a fresh process namespace) - chunk instead; next free
+risk ID MR-015. Stage data: /var/tmp/p25t4_stage (rho, df re-match, beta_fit, scalars),
+/var/tmp/p25t3_stage, /var/tmp/p25t2_stage, /var/tmp/p24t3_stage, /var/tmp/p23t2_stage
+(losses.npz - copula primitives), /var/tmp/p23t4_stage, .phase22_task2_stage.
 
 **Persisting blockers (human action):**
 - Git ghost locks (`.git/index.lock`, `.git/HEAD.lock`, `.git/refs/heads/main.lock`) -

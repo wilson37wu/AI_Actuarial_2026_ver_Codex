@@ -1680,6 +1680,30 @@
       "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
       "digest": "e9f2ad753b5378658718d53c6f717c0d1a961ead2b530c8db4cfdc71e22c74c0",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "7accfe5b150242fabdce49a43f273fc8",
+      "timestamp": "2026-06-08T01:31:12.922648+00:00",
+      "entry_type": "MODEL_RUN",
+      "actor": "AutomatedModelDev_Phase25",
+      "description": "Model run p25t4-pwtaildiag-20bc1f4f: PASS",
+      "details": {
+        "run_id": "p25t4-pwtaildiag-20bc1f4f",
+        "scenario_count": 200000,
+        "duration_seconds": 0.0,
+        "outcome": "PASS",
+        "files_changed": [
+          "par_model_v2/projection/pathwise_tail_diagnostics.py",
+          "scripts/build_phase25_task4_pathwise_tail_diagnostics.py",
+          "tests/test_phase25_task4_pathwise_tail_diagnostics.py",
+          "docs/PATHWISE_TAIL_DIAGNOSTICS_CARD.md",
+          "docs/validation/PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+        ],
+        "test_summary": "delta matrix complete (4 levels x 3 bases); nested pw-vs-hz +14.17%; vc understatement 69.1%/63.7%; df re-matched 2.9451 (frozen); sat995 100.0%; boot SE 4.1%; gates 4/4 PASS"
+      },
+      "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+      "digest": "042767a6bd7597f7b42415e072d578bab9200ee66afcce2563480039a8029726",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -4622,6 +4646,75 @@
         }
       ],
       "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics"
+    },
+    {
+      "record_id": "a68dd3b9df114d07bfa4103d0ac1be2b",
+      "created_at": "2026-06-08T01:31:12.922541+00:00",
+      "title": "Phase 25 Task 4 - path-wise tail diagnostics + pathwise-vs-horizon / with-vs-without capital-delta matrix + MR-010/MR-014 refresh",
+      "description": "Path-wise tail diagnostics + capital-delta matrix per the Phase 25 Task 1 design note (s5): with-vs-without and pathwise-vs-horizon deltas at VaR/ES/SCR for nested, t-copula, gaussian and var-covar; var-covar understatement refreshed on the path-wise basis; confidence sweep with action-saturation profile, prefix convergence, copula-seed stability and a margin bootstrap over the realised outer losses. Rank invariance verified: df re-matched on the WITHOUT-actions staged losses unchanged at the frozen 2.9451; copula parameters NOT re-tuned (SII Art. 234). Archived Phase 24 Task 2 horizon read-outs reproduced bit-identically before any new computation. MR-010/MR-014 refreshed (REQUIRED: 1% trigger MET at Task 2 with +14.17%).",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/pathwise_tail_diagnostics.py",
+        "scripts/build_phase25_task4_pathwise_tail_diagnostics.py",
+        "tests/test_phase25_task4_pathwise_tail_diagnostics.py",
+        "docs/PATHWISE_TAIL_DIAGNOSTICS_CARD.md",
+        "docs/validation/PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Regulation Article 23 (future management actions)",
+        "Solvency II Delegated Regulation Article 234 (aggregation)",
+        "SOA ASOP 56 section 3.1.3/3.4/3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M section 3.2/3.6",
+        "IFoA Life Aggregation & Simulation working party",
+        "McNeil-Frey-Embrechts 2015 ch.7"
+      ],
+      "before_snapshot": {
+        "var_covar_understatement_basis": "joint-action horizon basis (Phase 24 Task 4)",
+        "tail_diagnostics_on_pathwise_basis": null,
+        "mr010_mr014_pin": "Phase 24 Task 4",
+        "nested_scr_with_horizon": 40852.0541
+      },
+      "after_snapshot": {
+        "mr010_mr014_pin": "Phase 25 Task 4",
+        "nested_scr_with_pathwise": 46638.8659,
+        "t_pathwise_scr": 39794.3216670548,
+        "var_covar_understatement_vs_nested_with_pathwise": 0.6906284265230394,
+        "var_covar_understatement_vs_t_pathwise": 0.6374171307810147,
+        "df_rematched": 2.9450930033094664,
+        "tail_saturation_share_at_995": 1.0,
+        "bootstrap_scr_se_pct_of_mean": 0.04113469663301471,
+        "nested_pathwise_inside_bootstrap_ci": false,
+        "gates": {
+          "G1_delta_matrix_complete_and_crosschecked": true,
+          "G2_var_covar_understatement_refreshed_pathwise": true,
+          "G3_df_rank_invariance_copula_frozen": true,
+          "G4_reproducibility_recorded": true
+        },
+        "verdict": "PASS",
+        "reproducibility_digest": "20bc1f4f5e378b4f610b753f63a9e986e94dbad17237c4f1bda4e6a9735be3ad"
+      },
+      "impact_assessment": "Diagnostics/reporting-level change only: no governed upstream module altered; no capital basis changed. The delta matrix and tail diagnostics complete the Phase 25 evidence pack for the path-wise with-actions basis; the nested run remains the capital reference; the full path-wise copula re-aggregation is the documented next-phase candidate.",
+      "quantitative_impact": "Nested path-wise SCR 46,639 vs horizon 40,852 (+14.17%); t path-wise re-anchored SCR 39,794 vs horizon 31,002 (+28.4%); var-covar understates nested path-wise by 69.1% (horizon baseline 56.4%); df re-matched 2.9451 (frozen); bootstrap SCR SE 4.1% of mean.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase25",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-08T01:31:12.922562+00:00",
+          "actor": "AutomatedModelDev_Phase25",
+          "status": "PEER_REVIEW",
+          "comments": "Fixed pre-registered Task 4 gates (G1-G4) all PASS; 36 archive cross-checks; archived Phase 24 Task 2 horizon read-outs reproduced bit-identically; rank invariance verified; diagnostics DISCLOSED (no post-hoc thresholds)."
+        },
+        {
+          "timestamp": "2026-06-08T01:31:12.922575+00:00",
+          "actor": "AutomatedModelDev_Phase25",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+        }
+      ],
+      "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics"
     }
   ],
   "risk_register": [
@@ -4782,8 +4875,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
       "created_at": "2026-06-04T18:28:37.352914+00:00",
-      "updated_at": "2026-06-07T19:20:54.458022+00:00",
-      "notes": "Phase 24 Task 4 refresh: var-covar understatement quantified on the JOINT-action basis -- var-covar with-actions SCR 14,429 understates the nested-with reference 33,118 by 56.4% and the standing t(2.9451) joint-action read-out 31,002 by 53.5% (without-actions baseline 40.5%). Full with-vs-without / joint-vs-standalone delta matrix + tail diagnostics (saturation 100.0% in the 99.5% tail; margin-bootstrap SCR SE 5.8% of mean) in PHASE24_TASK4 report. t joint-action remains the standing with-actions copula mitigation; nested remains the reference."
+      "updated_at": "2026-06-08T01:31:12.922427+00:00",
+      "notes": "Phase 25 Task 4 refresh (path-wise basis; supersedes the Phase 24 Task 4 refresh): var-covar with-actions SCR 14,429 understates the nested PATH-WISE with-actions reference 46,639 by 69.1% (horizon-basis baseline 56.4%) and the t(2.9451) path-wise re-anchored read-out 39,794 by 63.7%. The path-wise declaration basis (P25T2) relieves LESS capital in the tail (+14.17% nested SCR vs horizon), so the var-covar understatement WIDENS on the governed basis. Full delta matrix + tail diagnostics in PHASE25_TASK4 report; nested remains the capital reference."
     },
     {
       "risk_id": "MR-011",
@@ -4846,8 +4939,8 @@
       "mitigation_status": "MITIGATED",
       "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
       "created_at": "2026-06-07T13:19:29.055501+00:00",
-      "updated_at": "2026-06-07T19:20:54.458103+00:00",
-      "notes": "Phase 24 Task 4: joint-action tail diagnostics complete -- confidence sweep with saturation profile (99.5% tail saturated 100.0%, quantifying the Phase 23 Task 4 mechanism), prefix convergence (final SCR rel delta 0.00%), copula-seed spread 1.98%, and a margin bootstrap over the n_obs realised losses (SCR SE 5.8% of mean; nested reference inside the 95% CI: True). Archived Task 2 read-outs reproduced bit-identically. Residuals unchanged: outer-node-vs-inner-path basis (Task 3 disclosure), placeholder parameters, fixed A_ref proxy."
+      "updated_at": "2026-06-08T01:31:12.922476+00:00",
+      "notes": "Phase 25 Task 4 refresh (path-wise basis; supersedes the Phase 24 Task 4 refresh): the governed with-actions basis is now the PATH-WISE declaration (P25T2-T3; restoration on recovering paths modelled). Nested path-wise SCR 46,639 vs horizon-level 40,852 (+14.17% -- the 1% disclosure trigger was MET and this refresh is the required action). Tail diagnostics on the path-wise basis: raw 99.5% tail saturation 100.0% but mean smoothed relief fraction 0.081 < max_relief (restoration caps realised relief); prefix convergence final SCR delta 0.00%; copula-seed spread 1.41%; margin bootstrap SCR SE 4.1% of mean (nested reference inside 95% CI: False). Rank invariance verified (df 2.9451 = frozen 2.9451; rho unchanged; Art. 234). Residuals: analytic re-anchoring (not a full path-wise copula re-aggregation -- next-phase candidate), constant FIT benefit share at the joint level, placeholder action parameters."
     }
   ]
 }

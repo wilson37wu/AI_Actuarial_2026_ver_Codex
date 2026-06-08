@@ -1832,3 +1832,66 @@ fit_mean), .phase22_task2_stage (heavy totals).
 — they only block fast-forwarding LOCAL main + normal git; push from the sandbox works.
 Serialise/stagger the scheduled runs; production sign-off residual (credentialled data +
 APS X2) — by design for this educational model; disk /sessions ~89%.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-08 +08 (cycle 25, supersedes everything above)
+
+**Phase 25 Task 4 COMPLETE (PASS 4/4 gates + governance verify_all True) — path-wise tail
+diagnostics + with-vs-without / pathwise-vs-horizon capital-delta matrix + REQUIRED
+MR-010/MR-014 refresh (trigger MET at Task 2: +14.17%).** NEW module
+`par_model_v2/projection/pathwise_tail_diagnostics.py`: the t/gaussian path-wise read-outs are
+an ANALYTIC RE-ANCHORING — the governed Task 3 smoothed-relief surface (sigma 0.225, alpha
+0.7567) plus the FIT-sample benefit share (beta_fit 0.8450; ONE extra leakage-free scalar)
+applied ONCE to the anchored joint level via the IDENTICAL node-level envelope transform used
+by truth and proxy, CRN against the horizon basis; NOT a full path-wise copula re-aggregation
+(documented next-phase candidate). **RESULT — 99.5% SCR (without → horizon → path-wise):
+nested 55,561.2 → 40,852.1 → 46,638.9 (+14.17%); t(2.9451) 46,756.0 → 31,001.8 → 39,794.3
+(+28.4%); gaussian 41,472.4 → 26,267.1 → 35,210.1 (+34.0%); var-covar: no path-wise analogue
+(DISCLOSED). The path-wise basis relieves LESS at every level/confidence — the horizon basis
+understates the with-actions SCR across the matrix. Var-covar understatement refreshed (MR-010):
+69.1% vs nested path-wise (was 56.4% horizon). Rank invariance (Art. 234): df re-matched on the
+WITHOUT-actions staged losses = 2.9451 (|diff| 7.0e-6 ≤ 4-dp tol); rho max|diff| 7.2e-16 —
+copula FROZEN, no silent re-tuning.** Tail: raw governed cut saturates 100% of the 99.5% tail,
+but the mean smoothed relief fraction is 0.0838 < max_relief 0.12 (restoration caps realised
+relief). Margin bootstrap (200×20k, frozen copula): SCR SE 4.1% of mean, 95% CI
+[35,793, 42,496] — **the nested path-wise reference 46,638.9 sits OUTSIDE the CI: the
+re-anchoring understates nested by 14.7% BEYOND margin noise — quantified motivation for the
+next-phase full path-wise copula re-aggregation.** P24T2 horizon read-outs reproduced
+bit-identically; 36 archive cross-checks; idempotent re-run digest-identical. Governance:
+ChangeRecord `a68dd3b9df114d07bfa4103d0ac1be2b` (methodology_change) OWNER_REVIEW; MR-010 +
+MR-014 pins → "Phase 25 Task 4"; audit 74→75; changes 47→48; verify_all True. Tests: 39 new
+PASS (`tests/test_phase25_task4_pathwise_tail_diagnostics.py`); full regression **2,684 PASS /
+0 FAIL across all 94 files** (true pytest total — prior "386/430" figures tallied only a
+subset of batches); compileall clean; ui self-test ok:true. ALSO REPAIRED:
+`.claude-dev/MODEL_DEV_STATE.json` (corrupted by the cycle-24 mount-staleness rewrite;
+truncated tail + reconstructed P25T3 entry; json-valid).
+
+**NEXT executable task: Phase 25 Task 5 — UI propagation + PHASE 25 COMPLETE.** ui_data.json
+contract 1.6.0 → 1.7.0 ADDITIVE (P21T5→P24T5 pattern: build_ui_data.py extension + ui_app.html
+panel + self-test checks): path-wise declaration panel — pathwise-vs-horizon SCR delta matrix
+(all four levels), restoration-share diagnostics (action share 41.4%, cut-then-restore 29.4%),
+smoothed-relief-fraction tail profile, Task 2-4 gates, bootstrap disclosure (nested outside CI
+→ next-phase motivation). UI consumes ONLY model-output JSON (no computation in the UI). Then
+PHASE 25 COMPLETE documentation (P24 pattern: phase summary in the log + status). After Task 5:
+design-note-first candidate selection for Phase 26 — (a) full path-wise copula re-aggregation
+(now with quantified 14.7%-beyond-noise motivation; rank invariance machinery staged in
+/var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-
+cadence refinement (annual board cadence with smoothing; cadence sensitivity 1.136 archived).
+
+**Sandbox operating rules (RE-CONFIRMED cycle 25):** ~44 s bash wall; PYTHONPATH=/var/tmp/pylibs:. ;
+build long files OFF-MOUNT (heredoc to /var/tmp) then cp + cmp; NEVER rewrite an existing large
+mounted file via the file tool (cycle-24 staleness corrupted MODEL_DEV_STATE.json — repaired
+cycle 25); nohup background jobs do NOT survive between bash calls — chunk work instead; back up
++ hash-verify GOVERNANCE_STORE.json before every governance stage (backup
+/var/tmp/p25t4_build/GOV_BACKUP_pre_p25t4.json); alt-`GIT_INDEX_FILE` commits onto `p22c9`,
+push `p22c9:main` at the end of every cycle; next free risk ID MR-015; re-check mtimes for
+parallel-run foreign writes before governance/commit. Stage data: /var/tmp/p25t4_stage (rho,
+df re-match, beta_fit, sigma/alpha, vc figures), /var/tmp/p25t3_stage, /var/tmp/p25t2_stage,
+/var/tmp/p24t3_stage, /var/tmp/p23t2_stage (losses.npz copula primitives), /var/tmp/p23t4_stage,
+.phase22_task2_stage (heavy totals).
+
+**Standing blockers (human action):** delete the three git ghost locks (GITHUB_PUSH_BLOCKER.md)
+— push from the sandbox works; serialise/stagger the scheduled runs; production sign-off
+residual (credentialled data + APS X2) — by design for this educational model; disk /sessions
+~89%.

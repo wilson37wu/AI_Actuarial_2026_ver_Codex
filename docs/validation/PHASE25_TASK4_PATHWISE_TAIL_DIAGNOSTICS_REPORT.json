@@ -1,0 +1,511 @@
+{
+  "run_timestamp": "2026-06-08T01:28:53.180936+00:00",
+  "phase": "Phase 25: Path-Wise Bonus Declaration Dynamics",
+  "task": "Phase 25 Task 4 - path-wise tail diagnostics + pathwise-vs-horizon / with-vs-without capital-delta matrix + MR-010/MR-014 refresh",
+  "verdict": "PASS",
+  "gates": {
+    "G1_delta_matrix_complete_and_crosschecked": true,
+    "G2_var_covar_understatement_refreshed_pathwise": true,
+    "G3_df_rank_invariance_copula_frozen": true,
+    "G4_reproducibility_recorded": true
+  },
+  "gate_note": "Gates formalise the pre-registered Task 4 bullets (design note s5): completeness/cross-check, refresh, rank invariance, reproducibility. The tail diagnostics are DISCLOSED evidence -- no post-hoc numeric acceptance thresholds (no gate-shopping).",
+  "rule": {
+    "cr_trigger": 1.1,
+    "cr_floor": 0.9,
+    "bonus_share": 0.3,
+    "pre_floor": 0.6,
+    "reference_coverage": 1.12,
+    "max_relief": 0.12
+  },
+  "reference_assets": 129916.49144595393,
+  "fit_mean_liability": 115996.86736245886,
+  "df_matched": 2.9451,
+  "df_rematched": 2.9450930033094664,
+  "rho_max_abs_diff_vs_archived": 7.216449660063518e-16,
+  "seed": 20260607,
+  "n_sim": 200000,
+  "n_obs": 160,
+  "drivers": [
+    "rate",
+    "equity",
+    "credit",
+    "lapse",
+    "mortality",
+    "fx",
+    "liquidity"
+  ],
+  "crosscheck_count": 36,
+  "pathwise_basis_params": {
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548,
+    "provenance": "sigma/alpha: governed Phase 25 Task 3 FIT-only calibration (archive cross-checked); benefit_share_fit: FIT-sample mean benefit share from the P25T3 staged arrays (leakage-free; ONE additional scalar)"
+  },
+  "readout_convention": "t/gaussian path-wise read-outs are an ANALYTIC RE-ANCHORING: V = L_fit + sum_k (Q_k(U_k) - mean_k); relieved = alpha * phi_sigma(CR(V)) * clip(beta_fit * V, 0, V); W = V - clip(relieved, 0, max_relief * clip(beta_fit * V, 0, V)) -- the IDENTICAL node-level envelope transform of the truth and the proxy, applied ONCE to the joint level under the FROZEN t(2.9451)/Gaussian dependence basis. NOT a full path-wise copula re-aggregation (documented next-phase candidate). Nested rows are on the n_eval=500 proxy-validation outer sample; t/gaussian/var-covar rows on the n_obs=160 aggregation dependence basis (DISCLOSED).",
+  "reproduction_of_p24t2_horizon_basis": {
+    "t_scr_abs_diff": 0.0,
+    "g_scr_abs_diff": 0.0,
+    "t_digest_match": true,
+    "g_digest_match": true
+  },
+  "crn_consistency": {
+    "t_horizon_scr_crn_abs_diff": 0.0,
+    "g_horizon_scr_crn_abs_diff": 0.0
+  },
+  "t_pathwise_readout": {
+    "config": {
+      "n_sim": 200000,
+      "seed": 20260607,
+      "df": 2.9451,
+      "copula": "t(2.9451)",
+      "confidence": 0.995,
+      "sigma": 0.225,
+      "alpha": 0.7566891068509882,
+      "benefit_share_fit": 0.8449827924965548
+    },
+    "var_pathwise": 152354.34627818983,
+    "es_pathwise": 157170.80867159332,
+    "scr_pathwise": 39794.3216670548,
+    "mean_pathwise": 112560.02461113503,
+    "var_horizon": 143682.04744466447,
+    "es_horizon": 148496.34347728066,
+    "scr_horizon": 31001.77628158343,
+    "var_without": 163275.05391439144,
+    "es_without": 168745.84486054623,
+    "scr_without": 47269.12222883626,
+    "clip_binding_share": 0.0,
+    "active_share_pathwise": 1.0,
+    "pathwise_minus_horizon_scr": 8792.54538547137,
+    "digest": "cb7852e78963"
+  },
+  "g_pathwise_readout": {
+    "config": {
+      "n_sim": 200000,
+      "seed": 20260607,
+      "df": null,
+      "copula": "gaussian",
+      "confidence": 0.995,
+      "sigma": 0.225,
+      "alpha": 0.7566891068509882,
+      "benefit_share_fit": 0.8449827924965548
+    },
+    "var_pathwise": 147756.4941283347,
+    "es_pathwise": 151202.3436620259,
+    "scr_pathwise": 35210.084673414254,
+    "mean_pathwise": 112546.40945492046,
+    "var_horizon": 138715.4062712376,
+    "es_horizon": 142380.81349575197,
+    "scr_horizon": 26267.06157714709,
+    "var_without": 157631.1434900427,
+    "es_without": 161796.37897244544,
+    "scr_without": 41629.106321465515,
+    "clip_binding_share": 0.0,
+    "active_share_pathwise": 1.0,
+    "pathwise_minus_horizon_scr": 8943.023096267163,
+    "digest": "ea5e72f3da64"
+  },
+  "delta_matrix": {
+    "nested": {
+      "without": {
+        "var": 171555.268,
+        "es": 176570.2272,
+        "scr": 55561.1889
+      },
+      "with_horizon": {
+        "var": 153125.5312,
+        "es": 157827.7702,
+        "scr": 40852.0541
+      },
+      "with_pathwise": {
+        "var": 158944.0748,
+        "es": 163343.6077,
+        "scr": 46638.8659
+      },
+      "with_horizon_minus_without": {
+        "var_delta": -18429.736800000013,
+        "var_delta_pct": -0.10742740234593094,
+        "es_delta": -18742.456999999995,
+        "es_delta_pct": -0.10614732334670743,
+        "scr_delta": -14709.1348,
+        "scr_delta_pct": -0.2647375819562421
+      },
+      "with_pathwise_minus_without": {
+        "var_delta": -12611.193200000009,
+        "var_delta_pct": -0.07351096440827459,
+        "es_delta": -13226.6195,
+        "es_delta_pct": -0.07490854890852178,
+        "scr_delta": -8922.323000000004,
+        "scr_delta_pct": -0.16058553059508063
+      },
+      "pathwise_minus_horizon": {
+        "var_delta": 5818.5436000000045,
+        "var_delta_pct": 0.03799852026243945,
+        "es_delta": 5515.837499999994,
+        "es_delta_pct": 0.0349484599130451,
+        "scr_delta": 5786.811799999996,
+        "scr_delta_pct": 0.14165289671443954
+      }
+    },
+    "t_copula": {
+      "without": {
+        "var": 164026.9467,
+        "es": 169381.4157,
+        "scr": 46755.963
+      },
+      "with_horizon": {
+        "var": 143682.04744466447,
+        "es": 148496.34347728066,
+        "scr": 31001.77628158343
+      },
+      "with_pathwise": {
+        "var": 152354.34627818983,
+        "es": 157170.80867159332,
+        "scr": 39794.3216670548
+      },
+      "with_horizon_minus_without": {
+        "var_delta": -20344.899255335535,
+        "var_delta_pct": -0.12403388385047305,
+        "es_delta": -20885.072222719347,
+        "es_delta_pct": -0.12330202895286904,
+        "scr_delta": -15754.186718416575,
+        "scr_delta_pct": -0.3369449735944178
+      },
+      "with_pathwise_minus_without": {
+        "var_delta": -11672.600421810173,
+        "var_delta_pct": -0.07116270013340542,
+        "es_delta": -12210.607028406695,
+        "es_delta_pct": -0.07208941416591723,
+        "scr_delta": -6961.641332945204,
+        "scr_delta_pct": -0.14889312263646892
+      },
+      "pathwise_minus_horizon": {
+        "var_delta": 8672.298833525361,
+        "var_delta_pct": 0.060357567196175146,
+        "es_delta": 8674.465194312652,
+        "es_delta_pct": 0.05841534539629799,
+        "scr_delta": 8792.54538547137,
+        "scr_delta_pct": 0.2836142453777583
+      }
+    },
+    "gaussian": {
+      "without": {
+        "var": 158734.1029,
+        "es": 162894.5595,
+        "scr": 41472.429
+      },
+      "with_horizon": {
+        "var": 138715.4062712376,
+        "es": 142380.81349575197,
+        "scr": 26267.06157714709
+      },
+      "with_pathwise": {
+        "var": 147756.4941283347,
+        "es": 151202.3436620259,
+        "scr": 35210.084673414254
+      },
+      "with_horizon_minus_without": {
+        "var_delta": -20018.69662876241,
+        "var_delta_pct": -0.12611465503020403,
+        "es_delta": -20513.746004248038,
+        "es_delta_pct": -0.12593266507619635,
+        "scr_delta": -15205.367422852905,
+        "scr_delta_pct": -0.36663797586712144
+      },
+      "with_pathwise_minus_without": {
+        "var_delta": -10977.608771665284,
+        "var_delta_pct": -0.0691572168242952,
+        "es_delta": -11692.215837974101,
+        "es_delta_pct": -0.07177781672919592,
+        "scr_delta": -6262.344326585742,
+        "scr_delta_pct": -0.1510001819904434
+      },
+      "pathwise_minus_horizon": {
+        "var_delta": 9041.087857097125,
+        "var_delta_pct": 0.06517724382696617,
+        "es_delta": 8821.530166273937,
+        "es_delta_pct": 0.061957295717636376,
+        "scr_delta": 8943.023096267163,
+        "scr_delta_pct": 0.3404653036656291
+      }
+    },
+    "var_covar": {
+      "without": {
+        "var": null,
+        "es": null,
+        "scr": 28990.889357788157
+      },
+      "with_horizon": {
+        "var": null,
+        "es": null,
+        "scr": 14428.739328663964
+      },
+      "with_pathwise": {
+        "var": null,
+        "es": null,
+        "scr": null
+      },
+      "with_horizon_minus_without": {
+        "scr_delta": -14562.150029124194,
+        "scr_delta_pct": -0.5023009073439203
+      },
+      "with_pathwise_minus_without": {}
+    }
+  },
+  "var_covar_refresh": {
+    "var_covar_scr_with": 14428.739328663964,
+    "understatement_vs_nested_with_pathwise": 0.6906284265230394,
+    "understatement_vs_t_pathwise_readout": 0.6374171307810147,
+    "understatement_vs_nested_with_horizon_basis_p24t4": 0.5643203280561115,
+    "basis_note": "vc_with is the P23T4 standalone-action formula figure (no path-wise analogue exists); nested path-wise reference is the n_eval=500 proxy-validation nested run; t path-wise read-out is on the n_obs=160 dependence basis (DISCLOSED)."
+  },
+  "mr_refresh_trigger": {
+    "threshold": 0.01,
+    "nested_scr_delta_rel_to_horizon": 0.14165289671443954,
+    "met": true
+  },
+  "tail_diagnostics": {
+    "confidence_sweep": [
+      {
+        "confidence": 0.9,
+        "var_pathwise": 129905.7676783103,
+        "es_pathwise": 137564.09061289945,
+        "scr_pathwise": 17345.743067175266,
+        "var_horizon": 124305.26384134508,
+        "scr_horizon": 11624.99267826404,
+        "var_without": 136339.32051109624,
+        "scr_without": 20333.38882554107,
+        "tail_active_share": 1.0,
+        "tail_saturation_share": 0.44025,
+        "tail_mean_smoothed_relief_fraction": 0.06533671453708577,
+        "relief_at_var_pathwise": 6433.55283278595,
+        "relief_at_var_horizon": 12034.056669751168,
+        "pathwise_minus_horizon_scr": 5720.750388911227
+      },
+      {
+        "confidence": 0.95,
+        "var_pathwise": 135405.1846068737,
+        "es_pathwise": 142844.55713074285,
+        "scr_pathwise": 22845.159995738664,
+        "var_horizon": 126640.8491813261,
+        "scr_horizon": 13960.578018245069,
+        "var_without": 143208.6891580993,
+        "scr_without": 27202.757472544123,
+        "tail_active_share": 1.0,
+        "tail_saturation_share": 0.8805,
+        "tail_mean_smoothed_relief_fraction": 0.07031347567090589,
+        "relief_at_var_pathwise": 7803.504551225604,
+        "relief_at_var_horizon": 16567.83997677319,
+        "pathwise_minus_horizon_scr": 8884.581977493595
+      },
+      {
+        "confidence": 0.99,
+        "var_pathwise": 147964.93471722896,
+        "es_pathwise": 153575.20375754952,
+        "scr_pathwise": 35404.91010609393,
+        "var_horizon": 138940.56566681495,
+        "scr_horizon": 26260.29450373391,
+        "var_without": 157887.00643956245,
+        "scr_without": 41881.07475400728,
+        "tail_active_share": 1.0,
+        "tail_saturation_share": 1.0,
+        "tail_mean_smoothed_relief_fraction": 0.07887120649202937,
+        "relief_at_var_pathwise": 9922.071722333494,
+        "relief_at_var_horizon": 18946.440772747505,
+        "pathwise_minus_horizon_scr": 9144.61560236002
+      },
+      {
+        "confidence": 0.995,
+        "var_pathwise": 152354.34627818983,
+        "es_pathwise": 157170.80867159332,
+        "scr_pathwise": 39794.3216670548,
+        "var_horizon": 143682.04744466447,
+        "scr_horizon": 31001.77628158343,
+        "var_without": 163275.05391439144,
+        "scr_without": 47269.12222883626,
+        "tail_active_share": 1.0,
+        "tail_saturation_share": 1.0,
+        "tail_mean_smoothed_relief_fraction": 0.08114847162497607,
+        "relief_at_var_pathwise": 10920.707636201609,
+        "relief_at_var_horizon": 19593.00646972697,
+        "pathwise_minus_horizon_scr": 8792.54538547137
+      },
+      {
+        "confidence": 0.999,
+        "var_pathwise": 160170.29158921618,
+        "es_pathwise": 162986.52235147328,
+        "scr_pathwise": 47610.266978081156,
+        "var_horizon": 151467.75108475913,
+        "scr_horizon": 38787.479921678096,
+        "var_without": 172122.444414499,
+        "scr_without": 56116.51272894384,
+        "tail_active_share": 1.0,
+        "tail_saturation_share": 1.0,
+        "tail_mean_smoothed_relief_fraction": 0.0830585956164448,
+        "relief_at_var_pathwise": 11952.152825282828,
+        "relief_at_var_horizon": 20654.69332973988,
+        "pathwise_minus_horizon_scr": 8822.78705640306
+      }
+    ],
+    "prefix_convergence": [
+      {
+        "n_sim": 25000,
+        "var_pathwise": 152630.00514520644,
+        "scr_pathwise": 40082.4563328745,
+        "var_rel_delta_vs_full": 0.0018093272279431586,
+        "scr_rel_delta_vs_full": 0.0072405974960553935
+      },
+      {
+        "n_sim": 50000,
+        "var_pathwise": 152684.0784736496,
+        "scr_pathwise": 40126.04924076072,
+        "var_rel_delta_vs_full": 0.0021642454154717767,
+        "scr_rel_delta_vs_full": 0.008336052979653058
+      },
+      {
+        "n_sim": 100000,
+        "var_pathwise": 152291.13188753137,
+        "scr_pathwise": 39747.06038851835,
+        "var_rel_delta_vs_full": 0.00041491688424186916,
+        "scr_rel_delta_vs_full": 0.0011876387523794432
+      },
+      {
+        "n_sim": 200000,
+        "var_pathwise": 152354.34627818983,
+        "scr_pathwise": 39794.3216670548,
+        "var_rel_delta_vs_full": 0.0,
+        "scr_rel_delta_vs_full": 0.0
+      }
+    ],
+    "seed_stability": {
+      "rows": [
+        {
+          "seed": 20260607,
+          "scr_pathwise": 39794.3216670548,
+          "var_pathwise": 152354.34627818983
+        },
+        {
+          "seed": 11,
+          "scr_pathwise": 39813.66366822949,
+          "var_pathwise": 152402.82293946578
+        },
+        {
+          "seed": 1234,
+          "scr_pathwise": 39416.368022819035,
+          "var_pathwise": 152023.0347057332
+        },
+        {
+          "seed": 777,
+          "scr_pathwise": 39704.81679428984,
+          "var_pathwise": 152281.93755645497
+        },
+        {
+          "seed": 424242,
+          "scr_pathwise": 39977.84519349765,
+          "var_pathwise": 152548.41572853437
+        }
+      ],
+      "scr_mean": 39741.403069178166,
+      "scr_max_rel_spread": 0.014128267431858021
+    },
+    "bootstrap": {
+      "n_replicates": 200,
+      "n_sim_per_replicate": 20000,
+      "n_obs": 160,
+      "seed": 20260608,
+      "resampling": "joint row resample (preserves realised cross-driver pairing); copula df/rho frozen (SII Art. 234)",
+      "var_pathwise": {
+        "mean": 151868.54131861014,
+        "se": 1896.3236045049073,
+        "ci_lo_95": 147700.18477362537,
+        "ci_hi_95": 155087.32932229564
+      },
+      "es_pathwise": {
+        "mean": 156280.69936409092,
+        "se": 1866.0338097578099,
+        "ci_lo_95": 151701.4230513519,
+        "ci_hi_95": 159216.6532882573
+      },
+      "scr_pathwise": {
+        "mean": 39251.8358570035,
+        "se": 1614.6123602667278,
+        "ci_lo_95": 35793.20732227234,
+        "ci_hi_95": 42496.39977793105
+      }
+    }
+  },
+  "diagnostic_config": {
+    "confidence_sweep": [
+      0.9,
+      0.95,
+      0.99,
+      0.995,
+      0.999
+    ],
+    "convergence_prefixes": [
+      25000,
+      50000,
+      100000,
+      200000
+    ],
+    "seed_stability_seeds": [
+      20260607,
+      11,
+      1234,
+      777,
+      424242
+    ],
+    "bootstrap_replicates": 200,
+    "bootstrap_n_sim": 20000
+  },
+  "diagnostic_findings": {
+    "sweep_var_monotone_in_confidence": true,
+    "pathwise_relieves_less_at_every_confidence": true,
+    "tail_saturation_share_at_995": 1.0,
+    "tail_mean_smoothed_relief_fraction_at_995": 0.08114847162497607,
+    "t_pathwise_minus_horizon_scr": 8792.54538547137,
+    "t_pathwise_minus_horizon_scr_rel": 0.2836142453777583,
+    "t_pathwise_vs_nested_pathwise_rel_err": 0.1467562321867093,
+    "scr_seed_max_rel_spread": 0.014128267431858021,
+    "scr_prefix_final_rel_delta": 0.0,
+    "nested_pathwise_inside_bootstrap_ci": false,
+    "bootstrap_scr_se_pct_of_mean": 0.04113469663301471
+  },
+  "affected_components": [
+    "par_model_v2/projection/pathwise_tail_diagnostics.py",
+    "scripts/build_phase25_task4_pathwise_tail_diagnostics.py",
+    "tests/test_phase25_task4_pathwise_tail_diagnostics.py",
+    "docs/PATHWISE_TAIL_DIAGNOSTICS_CARD.md",
+    "docs/validation/PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+  ],
+  "standard_references": [
+    "Solvency II Delegated Regulation Article 23 (future management actions)",
+    "Solvency II Delegated Regulation Article 234 (aggregation)",
+    "SOA ASOP 56 section 3.1.3/3.4/3.5",
+    "SOA ASOP 25 section 3.3",
+    "IA TAS M section 3.2/3.6",
+    "IFoA Life Aggregation & Simulation working party",
+    "McNeil-Frey-Embrechts 2015 ch.7"
+  ],
+  "use_restrictions": {
+    "classification": "EDUCATIONAL_DEMONSTRATION_ONLY",
+    "approved_uses": [
+      "Methodology demonstration of tail diagnostics and capital-delta reporting when a management-action basis changes (horizon-level -> path-wise) under a frozen dependence structure (Solvency II Art. 23 / Art. 234)",
+      "Quantification of the path-wise vs horizon-level recognition-lag effect at the aggregate level"
+    ],
+    "prohibited_uses": [
+      "Production capital or solvency decisions",
+      "Policyholder bonus declarations",
+      "Regulatory submissions"
+    ],
+    "rationale": "The t/gaussian path-wise read-outs are an analytic re-anchoring of the joint copula level with the governed smoothed-relief surface and a constant FIT-sample benefit share -- NOT a full path-wise copula re-aggregation (the documented next-phase candidate). Action parameters remain educational placeholders pending credentialled management-practice data and independent APS X2 review; n_obs-level margin sampling noise is disclosed via the bootstrap."
+  },
+  "reproducibility_digest": "20bc1f4f5e378b4f610b753f63a9e986e94dbad17237c4f1bda4e6a9735be3ad",
+  "markdown_path": "docs/validation/PHASE25_TASK4_PATHWISE_TAIL_DIAGNOSTICS_REPORT.md",
+  "change_record_id": "a68dd3b9df114d07bfa4103d0ac1be2b",
+  "change_record_status": "OWNER_REVIEW",
+  "mr010_refreshed": true,
+  "mr014_refreshed": true,
+  "audit_integrity_ok": true,
+  "change_records_total": 48
+}
