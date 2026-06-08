@@ -1728,6 +1728,28 @@
       "phase": "Phase 25: Path-wise Management-Action Declaration + Matching Proxy Basis",
       "digest": "15c65c60a4b32b428ea9773f635fe955c5665c3a5b4138b52f8a02da01c6124d",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "0987cc03b2794c6eb336ce2f9a456032",
+      "timestamp": "2026-06-08T03:17:03.942088+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase26Task1DesignNote",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 26 Task 1 design note (full path-wise copula re-aggregation)",
+      "details": {
+        "record_id": "40fb20ee3b9a41a7a2b6a47a587ada91",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/projection/pathwise_copula_reaggregation.py (NEW, tested helper module)",
+          "tests/test_phase26_task1_design_note.py",
+          "scripts/build_phase26_task1_design_note.py",
+          "docs/validation/PHASE26_TASK1_DESIGN_NOTE.{json,md}",
+          "docs/PATHWISE_COPULA_REAGGREGATION_DESIGN_CARD.md"
+        ]
+      },
+      "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+      "digest": "21ce1477c1791209cb90d9f98f38a3e9bd89399c0ba37ee6db9c96927d516052",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -4806,6 +4828,63 @@
         }
       ],
       "phase": "Phase 25: Path-wise Management-Action Declaration + Matching Proxy Basis"
+    },
+    {
+      "record_id": "40fb20ee3b9a41a7a2b6a47a587ada91",
+      "created_at": "2026-06-08T03:17:03.941814+00:00",
+      "title": "Phase 26 Task 1 - design note: full path-wise copula re-aggregation (per-driver composition relief on the frozen joint copula)",
+      "description": "Design note for Phase 26: full path-wise copula re-aggregation - the governed relief applied to the per-driver COMPOSITION of each joint copula scenario on the FROZEN copula (new tested helper module par_model_v2/projection/pathwise_copula_reaggregation.py: synthetic t-copula level-vs-component pre-study, pre-registered gate constants, use restrictions), addressing the residual QUANTIFIED in the Phase 25 Task 4 report (nested path-wise reference outside the re-anchoring bootstrap 95% CI; 14.7% understatement beyond margin noise). Candidate selection rationale recorded (credentialled calibration blocked on data; declaration-cadence refinement deferred to avoid superseded evidence). FIXED pre-registered acceptance gates for Tasks 2-4.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/projection/pathwise_copula_reaggregation.py (NEW, tested helper module)",
+        "tests/test_phase26_task1_design_note.py",
+        "scripts/build_phase26_task1_design_note.py",
+        "docs/validation/PHASE26_TASK1_DESIGN_NOTE.{json,md}",
+        "docs/PATHWISE_COPULA_REAGGREGATION_DESIGN_CARD.md"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour; dependence justified on the basis actually used for capital)",
+        "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable)",
+        "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+        "SOA ASOP 25 \u00a73.3",
+        "IA TAS M \u00a73.2/\u00a73.6",
+        "IFoA Life Aggregation & Simulation working party",
+        "CFO Forum MCEV Principle 7 (TVOG; dynamic management actions)"
+      ],
+      "before_snapshot": {
+        "benchmark_basis": "t/gaussian path-wise read-outs via analytic re-anchoring (P25T4): constant benefit share applied to the joint TOTAL level; nested reference outside the bootstrap 95% CI (quantified residual)"
+      },
+      "after_snapshot": {
+        "design": "per-driver composition transform on the frozen copula (Task 2); bootstrap closure test vs nested (Task 3); tail diagnostics + MR refresh (Task 4); UI 1.7.0 -> 1.8.0 (Task 5)",
+        "pre_study": {
+          "level_understatement_rel_at_var995": 0.008482859038162482,
+          "tail_cuttable_share_depression": 0.0943976274381802,
+          "understatement_sign_ok": true,
+          "bounds_ok": true
+        },
+        "verdict": "PASS (design note)"
+      },
+      "impact_assessment": "No numeric output path changed this cycle (design note + additive helper module only). Fixes non-gate-shopped acceptance criteria for Tasks 2-4 BEFORE any real-data full re-aggregation; pre-registers the SIGN of the expected capital effect (full re-aggregated t SCR >= re-anchored read-out) and the HEADLINE closure criterion (nested reference inside the full re-aggregation 95% CI). Educational classification retained; production sign-off withheld pending credentialled data + APS X2 review.",
+      "quantitative_impact": "Synthetic pre-study: constant-share level basis understates the component-basis VaR99.5 by 0.8%; tail cuttable share depressed by 0.094. No capital figures changed. Archived motivation: 14.7% beyond-noise understatement (P25T4).",
+      "status": "OWNER_REVIEW",
+      "author": "Phase26Task1DesignNote",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-08T03:17:03.942013+00:00",
+          "actor": "Phase26Task1DesignNote",
+          "status": "PEER_REVIEW",
+          "comments": "Design note + new unit tests PASS; no existing module touched."
+        },
+        {
+          "timestamp": "2026-06-08T03:17:03.942039+00:00",
+          "actor": "Phase26Task1DesignNote",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: synthetic-mechanism scope + margin-level composition residual documented; sign-off withheld."
+        }
+      ],
+      "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation"
     }
   ],
   "risk_register": [

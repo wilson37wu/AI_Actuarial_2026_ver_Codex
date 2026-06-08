@@ -8714,3 +8714,58 @@ bootstrap + rank invariance displayed).
 blocked); serialise/stagger scheduled runs (a Windows-shell run with no Python recorded a
 blocked cycle between 25 and 26); production sign-off residual (credentialled data + APS X2);
 disk /sessions ~89%.
+ four UI-propagation suites 87 PASS / 0 FAIL post-change.
+
+**PHASE 25 COMPLETE (Tasks 1-5)** — path-wise bonus-declaration dynamics:
+1. Task 1 design note (candidate selection, pre-registered gates).
+2. Task 2 path-wise declaration in the nested truth: with-actions SCR 46,638.9 (path-wise)
+   vs 40,852.1 (horizon) = **+14.17%** — the path-wise basis relieves LESS (recognition-lag,
+   two-sided) and is the more conservative, more faithful read-out; without-actions
+   bit-identical; 6/6 gates.
+3. Task 3 matching path-wise proxy basis [TRUNCATED MID-WRITE cycle 26 — REPAIRED cycle 27: the full Task 3 record is in the cycle-24 entry above and in docs/validation/PHASE25_TASK3_PATHWISE_PROXY_BASIS_REPORT.md; Task 4 tail diagnostics in PHASE25_TASK4_*, Task 5 UI propagation in PHASE25_TASK5_*.]
+
+---
+
+## 2026-06-08 (+08) — Cycle 27 — Phase 26 Task 1: Design note — full path-wise copula re-aggregation (PASS)
+
+**Health gate (targeted, DISCLOSED):** cycle 26 closed green (40/40 contract checks; cycle 25
+full regression 2,684/0 ~10h earlier); this cycle adds ONLY new additive files (no existing
+module touched). Gate: compileall clean; P24T1/P25T1/P25T3/P25T4 + new P26T1 suites
+163 PASS / 0 FAIL; foreign-write mtime check clean; governance store backed up +
+hash-verified (/var/tmp/p26t1_build/GOV_BACKUP_pre_p26t1.json).
+
+**Candidate selection (design-note-first):** CHOSEN (a) full path-wise copula re-aggregation —
+quantified motivation: P25T4 re-anchoring understates the nested path-wise reference 46,638.9
+by 14.7% BEYOND bootstrap noise (outside 95% CI [35,793, 42,496]). NOT chosen:
+(b) credentialled-data calibration (human-blocked); (c) declaration-cadence refinement
+(DEFERRED — cadence evidence on the soon-to-change aggregation basis would be superseded
+within one phase; sensitivity 1.136 archived).
+
+**Deliverables:**
+- NEW `par_model_v2/projection/pathwise_copula_reaggregation.py` (tested helper): synthetic
+  7-driver t-copula level-vs-component pre-study + pre-registered gate constants + use
+  restrictions. Mechanism demonstrated: with carve-out (non-cuttable) drivers dominating the
+  tail, the constant-share LEVEL transform (P25T4 convention) understates the per-scenario
+  COMPONENT-basis VaR99.5 by ~1.0% on common random numbers (sign stable across seeds 42/7/2026);
+  tail cuttable share depressed 0.566 -> 0.470; mean relief ~unchanged (re-ranking, not mean
+  shift). Sign evidence only — magnitude quantified at Tasks 2-3 on the real basis.
+- `scripts/build_phase26_task1_design_note.py` -> docs/validation/PHASE26_TASK1_DESIGN_NOTE.{json,md}
+  + docs/PATHWISE_COPULA_REAGGREGATION_DESIGN_CARD.md. Verdict PASS.
+- Pre-registered gates (s5, no gate-shopping): Task 2 — copula FROZEN (df 2.9451 tol 1e-4;
+  rho max|diff| <= 1e-12), archive cross-check bit-identical BEFORE new computation, sign gate
+  full re-agg t SCR >= re-anchored 39,794.3, governed sigma/alpha UNCHANGED, level variant
+  retained; Task 3 — frozen-copula bootstrap >= 200x20k, HEADLINE: nested 46,638.9 INSIDE the
+  full re-agg 95% CI else gap decomposed (copula-form vs relief-surface) + disclosed, SE <= 5%;
+  Task 4 — full-vs-reanchored delta matrix, MR-010/MR-014 refresh trigger 1%, rank invariance
+  re-verified; Task 5 — UI contract 1.7.0 -> 1.8.0 ADDITIVE + PHASE 26 COMPLETE.
+- Governance: ChangeRecord `40fb20ee3b9a41a7a2b6a47a587ada91` (governance_change) OWNER_REVIEW;
+  audit 76->77; changes 49->50; verify_all True; idempotent re-run verified (added: false).
+- Tests: 13 new PASS (`tests/test_phase26_task1_design_note.py`).
+
+**Operational note (DISCLOSED):** MODEL_DEV_LOG.md tail was corrupted by the cycle-26
+truncation incident (file ended mid-sentence; a direct mount append this cycle vanished
+silently while the byte count grew — mount staleness). Repaired by rebuilding the tail
+OFF-MOUNT and copying the whole file back (cp + cmp verified). PHASE 25 COMPLETE summary
+truncation marked inline; full records in docs/validation/PHASE25_TASK*_REPORT.md.
+
+**Next:** Phase 26 Task 2 — per-driver composition transform on the frozen copula.

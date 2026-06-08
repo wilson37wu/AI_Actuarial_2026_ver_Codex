@@ -4,7 +4,7 @@
  "last_run": "2026-06-08T (cycle 26, Linux sandbox)",
  "last_run_duration_minutes": null,
  "last_run_note": "Phase 25 Task 5 complete (PASS): offline-UI propagation of the path-wise action view, ui_data.json contract 1.6.0 -> 1.7.0 ADDITIVE. PHASE 25 COMPLETE (Tasks 1-5). Next: design-note-first candidate selection for Phase 26 (full path-wise copula re-aggregation is the quantified front-runner: 14.7% beyond-noise understatement).",
- "current_phase": "Phase 25: Path-Wise Bonus Declaration Dynamics - COMPLETE (Tasks 1-5)",
+ "current_phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
  "overall_status": "PHASE25_COMPLETE_NEXT_PHASE26_DESIGN_NOTE",
  "phases": {
   "Phase 1: Model Review & Documentation": {
@@ -467,6 +467,16 @@
     "Tail diagnostics on the path-wise basis + MR-010/MR-014 refresh (REQUIRED: +14.17% SCR delta); rank invariance df 2.9451 frozen"
    ],
    "next": "Offline-UI propagation (contract 1.6.0 -> 1.7.0 ADDITIVE) + PHASE 25 COMPLETE documentation"
+  },
+  "Phase 26: Full Path-Wise Copula Re-Aggregation": {
+   "description": "Replace the P25T4 analytic re-anchoring (constant-share level transform) with a per-driver composition relief transform on the FROZEN copula; close the quantified 14.7% beyond-noise understatement vs the nested path-wise reference 46,638.9.",
+   "completed": [
+    "Task 1: Design note - full path-wise copula re-aggregation (PASS; pre-registered gates s5; ChangeRecord 40fb20ee3b9a41a7a2b6a47a587ada91 OWNER_REVIEW; 13 new tests)"
+   ],
+   "in_progress": [
+    "Task 2: Per-driver composition transform on the frozen copula (archive cross-check -> sign gate vs 39,794.3; df 2.9451 frozen)"
+   ],
+   "next": "Task 3: Frozen-copula margin bootstrap on the full re-aggregated basis (HEADLINE: nested 46,638.9 inside 95% CI, else decomposed+disclosed)"
   }
  },
  "repository_info": {
@@ -785,5 +795,6 @@
   "change_record_id": "3fa4394e568b48fc9ee06dd8a64dd44b",
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
   "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
- }
+ },
+ "last_updated": "2026-06-08T03:40:00+00:00 (cycle 27, Linux sandbox)"
 }
