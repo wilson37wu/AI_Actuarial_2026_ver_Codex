@@ -1817,6 +1817,29 @@
       "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
       "digest": "76f1e06f2e4bf973aa8357cc75cface5f1ef7512ab3bc8597efc794a7096357c",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "a73fc1c34be346168acbe6c8ae2496d3",
+      "timestamp": "2026-06-08T07:24:36.488195+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase26",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 26 Task 5 offline-UI propagation; PHASE 26 COMPLETE",
+      "details": {
+        "record_id": "474879491df64f55a182be64b1f2cf2f",
+        "ui_contract": "1.8.0",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+      "digest": "7679a9d141ba2b1c0b0afe539f81b5ac3a3f4b9fb7e1c6b3e17c76113f02e89e",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -5131,6 +5154,79 @@
           "actor": "AutomatedModelDev_Phase26",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: methodology synthesis (delta matrix + MR re-check); copula/scalars frozen; sign-off withheld pending Task 5 UI propagation + Phase 26 completion docs."
+        }
+      ],
+      "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation"
+    },
+    {
+      "record_id": "474879491df64f55a182be64b1f2cf2f",
+      "created_at": "2026-06-08T07:24:36.488109+00:00",
+      "title": "Phase 26 Task 5 - offline-UI propagation of the full path-wise copula re-aggregation view",
+      "description": "Phase 26 Task 5 propagated the full path-wise copula re-aggregation results to the zero-install offline UI. scripts/build_ui_data.py (contract bumped ADDITIVELY to v1.8.0) now surfaces a first-class Full Re-Agg (P26) panel: (1) the Task 2 per-driver composition transform on the FROZEN t(2.9451) copula - component-basis t SCR 39,975.7 vs re-anchored (LEVEL) 39,794.3 = +0.46%, relief on the cuttable component only with the per-scenario envelope clip, governed sigma/alpha/benefit-share UNCHANGED, 6/6 gates; (2) the Task 3 frozen-copula margin bootstrap (200x20k) on the FULL component basis - t SCR mean 39,595.1, 95% CI [36,676.2, 42,943.1], SE 4.07% <= 5%, with the nested path-wise reference 46,638.9 OUTSIDE the CI; the residual 14.29% gap decomposes 91.9% COPULA-FORM (6,120.2 - the nested joint tail is heavier than the frozen t copula on standalone margins, exceeding the entire gaussian->t sensitivity 4,765.6) / 8.1% relief-surface (543.0, bounded by the governed 1.16% OOS error); (3) the Task 4 paired common-random-number delta matrix - composition correction (full minus re-anchored, t) +211.5 [+46.1, +381.8], 95% CI EXCLUDES zero (statistically significant) yet max |move| 0.55% < 1% MR trigger -> MR-010/MR-014 numeric refresh NOT required, MR-015 stays free; rank invariance re-verified (df 2.9451 within 1e-4, rho max|diff| 7.2e-16). Three Phase 26 PASS verdicts and additive capital read-outs (t_copula_scr_pathwise_component, t_copula_scr_pathwise_component_bootstrap_mean) added. The UI performs no calculation; it consumes only already-produced model output JSONs. PHASE 26 COMPLETE (Tasks 1-5).",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "Solvency II Art. 234 (dependence justification - frozen-copula re-aggregation + rank-invariance displayed)",
+        "Efron & Tibshirani (1993) paired bootstrap"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.7.0 (path-wise declaration / proxy basis / tail-diagnostics panel; no full re-aggregation basis matrix, component-basis bootstrap or paired delta matrix)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.8.0 (additive)",
+        "headline_readouts": {
+          "scr_component_t": 39975.654628199336,
+          "scr_level_t": 39794.3216670548,
+          "component_vs_reanchored_rel": 0.0045567546712239615,
+          "bootstrap_mean": 39595.06073760496,
+          "bootstrap_ci": [
+            36676.24172248241,
+            42943.093413623916
+          ],
+          "bootstrap_se_frac": 0.04066091087985294,
+          "nested_reference": 46638.9,
+          "gap_to_nested_rel": -0.14286883635335879,
+          "copula_form_share": 0.9185008546550519,
+          "relief_surface_share": 0.08149914534494808,
+          "paired_comp_correction": [
+            211.5138546653521,
+            46.07614898741779,
+            381.8135878535294
+          ],
+          "mr_trigger_fired": false,
+          "mr_trigger_max_abs_rel": 0.005509853324129865
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 118
+      },
+      "impact_assessment": "Display-layer only: the UI bundler reads validation-report JSONs and performs no model calculation, so no model output changes. Additive contract bump keeps existing consumers working (Phase 25 Task 5 exact-version test pin relaxed to a version floor >= (1,7,0) - DISCLOSED forward-compat fix per repo convention). Completes the Phase 26 per-task offline-UI propagation requirement; PHASE 26 COMPLETE (Tasks 1-5).",
+      "quantitative_impact": "UI now displays: component-basis t SCR 39976 vs re-anchored 39794 = +0.46% (composition correction); frozen-copula bootstrap mean 39595, 95% CI [36676, 42943], SE 4.07%; nested 46639 OUTSIDE the CI; gap 14.29% decomposed 91.9% copula-form / 8.1% relief-surface; paired composition correction +212 [46, 382] with max |move| 0.55% < 1% MR trigger (not fired). jsdom self-test ok with 0 network calls and 0 JS errors over 118 checks.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase26",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-08T07:24:36.488155+00:00",
+          "actor": "AutomatedModelDev_Phase26",
+          "status": "PEER_REVIEW",
+          "comments": "UI propagation verified by the contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only. The economically-immaterial-but-statistically-significant composition correction, the copula-form-dominated residual gap, and the nested-OUTSIDE-CI disclosure are carried into the display verbatim; the copula is FROZEN per SII Art. 234."
+        },
+        {
+          "timestamp": "2026-06-08T07:24:36.488169+00:00",
+          "actor": "AutomatedModelDev_Phase26",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. PHASE 26 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
         }
       ],
       "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation"

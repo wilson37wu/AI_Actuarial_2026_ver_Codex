@@ -2118,3 +2118,73 @@ MR-015; re-check mtimes for parallel-run foreign writes before governance/commit
 — push from the sandbox works; serialise/stagger the scheduled runs; production sign-off
 residual (credentialled data + APS X2) — by design for this educational model; disk /sessions
 ~89%.
+
+## ⚠️ LATEST STATUS — 2026-06-08 +08 (cycle 31, supersedes everything above)
+
+**Phase 26 Task 5 COMPLETE (PASS) — offline-UI contract 1.7.0 → 1.8.0 ADDITIVE;
+PHASE 26 COMPLETE (Tasks 1-5).** Propagated the full path-wise copula
+re-aggregation into the zero-install offline UI (`ui_app.html`; consumes only
+model-output JSON; 0 network / 0 JS errors). `scripts/build_ui_data.py`
+(contract → 1.8.0) adds a `phase26` section + first-class **Full Re-Agg (P26)**
+tab (9 tabs) surfacing: Task 2 per-driver composition on the FROZEN t(2.9451)
+copula — component t SCR **39,975.7** vs re-anchored 39,794.3 (**+0.46%**), 6/6
+gates; Task 3 frozen-copula bootstrap on the FULL component basis — mean
+**39,595.1**, 95% CI **[36,676.2, 42,943.1]**, SE 4.07%, nested **46,638.9
+OUTSIDE** the CI → residual **14.29%** gap = **91.9% COPULA-FORM** / 8.1%
+relief-surface; Task 4 paired CRN delta matrix — composition correction **+211.5
+[+46.1, +381.8]** significant but **0.55% < 1% MR trigger** (MR-015 stays free).
+Three Phase 26 PASS verdicts + additive capital read-outs
+(`t_copula_scr_pathwise_component`, `..._bootstrap_mean`). NEW
+`scripts/build_phase26_task5_ui_propagation.py` (43 contract checks → self-test →
+governance → report; idempotent) + `tests/test_phase26_task5_ui_propagation.py`
+(28 tests). Reports: `docs/validation/PHASE26_TASK5_UI_PROPAGATION_REPORT.{json,md}`
++ `docs/UI_PROPAGATION_CARD_P26.md`. Governance: ChangeRecord
+`474879491df64f55a182be64b1f2cf2f` (code_change) OWNER_REVIEW; audit 80→81;
+changes 53→54; verify_all True; idempotent. Tests: **166/0** (Phase 26 Tasks 1-5
++ all five P22-P26 UI-propagation suites); compileall clean; Node JSON validation
+passed (state, governance, ui_data, viewer_data, Task 5 report). viewer_data.json
++ ui_app.html rebuilt (python writes) so governance shows the live 54-record
+store. DISCLOSED forward-compat fix: P25T5 exact-version pin relaxed to a floor
+≥ (1,7,0). **The fully-offline interactive UI requirement is SATISFIED.**
+
+**NEXT executable task: Phase 27 Task 1 — research/design note (design-note-first,
+pre-registered gates)** for the next stochastic-model sophistication step.
+Motivation (quantified, from P26 Task 3): the residual gap to nested truth is
+**copula-FORM dominated** (91.9% of the 14.29% gap; the genuine nested joint tail
+is heavier than the frozen t(2.9451) copula on standalone margins — the
+copula-form residual 6,120.2 EXCEEDS the entire gaussian→t sensitivity 4,765.6,
+while the governed relief surface mis-prices only 1.16%). Candidate (pick ONE,
+design-note-first): (a) **richer upper-tail dependence — FRONT-RUNNER**: a
+grouped / skew-t or vine copula, or explicit upper-tail-asymmetry parameter, to
+close the copula-form gap while preserving the calibrated margins; pre-register
+gates: archive cross-check FIRST (frozen-t component read-out 39,975.7
+bit-identical before any new copula), the new copula must REDUCE the nested gap
+on CRN and its 95% bootstrap CI tested against nested 46,638.9, governed margins
+UNCHANGED, copula change governed + rank-invariance re-stated (SII Art. 234),
+SIGN gate richer-copula SCR ≥ frozen-t component; (b) credentialled-data
+calibration (human-blocked); (c) declaration-cadence refinement (DEFERRED).
+Then Task 2+ per the chosen design note; on completion keep `ui_app.html` in sync
+(contract 1.8.0 → 1.9.0 ADDITIVE) and re-assess the next sophistication step.
+
+**Sandbox operating rules (RE-CONFIRMED cycle 31, Linux sandbox):** Python 3.10 +
+node/jsdom ARE available here (unlike the Python-less Windows shell). **CRITICAL —
+the file tool (Edit/Write) SILENTLY TRUNCATES large mounted files**: this cycle it
+truncated `scripts/build_ui_data.py` (167 KB) and `scripts/ui_app_self_test.cjs`
+mid-write. NEVER Edit/Write an existing large mounted file. Instead: restore the
+clean blob from `p22c9` (`git cat-file -p p22c9:<path>`), build/patch OFF-MOUNT in
+`/var/tmp` (deterministic patch scripts; assert each replacement applies exactly
+once), then `cp` whole-file + `cmp`-verify onto the mount; python `open(...,'w')`
+writes and `cp` to the mount are the SAFE paths. Back up + hash-verify
+GOVERNANCE_STORE.json before every governance stage (backup
+`/var/tmp/p26t5_build/GOV_BACKUP_pre_p26t5.json`); alt-`GIT_INDEX_FILE` commits
+onto `p22c9` seeded from the pushed tip, push `p22c9:main` at cycle end; next free
+risk ID **MR-015**; re-check mtimes for parallel-run foreign writes before
+governance/commit. Stage data: `/var/tmp/p26t5_build` (CLEAN/PATCHED build_ui_data
++ self-test, GOV backup), `/var/tmp/p26t4_*`, `/var/tmp/p26t3_stage`,
+`/var/tmp/p26t2_stage`, `/var/tmp/p25t*`.
+
+**Standing blockers (human action):** delete the three git ghost locks
+(GITHUB_PUSH_BLOCKER.md) — push from the sandbox works; serialise/stagger the
+scheduled runs (Python-less Windows runs waste cycles); production sign-off
+residual (credentialled data + APS X2) — by design for this educational model;
+disk /sessions usage to watch.

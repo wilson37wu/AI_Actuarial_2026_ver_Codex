@@ -91,6 +91,16 @@ setTimeout(() => {
   const p25ProxyRows = document.querySelectorAll("#phase25 table.pxtable tbody tr").length;
   const p25BarRects = document.querySelectorAll("#phase25 svg.chart rect.bar").length;
 
+  // Phase 26 Task 5: open the Full Re-Agg (P26) panel and count its elements.
+  const p26Tab = tabs.find(t => t.getAttribute("data-target") === "phase26");
+  if (p26Tab) p26Tab.click();
+  const p26Cards = document.querySelectorAll("#phase26 .card").length;
+  const p26GateCrits = document.querySelectorAll("#phase26 .crit").length;
+  const p26MatrixRows = document.querySelectorAll("#phase26 table.p26matrix tbody tr").length;
+  const p26DeltaRows = document.querySelectorAll("#phase26 table.p26dtable tbody tr").length;
+  const p26GapRows = document.querySelectorAll("#phase26 table.p26gaptable tbody tr").length;
+  const p26BarRects = document.querySelectorAll("#phase26 svg.chart rect.bar").length;
+
   // UI Task 4: open the Governance & assumptions view and click through every sub-view.
   const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
   if (govTab) govTab.click();
@@ -208,6 +218,18 @@ setTimeout(() => {
     pathwiseDeclVerdictPresent: /Path-wise bonus declaration in the nested truth/.test(bodyText),
     pathwiseProxyVerdictPresent: /Matching path-wise proxy basis/.test(bodyText),
     pathwiseTailVerdictPresent: /Path-wise tail diagnostics/.test(bodyText),
+    phase26TabPresent: !!p26Tab,
+    p26Cards, p26GateCrits, p26MatrixRows, p26DeltaRows, p26GapRows, p26BarRects,
+    componentScrPresent: /39,976/.test(bodyText) && /39,595/.test(bodyText),
+    componentBootstrapCiPresent: /36,676/.test(bodyText) && /42,943/.test(bodyText),
+    copulaFormGapPresent: /91\.9%/.test(bodyText) && /COPULA-FORM/.test(bodyText),
+    gapToNestedPresent: /14\.29%/.test(bodyText),
+    compositionImmaterialPresent: /ECONOMICALLY IMMATERIAL/.test(bodyText),
+    mr015FreePresent: /MR-015/.test(bodyText),
+    nestedOutsideComponentCiPresent: /OUTSIDE/.test(bodyText),
+    reaggCompositionVerdictPresent: /per-driver composition transform/.test(bodyText),
+    reaggBootstrapVerdictPresent: /frozen-copula margin bootstrap \+ gap decomposition/.test(bodyText),
+    reaggDeltaVerdictPresent: /paired full-vs-reanchored delta matrix/.test(bodyText),
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -310,6 +332,23 @@ setTimeout(() => {
     checks.pathwiseDeclVerdictPresent &&
     checks.pathwiseProxyVerdictPresent &&
     checks.pathwiseTailVerdictPresent &&
+    checks.phase26TabPresent &&
+    checks.p26Cards >= 12 &&
+    checks.p26GateCrits >= 15 &&
+    checks.p26MatrixRows === 3 &&
+    checks.p26DeltaRows === 5 &&
+    checks.p26GapRows === 3 &&
+    checks.p26BarRects >= 5 &&
+    checks.componentScrPresent &&
+    checks.componentBootstrapCiPresent &&
+    checks.copulaFormGapPresent &&
+    checks.gapToNestedPresent &&
+    checks.compositionImmaterialPresent &&
+    checks.mr015FreePresent &&
+    checks.nestedOutsideComponentCiPresent &&
+    checks.reaggCompositionVerdictPresent &&
+    checks.reaggBootstrapVerdictPresent &&
+    checks.reaggDeltaVerdictPresent &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

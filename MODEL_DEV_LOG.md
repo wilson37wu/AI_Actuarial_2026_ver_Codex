@@ -8935,3 +8935,38 @@ NEW: `par_model_v2/projection/pathwise_delta_matrix.py`, `scripts/build_phase26_
 `docs/validation/PHASE26_TASK4_DELTA_MATRIX_REPORT.{json,md}`, `docs/DELTA_MATRIX_CARD.md`.
 Next: Task 5 — offline-UI propagation (contract 1.7.0 → 1.8.0 ADDITIVE) + PHASE 26 COMPLETE docs.
 Educational model; production sign-off withheld.
+
+---
+
+## 2026-06-08 (+08) - Cycle 31 - Phase 26 Task 5: offline-UI propagation (PHASE 26 COMPLETE)
+
+**Verdict: PASS. PHASE 26 COMPLETE (Tasks 1-5).** Offline-UI contract bumped **1.7.0 -> 1.8.0 ADDITIVE**; the full path-wise copula re-aggregation (Tasks 2-4) is now surfaced in the zero-install interactive UI.
+
+### What changed
+- `scripts/build_ui_data.py` (contract -> 1.8.0): new `_build_phase26()` normaliser reading the Phase 26 Task 2/3/4 validation reports into a `phase26` section (`composition` / `bootstrap` / `delta_matrix` / `narrative`); three Phase 26 PASS verdicts appended; two additive capital read-outs (`t_copula_scr_pathwise_component` 39,975.7, `t_copula_scr_pathwise_component_bootstrap_mean` 39,595.1); a first-class **Full Re-Agg (P26)** panel (`renderPhase26`, new tab; 9 tabs total).
+- `scripts/ui_app_self_test.cjs`: +17 Phase 26 checks (panel tab/cards/gate-crits, basis-matrix / paired-delta / gap-decomposition tables, SCR bars, and text disclosures: component SCR 39,976/39,595, bootstrap CI [36,676, 42,943], 91.9% COPULA-FORM, 14.29% gap, ECONOMICALLY IMMATERIAL, MR-015 free, nested OUTSIDE CI, three verdict needles).
+- `scripts/build_phase26_task5_ui_propagation.py` (new): 43 contract checks -> jsdom self-test -> OWNER_REVIEW ChangeRecord -> audit-chain verify_all -> report/card; idempotent.
+- `tests/test_phase26_task5_ui_propagation.py` (new): 28 read-only tests over the built artifacts (contract floor, composition/bootstrap/delta-matrix values cross-checked against the source reports, additive-section retention, offline-HTML zero-external-reference + embedded snapshot, governance persistence).
+
+### Headline evidence surfaced (verbatim, no re-computation)
+- **Task 2 composition transform (FROZEN copula):** component-basis t SCR **39,975.7** vs re-anchored (LEVEL) **39,794.3** = **+0.46%**; relief on the cuttable component only with the per-scenario envelope clip; governed sigma 0.225 / alpha 0.7567 / benefit-share 0.8450 UNCHANGED; copula FROZEN (df 2.9451, rho max|diff| 7.2e-16); 6/6 gates.
+- **Task 3 frozen-copula bootstrap (FULL component basis, 200x20k):** t SCR mean **39,595.1**, 95% CI **[36,676.2, 42,943.1]**, SE **4.07%** (<=5%); nested **46,638.9 OUTSIDE** the CI -> residual **14.29%** gap = **91.9% COPULA-FORM** (6,120.2; nested joint tail heavier than the frozen t copula on standalone margins, exceeding the entire gaussian->t sensitivity 4,765.6) / **8.1% relief-surface** (543.0, bounded by the governed 1.16% OOS error).
+- **Task 4 paired CRN delta matrix:** composition correction (full - re-anchored, t) **+211.5 [+46.1, +381.8]**, 95% CI EXCLUDES zero (significant) yet max |move| **0.55% < 1% MR trigger** -> MR-010/MR-014 numeric refresh NOT required, **MR-015 stays free**; rank invariance re-verified (df/rho frozen); management-action relief dominates.
+- **Conclusion:** full and re-anchored bases are economically interchangeable on the frozen copula; the material gap to nested is a **copula-FORM** limitation, NOT basis-choice.
+
+### Verification
+- ui_data.json contract checks: **43/43 PASS**.
+- jsdom self-test: **ok:true, 0 network / 0 JS errors over 118 checks**.
+- pytest: **166/0** (Phase 26 Tasks 1-5 + all five P22-P26 UI-propagation suites); compileall clean.
+- Node JSON validation: state, governance, ui_data, viewer_data, Task 5 report all valid.
+- viewer_data.json + ui_app.html rebuilt (python writes) so the governance tab reflects the live 54-record store.
+
+### Governance
+- ChangeRecord `474879491df64f55a182be64b1f2cf2f` (code_change) OWNER_REVIEW; audit 80->81; change records 53->54; audit-chain verify_all True; idempotent re-run 54->54.
+- DISCLOSED forward-compat fix: the Phase 25 Task 5 exact-version test pin (`== "1.7.0"`, x2) relaxed to a floor `>= (1,7,0)` (additive-bump repo convention).
+
+### Sandbox incident (DISCLOSED + RECOVERED)
+The file tool (Edit/Write) **silently truncated** the 167 KB `scripts/build_ui_data.py` and later the `scripts/ui_app_self_test.cjs` when rewriting them on the mount - the documented "NEVER rewrite a large mounted file via the file tool" hazard. Both were restored bit-good from the `p22c9` git blob and all edits re-applied OFF-MOUNT via deterministic patch scripts (each replacement asserted to apply exactly once), then `cp` whole-file + `cmp`-verified onto the mount. All subsequent large-file writes used python / `cp` (the safe path), never the file tool.
+
+### Next executable task
+**Phase 27 Task 1 - research/design note (design-note-first, pre-registered gates)** for the next stochastic-model sophistication step, motivated by the Phase 26 Task 3 finding that the residual gap to nested truth is **copula-FORM dominated** (91.9%) - the genuine nested joint tail is heavier than the frozen t(2.9451) copula on standalone margins. Candidate: a richer upper-tail dependence structure (grouped / skew-t or vine copula, or explicit tail-asymmetry) to close the copula-form gap; any copula change governed under SII Art. 234 (rank-invariance discipline). The fully-offline interactive UI requirement is SATISFIED (zero-install, model-output-only, interactive).

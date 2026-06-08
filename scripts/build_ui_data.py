@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.7.0"
+CONTRACT_VERSION = "1.8.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -1120,6 +1120,86 @@ def _build_verdicts(base: Any) -> List[Dict[str, Any]]:
             "source": ("docs/validation/PHASE25_TASK4_PATHWISE_TAIL_"
                        "DIAGNOSTICS_REPORT.json"),
         })
+    # Phase 26 verdicts: full path-wise copula re-aggregation - the per-driver
+    # composition transform, the frozen-copula component-basis bootstrap with
+    # the copula-form gap decomposition, and the paired delta matrix.
+    m2 = _load(os.path.join(
+        VAL, "PHASE26_TASK2_COMPOSITION_TRANSFORM_REPORT.json"))
+    if isinstance(m2, dict) and isinstance(m2.get("result"), dict):
+        mr = m2["result"]
+        mt = mr.get("t_readout", {}) or {}
+        verdicts.append({
+            "name": ("Full path-wise copula re-aggregation - per-driver "
+                     "composition transform (Phase 26 Task 2)"),
+            "verdict": str(m2.get("verdict", "")),
+            "evidence": ("per-scenario composition on the FROZEN t(2.9451) "
+                         "copula, relief on the cuttable component only with "
+                         "the per-scenario envelope clip: component-basis SCR "
+                         "%.1f vs re-anchored %.1f = +%.2f%% (statistically "
+                         "real but immaterial); governed sigma/alpha/"
+                         "benefit-share UNCHANGED; copula FROZEN (df %.4f, rho "
+                         "max|diff| %.1e)")
+            % (_num(mt.get("scr_component")) or 0.0,
+               _num(mr.get("sign_gate_reference")) or 0.0,
+               100.0 * (_num(mr.get("component_vs_reanchored_rel_t")) or 0.0),
+               _num(m2.get("df_rematched")) or 0.0,
+               _num(m2.get("rho_max_abs_diff")) or 0.0),
+            "source": ("docs/validation/"
+                       "PHASE26_TASK2_COMPOSITION_TRANSFORM_REPORT.json"),
+        })
+    m3 = _load(os.path.join(
+        VAL, "PHASE26_TASK3_MARGIN_BOOTSTRAP_REPORT.json"))
+    if isinstance(m3, dict) and isinstance(m3.get("result"), dict):
+        mr = m3["result"]
+        ci = mr.get("component_t_scr_ci", {}) or {}
+        dc = mr.get("residual_gap_decomposition", {}) or {}
+        verdicts.append({
+            "name": ("Full path-wise copula re-aggregation - frozen-copula "
+                     "margin bootstrap + gap decomposition (Phase 26 Task 3)"),
+            "verdict": str(m3.get("verdict", "")),
+            "evidence": ("component-basis frozen-copula bootstrap (200x20k): "
+                         "t SCR mean %.1f, 95%% CI [%.0f, %.0f], SE %.2f%% of "
+                         "mean (<= 5%%); nested path-wise %.1f OUTSIDE the CI "
+                         "-> residual %.2f%% gap decomposed %.1f%% COPULA-FORM "
+                         "(heavier nested joint tail than the frozen t copula "
+                         "on standalone margins) / %.1f%% relief-surface; "
+                         "copula-form DOMINANT, DISCLOSED")
+            % (_num(ci.get("mean")) or 0.0,
+               _num(ci.get("ci_lo")) or 0.0,
+               _num(ci.get("ci_hi")) or 0.0,
+               100.0 * (_num(mr.get("se_frac_of_mean")) or 0.0),
+               _num(mr.get("nested_pathwise_reference")) or 0.0,
+               100.0 * (_num(dc.get("gap_total_rel_to_nested")) or 0.0),
+               100.0 * (_num(dc.get("copula_form_share_of_gap")) or 0.0),
+               100.0 * (_num(dc.get("relief_surface_share_of_gap")) or 0.0)),
+            "source": ("docs/validation/"
+                       "PHASE26_TASK3_MARGIN_BOOTSTRAP_REPORT.json"),
+        })
+    m4 = _load(os.path.join(
+        VAL, "PHASE26_TASK4_DELTA_MATRIX_REPORT.json"))
+    if isinstance(m4, dict) and isinstance(m4.get("result"), dict):
+        mr = m4["result"]
+        pdl = mr.get("paired_deltas", {}) or {}
+        cc = pdl.get("composition_correction_t", {}) or {}
+        trg = mr.get("mr_trigger", {}) or {}
+        verdicts.append({
+            "name": ("Full path-wise copula re-aggregation - paired "
+                     "full-vs-reanchored delta matrix (Phase 26 Task 4)"),
+            "verdict": str(m4.get("verdict", "")),
+            "evidence": ("paired common-random-number delta matrix over the "
+                         "Task 3 replicates: composition correction "
+                         "(full minus re-anchored, t) +%.1f [%.1f, %.1f], "
+                         "95%% CI EXCLUDES zero (statistically significant) "
+                         "yet max |move| %.2f%% < 1%% MR trigger -> MR-010/"
+                         "MR-014 numeric refresh NOT required, MR-015 stays "
+                         "free; rank invariance re-verified (df/rho frozen)")
+            % (_num(cc.get("mean")) or 0.0,
+               _num(cc.get("ci_lo")) or 0.0,
+               _num(cc.get("ci_hi")) or 0.0,
+               100.0 * (_num(trg.get("max_abs_rel")) or 0.0)),
+            "source": ("docs/validation/"
+                       "PHASE26_TASK4_DELTA_MATRIX_REPORT.json"),
+        })
     return verdicts
 
 
@@ -1430,6 +1510,135 @@ def _build_phase25() -> Dict[str, Any]:
     return out
 
 
+def _build_phase26() -> Dict[str, Any]:
+    """Phase 26 (contract 1.8.0, additive): full PATH-WISE COPULA
+    RE-AGGREGATION. Surfaces the Task 2 per-driver composition transform on
+    the FROZEN copula (component vs re-anchored/level basis), the Task 3
+    frozen-copula margin bootstrap on the full component basis with the nested
+    reference OUTSIDE the 95% CI -> copula-form gap decomposition, and the
+    Task 4 paired full-vs-reanchored delta matrix with the MR-trigger decision.
+    Pure display-layer normalisation of the already-produced Phase 26 Task
+    2/3/4 validation reports - no model calculation."""
+    out: Dict[str, Any] = {}
+    # ---- Task 2: per-driver composition transform (component vs level) ----
+    t2 = _load(os.path.join(
+        VAL, "PHASE26_TASK2_COMPOSITION_TRANSFORM_REPORT.json"))
+    if isinstance(t2, dict) and isinstance(t2.get("result"), dict):
+        r = t2["result"]
+        tr = r.get("t_readout", {}) or {}
+        gr = r.get("g_readout", {}) or {}
+        out["composition"] = {
+            "cuttable_drivers": t2.get("cuttable_drivers", []),
+            "carveout_drivers": t2.get("carveout_drivers", []),
+            "t_readout": {
+                "scr_without": tr.get("scr_without"),
+                "scr_level": tr.get("scr_level"),
+                "scr_component": tr.get("scr_component"),
+                "component_minus_level_scr":
+                    tr.get("component_minus_level_scr"),
+                "cuttable_share_mean": tr.get("cuttable_share_mean"),
+                "cuttable_share_tail_mean": tr.get("cuttable_share_tail_mean"),
+                "tail_cuttable_share_depression":
+                    tr.get("tail_cuttable_share_depression"),
+            },
+            "g_readout": {
+                "scr_without": gr.get("scr_without"),
+                "scr_level": gr.get("scr_level"),
+                "scr_component": gr.get("scr_component"),
+                "component_minus_level_scr":
+                    gr.get("component_minus_level_scr"),
+            },
+            "sign_gate_reference": r.get("sign_gate_reference"),
+            "nested_pathwise_reference": r.get("nested_pathwise_reference"),
+            "component_vs_reanchored_rel_t":
+                r.get("component_vs_reanchored_rel_t"),
+            "component_vs_reanchored_rel_g":
+                r.get("component_vs_reanchored_rel_g"),
+            "mr_refresh_trigger_1pct": r.get("mr_refresh_trigger_1pct"),
+            "gap_to_nested_component_t_rel":
+                r.get("gap_to_nested_component_t_rel"),
+            "gap_to_nested_level_t_rel": r.get("gap_to_nested_level_t_rel"),
+            "envelope_bounds_ok": r.get("envelope_bounds_ok"),
+            "df_rematched": t2.get("df_rematched"),
+            "rho_max_abs_diff": t2.get("rho_max_abs_diff"),
+            "gates": r.get("gates", {}),
+            "verdict": t2.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE26_TASK2_COMPOSITION_TRANSFORM_REPORT.json"),
+            "change_record_id": t2.get("change_record_id"),
+        }
+    # ---- Task 3: frozen-copula margin bootstrap on the component basis ----
+    t3 = _load(os.path.join(
+        VAL, "PHASE26_TASK3_MARGIN_BOOTSTRAP_REPORT.json"))
+    if isinstance(t3, dict) and isinstance(t3.get("result"), dict):
+        r = t3["result"]
+        out["bootstrap"] = {
+            "config": r.get("config", {}),
+            "component_t_scr_ci": r.get("component_t_scr_ci", {}),
+            "component_g_scr_ci": r.get("component_g_scr_ci", {}),
+            "level_t_scr_ci": r.get("level_t_scr_ci", {}),
+            "without_t_scr_ci": r.get("without_t_scr_ci", {}),
+            "nested_pathwise_reference": r.get("nested_pathwise_reference"),
+            "task2_t_component_point": r.get("task2_t_component_point"),
+            "headline_nested_inside_95ci":
+                r.get("headline_nested_inside_95ci"),
+            "se_frac_of_mean": r.get("se_frac_of_mean"),
+            "se_gate_pass": r.get("se_gate_pass"),
+            "residual_gap_decomposition":
+                r.get("residual_gap_decomposition", {}),
+            "gates": r.get("gates", {}),
+            "verdict": t3.get("verdict"),
+            "digest": r.get("digest"),
+            "source": ("docs/validation/"
+                       "PHASE26_TASK3_MARGIN_BOOTSTRAP_REPORT.json"),
+            "change_record_id": t3.get("change_record_id"),
+        }
+    # ---- Task 4: paired full-vs-reanchored delta matrix + MR trigger ----
+    t4 = _load(os.path.join(
+        VAL, "PHASE26_TASK4_DELTA_MATRIX_REPORT.json"))
+    if isinstance(t4, dict) and isinstance(t4.get("result"), dict):
+        r = t4["result"]
+        out["delta_matrix"] = {
+            "point_matrix": r.get("point_matrix", {}),
+            "marginal_cis": r.get("marginal_cis", {}),
+            "paired_deltas": r.get("paired_deltas", {}),
+            "mr_trigger": r.get("mr_trigger", {}),
+            "gap_to_nested": r.get("gap_to_nested", {}),
+            "rank_invariance": r.get("rank_invariance", {}),
+            "config": r.get("config", {}),
+            "gates": r.get("gates", {}),
+            "verdict": t4.get("verdict"),
+            "digest": r.get("digest"),
+            "source": ("docs/validation/"
+                       "PHASE26_TASK4_DELTA_MATRIX_REPORT.json"),
+            "change_record_id": t4.get("change_record_id"),
+        }
+    if out:
+        out["narrative"] = (
+            "Phase 26 re-aggregated the path-wise capital from the FULL "
+            "per-driver composition on the FROZEN t(2.9451) copula (rank "
+            "invariance held: rho max|diff| 7.2e-16, df within 1e-4), instead "
+            "of the Phase 25 constant-share LEVEL (analytic re-anchoring) "
+            "transform. The composition correction (full minus re-anchored) "
+            "is STATISTICALLY SIGNIFICANT on the paired common-random-number "
+            "bootstrap (t +211.5 [+46.1, +381.8]; g +192.6 [+60.2, +312.6]) "
+            "but ECONOMICALLY IMMATERIAL (+0.54% / +0.55%, below the 1% "
+            "MR-010/MR-014 refresh trigger - MR-015 stays free). The frozen-"
+            "copula margin bootstrap on the full component basis puts the "
+            "component t SCR at 39,595.1 [36,676.2, 42,943.1] (SE 4.07% <= 5%) "
+            "with the nested path-wise reference 46,638.9 OUTSIDE the 95% CI; "
+            "the residual 14.29% gap decomposes 91.9% COPULA-FORM (6,120.2 - "
+            "the nested joint tail is heavier than the frozen t copula on "
+            "standalone margins, exceeding the entire gaussian->t sensitivity "
+            "of 4,765.6) and only 8.1% relief-surface (543.0, bounded by the "
+            "governed 1.16% OOS error). CONCLUSION: the full and re-anchored "
+            "bases are economically interchangeable on the frozen copula; the "
+            "material gap to the nested truth is a copula-FORM limitation, NOT "
+            "a basis-choice effect. Nested with-actions (path-wise) remains "
+            "the capital reference; production sign-off withheld (educational).")
+    return out
+
+
 # --------------------------------------------------------------------------- #
 def build_ui_data() -> Dict[str, Any]:
     base = _load(VIEWER_DATA) or {}
@@ -1481,6 +1690,21 @@ def build_ui_data() -> Dict[str, Any]:
         capital["t_copula_scr_pathwise_readout"] = _p25_td.get(
             "t_scr_pathwise_readout")
 
+    phase26 = _build_phase26()
+    _p26_comp = (phase26.get("composition") or {}).get("t_readout") or {}
+    if _p26_comp.get("scr_component") is not None:
+        # Additive capital read-out: full re-aggregated (component-basis)
+        # path-wise t-copula SCR (Phase 26 Task 2 - point estimate).
+        capital["t_copula_scr_pathwise_component"] = _p26_comp.get(
+            "scr_component")
+    _p26_bt = (phase26.get("bootstrap") or {}).get(
+        "component_t_scr_ci") or {}
+    if _p26_bt.get("mean") is not None:
+        # Additive capital read-out: frozen-copula bootstrap mean SCR on the
+        # full component basis (Phase 26 Task 3 - sampling-band centre).
+        capital["t_copula_scr_pathwise_component_bootstrap_mean"] = (
+            _p26_bt.get("mean"))
+
     summary = dict(base.get("summary", {}))
     summary["contract_artifacts"] = len(inventory)
     summary["calibrated_drivers"] = len(calibrations)
@@ -1498,6 +1722,7 @@ def build_ui_data() -> Dict[str, Any]:
         "management_actions": management_actions,
         "phase24": phase24,
         "phase25": phase25,
+        "phase26": phase26,
         "governance": base.get("governance", {}),
         "verdicts": _build_verdicts(base.get("verdicts", [])),
     }
@@ -1652,6 +1877,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="actions" class="panel" data-title="Management Actions"></div>
   <div id="phase24" class="panel" data-title="Joint Actions (P24)"></div>
   <div id="phase25" class="panel" data-title="Path-wise Actions (P25)"></div>
+  <div id="phase26" class="panel" data-title="Full Re-Agg (P26)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
 </div>
 
@@ -1687,6 +1913,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["actions","Management Actions"],
     ["phase24","Joint Actions (P24)"],
     ["phase25","Path-wise Actions (P25)"],
+    ["phase26","Full Re-Agg (P26)"],
     ["governance","Governance"]
   ];
 
@@ -2484,6 +2711,124 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  function renderPhase26(){
+    var el=document.getElementById("phase26"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var p=DATA.phase26||{};
+    var co=p.composition||{}, bo=p.bootstrap||{}, dm=p.delta_matrix||{};
+    if(!Object.keys(co).length&&!Object.keys(dm).length){
+      el.innerHTML='<p class="muted">No Phase 26 full path-wise copula re-aggregation data in this snapshot (requires contract v1.8.0+).</p>';
+      return;
+    }
+    var ct=co.t_readout||{}, cg=co.g_readout||{};
+    var ci=bo.component_t_scr_ci||{}, gd=bo.residual_gap_decomposition||{};
+    var pm=dm.point_matrix||{}, mc=dm.marginal_cis||{}, pdl=dm.paired_deltas||{}, trg=dm.mr_trigger||{};
+    var nestedRef=(co.nested_pathwise_reference!=null?co.nested_pathwise_reference:bo.nested_pathwise_reference);
+    var cc=pdl.composition_correction_t||{};
+    var compRel=(cc.mean_rel_to_subtrahend!=null?cc.mean_rel_to_subtrahend:co.component_vs_reanchored_rel_t);
+    var gapRel=co.gap_to_nested_component_t_rel;
+    var html='<div class="cards">';
+    [
+      ["Nested SCR (path-wise) - reference",num(nestedRef)],
+      ["Component (FULL re-agg) t SCR",num(ct.scr_component)],
+      ["Re-anchored (LEVEL) t SCR",num(ct.scr_level)],
+      ["Composition correction (full &minus; re-anchored)",cc.mean!=null?"+"+num(cc.mean)+" (+"+(100*compRel).toFixed(2)+"%)":"--"],
+      ["Bootstrap mean t SCR (component)",num(ci.mean)],
+      ["Bootstrap 95% CI (component t)",ci.ci_lo!=null?"["+num(ci.ci_lo)+", "+num(ci.ci_hi)+"]":"--"],
+      ["Bootstrap SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
+      ["Nested inside 95% CI?",bo.headline_nested_inside_95ci?"✓ yes":"✗ no (OUTSIDE)"],
+      ["Gap to nested (component, t)",gapRel!=null?(100*gapRel).toFixed(2)+"%":"--"],
+      ["Copula-form share of gap",gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"%":"--"],
+      ["Relief-surface share of gap",gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--"],
+      ["MR-010/MR-014 1% trigger",trg.trigger_fired===false?"NOT fired (MR-015 free)":(trg.trigger_fired?"FIRED":"--")],
+      ["t df (copula FROZEN)",co.df_rematched!=null?Number(co.df_rematched).toFixed(4):"--"],
+      ["rho max|diff| (frozen)",co.rho_max_abs_diff!=null?Number(co.rho_max_abs_diff).toExponential(1):"--"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+c[0]+
+      '</div><div class="v">'+esc(c[1])+'</div></div>'; });
+    html+='</div>';
+    html+='<p class="note">The full per-driver composition re-aggregation moves the with-actions SCR by only +'+
+      (compRel!=null?(100*compRel).toFixed(2):"--")+'% versus the Phase 25 analytic re-anchoring: '+
+      'STATISTICALLY SIGNIFICANT (paired 95% CI excludes zero) but ECONOMICALLY IMMATERIAL '+
+      '(below the 1% MR trigger - MR-015 stays free). Copula FROZEN per SII Art. 234.</p>';
+    // ---- point matrix: bases x {t, gaussian} with component-basis 95% CI ----
+    function pmc(b,k){ return (pm[b]||{})[k]; }
+    function mci(b,k){ var r=(mc[b]||{})[k]; return (r&&r.ci_lo!=null)?("["+num(r.ci_lo)+", "+num(r.ci_hi)+"]"):"--"; }
+    var brows=[["Without actions","without"],["Re-anchored (LEVEL)","level"],["Component (FULL re-agg)","component"]];
+    html+='<div class="subh">Re-aggregation basis matrix (99.5% / 1y SCR) &mdash; without &rarr; re-anchored &rarr; full component (Task 2 point, Task 3 frozen-copula CI)</div>'+
+      '<table class="ptable p26matrix"><thead><tr><th>Basis</th><th>t-copula SCR</th><th>t 95% CI (bootstrap)</th>'+
+      '<th>Gaussian SCR</th></tr></thead><tbody>';
+    brows.forEach(function(r){
+      html+='<tr><td>'+esc(r[0])+'</td><td>'+num(pmc(r[1],"t"))+'</td><td>'+mci(r[1],"t")+'</td>'+
+        '<td>'+num(pmc(r[1],"g"))+'</td></tr>';
+    });
+    html+='</tbody></table>';
+    // ---- SCR bar chart ----
+    var D=[];
+    [["Without (t)",pmc("without","t"),"#39d98a"],
+     ["Re-anchored (t)",pmc("level","t"),"#2b5d99"],
+     ["Component (t)",pmc("component","t"),"#4f9cff"],
+     ["Bootstrap mean (t)",ci.mean,"#2fd0a8"],
+     ["Nested PATH-WISE ref",nestedRef,"#ffb454"],
+     ["Component (gauss)",pmc("component","g"),"#9a7bff"]
+    ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; full re-aggregation vs re-anchored vs nested reference</h4>'+
+        '<p class="cap">The full component basis and the re-anchored level basis are economically interchangeable on the '+
+        'frozen copula; both sit well below the nested path-wise reference '+num(nestedRef)+' &mdash; a COPULA-FORM gap, not a basis choice.</p>'+
+        barChart(D,{w:760,h:300,mB:64})+'</div>';
+    }
+    // ---- paired delta decomposition (common-random-number) ----
+    function pd(k){ return pdl[k]||{}; }
+    var drows=[
+      ["Composition correction (full &minus; re-anchored), t","composition_correction_t"],
+      ["Composition correction (full &minus; re-anchored), gaussian","composition_correction_g"],
+      ["Management-action relief (without &minus; full), t","management_relief_t"],
+      ["Dependence form (gaussian &rarr; t), component","dependence_form_component"],
+      ["Dependence form (gaussian &rarr; t), re-anchored","dependence_form_level"]
+    ];
+    html+='<div class="subh">Paired common-random-number delta decomposition (Task 4; over the 200 frozen-copula replicates)</div>'+
+      '<table class="ptable p26dtable"><thead><tr><th>Effect</th><th>Mean</th><th>95% CI</th><th>Excludes zero?</th></tr></thead><tbody>';
+    drows.forEach(function(r){
+      var d=pd(r[1]);
+      html+='<tr><td>'+r[0]+'</td><td>'+(d.mean!=null?"+"+num(d.mean):"--")+'</td>'+
+        '<td>'+(d.ci_lo!=null?"[+"+num(d.ci_lo)+", +"+num(d.ci_hi)+"]":"--")+'</td>'+
+        '<td>'+(d.excludes_zero?"✓ yes (significant)":"no")+'</td></tr>';
+    });
+    html+='</tbody></table>'+
+      '<p class="note">Every effect is statistically significant on the paired bootstrap, but the composition correction is the '+
+      'smallest by two orders of magnitude: management-action relief (+'+num((pd("management_relief_t").mean))+') dominates the capital picture.</p>';
+    // ---- residual gap decomposition ----
+    if(Object.keys(gd).length){
+      html+='<div class="subh">Residual gap to nested truth (Task 3) &mdash; copula-form vs relief-surface</div>'+
+        '<table class="ptable p26gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share of gap</th><th>Basis</th></tr></thead><tbody>'+
+        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+          (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
+          '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
+        '<tr><td>Copula-form residual</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+          (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"%":"--")+
+          '</td><td>nested joint tail heavier than frozen t copula</td></tr>'+
+        '<tr><td>Total gap (nested &minus; component)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+          (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"%":"--")+
+          '</td><td>nested with-actions reference</td></tr>'+
+        '</tbody></table>'+
+        '<p class="note">The residual is COPULA-FORM DOMINATED ('+
+        (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1):"--")+
+        '% of the gap): the copula-form residual '+num(gd.copula_form_residual_abs)+' EXCEEDS the entire gaussian&rarr;t '+
+        'dependence-form sensitivity ('+num(gd.dependence_form_sensitivity_t_minus_g)+'). The governed relief surface mis-prices SCR by only 1.16% of nested. '+
+        'The nested path-wise reference '+num(nestedRef)+' lies OUTSIDE the component-basis 95% CI ['+num(ci.ci_lo)+', '+num(ci.ci_hi)+'] '+
+        '&mdash; the gap is a copula-FORM limitation, NOT a basis-choice effect. DISCLOSED.</p>';
+    }
+    html+=maGateGrid(co.gates,"Task 2 pre-registered gates (per-driver composition transform on the frozen copula)");
+    html+=maGateGrid(bo.gates,"Task 3 pre-registered gates (frozen-copula margin bootstrap + gap decomposition)");
+    html+=maGateGrid(dm.gates,"Task 4 pre-registered gates (paired full-vs-reanchored delta matrix + MR trigger)");
+    html+='<p class="note">'+esc(p.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(co.source||"")+' &middot; '+esc(bo.source||"")+' &middot; '+esc(dm.source||"")+
+      ' &middot; ChangeRecords '+esc(co.change_record_id||"")+' / '+esc(bo.change_record_id||"")+' / '+esc(dm.change_record_id||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
   // ---- Governance & assumptions view (UI Task 4) ----
   var GLIK=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
   var GIMP=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
@@ -2835,7 +3180,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

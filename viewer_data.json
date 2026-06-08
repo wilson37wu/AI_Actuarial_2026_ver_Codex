@@ -1087,9 +1087,9 @@
     ]
   },
   "governance": {
-    "audit_entries": 75,
+    "audit_entries": 81,
     "audit_integrity_ok": true,
-    "audit_verified": 75,
+    "audit_verified": 81,
     "audit_failed": 0,
     "change_records": [
       {
@@ -2666,6 +2666,196 @@
             "actor": "AutomatedModelDev_Phase25",
             "status": "OWNER_REVIEW",
             "comments": "Owner review requested. Production sign-off withheld pending credentialled management-practice data and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "3fa4394e568b48fc9ee06dd8a64dd44b",
+        "title": "Phase 25 Task 5 - offline-UI propagation of the path-wise action view",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-08T01:56:53.018521+00:00",
+        "phase": "Phase 25: Path-wise Management-Action Declaration + Matching Proxy Basis",
+        "author": "AutomatedModelDev_Phase25",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+          "Solvency II Art. 23 (future management actions - path-wise declaration displayed)",
+          "Solvency II Art. 234 (dependence justification - frozen-copula bootstrap + rank-invariance displayed)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T01:56:53.018647+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by 40 contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only; the recognition-lag conservatism, the var-covar no-analogue disclosure and the OUTSIDE-CI re-anchoring understatement are carried into the display verbatim."
+          },
+          {
+            "timestamp": "2026-06-08T01:56:53.018685+00:00",
+            "actor": "AutomatedModelDev_Phase25",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. PHASE 25 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
+          }
+        ]
+      },
+      {
+        "record_id": "40fb20ee3b9a41a7a2b6a47a587ada91",
+        "title": "Phase 26 Task 1 - design note: full path-wise copula re-aggregation (per-driver composition relief on the frozen joint copula)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-08T03:17:03.941814+00:00",
+        "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+        "author": "Phase26Task1DesignNote",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour; dependence justified on the basis actually used for capital)",
+          "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable)",
+          "SOA ASOP 56 §3.1.3/§3.4/§3.5",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.2/§3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "CFO Forum MCEV Principle 7 (TVOG; dynamic management actions)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T03:17:03.942013+00:00",
+            "actor": "Phase26Task1DesignNote",
+            "status": "PEER_REVIEW",
+            "comments": "Design note + new unit tests PASS; no existing module touched."
+          },
+          {
+            "timestamp": "2026-06-08T03:17:03.942039+00:00",
+            "actor": "Phase26Task1DesignNote",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: synthetic-mechanism scope + margin-level composition residual documented; sign-off withheld."
+          }
+        ]
+      },
+      {
+        "record_id": "dcf5cc5132ad4cadb534ea47314d9684",
+        "title": "Phase 26 Task 2 - per-driver composition transform on the frozen copula (full path-wise copula re-aggregation, t/gaussian benchmark bases)",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-08T04:17:40.759414+00:00",
+        "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+        "author": "AutomatedModelDev_Phase26",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T04:17:40.759455+00:00",
+            "actor": "AutomatedModelDev_Phase26",
+            "status": "PEER_REVIEW",
+            "comments": "Pre-registered gates 6/6 PASS; archive cross-checks bit-identical; new unit tests PASS."
+          },
+          {
+            "timestamp": "2026-06-08T04:17:40.759472+00:00",
+            "actor": "AutomatedModelDev_Phase26",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: benchmark-basis change (level -> component); magnitude disclosed; sign-off withheld pending Task 3 bootstrap closure."
+          }
+        ]
+      },
+      {
+        "record_id": "9049003b55d742f1812d5b083e3cd518",
+        "title": "Phase 26 Task 3 - frozen-copula margin bootstrap on the full re-aggregated (component) basis + residual-gap decomposition",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-08T05:14:52.224950+00:00",
+        "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+        "author": "AutomatedModelDev_Phase26",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "SOA ASOP 56 section 3.1.3/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "Efron & Tibshirani (1993) bootstrap"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T05:14:52.224989+00:00",
+            "actor": "AutomatedModelDev_Phase26",
+            "status": "PEER_REVIEW",
+            "comments": "SE gate PASS; archive cross-check bit-identical; bootstrap digest recorded; new unit tests PASS."
+          },
+          {
+            "timestamp": "2026-06-08T05:14:52.225011+00:00",
+            "actor": "AutomatedModelDev_Phase26",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: methodology addition (uncertainty band + disclosed gap decomposition); copula/scalars frozen; sign-off withheld pending Task 4 delta-matrix refresh."
+          }
+        ]
+      },
+      {
+        "record_id": "09ef1e360a70456c9c93f84c81bee4bf",
+        "title": "Phase 26 Task 4 - full-vs-reanchored delta matrix + MR-010/MR-014 1% trigger re-check + rank-invariance re-verification",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-08T06:18:40.556306+00:00",
+        "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+        "author": "AutomatedModelDev_Phase26",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "SOA ASOP 56 section 3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.6",
+          "Efron & Tibshirani (1993) paired bootstrap"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T06:18:40.556349+00:00",
+            "actor": "AutomatedModelDev_Phase26",
+            "status": "PEER_REVIEW",
+            "comments": "Delta matrix assembled; paired CRN delta CIs computed; MR 1% trigger re-checked (sub-1%); rank invariance re-verified; new unit tests PASS."
+          },
+          {
+            "timestamp": "2026-06-08T06:18:40.556368+00:00",
+            "actor": "AutomatedModelDev_Phase26",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: methodology synthesis (delta matrix + MR re-check); copula/scalars frozen; sign-off withheld pending Task 5 UI propagation + Phase 26 completion docs."
+          }
+        ]
+      },
+      {
+        "record_id": "474879491df64f55a182be64b1f2cf2f",
+        "title": "Phase 26 Task 5 - offline-UI propagation of the full path-wise copula re-aggregation view",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-08T07:24:36.488109+00:00",
+        "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+        "author": "AutomatedModelDev_Phase26",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+          "Solvency II Art. 234 (dependence justification - frozen-copula re-aggregation + rank-invariance displayed)",
+          "Efron & Tibshirani (1993) paired bootstrap"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T07:24:36.488155+00:00",
+            "actor": "AutomatedModelDev_Phase26",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by the contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only. The economically-immaterial-but-statistically-significant composition correction, the copula-form-dominated residual gap, and the nested-OUTSIDE-CI disclosure are carried into the display verbatim; the copula is FROZEN per SII Art. 234."
+          },
+          {
+            "timestamp": "2026-06-08T07:24:36.488169+00:00",
+            "actor": "AutomatedModelDev_Phase26",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. PHASE 26 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review."
           }
         ]
       }
