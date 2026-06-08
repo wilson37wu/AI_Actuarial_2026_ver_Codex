@@ -1772,6 +1772,28 @@
       "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
       "digest": "c3446bcc37c00f6934c2e731c67c95f84cb6f77f24883814ad4fb162bacae543",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "4f487d0872304e589388689b1b9ace3f",
+      "timestamp": "2026-06-08T05:14:52.225061+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase26",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 26 Task 3 frozen-copula margin bootstrap + residual-gap decomposition",
+      "details": {
+        "record_id": "9049003b55d742f1812d5b083e3cd518",
+        "change_type": "methodology_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/projection/pathwise_composition_bootstrap.py",
+          "scripts/build_phase26_task3_margin_bootstrap.py",
+          "tests/test_phase26_task3_margin_bootstrap.py",
+          "docs/COMPOSITION_BOOTSTRAP_CARD.md",
+          "docs/validation/PHASE26_TASK3_MARGIN_BOOTSTRAP_REPORT.{json,md}"
+        ]
+      },
+      "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+      "digest": "6e20b2ff1728eda07bc3749895dd1302e6d06ec6e73a22187e5dfb3e11a3a29a",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -4966,6 +4988,67 @@
           "actor": "AutomatedModelDev_Phase26",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: benchmark-basis change (level -> component); magnitude disclosed; sign-off withheld pending Task 3 bootstrap closure."
+        }
+      ],
+      "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation"
+    },
+    {
+      "record_id": "9049003b55d742f1812d5b083e3cd518",
+      "created_at": "2026-06-08T05:14:52.224950+00:00",
+      "title": "Phase 26 Task 3 - frozen-copula margin bootstrap on the full re-aggregated (component) basis + residual-gap decomposition",
+      "description": "Frozen-copula non-parametric margin bootstrap (200x20000) on the full re-aggregated component basis: realised standalone-loss rows resampled with replacement (cross-driver pairing preserved); copula df/rho and governed sigma/alpha/beta_fit FROZEN. The nested truth 46,638.9 lies OUTSIDE the component 95% CI, so the residual gap is decomposed: relief-surface part (P25T3 OOS SCR rel err 1.16%) vs copula-form residual. Finding: the residual is COPULA-FORM dominated -- the nested joint tail is heavier than the frozen t-copula on standalone margins -- NOT relief-surface. SE gate (<=5% of mean) PASS.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/pathwise_composition_bootstrap.py",
+        "scripts/build_phase26_task3_margin_bootstrap.py",
+        "tests/test_phase26_task3_margin_bootstrap.py",
+        "docs/COMPOSITION_BOOTSTRAP_CARD.md",
+        "docs/validation/PHASE26_TASK3_MARGIN_BOOTSTRAP_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Solvency II Delegated Regulation Article 234 (aggregation)",
+        "SOA ASOP 56 section 3.1.3/3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M section 3.6",
+        "IFoA Life Aggregation & Simulation working party",
+        "Efron & Tibshirani (1993) bootstrap"
+      ],
+      "before_snapshot": {
+        "task2_residual": "nested 46,638.9 vs component t 39975.7; gap disclosed at Task 2, decomposition deferred to Task 3"
+      },
+      "after_snapshot": {
+        "component_t_scr_mean": 39595.06073760496,
+        "component_t_scr_95ci": [
+          36676.24172248241,
+          42943.093413623916
+        ],
+        "se_frac_of_mean": 0.04066091087985294,
+        "headline_nested_inside_95ci": false,
+        "gap_total_rel_to_nested": 0.14286883635335879,
+        "copula_form_share_of_gap": 0.9185008546550519,
+        "relief_surface_share_of_gap": 0.08149914534494808,
+        "copula_form_dominant": true,
+        "verdict": "PASS",
+        "digest": "97aa928bcbf7"
+      },
+      "impact_assessment": "Adds a frozen-copula uncertainty band and a disclosed residual-gap decomposition; no governed parameter changes (copula and relief scalars FROZEN). The nested truth lies above the component CI -> the frozen-copula component basis is a DISCLOSED lower bound vs the nested truth, the residual being copula-form (margin-aggregation vs nested-dynamics) dominated. MR-010/MR-014 refresh to be re-checked at Task 4. Educational classification retained; production sign-off withheld.",
+      "quantitative_impact": "component t SCR mean 39595.1, 95% CI [36676.2, 42943.1], SE 4.07% of mean; nested 46,638.9 OUTSIDE CI; gap +14.29% = copula-form 6120 (92%) + relief-surface 543 (8%).",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase26",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-08T05:14:52.224989+00:00",
+          "actor": "AutomatedModelDev_Phase26",
+          "status": "PEER_REVIEW",
+          "comments": "SE gate PASS; archive cross-check bit-identical; bootstrap digest recorded; new unit tests PASS."
+        },
+        {
+          "timestamp": "2026-06-08T05:14:52.225011+00:00",
+          "actor": "AutomatedModelDev_Phase26",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: methodology addition (uncertainty band + disclosed gap decomposition); copula/scalars frozen; sign-off withheld pending Task 4 delta-matrix refresh."
         }
       ],
       "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation"

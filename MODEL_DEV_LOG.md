@@ -8835,3 +8835,63 @@ integrity). Post-change P26T1+P26T2 suites 30 PASS / 0 FAIL.
 re-aggregated (component) basis; HEADLINE gate: nested 46,638.9 INSIDE the 95% CI, else the
 residual gap MUST be decomposed (copula-form vs relief-surface) + disclosed; SE <= 5%;
 methodology_change ChangeRecord.
+
+---
+
+## 2026-06-08 (+08) cycle 29 — Phase 26 Task 3: frozen-copula margin bootstrap (component basis) — PASS
+
+**Task:** Phase 26 Task 3 — frozen-copula margin bootstrap (≥200×20k) on the FULL
+re-aggregated (component) basis; HEADLINE gate nested 46,638.9 inside the 95% CI, else the
+residual gap decomposed (copula-form vs relief-surface) and disclosed.
+
+**Health gate (DISCLOSED):** governance store backed up + hash-verified
+(/var/tmp/p26t3_build_gov_backup.json sha256 c0ce4600…); mtime foreign-write check clean;
+compileall clean; P26T2 suite 17/17 PASS.
+
+**Archive cross-check FIRST (B3/B4):** Task 2 t-component read-out reproduced BIT-IDENTICALLY
+(scr_component 39975.654628199336, digest c97714b0a831) and all six Task 2 gates PASS before
+any bootstrap. Copula FROZEN: df re-matched 2.9451 (tol 1e-4), rho max|diff| 7.2e-16 (tol
+1e-12). Governed sigma 0.225 / alpha 0.7567 / beta_fit 0.8450 UNCHANGED.
+
+**New code:** `par_model_v2/projection/pathwise_composition_bootstrap.py` —
+`composition_margin_bootstrap` (joint row resample WITH replacement → realised cross-driver
+pairing preserved; df/rho + relief scalars FROZEN per replicate, SII Art. 234; t and gaussian
+component read-outs on common random numbers; per-replicate `SeedSequence(master).spawn()` →
+chunk-independent / resume-safe / idempotent), `summarise_ci` (percentile CI + SE),
+`decompose_residual_gap` (relief-surface vs copula-form additive identity),
+`bootstrap_digest` (order-independent), `composition_bootstrap_use_restrictions`.
+`scripts/build_phase26_task3_margin_bootstrap.py` (verify | chunk --start/--stop | aggregate |
+report | governance). Staged in five 40-replicate chunks (~9 s each); a 4-chunk loop hit the
+45 s wall, resumed cleanly from persisted partials for the last chunk.
+
+**Results (seed 20260608, 200×20k):** component t SCR mean 39,595.1; 95% CI [36,676.2,
+42,943.1]; SE 1,610.0 = 4.07% of mean → B2 SE gate (≤5%) PASS. HEADLINE (B1): nested 46,638.9
+OUTSIDE the 95% CI (above the upper bound) → decomposition branch (pre-registered, expected
+given the +0.46% Task 2 move). Residual gap nested − component = 6,663.2 (+14.29% of nested)
+decomposed: relief-surface 543.0 (8.1%, = P25T3 OOS SCR rel err 1.16% × nested) and copula-form
+6,120.2 (91.9%). Copula-form DOMINANT; the residual exceeds the entire gaussian→t
+dependence-form sensitivity (4,765.6) → the genuine nested joint tail is heavier than the frozen
+t(2.9451) copula on standalone margins, NOT relief-surface. DISCLOSED. Without-actions bootstrap
+mean 46,725.3 (incidentally near nested; not a gate). Idempotency: first-5-replicate re-run
+bit-identical; aggregate digest 97aa928bcbf7.
+
+**Gates:** B1 (headline OR decomposition) satisfied via the disclosed decomposition; B2 SE ≤5%
+PASS; B3 archive bit-identical PASS; B4 copula/scalars frozen PASS; B5 reproducible/
+chunk-independent PASS. Verdict PASS.
+
+**Governance:** ChangeRecord 9049003b55d742f1812d5b083e3cd518 (methodology_change) → PEER_REVIEW
+→ OWNER_REVIEW (sign-off withheld); audit append; store audit 78→79, changes 51→52, verify_all
+True; idempotent re-run reports "already applied".
+
+**Tests:** 10 new (tests/test_phase26_task3_margin_bootstrap.py) PASS — chunk-independence/
+resume-safety, idempotency, frozen-input non-mutation, CI structure, decomposition additive
+identity + copula-form dominance, residual-exceeds-sensitivity, digest order-independence.
+Regression: P26T2 + P26T3 + governance + copula suites 136/0.
+
+**Reports:** docs/validation/PHASE26_TASK3_MARGIN_BOOTSTRAP_REPORT.{json,md};
+docs/COMPOSITION_BOOTSTRAP_CARD.md.
+
+**Next:** Phase 26 Task 4 — full-vs-reanchored delta matrix + MR-010/MR-014 1% refresh re-check
+(next free risk ID MR-015) + rank-invariance re-verify; then Task 5 (UI 1.7.0→1.8.0 ADDITIVE +
+PHASE 26 COMPLETE). Production sign-off withheld — educational model pending credentialled data
++ independent APS X2 review.

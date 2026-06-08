@@ -1,0 +1,157 @@
+{
+ "run_timestamp": "2026-06-08T05:14:49.604732+00:00",
+ "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+ "task": "Task 3 - frozen-copula margin bootstrap on the component basis",
+ "verdict": "PASS",
+ "drivers": [
+  "rate",
+  "equity",
+  "credit",
+  "lapse",
+  "mortality",
+  "fx",
+  "liquidity"
+ ],
+ "df_rematched": 2.9450930033094664,
+ "rho_max_abs_diff": 7.216449660063518e-16,
+ "crosscheck_count": 6,
+ "pathwise_basis_params": {
+  "sigma": 0.225,
+  "alpha": 0.7566891068509882,
+  "benefit_share_fit": 0.8449827924965548,
+  "provenance": "governed P25T3 FIT values, frozen (B4; NO re-tuning)"
+ },
+ "result": {
+  "config": {
+   "n_replicates": 200,
+   "n_sim_per_replicate": 20000,
+   "master_seed": 20260608,
+   "df_frozen": 2.9451,
+   "confidence": 0.995,
+   "ci_level": 0.95,
+   "resampling": "joint row resample WITH replacement; copula FROZEN"
+  },
+  "component_t_scr_ci": {
+   "n": 200,
+   "mean": 39595.06073760496,
+   "se": 1609.9712359341195,
+   "se_frac_of_mean": 0.04066091087985294,
+   "ci_level": 0.95,
+   "ci_lo": 36676.24172248241,
+   "ci_hi": 42943.093413623916,
+   "min": 34445.85077822741,
+   "max": 43759.03650033423
+  },
+  "component_g_scr_ci": {
+   "n": 200,
+   "mean": 35140.65714221947,
+   "se": 1217.4701392429768,
+   "se_frac_of_mean": 0.034645628120034695,
+   "ci_level": 0.95,
+   "ci_lo": 32889.55004982064,
+   "ci_hi": 37509.92360510155,
+   "min": 31755.79221439363,
+   "max": 37797.531757127246
+  },
+  "level_t_scr_ci": {
+   "n": 200,
+   "mean": 39383.54688293961,
+   "se": 1596.3650326520726,
+   "se_frac_of_mean": 0.0405338055863017,
+   "ci_level": 0.95,
+   "ci_lo": 36492.66444004359,
+   "ci_hi": 42556.8046363615,
+   "min": 34341.827497340506,
+   "max": 43526.26674345255
+  },
+  "without_t_scr_ci": {
+   "n": 200,
+   "mean": 46725.32698605153,
+   "se": 1899.576340761883,
+   "se_frac_of_mean": 0.04065410481405397,
+   "ci_level": 0.95,
+   "ci_lo": 43139.40954178635,
+   "ci_hi": 50441.03642975602,
+   "min": 40584.27655071195,
+   "max": 51511.377150436834
+  },
+  "nested_pathwise_reference": 46638.9,
+  "task2_t_component_point": 39975.654628199336,
+  "task2_g_component_point": 35210.1,
+  "headline_nested_inside_95ci": false,
+  "se_frac_of_mean": 0.04066091087985294,
+  "se_gate_pass": true,
+  "residual_gap_decomposition": {
+   "nested_scr": 46638.9,
+   "scr_component_t": 39975.654628199336,
+   "scr_component_g": 35210.1,
+   "gap_total_abs": 6663.245371800665,
+   "gap_total_rel_to_nested": 0.14286883635335879,
+   "relief_surface_rel_err_source": 0.01164368805922599,
+   "relief_surface_part_abs": 543.0488030254351,
+   "relief_surface_share_of_gap": 0.08149914534494808,
+   "copula_form_residual_abs": 6120.196568775231,
+   "copula_form_share_of_gap": 0.9185008546550519,
+   "dependence_form_sensitivity_t_minus_g": 4765.5546281993375,
+   "copula_form_dominant": true,
+   "residual_exceeds_t_g_sensitivity": true,
+   "interpretation": "The genuine nested joint tail is heavier than the frozen t(2.9451) copula on standalone margins: the residual gap (6120.2) exceeds the entire gaussian->t dependence-form sensitivity (4765.6), while the governed relief surface mis-prices SCR by only 1.16% of nested (543.0). The residual is therefore COPULA-FORM (margin-aggregation vs nested joint dynamics) dominated, NOT relief-surface."
+  },
+  "residual_gap_decomposition_bootstrap_mean_g": {
+   "nested_scr": 46638.9,
+   "scr_component_t": 39975.654628199336,
+   "scr_component_g": 35140.65714221947,
+   "gap_total_abs": 6663.245371800665,
+   "gap_total_rel_to_nested": 0.14286883635335879,
+   "relief_surface_rel_err_source": 0.01164368805922599,
+   "relief_surface_part_abs": 543.0488030254351,
+   "relief_surface_share_of_gap": 0.08149914534494808,
+   "copula_form_residual_abs": 6120.196568775231,
+   "copula_form_share_of_gap": 0.9185008546550519,
+   "dependence_form_sensitivity_t_minus_g": 4834.997485979868,
+   "copula_form_dominant": true,
+   "residual_exceeds_t_g_sensitivity": true,
+   "interpretation": "The genuine nested joint tail is heavier than the frozen t(2.9451) copula on standalone margins: the residual gap (6120.2) exceeds the entire gaussian->t dependence-form sensitivity (4835.0), while the governed relief surface mis-prices SCR by only 1.16% of nested (543.0). The residual is therefore COPULA-FORM (margin-aggregation vs nested joint dynamics) dominated, NOT relief-surface."
+  },
+  "relief_surface_rel_err_source": 0.01164368805922599,
+  "gates": {
+   "B1_headline_nested_inside_95ci_OR_gap_decomposed": true,
+   "B1_headline_nested_inside_95ci_raw": false,
+   "B2_se_le_5pct_of_mean": true,
+   "B3_archive_crosscheck_bit_identical": true,
+   "B4_copula_frozen_scalars_unchanged": true,
+   "B5_reproducible_chunk_independent": true
+  },
+  "digest": "97aa928bcbf7"
+ },
+ "use_restrictions": {
+  "classification": "EDUCATIONAL",
+  "restrictions": [
+   "The bootstrap resamples the realised standalone-loss rows only; it does NOT re-tune the copula (df/rho FROZEN) or the governed relief scalars (sigma/alpha/beta_fit) - SII Art. 234.",
+   "Percentile CI/SE quantify Monte-Carlo + finite-sample uncertainty of the frozen-copula component SCR; they do NOT quantify copula-form (margin-aggregation vs nested-dynamics) model error, which is decomposed and disclosed separately.",
+   "The nested reference 46,638.9 is the single-path proxy nested truth (P25T2/P25T3); the residual gap to it is a disclosed model-form limitation, not a calibration target.",
+   "Action / copula parameters remain educational placeholders pending credentialled data + independent APS X2 review."
+  ]
+ },
+ "standard_references": [
+  "Solvency II Delegated Regulation Article 234 (aggregation)",
+  "SOA ASOP 56 section 3.1.3/3.5",
+  "SOA ASOP 25 section 3.3",
+  "IA TAS M section 3.6",
+  "IFoA Life Aggregation & Simulation working party",
+  "Efron & Tibshirani (1993) bootstrap"
+ ],
+ "affected_components": [
+  "par_model_v2/projection/pathwise_composition_bootstrap.py",
+  "scripts/build_phase26_task3_margin_bootstrap.py",
+  "tests/test_phase26_task3_margin_bootstrap.py",
+  "docs/COMPOSITION_BOOTSTRAP_CARD.md",
+  "docs/validation/PHASE26_TASK3_MARGIN_BOOTSTRAP_REPORT.{json,md}"
+ ],
+ "markdown_path": "docs/validation/PHASE26_TASK3_MARGIN_BOOTSTRAP_REPORT.md",
+ "change_record_id": "9049003b55d742f1812d5b083e3cd518",
+ "change_record_status": "OWNER_REVIEW",
+ "audit_integrity_ok": true,
+ "change_records_total": 52,
+ "audit_entries_total": 79
+}

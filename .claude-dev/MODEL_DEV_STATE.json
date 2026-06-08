@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-08T (cycle 28, Linux sandbox)",
+ "last_run": "2026-06-08T (cycle 29, Linux sandbox)",
  "last_run_duration_minutes": null,
- "last_run_note": "Phase 26 Task 2 complete (PASS): per-driver composition transform on the frozen copula (full path-wise copula re-aggregation). t(2.9451) SCR component 39975.7 vs re-anchored 39794.3 (+0.46%, sign gate PASS); level variant bit-identical; gates 6/6; 17 new tests; ChangeRecord dcf5cc5132ad4cadb534ea47314d9684 code_change OWNER_REVIEW. Next: Task 3 frozen-copula bootstrap >=200x20k on the component basis; HEADLINE nested 46638.9 inside 95% CI else gap decomposed (likely branch) + disclosed.",
+ "last_run_note": "Phase 26 Task 3 complete (PASS): frozen-copula margin bootstrap 200x20k on the component basis. Component t SCR mean 39595.1, 95% CI [36676.2,42943.1], SE 1610.0 (4.07% of mean -> SE gate <=5% PASS). HEADLINE nested 46638.9 OUTSIDE the 95% CI (decomposition branch, pre-registered/expected): residual gap +14.29% decomposed = copula-form 6120 (91.9%) + relief-surface 543 (8.1%, P25T3 OOS SCR rel err 1.16%); COPULA-FORM DOMINATED (nested joint tail heavier than frozen t-copula on standalone margins), NOT relief-surface; residual exceeds the entire gaussian->t sensitivity 4766. Archive cross-check FIRST: Task 2 t-component 39975.6546 reproduced bit-identically (digest c97714b0a831). Copula FROZEN (df 2.9451, rho max|diff| 7.2e-16); governed scalars unchanged; per-replicate SeedSequence spawn -> chunk-independent + idempotent (digest 97aa928bcbf7). 10 new tests; ChangeRecord 9049003b55d742f1812d5b083e3cd518 methodology_change OWNER_REVIEW, audit 78->79, changes 51->52, verify_all True. Next: Task 4 full-vs-reanchored delta matrix + MR-010/MR-014 1% refresh re-check + rank invariance re-verify (next free risk ID MR-015), then Task 5 UI contract 1.7.0->1.8.0 ADDITIVE + PHASE 26 COMPLETE docs.",
  "current_phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
- "overall_status": "PHASE26_TASK2_COMPLETE_NEXT_TASK3_BOOTSTRAP",
+ "overall_status": "PHASE26_TASK3_COMPLETE_NEXT_TASK4_DELTA_MATRIX",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -794,20 +794,4 @@
   "evidence": "docs/validation/PHASE25_TASK5_UI_PROPAGATION_REPORT.{json,md}",
   "change_record_id": "3fa4394e568b48fc9ee06dd8a64dd44b",
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
-  "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
- },
- "last_updated": "2026-06-08T04:30:00Z",
- "cycle_2026_06_08_phase26_task2": {
-  "verdict": "PASS",
-  "gates": "6/6 pre-registered",
-  "tests_new": 17,
-  "scr_component_t": 39975.7,
-  "scr_level_t": 39794.3216670548,
-  "delta_rel": 0.00456,
-  "gap_to_nested_rel": -0.1429,
-  "mr_1pct_trigger": false,
-  "change_record": "dcf5cc5132ad4cadb534ea47314d9684",
-  "audit": "77->78",
-  "changes": "50->51"
- }
-}
+  "next_task": "Phase 26 Task 1 - design-note-

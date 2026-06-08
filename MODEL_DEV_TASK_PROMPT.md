@@ -2062,3 +2062,59 @@ parallel-run foreign writes before governance/commit. Stage data: /var/tmp/p26t2
 (GITHUB_PUSH_BLOCKER.md) — push from the sandbox works; serialise/stagger the scheduled
 runs (Python-less Windows runs waste cycles); production sign-off residual (credentialled
 data + APS X2) — by design for this educational model; disk /sessions ~89%.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-08 +08 (cycle 29, supersedes everything above)
+
+**Phase 26 Task 3 COMPLETE (PASS) — frozen-copula margin bootstrap (200×20k) on the FULL
+re-aggregated (component) basis.** Archive cross-check FIRST (B3/B4): the Task 2 t-component
+read-out reproduced BIT-IDENTICALLY (39975.6546, digest c97714b0a831) and all six Task 2
+gates PASS before any bootstrap; copula FROZEN (df 2.9451 tol 1e-4; rho max|diff| 7.2e-16
+tol 1e-12); governed sigma 0.225 / alpha 0.7567 / beta_fit 0.8450 UNCHANGED. NEW
+`par_model_v2/projection/pathwise_composition_bootstrap.py` (+ build script + 10 tests):
+non-parametric bootstrap over the realised standalone-loss rows (joint resample WITH
+replacement → cross-driver pairing preserved); df/rho + relief scalars FROZEN per replicate
+(SII Art. 234); t/gaussian component read-outs on CRN; per-replicate `SeedSequence.spawn()`
+→ chunk-independent, resume-safe, idempotent. RESULTS: component t SCR mean **39,595.1**,
+95% CI **[36,676.2, 42,943.1]**, SE 1,610.0 (**4.07%** of mean → B2 SE gate ≤5% PASS).
+HEADLINE (B1): nested **46,638.9 OUTSIDE** the 95% CI → DECOMPOSITION branch (pre-registered,
+expected). Residual gap nested − component = 6,663.2 (**+14.29%**) decomposed: relief-surface
+**543.0 (8.1%)** — independently bounded by the governed P25T3 OOS SCR rel err 1.16% — and
+copula-form **6,120.2 (91.9%)**; copula-form DOMINANT, residual EXCEEDS the entire gaussian→t
+sensitivity (4,765.6) → the nested joint tail is heavier than the frozen t(2.9451) copula on
+standalone margins, NOT relief-surface. DISCLOSED. Gates 5/5 (B1 satisfied via the disclosed
+decomposition). Governance: ChangeRecord `9049003b55d742f1812d5b083e3cd518`
+(methodology_change) OWNER_REVIEW; audit 78→79; changes 51→52; verify_all True; idempotent
+(digest 97aa928bcbf7). Reports: docs/validation/PHASE26_TASK3_MARGIN_BOOTSTRAP_REPORT.{json,md}
++ docs/COMPOSITION_BOOTSTRAP_CARD.md.
+
+**NEXT executable task: Phase 26 Task 4 — full-vs-reanchored delta matrix.** Build the
+component-vs-level-vs-without delta matrix across t/gaussian with the Task 3 bootstrap CIs
+attached; re-check the MR-010/MR-014 1% disclosure trigger after Tasks 2–3 (Task 2 +0.46% < 1%;
+confirm the combined move stays sub-1% or refresh the MR notes + open MR-015); re-verify rank
+invariance (df/rho frozen); methodology_change ChangeRecord OWNER_REVIEW; idempotent re-run
+digest-identical; stage to /var/tmp/p26t4_* in <44 s chunks. Then Task 5 (UI contract
+1.7.0 → 1.8.0 ADDITIVE: surface the component-basis bootstrap CI + gap decomposition; PHASE 26
+COMPLETE docs). On Phase 26 completion the standing instruction is to keep the fully-offline
+interactive UI (`ui_app.html`, no pre-install, consumes only model output) in sync with the new
+evidence, and to research the next stochastic-model sophistication step.
+
+**Sandbox operating rules (RE-CONFIRMED cycle 29):** ~44 s bash wall — a 4-chunk loop timed out
+at 45 s, so chunk the bootstrap in ≤40-replicate / ≤~10 s stages (partials persist → resume is
+free); MOUNT APPENDS UNRELIABLE — ALWAYS build/append OFF-MOUNT (/var/tmp) then cp whole-file +
+cmp + grep-verify; PYTHONPATH=/var/tmp/pylibs:. ; NEVER rewrite an existing large mounted file
+via the file tool; nohup does NOT survive between bash calls; back up + hash-verify
+GOVERNANCE_STORE.json before every governance stage; alt-`GIT_INDEX_FILE` commits onto `p22c9`
+seeded from the pushed tip, push `p22c9:main` at the end of every cycle; next free risk ID
+MR-015; re-check mtimes for parallel-run foreign writes before governance/commit. Stage data:
+/var/tmp/p26t3_stage (verified_inputs.npz + partial_*.json + bootstrap_result.json),
+/var/tmp/p26t2_stage (verified_inputs.npz, reagg_result.json), /var/tmp/p26t1_build,
+/var/tmp/p25t5_build, /var/tmp/p25t4_stage, /var/tmp/p25t3_stage, /var/tmp/p25t2_stage,
+/var/tmp/p24t3_stage, /var/tmp/p23t2_stage (losses.npz), /var/tmp/p23t4_stage,
+.phase22_task2_stage.
+
+**Standing blockers (human action):** delete the three git ghost locks (GITHUB_PUSH_BLOCKER.md)
+— push from the sandbox works; serialise/stagger the scheduled runs; production sign-off
+residual (credentialled data + APS X2) — by design for this educational model; disk /sessions
+~89%.
