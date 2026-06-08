@@ -1,0 +1,175 @@
+{
+ "run_timestamp": "2026-06-08T04:16:28.461315+00:00",
+ "phase": "Phase 26: Full Path-Wise Copula Re-Aggregation",
+ "task": "Task 2 - per-driver composition transform on the frozen copula",
+ "verdict": "PASS",
+ "drivers": [
+  "rate",
+  "equity",
+  "credit",
+  "lapse",
+  "mortality",
+  "fx",
+  "liquidity"
+ ],
+ "cuttable_drivers": [
+  "rate",
+  "equity",
+  "lapse",
+  "mortality"
+ ],
+ "carveout_drivers": [
+  "credit",
+  "fx",
+  "liquidity"
+ ],
+ "df_rematched": 2.9450930033094664,
+ "rho_max_abs_diff": 7.216449660063518e-16,
+ "crosscheck_count": 12,
+ "pathwise_basis_params": {
+  "sigma": 0.225,
+  "alpha": 0.7566891068509882,
+  "benefit_share_fit": 0.8449827924965548,
+  "provenance": "governed Phase 25 Task 3 FIT-only calibration, bit-equal to the archived P25T4 report params (G4; NO re-tuning)"
+ },
+ "result": {
+  "t_readout": {
+   "config": {
+    "n_sim": 200000,
+    "seed": 20260607,
+    "df": 2.9451,
+    "copula": "t(2.9451)",
+    "confidence": 0.995,
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548,
+    "cuttable_drivers": [
+     "rate",
+     "equity",
+     "lapse",
+     "mortality"
+    ],
+    "carveout_drivers": [
+     "credit",
+     "fx",
+     "liquidity"
+    ]
+   },
+   "var_without": 163275.05391439144,
+   "es_without": 168745.84486054623,
+   "scr_without": 47269.12222883626,
+   "var_level": 152354.34627818983,
+   "es_level": 157170.80867159332,
+   "scr_level": 39794.3216670548,
+   "var_component": 152553.93887183352,
+   "es_component": 157471.34681056417,
+   "scr_component": 39975.654628199336,
+   "mean_component": 112578.28424363419,
+   "mean_level": 112560.02461113503,
+   "component_minus_level_scr": 181.33296114453697,
+   "clip_binding_share_level": 0.0,
+   "clip_binding_share_component": 0.0,
+   "active_share_level": 1.0,
+   "active_share_component": 1.0,
+   "cuttable_share_mean": 0.9929651939408488,
+   "cuttable_share_tail_mean": 0.9742062312375245,
+   "tail_cuttable_share_depression": 0.018758962703324333,
+   "mean_relief_level": 3445.907074420138,
+   "mean_relief_component": 3427.647441920975,
+   "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+   "digest": "c97714b0a831"
+  },
+  "g_readout": {
+   "config": {
+    "n_sim": 200000,
+    "seed": 20260607,
+    "df": null,
+    "copula": "gaussian",
+    "confidence": 0.995,
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548,
+    "cuttable_drivers": [
+     "rate",
+     "equity",
+     "lapse",
+     "mortality"
+    ],
+    "carveout_drivers": [
+     "credit",
+     "fx",
+     "liquidity"
+    ]
+   },
+   "var_without": 157631.1434900427,
+   "es_without": 161796.37897244544,
+   "scr_without": 41629.106321465515,
+   "var_level": 147756.4941283347,
+   "es_level": 151202.3436620259,
+   "scr_level": 35210.084673414254,
+   "var_component": 147956.92960007247,
+   "es_component": 151448.55074062216,
+   "scr_component": 35391.468763848694,
+   "mean_component": 112565.46083622378,
+   "mean_level": 112546.40945492046,
+   "component_minus_level_scr": 181.3840904344397,
+   "clip_binding_share_level": 0.0,
+   "clip_binding_share_component": 0.0,
+   "active_share_level": 1.0,
+   "active_share_component": 1.0,
+   "cuttable_share_mean": 0.9925953135528667,
+   "cuttable_share_tail_mean": 0.9768718867165949,
+   "tail_cuttable_share_depression": 0.015723426836271814,
+   "mean_relief_level": 3455.62771365674,
+   "mean_relief_component": 3436.5763323534065,
+   "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+   "digest": "81ece1c4fee5"
+  },
+  "gates": {
+   "G1_archive_crosscheck_bit_identical": true,
+   "G2_rank_invariance_frozen_copula": true,
+   "G3_cuttable_component_only_with_envelope_clip": true,
+   "G4_governed_scalars_unchanged": true,
+   "G5_sign_gate_component_t_scr_ge_reanchored": true,
+   "G6_level_variant_retained_bit_identical": true
+  },
+  "sign_gate_reference": 39794.3,
+  "nested_pathwise_reference": 46638.9,
+  "component_vs_reanchored_rel_t": 0.0045567546712239615,
+  "component_vs_reanchored_rel_g": 0.0051514812337669635,
+  "mr_refresh_trigger_1pct": false,
+  "gap_to_nested_component_t_rel": -0.14286883635335879,
+  "gap_to_nested_level_t_rel": -0.14675685603530964,
+  "envelope_bounds_ok": true
+ },
+ "use_restrictions": {
+  "classification": "EDUCATIONAL",
+  "restrictions": [
+   "The component basis consumes the governed P25T3 FIT-sample scalars (sigma, alpha, beta_fit) without re-tuning; residual relief-surface error is decomposed at Task 3 if the bootstrap CI gate fails.",
+   "Per-driver composition recovery is exact only at the driver margin level used by the benchmark; node-level heterogeneity below the driver level remains aggregated (design note s6).",
+   "Copula parameters are FROZEN (df 2.9451; correlation bit-frozen); the transform must NOT re-tune them (Solvency II Art. 234 rank invariance).",
+   "Action parameters remain educational placeholders pending credentialled practice data + independent APS X2 review."
+  ]
+ },
+ "standard_references": [
+  "Solvency II Delegated Regulation Article 23 (future management actions)",
+  "Solvency II Delegated Regulation Article 234 (aggregation)",
+  "SOA ASOP 56 section 3.1.3/3.4/3.5",
+  "SOA ASOP 25 section 3.3",
+  "IA TAS M section 3.2/3.6",
+  "IFoA Life Aggregation & Simulation working party"
+ ],
+ "affected_components": [
+  "par_model_v2/projection/pathwise_composition_transform.py",
+  "scripts/build_phase26_task2_composition_transform.py",
+  "tests/test_phase26_task2_composition_transform.py",
+  "docs/COMPOSITION_TRANSFORM_CARD.md",
+  "docs/validation/PHASE26_TASK2_COMPOSITION_TRANSFORM_REPORT.{json,md}"
+ ],
+ "markdown_path": "docs/validation/PHASE26_TASK2_COMPOSITION_TRANSFORM_REPORT.md",
+ "change_record_id": "dcf5cc5132ad4cadb534ea47314d9684",
+ "change_record_status": "OWNER_REVIEW",
+ "audit_integrity_ok": true,
+ "change_records_total": 51,
+ "audit_entries_total": 78
+}

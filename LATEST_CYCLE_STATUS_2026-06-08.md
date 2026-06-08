@@ -1,53 +1,52 @@
-# Latest Cycle Status - 2026-06-08 (+08) (cycle 27) - READ FIRST
+# Latest Cycle Status - 2026-06-08 (+08) (cycle 28) - READ FIRST
 
-**Phase 26 Task 1 COMPLETE (PASS — design note, pre-registered gates, 13 new tests,
-governance verify_all True). Next: Phase 26 Task 2 — per-driver composition transform
-on the frozen copula.**
+**Phase 26 Task 2 COMPLETE (PASS — per-driver composition transform on the FROZEN copula;
+6/6 pre-registered gates; 17 new tests; governance verify_all True). Next: Phase 26 Task 3 —
+frozen-copula margin bootstrap on the FULL re-aggregated (component) basis.**
 
-What this cycle did (design-note-first candidate selection + design note):
+What this cycle did:
 
-- Health gate (targeted, DISCLOSED): cycle 26 closed green 8-10h earlier; this cycle adds
-  ONLY new additive files. compileall clean; P24T1/P25T1/P25T3/P25T4 + new P26T1 suites
-  163 PASS / 0 FAIL; foreign-write mtime check clean; governance store backed up +
-  hash-verified (/var/tmp/p26t1_build/GOV_BACKUP_pre_p26t1.json).
-- CHOSEN candidate (a): full path-wise copula re-aggregation — quantified motivation:
-  the P25T4 analytic re-anchoring (constant-share LEVEL transform) understates the nested
-  path-wise reference 46,638.9 by 14.7% BEYOND bootstrap noise (outside 95% CI
-  [35,793, 42,496]). NOT chosen: (b) credentialled calibration (human-blocked);
-  (c) declaration-cadence refinement (DEFERRED — would be superseded by this phase's basis
-  change; sensitivity 1.136 archived).
-- NEW `par_model_v2/projection/pathwise_copula_reaggregation.py`: synthetic 7-driver
-  t-copula level-vs-component pre-study — carve-out (non-cuttable) drivers dominate the
-  tail, so the LEVEL transform understates the COMPONENT-basis VaR99.5 (~1.0% on CRN; sign
-  stable seeds 42/7/2026; tail cuttable share 0.566 -> 0.470; re-ranking not mean shift).
-  Sign evidence only; magnitude at Tasks 2-3.
-- `scripts/build_phase26_task1_design_note.py` -> docs/validation/PHASE26_TASK1_DESIGN_NOTE.{json,md}
-  + docs/PATHWISE_COPULA_REAGGREGATION_DESIGN_CARD.md. Verdict PASS. Idempotent verified.
-- Pre-registered gates (s5, no gate-shopping): T2 copula FROZEN (df 2.9451 tol 1e-4; rho
-  <= 1e-12), archive cross-check bit-identical first, sign gate full t SCR >= 39,794.3,
-  sigma/alpha unchanged; T3 bootstrap >= 200x20k, HEADLINE nested 46,638.9 INSIDE 95% CI
-  else decomposed + disclosed, SE <= 5%; T4 delta matrix + MR-010/MR-014 1% trigger + rank
-  invariance; T5 UI 1.7.0 -> 1.8.0 ADDITIVE + PHASE 26 COMPLETE.
-- Governance: ChangeRecord `40fb20ee3b9a41a7a2b6a47a587ada91` (governance_change)
-  OWNER_REVIEW; audit 76->77; changes 49->50; verify_all True.
-- Tests: 13 new PASS (tests/test_phase26_task1_design_note.py).
-- REPAIRED (DISCLOSED): MODEL_DEV_LOG.md tail (cycle-26 truncation; a direct mount append
-  VANISHED silently this cycle) — rebuilt OFF-MOUNT, whole-file cp + cmp verified.
+- Health gate (targeted, DISCLOSED): cycle 27 closed green ~8h earlier; additive-only cycle.
+  compileall clean; targeted suites 150 PASS / 0 FAIL pre-change; mtime check clean;
+  governance store backed up + hash-verified (/var/tmp/p26t2_build/GOV_BACKUP_pre_p26t2.json).
+- Archive cross-check FIRST (G1/G2): 12/12 PASS — P24T2 horizon + P25T4 LEVEL read-outs
+  reproduced BIT-IDENTICALLY before any new computation; df re-matched 2.9451 (tol 1e-4);
+  rho max|diff| 7.22e-16 (tol 1e-12) — copula FROZEN.
+- NEW `par_model_v2/projection/pathwise_composition_transform.py`: per-scenario composition
+  recovered from frozen margins; CUTTABLE sub-level (L_fit + rate/equity/lapse/mortality
+  deviations) vs CARVE-OUT (credit/fx/liquidity); relief on the cuttable component only,
+  B_comp = clip(beta_fit * V_cut, 0, V), per-scenario max_relief envelope clip; LEVEL
+  variant retained on CRN. Governed sigma/alpha/beta_fit UNCHANGED (bit-equal P25T4).
+- NEW `scripts/build_phase26_task2_composition_transform.py` (verify|reagg|report|governance)
+  -> docs/validation/PHASE26_TASK2_COMPOSITION_TRANSFORM_REPORT.{json,md} +
+  docs/COMPOSITION_TRANSFORM_CARD.md. Verdict PASS. Idempotent.
+- RESULTS: t(2.9451) SCR component 39,975.7 vs re-anchored 39,794.3 = +0.46% (SIGN gate
+  PASS); gaussian 35,391.5 vs 35,210.1 (+0.52%); real-basis tail cuttable-share depression
+  0.993 -> 0.974 (FAR smaller than synthetic 0.566 -> 0.470). Gap to nested 46,638.9:
+  -14.68% -> -14.29% — composition closes only a small part; residual now expected to be
+  relief-surface / copula-form error. DISCLOSED. MR 1% trigger NOT met (+0.46% < 1%).
+- Governance: ChangeRecord `dcf5cc5132ad4cadb534ea47314d9684` (code_change) OWNER_REVIEW;
+  audit 77->78; changes 50->51; verify_all True. Tests: 17 new PASS; P26 suites 30/0.
 
-**Next executable action: Phase 26 Task 2 — per-driver composition transform on the
-frozen copula** (recover per-driver loss composition from the frozen margins per joint
-scenario; relief on the CUTTABLE component only with per-scenario max_relief envelope clip;
-governed sigma 0.225 / alpha 0.757 UNCHANGED; gates above; code_change ChangeRecord).
+**Next executable action: Phase 26 Task 3 — frozen-copula margin bootstrap (>= 200 x 20k)
+on the FULL re-aggregated (component) basis.** HEADLINE gate: nested 46,638.9 INSIDE the
+95% CI, else residual gap MUST be decomposed (copula-form vs relief-surface) + disclosed —
+given the +0.46% Task 2 move, decomposition is the LIKELY branch: plan the gap decomposition
+explicitly (surface error via P25T3 OOS diagnostics vs copula-form via t-vs-gaussian /
+margin-form deltas). SE <= 5%; seeds/config/digests recorded; idempotent;
+methodology_change ChangeRecord OWNER_REVIEW. Stage to /var/tmp/p26t3_* in <44 s chunks
+(200 replicates x 20k: chunk the replicate loop, persist partials, resume).
 
-**Operating warnings (cycle 27):** ~44 s bash wall; MOUNT APPENDS UNRELIABLE — this cycle a
-direct >>-append to MODEL_DEV_LOG.md vanished while the byte count grew; ALWAYS build/append
-OFF-MOUNT (/var/tmp) then cp whole-file + cmp + grep-verify; PYTHONPATH=/var/tmp/pylibs:. ;
-NEVER rewrite an existing large mounted file via the file tool; nohup does not survive
-between bash calls; back up + hash-verify the governance store before any governance stage;
-re-check mtimes for parallel-run foreign writes before governance/commit; next free risk ID
-MR-015. Stage data: /var/tmp/p26t1_build, /var/tmp/p25t5_build, /var/tmp/p25t4_stage,
-/var/tmp/p25t3_stage, /var/tmp/p25t2_stage, /var/tmp/p24t3_stage, /var/tmp/p23t2_stage
-(losses.npz), /var/tmp/p23t4_stage, .phase22_task2_stage.
+**Operating warnings (cycle 28):** ~44 s bash wall; MOUNT APPENDS UNRELIABLE — ALWAYS
+build/append OFF-MOUNT (/var/tmp) then cp whole-file + cmp + grep-verify (worked cleanly
+this cycle); PYTHONPATH=/var/tmp/pylibs:. ; NEVER rewrite an existing large mounted file via
+the file tool; nohup does not survive between bash calls; back up + hash-verify the
+governance store before any governance stage; re-check mtimes for parallel-run foreign
+writes before governance/commit; next free risk ID MR-015. Stage data: /var/tmp/p26t2_stage
+(verified_inputs.npz + reagg_result.json), /var/tmp/p26t2_build, /var/tmp/p26t1_build,
+/var/tmp/p25t5_build, /var/tmp/p25t4_stage, /var/tmp/p25t3_stage, /var/tmp/p25t2_stage,
+/var/tmp/p24t3_stage, /var/tmp/p23t2_stage (losses.npz), /var/tmp/p23t4_stage,
+.phase22_task2_stage.
 
 **Persisting blockers (human action):**
 - Git ghost locks (`.git/index.lock`, `.git/HEAD.lock`, `.git/refs/heads/main.lock`) -

@@ -2004,3 +2004,61 @@ parallel-run foreign writes before governance/commit. Stage data: /var/tmp/p26t1
 (GITHUB_PUSH_BLOCKER.md) — push from the sandbox works; serialise/stagger the scheduled runs
 (Python-less Windows runs waste cycles); production sign-off residual (credentialled data +
 APS X2) — by design for this educational model; disk /sessions ~89%.
+
+---
+
+## ⚠️ LATEST STATUS — 2026-06-08 +08 (cycle 28, supersedes everything above)
+
+**Phase 26 Task 2 COMPLETE (PASS) — per-driver composition transform on the FROZEN copula
+(full path-wise copula re-aggregation, benchmark bases).** Archive cross-check FIRST 12/12
+PASS (P24T2 horizon + P25T4 LEVEL read-outs bit-identical BEFORE new computation); rank
+invariance df re-matched 2.9451 (tol 1e-4), rho max|diff| 7.22e-16 (tol 1e-12) — copula
+FROZEN (Art. 234). NEW `par_model_v2/projection/pathwise_composition_transform.py`
+(+ build script + 17 tests): per-scenario composition from frozen margins; CUTTABLE
+sub-level (L_fit + rate/equity/lapse/mortality deviations) vs CARVE-OUT
+(credit/fx/liquidity, P24T3); relief on the cuttable component only,
+B_comp = clip(beta_fit * V_cut, 0, V), per-scenario max_relief envelope clip
+(apply_pathwise_declaration_node); LEVEL variant retained on CRN bit-identically; governed
+sigma 0.225 / alpha 0.7567 / beta_fit 0.8450 UNCHANGED. RESULTS (seed 20260607, 200k):
+t(2.9451) SCR component 39,975.7 vs re-anchored 39,794.3 = **+0.46%** (SIGN gate PASS;
+magnitude disclosed); gaussian 35,391.5 (+0.52%); tail cuttable-share depression on the
+REAL basis only 0.993 -> 0.974 (vs synthetic 0.566 -> 0.470); gap to nested 46,638.9
+narrows -14.68% -> -14.29% only — DISCLOSED: residual gap now expected dominated by
+relief-surface / copula-form error, NOT composition. MR-010/MR-014 1% trigger NOT met.
+Gates 6/6 PASS. Governance: ChangeRecord `dcf5cc5132ad4cadb534ea47314d9684` (code_change)
+OWNER_REVIEW; audit 77->78; changes 50->51; verify_all True; idempotent. Reports:
+docs/validation/PHASE26_TASK2_COMPOSITION_TRANSFORM_REPORT.{json,md} +
+docs/COMPOSITION_TRANSFORM_CARD.md.
+
+**NEXT executable task: Phase 26 Task 3 — frozen-copula margin bootstrap (>= 200 x 20k) on
+the FULL re-aggregated (component) basis.** Pre-registered gates (design note s5): HEADLINE
+nested 46,638.9 INSIDE the 95% CI, ELSE the residual gap MUST be decomposed (copula-form vs
+relief-surface) + disclosed — given the +0.46% Task 2 move, the decomposition branch is
+LIKELY: plan it explicitly (relief-surface error via the P25T3 OOS/val diagnostics on the
+component basis; copula-form via t-vs-gaussian and margin-form deltas); bootstrap SE <= 5%
+of mean SCR; seeds/config/digests recorded; idempotent re-run digest-identical;
+methodology_change ChangeRecord OWNER_REVIEW. IMPLEMENTATION: chunk the 200-replicate loop
+into <44 s stages persisting partials to /var/tmp/p26t3_stage (resume-safe), reusing
+composition_joint_readout with per-replicate margin resamples (P25T4
+pathwise_bootstrap_margin_ci pattern adapted to the component basis). Then Task 4
+(full-vs-reanchored delta matrix; MR-010/MR-014 refresh trigger re-checked after Task 3;
+rank invariance re-verified; next free risk ID MR-015), Task 5 (UI contract 1.7.0 -> 1.8.0
+ADDITIVE + PHASE 26 COMPLETE docs).
+
+**Sandbox operating rules (RE-CONFIRMED cycle 28):** ~44 s bash wall; MOUNT APPENDS
+UNRELIABLE — ALWAYS build/append OFF-MOUNT (/var/tmp) then cp whole-file + cmp +
+grep-verify (clean this cycle); PYTHONPATH=/var/tmp/pylibs:. ; NEVER rewrite an existing
+large mounted file via the file tool; nohup does NOT survive between bash calls — chunk
+instead; back up + hash-verify GOVERNANCE_STORE.json before every governance stage (backup
+/var/tmp/p26t2_build/GOV_BACKUP_pre_p26t2.json); alt-`GIT_INDEX_FILE` commits onto `p22c9`,
+push `p22c9:main` at the end of every cycle; next free risk ID MR-015; re-check mtimes for
+parallel-run foreign writes before governance/commit. Stage data: /var/tmp/p26t2_stage
+(verified_inputs.npz, reagg_result.json), /var/tmp/p26t1_build, /var/tmp/p25t5_build,
+/var/tmp/p25t4_stage, /var/tmp/p25t3_stage, /var/tmp/p25t2_stage (nested path-wise arrays),
+/var/tmp/p24t3_stage, /var/tmp/p23t2_stage (losses.npz copula primitives),
+/var/tmp/p23t4_stage, .phase22_task2_stage (heavy totals).
+
+**Standing blockers (human action):** delete the three git ghost locks
+(GITHUB_PUSH_BLOCKER.md) — push from the sandbox works; serialise/stagger the scheduled
+runs (Python-less Windows runs waste cycles); production sign-off residual (credentialled
+data + APS X2) — by design for this educational model; disk /sessions ~89%.

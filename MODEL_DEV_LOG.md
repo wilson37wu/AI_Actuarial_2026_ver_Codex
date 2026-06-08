@@ -8769,3 +8769,69 @@ OFF-MOUNT and copying the whole file back (cp + cmp verified). PHASE 25 COMPLETE
 truncation marked inline; full records in docs/validation/PHASE25_TASK*_REPORT.md.
 
 **Next:** Phase 26 Task 2 — per-driver composition transform on the frozen copula.
+
+---
+
+## 2026-06-08 (+08) — Cycle 28 — Phase 26 Task 2: Per-driver composition transform on the frozen copula (PASS)
+
+**Health gate (targeted, DISCLOSED):** cycle 27 closed green ~8h earlier; this cycle adds ONLY
+new additive files (no existing module touched). compileall clean; P24T1/P25T1/P25T3/P25T4/
+P26T1 suites 150 PASS / 0 FAIL pre-change; foreign-write mtime check clean; governance store
+backed up + hash-verified (/var/tmp/p26t2_build/GOV_BACKUP_pre_p26t2.json).
+
+**Archive cross-check FIRST (pre-registered G1/G2): 12/12 PASS** — P24T2 horizon t/gaussian
+joint-action read-outs AND P25T4 analytic re-anchored (LEVEL) read-outs reproduced
+BIT-IDENTICALLY (digest + float equality) before any new computation; rank invariance df
+re-matched 2.9451 (tol 1e-4) on the without-actions staged losses; rho max|diff| 7.22e-16
+(tol 1e-12) — copula FROZEN (Art. 234).
+
+**Deliverables:**
+- NEW `par_model_v2/projection/pathwise_composition_transform.py`: per joint copula scenario
+  the per-driver loss composition is recovered from the FROZEN empirical margins
+  (V = L_fit + sum_k (Q_k(U_k) - mean_k)); split into CUTTABLE sub-level
+  (L_fit + rate/equity/lapse/mortality deviations) vs CARVE-OUT remainder (credit + analytic
+  fx/liquidity offsets, P24T3 convention); governed relief applied to the CUTTABLE component
+  only: B_comp = clip(beta_fit * V_cut, 0, V), W = V - clip(frac * B_comp, 0,
+  max_relief * B_comp) via the IDENTICAL node-level envelope
+  (apply_pathwise_declaration_node). LEVEL variant retained on common random numbers.
+- NEW `scripts/build_phase26_task2_composition_transform.py` (stages verify | reagg | report |
+  governance) -> docs/validation/PHASE26_TASK2_COMPOSITION_TRANSFORM_REPORT.{json,md} +
+  docs/COMPOSITION_TRANSFORM_CARD.md. Verdict PASS.
+
+**Results (seed 20260607, n_sim 200k, CRN vs archived):**
+- t(2.9451) SCR: without 47,269.1; LEVEL (re-anchored) 39,794.3 (bit-identical to P25T4);
+  COMPONENT (full re-agg) 39,975.7 = **+0.46% vs re-anchored** — SIGN gate PASS
+  (component >= 39,794.3; magnitude DISCLOSED, not gated).
+- gaussian SCR: without 41,629.1; LEVEL 35,210.1 (bit-identical); COMPONENT 35,391.5 (+0.52%).
+- Tail cuttable-share depression on the REAL basis: mean 0.993 -> tail 0.974 (depression
+  0.019) — far smaller than the synthetic pre-study (0.566 -> 0.470): the real cuttable
+  sub-level (incl. the full L_fit base) dominates each scenario, so composition heterogeneity
+  moves the benchmark by less than the design-note synthetic suggested.
+- Gap to nested path-wise reference 46,638.9: LEVEL -14.68% -> COMPONENT -14.29% — the
+  composition transform closes only a SMALL part of the beyond-noise understatement.
+  DISCLOSED: the residual gap is now expected to be dominated by relief-surface /
+  copula-form error, NOT composition heterogeneity; Task 3 bootstrap closure test must
+  decompose the remaining gap (per pre-registered Task 3 gate) if (as now likely) the nested
+  reference stays outside the 95% CI.
+- MR-010/MR-014 1% disclosure trigger: NOT met (+0.46% < 1%) — refresh not required at
+  Task 4 unless Task 3 moves the figure; envelope bounds verified elementwise; clip-binding
+  share 0.0; composition reconstruction max abs err 8.7e-11.
+
+**Gates: 6/6 PASS** (G1 archive cross-check bit-identical; G2 rank invariance frozen copula;
+G3 cuttable-component-only relief with per-scenario max_relief envelope clip; G4 governed
+sigma 0.225 / alpha 0.7567 / beta_fit 0.8450 UNCHANGED bit-equal to P25T4 params;
+G5 sign gate; G6 level variant retained bit-identical).
+
+**Governance:** ChangeRecord `dcf5cc5132ad4cadb534ea47314d9684` (code_change) OWNER_REVIEW;
+audit 77->78; change records 50->51; verify_all True; idempotent re-run verified
+(added: false).
+
+**Tests:** 17 new PASS (`tests/test_phase26_task2_composition_transform.py` — partition,
+reconstruction identity, envelope bounds, component<=level relief where carve-out positive,
+CRN/idempotency, gaussian branch, archived-report bit-identity vs P25T4, governance
+integrity). Post-change P26T1+P26T2 suites 30 PASS / 0 FAIL.
+
+**Next:** Phase 26 Task 3 — frozen-copula margin bootstrap (>= 200 x 20k) on the FULL
+re-aggregated (component) basis; HEADLINE gate: nested 46,638.9 INSIDE the 95% CI, else the
+residual gap MUST be decomposed (copula-form vs relief-surface) + disclosed; SE <= 5%;
+methodology_change ChangeRecord.
