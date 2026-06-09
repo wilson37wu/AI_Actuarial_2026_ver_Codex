@@ -1,0 +1,192 @@
+{
+ "run_timestamp": "2026-06-08T16:16:19.289282+00:00",
+ "phase": "Phase 28: Grouped-t Heterogeneous Tail-Dependence Copula",
+ "task": "Task 3 - grouped-t-copula margin bootstrap + residual re-decomposition",
+ "verdict": "PASS",
+ "block_dfs_hat": [
+  37.865628454397445,
+  8.506318281609548
+ ],
+ "drivers": [
+  "rate",
+  "equity",
+  "credit",
+  "lapse",
+  "mortality",
+  "fx",
+  "liquidity"
+ ],
+ "df_rematched": 2.9450930033094664,
+ "rho_max_abs_diff": 7.216449660063518e-16,
+ "crosscheck_count": 8,
+ "pathwise_basis_params": {
+  "sigma": 0.225,
+  "alpha": 0.7566891068509882,
+  "benefit_share_fit": 0.8449827924965548,
+  "provenance": "governed P25T3 FIT values, frozen (C5; NO re-tuning)"
+ },
+ "result": {
+  "config": {
+   "n_replicates": 200,
+   "n_sim_per_replicate": 20000,
+   "master_seed": 20260608,
+   "homogeneous_df_frozen": 2.9451,
+   "block_dfs_frozen": [
+    37.865628454397445,
+    8.506318281609548
+   ],
+   "blocks": [
+    [
+     0,
+     1,
+     3,
+     4
+    ],
+    [
+     2,
+     5,
+     6
+    ]
+   ],
+   "confidence": 0.995,
+   "ci_level": 0.95,
+   "resampling": "joint row resample WITH replacement; copula Sigma + homogeneous df + per-block df_g FROZEN; grouped-t vs single-df t on COMMON Gaussian latent"
+  },
+  "grouped_t_component_scr_ci": {
+   "n": 200,
+   "mean": 35372.49326229076,
+   "se": 1265.38880053341,
+   "se_frac_of_mean": 0.03577324310023664,
+   "ci_level": 0.95,
+   "ci_lo": 33034.37733256475,
+   "ci_hi": 38008.51222047386,
+   "min": 31595.19225150207,
+   "max": 38677.92757177893
+  },
+  "single_t_component_scr_ci": {
+   "n": 200,
+   "mean": 39595.06073760497,
+   "se": 1609.9712359341177,
+   "se_frac_of_mean": 0.040660910879852886,
+   "ci_level": 0.95,
+   "ci_lo": 36676.24172248241,
+   "ci_hi": 42943.093413623916,
+   "min": 34445.85077822741,
+   "max": 43759.03650033423
+  },
+  "without_grouped_t_scr_ci": {
+   "n": 200,
+   "mean": 41636.748745342236,
+   "se": 1508.180945386911,
+   "se_frac_of_mean": 0.036222351428331113,
+   "ci_level": 0.95,
+   "ci_lo": 38899.0303218089,
+   "ci_hi": 44908.206460579466,
+   "min": 37233.925135434794,
+   "max": 45891.717478649705
+  },
+  "grouped_minus_single_mean": -4222.567475314206,
+  "grouped_minus_single_min": -5909.483634186283,
+  "grouped_minus_single_max": -2483.633603813476,
+  "grouped_minus_single_neg_share": 1.0,
+  "directional_disclosed_direction": "down",
+  "heterogeneity_upper_mean": -0.011523125000000007,
+  "nested_pathwise_reference": 46638.9,
+  "task2_frozen_t_component_point": 39975.654628199336,
+  "task2_grouped_t_component_point": 35604.39894619743,
+  "headline_nested_inside_95ci": false,
+  "se_frac_of_mean": 0.03577324310023664,
+  "se_gate_pass": true,
+  "residual_gap_redecomposition_point": {
+   "nested_scr": 46638.9,
+   "scr_component_grouped_t": 35604.39894619743,
+   "scr_component_single_t": 39975.654628199336,
+   "gap_total_abs": 11034.501053802574,
+   "gap_total_rel_to_nested": 0.23659436765881214,
+   "relief_surface_rel_err_source": 0.01164368805922599,
+   "relief_surface_part_abs": 543.0488030254351,
+   "relief_surface_share_of_gap": 0.049213716177796386,
+   "copula_form_residual_abs": 10491.45225077714,
+   "copula_form_share_of_gap": 0.9507862838222036,
+   "copula_form_residual_skewt_reconfirmed": 6114.9,
+   "copula_form_residual_frozen_t": 6120.196568775231,
+   "copula_form_residual_change_vs_skewt_abs": 4376.55225077714,
+   "copula_form_residual_change_vs_skewt_rel": 0.7157193495849712,
+   "copula_form_residual_change_vs_frozen_t_abs": 4371.255682001909,
+   "copula_form_residual_change_vs_frozen_t_rel": 0.7142345238229303,
+   "grouped_minus_single_lift": -4371.255682001909,
+   "copula_form_residual_widened_vs_skewt": true,
+   "copula_form_dominant": true,
+   "residual_closed_by_grouped_t": false,
+   "interpretation": "The per-block df_g fitted leakage-free to the standalone within-block upper co-exceedances DILUTE cross-block co-movement (Task 2 material finding: df_NONFIN 37.866, df_FIN 8.506, both ABOVE the frozen 2.9451; the single-df t shares ONE mixing variate and is the maximal-cross-block-dependence boundary). On common random numbers the grouped-t lifts the component SCR by -4371.3 vs the single-df t; the copula-form residual moves from the skew-t-reconfirmed 6114.9 to 10491.5 (a change of +4376.6, +71.57%). The residual WIDENS (informative -> vine escalation) - confirming that a single copula on the standalone margins (whether asymmetric, skew-t, or block-heterogeneous, grouped-t) does NOT close the UPWARD nested residual; it lives in the nested inner-path joint dynamics. The vine / pair-copula (Aas et al. 2009) remains the general fallback (Phase 29)."
+  },
+  "residual_gap_redecomposition_bootstrap_mean": {
+   "nested_scr": 46638.9,
+   "scr_component_grouped_t": 35372.49326229076,
+   "scr_component_single_t": 39595.06073760497,
+   "gap_total_abs": 11266.406737709243,
+   "gap_total_rel_to_nested": 0.24156673372890963,
+   "relief_surface_rel_err_source": 0.01164368805922599,
+   "relief_surface_part_abs": 543.0488030254351,
+   "relief_surface_share_of_gap": 0.04820070992180877,
+   "copula_form_residual_abs": 10723.357934683809,
+   "copula_form_share_of_gap": 0.9517992900781913,
+   "copula_form_residual_skewt_reconfirmed": 6114.9,
+   "copula_form_residual_frozen_t": 6120.196568775231,
+   "copula_form_residual_change_vs_skewt_abs": 4608.457934683809,
+   "copula_form_residual_change_vs_skewt_rel": 0.753644039098564,
+   "copula_form_residual_change_vs_frozen_t_abs": 4603.161365908578,
+   "copula_form_residual_change_vs_frozen_t_rel": 0.7521263923766028,
+   "grouped_minus_single_lift": -4222.567475314208,
+   "copula_form_residual_widened_vs_skewt": true,
+   "copula_form_dominant": true,
+   "residual_closed_by_grouped_t": false,
+   "interpretation": "The per-block df_g fitted leakage-free to the standalone within-block upper co-exceedances DILUTE cross-block co-movement (Task 2 material finding: df_NONFIN 37.866, df_FIN 8.506, both ABOVE the frozen 2.9451; the single-df t shares ONE mixing variate and is the maximal-cross-block-dependence boundary). On common random numbers the grouped-t lifts the component SCR by -4222.6 vs the single-df t; the copula-form residual moves from the skew-t-reconfirmed 6114.9 to 10723.4 (a change of +4608.5, +75.36%). The residual WIDENS (informative -> vine escalation) - confirming that a single copula on the standalone margins (whether asymmetric, skew-t, or block-heterogeneous, grouped-t) does NOT close the UPWARD nested residual; it lives in the nested inner-path joint dynamics. The vine / pair-copula (Aas et al. 2009) remains the general fallback (Phase 29)."
+  },
+  "relief_surface_rel_err_source": 0.01164368805922599,
+  "skewt_reconfirmed_copula_form_residual_ref": 6114.9,
+  "frozen_t_copula_form_residual_ref": 6120.196568775231,
+  "gates": {
+   "C1_headline_nested_inside_95ci_OR_gap_redecomposed": true,
+   "C1_headline_nested_inside_95ci_raw": false,
+   "C2_directional_disclosed_not_gated": true,
+   "C3_se_le_5pct_of_mean": true,
+   "C4_archive_crosscheck_bit_identical": true,
+   "C5_copula_frozen_scalars_unchanged": true,
+   "C6_reproducible_chunk_independent": true
+  },
+  "digest": "71d5c6eee80d"
+ },
+ "use_restrictions": {
+  "classification": "EDUCATIONAL",
+  "restrictions": [
+   "The bootstrap resamples the realised standalone-loss rows only; it does NOT re-tune the copula (Sigma / homogeneous df / per-block df_g FROZEN) or the governed relief scalars (sigma/alpha/beta_fit) - SII Art. 234.",
+   "Percentile CI/SE quantify Monte-Carlo + finite-sample uncertainty of the FROZEN grouped-t component SCR; they do NOT quantify copula-form (margin-aggregation vs nested-dynamics) model error, which is RE-decomposed and disclosed separately.",
+   "The grouped-t vs single-df t contrast shares the Gaussian copula latent (CRN); the per-block radial mixing IS the heterogeneity lever and therefore differs by construction. The per-replicate lift sign is disclosed, not gated (the lever is two-sided).",
+   "The nested reference 46,638.9 is the single-path proxy nested truth (P25T2/P25T3); the residual gap to it is a disclosed model-form limitation. A WIDENING of the copula-form residual is INFORMATIVE (the standalone margins carry no within-block tail concentration), not a gate failure; it escalates to the vine / pair-copula (Aas et al. 2009), Phase 29.",
+   "Action / copula parameters remain educational placeholders pending credentialled data + independent APS X2 review."
+  ]
+ },
+ "standard_references": [
+  "Solvency II Delegated Regulation Article 234 (aggregation incl. tail behaviour)",
+  "Daul, De Giorgi, Lindskog & McNeil (2003), The grouped t-copula",
+  "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7",
+  "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions (vine, Phase 29 fallback)",
+  "SOA ASOP 56 section 3.1.3/3.5",
+  "IA TAS M section 3.6",
+  "Efron & Tibshirani (1993), An Introduction to the Bootstrap"
+ ],
+ "affected_components": [
+  "par_model_v2/projection/grouped_t_copula_bootstrap.py",
+  "scripts/build_phase28_task3_grouped_t_bootstrap.py",
+  "tests/test_phase28_task3_grouped_t_bootstrap.py",
+  "docs/GROUPED_T_BOOTSTRAP_CARD.md",
+  "docs/validation/PHASE28_TASK3_GROUPED_T_BOOTSTRAP_REPORT.{json,md}"
+ ],
+ "markdown_path": "docs/validation/PHASE28_TASK3_GROUPED_T_BOOTSTRAP_REPORT.md",
+ "change_record_id": "32bae3c32f0040a08a9696c23e02a062",
+ "change_record_status": "OWNER_REVIEW",
+ "audit_integrity_ok": true,
+ "change_records_total": 61,
+ "audit_entries_total": 89
+}

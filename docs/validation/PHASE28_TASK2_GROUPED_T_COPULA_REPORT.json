@@ -1,0 +1,326 @@
+{
+ "run_timestamp": "2026-06-08T15:18:49.183270+00:00",
+ "phase": "Phase 28: Grouped-t Heterogeneous Tail-Dependence Copula",
+ "task": "Task 2 - grouped-t copula re-aggregation on the frozen copula",
+ "verdict": "PASS",
+ "drivers": [
+  "rate",
+  "equity",
+  "credit",
+  "lapse",
+  "mortality",
+  "fx",
+  "liquidity"
+ ],
+ "df_frozen": 2.9451,
+ "df_rematched": 2.9450930033094664,
+ "rho_max_abs_diff": 7.216449660063518e-16,
+ "crosscheck_count": 8,
+ "pathwise_basis_params": {
+  "sigma": 0.225,
+  "alpha": 0.7566891068509882,
+  "benefit_share_fit": 0.8449827924965548,
+  "provenance": "governed Phase 25 Task 3 FIT calibration, frozen via the Phase 26 Task 2 verified inputs (no re-tuning)"
+ },
+ "result": {
+  "realised_block_codependence": {
+   "tail_level_p": 0.9,
+   "within_block": [
+    0.12500000000000003,
+    0.12500000000000003
+   ],
+   "cross_block": 0.17187500000000003
+  },
+  "fit": {
+   "block_dfs_hat": [
+    37.865628454397445,
+    8.506318281609548
+   ],
+   "per_block_fit": [
+    {
+     "block": [
+      0,
+      1,
+      3,
+      4
+     ],
+     "tail_level_p": 0.9,
+     "target_realised_within_codependence": 0.12500000000000003,
+     "model_within_codependence_at_frozen_df": 0.22878333333333337,
+     "df_hat": 37.865628454397445,
+     "model_within_codependence_at_df_hat": 0.15465000000000004,
+     "fit_residual_abs": 0.02965000000000001,
+     "fit_n_sim": 100000,
+     "fit_seed": 20260608,
+     "fit_converged": true,
+     "df_lo": 2.05,
+     "df_hi": 60.0,
+     "df_at_boundary": false
+    },
+    {
+     "block": [
+      2,
+      5,
+      6
+     ],
+     "tail_level_p": 0.9,
+     "target_realised_within_codependence": 0.12500000000000003,
+     "model_within_codependence_at_frozen_df": 0.1766333333333334,
+     "df_hat": 8.506318281609548,
+     "model_within_codependence_at_df_hat": 0.1250666666666667,
+     "fit_residual_abs": 6.666666666665932e-05,
+     "fit_n_sim": 100000,
+     "fit_seed": 20260609,
+     "fit_converged": true,
+     "df_lo": 2.05,
+     "df_hi": 60.0,
+     "df_at_boundary": false
+    }
+   ],
+   "all_converged": true
+  },
+  "block_dfs_hat": [
+   37.865628454397445,
+   8.506318281609548
+  ],
+  "block_labels": [
+   "NON_FIN",
+   "FIN_CARVE_OUT"
+  ],
+  "blocks": [
+   [
+    0,
+    1,
+    3,
+    4
+   ],
+   [
+    2,
+    5,
+    6
+   ]
+  ],
+  "grouped_t_readout_at_df_hat": {
+   "config": {
+    "n_sim": 200000,
+    "seed": 20260607,
+    "block_dfs": [
+     37.865628454397445,
+     8.506318281609548
+    ],
+    "blocks": [
+     [
+      0,
+      1,
+      3,
+      4
+     ],
+     [
+      2,
+      5,
+      6
+     ]
+    ],
+    "shared_mixing": false,
+    "copula": "grouped_t(dfs=[37.8656, 8.5063], blocks=[[0, 1, 3, 4], [2, 5, 6]])",
+    "confidence": 0.995,
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548
+   },
+   "var_without": 157899.04792216767,
+   "es_without": 162067.04416657245,
+   "scr_without": 41892.843492878616,
+   "var_component": 148174.28104093546,
+   "es_component": 151657.5324910257,
+   "scr_component": 35604.39894619743,
+   "mean_component": 112569.88209473803,
+   "clip_binding_share_component": 0.0,
+   "active_share_component": 1.0,
+   "tail_dependence": {
+    "level_p": 0.9,
+    "within_block_upper": [
+     0.15898333333333334,
+     0.1250166666666667
+    ],
+    "within_block_lower": [
+     0.16005833333333339,
+     0.1270166666666667
+    ],
+    "cross_block_upper": 0.1704791666666667,
+    "cross_block_lower": 0.17095000000000005,
+    "heterogeneity_upper": -0.011495833333333372
+   },
+   "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+   "digest": "b7de159d563c"
+  },
+  "single_t_readout_homogeneous": {
+   "config": {
+    "n_sim": 200000,
+    "seed": 20260607,
+    "block_dfs": [
+     2.9451,
+     2.9451
+    ],
+    "blocks": [
+     [
+      0,
+      1,
+      3,
+      4
+     ],
+     [
+      2,
+      5,
+      6
+     ]
+    ],
+    "shared_mixing": true,
+    "copula": "grouped_t(dfs=[2.9451, 2.9451], blocks=[[0, 1, 3, 4], [2, 5, 6]])",
+    "confidence": 0.995,
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548
+   },
+   "var_without": 163275.05391439144,
+   "es_without": 168745.84486054623,
+   "scr_without": 47269.12222883626,
+   "var_component": 152553.93887183352,
+   "es_component": 157471.34681056417,
+   "scr_component": 39975.654628199336,
+   "mean_component": 112578.28424363419,
+   "clip_binding_share_component": 0.0,
+   "active_share_component": 1.0,
+   "tail_dependence": {
+    "level_p": 0.9,
+    "within_block_upper": [
+     0.2355166666666667,
+     0.17995000000000005
+    ],
+    "within_block_lower": [
+     0.23707500000000006,
+     0.1803666666666667
+    ],
+    "cross_block_upper": 0.2581416666666667,
+    "cross_block_lower": 0.2599333333333334,
+    "heterogeneity_upper": -0.022625000000000006
+   },
+   "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+   "digest": "a151f1bd4ded"
+  },
+  "sensitivity_grid_disclosed": [
+   {
+    "block_dfs": [
+     2.9451,
+     2.9451
+    ],
+    "scr_component": 39975.654628199336,
+    "scr_without": 47269.12222883626,
+    "within_block_upper": [
+     0.2355166666666667,
+     0.17995000000000005
+    ],
+    "cross_block_upper": 0.2581416666666667,
+    "heterogeneity_upper": -0.022625000000000006
+   },
+   {
+    "block_dfs": [
+     8.0,
+     2.5
+    ],
+    "scr_component": 36495.652334091545,
+    "scr_without": 43006.19808542266,
+    "within_block_upper": [
+     0.18548333333333336,
+     0.19181666666666672
+    ],
+    "cross_block_upper": 0.1539291666666667,
+    "heterogeneity_upper": 0.03788750000000002
+   },
+   {
+    "block_dfs": [
+     15.0,
+     2.2
+    ],
+    "scr_component": 35867.88119023683,
+    "scr_without": 42198.44469800164,
+    "within_block_upper": [
+     0.1680666666666667,
+     0.20585000000000006
+    ],
+    "cross_block_upper": 0.1545083333333334,
+    "heterogeneity_upper": 0.051341666666666674
+   },
+   {
+    "block_dfs": [
+     30.0,
+     2.1
+    ],
+    "scr_component": 35343.2884286499,
+    "scr_without": 41586.04497720348,
+    "within_block_upper": [
+     0.16042500000000004,
+     0.21035000000000004
+    ],
+    "cross_block_upper": 0.1542791666666667,
+    "heterogeneity_upper": 0.05607083333333335
+   }
+  ],
+  "gates": {
+   "G1_homogeneous_boundary_exact_recovery": true,
+   "G2_archive_crosscheck_frozen_t_bit_identical": true,
+   "G3_rank_invariance_frozen_copula": true,
+   "G4_margins_unchanged_without_basis_bit_identical": true,
+   "G5_block_partition_preregistered_exact": true,
+   "G6_block_dfs_fitted_leakage_free": true,
+   "G7_directional_disclosed_not_gated": true,
+   "G8_single_df_t_comparison_variant_retained": true,
+   "G_mechanism_heterogeneity_rising_with_heavier_fin": true
+  },
+  "frozen_t_component_reference": 39975.654628199336,
+  "nested_pathwise_reference": 46638.9,
+  "grouped_t_vs_frozen_t_rel": -0.10934794495943967,
+  "grouped_t_vs_frozen_t_direction": "down",
+  "gap_to_nested_grouped_t_rel": -0.23659436765881214,
+  "gap_to_nested_frozen_t_rel": -0.14286883635335879,
+  "homogeneous_recovery_dev": 0.0,
+  "skewt_reconfirmed_copula_form_residual_ref": 6114.9,
+  "frozen_t_copula_form_residual_ref": 6120.196568775231,
+  "materiality_disclosure_threshold": 0.01,
+  "material_finding": "The per-block df_g fitted leakage-free to the realised WITHIN-block upper co-exceedances of the standalone loss vectors are df_NONFIN=37.866, df_FIN=8.506 (FIN/carve-out = credit, FX, liquidity). The realised within-block upper co-exceedances (p=0.90) are NON-FIN 0.1250, FIN 0.1250, cross-block 0.1719: the standalone loss vectors do NOT exhibit strong within-FIN >> cross-block tail concentration (boundary-pinned df flags [False, False]). The grouped-t at df_hat moves the component SCR to 35604.4 vs the frozen-t 39975.7 (-10.93%, down) - the DISCLOSED two-sided direction is down. The disclosed df grid confirms the lever produces within-FIN >> cross-block heterogeneity (up to +0.0561 at df_FIN=2.1) that a single pooled df cannot. Whether the grouped-t CLOSES the upward nested residual 46,638.9 is resolved by the Task 3 bootstrap; given the standalone margins show modest within-block concentration, the expectation is the copula-form residual (skew-t-reconfirmed 6,114.9) is only partially moved and the vine (Aas et al. 2009) remains the general fallback (Phase 29)."
+ },
+ "use_restrictions": {
+  "classification": "EDUCATIONAL",
+  "restrictions": [
+   "The grouped-t copula adds per-BLOCK degrees of freedom df_g (heterogeneous tail dependence across driver blocks) on the FROZEN Sigma; the homogeneous boundary (all df_g = 2.9451 with a single shared mixing variate) recovers the governed single-df t EXACTLY (Solvency II Art. 234 rank invariance; no re-tuning of Sigma/margins/homogeneous df).",
+   "The block partition (FIN/carve-out {credit, FX, liquidity} vs NON-FIN {rate, equity, lapse, mortality}) is PRE-REGISTERED in the Phase 28 Task 1 design note before any fit; a different partition is a new modelling decision requiring its own governed note.",
+   "Each block's df_g is fitted leakage-free to that block's realised WITHIN-block upper co-exceedances of the standalone loss vectors only (no nested truth; Sigma/margins untouched); the cross-block tail dependence is then implied and DISCLOSED, not fitted.",
+   "The grouped-t is a tail-dependence HETEROGENEITY lever, NOT a uniform tail-heaviness lever: because the single-df t shares ONE mixing variate it is the MAXIMAL-cross-block-dependence boundary, so the grouped-t can dilute cross-block co-movement; its aggregate SCR effect is genuinely two-sided and DISCLOSED, not pre-gated.",
+   "Margins remain the calibrated frozen margins - the upgrade changes the COPULA only, never the standalone marginal capital.",
+   "Action parameters remain educational placeholders pending credentialled practice data + independent APS X2 review."
+  ]
+ },
+ "standard_references": [
+  "Solvency II Delegated Regulation Article 234 (aggregation incl. tail behaviour)",
+  "Solvency II Delegated Regulation Article 23 (future management actions)",
+  "SOA ASOP 56 section 3.1.3/3.4/3.5",
+  "SOA ASOP 25 section 3.3",
+  "IA TAS M section 3.2/3.6",
+  "IFoA Life Aggregation & Simulation working party",
+  "Daul, De Giorgi, Lindskog & McNeil (2003), The grouped t-copula",
+  "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7"
+ ],
+ "affected_components": [
+  "par_model_v2/projection/grouped_t_copula_aggregation.py",
+  "scripts/build_phase28_task2_grouped_t_copula.py",
+  "tests/test_phase28_task2_grouped_t_copula.py",
+  "docs/GROUPED_T_COPULA_CARD.md",
+  "docs/validation/PHASE28_TASK2_GROUPED_T_COPULA_REPORT.{json,md}"
+ ],
+ "markdown_path": "docs/validation/PHASE28_TASK2_GROUPED_T_COPULA_REPORT.md",
+ "change_record_id": "85a6b858662c42f095b62e4719e04836",
+ "change_record_status": "OWNER_REVIEW",
+ "audit_integrity_ok": true,
+ "change_records_total": 60,
+ "audit_entries_total": 88
+}

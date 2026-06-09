@@ -1,4 +1,4 @@
-// Offline self-test for ui_app.html (UI Tasks 1-5 + Phase 21-25 propagation).
+// Offline self-test for ui_app.html (UI Tasks 1-5 + Phase 21-28 propagation).
 // Loads the standalone HTML under jsdom, blocks fetch/XHR, clicks every tab and
 // sub-view, and asserts: embedded data parsed; inventory + calibration explorer +
 // capital dashboard + governance view render; ZERO network calls; ZERO JS errors.
@@ -100,6 +100,15 @@ setTimeout(() => {
   const p26DeltaRows = document.querySelectorAll("#phase26 table.p26dtable tbody tr").length;
   const p26GapRows = document.querySelectorAll("#phase26 table.p26gaptable tbody tr").length;
   const p26BarRects = document.querySelectorAll("#phase26 svg.chart rect.bar").length;
+
+  // Phase 28 Task 5: open the Grouped-t Tail (P28) panel and count its elements.
+  const p28Tab = tabs.find(t => t.getAttribute("data-target") === "phase28");
+  if (p28Tab) p28Tab.click();
+  const p28Cards = document.querySelectorAll("#phase28 .card").length;
+  const p28GateCrits = document.querySelectorAll("#phase28 .crit").length;
+  const p28TailRows = document.querySelectorAll("#phase28 table.p28tail tbody tr").length;
+  const p28GapRows = document.querySelectorAll("#phase28 table.p28gaptable tbody tr").length;
+  const p28BarRects = document.querySelectorAll("#phase28 svg.chart rect.bar").length;
 
   // UI Task 4: open the Governance & assumptions view and click through every sub-view.
   const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
@@ -230,6 +239,18 @@ setTimeout(() => {
     reaggCompositionVerdictPresent: /per-driver composition transform/.test(bodyText),
     reaggBootstrapVerdictPresent: /frozen-copula margin bootstrap \+ gap decomposition/.test(bodyText),
     reaggDeltaVerdictPresent: /paired full-vs-reanchored delta matrix/.test(bodyText),
+    phase28TabPresent: !!p28Tab,
+    p28Cards, p28GateCrits, p28TailRows, p28GapRows, p28BarRects,
+    groupedTailTabTextPresent: /Grouped-t Tail \(P28\)/.test(bodyText),
+    groupedScrPresent: /35,372/.test(bodyText) && /35,604/.test(bodyText),
+    groupedBootstrapCiPresent: /33,034/.test(bodyText) && /38,009/.test(bodyText),
+    singleDfScrPresent: /39,595/.test(bodyText) && /39,976/.test(bodyText),
+    nestedP28Present: /46,639/.test(bodyText),
+    crossBlockDilutionPresent: /-0\.0871/.test(bodyText),
+    residualWideningPresent: /10,491/.test(bodyText) && /6,115/.test(bodyText),
+    blockDfPresent: /37\.866/.test(bodyText) && /8\.506/.test(bodyText),
+    mr016Present: /MR-016/.test(bodyText),
+    vineEscalationPresent: /vine \/ pair-copula/.test(bodyText),
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -349,6 +370,22 @@ setTimeout(() => {
     checks.reaggCompositionVerdictPresent &&
     checks.reaggBootstrapVerdictPresent &&
     checks.reaggDeltaVerdictPresent &&
+    checks.phase28TabPresent &&
+    checks.p28Cards >= 12 &&
+    checks.p28GateCrits >= 20 &&
+    checks.p28TailRows === 4 &&
+    checks.p28GapRows === 4 &&
+    checks.p28BarRects >= 8 &&
+    checks.groupedTailTabTextPresent &&
+    checks.groupedScrPresent &&
+    checks.groupedBootstrapCiPresent &&
+    checks.singleDfScrPresent &&
+    checks.nestedP28Present &&
+    checks.crossBlockDilutionPresent &&
+    checks.residualWideningPresent &&
+    checks.blockDfPresent &&
+    checks.mr016Present &&
+    checks.vineEscalationPresent &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

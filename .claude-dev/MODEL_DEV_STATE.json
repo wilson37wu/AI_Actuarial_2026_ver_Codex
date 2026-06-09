@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-08T (cycle 31, Linux sandbox)",
+ "last_run": "2026-06-10T02:07:37.0637293+08:00",
  "last_run_duration_minutes": null,
- "last_run_note": "Phase 26 Task 5 complete (PASS) -> PHASE 26 COMPLETE (Tasks 1-5). Offline-UI contract 1.7.0->1.8.0 ADDITIVE: new phase26 section (composition/bootstrap/delta_matrix/narrative) + first-class Full Re-Agg (P26) tab in the zero-install ui_app.html (0 network/0 JS errors over 118 self-test checks). Surfaces Task 2 composition (component t 39,975.7 vs re-anchored 39,794.3 = +0.46%, 6/6 gates), Task 3 frozen-copula bootstrap (mean 39,595.1, 95% CI [36,676.2,42,943.1], SE 4.07%, nested 46,638.9 OUTSIDE CI -> 14.29% gap = 91.9% COPULA-FORM/8.1% relief-surface), Task 4 paired CRN delta matrix (composition correction +211.5 [+46.1,+381.8] significant but 0.55%<1% MR trigger -> MR-015 stays free). 3 Phase 26 PASS verdicts + additive capital read-outs. NEW build_phase26_task5_ui_propagation.py (43 checks->self-test->governance->report; idempotent) + test_phase26_task5_ui_propagation.py (28 tests). pytest 166/0; compileall clean; Node JSON validation passed; viewer_data+ui_app rebuilt (live 54-record governance). ChangeRecord 474879491df64f55a182be64b1f2cf2f code_change OWNER_REVIEW; audit 80->81; changes 53->54; verify_all True. DISCLOSED forward-compat: P25T5 exact pin relaxed to floor >=(1,7,0). DISCLOSED+RECOVERED: the file tool truncated build_ui_data.py (167KB) and the self-test .cjs on the mount; restored from p22c9 blob, re-applied edits OFF-MOUNT via patch scripts, cp+cmp verified. The fully-offline interactive UI requirement is SATISFIED. Next: Phase 27 Task 1 design note (richer tail-dependence copula).",
- "current_phase": "Phase 27: Richer Tail-Dependence Copula",
- "overall_status": "PHASE26_COMPLETE_NEXT_PHASE27_TASK1_DESIGN_NOTE",
+ "last_run_note": "Phase 29 Task 2 retry blocked again: staged implementation remains in progress, but this Windows automation session has no callable Python runtime and no /var/tmp view containing the required Phase 23/26 NumPy inputs. Node JSON checks and ASCII checks passed; no numerical gates, report, governance ChangeRecord, or state advancement were performed.",
+ "current_phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade (in progress)",
+ "overall_status": "PHASE29_TASK2_IMPLEMENTATION_STAGED_NUMERICAL_GATES_PENDING",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -483,12 +483,40 @@
   },
   "Phase 27: Richer Tail-Dependence Copula": {
    "description": "Close the Phase 26 Task 3 copula-FORM residual (91.9% of the 14.29% nested gap; nested joint tail heavier than the frozen t(2.9451) on standalone margins) with a richer upper-tail dependence structure (grouped/skew-t or vine copula, or explicit tail-asymmetry), margins UNCHANGED, copula change governed under SII Art. 234.",
-   "completed": [],
-   "in_progress": [
-    "Task 1: Design note - next sophistication step (richer tail-dependence copula); pre-registered gates."
+   "completed": [
+    "Task 1: Design note - richer upper-tail dependence copula (skew-t); pre-registered gates.",
+    "Task 2: implement the GH skew-t copula on the frozen (df 2.9451, Sigma); gamma fitted leakage-free to standalone upper-tail co-exceedances; gamma=0 exact recovery (dev 0.0); all 7 pre-registered gates PASS; ChangeRecord 6bb5db0a06734369a0eb6d5ff48e84bc OWNER_REVIEW.",
+    "Task 3: skew-t margin bootstrap (200x20k) PASS; nested 46,638.9 outside skew-t 95% CI [36,679.9, 42,943.1]; residual RE-decomposed; copula-form residual 6,120.2 -> 6,114.9 (0.09% reduction); ChangeRecord 46c3318c27ae469daf7c0e40f8d99a41 OWNER_REVIEW.",
+    "Task 4: tail diagnostics + MR governance PASS; gamma_hat near zero, radial asymmetry near zero; MR-010/MR-014 refresh not required (max move 0.0133% < 1%); MR-015 opened for copula-form residual; ChangeRecord OWNER_REVIEW.",
+    "Task 5 (2026-06-08): offline-UI propagation COMPLETE. ui_data.json contract 1.8.0 -> 1.9.0 (ADDITIVE: new phase27 block + skewt_copula_scr_component_bootstrap_mean capital read-out + governance risk-register merge surfacing MR-015). New offline UI tab \"Skew-t Tail (P27)\" in ui_app.html: skew-t (39,598.2 bootstrap mean) vs symmetric-t (39,595.1) vs nested (46,638.9) SCR bar chart; upper/lower tail-dependence + radial-asymmetry profile across p in {0.80,0.85,0.90,0.95} with 95% CI (lambda_U ~ lambda_L, gamma_hat~0); skew-t 95% CI [36,679.9, 42,943.1] SE 4.07% with nested OUTSIDE; residual re-decomposition (copula-form 6,114.9 vs relief-surface 543.0); T3+T4 pre-registered gate grids; MR-015 also surfaced in Governance register (14 -> 15 risks). build_ui_data.py edited off-mount + cp+cmp+py_compile (disk-truncation guard). Verification: node ui_app_self_test.cjs ok:true, tabCount 10, 0 network / 0 JS errors; external-ref scan clean (no http(s)/CDN/script-src/link/@import); jsdom render confirms 12 cards, 13 chart bars, tail+residual tables, gamma_hat/MATERIAL-FINDING/MR-015 text. Zero-install, model-output-only requirement remains SATISFIED. No model recalculation (display-layer only). PHASE 27 COMPLETE."
    ],
-   "next": "Task 2: implement the chosen richer-copula transform per the design note.",
-   "status": "in_progress"
+   "in_progress": [],
+   "next": "Phase 28 Task 1: design-note-first grouped-t (Daul et al. 2003) heterogeneous tail-dependence escalation; vine (Aas et al. 2009) the general fallback.",
+   "status": "completed"
+  },
+  "Phase 28: Grouped-t / Heterogeneous Tail-Dependence": {
+   "status": "completed",
+   "description": "Escalate the aggregation copula to the grouped-t (per-block degrees of freedom; Daul et al. 2003) on the FROZEN correlation Sigma to represent heterogeneous within-block vs cross-block tail dependence the single pooled df (Phase 23-27) cannot. Homogeneous boundary nests the governed single-df t exactly; pre-registered block partition (financial/carve-out vs non-financial). Carries the Phase 27 MR-015 reconfirmation (skew-t gamma_hat~0; copula-form residual not closed by a radial-asymmetry scalar). EDUCATIONAL.",
+   "completed": [
+    "Task 1: design note (grouped-t candidate chosen; vine deferred as general fallback; heavier single df rejected) + tested helper module + synthetic heterogeneous-tail pre-study (within>>cross; exact homogeneous-boundary recovery; two-sided aggregate sign disclosed) + pre-registered gates + governance ChangeRecord OWNER_REVIEW (b92691ef)",
+    "Task 2: grouped-t copula implemented on frozen Sigma (per-block df_g; Daul et al. 2003); homogeneous-boundary EXACT recovery (dev 0.0); frozen-t component 39,975.654628 bit-identical; df fitted leakage-free df_NONFIN 37.866 / df_FIN 8.506; grouped-t component 35,604.4 vs frozen-t 39,975.7 (-10.93%, DISCLOSED two-sided dilution); 9/9 gates; ChangeRecord 85a6b858 OWNER_REVIEW",
+    "Task 3: grouped-t margin bootstrap (200x20,000) on the frozen copula + governed relief scalars (PASS, SE gate). Grouped-t component SCR mean 35,372.5, 95% CI [33,034.4, 38,008.5], SE 3.58% (<=5%). HEADLINE: nested 46,638.9 OUTSIDE the grouped-t 95% CI -> residual RE-decomposed; copula-form residual WIDENS from the skew-t-reconfirmed 6,114.9 to 10,491.5 (point basis; +4,376.6 / +71.57%) and vs frozen-t 6,120.2 -> the grouped-t does NOT close the UPWARD nested residual (second negative super-set after skew-t gamma_hat~0); informative -> vine (Aas et al. 2009) escalation, Phase 29. Directional DISCLOSED (two-sided): grouped-t - single-df t CRN mean -4,222.6 (DOWN, 100% of replicates). Digest 71d5c6eee80d (idempotent). ChangeRecord 32bae3c3 OWNER_REVIEW; audit 88->89; change records 60->61; verify_all True",
+    "Task 4: grouped-t within/cross-block, upper/lower tail-dependence diagnostics (grouped-t vs single-df t on CRN at archived P28T3 cop_seeds, 200x20,000). 6/6 gates PASS. p=0.90 grouped cross-block upper 0.1703 < single-df t 0.2573 (dilution -0.0871, CI excludes 0); within-FIN upper 0.1257 < single 0.1777; radial asymmetry ~0 (CI spans 0, t-copula radially symmetric within block). Archive cross-check BIT-identical at p=0.90 (max dev 0.0). MR-010/MR-014 NO refresh: GOVERNED frozen single-df t boundary recovered exactly (move 0.00%); grouped-t DOWN move (-10.93% point) DISCLOSED not adopted. OPEN MR-016 (heterogeneous-tail/cross-block-dilution copula-FORM residual; widens to 10,491.5; model_error MEDIUM x HIGH; mitigation vine/pair-copula Phase 29). Digest e86057638b01 idempotent. ChangeRecord 0988ea9f OWNER_REVIEW; audit 89->90; change records 61->62; risk register 15->16; verify_all True",
+    "Task 5: offline-UI propagation COMPLETE (PASS; contract 1.9.0 -> 1.10.0 ADDITIVE). ui_data.json adds phase28 + grouped_t_copula_scr_component_bootstrap_mean/single_t_copula_scr_component_bootstrap_mean/grouped_t_copula_scr_component_point capital read-outs; ui_app.html adds Grouped-t Tail (P28) tab surfacing grouped-t vs single-df t vs nested SCR, bootstrap CI [33,034.4,38,008.5] SE 3.58%, p=0.90 cross-block dilution -0.0871, df_NONFIN 37.866 / df_FIN 8.506, residual widening 6,114.9 -> 10,491.5, MR-016 in Governance. Self-test ok:true, tabCount 11, 0 network / 0 JS errors; external-ref scan clean. PHASE 28 COMPLETE."
+   ],
+   "in_progress": [],
+   "next": "Phase 29: Vine / Pair-Copula Dependence Upgrade: Task 1 - design-note-first vine / pair-copula (Aas et al. 2009) candidate selection, frozen margins/Sigma boundary recovery, leakage-free pair family gates, and MR-016 remediation plan."
+  },
+  "Phase 29: Vine / Pair-Copula Dependence Upgrade": {
+   "status": "in_progress",
+   "description": "Escalate beyond single-copula-on-standalone-margins after Phase 27 skew-t (gamma_hat~0) and Phase 28 grouped-t (cross-block dilution; residual widening) both failed to close the upward nested residual. Evaluate vine / pair-copula dependence structures (Aas et al. 2009) with frozen margins and governed boundary recovery before any implementation. EDUCATIONAL.",
+   "completed": [
+    "Task 1: design-note-first vine / pair-copula candidate selection COMPLETE (PASS). Selected a truncated credit-root C-vine / pair-copula prototype (Aas et al. 2009) with first-tree credit links, second-tree links conditioned on credit, max two trees, capped family set {gaussian, student_t, survival_clayton, survival_gumbel}, frozen standalone margins/Sigma/df boundary recovery, leakage-free fit/holdout gates, bootstrap/diagnostic gates, and MR-016 remediation criteria. New helper par_model_v2/projection/vine_copula_upgrade.py, builder scripts/build_phase29_task1_design_note.py, tests tests/test_phase29_task1_design_note.py, docs/validation/PHASE29_TASK1_DESIGN_NOTE.{json,md}, and docs/VINE_COPULA_DESIGN_CARD.md. Verification in this Windows shell: py_compile PASS for new Python files; JSON parse PASS for state/governance/report. NumPy/pytest unavailable in bundled Python, so numerical pre-study and pytest deferred to Python+NumPy environment."
+   ],
+   "in_progress": [
+    "Task 2: implement selected vine / pair-copula prototype on frozen standalone margins, retaining single-df t and grouped-t comparison variants."
+   ],
+   "next": "Task 3: vine margin bootstrap and residual re-decomposition versus grouped-t residual 10,491.5 and skew-t residual 6,114.9."
   }
  },
  "repository_info": {
@@ -501,16 +529,16 @@
  "progress_metrics": {
   "total_tasks": 118,
   "tasks_completed": 118,
-  "phases_completed": 24,
+  "phases_completed": 26,
   "estimated_completion_pct": 99,
   "average_cycle_duration_minutes": 53,
-  "cycles_run": 157,
+  "cycles_run": 161,
   "tasks_total": 116,
-  "last_task": "Phase 26 Task 5 - offline-UI propagation (contract 1.8.0 ADDITIVE; Full Re-Agg P26 tab) PASS; PHASE 26 COMPLETE; ChangeRecord 474879491df6 OWNER_REVIEW; self-test 0/0 over 118 checks; pytest 166/0",
-  "next_task": "Phase 27 Task 1 - design note for the next sophistication step (richer upper-tail dependence copula to close the 91.9% copula-form residual; margins unchanged; governed under SII Art. 234)",
+  "last_task": "Phase 29 Task 1 - vine / pair-copula design note (PASS; truncated credit-root C-vine envelope and MR-016 remediation gates pre-registered)",
+  "next_task": "Phase 29 Task 2 - implement selected vine / pair-copula prototype on frozen standalone margins",
   "phase20_complete": true,
-  "offline_ui_contract_version": "1.2.0",
-  "last_ui_self_test": "node scripts/ui_app_self_test.cjs ui_app.html -> ok:true; 0 network / 0 JS errors"
+  "offline_ui_contract_version": "1.10.0",
+  "last_ui_self_test": "node scripts/ui_app_self_test.cjs ui_app.html -> ok:true; tabCount 11; 0 network / 0 JS errors"
  },
  "technical_notes": {
   "model_type": "Stochastic ALM & TVOG",
@@ -808,7 +836,7 @@
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
   "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
  },
- "last_updated": "2026-06-08T04:30:00Z",
+ "last_updated": "2026-06-08T15:22:03.423964+00:00",
  "cycle_2026_06_08_phase26_task2": {
   "verdict": "PASS",
   "gates": "6/6 pre-registered",
@@ -821,5 +849,150 @@
   "change_record": "dcf5cc5132ad4cadb534ea47314d9684",
   "audit": "77->78",
   "changes": "50->51"
+ },
+ "cycle_2026_06_08_phase27_task1": {
+  "task": "Phase 27 Task 1 - design note: richer upper-tail dependence copula (skew-t)",
+  "verdict": "PASS",
+  "candidate_chosen": "GH skew-t upper-tail-asymmetry parameter on frozen (df 2.9451, Sigma); gamma=0 nests symmetric t exactly",
+  "candidates_deferred": [
+   "grouped-t (Daul et al. 2003)",
+   "vine/pair-copula (Aas et al. 2009)",
+   "credentialled-data calibration (blocked)"
+  ],
+  "motivation": "P26T3 residual-gap decomposition: nested 46,638.9 vs frozen-t component 39,975.7; copula-form residual 6,120.2 (91.9% of 14.29% gap) exceeds gaussian->t sensitivity 4,765.6; relief-surface only 1.16%",
+  "pre_study": {
+   "var995_understatement_rel": 0.1016,
+   "es995_understatement_rel": 0.1068,
+   "upper_tail_dep_skew_vs_sym": [
+    0.742,
+    0.291
+   ],
+   "lower_tail_dep_skew_vs_sym": [
+    0.136,
+    0.283
+   ],
+   "gamma_zero_recovery_max_abs": 0,
+   "mechanism_demonstrated": true,
+   "digest": "0ed75b742bab"
+  },
+  "governance": {
+   "record_id": "391700530a174ec1bc3b99a0c16e808d",
+   "status": "OWNER_REVIEW",
+   "change_records": "54->55",
+   "audit": "81->82",
+   "verify_all": true,
+   "idempotent": true
+  },
+  "tests": "14/0 (P27T1); 84/0 incl. P25T1/P26T1/P26T5 regression; compileall clean; JSON validated",
+  "new_files": [
+   "par_model_v2/projection/tail_dependence_upgrade.py",
+   "scripts/build_phase27_task1_design_note.py",
+   "tests/test_phase27_task1_design_note.py",
+   "docs/validation/PHASE27_TASK1_DESIGN_NOTE.{json,md}",
+   "docs/RICHER_TAIL_DEPENDENCE_DESIGN_CARD.md"
+  ],
+  "next_risk_id": "MR-015 (reserved for the Phase 27 copula-form / radial-asymmetry change at Task 4)"
+ },
+ "cycle_2026_06_08_phase27_task5": {
+  "timestamp": "2026-06-08",
+  "task": "Phase 27 Task 5 - offline-UI propagation (contract 1.8.0 -> 1.9.0 ADDITIVE)",
+  "verdict": "PASS",
+  "contract_version": "1.9.0",
+  "new_ui_tab": "Skew-t Tail (P27)",
+  "self_test": "ok:true; tabCount 10; 0 network / 0 JS errors; external-ref scan clean",
+  "risks_total": 15,
+  "phase_status": "PHASE 27 COMPLETE",
+  "next": "Phase 28 Task 1 grouped-t design note (vine fallback)"
+ },
+ "cycle_2026_06_08_phase28_task2": {
+  "timestamp": "2026-06-08T15:22:03.423964+00:00",
+  "task": "Phase 28 Task 2 - grouped-t copula re-aggregation on the frozen copula",
+  "verdict": "PASS",
+  "gates": "9/9 PASS (G1 homogeneous-boundary exact recovery dev 0.0; G2 frozen-t component 39,975.654628 bit-identical; G3 Sigma frozen max|diff| 7.22e-16 + homogeneous df 2.9451; G4 margins-unchanged boundary without-basis bit-identical; G5 partition pre-registered FIN{2,5,6}/NONFIN{0,1,3,4}; G6 per-block df fitted leakage-free converged; G7 directional DISCLOSED; G8 single-df t variant retained; G_mechanism heterogeneity rising with heavier FIN)",
+  "block_dfs_hat": {
+   "df_NONFIN": 37.866,
+   "df_FIN": 8.506
+  },
+  "grouped_t_component_scr": 35604.4,
+  "frozen_t_component_scr": 39975.654628199336,
+  "grouped_t_vs_frozen_t_rel": -0.1093,
+  "gap_to_nested_rel": -0.2366,
+  "material_finding": "Realised standalone within-block upper co-exceedances (NON-FIN 0.125, FIN 0.125) are BELOW the cross-block level (0.172): the standalone margins show NO within-carve-out tail concentration, so the leakage-free fit pushes df_g HIGH (light tails) and the grouped-t DILUTES cross-block co-movement -> component SCR DOWN 10.93%. The heterogeneity lever is correctly implemented (disclosed df grid lifts within-FIN >> cross-block heterogeneity to +0.056) but, like the skew-t asymmetry scalar, it does NOT close the upward nested residual on the standalone basis. RE-CONFIRMS the copula-form residual lives in nested inner-path joint dynamics -> vine (Aas et al. 2009) general fallback flagged for Phase 29.",
+  "change_record_id": "85a6b858662c42f095b62e4719e04836",
+  "change_record_status": "OWNER_REVIEW",
+  "governance": {
+   "change_records": 60,
+   "audit_entries": 88,
+   "risk_register": 15,
+   "verify_all": true
+  },
+  "verification": "pytest 11/0 (P28T2); regression P28T1+P27T1-T4 64/0; P26+governance 175/0 (250 passed, 0 failed); compileall clean; report+governance JSON validated.",
+  "new_files": [
+   "par_model_v2/projection/grouped_t_copula_aggregation.py",
+   "scripts/build_phase28_task2_grouped_t_copula.py",
+   "tests/test_phase28_task2_grouped_t_copula.py",
+   "docs/validation/PHASE28_TASK2_GROUPED_T_COPULA_REPORT.{json,md}",
+   "docs/GROUPED_T_COPULA_CARD.md"
+  ]
+ },
+ "cycle_2026_06_09_phase28_task4": {
+  "timestamp": "2026-06-08T17:30:13.905436+00:00",
+  "task": "Phase 28 Task 4 - grouped-t within/cross-block tail-dependence diagnostics + MR no-refresh + open MR-016",
+  "verdict": "PASS",
+  "gates": "6/6 (G1 archive cross-check bit-identical max dev 0.0; G2 grouped dilutes cross-block all p; G3 no MR refresh governed move 0.00%; G4 MR-016 opened; G5 digest e86057638b01 idempotent; G6 governance OWNER_REVIEW verify_all True)",
+  "p90": {
+   "grp_cross_upper": 0.17026,
+   "sng_cross_upper": 0.25734,
+   "dilution": -0.08708,
+   "grp_within_fin_upper": 0.12566,
+   "sng_within_fin_upper": 0.17771
+  },
+  "mr_refresh": "NO (governed frozen single-df t boundary move 0.00%; grouped-t -10.93% disclosed not adopted)",
+  "mr016_opened": true,
+  "change_record_id": "0988ea9f865a49c3b938d22dc37af498",
+  "audit_entries_total": 90,
+  "change_records_total": 62,
+  "risk_register_total": 16,
+  "tests": "P28T4 11/0; regression P28T1-T3 35/0, P27T1-T4 48/0 (94 passed)",
+  "digest": "e86057638b01"
+ },
+ "cycle_2026_06_09_phase28_task5": {
+  "timestamp": "2026-06-09T02:15:23.589028+08:00",
+  "task": "Phase 28 Task 5 - offline-UI propagation (Grouped-t Tail P28)",
+  "verdict": "PASS",
+  "contract_version": "1.10.0",
+  "new_ui_tab": "Grouped-t Tail (P28)",
+  "grouped_t_component_scr_bootstrap_mean": 35372.49326229076,
+  "grouped_t_component_scr_point": 35604.39894619743,
+  "single_t_component_scr_bootstrap_mean": 39595.06073760497,
+  "nested_pathwise_reference": 46638.9,
+  "bootstrap_ci": "[33034.4, 38008.5]",
+  "p90_cross_block_dilution": -0.08707895833333336,
+  "residual_widening": "copula-form residual 6114.9 -> 10491.5",
+  "mr016_surfaced": true,
+  "self_test": "ok:true; tabCount 11; 0 network / 0 JS errors",
+  "external_ref_scan": "clean",
+  "next": "Phase 29 Task 1 - vine / pair-copula design note"
+ },
+ "cycle_2026_06_09_phase29_task1": {
+  "timestamp": "2026-06-09T08:17:10.9659298+08:00",
+  "task": "Phase 29 Task 1 - vine / pair-copula design note",
+  "verdict": "PASS",
+  "candidate_chosen": "truncated credit-root C-vine / pair-copula prototype",
+  "search_envelope": "max 2 trees; first tree credit-root star; second tree conditional on credit; families gaussian/student_t/survival_clayton/survival_gumbel",
+  "frozen_boundary_gate": "frozen_t_boundary must reproduce 39,975.654628 before any vine computation; tolerance 1e-9",
+  "mr016_plan": "Mitigate only if residual materially shrinks and nested 46,638.9 is inside candidate CI; otherwise keep MR-016 open and open MR-017 if needed",
+  "change_record_id": "f5c26bca4c964309b6afe13650023b46",
+  "governance": "ChangeRecord OWNER_REVIEW; change_records 62->63; audit 90->91; verify_all True",
+  "new_files": [
+   "par_model_v2/projection/vine_copula_upgrade.py",
+   "scripts/build_phase29_task1_design_note.py",
+   "tests/test_phase29_task1_design_note.py",
+   "docs/validation/PHASE29_TASK1_DESIGN_NOTE.json",
+   "docs/validation/PHASE29_TASK1_DESIGN_NOTE.md",
+   "docs/VINE_COPULA_DESIGN_CARD.md"
+  ],
+  "verification": "py_compile PASS for new Python files; JSON parse PASS for state/governance/P29 report; governance verify_all True; pytest not run because available Python lacks numpy",
+  "next": "Phase 29 Task 2 - implement selected vine / pair-copula prototype on frozen standalone margins"
  }
 }

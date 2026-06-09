@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.8.0"
+CONTRACT_VERSION = "1.10.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -1640,6 +1640,277 @@ def _build_phase26() -> Dict[str, Any]:
 
 
 # --------------------------------------------------------------------------- #
+def _build_phase27() -> Dict[str, Any]:
+    """Phase 27 (contract 1.9.0, additive): richer UPPER-TAIL-DEPENDENCE
+    copula (GH skew-t). Surfaces the Task 3 skew-t margin bootstrap (skew-t vs
+    symmetric-t vs nested SCR + residual re-decomposition), the Task 4
+    upper/lower tail-dependence asymmetry profile across the p-grid with 95%
+    CIs, the gamma_hat~0 MATERIAL FINDING, and the MR-015 risk. Pure
+    display-layer normalisation of the already-produced Phase 27 Task 3/4
+    validation reports - no model calculation."""
+    out: Dict[str, Any] = {}
+    t3 = _load(os.path.join(
+        VAL, "PHASE27_TASK3_SKEW_T_BOOTSTRAP_REPORT.json"))
+    if isinstance(t3, dict) and isinstance(t3.get("result"), dict):
+        r = t3["result"]
+        out["bootstrap"] = {
+            "config": r.get("config", {}),
+            "gamma_hat": t3.get("gamma_hat"),
+            "skewt_component_scr_ci": r.get("skewt_component_scr_ci", {}),
+            "symmetric_component_scr_ci":
+                r.get("symmetric_component_scr_ci", {}),
+            "without_skewt_scr_ci": r.get("without_skewt_scr_ci", {}),
+            "nested_pathwise_reference": r.get("nested_pathwise_reference"),
+            "task2_frozen_t_component_point":
+                r.get("task2_frozen_t_component_point"),
+            "task2_skewt_component_point":
+                r.get("task2_skewt_component_point"),
+            "headline_nested_inside_95ci":
+                r.get("headline_nested_inside_95ci"),
+            "se_frac_of_mean": r.get("se_frac_of_mean"),
+            "se_gate_pass": r.get("se_gate_pass"),
+            "directional_not_widened_mean":
+                r.get("directional_not_widened_mean"),
+            "directional_lift_nonneg_share":
+                r.get("directional_lift_nonneg_share"),
+            "radial_asymmetry_mean": r.get("radial_asymmetry_mean"),
+            "skewt_minus_sym_mean": r.get("skewt_minus_sym_mean"),
+            "residual_gap_redecomposition":
+                r.get("residual_gap_redecomposition_point", {}),
+            "gates": r.get("gates", {}),
+            "verdict": t3.get("verdict"),
+            "digest": r.get("digest"),
+            "source": ("docs/validation/"
+                       "PHASE27_TASK3_SKEW_T_BOOTSTRAP_REPORT.json"),
+            "change_record_id": t3.get("change_record_id"),
+        }
+    t4 = _load(os.path.join(
+        VAL, "PHASE27_TASK4_TAIL_DIAGNOSTICS_REPORT.json"))
+    if isinstance(t4, dict) and isinstance(t4.get("result"), dict):
+        r = t4["result"]
+        tds = r.get("tail_diagnostics_summary", {}) or {}
+
+        def _m(blk, key):
+            v = blk.get(key) or {}
+            return {"mean": v.get("mean"), "ci_lo": v.get("ci_lo"),
+                    "ci_hi": v.get("ci_hi")}
+
+        rows = []
+        for pk in sorted(tds.keys()):
+            blk = tds[pk] or {}
+            try:
+                p_val = float(pk.split("_")[1]) / 100.0
+            except (IndexError, ValueError):
+                p_val = None
+            rows.append({
+                "p": p_val,
+                "skewt_lambda_U": _m(blk, "skewt_lambda_U"),
+                "skewt_lambda_L": _m(blk, "skewt_lambda_L"),
+                "skewt_radial_asym": _m(blk, "skewt_radial_asym"),
+                "sym_lambda_U": _m(blk, "sym_lambda_U"),
+                "sym_lambda_L": _m(blk, "sym_lambda_L"),
+            })
+        cfg = r.get("config", {}) or {}
+        out["tail"] = {
+            "gamma_hat": t4.get("gamma_hat"),
+            "df_frozen": t4.get("df_frozen"),
+            "nested_pathwise_reference": t4.get("nested_pathwise_reference"),
+            "p_grid": cfg.get("p_grid", []),
+            "tail_anchor_p": cfg.get("tail_level_anchor"),
+            "rows": rows,
+            "archive_crosscheck": r.get("archive_crosscheck", {}),
+            "consistency_skewt_ge_sym": r.get("consistency_skewt_ge_sym"),
+            "mr_refresh_decision": r.get("mr_refresh_decision", {}),
+            "mr015_opened": t4.get("mr015_opened"),
+            "gates": r.get("gates", {}),
+            "verdict": t4.get("verdict"),
+            "digest": r.get("digest"),
+            "source": ("docs/validation/"
+                       "PHASE27_TASK4_TAIL_DIAGNOSTICS_REPORT.json"),
+            "change_record_id": t4.get("change_record_id"),
+        }
+    if out:
+        out["narrative"] = (
+            "Phase 27 layered an explicit UPPER-TAIL-ASYMMETRY scalar - the "
+            "generalized-hyperbolic skew-t copula (Demarta & McNeil 2005) - on "
+            "the FROZEN t(2.9451) copula, with gamma=0 recovering the symmetric "
+            "t EXACTLY. MATERIAL FINDING: fitting gamma leakage-free to the "
+            "realised upper-tail co-exceedances pins it at the boundary "
+            "(gamma_hat ~ 6.2e-5), so the skew-t draw is near-radially-"
+            "symmetric (radial asymmetry ~ 0 at p=0.90) and the skew-t "
+            "component SCR (39,598.2 bootstrap mean) is economically identical "
+            "to the frozen-t basis (39,595.1). The nested path-wise reference "
+            "46,638.9 lies OUTSIDE the skew-t 95% CI [36,679.9, 42,943.1] "
+            "(SE 4.07%); the copula-FORM residual falls only ~0.09% "
+            "(6,120.2 -> 6,114.9) - RE-CONFIRMED as NOT closed by a single "
+            "upper-tail-asymmetry scalar. It lives in nested inner-path joint "
+            "dynamics a copula on standalone margins cannot represent. The "
+            "MR-010/MR-014 quantifications are unchanged (SCR move 0.013% < 1% "
+            "trigger); MR-015 is opened to track the copula-form residual, the "
+            "grouped-t / vine escalation scheduled for Phase 28. Copula FROZEN "
+            "per SII Art. 234; production sign-off withheld (educational).")
+    return out
+
+
+def _build_phase28() -> Dict[str, Any]:
+    """Phase 28 (contract 1.10.0, additive): grouped-t / heterogeneous
+    tail-dependence copula. Normalises the already-produced Task 2 grouped-t
+    point read-out, Task 3 bootstrap, and Task 4 within/cross-block diagnostics
+    for the offline UI. Display-layer only - no model calculation."""
+    out: Dict[str, Any] = {}
+    t2 = _load(os.path.join(
+        VAL, "PHASE28_TASK2_GROUPED_T_COPULA_REPORT.json"))
+    if isinstance(t2, dict) and isinstance(t2.get("result"), dict):
+        r = t2["result"]
+        out["copula"] = {
+            "drivers": t2.get("drivers", []),
+            "df_frozen": t2.get("df_frozen"),
+            "df_rematched": t2.get("df_rematched"),
+            "rho_max_abs_diff": t2.get("rho_max_abs_diff"),
+            "block_dfs_hat": r.get("block_dfs_hat", []),
+            "block_labels": r.get("block_labels", []),
+            "blocks": r.get("blocks", []),
+            "realised_block_codependence":
+                r.get("realised_block_codependence", {}),
+            "fit": r.get("fit", {}),
+            "grouped_t_readout_at_df_hat":
+                r.get("grouped_t_readout_at_df_hat", {}),
+            "single_t_readout_homogeneous":
+                r.get("single_t_readout_homogeneous", {}),
+            "frozen_t_component_reference":
+                r.get("frozen_t_component_reference"),
+            "nested_pathwise_reference": r.get("nested_pathwise_reference"),
+            "grouped_t_vs_frozen_t_rel":
+                r.get("grouped_t_vs_frozen_t_rel"),
+            "grouped_t_vs_frozen_t_direction":
+                r.get("grouped_t_vs_frozen_t_direction"),
+            "gap_to_nested_grouped_t_rel":
+                r.get("gap_to_nested_grouped_t_rel"),
+            "gap_to_nested_frozen_t_rel":
+                r.get("gap_to_nested_frozen_t_rel"),
+            "homogeneous_recovery_dev": r.get("homogeneous_recovery_dev"),
+            "gates": r.get("gates", {}),
+            "verdict": t2.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE28_TASK2_GROUPED_T_COPULA_REPORT.json"),
+            "change_record_id": t2.get("change_record_id"),
+        }
+    t3 = _load(os.path.join(
+        VAL, "PHASE28_TASK3_GROUPED_T_BOOTSTRAP_REPORT.json"))
+    if isinstance(t3, dict) and isinstance(t3.get("result"), dict):
+        r = t3["result"]
+        out["bootstrap"] = {
+            "config": r.get("config", {}),
+            "block_dfs_hat": t3.get("block_dfs_hat", []),
+            "grouped_t_component_scr_ci":
+                r.get("grouped_t_component_scr_ci", {}),
+            "single_t_component_scr_ci":
+                r.get("single_t_component_scr_ci", {}),
+            "without_grouped_t_scr_ci":
+                r.get("without_grouped_t_scr_ci", {}),
+            "grouped_minus_single_mean":
+                r.get("grouped_minus_single_mean"),
+            "grouped_minus_single_neg_share":
+                r.get("grouped_minus_single_neg_share"),
+            "directional_disclosed_direction":
+                r.get("directional_disclosed_direction"),
+            "nested_pathwise_reference": r.get("nested_pathwise_reference"),
+            "task2_frozen_t_component_point":
+                r.get("task2_frozen_t_component_point"),
+            "task2_grouped_t_component_point":
+                r.get("task2_grouped_t_component_point"),
+            "headline_nested_inside_95ci":
+                r.get("headline_nested_inside_95ci"),
+            "se_frac_of_mean": r.get("se_frac_of_mean"),
+            "se_gate_pass": r.get("se_gate_pass"),
+            "residual_gap_redecomposition_point":
+                r.get("residual_gap_redecomposition_point", {}),
+            "residual_gap_redecomposition_bootstrap_mean":
+                r.get("residual_gap_redecomposition_bootstrap_mean", {}),
+            "gates": r.get("gates", {}),
+            "digest": r.get("digest"),
+            "verdict": t3.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE28_TASK3_GROUPED_T_BOOTSTRAP_REPORT.json"),
+            "change_record_id": t3.get("change_record_id"),
+        }
+    t4 = _load(os.path.join(
+        VAL, "PHASE28_TASK4_TAIL_DIAGNOSTICS_REPORT.json"))
+    if isinstance(t4, dict) and isinstance(t4.get("result"), dict):
+        r = t4["result"]
+        tds = r.get("tail_diagnostics_summary", {}) or {}
+
+        def _m(blk, key):
+            v = blk.get(key) or {}
+            return {"mean": v.get("mean"), "ci_lo": v.get("ci_lo"),
+                    "ci_hi": v.get("ci_hi")}
+
+        rows = []
+        for pk in sorted(tds.keys()):
+            blk = tds[pk] or {}
+            try:
+                p_val = float(pk.split("_")[1]) / 100.0
+            except (IndexError, ValueError):
+                p_val = None
+            rows.append({
+                "p": p_val,
+                "grp_cross_upper": _m(blk, "grp_cross_upper"),
+                "grp_cross_lower": _m(blk, "grp_cross_lower"),
+                "sng_cross_upper": _m(blk, "sng_cross_upper"),
+                "sng_cross_lower": _m(blk, "sng_cross_lower"),
+                "grp_minus_sng_cross_upper":
+                    _m(blk, "grp_minus_sng_cross_upper"),
+                "grp_within_upper_nonfin":
+                    _m(blk, "grp_within_upper_nonfin"),
+                "grp_within_upper_fin": _m(blk, "grp_within_upper_fin"),
+                "sng_within_upper_fin": _m(blk, "sng_within_upper_fin"),
+                "grp_within_radial_asym_fin":
+                    _m(blk, "grp_within_radial_asym_fin"),
+                "grp_heterogeneity_upper":
+                    _m(blk, "grp_heterogeneity_upper"),
+            })
+        cfg = r.get("config", {}) or {}
+        out["tail"] = {
+            "block_dfs_frozen": t4.get("block_dfs_frozen", []),
+            "homogeneous_df_frozen": t4.get("homogeneous_df_frozen"),
+            "nested_pathwise_reference": t4.get("nested_pathwise_reference"),
+            "p_grid": cfg.get("p_grid", []),
+            "tail_anchor_p": cfg.get("tail_level_anchor"),
+            "rows": rows,
+            "archive_crosscheck": r.get("archive_crosscheck", {}),
+            "dilution_consistency": r.get("dilution_consistency", {}),
+            "mr_refresh_decision": r.get("mr_refresh_decision", {}),
+            "mr016_opened": t4.get("mr016_opened"),
+            "gates": r.get("gates", {}),
+            "verdict": t4.get("verdict"),
+            "digest": r.get("digest"),
+            "source": ("docs/validation/"
+                       "PHASE28_TASK4_TAIL_DIAGNOSTICS_REPORT.json"),
+            "change_record_id": t4.get("change_record_id"),
+        }
+    if out:
+        out["narrative"] = (
+            "Phase 28 tested the grouped-t copula (Daul et al. 2003) as a "
+            "heterogeneous tail-dependence super-set of the frozen single-df "
+            "t(2.9451) copula. The homogeneous boundary recovers the governed "
+            "single-df t component exactly, but leakage-free block df fitting "
+            "to standalone within-block co-exceedances gives df_NONFIN=37.866 "
+            "and df_FIN=8.506, both lighter-tailed than the frozen df. "
+            "MATERIAL FINDING: the grouped-t dilutes cross-block co-movement "
+            "against the single shared-mixing t boundary, moving grouped-t "
+            "component SCR DOWN to 35,372.5 bootstrap mean (point 35,604.4) "
+            "vs single-df t 39,595.1 bootstrap mean (point 39,975.7). The "
+            "nested path-wise reference 46,638.9 remains OUTSIDE the grouped-t "
+            "95% CI [33,034.4, 38,008.5], and the copula-form residual WIDENS "
+            "from the skew-t-reconfirmed 6,114.9 to 10,491.5. The grouped-t is "
+            "therefore DISCLOSED, not adopted into the governed headline; "
+            "MR-010/MR-014 are not refreshed (headline move 0.00%), MR-016 is "
+            "opened, and Phase 29 escalates to vine / pair-copula. Copula and "
+            "margins remain frozen per SII Art. 234; production sign-off "
+            "withheld (educational).")
+    return out
+
+
 def build_ui_data() -> Dict[str, Any]:
     base = _load(VIEWER_DATA) or {}
     state = _load(STATE_PATH) or {}
@@ -1705,6 +1976,55 @@ def build_ui_data() -> Dict[str, Any]:
         capital["t_copula_scr_pathwise_component_bootstrap_mean"] = (
             _p26_bt.get("mean"))
 
+    phase27 = _build_phase27()
+    _p27_bt = (phase27.get("bootstrap") or {}).get(
+        "skewt_component_scr_ci") or {}
+    if _p27_bt.get("mean") is not None:
+        capital["skewt_copula_scr_component_bootstrap_mean"] = (
+            _p27_bt.get("mean"))
+
+    phase28 = _build_phase28()
+    _p28_bt = (phase28.get("bootstrap") or {})
+    _p28_grp = _p28_bt.get("grouped_t_component_scr_ci") or {}
+    _p28_sng = _p28_bt.get("single_t_component_scr_ci") or {}
+    if _p28_grp.get("mean") is not None:
+        capital["grouped_t_copula_scr_component_bootstrap_mean"] = (
+            _p28_grp.get("mean"))
+    if _p28_sng.get("mean") is not None:
+        capital["single_t_copula_scr_component_bootstrap_mean"] = (
+            _p28_sng.get("mean"))
+    _p28_cp = (phase28.get("copula") or {}).get(
+        "grouped_t_readout_at_df_hat") or {}
+    if _p28_cp.get("scr_component") is not None:
+        capital["grouped_t_copula_scr_component_point"] = (
+            _p28_cp.get("scr_component"))
+
+    governance = dict(base.get("governance", {}))
+    _base_risks = list(governance.get("risk_register", []) or [])
+    _have = {str(x.get("risk_id")) for x in _base_risks}
+    _store_risks = (gov.get("risk_register") or []) if isinstance(gov, dict) \
+        else []
+    for _rk in _store_risks:
+        _rid = str(_rk.get("risk_id"))
+        if _rid and _rid not in _have:
+            _base_risks.append({
+                "risk_id": _rk.get("risk_id"),
+                "title": _rk.get("title"),
+                "overall_rating": _rk.get("overall_rating"),
+                "mitigation_status": _rk.get("mitigation_status"),
+                "category": _rk.get("category"),
+                "owner": _rk.get("owner"),
+                "likelihood": _rk.get("likelihood"),
+                "impact": _rk.get("impact"),
+                "description": _rk.get("description"),
+                "mitigation": _rk.get("mitigation"),
+                "related_standard": _rk.get("related_standard"),
+                "updated_at": _rk.get("updated_at"),
+            })
+            _have.add(_rid)
+    if _base_risks:
+        governance["risk_register"] = _base_risks
+
     summary = dict(base.get("summary", {}))
     summary["contract_artifacts"] = len(inventory)
     summary["calibrated_drivers"] = len(calibrations)
@@ -1723,7 +2043,9 @@ def build_ui_data() -> Dict[str, Any]:
         "phase24": phase24,
         "phase25": phase25,
         "phase26": phase26,
-        "governance": base.get("governance", {}),
+        "phase27": phase27,
+        "phase28": phase28,
+        "governance": governance,
         "verdicts": _build_verdicts(base.get("verdicts", [])),
     }
     return data
@@ -1878,6 +2200,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="phase24" class="panel" data-title="Joint Actions (P24)"></div>
   <div id="phase25" class="panel" data-title="Path-wise Actions (P25)"></div>
   <div id="phase26" class="panel" data-title="Full Re-Agg (P26)"></div>
+  <div id="phase27" class="panel" data-title="Skew-t Tail (P27)"></div>
+  <div id="phase28" class="panel" data-title="Grouped-t Tail (P28)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
 </div>
 
@@ -1914,6 +2238,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["phase24","Joint Actions (P24)"],
     ["phase25","Path-wise Actions (P25)"],
     ["phase26","Full Re-Agg (P26)"],
+    ["phase27","Skew-t Tail (P27)"],
+    ["phase28","Grouped-t Tail (P28)"],
     ["governance","Governance"]
   ];
 
@@ -2829,6 +3155,224 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  function renderPhase27(){
+    var el=document.getElementById("phase27"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var p=DATA.phase27||{};
+    var bo=p.bootstrap||{}, td=p.tail||{};
+    if(!Object.keys(bo).length&&!Object.keys(td).length){
+      el.innerHTML='<p class="muted">No Phase 27 skew-t tail-dependence data in this snapshot (requires contract v1.9.0+).</p>';
+      return;
+    }
+    var sk=bo.skewt_component_scr_ci||{}, sy=bo.symmetric_component_scr_ci||{};
+    var gd=bo.residual_gap_redecomposition||{};
+    var mr=td.mr_refresh_decision||{};
+    var nestedRef=(bo.nested_pathwise_reference!=null?bo.nested_pathwise_reference:td.nested_pathwise_reference);
+    var gh=(bo.gamma_hat!=null?bo.gamma_hat:td.gamma_hat);
+    var html='<div class="cards">';
+    [
+      ["gamma_hat (fitted upper-tail skew)",gh!=null?Number(gh).toExponential(2):"--"],
+      ["Skew-t component SCR (bootstrap mean)",num(sk.mean)],
+      ["Symmetric-t component SCR (mean)",num(sy.mean)],
+      ["Nested SCR (path-wise) - reference",num(nestedRef)],
+      ["Skew-t 95% CI",sk.ci_lo!=null?"["+num(sk.ci_lo)+", "+num(sk.ci_hi)+"]":"--"],
+      ["Skew-t SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
+      ["Nested inside 95% CI?",bo.headline_nested_inside_95ci?"✓ yes":"✗ no (OUTSIDE)"],
+      ["Radial asymmetry (mean, p=0.90)",bo.radial_asymmetry_mean!=null?Number(bo.radial_asymmetry_mean).toExponential(2):"--"],
+      ["Copula-form residual reduction",gd.copula_form_residual_reduction_rel!=null?(100*gd.copula_form_residual_reduction_rel).toFixed(2)+"%":"--"],
+      ["MR-010/MR-014 1% trigger",mr.refresh_required===false?("NOT fired (move "+(mr.max_abs_relative_move!=null?(100*mr.max_abs_relative_move).toFixed(3)+"%":"--")+")"):(mr.refresh_required?"FIRED":"--")],
+      ["MR-015 (copula-form residual)",td.mr015_opened?"OPEN (tracked)":"--"],
+      ["df (copula FROZEN)",td.df_frozen!=null?Number(td.df_frozen).toFixed(4):"--"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+c[0]+
+      '</div><div class="v">'+esc(c[1])+'</div></div>'; });
+    html+='</div>';
+    html+='<p class="note"><b>MATERIAL FINDING.</b> The fitted upper-tail-asymmetry scalar gamma_hat &asymp; 0 pins the skew-t at near-radial-symmetry, '+
+      'so the skew-t component SCR is economically identical to the frozen symmetric-t basis (move '+
+      (mr.max_abs_relative_move!=null?(100*mr.max_abs_relative_move).toFixed(3):"--")+'%, below the 1% MR trigger). '+
+      'The copula-form residual to the nested truth is RE-CONFIRMED as NOT closed by a single skew-t scalar. Copula FROZEN per SII Art. 234.</p>';
+    var D=[];
+    [["Symmetric-t (mean)",sy.mean,"#2b5d99"],
+     ["Skew-t (mean)",sk.mean,"#4f9cff"],
+     ["Skew-t CI lo",sk.ci_lo,"#2fd0a8"],
+     ["Skew-t CI hi",sk.ci_hi,"#2fd0a8"],
+     ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
+    ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; skew-t vs symmetric-t vs nested reference</h4>'+
+        '<p class="cap">With gamma_hat &asymp; 0 the skew-t and symmetric-t bases coincide; both sit well below the nested path-wise reference '+
+        num(nestedRef)+' &mdash; a COPULA-FORM gap unaffected by the upper-tail-asymmetry scalar.</p>'+
+        barChart(D,{w:760,h:300,mB:64})+'</div>';
+    }
+    var rows=td.rows||[];
+    if(rows.length){
+      html+='<div class="subh">Upper/lower tail-dependence &amp; radial asymmetry across the tail grid (skew-t draw, 200&times;20k bootstrap, 95% CI)</div>'+
+        '<table class="ptable"><thead><tr><th>p</th><th>&lambda;<sub>U</sub> (skew-t)</th><th>&lambda;<sub>L</sub> (skew-t)</th>'+
+        '<th>Radial asym (U&minus;L)</th><th>&lambda;<sub>U</sub> (sym-t)</th></tr></thead><tbody>';
+      function cv(m){ return (m&&m.mean!=null)?(Number(m.mean).toFixed(4)+(m.ci_lo!=null?(" ["+Number(m.ci_lo).toFixed(4)+", "+Number(m.ci_hi).toFixed(4)+"]"):"")):"--"; }
+      rows.forEach(function(rw){
+        html+='<tr><td>'+(rw.p!=null?rw.p.toFixed(2):"--")+'</td><td>'+cv(rw.skewt_lambda_U)+'</td><td>'+cv(rw.skewt_lambda_L)+'</td>'+
+          '<td>'+((rw.skewt_radial_asym&&rw.skewt_radial_asym.mean!=null)?Number(rw.skewt_radial_asym.mean).toExponential(2):"--")+'</td>'+
+          '<td>'+((rw.sym_lambda_U&&rw.sym_lambda_U.mean!=null)?Number(rw.sym_lambda_U.mean).toFixed(4):"--")+'</td></tr>';
+      });
+      html+='</tbody></table>';
+      var TD=[];
+      rows.forEach(function(rw){
+        var pl=(rw.p!=null?rw.p.toFixed(2):"?");
+        if(rw.skewt_lambda_U&&rw.skewt_lambda_U.mean!=null) TD.push({label:"λU p="+pl,value:rw.skewt_lambda_U.mean,color:"#4f9cff",tip:"<b>upper tail dep</b><br>p="+pl+": "+rw.skewt_lambda_U.mean.toFixed(4)});
+        if(rw.skewt_lambda_L&&rw.skewt_lambda_L.mean!=null) TD.push({label:"λL p="+pl,value:rw.skewt_lambda_L.mean,color:"#9a7bff",tip:"<b>lower tail dep</b><br>p="+pl+": "+rw.skewt_lambda_L.mean.toFixed(4)});
+      });
+      if(TD.length){
+        html+='<div class="chartwrap"><h4>Tail-dependence: upper (&lambda;<sub>U</sub>) vs lower (&lambda;<sub>L</sub>) across p</h4>'+
+          '<p class="cap">The skew-t draw is near-radially-symmetric (&lambda;<sub>U</sub> &asymp; &lambda;<sub>L</sub> at every p), consistent with gamma_hat &asymp; 0.</p>'+
+          barChart(TD,{w:760,h:300,mB:84})+'</div>';
+      }
+    }
+    if(Object.keys(gd).length){
+      html+='<div class="subh">Residual gap to nested truth &mdash; copula-form vs relief-surface (skew-t re-decomposition)</div>'+
+        '<table class="ptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share of gap</th><th>Basis</th></tr></thead><tbody>'+
+        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+          (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
+          '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
+        '<tr><td>Copula-form residual (skew-t)</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+          (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"%":"--")+
+          '</td><td>frozen-t '+num(gd.copula_form_residual_frozen_t)+' &rarr; skew-t '+num(gd.copula_form_residual_abs)+'</td></tr>'+
+        '<tr><td>Total gap (nested &minus; skew-t)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+          (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"%":"--")+
+          '</td><td>nested with-actions reference</td></tr>'+
+        '</tbody></table>'+
+        '<p class="note">The skew-t scalar lifts the frozen-t component SCR by only '+num(gd.skewt_minus_sym_lift)+' on common random numbers; '+
+        'the copula-form residual moves '+num(gd.copula_form_residual_frozen_t)+' &rarr; '+num(gd.copula_form_residual_abs)+' ('+
+        (gd.copula_form_residual_reduction_rel!=null?(100*gd.copula_form_residual_reduction_rel).toFixed(2):"--")+'% reduction) &mdash; '+
+        'RE-CONFIRMED as NOT closed by a single upper-tail-asymmetry scalar. Mitigation: grouped-t / vine escalation (Phase 28). Tracked by MR-015. DISCLOSED.</p>';
+    }
+    html+=maGateGrid(bo.gates,"Task 3 pre-registered gates (skew-t margin bootstrap + residual re-decomposition)");
+    html+=maGateGrid(td.gates,"Task 4 pre-registered gates (tail-dependence diagnostics + MR-015)");
+    html+='<p class="note">'+esc(p.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(bo.source||"")+' &middot; '+esc(td.source||"")+
+      ' &middot; ChangeRecords '+esc(bo.change_record_id||"")+' / '+esc(td.change_record_id||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
+  function renderPhase28(){
+    var el=document.getElementById("phase28"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var p=DATA.phase28||{};
+    var co=p.copula||{}, bo=p.bootstrap||{}, td=p.tail||{};
+    if(!Object.keys(co).length&&!Object.keys(bo).length&&!Object.keys(td).length){
+      el.innerHTML='<p class="muted">No Phase 28 grouped-t tail-dependence data in this snapshot (requires contract v1.10.0+).</p>';
+      return;
+    }
+    var gr=bo.grouped_t_component_scr_ci||{}, sg=bo.single_t_component_scr_ci||{};
+    var grpPoint=bo.task2_grouped_t_component_point;
+    var sngPoint=bo.task2_frozen_t_component_point;
+    var nestedRef=(bo.nested_pathwise_reference!=null?bo.nested_pathwise_reference:co.nested_pathwise_reference);
+    var gd=bo.residual_gap_redecomposition_point||{};
+    var mr=td.mr_refresh_decision||{};
+    var dfs=(co.block_dfs_hat||td.block_dfs_frozen||[]);
+    var p90=(td.rows||[]).filter(function(x){ return Math.abs(Number(x.p)-0.9)<1e-9; })[0]||{};
+    function mean(m,d){ return (m&&m.mean!=null)?Number(m.mean).toFixed(d==null?4:d):"--"; }
+    function ci(m,d){ return (m&&m.ci_lo!=null)?"["+Number(m.ci_lo).toFixed(d==null?4:d)+", "+Number(m.ci_hi).toFixed(d==null?4:d)+"]":"--"; }
+    var html='<div class="cards">';
+    [
+      ["df_NONFIN / df_FIN",dfs.length>1?(Number(dfs[0]).toFixed(3)+" / "+Number(dfs[1]).toFixed(3)):"--"],
+      ["Grouped-t component SCR (bootstrap mean)",num(gr.mean)],
+      ["Grouped-t component SCR (point)",num(grpPoint)],
+      ["Single-df t component SCR (mean)",num(sg.mean)],
+      ["Single-df t component SCR (point)",num(sngPoint)],
+      ["Nested SCR (path-wise) - reference",num(nestedRef)],
+      ["Grouped-t 95% CI",gr.ci_lo!=null?"["+num(gr.ci_lo)+", "+num(gr.ci_hi)+"]":"--"],
+      ["Grouped-t SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
+      ["Nested inside grouped 95% CI?",bo.headline_nested_inside_95ci?"yes":"no (OUTSIDE)"],
+      ["Grouped minus single (CRN mean)",num(bo.grouped_minus_single_mean)],
+      ["Cross-block dilution at p=0.90",mean(p90.grp_minus_sng_cross_upper,4)+" "+ci(p90.grp_minus_sng_cross_upper,4)],
+      ["MR-016",td.mr016_opened?"OPEN (tracked)":"--"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+c[0]+
+      '</div><div class="v">'+esc(c[1])+'</div></div>'; });
+    html+='</div>';
+    html+='<p class="note"><b>MATERIAL FINDING.</b> The grouped-t block-df fit did not reveal a standalone within-FIN tail concentration. '+
+      'It diluted cross-block co-movement versus the single shared-mixing t boundary, so grouped-t component SCR moved DOWN. '+
+      'The grouped-t result is DISCLOSED, not adopted into the governed headline; MR-010/MR-014 stay unchanged and MR-016 tracks the residual.</p>';
+    var D=[];
+    [["Grouped-t mean",gr.mean,"#4f9cff"],
+     ["Grouped-t point",grpPoint,"#2fd0a8"],
+     ["Single-df t mean",sg.mean,"#9a7bff"],
+     ["Single-df t point",sngPoint,"#2b5d99"],
+     ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
+    ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; grouped-t vs single-df t vs nested reference</h4>'+
+        '<p class="cap">The grouped-t component sits below the single-df t boundary and farther below the nested path-wise reference '+num(nestedRef)+
+        '; the widening is informative model-form evidence, not a failed recalibration.</p>'+barChart(D,{w:760,h:300,mB:72})+'</div>';
+    }
+    var rows=td.rows||[];
+    if(rows.length){
+      html+='<div class="subh">Within/cross-block upper/lower tail-dependence grid (grouped vs single, 200&times;20k bootstrap, 95% CI)</div>'+
+        '<table class="ptable p28tail"><thead><tr><th>p</th><th>Grouped cross U</th><th>Single cross U</th><th>Grouped - single cross U</th>'+
+        '<th>Grouped cross L</th><th>Grouped within FIN U</th><th>Single within FIN U</th><th>Grouped FIN radial asym</th></tr></thead><tbody>';
+      rows.forEach(function(rw){
+        html+='<tr><td>'+(rw.p!=null?rw.p.toFixed(2):"--")+'</td>'+
+          '<td>'+mean(rw.grp_cross_upper,4)+' '+ci(rw.grp_cross_upper,4)+'</td>'+
+          '<td>'+mean(rw.sng_cross_upper,4)+' '+ci(rw.sng_cross_upper,4)+'</td>'+
+          '<td>'+mean(rw.grp_minus_sng_cross_upper,4)+' '+ci(rw.grp_minus_sng_cross_upper,4)+'</td>'+
+          '<td>'+mean(rw.grp_cross_lower,4)+' '+ci(rw.grp_cross_lower,4)+'</td>'+
+          '<td>'+mean(rw.grp_within_upper_fin,4)+'</td>'+
+          '<td>'+mean(rw.sng_within_upper_fin,4)+'</td>'+
+          '<td>'+mean(rw.grp_within_radial_asym_fin,5)+' '+ci(rw.grp_within_radial_asym_fin,5)+'</td></tr>';
+      });
+      html+='</tbody></table>';
+      var TD=[];
+      rows.forEach(function(rw){
+        var pl=(rw.p!=null?rw.p.toFixed(2):"?");
+        if(rw.grp_cross_upper&&rw.grp_cross_upper.mean!=null) TD.push({label:"grp cross p="+pl,value:rw.grp_cross_upper.mean,color:"#4f9cff",tip:"<b>grouped cross upper</b><br>p="+pl+": "+rw.grp_cross_upper.mean.toFixed(4)});
+        if(rw.sng_cross_upper&&rw.sng_cross_upper.mean!=null) TD.push({label:"single cross p="+pl,value:rw.sng_cross_upper.mean,color:"#9a7bff",tip:"<b>single cross upper</b><br>p="+pl+": "+rw.sng_cross_upper.mean.toFixed(4)});
+      });
+      if(TD.length){
+        html+='<div class="chartwrap"><h4>Cross-block upper-tail dilution profile</h4>'+
+          '<p class="cap">Grouped-t cross-block upper tail dependence is below the single-df t boundary at every p; p=0.90 dilution is '+
+          mean(p90.grp_minus_sng_cross_upper,4)+'.</p>'+barChart(TD,{w:760,h:300,mB:90})+'</div>';
+      }
+    }
+    if(Object.keys(gd).length){
+      html+='<div class="subh">Residual gap to nested truth &mdash; grouped-t re-decomposition and widening</div>'+
+        '<table class="ptable p28gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share / move</th><th>Basis</th></tr></thead><tbody>'+
+        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+          (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
+          '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
+        '<tr><td>Copula-form residual (grouped-t)</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+          (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"% of gap":"--")+
+          '</td><td>skew-t reconfirmed '+num(gd.copula_form_residual_skewt_reconfirmed)+' &rarr; grouped-t '+num(gd.copula_form_residual_abs)+'</td></tr>'+
+        '<tr><td>Residual widening vs skew-t</td><td>'+num(gd.copula_form_residual_change_vs_skewt_abs)+'</td><td>'+
+          (gd.copula_form_residual_change_vs_skewt_rel!=null?("+"+(100*gd.copula_form_residual_change_vs_skewt_rel).toFixed(2)+"%"):"--")+
+          '</td><td>informative negative super-set result; vine escalation</td></tr>'+
+        '<tr><td>Total gap (nested &minus; grouped-t)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+          (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"% of nested":"--")+
+          '</td><td>nested with-actions reference</td></tr>'+
+        '</tbody></table>'+
+        '<p class="note">The nested reference '+num(nestedRef)+' is OUTSIDE the grouped-t CI ['+num(gr.ci_lo)+', '+num(gr.ci_hi)+']; '+
+        'the copula-form residual WIDENS from '+num(gd.copula_form_residual_skewt_reconfirmed)+' to '+num(gd.copula_form_residual_abs)+
+        '. This confirms the residual is nested inner-path joint structure that a copula on standalone margins cannot represent. DISCLOSED; Phase 29 vine / pair-copula is the fallback.</p>';
+    }
+    html+='<div class="subh">MR refresh and governance decision</div>'+
+      '<table class="ptable"><thead><tr><th>Decision</th><th>Value</th><th>Rationale</th></tr></thead><tbody>'+
+      '<tr><td>Governed headline move</td><td>'+(mr.governed_headline_relative_move!=null?(100*mr.governed_headline_relative_move).toFixed(4)+"%":"--")+
+      '</td><td>Frozen single-df t boundary recovered exactly; MR-010/MR-014 no-refresh.</td></tr>'+
+      '<tr><td>Disclosed grouped move</td><td>'+(mr.disclosed_grouped_vs_basis_move_bootstrap_mean!=null?(100*mr.disclosed_grouped_vs_basis_move_bootstrap_mean).toFixed(2)+"%":"--")+
+      '</td><td>Non-conservative DOWN move, disclosed and tracked by MR-016.</td></tr>'+
+      '<tr><td>MR-016</td><td>'+(td.mr016_opened?"OPEN":"--")+'</td><td>Heterogeneous-tail / cross-block-dilution copula-form residual remains open.</td></tr>'+
+      '</tbody></table>';
+    html+=maGateGrid(co.gates,"Task 2 pre-registered gates (grouped-t copula re-aggregation)");
+    html+=maGateGrid(bo.gates,"Task 3 pre-registered gates (grouped-t bootstrap + residual re-decomposition)");
+    html+=maGateGrid(td.gates,"Task 4 pre-registered gates (tail diagnostics + MR-016)");
+    html+='<p class="note">'+esc(p.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(co.source||"")+' &middot; '+esc(bo.source||"")+' &middot; '+esc(td.source||"")+
+      ' &middot; ChangeRecords '+esc(co.change_record_id||"")+' / '+esc(bo.change_record_id||"")+' / '+esc(td.change_record_id||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
   // ---- Governance & assumptions view (UI Task 4) ----
   var GLIK=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
   var GIMP=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
@@ -3180,7 +3724,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

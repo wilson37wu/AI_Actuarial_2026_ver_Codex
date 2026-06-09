@@ -1,9 +1,9 @@
 {
-  "contract_version": "1.8.0",
+  "contract_version": "1.10.0",
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-08T07:27:20.739439+00:00",
+    "generated_utc": "2026-06-08T18:13:08.203Z",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -25,7 +25,7 @@
     "risks_open": 1,
     "risks_mitigated": 10,
     "production_status": "NOT CLEARED FOR PRODUCTION",
-    "contract_artifacts": 68,
+    "contract_artifacts": 72,
     "calibrated_drivers": 11
   },
   "inventory": [
@@ -81,7 +81,7 @@
       "bytes": 3411,
       "sha256": "4fbe78d9cf3c907bd04632ed720030f8643f404118192e1a63e9c0980db51188",
       "mtime_utc": "2026-06-04T17:19:17.657341Z",
-      "headline": "PASS \u2014 selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"
+      "headline": "PASS — selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"
     },
     {
       "id": "PHASE15_RISK_AGGREGATION_REPORT",
@@ -126,7 +126,7 @@
       "bytes": 4261,
       "sha256": "e1bb0aecd491f8ba012dffa91d77eb562b97909c6de98d30db20fd5fc7a19953",
       "mtime_utc": "2026-06-05T04:21:39.480240Z",
-      "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)"
+      "headline": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)"
     },
     {
       "id": "PHASE17_RISK_AGGREGATION_REPORT",
@@ -189,7 +189,7 @@
       "bytes": 4336,
       "sha256": "8e37e976170f3d125e8adb0010bc5b1c2cde27daafd30fac3b097335e2039bb7",
       "mtime_utc": "2026-06-05T10:32:02.363431Z",
-      "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9638, VaR rel err=2.33%, leakage-free, overfit gap=0.0057)"
+      "headline": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9638, VaR rel err=2.33%, leakage-free, overfit gap=0.0057)"
     },
     {
       "id": "PHASE18_TASK4_AGGREGATION_REPORT",
@@ -234,7 +234,7 @@
       "bytes": 4005,
       "sha256": "a81154ba3ed62036702497128c15f65b504d21083ae88ad6a5629bc4c03e5233",
       "mtime_utc": "2026-06-05T21:15:52.604204Z",
-      "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
+      "headline": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
     },
     {
       "id": "PHASE19_TASK4_AGGREGATION_REPORT",
@@ -583,8 +583,44 @@
       "path": "docs/validation/PHASE26_TASK5_UI_PROPAGATION_REPORT.json",
       "category": "other",
       "bytes": 3625,
-      "sha256": "24cf6ba70f400197694f9bed1e6714503bdbb7b4fbc2da952d0596f618bc9b39",
-      "mtime_utc": "2026-06-08T07:25:04Z",
+      "sha256": "44e62367234d9f3154c8f37dad315ba63c853e5500ac0856b10fb8a8af1d19d0",
+      "mtime_utc": "2026-06-08T07:27:56Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE27_TASK1_DESIGN_NOTE",
+      "path": "docs/validation/PHASE27_TASK1_DESIGN_NOTE.json",
+      "category": "other",
+      "bytes": 15720,
+      "sha256": "7666ef1d58cecde77d8ef3ee3b8ced0a1f01a0ef61fee82853fb535408ade2eb",
+      "mtime_utc": "2026-06-08T08:17:55Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE27_TASK2_SKEW_T_COPULA_REPORT",
+      "path": "docs/validation/PHASE27_TASK2_SKEW_T_COPULA_REPORT.json",
+      "category": "other",
+      "bytes": 8021,
+      "sha256": "064aad640b12283140a6db897563949d090b6308d01701f1c660dec7c52d0444",
+      "mtime_utc": "2026-06-08T09:21:34Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE27_TASK3_SKEW_T_BOOTSTRAP_REPORT",
+      "path": "docs/validation/PHASE27_TASK3_SKEW_T_BOOTSTRAP_REPORT.json",
+      "category": "other",
+      "bytes": 7558,
+      "sha256": "1d328228c2a9442e9254f517d1b2379440ba2aede9c7f11989c8939162e36307",
+      "mtime_utc": "2026-06-08T10:21:52Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE27_TASK4_TAIL_DIAGNOSTICS_REPORT",
+      "path": "docs/validation/PHASE27_TASK4_TAIL_DIAGNOSTICS_REPORT.json",
+      "category": "tail_diagnostics",
+      "bytes": 13223,
+      "sha256": "f78ff0c8165b373414b51945eddfd089629be8c11f6eb4dabef7effc79b34c63",
+      "mtime_utc": "2026-06-08T12:25:55Z",
       "headline": "PASS"
     },
     {
@@ -668,7 +704,7 @@
     "component_loss_correlation": 0.3870458,
     "loss_correlation_matrix": [
       [
-        1.0,
+        1,
         0.839762,
         0.967533,
         0.368116,
@@ -676,7 +712,7 @@
       ],
       [
         0.839762,
-        1.0,
+        1,
         0.863011,
         0.328634,
         0.017918
@@ -684,7 +720,7 @@
       [
         0.967533,
         0.863011,
-        1.0,
+        1,
         0.379653,
         -0.02457
       ],
@@ -692,7 +728,7 @@
         0.368116,
         0.328634,
         0.379653,
-        1.0,
+        1,
         0.127506
       ],
       [
@@ -700,44 +736,44 @@
         0.017918,
         -0.02457,
         0.127506,
-        1.0
+        1
       ]
     ],
     "esg_correlation_matrix": [
       [
-        1.0,
+        1,
         -0.15,
         -0.2,
-        0.0,
-        0.0
+        0,
+        0
       ],
       [
         -0.15,
-        1.0,
+        1,
         -0.3,
-        0.0,
-        0.0
+        0,
+        0
       ],
       [
         -0.2,
         -0.3,
-        1.0,
-        0.0,
-        0.0
+        1,
+        0,
+        0
       ],
       [
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0
+        0,
+        0,
+        0,
+        1,
+        0
       ],
       [
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0
+        0,
+        0,
+        0,
+        0,
+        1
       ]
     ],
     "esg_understatement_pct": 40.48,
@@ -770,7 +806,7 @@
       "standalone_scr_sum": 62389.3012,
       "realised_loss_correlation": [
         [
-          1.0,
+          1,
           0.5088878100052604,
           0.8878723336825546,
           0.1618376140146465,
@@ -780,7 +816,7 @@
         ],
         [
           0.5088878100052605,
-          1.0,
+          1,
           0.5509591379061576,
           -0.047203615944372154,
           -0.16506753666442653,
@@ -800,7 +836,7 @@
           0.16183761401464647,
           -0.04720361594437216,
           0.1506311175112681,
-          1.0,
+          1,
           0.06600443159184158,
           -0.17597717011317135,
           -0.06687320954606928
@@ -820,7 +856,7 @@
           -0.1312072093018077,
           -0.17597717011317135,
           0.01642021764472774,
-          1.0,
+          1,
           -0.11460088190871084
         ],
         [
@@ -830,7 +866,7 @@
           -0.06687320954606928,
           0.081739925352727,
           -0.11460088190871083,
-          1.0
+          1
         ]
       ],
       "selected_copula": "gaussian",
@@ -840,11 +876,11 @@
           "n_params": 21,
           "loglik": 187.3387,
           "aic": -332.6774,
-          "upper_tail_dependence": 0.0,
+          "upper_tail_dependence": 0,
           "params": {
             "correlation": [
               [
-                1.0,
+                1,
                 0.5100164609374884,
                 0.8889420455976542,
                 0.1707275747483455,
@@ -854,7 +890,7 @@
               ],
               [
                 0.5100164609374884,
-                1.0,
+                1,
                 0.5462780044537359,
                 -0.028588150207345533,
                 -0.13606526369994817,
@@ -864,7 +900,7 @@
               [
                 0.8889420455976541,
                 0.5462780044537359,
-                1.0,
+                1,
                 0.15799910787531793,
                 -0.0062661816671567405,
                 -0.11765203241040999,
@@ -874,7 +910,7 @@
                 0.1707275747483455,
                 -0.02858815020734554,
                 0.15799910787531796,
-                1.0,
+                1,
                 0.09155832399825004,
                 -0.1527119981077051,
                 -0.059477595534496795
@@ -884,7 +920,7 @@
                 -0.1360652636999482,
                 -0.00626618166715675,
                 0.09155832399825002,
-                1.0,
+                1,
                 0.014601853270014427,
                 0.06498673926789991
               ],
@@ -894,7 +930,7 @@
                 -0.11765203241041002,
                 -0.15271199810770514,
                 0.014601853270014425,
-                1.0,
+                1,
                 -0.1560492786459769
               ],
               [
@@ -904,7 +940,7 @@
                 -0.05947759553449679,
                 0.06498673926789993,
                 -0.15604927864597692,
-                1.0
+                1
               ]
             ]
           },
@@ -930,7 +966,7 @@
           "params": {
             "correlation": [
               [
-                1.0,
+                1,
                 0.5559808788758441,
                 0.892793591824362,
                 0.1192541011319786,
@@ -940,7 +976,7 @@
               ],
               [
                 0.5559808788758441,
-                1.0,
+                1,
                 0.5879850458290629,
                 -0.02099180513530902,
                 -0.08412084089488894,
@@ -950,7 +986,7 @@
               [
                 0.8927935918243621,
                 0.5879850458290629,
-                1.0,
+                1,
                 0.13052619222005155,
                 0.019757158783946648,
                 -0.1266073016534907,
@@ -960,7 +996,7 @@
                 0.11925410113197862,
                 -0.02099180513530903,
                 0.13052619222005152,
-                1.0,
+                1,
                 0.09273127084763666,
                 -0.08977987160077049,
                 -0.07673544495919438
@@ -970,7 +1006,7 @@
                 -0.08412084089488896,
                 0.019757158783946644,
                 0.09273127084763669,
-                1.0,
+                1,
                 0.043454889785622675,
                 0.08362862035845726
               ],
@@ -980,7 +1016,7 @@
                 -0.12660730165349068,
                 -0.08977987160077049,
                 0.04345488978562269,
-                1.0,
+                1,
                 -0.14984466068023425
               ],
               [
@@ -990,10 +1026,10 @@
                 -0.07673544495919435,
                 0.08362862035845721,
                 -0.14984466068023425,
-                1.0
+                1
               ]
             ],
-            "df": 50.0
+            "df": 50
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
@@ -1041,15 +1077,15 @@
         "capital_horizon_months": 12,
         "rel_error_tolerance": 0.1,
         "t_df_grid": [
-          3.0,
-          4.0,
-          5.0,
-          6.0,
-          8.0,
-          10.0,
-          15.0,
-          25.0,
-          50.0
+          3,
+          4,
+          5,
+          6,
+          8,
+          10,
+          15,
+          25,
+          50
         ]
       },
       "notes": [
@@ -1061,9 +1097,9 @@
       ],
       "audit_entry_id": null,
       "standards": [
-        "SOA ASOP 56 \u00a73.5",
-        "SOA ASOP 25 \u00a73.3",
-        "IA TAS M \u00a73.6",
+        "SOA ASOP 56 §3.5",
+        "SOA ASOP 25 §3.3",
+        "IA TAS M §3.6",
         "Solvency II Delegated Reg. Art. 234",
         "IFoA Life Aggregation & Simulation WP",
         "Demarta-McNeil 2005 (t-copula)"
@@ -1074,11 +1110,11 @@
           "n_params": 21,
           "loglik": 187.3387,
           "aic": -332.6774,
-          "upper_tail_dependence": 0.0,
+          "upper_tail_dependence": 0,
           "params": {
             "correlation": [
               [
-                1.0,
+                1,
                 0.5100164609374884,
                 0.8889420455976542,
                 0.1707275747483455,
@@ -1088,7 +1124,7 @@
               ],
               [
                 0.5100164609374884,
-                1.0,
+                1,
                 0.5462780044537359,
                 -0.028588150207345533,
                 -0.13606526369994817,
@@ -1098,7 +1134,7 @@
               [
                 0.8889420455976541,
                 0.5462780044537359,
-                1.0,
+                1,
                 0.15799910787531793,
                 -0.0062661816671567405,
                 -0.11765203241040999,
@@ -1108,7 +1144,7 @@
                 0.1707275747483455,
                 -0.02858815020734554,
                 0.15799910787531796,
-                1.0,
+                1,
                 0.09155832399825004,
                 -0.1527119981077051,
                 -0.059477595534496795
@@ -1118,7 +1154,7 @@
                 -0.1360652636999482,
                 -0.00626618166715675,
                 0.09155832399825002,
-                1.0,
+                1,
                 0.014601853270014427,
                 0.06498673926789991
               ],
@@ -1128,7 +1164,7 @@
                 -0.11765203241041002,
                 -0.15271199810770514,
                 0.014601853270014425,
-                1.0,
+                1,
                 -0.1560492786459769
               ],
               [
@@ -1138,7 +1174,7 @@
                 -0.05947759553449679,
                 0.06498673926789993,
                 -0.15604927864597692,
-                1.0
+                1
               ]
             ]
           },
@@ -1164,7 +1200,7 @@
           "params": {
             "correlation": [
               [
-                1.0,
+                1,
                 0.5559808788758441,
                 0.892793591824362,
                 0.1192541011319786,
@@ -1174,7 +1210,7 @@
               ],
               [
                 0.5559808788758441,
-                1.0,
+                1,
                 0.5879850458290629,
                 -0.02099180513530902,
                 -0.08412084089488894,
@@ -1184,7 +1220,7 @@
               [
                 0.8927935918243621,
                 0.5879850458290629,
-                1.0,
+                1,
                 0.13052619222005155,
                 0.019757158783946648,
                 -0.1266073016534907,
@@ -1194,7 +1230,7 @@
                 0.11925410113197862,
                 -0.02099180513530903,
                 0.13052619222005152,
-                1.0,
+                1,
                 0.09273127084763666,
                 -0.08977987160077049,
                 -0.07673544495919438
@@ -1204,7 +1240,7 @@
                 -0.08412084089488896,
                 0.019757158783946644,
                 0.09273127084763669,
-                1.0,
+                1,
                 0.043454889785622675,
                 0.08362862035845726
               ],
@@ -1214,7 +1250,7 @@
                 -0.12660730165349068,
                 -0.08977987160077049,
                 0.04345488978562269,
-                1.0,
+                1,
                 -0.14984466068023425
               ],
               [
@@ -1224,10 +1260,10 @@
                 -0.07673544495919435,
                 0.08362862035845721,
                 -0.14984466068023425,
-                1.0
+                1
               ]
             ],
-            "df": 50.0
+            "df": 50
           },
           "aggregated_capital": {
             "confidence_level": 0.995,
@@ -1285,7 +1321,7 @@
       "baseline_report": "docs/validation/PHASE21_TASK4_AGGREGATION_REPORT.json",
       "inputs_changed": {
         "exposure_notional": {
-          "placeholder": 30000.0,
+          "placeholder": 30000,
           "calibrated": 22000.000000000004
         },
         "liquidity_couplings": "placeholder (0.05,-0.20,0.35,0.10,0.00,0.10) -> G-LIQX-estimated (see calibration_inputs)"
@@ -1325,8 +1361,8 @@
       "copula_vs_nested_rel_error": {
         "placeholder": 0.14583780247884578,
         "calibrated": 0.14583332565245183,
-        "delta": -4.476826393956523e-06,
-        "rel_delta": -3.0697297393835186e-05
+        "delta": -0.000004476826393956523,
+        "rel_delta": -0.000030697297393835186
       }
     },
     "aggregation_verdict": "PASS",
@@ -1339,7 +1375,11 @@
     "nested_scr_with_pathwise": 46638.8659,
     "t_copula_scr_pathwise_readout": 39794.3216670548,
     "t_copula_scr_pathwise_component": 39975.654628199336,
-    "t_copula_scr_pathwise_component_bootstrap_mean": 39595.06073760496
+    "t_copula_scr_pathwise_component_bootstrap_mean": 39595.06073760496,
+    "skewt_copula_scr_component_bootstrap_mean": 39598.1603351356,
+    "grouped_t_copula_scr_component_bootstrap_mean": 35372.49326229076,
+    "single_t_copula_scr_component_bootstrap_mean": 39595.06073760497,
+    "grouped_t_copula_scr_component_point": 35604.39894619743
   },
   "tail": {
     "verdict": "PASS - seven-driver 99.5% capital metric converges (copula-simulated, last VaR delta < 0.5%), is bounded by simulated and honest small-sample nested bootstrap CIs, and benefits from Sobol-RQMC variance reduction",
@@ -1390,11 +1430,11 @@
       165808.52450750157
     ],
     "nested_n_outer": 160,
-    "nested_disclosure": "n_outer=160 is SMALL for a 99.5% quantile; the nested CI is wide by construction and is disclosed, not hidden \u2014 the copula-simulated study above carries the convergence evidence (IA TAS M 3.6.4).",
+    "nested_disclosure": "n_outer=160 is SMALL for a 99.5% quantile; the nested CI is wide by construction and is disclosed, not hidden — the copula-simulated study above carries the convergence evidence (IA TAS M 3.6.4).",
     "source": "docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.json"
   },
   "proxy": {
-    "verdict": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)",
+    "verdict": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)",
     "selected_degree": 1,
     "overfit_onset_degree": 2,
     "overfit_onset_terms": 21,
@@ -2267,7 +2307,7 @@
       "gate_id": "G-02",
       "market": "CNY",
       "params": {
-        "a": 3.0,
+        "a": 3,
         "sigma_r": 0.03375264636530553,
         "r0": 0.0207,
         "swaption_rmse_bps": 8.897
@@ -2288,7 +2328,7 @@
             "ok": true
           },
           {
-            "name": "Swaption RMSE within G-02 band (\u2264 25 bps)",
+            "name": "Swaption RMSE within G-02 band (≤ 25 bps)",
             "ok": true
           },
           {
@@ -2311,7 +2351,7 @@
           ],
           "threshold": {
             "label": "G-02 band (25 bps)",
-            "value": 25.0
+            "value": 25
           }
         }
       }
@@ -2321,7 +2361,7 @@
       "gate_id": "G-02",
       "market": "HKD",
       "params": {
-        "a": 3.0,
+        "a": 3,
         "sigma_r": 0.04190188244229688,
         "r0": 0.045,
         "swaption_rmse_bps": 13.331
@@ -2342,7 +2382,7 @@
             "ok": true
           },
           {
-            "name": "Swaption RMSE within G-02 band (\u2264 25 bps)",
+            "name": "Swaption RMSE within G-02 band (≤ 25 bps)",
             "ok": true
           },
           {
@@ -2365,7 +2405,7 @@
           ],
           "threshold": {
             "label": "G-02 band (25 bps)",
-            "value": 25.0
+            "value": 25
           }
         }
       }
@@ -2442,7 +2482,7 @@
           ],
           "threshold": {
             "label": "G-SWPN RMSE band (75 bps)",
-            "value": 75.0
+            "value": 75
           }
         }
       }
@@ -2498,15 +2538,15 @@
           "unit": "%",
           "items": [
             {
-              "label": "\u03c3 implied",
-              "value": 21.0
+              "label": "σ implied",
+              "value": 21
             },
             {
-              "label": "\u03c3 historical",
+              "label": "σ historical",
               "value": 22.445663963362207
             },
             {
-              "label": "\u03c3 blended",
+              "label": "σ blended",
               "value": 21.578265585344887
             }
           ],
@@ -2565,15 +2605,15 @@
           "unit": "%",
           "items": [
             {
-              "label": "\u03c3 implied",
-              "value": 24.0
+              "label": "σ implied",
+              "value": 24
             },
             {
-              "label": "\u03c3 historical",
+              "label": "σ historical",
               "value": 27.08879953559915
             },
             {
-              "label": "\u03c3 blended",
+              "label": "σ blended",
               "value": 25.23551981423966
             }
           ],
@@ -2633,7 +2673,7 @@
           "unit": "bp",
           "items": [
             {
-              "label": "Initial s\u2080",
+              "label": "Initial s₀",
               "value": 109.47427402090742
             },
             {
@@ -2642,7 +2682,7 @@
             },
             {
               "label": "Long-run Q",
-              "value": 140.0
+              "value": 140
             }
           ],
           "threshold": null
@@ -2706,7 +2746,7 @@
               "value": 0.882541419596922
             },
             {
-              "label": "Stationary \u03c3",
+              "label": "Stationary σ",
               "value": 0.1421001689894605
             },
             {
@@ -2726,7 +2766,7 @@
         "fx_vol": 0.06,
         "rate_spread": 0.02,
         "initial_spot": 7.8,
-        "real_world_drift": 0.0
+        "real_world_drift": 0
       },
       "gate_status": "PASS",
       "gate_evidence": "G-FX PASS (6/6 criteria); CIP martingale z=0.076 sigma",
@@ -2775,7 +2815,7 @@
           ],
           "threshold": {
             "label": "G-FX tolerance (4 sigma)",
-            "value": 4.0
+            "value": 4
           }
         }
       }
@@ -2788,7 +2828,7 @@
         "kappa_l": 0.9345477332289048,
         "long_run_premium": 0.006263716277336537,
         "sigma_l": 0.02129008914879804,
-        "lambda_l": 2.0,
+        "lambda_l": 2,
         "half_life_years": 0.7416926454522449,
         "feller_ok": true
       },
@@ -2851,7 +2891,7 @@
       "market": "HKD",
       "params": {
         "exposure_notional": 22000.000000000004,
-        "backing_asset_mv": 100000.0,
+        "backing_asset_mv": 100000,
         "illiquid_share": 0.55,
         "forced_sale_fraction": 0.4,
         "coupling_tolerance": 0.12,
@@ -2936,11 +2976,11 @@
       "params": {
         "kappa_m": 0.3,
         "sigma_m": 0.15,
-        "initial_index": 0.0,
+        "initial_index": 0,
         "stationary_std": 0.19364916731037082
       },
       "gate_status": "PLACEHOLDER",
-      "gate_evidence": "Educational placeholder \u2014 illustrative kappa_m/sigma_m, not calibrated to a mortality-experience series; no G-MORT plausibility gate defined.",
+      "gate_evidence": "Educational placeholder — illustrative kappa_m/sigma_m, not calibrated to a mortality-experience series; no G-MORT plausibility gate defined.",
       "is_placeholder": true,
       "source": "par_model_v2/stochastic/mortality_trend.py",
       "lineage_id": null,
@@ -3236,8 +3276,8 @@
             "scr_delta": -15589.664537114746,
             "scr_delta_pct": -0.3200674510586923
           },
-          "joint_minus_standalone_scr": 0.0,
-          "joint_minus_standalone_scr_pct": 0.0
+          "joint_minus_standalone_scr": 0,
+          "joint_minus_standalone_scr_pct": 0
         },
         "t_copula": {
           "without": {
@@ -3339,7 +3379,7 @@
           "var_without": 136339.32051109624,
           "es_without": 145649.75176184587,
           "scr_without": 20333.38882554107,
-          "tail_active_share": 1.0,
+          "tail_active_share": 1,
           "tail_saturation_share": 0.44025,
           "tail_mean_cut_factor": 0.0815303107256105,
           "relief_at_var": 12034.056669751168
@@ -3352,7 +3392,7 @@
           "var_without": 143208.6891580993,
           "es_without": 151901.7802763623,
           "scr_without": 27202.757472544123,
-          "tail_active_share": 1.0,
+          "tail_active_share": 1,
           "tail_saturation_share": 0.8805,
           "tail_mean_cut_factor": 0.002212294517434238,
           "relief_at_var": 16567.83997677319
@@ -3365,9 +3405,9 @@
           "var_without": 157887.00643956245,
           "es_without": 164552.93603504068,
           "scr_without": 41881.07475400728,
-          "tail_active_share": 1.0,
-          "tail_saturation_share": 1.0,
-          "tail_mean_cut_factor": 0.0,
+          "tail_active_share": 1,
+          "tail_saturation_share": 1,
+          "tail_mean_cut_factor": 0,
           "relief_at_var": 18946.440772747505
         },
         {
@@ -3378,9 +3418,9 @@
           "var_without": 163275.05391439144,
           "es_without": 168745.84486054623,
           "scr_without": 47269.12222883626,
-          "tail_active_share": 1.0,
-          "tail_saturation_share": 1.0,
-          "tail_mean_cut_factor": 0.0,
+          "tail_active_share": 1,
+          "tail_saturation_share": 1,
+          "tail_mean_cut_factor": 0,
           "relief_at_var": 19593.00646972697
         },
         {
@@ -3391,9 +3431,9 @@
           "var_without": 172122.444414499,
           "es_without": 175290.28845206532,
           "scr_without": 56116.51272894384,
-          "tail_active_share": 1.0,
-          "tail_saturation_share": 1.0,
-          "tail_mean_cut_factor": 0.0,
+          "tail_active_share": 1,
+          "tail_saturation_share": 1,
+          "tail_mean_cut_factor": 0,
           "relief_at_var": 20654.69332973988
         }
       ],
@@ -3427,8 +3467,8 @@
           "var_with": 143682.04744466447,
           "es_with": 148496.34347728066,
           "scr_with": 31001.77628158343,
-          "var_rel_delta_vs_full": 0.0,
-          "scr_rel_delta_vs_full": 0.0
+          "var_rel_delta_vs_full": 0,
+          "scr_rel_delta_vs_full": 0
         }
       ],
       "seed_stability": {
@@ -3489,16 +3529,16 @@
       },
       "diagnostic_findings": {
         "sweep_var_monotone_in_confidence": true,
-        "tail_saturation_share_at_995": 1.0,
+        "tail_saturation_share_at_995": 1,
         "scr_seed_max_rel_spread": 0.01976996396013771,
-        "scr_prefix_final_rel_delta": 0.0,
+        "scr_prefix_final_rel_delta": 0,
         "nested_with_inside_bootstrap_ci": true,
         "bootstrap_scr_se_pct_of_mean": 0.05763106380290459
       },
       "crosscheck_count": 27,
       "reproduction_of_p24t2": {
-        "t_scr_abs_diff": 0.0,
-        "g_scr_abs_diff": 0.0,
+        "t_scr_abs_diff": 0,
+        "g_scr_abs_diff": 0,
         "t_digest_match": true,
         "g_digest_match": true
       },
@@ -3564,8 +3604,8 @@
       },
       "pathwise_action_share": 0.4140390625,
       "pathwise_restoration_share": 0.2936171875,
-      "clip_binding_share_pathwise": 0.0,
-      "clip_binding_share_horizon": 0.0,
+      "clip_binding_share_pathwise": 0,
+      "clip_binding_share_horizon": 0,
       "gates": {
         "G1_carveouts_preserved_relieved_within_envelope": true,
         "G2_sign_gate_pathwise_scr_ge_horizon_scr": true,
@@ -3796,7 +3836,7 @@
           "scr_horizon": 11624.99267826404,
           "var_without": 136339.32051109624,
           "scr_without": 20333.38882554107,
-          "tail_active_share": 1.0,
+          "tail_active_share": 1,
           "tail_saturation_share": 0.44025,
           "tail_mean_smoothed_relief_fraction": 0.06533671453708577,
           "relief_at_var_pathwise": 6433.55283278595,
@@ -3812,7 +3852,7 @@
           "scr_horizon": 13960.578018245069,
           "var_without": 143208.6891580993,
           "scr_without": 27202.757472544123,
-          "tail_active_share": 1.0,
+          "tail_active_share": 1,
           "tail_saturation_share": 0.8805,
           "tail_mean_smoothed_relief_fraction": 0.07031347567090589,
           "relief_at_var_pathwise": 7803.504551225604,
@@ -3828,8 +3868,8 @@
           "scr_horizon": 26260.29450373391,
           "var_without": 157887.00643956245,
           "scr_without": 41881.07475400728,
-          "tail_active_share": 1.0,
-          "tail_saturation_share": 1.0,
+          "tail_active_share": 1,
+          "tail_saturation_share": 1,
           "tail_mean_smoothed_relief_fraction": 0.07887120649202937,
           "relief_at_var_pathwise": 9922.071722333494,
           "relief_at_var_horizon": 18946.440772747505,
@@ -3844,8 +3884,8 @@
           "scr_horizon": 31001.77628158343,
           "var_without": 163275.05391439144,
           "scr_without": 47269.12222883626,
-          "tail_active_share": 1.0,
-          "tail_saturation_share": 1.0,
+          "tail_active_share": 1,
+          "tail_saturation_share": 1,
           "tail_mean_smoothed_relief_fraction": 0.08114847162497607,
           "relief_at_var_pathwise": 10920.707636201609,
           "relief_at_var_horizon": 19593.00646972697,
@@ -3860,8 +3900,8 @@
           "scr_horizon": 38787.479921678096,
           "var_without": 172122.444414499,
           "scr_without": 56116.51272894384,
-          "tail_active_share": 1.0,
-          "tail_saturation_share": 1.0,
+          "tail_active_share": 1,
+          "tail_saturation_share": 1,
           "tail_mean_smoothed_relief_fraction": 0.0830585956164448,
           "relief_at_var_pathwise": 11952.152825282828,
           "relief_at_var_horizon": 20654.69332973988,
@@ -3894,8 +3934,8 @@
           "n_sim": 200000,
           "var_pathwise": 152354.34627818983,
           "scr_pathwise": 39794.3216670548,
-          "var_rel_delta_vs_full": 0.0,
-          "scr_rel_delta_vs_full": 0.0
+          "var_rel_delta_vs_full": 0,
+          "scr_rel_delta_vs_full": 0
         }
       ],
       "seed_stability": {
@@ -3957,19 +3997,19 @@
       "diagnostic_findings": {
         "sweep_var_monotone_in_confidence": true,
         "pathwise_relieves_less_at_every_confidence": true,
-        "tail_saturation_share_at_995": 1.0,
+        "tail_saturation_share_at_995": 1,
         "tail_mean_smoothed_relief_fraction_at_995": 0.08114847162497607,
         "t_pathwise_minus_horizon_scr": 8792.54538547137,
         "t_pathwise_minus_horizon_scr_rel": 0.2836142453777583,
         "t_pathwise_vs_nested_pathwise_rel_err": 0.1467562321867093,
         "scr_seed_max_rel_spread": 0.014128267431858021,
-        "scr_prefix_final_rel_delta": 0.0,
+        "scr_prefix_final_rel_delta": 0,
         "nested_pathwise_inside_bootstrap_ci": false,
         "bootstrap_scr_se_pct_of_mean": 0.04113469663301471
       },
       "reproduction_of_p24t2": {
-        "t_scr_abs_diff": 0.0,
-        "g_scr_abs_diff": 0.0,
+        "t_scr_abs_diff": 0,
+        "g_scr_abs_diff": 0,
         "t_digest_match": true,
         "g_digest_match": true
       },
@@ -4304,6 +4344,282 @@
     },
     "narrative": "Phase 26 re-aggregated the path-wise capital from the FULL per-driver composition on the FROZEN t(2.9451) copula (rank invariance held: rho max|diff| 7.2e-16, df within 1e-4), instead of the Phase 25 constant-share LEVEL (analytic re-anchoring) transform. The composition correction (full minus re-anchored) is STATISTICALLY SIGNIFICANT on the paired common-random-number bootstrap (t +211.5 [+46.1, +381.8]; g +192.6 [+60.2, +312.6]) but ECONOMICALLY IMMATERIAL (+0.54% / +0.55%, below the 1% MR-010/MR-014 refresh trigger - MR-015 stays free). The frozen-copula margin bootstrap on the full component basis puts the component t SCR at 39,595.1 [36,676.2, 42,943.1] (SE 4.07% <= 5%) with the nested path-wise reference 46,638.9 OUTSIDE the 95% CI; the residual 14.29% gap decomposes 91.9% COPULA-FORM (6,120.2 - the nested joint tail is heavier than the frozen t copula on standalone margins, exceeding the entire gaussian->t sensitivity of 4,765.6) and only 8.1% relief-surface (543.0, bounded by the governed 1.16% OOS error). CONCLUSION: the full and re-anchored bases are economically interchangeable on the frozen copula; the material gap to the nested truth is a copula-FORM limitation, NOT a basis-choice effect. Nested with-actions (path-wise) remains the capital reference; production sign-off withheld (educational)."
   },
+  "phase27": {
+    "bootstrap": {
+      "config": {
+        "n_replicates": 200,
+        "n_sim_per_replicate": 20000,
+        "master_seed": 20260608,
+        "df_frozen": 2.9451,
+        "gamma_frozen": 0.0000624229466599955,
+        "confidence": 0.995,
+        "ci_level": 0.95,
+        "resampling": "joint row resample WITH replacement; copula df/rho AND gamma FROZEN; skew-t vs symmetric-t on CRN"
+      },
+      "gamma_hat": 0.0000624229466599955,
+      "skewt_component_scr_ci": {
+        "n": 200,
+        "mean": 39598.1603351356,
+        "se": 1610.2176323117649,
+        "se_frac_of_mean": 0.040663950513958914,
+        "ci_level": 0.95,
+        "ci_lo": 36679.93113319977,
+        "ci_hi": 42943.14264736153,
+        "min": 34445.54079866767,
+        "max": 43759.92396181212
+      },
+      "symmetric_component_scr_ci": {
+        "n": 200,
+        "mean": 39595.06073760497,
+        "se": 1609.9712359341177,
+        "se_frac_of_mean": 0.040660910879852886,
+        "ci_level": 0.95,
+        "ci_lo": 36676.24172248241,
+        "ci_hi": 42943.093413623916,
+        "min": 34445.85077822741,
+        "max": 43759.03650033423
+      },
+      "without_skewt_scr_ci": {
+        "n": 200,
+        "mean": 46730.172158754634,
+        "se": 1898.4643957501992,
+        "se_frac_of_mean": 0.040626094620422507,
+        "ci_level": 0.95,
+        "ci_lo": 43148.02341227352,
+        "ci_hi": 50441.09839017342,
+        "min": 40585.00002988796,
+        "max": 51517.829056246424
+      },
+      "nested_pathwise_reference": 46638.9,
+      "task2_frozen_t_component_point": 39975.654628199336,
+      "task2_skewt_component_point": 39980.95565911311,
+      "headline_nested_inside_95ci": false,
+      "se_frac_of_mean": 0.040663950513958914,
+      "se_gate_pass": true,
+      "directional_not_widened_mean": true,
+      "directional_lift_nonneg_share": 0.885,
+      "radial_asymmetry_mean": 0.0004270238095238131,
+      "skewt_minus_sym_mean": 3.099597530635947,
+      "residual_gap_redecomposition": {
+        "nested_scr": 46638.9,
+        "scr_component_skewt": 39980.95565911311,
+        "scr_component_sym": 39975.654628199336,
+        "gap_total_abs": 6657.94434088689,
+        "gap_total_rel_to_nested": 0.14275517520539485,
+        "relief_surface_rel_err_source": 0.01164368805922599,
+        "relief_surface_part_abs": 543.0488030254351,
+        "relief_surface_share_of_gap": 0.08156403466615594,
+        "copula_form_residual_abs": 6114.8955378614555,
+        "copula_form_share_of_gap": 0.9184359653338441,
+        "copula_form_residual_frozen_t": 6120.196568775231,
+        "copula_form_residual_reduction_abs": 5.301030913775321,
+        "copula_form_residual_reduction_rel": 0.0008661537017978753,
+        "skewt_minus_sym_lift": 5.301030913775321,
+        "nested_gap_not_widened": true,
+        "copula_form_dominant": true,
+        "residual_closed_by_skewt_scalar": false,
+        "interpretation": "The fitted upper-tail-asymmetry scalar gamma_hat ~ 0 (Task 2 material finding) lifts the frozen-t component SCR by only 5.3 on common random numbers; the copula-form residual falls from 6120.2 to 6114.9 (a 0.09% reduction). The residual is RE-CONFIRMED as NOT closed by a single skew-t scalar - it lives in the nested inner-path joint dynamics a copula on standalone margins cannot represent (grouped-t / vine escalation, Phase 28). The skew-t does NOT widen the nested gap (gamma_hat >= 0 is monotone)."
+      },
+      "gates": {
+        "C1_headline_nested_inside_95ci_OR_gap_redecomposed": true,
+        "C1_headline_nested_inside_95ci_raw": false,
+        "C2_directional_skewt_not_widen_gap_mean": true,
+        "C3_se_le_5pct_of_mean": true,
+        "C4_archive_crosscheck_bit_identical": true,
+        "C5_copula_frozen_scalars_unchanged": true,
+        "C6_reproducible_chunk_independent": true
+      },
+      "verdict": "PASS",
+      "digest": "9c6e55e81ae3",
+      "source": "docs/validation/PHASE27_TASK3_SKEW_T_BOOTSTRAP_REPORT.json",
+      "change_record_id": "46c3318c27ae469daf7c0e40f8d99a41"
+    },
+    "tail": {
+      "gamma_hat": 0.0000624229466599955,
+      "df_frozen": 2.9451,
+      "nested_pathwise_reference": 46638.9,
+      "p_grid": [
+        0.8,
+        0.85,
+        0.9,
+        0.95
+      ],
+      "tail_anchor_p": 0.9,
+      "rows": [
+        {
+          "p": 0.8,
+          "skewt_lambda_U": {
+            "mean": 0.30055791666666676,
+            "ci_lo": 0.29263035714285723,
+            "ci_hi": 0.30951369047619054
+          },
+          "skewt_lambda_L": {
+            "mean": 0.300148630952381,
+            "ci_lo": 0.2912684523809524,
+            "ci_hi": 0.308239880952381
+          },
+          "skewt_radial_asym": {
+            "mean": 0.0004092857142857209,
+            "ci_lo": -0.011411607142857149,
+            "ci_hi": 0.013454464285714418
+          },
+          "sym_lambda_U": {
+            "mean": 0.30053720238095244,
+            "ci_lo": 0.2925574404761905,
+            "ci_hi": 0.30956011904761915
+          },
+          "sym_lambda_L": {
+            "mean": 0.3001693452380953,
+            "ci_lo": 0.29124523809523817,
+            "ci_hi": 0.30828630952380953
+          }
+        },
+        {
+          "p": 0.85,
+          "skewt_lambda_U": {
+            "mean": 0.2691844444444444,
+            "ci_lo": 0.2599039682539682,
+            "ci_hi": 0.27862777777777775
+          },
+          "skewt_lambda_L": {
+            "mean": 0.26879404761904757,
+            "ci_lo": 0.2609190476190476,
+            "ci_hi": 0.27739880952380946
+          },
+          "skewt_radial_asym": {
+            "mean": 0.00039039682539682456,
+            "ci_lo": -0.014568650793650726,
+            "ci_hi": 0.01355198412698416
+          },
+          "sym_lambda_U": {
+            "mean": 0.2691646825396825,
+            "ci_lo": 0.25974920634920634,
+            "ci_hi": 0.2785968253968253
+          },
+          "sym_lambda_L": {
+            "mean": 0.2688229365079364,
+            "ci_lo": 0.2609035714285714,
+            "ci_hi": 0.2774297619047618
+          }
+        },
+        {
+          "p": 0.9,
+          "skewt_lambda_U": {
+            "mean": 0.23951321428571437,
+            "ci_lo": 0.22866666666666666,
+            "ci_hi": 0.249752380952381
+          },
+          "skewt_lambda_L": {
+            "mean": 0.23908619047619056,
+            "ci_lo": 0.22920833333333335,
+            "ci_hi": 0.25067142857142866
+          },
+          "skewt_radial_asym": {
+            "mean": 0.0004270238095238131,
+            "ci_lo": -0.01642202380952377,
+            "ci_hi": 0.016429761904761937
+          },
+          "sym_lambda_U": {
+            "mean": 0.2394778571428572,
+            "ci_lo": 0.22857023809523816,
+            "ci_hi": 0.2497744047619048
+          },
+          "sym_lambda_L": {
+            "mean": 0.23911666666666676,
+            "ci_lo": 0.22920833333333335,
+            "ci_hi": 0.25076547619047634
+          }
+        },
+        {
+          "p": 0.95,
+          "skewt_lambda_U": {
+            "mean": 0.21067357142857127,
+            "ci_lo": 0.1973773809523808,
+            "ci_hi": 0.22410238095238083
+          },
+          "skewt_lambda_L": {
+            "mean": 0.2102757142857141,
+            "ci_lo": 0.19826785714285694,
+            "ci_hi": 0.22439047619047603
+          },
+          "skewt_radial_asym": {
+            "mean": 0.0003978571428571422,
+            "ci_lo": -0.018910714285714305,
+            "ci_hi": 0.01851428571428567
+          },
+          "sym_lambda_U": {
+            "mean": 0.2106107142857141,
+            "ci_lo": 0.19733095238095227,
+            "ci_hi": 0.2240535714285713
+          },
+          "sym_lambda_L": {
+            "mean": 0.21031428571428554,
+            "ci_lo": 0.19826904761904743,
+            "ci_hi": 0.22434166666666647
+          }
+        }
+      ],
+      "archive_crosscheck": {
+        "anchor_level_p": 0.9,
+        "max_abs_dev_lambda_U": 0,
+        "max_abs_dev_lambda_L": 0,
+        "max_abs_dev_radial_asym": 0,
+        "recomputed_radial_asym_mean": 0.0004270238095238131,
+        "cached_p27t3_radial_asym_mean": 0.0004270238095238131,
+        "radial_asym_mean_dev": 0,
+        "bit_identical": true
+      },
+      "consistency_skewt_ge_sym": {
+        "p_80": {
+          "skewt_radial_asym_mean": 0.0004092857142857209,
+          "sym_radial_asym_mean": 0.00036785714285714644,
+          "skewt_ge_sym": true
+        },
+        "p_85": {
+          "skewt_radial_asym_mean": 0.00039039682539682456,
+          "sym_radial_asym_mean": 0.0003417460317460341,
+          "skewt_ge_sym": true
+        },
+        "p_90": {
+          "skewt_radial_asym_mean": 0.0004270238095238131,
+          "sym_radial_asym_mean": 0.0003611904761904763,
+          "skewt_ge_sym": true
+        },
+        "p_95": {
+          "skewt_radial_asym_mean": 0.0003978571428571422,
+          "sym_radial_asym_mean": 0.00029642857142857167,
+          "skewt_ge_sym": true
+        }
+      },
+      "mr_refresh_decision": {
+        "scr_component_skewt_mean": 39598.1603351356,
+        "scr_component_basis_mean": 39595.06073760496,
+        "relative_move_bootstrap_mean": 0.00007828242899244792,
+        "scr_skewt_point": 39980.95565911311,
+        "scr_basis_point": 39975.654628199336,
+        "relative_move_point": 0.00013260648169688524,
+        "max_abs_relative_move": 0.00013260648169688524,
+        "trigger": 0.01,
+        "refresh_required": false,
+        "decision": "NO refresh required (move 0.0133% <= 1% trigger)",
+        "rationale": "gamma_hat ~ 0 (Task 2 material finding): the skew-t headline component SCR is economically identical to the frozen-t basis, so the var-cov-understatement (MR-010) and management-action-omission (MR-014) quantifications are unchanged within tolerance; the copula-FORM residual is tracked by the NEW MR-015 instead."
+      },
+      "mr015_opened": true,
+      "gates": {
+        "T4_G1_archive_crosscheck_bit_identical": true,
+        "T4_G2_skewt_radial_asym_ge_sym_all_p": true,
+        "T4_G3_no_mr_refresh_move_le_1pct": true,
+        "T4_G4_open_mr015": true,
+        "T4_G5_digest_idempotent": true,
+        "T4_G6_governance_owner_review": true
+      },
+      "verdict": "PASS",
+      "digest": "e660ad6153ec",
+      "source": "docs/validation/PHASE27_TASK4_TAIL_DIAGNOSTICS_REPORT.json",
+      "change_record_id": "00f05366af9349d5ba1f4609a239f51b"
+    },
+    "narrative": "Phase 27 layered an explicit UPPER-TAIL-ASYMMETRY scalar - the generalized-hyperbolic skew-t copula (Demarta & McNeil 2005) - on the FROZEN t(2.9451) copula, with gamma=0 recovering the symmetric t EXACTLY. MATERIAL FINDING: fitting gamma leakage-free to the realised upper-tail co-exceedances pins it at the boundary (gamma_hat ~ 6.2e-5), so the skew-t draw is near-radially-symmetric (radial asymmetry ~ 0 at p=0.90) and the skew-t component SCR (39,598.2 bootstrap mean) is economically identical to the frozen-t basis (39,595.1). The nested path-wise reference 46,638.9 lies OUTSIDE the skew-t 95% CI [36,679.9, 42,943.1] (SE 4.07%); the copula-FORM residual falls only ~0.09% (6,120.2 -> 6,114.9) - RE-CONFIRMED as NOT closed by a single upper-tail-asymmetry scalar. It lives in nested inner-path joint dynamics a copula on standalone margins cannot represent. The MR-010/MR-014 quantifications are unchanged (SCR move 0.013% < 1% trigger); MR-015 is opened to track the copula-form residual, the grouped-t / vine escalation scheduled for Phase 28. Copula FROZEN per SII Art. 234; production sign-off withheld (educational)."
+  },
   "governance": {
     "audit_entries": 81,
     "audit_integrity_ok": true,
@@ -4320,12 +4636,12 @@
         "author": "AutomatedModelDev_Phase13",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 7 \u00a73.3",
-          "SOA ASOP 25 \u00a73.3",
-          "SOA ASOP 56 \u00a73.1",
-          "IA TAS M \u00a73.5",
-          "IA TAS M \u00a73.6",
-          "IFoA APS X2 \u00a74.2"
+          "SOA ASOP 7 §3.3",
+          "SOA ASOP 25 §3.3",
+          "SOA ASOP 56 §3.1",
+          "IA TAS M §3.5",
+          "IA TAS M §3.6",
+          "IFoA APS X2 §4.2"
         ],
         "sign_off_history": [
           {
@@ -4359,10 +4675,10 @@
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
           "CBIRC C-ROSS Reserve Valuation Guidance (2023)",
-          "IA TAS M \u00a73.5",
-          "IA TAS M \u00a73.7",
-          "SOA ASOP 25 \u00a73.3",
-          "SOA ASOP 56 \u00a73.5"
+          "IA TAS M §3.5",
+          "IA TAS M §3.7",
+          "SOA ASOP 25 §3.3",
+          "SOA ASOP 56 §3.5"
         ],
         "sign_off_history": [
           {
@@ -4387,7 +4703,7 @@
       },
       {
         "record_id": "20d0fe588afa4c74a2ee814e219e8f82",
-        "title": "Phase 13 Task 4: IA TAS M \u00a73.6 validation suite executed (G-06)",
+        "title": "Phase 13 Task 4: IA TAS M §3.6 validation suite executed (G-06)",
         "status": "APPROVED",
         "change_type": "governance_change",
         "created_at": "2026-06-04T07:42:31.873044+00:00",
@@ -4395,17 +4711,17 @@
         "author": "AutomatedModelDev_Phase13",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "IA TAS M \u00a73.6",
-          "IA TAS M \u00a73.6.5",
-          "APS X2 \u00a73",
-          "SOA ASOP 56 \u00a73.5"
+          "IA TAS M §3.6",
+          "IA TAS M §3.6.5",
+          "APS X2 §3",
+          "SOA ASOP 56 §3.5"
         ],
         "sign_off_history": [
           {
             "timestamp": "2026-06-04T07:42:31.873066+00:00",
             "actor": "AutomatedModelDev_Phase13",
             "status": "PEER_REVIEW",
-            "comments": "IA TAS M \u00a73.6 suite executed; per-requirement evidence attached in validation report."
+            "comments": "IA TAS M §3.6 suite executed; per-requirement evidence attached in validation report."
           },
           {
             "timestamp": "2026-06-04T07:42:31.873081+00:00",
@@ -4423,7 +4739,7 @@
       },
       {
         "record_id": "c518f45fe332426bad7a35b95ea2a82c",
-        "title": "APS X2 Independent Model Review (educational) \u2014 Phase 13 Task 6 (G-08)",
+        "title": "APS X2 Independent Model Review (educational) — Phase 13 Task 6 (G-08)",
         "status": "APPROVED",
         "change_type": "governance_change",
         "created_at": "2026-06-04T09:16:43.835696+00:00",
@@ -4431,10 +4747,10 @@
         "author": "APS_X2_Independent_Reviewer",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "IFoA APS X2 \u00a74.2",
-          "IA TAS M \u00a73.6.5",
-          "IFoA Modelling Practice Note \u00a74",
-          "SOA ASOP 56 \u00a73.5"
+          "IFoA APS X2 §4.2",
+          "IA TAS M §3.6.5",
+          "IFoA Modelling Practice Note §4",
+          "SOA ASOP 56 §3.5"
         ],
         "sign_off_history": [
           {
@@ -4459,7 +4775,7 @@
       },
       {
         "record_id": "592109f8874f461d8137611cb7e14bba",
-        "title": "Runtime P/Q measure enforcement in all simulation paths (G-05 / MR-004) \u2014 Phase 14 Task 1",
+        "title": "Runtime P/Q measure enforcement in all simulation paths (G-05 / MR-004) — Phase 14 Task 1",
         "status": "IMPLEMENTED",
         "change_type": "MODEL_CODE_CONTROL",
         "created_at": "2026-06-04T10:30:44+00:00",
@@ -4467,8 +4783,8 @@
         "author": "Automated model-dev cycle (Claude)",
         "peer_reviewer": "PENDING_INDEPENDENT_REVIEW",
         "standard_references": [
-          "SOA ASOP 56 \u00a73.1.3",
-          "IA TAS M \u00a73.4"
+          "SOA ASOP 56 §3.1.3",
+          "IA TAS M §3.4"
         ],
         "sign_off_history": [
           {
@@ -4489,12 +4805,12 @@
         "author": "AutomatedModelDev_Phase14",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 56 \u00a73.4",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.5",
-          "IA TAS M \u00a73.6",
-          "IA TAS M \u00a73.7",
-          "IFoA APS X2 \u00a74.2"
+          "SOA ASOP 56 §3.4",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.5",
+          "IA TAS M §3.6",
+          "IA TAS M §3.7",
+          "IFoA APS X2 §4.2"
         ],
         "sign_off_history": [
           {
@@ -4519,7 +4835,7 @@
       },
       {
         "record_id": "CR-MR009-CLOSE-20260604",
-        "title": "Close MR-009 \u2014 migrate educational guided_examples.py to current model APIs",
+        "title": "Close MR-009 — migrate educational guided_examples.py to current model APIs",
         "status": "IMPLEMENTED",
         "change_type": "CORRECTION",
         "created_at": "2026-06-04T12:37:49.737472+00:00",
@@ -4527,9 +4843,9 @@
         "author": "Claude Actuarial Agent",
         "peer_reviewer": null,
         "standard_references": [
-          "IA TAS M \u00a73.6",
-          "SOA ASOP 56 \u00a73.5",
-          "SOA ASOP 56 \u00a73.2"
+          "IA TAS M §3.6",
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 56 §3.2"
         ],
         "sign_off_history": [
           {
@@ -4542,7 +4858,7 @@
       },
       {
         "record_id": "05f624242d144ba6bd06f5e4f3484777",
-        "title": "Phase 14 Task 4: IA TAS M \u00a73.6 re-validation against Phase 13 Task 5 backtest (G-06)",
+        "title": "Phase 14 Task 4: IA TAS M §3.6 re-validation against Phase 13 Task 5 backtest (G-06)",
         "status": "OWNER_REVIEW",
         "change_type": "governance_change",
         "created_at": "2026-06-04T13:27:04.938789+00:00",
@@ -4550,13 +4866,13 @@
         "author": "AutomatedModelDev_Phase14",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "IA TAS M \u00a73.6",
-          "IA TAS M \u00a73.6.4",
-          "IA TAS M \u00a73.6.5",
-          "APS X2 \u00a73",
-          "SOA ASOP 56 \u00a73.5",
-          "SOA ASOP 25 \u00a73.3",
-          "SOA ASOP 7 \u00a73.3"
+          "IA TAS M §3.6",
+          "IA TAS M §3.6.4",
+          "IA TAS M §3.6.5",
+          "APS X2 §3",
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 25 §3.3",
+          "SOA ASOP 7 §3.3"
         ],
         "sign_off_history": [
           {
@@ -4583,10 +4899,10 @@
         "author": "Claude Actuarial Agent",
         "peer_reviewer": "APS X2 Independent Reviewer (pending)",
         "standard_references": [
-          "SOA ASOP 56 \u00a73.1.3",
-          "SOA ASOP 56 \u00a73.4",
-          "SOA ASOP 56 \u00a73.5",
-          "IA TAS M \u00a73.6"
+          "SOA ASOP 56 §3.1.3",
+          "SOA ASOP 56 §3.4",
+          "SOA ASOP 56 §3.5",
+          "IA TAS M §3.6"
         ],
         "sign_off_history": [
           {
@@ -4605,7 +4921,7 @@
       },
       {
         "record_id": "916e55220ddd42eca3f43ccb95b6b536",
-        "title": "Phase 14 Task 6 \u2014 Nested-stochastic / LSMC TVOG capital proxy",
+        "title": "Phase 14 Task 6 — Nested-stochastic / LSMC TVOG capital proxy",
         "status": "OWNER_REVIEW",
         "change_type": "methodology_change",
         "created_at": "2026-06-04T15:27:41.800519+00:00",
@@ -4613,12 +4929,12 @@
         "author": "LSMCProxyEngine (automated Phase 14 Task 6)",
         "peer_reviewer": "automated-regression",
         "standard_references": [
-          "SOA ASOP 56 \u00a73.1.3",
-          "SOA ASOP 56 \u00a73.5",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.2",
-          "IA TAS M \u00a73.6",
-          "IFoA MCEV Principles \u00a77"
+          "SOA ASOP 56 §3.1.3",
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.2",
+          "IA TAS M §3.6",
+          "IFoA MCEV Principles §7"
         ],
         "sign_off_history": [
           {
@@ -4637,7 +4953,7 @@
       },
       {
         "record_id": "81fe2cedd71747e198ba055bf021e453",
-        "title": "Phase 15 Task 1 \u2014 Two-driver (rates+equity) nested/LSMC capital proxy",
+        "title": "Phase 15 Task 1 — Two-driver (rates+equity) nested/LSMC capital proxy",
         "status": "OWNER_REVIEW",
         "change_type": "code_change",
         "created_at": "2026-06-04T16:26:28.886561+00:00",
@@ -4645,12 +4961,12 @@
         "author": "MultiDriverCapital-AutoDev",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 \u00a73.1.3",
-          "SOA ASOP 56 \u00a73.5",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.2",
-          "IA TAS M \u00a73.6",
-          "IFoA MCEV Principles \u00a77",
+          "SOA ASOP 56 §3.1.3",
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.2",
+          "IA TAS M §3.6",
+          "IFoA MCEV Principles §7",
           "Longstaff-Schwartz 2001"
         ],
         "sign_off_history": [
@@ -4670,7 +4986,7 @@
       },
       {
         "record_id": "5e21202bf5a843ffb63dce5ad28099a5",
-        "title": "Phase 15 Task 3 \u2014 Correlated risk aggregation (rates + equity guarantee)",
+        "title": "Phase 15 Task 3 — Correlated risk aggregation (rates + equity guarantee)",
         "status": "OWNER_REVIEW",
         "change_type": "methodology_change",
         "created_at": "2026-06-04T18:28:37.351932+00:00",
@@ -4678,11 +4994,11 @@
         "author": "Claude (automated 12h cycle)",
         "peer_reviewer": "APS X2 independent reviewer (PENDING)",
         "standard_references": [
-          "SOA ASOP 56 \u00a73.5",
-          "SOA ASOP 56 \u00a73.1.3",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.2",
-          "IA TAS M \u00a73.6"
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 56 §3.1.3",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.2",
+          "IA TAS M §3.6"
         ],
         "sign_off_history": [
           {
@@ -4709,12 +5025,12 @@
         "author": "MultiDriverTailDiagnostics",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 \u00a73.5",
-          "SOA ASOP 56 \u00a73.1.3",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.6",
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 56 §3.1.3",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.6",
           "L'Ecuyer (2018) RQMC",
-          "Glasserman (2003) \u00a74"
+          "Glasserman (2003) §4"
         ],
         "sign_off_history": [
           {
@@ -4741,12 +5057,12 @@
         "author": "Phase15Task5GovernanceRefresh",
         "peer_reviewer": null,
         "standard_references": [
-          "IA TAS M \u00a73.6",
-          "IA TAS M \u00a73.7",
-          "APS X2 \u00a73",
-          "SOA ASOP 56 \u00a73.5",
-          "SOA ASOP 25 \u00a73.3",
-          "IFoA Modelling Practice Note \u00a74"
+          "IA TAS M §3.6",
+          "IA TAS M §3.7",
+          "APS X2 §3",
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 25 §3.3",
+          "IFoA Modelling Practice Note §4"
         ],
         "sign_off_history": [
           {
@@ -4773,11 +5089,11 @@
         "author": "Phase17Task5GovernanceRefresh",
         "peer_reviewer": null,
         "standard_references": [
-          "IA TAS M \u00a73.6",
-          "IA TAS M \u00a73.7",
-          "APS X2 \u00a73",
-          "SOA ASOP 56 \u00a73.5",
-          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M §3.6",
+          "IA TAS M §3.7",
+          "APS X2 §3",
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 25 §3.3",
           "IFoA proxy-modelling working party"
         ],
         "sign_off_history": [
@@ -4805,9 +5121,9 @@
         "author": "Phase18Task1CopulaAggregation",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 \u00a73.5",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.6",
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.6",
           "Solvency II Delegated Reg. Art. 234",
           "IFoA Life Aggregation & Simulation working party",
           "Demarta-McNeil 2005 (t-copula)"
@@ -4837,11 +5153,11 @@
         "author": "AutomatedModelDev_Phase18",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 56 \u00a73.4",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.5",
-          "IA TAS M \u00a73.6",
-          "IFoA APS X2 \u00a74.2"
+          "SOA ASOP 56 §3.4",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.5",
+          "IA TAS M §3.6",
+          "IFoA APS X2 §4.2"
         ],
         "sign_off_history": [
           {
@@ -4874,12 +5190,12 @@
         "author": "Phase18Task4GovernanceRefresh",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 \u00a73.5",
-          "SOA ASOP 56 \u00a73.1.3",
-          "SOA ASOP 25 \u00a73.3",
-          "SOA ASOP 7 \u00a73.3",
-          "IA TAS M \u00a73.2",
-          "IA TAS M \u00a73.6",
+          "SOA ASOP 56 §3.5",
+          "SOA ASOP 56 §3.1.3",
+          "SOA ASOP 25 §3.3",
+          "SOA ASOP 7 §3.3",
+          "IA TAS M §3.2",
+          "IA TAS M §3.6",
           "Solvency II Delegated Reg. Art. 234",
           "IFoA Life Aggregation & Simulation working party",
           "L'Ecuyer (2018) RQMC"
@@ -4909,12 +5225,12 @@
         "author": "AutomatedModelDev_Phase19",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 7 \u00a73.3",
-          "SOA ASOP 56 \u00a73.4",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.5",
-          "IA TAS M \u00a73.6",
-          "IFoA APS X2 \u00a74.2"
+          "SOA ASOP 7 §3.3",
+          "SOA ASOP 56 §3.4",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.5",
+          "IA TAS M §3.6",
+          "IFoA APS X2 §4.2"
         ],
         "sign_off_history": [
           {
@@ -5146,13 +5462,13 @@
         "author": "AutomatedModelDev_Phase21",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 56 \u00a73.1.3",
-          "SOA ASOP 56 \u00a73.4",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.4",
-          "IA TAS M \u00a73.5",
-          "IA TAS M \u00a73.6",
-          "IFoA APS X2 \u00a74.2"
+          "SOA ASOP 56 §3.1.3",
+          "SOA ASOP 56 §3.4",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.4",
+          "IA TAS M §3.5",
+          "IA TAS M §3.6",
+          "IFoA APS X2 §4.2"
         ],
         "sign_off_history": [
           {
@@ -5313,15 +5629,15 @@
         "author": "AutomatedModelDev_Phase22",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 56 \u00a73.1.3",
-          "SOA ASOP 56 \u00a73.4",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.4",
-          "IA TAS M \u00a73.5",
-          "IA TAS M \u00a73.6",
+          "SOA ASOP 56 §3.1.3",
+          "SOA ASOP 56 §3.4",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.4",
+          "IA TAS M §3.5",
+          "IA TAS M §3.6",
           "Solvency II Delegated Reg. Art. 142",
           "Solvency II Delegated Reg. Art. 234",
-          "IFoA APS X2 \u00a74.2"
+          "IFoA APS X2 §4.2"
         ],
         "sign_off_history": [
           {
@@ -5409,9 +5725,9 @@
         "author": "Phase23Task1DesignNote",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.2/\u00a73.6",
+          "SOA ASOP 56 §3.1.3/§3.4/§3.5",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.2/§3.6",
           "Solvency II Delegated Reg. Art. 23 (future management actions)",
           "Solvency II Delegated Reg. Art. 234 (empirically justified diversification)",
           "Solvency II Delegated Reg. Art. 236",
@@ -5573,9 +5889,9 @@
         "standard_references": [
           "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable; effect quantified)",
           "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour)",
-          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.2/\u00a73.6",
+          "SOA ASOP 56 §3.1.3/§3.4/§3.5",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.2/§3.6",
           "IFoA Life Aggregation & Simulation working party",
           "McNeil-Frey-Embrechts 2015 ch.7",
           "Demarta-McNeil 2005"
@@ -5771,9 +6087,9 @@
         "standard_references": [
           "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable; consistent with how they would be exercised over time)",
           "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour)",
-          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.2/\u00a73.6",
+          "SOA ASOP 56 §3.1.3/§3.4/§3.5",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.2/§3.6",
           "IFoA Life Aggregation & Simulation working party",
           "CFO Forum MCEV Principle 7 (TVOG; dynamic management actions)"
         ],
@@ -5930,9 +6246,9 @@
         "standard_references": [
           "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour; dependence justified on the basis actually used for capital)",
           "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable)",
-          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
-          "SOA ASOP 25 \u00a73.3",
-          "IA TAS M \u00a73.2/\u00a73.6",
+          "SOA ASOP 56 §3.1.3/§3.4/§3.5",
+          "SOA ASOP 25 §3.3",
+          "IA TAS M §3.2/§3.6",
           "IFoA Life Aggregation & Simulation working party",
           "CFO Forum MCEV Principle 7 (TVOG; dynamic management actions)"
         ],
@@ -6081,7 +6397,7 @@
     "deployment_gates": [
       {
         "gate_id": "G-01",
-        "description": "Discount rate \u2264 3.0% in all defaults",
+        "description": "Discount rate ≤ 3.0% in all defaults",
         "status": "CLEARED (educational)",
         "level": "educational",
         "blocking": "Regulatory reserve, pricing",
@@ -6121,7 +6437,7 @@
       },
       {
         "gate_id": "G-06",
-        "description": "IA validation suite \u2265 80% PASS",
+        "description": "IA validation suite ≥ 80% PASS",
         "status": "CLEARED (educational, 80.6%)",
         "level": "educational",
         "blocking": "All regulatory use cases",
@@ -6156,7 +6472,7 @@
         "description": "MR-005 formally closed in risk register",
         "status": "CLEARED",
         "level": "production",
-        "blocking": "\u2014 (admin only)",
+        "blocking": "— (admin only)",
         "cleared": true
       },
       {
@@ -6187,8 +6503,8 @@
         "likelihood": "HIGH",
         "impact": "CRITICAL",
         "description": "Current discount rate assumption is 3.5%, exceeding the CBIRC regulatory cap of 3.0% (effective 2023 reserve valuation guidance). This produces an understated liability reserve and overstated solvency margin.",
-        "mitigation": "Reduce discount rate to \u22643.0% in Phase 4 calibration; document deviation formally per ASOP 25 \u00a73.3.",
-        "related_standard": "SOA ASOP 25 \u00a73.3; CBIRC Reserve Valuation Guidance 2023",
+        "mitigation": "Reduce discount rate to ≤3.0% in Phase 4 calibration; document deviation formally per ASOP 25 §3.3.",
+        "related_standard": "SOA ASOP 25 §3.3; CBIRC Reserve Valuation Guidance 2023",
         "updated_at": "2026-06-04T05:28:13.393982+00:00"
       },
       {
@@ -6200,9 +6516,9 @@
         "owner": "Assumption Owner",
         "likelihood": "HIGH",
         "impact": "HIGH",
-        "description": "Bond return assumptions (4.0\u20135.0%) are 100\u2013180 bps above current CNY government bond yields (2.2\u20132.6% as of calibration date). Equity ERP has not been calibrated. This systematically understates TVOG and liability PV.",
+        "description": "Bond return assumptions (4.0–5.0%) are 100–180 bps above current CNY government bond yields (2.2–2.6% as of calibration date). Equity ERP has not been calibrated. This systematically understates TVOG and liability PV.",
         "mitigation": "Recalibrate bond returns and ERP to CNY market data in Phase 4 (GBMCalibrator); interim sensitivity analysis required.",
-        "related_standard": "SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3",
+        "related_standard": "SOA ASOP 56 §3.4; SOA ASOP 25 §3.3",
         "updated_at": "2026-06-04T11:24:19.652316+00:00"
       },
       {
@@ -6214,9 +6530,9 @@
         "owner": "Model Developer",
         "likelihood": "MEDIUM",
         "impact": "CRITICAL",
-        "description": "No dynamic lapse function is implemented. Dynamic lapse is the single most impactful assumption for TVOG and ALM under stressed rate scenarios. Static lapse at current flat rates will materially understate TVOG sensitivity (estimated \u00b115\u201330% TVOG per \u00b125% lapse shock per Phase 1 assessment).",
+        "description": "No dynamic lapse function is implemented. Dynamic lapse is the single most impactful assumption for TVOG and ALM under stressed rate scenarios. Static lapse at current flat rates will materially understate TVOG sensitivity (estimated ±15–30% TVOG per ±25% lapse shock per Phase 1 assessment).",
         "mitigation": "Dynamic lapse implemented and calibrated (Phase 13 Task 2); ChangeRecord assumption=\"dynamic_lapse\" APPROVED.",
-        "related_standard": "SOA ASOP 7 \u00a73.3; IA TAS M \u00a73.5",
+        "related_standard": "SOA ASOP 7 §3.3; IA TAS M §3.5",
         "updated_at": "2026-06-06T00:17:39.182600+00:00"
       },
       {
@@ -6230,7 +6546,7 @@
         "impact": "CRITICAL",
         "description": "Prior to Phase 2, the codebase did not enforce or document the distinction between real-world (P) and risk-neutral (Q) scenario sets. Mixing measures is a critical actuarial error that invalidates both VaR/ES and TVOG outputs.",
         "mitigation": "Measure enum implemented in esg_process.py (Phase 2). LossDistribution enforces Measure.P for VaR/ES (risk_metrics.py); TVOGEngine enforces Measure.Q (tvog.py). Phase 14 Task 1: runtime guard _enforce_simulation_measure() now validates the requested measure against each generator's declared SUPPORTED_MEASURES in every simulate()/generate() execution path (HullWhite, G2++, GBM, FX, ScenarioSet), and _assert_output_measure() verifies the output measure stamp. 30 dedicated runtime tests (tests/test_measure_enforcement.py) PASS with genuine runtime execution evidence (numpy/scipy/pandas/pytest available in automation sandbox).",
-        "related_standard": "SOA ASOP 56 \u00a73.1.3; IA TAS M \u00a73.4",
+        "related_standard": "SOA ASOP 56 §3.1.3; IA TAS M §3.4",
         "updated_at": "2026-06-04T10:30:44+00:00"
       },
       {
@@ -6243,8 +6559,8 @@
         "likelihood": "HIGH",
         "impact": "HIGH",
         "description": "DistributedExecutor fails to serialise complex model objects for multiprocessing, causing 7 test failures in the original repository test suite. This blocks all distributed scenario execution, TVOG computation, and VaR/ES integration.",
-        "mitigation": "RESOLVED \u2014 module-level `_execute_task_spec` callable + `make_partial_task` binder; verified by 63 tests.",
-        "related_standard": "SOA ASOP 56 \u00a73.5 (scenario adequacy requires successful batch execution)",
+        "mitigation": "RESOLVED — module-level `_execute_task_spec` callable + `make_partial_task` binder; verified by 63 tests.",
+        "related_standard": "SOA ASOP 56 §3.5 (scenario adequacy requires successful batch execution)",
         "updated_at": "2026-06-04T09:16:43.834338+00:00"
       },
       {
@@ -6257,8 +6573,8 @@
         "likelihood": "HIGH",
         "impact": "CRITICAL",
         "description": "Overall validation readiness assessed at 2/5 (development-grade). Stochastic validation (scenario convergence, martingale test, VaR/ES integration) is entirely absent. Model is not fit for regulatory reporting or production use in current state.",
-        "mitigation": "4-layer validation framework implementation across Phases 3\u20134. Full validation cadence in Phase 5.",
-        "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; APS X2",
+        "mitigation": "4-layer validation framework implementation across Phases 3–4. Full validation cadence in Phase 5.",
+        "related_standard": "SOA ASOP 56 §3.5; IA TAS M §3.6; APS X2",
         "updated_at": "2026-05-18T02:18:55.749042+00:00"
       },
       {
@@ -6270,9 +6586,9 @@
         "owner": "Assumption Owner",
         "likelihood": "HIGH",
         "impact": "HIGH",
-        "description": "The model has no documented assumption change control process. Any assumption can be changed without sign-off, impact assessment, or audit trail. This is a material IA TAS M \u00a73.7 gap.",
+        "description": "The model has no documented assumption change control process. Any assumption can be changed without sign-off, impact assessment, or audit trail. This is a material IA TAS M §3.7 gap.",
         "mitigation": "GovernanceStore + ChangeRecord + SignOffWorkflow implemented in Phase 2, Task 4 (this module). Requires organisational adoption.",
-        "related_standard": "IA TAS M \u00a73.7; IA TAS M \u00a73.3",
+        "related_standard": "IA TAS M §3.7; IA TAS M §3.3",
         "updated_at": "2026-05-18T02:18:55.749049+00:00"
       },
       {
@@ -6284,9 +6600,9 @@
         "owner": "Model Developer",
         "likelihood": "HIGH",
         "impact": "CRITICAL",
-        "description": "HullWhiteCalibrator.calibrate() is a NotImplementedError stub. HW1F parameters (a=0.10, \u03c3_r=0.012) are placeholders producing model swaption vol ~250 bps vs ~42 bps market \u2014 a 6x error. All interest rate paths and ZCB prices derived from these parameters are unreliable.",
+        "description": "HullWhiteCalibrator.calibrate() is a NotImplementedError stub. HW1F parameters (a=0.10, σ_r=0.012) are placeholders producing model swaption vol ~250 bps vs ~42 bps market — a 6x error. All interest rate paths and ZCB prices derived from these parameters are unreliable.",
         "mitigation": "Implement L-BFGS-B calibration in Phase 4 using CNY swaption market data.",
-        "related_standard": "SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3",
+        "related_standard": "SOA ASOP 56 §3.4; SOA ASOP 25 §3.3",
         "updated_at": "2026-05-18T02:18:55.749056+00:00"
       },
       {
@@ -6298,9 +6614,9 @@
         "owner": "Model Developer",
         "likelihood": "LOW",
         "impact": "LOW",
-        "description": "par_model_v2/examples/guided_examples.py references attributes removed from RiskFreeCurve (calibration_date/model_label/discount_factors) and FixedIncomeInstrument (term_months/par_value/oas_bps) and an outdated project_fixed_income_cashflows signature; tests/test_guided_examples.py errors (3 failed / 46 errors). Surfaced by the Phase 13 Task 4 IA TAS M \u00a73.6 validation run. Educational wrapper only; backs no IA TAS M \u00a73.6 requirement; production reporting engine (reporting_cycle.py) is tested separately and passes.",
+        "description": "par_model_v2/examples/guided_examples.py references attributes removed from RiskFreeCurve (calibration_date/model_label/discount_factors) and FixedIncomeInstrument (term_months/par_value/oas_bps) and an outdated project_fixed_income_cashflows signature; tests/test_guided_examples.py errors (3 failed / 46 errors). Surfaced by the Phase 13 Task 4 IA TAS M §3.6 validation run. Educational wrapper only; backs no IA TAS M §3.6 requirement; production reporting engine (reporting_cycle.py) is tested separately and passes.",
         "mitigation": "Migrate the fixed-income / TVOG / HK-liability sections of guided_examples.py to the current APIs in a dedicated change-controlled cycle; re-run tests/test_guided_examples.py to green.",
-        "related_standard": "IA TAS M \u00a73.6; SOA ASOP 56 \u00a73.5",
+        "related_standard": "IA TAS M §3.6; SOA ASOP 56 §3.5",
         "updated_at": "2026-06-04T12:37:49.737472+00:00"
       },
       {
@@ -6314,7 +6630,7 @@
         "impact": "HIGH",
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
-        "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
+        "related_standard": "SOA ASOP 56 §3.5; IA TAS M §3.6; SOA ASOP 25 §3.3",
         "updated_at": "2026-06-08T01:31:12.922427+00:00"
       },
       {
@@ -6328,7 +6644,7 @@
         "impact": "HIGH",
         "description": "The Phase 15 multi-driver (short-rate + equity) nested/LSMC economic-capital proxy (Tasks 1-4) is fitted on PLACEHOLDER HW1F / GBM parameters, omits material risk drivers (lapse, mortality/longevity trend, credit spread, FX, liquidity, management action), uses an educational single-guarantee liability, and has NOT been independently reviewed (APS X2). The 99.5% VaR/ES and SCR-proxy figures it produces are illustrative only and must not be used for regulatory or internal economic-capital reporting until parameters are calibrated to credentialled market data, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all multi-driver capital output as EDUCATIONAL ONLY in the limitation card and at the API boundary; bound proxy error by the Task 2 out-of-sample validation (OOS R^2=0.9704, VaR rel err 3.21%) and outer-sampling error by the Task 4 bootstrap CI (SE ~1.66%); benchmark every aggregated figure to the Task 3 nested ground truth. Residual closure requires credentialled-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008).",
-        "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5",
+        "related_standard": "IA TAS M §3.6; APS X2 §3; SOA ASOP 56 §3.5",
         "updated_at": "2026-06-07T08:25:03.762431+00:00"
       },
       {
@@ -6342,7 +6658,7 @@
         "impact": "HIGH",
         "description": "Phase 17 adds a CIR++ mean-reverting credit-spread driver (par_model_v2/stochastic/credit_spread.py) as the third risk factor in the nested/LSMC economic-capital proxy (rate + equity + credit-spread), with a reduced-form hazard x LGD credit-loss component on spread-sensitive backing assets. The CIR++ parameters (mean-reversion, long-run spread, vol, risk premium) and the hazard/LGD assumptions are PLACEHOLDER educational defaults, NOT calibrated to credentialled credit-market data; the trivariate LSMC surface still omits material drivers (lapse, mortality/longevity trend, FX, liquidity, management action) and has NOT been independently reviewed (APS X2). The three-driver 99.5% VaR/ES and SCR-proxy figures are illustrative only and must not be used for regulatory or internal economic-capital reporting until the credit parameters are calibrated, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
-        "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
+        "related_standard": "IA TAS M §3.6; APS X2 §3; SOA ASOP 56 §3.5; ASOP 25 §3.3",
         "updated_at": "2026-06-07T09:14:22.447046+00:00"
       },
       {
@@ -6372,6 +6688,36 @@
         "mitigation": "Phase 23 Task 3: governed dynamic reversionary-bonus participation cut entering the nested ground truth and the proxy basis, validated OOS at fixed pre-registered gates.",
         "related_standard": "ASOP 56 3.1.3/3.4; TAS M 3.2; SII Art. 23",
         "updated_at": "2026-06-08T01:31:12.922476+00:00"
+      },
+      {
+        "risk_id": "MR-015",
+        "title": "Copula-FORM / radial-asymmetry residual not closed by the skew-t upper-tail scalar",
+        "overall_rating": "HIGH",
+        "mitigation_status": "OPEN",
+        "category": "model_error",
+        "owner": "Head of Capital Modelling (educational placeholder)",
+        "likelihood": "MEDIUM",
+        "impact": "HIGH",
+        "description": "The frozen-t copula-form residual (~6,120; 91.9% of the 14.29% nested-vs-frozen gap) is NOT a standalone-driver upper-tail radial-asymmetry effect: fitting the GH skew-t skewness gamma leakage-free to the realised upper-tail co-exceedances pins it at the boundary (gamma_hat ~ 6.2e-5), so the skew-t draw is near-radially-symmetric (radial asymmetry ~ 0 at p=0.90) and the copula-form residual falls only ~0.09% (6,120 -> 6,115). The residual lives in nested inner-path joint dynamics that a copula on standalone margins cannot represent.",
+        "mitigation": "Escalate the dependence structure beyond a single radially (a)symmetric copula: grouped-t (Daul et al. 2003) as the indicated next step, vine / pair-copula (Aas et al. 2009) the general fallback; scheduled for Phase 28. Until then the residual is quantified, disclosed, and the path-wise nested truth (46,638.9) is reported alongside the frozen-copula component (39,975.7).",
+        "related_standard": "Solvency II Art. 234; Demarta & McNeil (2005); McNeil, Frey & Embrechts (2015) QRM ch.7; IFoA Modelling Practice Note s4",
+        "updated_at": "2026-06-08T12:25:18.156272+00:00"
+      },
+      {
+        "risk_id": "MR-016",
+        "title": "Heterogeneous-tail / cross-block-dilution copula-FORM residual not closed by the grouped-t per-block df",
+        "description": "The realised standalone within-FIN upper co-exceedance (0.125) sits BELOW the cross-block level (0.172), so the leakage-free per-block df fit pins df_NONFIN 37.866 / df_FIN 8.506 ABOVE the frozen 2.9451 (lighter within-block tails); on common random numbers the grouped-t therefore DILUTES cross-block co-movement vs the single-df t maximal-cross-block boundary (grouped cross-block upper 0.1703 < single 0.2573 at p=0.90) and moves the disclosed component SCR DOWN 10.93%. The copula-FORM residual to the nested truth WIDENS from the skew-t-reconfirmed 6,114.9 to 10,491.5 (Phase 28 Task 3). This is the SECOND negative super-set result after the skew-t (gamma_hat ~ 0): a single copula on the standalone margins, whether asymmetric or block-heterogeneous, cannot close the UPWARD nested residual; it lives in nested inner-path joint dynamics.",
+        "category": "model_error",
+        "likelihood": "MEDIUM",
+        "impact": "HIGH",
+        "overall_rating": "HIGH",
+        "owner": "Head of Capital Modelling (educational placeholder)",
+        "mitigation": "Escalate the dependence structure beyond a single copula on the standalone margins: vine / pair-copula (Aas et al. 2009 - pair-copula constructions capturing conditional / inner-path joint dynamics) as the general fallback, scheduled for Phase 29. Until then the residual is quantified, disclosed, and the path-wise nested truth (46,638.9) is reported alongside the governed frozen-copula component (39,975.7, the conservative maximal-cross-block boundary) so users see the conservative bound; the grouped-t DOWN move is DISCLOSED, not adopted.",
+        "mitigation_status": "OPEN",
+        "related_standard": "Solvency II Art. 234; Daul et al. (2003); McNeil, Frey & Embrechts (2015) QRM ch.7; Aas et al. (2009); IFoA Modelling Practice Note s4",
+        "created_at": "2026-06-08T17:28:41.083502+00:00",
+        "updated_at": "2026-06-08T17:28:41.083502+00:00",
+        "notes": "Opened Phase 28 Task 4. Carries forward MR-015 (Phase 27 skew-t copula-FORM residual). Task 2 leakage-free per-block df fit; Task 3 bootstrap residual widening; Task 4 within/cross tail diagnostics confirm cross-block dilution. Monitored."
       }
     ]
   },
@@ -6379,7 +6725,7 @@
     {
       "key": "proxy",
       "label": "Out-of-sample proxy validation",
-      "verdict": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
+      "verdict": "PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
     },
     {
       "key": "aggregation",
@@ -6513,5 +6859,653 @@
       "evidence": "paired common-random-number delta matrix over the Task 3 replicates: composition correction (full minus re-anchored, t) +211.5 [46.1, 381.8], 95% CI EXCLUDES zero (statistically significant) yet max |move| 0.55% < 1% MR trigger -> MR-010/MR-014 numeric refresh NOT required, MR-015 stays free; rank invariance re-verified (df/rho frozen)",
       "source": "docs/validation/PHASE26_TASK4_DELTA_MATRIX_REPORT.json"
     }
-  ]
+  ],
+  "phase28": {
+    "copula": {
+      "drivers": [
+        "rate",
+        "equity",
+        "credit",
+        "lapse",
+        "mortality",
+        "fx",
+        "liquidity"
+      ],
+      "df_frozen": 2.9451,
+      "df_rematched": 2.9450930033094664,
+      "rho_max_abs_diff": 7.216449660063518e-16,
+      "block_dfs_hat": [
+        37.865628454397445,
+        8.506318281609548
+      ],
+      "block_labels": [
+        "NON_FIN",
+        "FIN_CARVE_OUT"
+      ],
+      "blocks": [
+        [
+          0,
+          1,
+          3,
+          4
+        ],
+        [
+          2,
+          5,
+          6
+        ]
+      ],
+      "realised_block_codependence": {
+        "tail_level_p": 0.9,
+        "within_block": [
+          0.12500000000000003,
+          0.12500000000000003
+        ],
+        "cross_block": 0.17187500000000003
+      },
+      "fit": {
+        "block_dfs_hat": [
+          37.865628454397445,
+          8.506318281609548
+        ],
+        "per_block_fit": [
+          {
+            "block": [
+              0,
+              1,
+              3,
+              4
+            ],
+            "tail_level_p": 0.9,
+            "target_realised_within_codependence": 0.12500000000000003,
+            "model_within_codependence_at_frozen_df": 0.22878333333333337,
+            "df_hat": 37.865628454397445,
+            "model_within_codependence_at_df_hat": 0.15465000000000004,
+            "fit_residual_abs": 0.02965000000000001,
+            "fit_n_sim": 100000,
+            "fit_seed": 20260608,
+            "fit_converged": true,
+            "df_lo": 2.05,
+            "df_hi": 60,
+            "df_at_boundary": false
+          },
+          {
+            "block": [
+              2,
+              5,
+              6
+            ],
+            "tail_level_p": 0.9,
+            "target_realised_within_codependence": 0.12500000000000003,
+            "model_within_codependence_at_frozen_df": 0.1766333333333334,
+            "df_hat": 8.506318281609548,
+            "model_within_codependence_at_df_hat": 0.1250666666666667,
+            "fit_residual_abs": 0.00006666666666665932,
+            "fit_n_sim": 100000,
+            "fit_seed": 20260609,
+            "fit_converged": true,
+            "df_lo": 2.05,
+            "df_hi": 60,
+            "df_at_boundary": false
+          }
+        ],
+        "all_converged": true
+      },
+      "grouped_t_readout_at_df_hat": {
+        "config": {
+          "n_sim": 200000,
+          "seed": 20260607,
+          "block_dfs": [
+            37.865628454397445,
+            8.506318281609548
+          ],
+          "blocks": [
+            [
+              0,
+              1,
+              3,
+              4
+            ],
+            [
+              2,
+              5,
+              6
+            ]
+          ],
+          "shared_mixing": false,
+          "copula": "grouped_t(dfs=[37.8656, 8.5063], blocks=[[0, 1, 3, 4], [2, 5, 6]])",
+          "confidence": 0.995,
+          "sigma": 0.225,
+          "alpha": 0.7566891068509882,
+          "benefit_share_fit": 0.8449827924965548
+        },
+        "var_without": 157899.04792216767,
+        "es_without": 162067.04416657245,
+        "scr_without": 41892.843492878616,
+        "var_component": 148174.28104093546,
+        "es_component": 151657.5324910257,
+        "scr_component": 35604.39894619743,
+        "mean_component": 112569.88209473803,
+        "clip_binding_share_component": 0,
+        "active_share_component": 1,
+        "tail_dependence": {
+          "level_p": 0.9,
+          "within_block_upper": [
+            0.15898333333333334,
+            0.1250166666666667
+          ],
+          "within_block_lower": [
+            0.16005833333333339,
+            0.1270166666666667
+          ],
+          "cross_block_upper": 0.1704791666666667,
+          "cross_block_lower": 0.17095000000000005,
+          "heterogeneity_upper": -0.011495833333333372
+        },
+        "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+        "digest": "b7de159d563c"
+      },
+      "single_t_readout_homogeneous": {
+        "config": {
+          "n_sim": 200000,
+          "seed": 20260607,
+          "block_dfs": [
+            2.9451,
+            2.9451
+          ],
+          "blocks": [
+            [
+              0,
+              1,
+              3,
+              4
+            ],
+            [
+              2,
+              5,
+              6
+            ]
+          ],
+          "shared_mixing": true,
+          "copula": "grouped_t(dfs=[2.9451, 2.9451], blocks=[[0, 1, 3, 4], [2, 5, 6]])",
+          "confidence": 0.995,
+          "sigma": 0.225,
+          "alpha": 0.7566891068509882,
+          "benefit_share_fit": 0.8449827924965548
+        },
+        "var_without": 163275.05391439144,
+        "es_without": 168745.84486054623,
+        "scr_without": 47269.12222883626,
+        "var_component": 152553.93887183352,
+        "es_component": 157471.34681056417,
+        "scr_component": 39975.654628199336,
+        "mean_component": 112578.28424363419,
+        "clip_binding_share_component": 0,
+        "active_share_component": 1,
+        "tail_dependence": {
+          "level_p": 0.9,
+          "within_block_upper": [
+            0.2355166666666667,
+            0.17995000000000005
+          ],
+          "within_block_lower": [
+            0.23707500000000006,
+            0.1803666666666667
+          ],
+          "cross_block_upper": 0.2581416666666667,
+          "cross_block_lower": 0.2599333333333334,
+          "heterogeneity_upper": -0.022625000000000006
+        },
+        "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+        "digest": "a151f1bd4ded"
+      },
+      "frozen_t_component_reference": 39975.654628199336,
+      "nested_pathwise_reference": 46638.9,
+      "grouped_t_vs_frozen_t_rel": -0.10934794495943967,
+      "grouped_t_vs_frozen_t_direction": "down",
+      "gap_to_nested_grouped_t_rel": -0.23659436765881214,
+      "gap_to_nested_frozen_t_rel": -0.14286883635335879,
+      "homogeneous_recovery_dev": 0,
+      "gates": {
+        "G1_homogeneous_boundary_exact_recovery": true,
+        "G2_archive_crosscheck_frozen_t_bit_identical": true,
+        "G3_rank_invariance_frozen_copula": true,
+        "G4_margins_unchanged_without_basis_bit_identical": true,
+        "G5_block_partition_preregistered_exact": true,
+        "G6_block_dfs_fitted_leakage_free": true,
+        "G7_directional_disclosed_not_gated": true,
+        "G8_single_df_t_comparison_variant_retained": true,
+        "G_mechanism_heterogeneity_rising_with_heavier_fin": true
+      },
+      "verdict": "PASS",
+      "source": "docs/validation/PHASE28_TASK2_GROUPED_T_COPULA_REPORT.json",
+      "change_record_id": "85a6b858662c42f095b62e4719e04836"
+    },
+    "bootstrap": {
+      "config": {
+        "n_replicates": 200,
+        "n_sim_per_replicate": 20000,
+        "master_seed": 20260608,
+        "homogeneous_df_frozen": 2.9451,
+        "block_dfs_frozen": [
+          37.865628454397445,
+          8.506318281609548
+        ],
+        "blocks": [
+          [
+            0,
+            1,
+            3,
+            4
+          ],
+          [
+            2,
+            5,
+            6
+          ]
+        ],
+        "confidence": 0.995,
+        "ci_level": 0.95,
+        "resampling": "joint row resample WITH replacement; copula Sigma + homogeneous df + per-block df_g FROZEN; grouped-t vs single-df t on COMMON Gaussian latent"
+      },
+      "block_dfs_hat": [
+        37.865628454397445,
+        8.506318281609548
+      ],
+      "grouped_t_component_scr_ci": {
+        "n": 200,
+        "mean": 35372.49326229076,
+        "se": 1265.38880053341,
+        "se_frac_of_mean": 0.03577324310023664,
+        "ci_level": 0.95,
+        "ci_lo": 33034.37733256475,
+        "ci_hi": 38008.51222047386,
+        "min": 31595.19225150207,
+        "max": 38677.92757177893
+      },
+      "single_t_component_scr_ci": {
+        "n": 200,
+        "mean": 39595.06073760497,
+        "se": 1609.9712359341177,
+        "se_frac_of_mean": 0.040660910879852886,
+        "ci_level": 0.95,
+        "ci_lo": 36676.24172248241,
+        "ci_hi": 42943.093413623916,
+        "min": 34445.85077822741,
+        "max": 43759.03650033423
+      },
+      "without_grouped_t_scr_ci": {
+        "n": 200,
+        "mean": 41636.748745342236,
+        "se": 1508.180945386911,
+        "se_frac_of_mean": 0.036222351428331113,
+        "ci_level": 0.95,
+        "ci_lo": 38899.0303218089,
+        "ci_hi": 44908.206460579466,
+        "min": 37233.925135434794,
+        "max": 45891.717478649705
+      },
+      "grouped_minus_single_mean": -4222.567475314206,
+      "grouped_minus_single_neg_share": 1,
+      "directional_disclosed_direction": "down",
+      "nested_pathwise_reference": 46638.9,
+      "task2_frozen_t_component_point": 39975.654628199336,
+      "task2_grouped_t_component_point": 35604.39894619743,
+      "headline_nested_inside_95ci": false,
+      "se_frac_of_mean": 0.03577324310023664,
+      "se_gate_pass": true,
+      "residual_gap_redecomposition_point": {
+        "nested_scr": 46638.9,
+        "scr_component_grouped_t": 35604.39894619743,
+        "scr_component_single_t": 39975.654628199336,
+        "gap_total_abs": 11034.501053802574,
+        "gap_total_rel_to_nested": 0.23659436765881214,
+        "relief_surface_rel_err_source": 0.01164368805922599,
+        "relief_surface_part_abs": 543.0488030254351,
+        "relief_surface_share_of_gap": 0.049213716177796386,
+        "copula_form_residual_abs": 10491.45225077714,
+        "copula_form_share_of_gap": 0.9507862838222036,
+        "copula_form_residual_skewt_reconfirmed": 6114.9,
+        "copula_form_residual_frozen_t": 6120.196568775231,
+        "copula_form_residual_change_vs_skewt_abs": 4376.55225077714,
+        "copula_form_residual_change_vs_skewt_rel": 0.7157193495849712,
+        "copula_form_residual_change_vs_frozen_t_abs": 4371.255682001909,
+        "copula_form_residual_change_vs_frozen_t_rel": 0.7142345238229303,
+        "grouped_minus_single_lift": -4371.255682001909,
+        "copula_form_residual_widened_vs_skewt": true,
+        "copula_form_dominant": true,
+        "residual_closed_by_grouped_t": false,
+        "interpretation": "The per-block df_g fitted leakage-free to the standalone within-block upper co-exceedances DILUTE cross-block co-movement (Task 2 material finding: df_NONFIN 37.866, df_FIN 8.506, both ABOVE the frozen 2.9451; the single-df t shares ONE mixing variate and is the maximal-cross-block-dependence boundary). On common random numbers the grouped-t lifts the component SCR by -4371.3 vs the single-df t; the copula-form residual moves from the skew-t-reconfirmed 6114.9 to 10491.5 (a change of +4376.6, +71.57%). The residual WIDENS (informative -> vine escalation) - confirming that a single copula on the standalone margins (whether asymmetric, skew-t, or block-heterogeneous, grouped-t) does NOT close the UPWARD nested residual; it lives in the nested inner-path joint dynamics. The vine / pair-copula (Aas et al. 2009) remains the general fallback (Phase 29)."
+      },
+      "residual_gap_redecomposition_bootstrap_mean": {
+        "nested_scr": 46638.9,
+        "scr_component_grouped_t": 35372.49326229076,
+        "scr_component_single_t": 39595.06073760497,
+        "gap_total_abs": 11266.406737709243,
+        "gap_total_rel_to_nested": 0.24156673372890963,
+        "relief_surface_rel_err_source": 0.01164368805922599,
+        "relief_surface_part_abs": 543.0488030254351,
+        "relief_surface_share_of_gap": 0.04820070992180877,
+        "copula_form_residual_abs": 10723.357934683809,
+        "copula_form_share_of_gap": 0.9517992900781913,
+        "copula_form_residual_skewt_reconfirmed": 6114.9,
+        "copula_form_residual_frozen_t": 6120.196568775231,
+        "copula_form_residual_change_vs_skewt_abs": 4608.457934683809,
+        "copula_form_residual_change_vs_skewt_rel": 0.753644039098564,
+        "copula_form_residual_change_vs_frozen_t_abs": 4603.161365908578,
+        "copula_form_residual_change_vs_frozen_t_rel": 0.7521263923766028,
+        "grouped_minus_single_lift": -4222.567475314208,
+        "copula_form_residual_widened_vs_skewt": true,
+        "copula_form_dominant": true,
+        "residual_closed_by_grouped_t": false,
+        "interpretation": "The per-block df_g fitted leakage-free to the standalone within-block upper co-exceedances DILUTE cross-block co-movement (Task 2 material finding: df_NONFIN 37.866, df_FIN 8.506, both ABOVE the frozen 2.9451; the single-df t shares ONE mixing variate and is the maximal-cross-block-dependence boundary). On common random numbers the grouped-t lifts the component SCR by -4222.6 vs the single-df t; the copula-form residual moves from the skew-t-reconfirmed 6114.9 to 10723.4 (a change of +4608.5, +75.36%). The residual WIDENS (informative -> vine escalation) - confirming that a single copula on the standalone margins (whether asymmetric, skew-t, or block-heterogeneous, grouped-t) does NOT close the UPWARD nested residual; it lives in the nested inner-path joint dynamics. The vine / pair-copula (Aas et al. 2009) remains the general fallback (Phase 29)."
+      },
+      "gates": {
+        "C1_headline_nested_inside_95ci_OR_gap_redecomposed": true,
+        "C1_headline_nested_inside_95ci_raw": false,
+        "C2_directional_disclosed_not_gated": true,
+        "C3_se_le_5pct_of_mean": true,
+        "C4_archive_crosscheck_bit_identical": true,
+        "C5_copula_frozen_scalars_unchanged": true,
+        "C6_reproducible_chunk_independent": true
+      },
+      "digest": "71d5c6eee80d",
+      "verdict": "PASS",
+      "source": "docs/validation/PHASE28_TASK3_GROUPED_T_BOOTSTRAP_REPORT.json",
+      "change_record_id": "32bae3c32f0040a08a9696c23e02a062"
+    },
+    "tail": {
+      "block_dfs_frozen": [
+        37.865628454397445,
+        8.506318281609548
+      ],
+      "homogeneous_df_frozen": 2.9451,
+      "nested_pathwise_reference": 46638.9,
+      "p_grid": [
+        0.8,
+        0.85,
+        0.9,
+        0.95
+      ],
+      "tail_anchor_p": 0.9,
+      "rows": [
+        {
+          "p": 0.8,
+          "grp_cross_upper": {
+            "mean": 0.27272197916666674,
+            "ci_lo": 0.2653468750000001,
+            "ci_hi": 0.27944322916666675
+          },
+          "grp_cross_lower": {
+            "mean": 0.27234479166666675,
+            "ci_lo": 0.2658005208333334,
+            "ci_hi": 0.2797395833333334
+          },
+          "sng_cross_upper": {
+            "mean": 0.31761552083333344,
+            "ci_lo": 0.30918593750000006,
+            "ci_hi": 0.3260437500000001
+          },
+          "sng_cross_lower": {
+            "mean": 0.3173172916666667,
+            "ci_lo": 0.30764166666666676,
+            "ci_hi": 0.32502864583333335
+          },
+          "grp_minus_sng_cross_upper": {
+            "mean": -0.044893541666666675,
+            "ci_lo": -0.05191718749999995,
+            "ci_hi": -0.038281249999999996
+          },
+          "grp_within_upper_nonfin": {
+            "mean": 0.2581541666666667,
+            "ci_lo": 0.24870416666666673,
+            "ci_hi": 0.26683437500000007
+          },
+          "grp_within_upper_fin": {
+            "mean": 0.2087883333333334,
+            "ci_lo": 0.1991520833333334,
+            "ci_hi": 0.21825208333333337
+          },
+          "sng_within_upper_fin": {
+            "mean": 0.23792166666666673,
+            "ci_lo": 0.22624166666666673,
+            "ci_hi": 0.24787708333333344
+          },
+          "grp_within_radial_asym_fin": {
+            "mean": 0.000810833333333335,
+            "ci_lo": -0.011837499999999947,
+            "ci_hi": 0.013839583333333337
+          },
+          "grp_heterogeneity_upper": {
+            "mean": -0.014567812500000004,
+            "ci_lo": -0.02135729166666673,
+            "ci_hi": -0.008378124999999934
+          }
+        },
+        {
+          "p": 0.85,
+          "grp_cross_upper": {
+            "mean": 0.22288194444444442,
+            "ci_lo": 0.21543055555555551,
+            "ci_hi": 0.22986388888888887
+          },
+          "grp_cross_lower": {
+            "mean": 0.22257999999999994,
+            "ci_lo": 0.21541597222222217,
+            "ci_hi": 0.23028402777777773
+          },
+          "sng_cross_upper": {
+            "mean": 0.2866441666666666,
+            "ci_lo": 0.27638749999999995,
+            "ci_hi": 0.2963743055555555
+          },
+          "sng_cross_lower": {
+            "mean": 0.2864118055555555,
+            "ci_lo": 0.2779416666666666,
+            "ci_hi": 0.29578194444444444
+          },
+          "grp_minus_sng_cross_upper": {
+            "mean": -0.06376222222222222,
+            "ci_lo": -0.07176111111111112,
+            "ci_hi": -0.05460069444444444
+          },
+          "grp_within_upper_nonfin": {
+            "mean": 0.20937888888888886,
+            "ci_lo": 0.1998861111111111,
+            "ci_hi": 0.2177819444444444
+          },
+          "grp_within_upper_fin": {
+            "mean": 0.16709555555555552,
+            "ci_lo": 0.1585222222222222,
+            "ci_hi": 0.17591111111111107
+          },
+          "sng_within_upper_fin": {
+            "mean": 0.2069794444444444,
+            "ci_lo": 0.1956638888888889,
+            "ci_hi": 0.21699999999999997
+          },
+          "grp_within_radial_asym_fin": {
+            "mean": 0.0008594444444444467,
+            "ci_lo": -0.01168055555555557,
+            "ci_hi": 0.014119444444444412
+          },
+          "grp_heterogeneity_upper": {
+            "mean": -0.013503055555555555,
+            "ci_lo": -0.01991875,
+            "ci_hi": -0.006443749999999976
+          }
+        },
+        {
+          "p": 0.9,
+          "grp_cross_upper": {
+            "mean": 0.1702614583333334,
+            "ci_lo": 0.1629895833333334,
+            "ci_hi": 0.17692187500000006
+          },
+          "grp_cross_lower": {
+            "mean": 0.17003062500000005,
+            "ci_lo": 0.16316354166666672,
+            "ci_hi": 0.17755520833333338
+          },
+          "sng_cross_upper": {
+            "mean": 0.2573404166666667,
+            "ci_lo": 0.24459791666666675,
+            "ci_hi": 0.26866875000000007
+          },
+          "sng_cross_lower": {
+            "mean": 0.25703520833333343,
+            "ci_lo": 0.2468166666666667,
+            "ci_hi": 0.2687979166666667
+          },
+          "grp_minus_sng_cross_upper": {
+            "mean": -0.08707895833333336,
+            "ci_lo": -0.09575208333333336,
+            "ci_hi": -0.07657604166666664
+          },
+          "grp_within_upper_nonfin": {
+            "mean": 0.15873833333333337,
+            "ci_lo": 0.1502354166666667,
+            "ci_hi": 0.1680854166666667
+          },
+          "grp_within_upper_fin": {
+            "mean": 0.1256616666666667,
+            "ci_lo": 0.11599583333333337,
+            "ci_hi": 0.13483333333333336
+          },
+          "sng_within_upper_fin": {
+            "mean": 0.17770833333333336,
+            "ci_lo": 0.16465833333333338,
+            "ci_hi": 0.19034166666666671
+          },
+          "grp_within_radial_asym_fin": {
+            "mean": 0.00018916666666666818,
+            "ci_lo": -0.012004166666666689,
+            "ci_hi": 0.012670833333333327
+          },
+          "grp_heterogeneity_upper": {
+            "mean": -0.011523125000000007,
+            "ci_lo": -0.018334375000000035,
+            "ci_hi": -0.004467708333333357
+          }
+        },
+        {
+          "p": 0.95,
+          "grp_cross_upper": {
+            "mean": 0.11125583333333325,
+            "ci_lo": 0.10424166666666658,
+            "ci_hi": 0.11791874999999993
+          },
+          "grp_cross_lower": {
+            "mean": 0.11098458333333325,
+            "ci_lo": 0.10356249999999993,
+            "ci_hi": 0.11841666666666656
+          },
+          "sng_cross_upper": {
+            "mean": 0.22872916666666648,
+            "ci_lo": 0.21496041666666652,
+            "ci_hi": 0.24275416666666644
+          },
+          "sng_cross_lower": {
+            "mean": 0.22837541666666644,
+            "ci_lo": 0.21481666666666646,
+            "ci_hi": 0.2429208333333331
+          },
+          "grp_minus_sng_cross_upper": {
+            "mean": -0.11747333333333324,
+            "ci_lo": -0.13366874999999984,
+            "ci_hi": -0.10448333333333322
+          },
+          "grp_within_upper_nonfin": {
+            "mean": 0.10371749999999992,
+            "ci_lo": 0.09366666666666658,
+            "ci_hi": 0.11418333333333323
+          },
+          "grp_within_upper_fin": {
+            "mean": 0.08449999999999992,
+            "ci_lo": 0.07399166666666661,
+            "ci_hi": 0.09569999999999992
+          },
+          "sng_within_upper_fin": {
+            "mean": 0.15057999999999985,
+            "ci_lo": 0.13464999999999988,
+            "ci_hi": 0.16568333333333318
+          },
+          "grp_within_radial_asym_fin": {
+            "mean": -0.00012500000000000003,
+            "ci_lo": -0.013358333333333318,
+            "ci_hi": 0.01636666666666665
+          },
+          "grp_heterogeneity_upper": {
+            "mean": -0.0075283333333333365,
+            "ci_lo": -0.016502083333333334,
+            "ci_hi": 0.000837499999999992
+          }
+        }
+      ],
+      "archive_crosscheck": {
+        "anchor_level_p": 0.9,
+        "max_abs_dev_within_upper_nonfin": 0,
+        "max_abs_dev_within_upper_fin": 0,
+        "max_abs_dev_cross_upper": 0,
+        "max_abs_dev_heterogeneity_upper": 0,
+        "max_abs_dev": 0,
+        "bit_identical": true
+      },
+      "dilution_consistency": {
+        "p_80": {
+          "grp_cross_upper_mean": 0.27272197916666674,
+          "sng_cross_upper_mean": 0.31761552083333344,
+          "grp_minus_sng_cross_upper_mean": -0.044893541666666675,
+          "grp_le_sng_cross_upper": true
+        },
+        "p_85": {
+          "grp_cross_upper_mean": 0.22288194444444442,
+          "sng_cross_upper_mean": 0.2866441666666666,
+          "grp_minus_sng_cross_upper_mean": -0.06376222222222222,
+          "grp_le_sng_cross_upper": true
+        },
+        "p_90": {
+          "grp_cross_upper_mean": 0.1702614583333334,
+          "sng_cross_upper_mean": 0.2573404166666667,
+          "grp_minus_sng_cross_upper_mean": -0.08707895833333336,
+          "grp_le_sng_cross_upper": true
+        },
+        "p_95": {
+          "grp_cross_upper_mean": 0.11125583333333325,
+          "sng_cross_upper_mean": 0.22872916666666648,
+          "grp_minus_sng_cross_upper_mean": -0.11747333333333324,
+          "grp_le_sng_cross_upper": true
+        }
+      },
+      "mr_refresh_decision": {
+        "governed_headline_basis": "frozen single-df t (maximal-cross-block boundary)",
+        "scr_component_single_t_mean": 39595.06073760497,
+        "scr_component_basis_mean": 39595.06073760497,
+        "governed_headline_relative_move": 0,
+        "scr_component_grouped_t_mean": 35372.49326229076,
+        "disclosed_grouped_vs_basis_move_bootstrap_mean": -0.10664379335839412,
+        "scr_grouped_t_point": 35604.39894619743,
+        "scr_basis_point": 39975.654628199336,
+        "disclosed_grouped_vs_basis_move_point": -0.10934794495943963,
+        "trigger": 0.01,
+        "refresh_required": false,
+        "decision": "NO refresh required (governed headline move 0.0000% <= 1% trigger)",
+        "rationale": "The grouped-t per-block df fitted leakage-free to the standalone within-block upper co-exceedances DILUTE cross-block co-movement and move the disclosed component SCR DOWN (-10.93% point / -10.66% bootstrap mean), which is non-conservative; the grouped-t is therefore DISCLOSED, not adopted into the governed headline. The governed headline remains the frozen single-df t (recovered EXACTLY by the homogeneous boundary, move 0.00%), so MR-010 (var-cov understatement) and MR-014 (management-action omission) quantifications are unchanged; the heterogeneous-tail / cross-block-dilution copula-FORM change is tracked by the NEW MR-016 instead."
+      },
+      "mr016_opened": true,
+      "gates": {
+        "T4_G1_archive_crosscheck_bit_identical": true,
+        "T4_G2_grouped_dilutes_cross_block_all_p": true,
+        "T4_G3_no_mr_refresh_governed_move_le_1pct": true,
+        "T4_G4_open_mr016": true,
+        "T4_G5_digest_idempotent": true,
+        "T4_G6_governance_owner_review": true
+      },
+      "verdict": "PASS",
+      "digest": "e86057638b01",
+      "source": "docs/validation/PHASE28_TASK4_TAIL_DIAGNOSTICS_REPORT.json",
+      "change_record_id": "0988ea9f865a49c3b938d22dc37af498"
+    },
+    "narrative": "Phase 28 tested the grouped-t copula (Daul et al. 2003) as a heterogeneous tail-dependence super-set of the frozen single-df t(2.9451) copula. The homogeneous boundary recovers the governed single-df t component exactly, but leakage-free block df fitting to standalone within-block co-exceedances gives df_NONFIN=37.866 and df_FIN=8.506, both lighter-tailed than the frozen df. MATERIAL FINDING: the grouped-t dilutes cross-block co-movement against the single shared-mixing t boundary, moving grouped-t component SCR DOWN to 35,372.5 bootstrap mean (point 35,604.4) vs single-df t 39,595.1 bootstrap mean (point 39,975.7). The nested path-wise reference 46,638.9 remains OUTSIDE the grouped-t 95% CI [33,034.4, 38,008.5], and the copula-form residual WIDENS from the skew-t-reconfirmed 6,114.9 to 10,491.5. The grouped-t is therefore DISCLOSED, not adopted into the governed headline; MR-010/MR-014 are not refreshed (headline move 0.00%), MR-016 is opened, and Phase 29 escalates to vine / pair-copula. Copula and margins remain frozen per SII Art. 234; production sign-off withheld (educational)."
+  }
 }

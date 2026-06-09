@@ -1,0 +1,186 @@
+{
+ "run_timestamp": "2026-06-08T09:19:29.107034+00:00",
+ "phase": "Phase 27: Richer Tail-Dependence Copula",
+ "task": "Task 2 - GH skew-t copula re-aggregation on the frozen copula",
+ "verdict": "PASS",
+ "drivers": [
+  "rate",
+  "equity",
+  "credit",
+  "lapse",
+  "mortality",
+  "fx",
+  "liquidity"
+ ],
+ "df_frozen": 2.9451,
+ "df_rematched": 2.9450930033094664,
+ "rho_max_abs_diff": 7.216449660063518e-16,
+ "crosscheck_count": 7,
+ "pathwise_basis_params": {
+  "sigma": 0.225,
+  "alpha": 0.7566891068509882,
+  "benefit_share_fit": 0.8449827924965548,
+  "provenance": "governed Phase 25 Task 3 FIT calibration, frozen via the Phase 26 Task 2 verified inputs (no re-tuning)"
+ },
+ "result": {
+  "fit": {
+   "gamma_hat": 6.24229466599955e-05,
+   "tail_level_p": 0.9,
+   "target_realised_codependence": 0.15178571428571433,
+   "model_codependence_at_gamma0": 0.23599523809523817,
+   "model_codependence_at_gamma_hat": 0.23602380952380966,
+   "fit_residual_abs": 0.08423809523809533,
+   "fit_n_sim": 100000,
+   "fit_seed": 20260608,
+   "fit_converged": true,
+   "upper_tail_lift_vs_symmetric": 2.8571428571488866e-05
+  },
+  "gamma_hat": 6.24229466599955e-05,
+  "skewt_readout_at_gamma_hat": {
+   "config": {
+    "n_sim": 200000,
+    "seed": 20260607,
+    "df": 2.9451,
+    "gamma": 6.24229466599955e-05,
+    "copula": "skew_t(2.9451, gamma=6.24229e-05)",
+    "confidence": 0.995,
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548
+   },
+   "var_without": 163280.29163304257,
+   "es_without": 168752.4453267742,
+   "scr_without": 47274.397589933986,
+   "var_component": 152559.2095076102,
+   "es_component": 157477.36380340994,
+   "scr_component": 39980.95565911311,
+   "mean_component": 112578.2538484971,
+   "clip_binding_share_component": 0.0,
+   "active_share_component": 1.0,
+   "upper_tail_codependence": 0.2405380952380953,
+   "lower_tail_codependence": 0.24202857142857148,
+   "radial_asymmetry": -0.001490476190476181,
+   "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+   "digest": "1c4a7bbb0c4f"
+  },
+  "symmetric_readout_gamma0": {
+   "config": {
+    "n_sim": 200000,
+    "seed": 20260607,
+    "df": 2.9451,
+    "gamma": 0.0,
+    "copula": "skew_t(2.9451, gamma=0)",
+    "confidence": 0.995,
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548
+   },
+   "var_without": 163275.05391439144,
+   "es_without": 168745.84486054623,
+   "scr_without": 47269.12222883626,
+   "var_component": 152553.93887183352,
+   "es_component": 157471.34681056417,
+   "scr_component": 39975.654628199336,
+   "mean_component": 112578.28424363419,
+   "clip_binding_share_component": 0.0,
+   "active_share_component": 1.0,
+   "upper_tail_codependence": 0.2405071428571429,
+   "lower_tail_codependence": 0.24203571428571433,
+   "radial_asymmetry": -0.0015285714285714347,
+   "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+   "digest": "d6184cb09586"
+  },
+  "sensitivity_grid_disclosed": [
+   {
+    "gamma": 0.0,
+    "scr_component": 39975.654628199336,
+    "scr_without": 47269.12222883626,
+    "upper_tail_codependence": 0.2405071428571429,
+    "lower_tail_codependence": 0.24203571428571433,
+    "radial_asymmetry": -0.0015285714285714347
+   },
+   {
+    "gamma": 0.25,
+    "scr_component": 52215.75941007004,
+    "scr_without": 60661.570409281616,
+    "upper_tail_codependence": 0.41709047619047623,
+    "lower_tail_codependence": 0.17653095238095243,
+    "radial_asymmetry": 0.2405595238095238
+   },
+   {
+    "gamma": 0.5,
+    "scr_component": 53840.408121983884,
+    "scr_without": 62378.05950425207,
+    "upper_tail_codependence": 0.5654666666666668,
+    "lower_tail_codependence": 0.16750000000000004,
+    "radial_asymmetry": 0.39796666666666675
+   },
+   {
+    "gamma": 1.0,
+    "scr_component": 54600.23688976286,
+    "scr_without": 63105.12017595615,
+    "upper_tail_codependence": 0.7339857142857144,
+    "lower_tail_codependence": 0.1967190476190477,
+    "radial_asymmetry": 0.5372666666666667
+   },
+   {
+    "gamma": 2.0,
+    "scr_component": 52551.33611638492,
+    "scr_without": 60752.91050133818,
+    "upper_tail_codependence": 0.8608428571428571,
+    "lower_tail_codependence": 0.3257714285714287,
+    "radial_asymmetry": 0.5350714285714284
+   }
+  ],
+  "gates": {
+   "G1_gamma0_exact_recovery": true,
+   "G2_archive_crosscheck_frozen_t_bit_identical": true,
+   "G3_rank_invariance_frozen_copula": true,
+   "G4_margins_unchanged_without_basis_bit_identical": true,
+   "G5_sign_gate_skewt_scr_ge_frozen_t_component": true,
+   "G6_gamma_fitted_leakage_free_upper_tail": true,
+   "G_mechanism_lever_monotone_and_asymmetric": true
+  },
+  "frozen_t_component_reference": 39975.654628199336,
+  "nested_pathwise_reference": 46638.9,
+  "sign_gate_reference": 39975.654628199336,
+  "skewt_vs_frozen_t_rel": 0.00013260648169688416,
+  "gap_to_nested_skewt_rel": -0.14275517520539482,
+  "gap_to_nested_frozen_t_rel": -0.14286883635335879,
+  "gamma0_recovery_dev": 0.0,
+  "material_finding": "The leakage-free fit pins gamma at its lower boundary (gamma_hat=6.24e-05): the realised average pairwise UPPER-tail co-exceedance of the standalone loss vectors (0.1518 at p=0.90) is BELOW the frozen symmetric-t level (0.2360) and shows no upper-tail asymmetry, so the skew-t asymmetry lever (which can only RAISE the upper tail) does not activate. The skew-t at gamma_hat is economically identical to the frozen t (delta +0.01%, within the quadrature-PIT tolerance). The mechanism IS correctly implemented and powerful (the disclosed gamma grid lifts the component SCR to 54600 at gamma=1.0 and overshoots the nested 46638.9), but the copula-FORM residual (6,120.2; 91.9% of the 14.29% nested gap) is NOT a standalone-driver upper-tail radial-asymmetry effect -- it must originate in structure a copula on standalone margins cannot represent (nested inner-path joint dynamics). Escalation: grouped-t (heterogeneous tail dependence across drivers) is the next lever; vine the general fallback."
+ },
+ "use_restrictions": {
+  "classification": "EDUCATIONAL",
+  "restrictions": [
+   "The skew-t copula adds ONE scalar upper-tail-asymmetry parameter (gamma) on the FROZEN (df 2.9451, Sigma); gamma = 0 recovers the governed symmetric t EXACTLY (Solvency II Art. 234 rank invariance; no re-tuning of df/Sigma/margins).",
+   "gamma is fitted to the realised UPPER-TAIL co-exceedances of the standalone loss vectors only (leakage-free; a finite-sample estimate whose sampling error is propagated through the Task 3 bootstrap).",
+   "The univariate GH skew-t marginal CDF is evaluated by Gauss-Laguerre quadrature on a fine grid for gamma > 0; the gamma = 0 path short-circuits to the exact Student-t CDF.",
+   "If the residual needs heterogeneous tail dependence ACROSS drivers, the grouped-t escalation (deferred) is next; the vine copula is the general fallback.",
+   "Action parameters remain educational placeholders pending credentialled practice data + independent APS X2 review."
+  ]
+ },
+ "standard_references": [
+  "Solvency II Delegated Regulation Article 234 (aggregation incl. tail behaviour)",
+  "Solvency II Delegated Regulation Article 23 (future management actions)",
+  "SOA ASOP 56 section 3.1.3/3.4/3.5",
+  "SOA ASOP 25 section 3.3",
+  "IA TAS M section 3.2/3.6",
+  "IFoA Life Aggregation & Simulation working party",
+  "Demarta & McNeil (2005), The t copula and related copulas (skew-t copula)",
+  "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7"
+ ],
+ "affected_components": [
+  "par_model_v2/projection/skew_t_copula_aggregation.py",
+  "scripts/build_phase27_task2_skew_t_copula.py",
+  "tests/test_phase27_task2_skew_t_copula.py",
+  "docs/SKEW_T_COPULA_CARD.md",
+  "docs/validation/PHASE27_TASK2_SKEW_T_COPULA_REPORT.{json,md}"
+ ],
+ "markdown_path": "docs/validation/PHASE27_TASK2_SKEW_T_COPULA_REPORT.md",
+ "change_record_id": "6bb5db0a06734369a0eb6d5ff48e84bc",
+ "change_record_status": "OWNER_REVIEW",
+ "audit_integrity_ok": true,
+ "change_records_total": 56,
+ "audit_entries_total": 83
+}
