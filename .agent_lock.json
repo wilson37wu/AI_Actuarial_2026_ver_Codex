@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-10T20:22:39Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-10T21:09Z-c519",
+  "started_at": "2026-06-10T21:09:07Z",
+  "ttl_minutes": 120,
+  "task": "Phase 29 Task 4: vine pair-level tail diagnostics + overfit check + MR-016 decision",
+  "note": ""
 }
