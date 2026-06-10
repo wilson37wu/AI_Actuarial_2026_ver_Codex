@@ -9296,3 +9296,15 @@ Next: Phase 27 Task 5 — offline-UI propagation (contract 1.8.0 -> 1.9.0 ADDITI
 - Governance: ChangeRecord 5038d450f9694bb884fcd73cf0bb0bbd (code_change) OWNER_REVIEW; records 63->64; audit integrity True.
 - Tests: P29T2 9/0; regression P29T1+P28T2 25/0.
 - State: PHASE29_TASK2_COMPLETE_NEXT_TASK3_BOOTSTRAP; in_progress -> Task 3 (vine margin bootstrap >=200x20k, SE<=5%, residual re-decomposition vs 10,491.5 / 6,114.9).
+
+---
+
+## Cycle 2026-06-11 (Claude Cowork, Linux sandbox) - Phase 29 Task 3 COMPLETE
+
+- Coordination: fresh /tmp clone; preflight PROCEED (lock free); acquired cycle 2026-06-10T20:08Z-ef6f; released at end. Working-folder git HEAD was behind origin (170dc74 vs f4bcead) -- synced files from origin to the mount.
+- Staged inputs from the same-day P29T2 cycle persisted in /var/tmp and were re-validated by bit-identical archive cross-checks instead of regeneration: 7/7 verify checks PASS (frozen-t component 39,975.654628199336 AND vine candidate 42,458.5527095696 reproduced exactly; df 2.9451; rho max|diff| 7.2e-16; fit digest f4c41381d843).
+- P29T3 vine margin bootstrap 200x20,000 (chunks 10/70/70/50, each <16s): vine component SCR mean 41,917.6, 95% CI [38,654.7, 45,284.3], SE 1,694.2 = 4.04% of mean (SE gate PASS). Nested 46,638.9 NOT inside CI -> pre-registered re-decomposition branch: copula-form residual 3,637.3 (point) / 4,178.2 (bootstrap mean) = -6,854.2 (-65.33%) vs grouped-t 10,491.5; -2,477.6 (-40.52%) vs skew-t 6,114.9 -- FIRST candidate to NARROW the residual below both baselines. Lift (vine - frozen-t, CRN) +2,314.4 mean, positive in 100% of replicates. Digest e277f58b57f8; idempotent re-run identical.
+- New: par_model_v2/projection/vine_copula_bootstrap.py; scripts/build_phase29_task3_vine_margin_bootstrap.py; tests/test_phase29_task3_vine_margin_bootstrap.py (6/0); docs/validation/PHASE29_TASK3_VINE_MARGIN_BOOTSTRAP_REPORT.{json,md}; docs/VINE_MARGIN_BOOTSTRAP_CARD.md.
+- Governance: ChangeRecord 3a063680d2724e83813241a6b04a81e4 (methodology_change) OWNER_REVIEW; change records 64->65; audit entries 92->93; verify_all True; idempotent.
+- Tests: P29T3 6/0; regression P29T1+P29T2+P28T3 28 passed / 3 env skips (P28T2 fit artifacts not staged this cycle).
+- State: PHASE29_TASK3_COMPLETE_NEXT_TASK4_DIAGNOSTICS; in_progress -> Task 4 (pair-level tail diagnostics + MR-016 remediation decision; nested NOT inside CI so close/mitigate criterion already fails -> expect MR-016 stays OPEN).
