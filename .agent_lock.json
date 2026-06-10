@@ -1,5 +1,8 @@
 {
-  "owner": null,
-  "note": "initialized; see AGENT_COORDINATION.md",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-10T18:49Z-789e",
+  "started_at": "2026-06-10T18:49:04Z",
+  "ttl_minutes": 120,
+  "task": "Phase 29 Task 2: vine/pair-copula prototype",
+  "note": ""
 }
