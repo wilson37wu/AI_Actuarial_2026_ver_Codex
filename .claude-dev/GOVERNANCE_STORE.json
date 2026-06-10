@@ -2093,6 +2093,29 @@
       "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
       "digest": "b315b0b4e2fd266108e2b05f296b69327965cd000c1b9159a3d61bf88a39a91f",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "23e21fd0808545af900b6073b661d3c2",
+      "timestamp": "2026-06-10T23:24:29.560699+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase29",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 29 Task 4 vine tail diagnostics + MR-016 KEEP-OPEN decision + MR-017",
+      "details": {
+        "record_id": "655dae827a644dc0bbb8a87b74e34ddf",
+        "change_type": "governance_change",
+        "mr016_decision": "KEEP_OPEN",
+        "mr017_opened": true,
+        "affected_components": [
+          "par_model_v2/projection/vine_tail_diagnostics.py",
+          "scripts/build_phase29_task4_vine_tail_diagnostics.py",
+          "tests/test_phase29_task4_vine_tail_diagnostics.py",
+          "docs/VINE_TAIL_DIAGNOSTICS_CARD.md",
+          "docs/validation/PHASE29_TASK4_VINE_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+        ]
+      },
+      "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
+      "digest": "644c9003ee2041fd7a02c4b5e3792c0586232c275b372354ffc9cd82a6e7e97c",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -6197,6 +6220,77 @@
         }
       ],
       "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade"
+    },
+    {
+      "record_id": "655dae827a644dc0bbb8a87b74e34ddf",
+      "created_at": "2026-06-10T23:24:29.560635+00:00",
+      "title": "Phase 29 Task 4 - vine pair-level tail diagnostics + fit-vs-holdout overfit check + MR-016 remediation decision (KEEP OPEN; narrowing disclosed) + open MR-017 (residual vine-FORM limitation)",
+      "description": "Per-pair upper/lower tail co-dependence diagnostics for the six first-tree (credit-root) links, five second-tree links (conditional on the root upper tail) and three holdout pairs, vine candidate vs frozen-t boundary on COMMON random numbers, re-drawn at the archived Task 3 bootstrap seeds (per-replicate and aggregate SCR cross-checks BIT-identical). Pre-registered fit-vs-holdout overfit gate PASS. MR-016 remediation decision: KEEP OPEN (nested 46,638.9 outside the vine 95% CI; the -40.52%/-65.33% residual narrowing is DISCLOSED). MR-017 opened for the remaining vine-FORM limitations. MR-010/MR-014: NO refresh (governed headline move 0.0000% <= 1%; vine NOT adopted without owner sign-off). No new model parameter.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/projection/vine_tail_diagnostics.py",
+        "scripts/build_phase29_task4_vine_tail_diagnostics.py",
+        "tests/test_phase29_task4_vine_tail_diagnostics.py",
+        "docs/VINE_TAIL_DIAGNOSTICS_CARD.md",
+        "docs/validation/PHASE29_TASK4_VINE_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+        "Joe (2014), Dependence Modeling with Copulas, ch.2 (tail dependence)",
+        "Solvency II Delegated Regulation Article 234",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+        "IA TAS M sections 3.2, 3.6, 3.7",
+        "IFoA Modelling Practice Note s4 (model risk register)"
+      ],
+      "before_snapshot": {
+        "pair_level_tail_diagnostics": "not yet reported for the vine candidate",
+        "mr016": "OPEN (no remediation decision)",
+        "mr017": "not opened",
+        "mr_register_count": 16
+      },
+      "after_snapshot": {
+        "archive_crosscheck_bit_identical": true,
+        "overfit_gate_pass": true,
+        "max_holdout_abs_mean_lift": 0.04136750000000001,
+        "max_fit_abs_mean_lift": 0.8514015735106508,
+        "mr016_decision": "KEEP_OPEN",
+        "nested_inside_ci": false,
+        "mr017_opened": true,
+        "mr_register_count": 17,
+        "mr010_mr014_refresh_required": false,
+        "governed_headline_move": 0.0,
+        "gates": {
+          "T4_G1_archive_crosscheck_bit_identical": true,
+          "T4_G2_pair_tail_grid_complete": true,
+          "T4_G3_fit_vs_holdout_overfit_check": true,
+          "T4_G4_mr016_decision_per_preregistered_criteria": true,
+          "T4_G5_mr010_mr014_no_refresh": true,
+          "T4_G6_reproducible_digest": true
+        },
+        "verdict": "PASS",
+        "digest": "d9d55c3460e2"
+      },
+      "impact_assessment": "Diagnostic + governance only: no governed parameter changes (copula Sigma / homogeneous df / Task 2 pair-family fit and relief scalars FROZEN). The vine candidate's residual narrowing is confirmed to act through the fitted pair links (overfit gate PASS) and is DISCLOSED, not adopted; the governed frozen single-df t headline is unchanged, so MR-010/MR-014 quantifications stand; MR-016 stays OPEN per the pre-registered criteria and the remaining vine-FORM limitation is tracked by the NEW MR-017. Educational classification retained; production sign-off withheld.",
+      "quantitative_impact": "p=0.90 max fitted-pair |mean lift| 0.8514; max holdout |mean lift| 0.0414 (ratio 0.05); archive cross-check per-replicate max abs dev 0.0e+00 / aggregate 0.0e+00; MR-016 KEEP OPEN (nested 46,638.9 vs CI hi 45284.3); MR-017 opened (model_error, MEDIUM x HIGH, OPEN); governed headline move +0.0000% -> no MR-010/MR-014 refresh.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase29",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-10T23:24:29.560656+00:00",
+          "actor": "AutomatedModelDev_Phase29",
+          "status": "PEER_REVIEW",
+          "comments": "Archive cross-checks bit-identical; overfit gate PASS; MR-016 KEEP OPEN per pre-registered criteria; MR-017 opened; new unit tests PASS."
+        },
+        {
+          "timestamp": "2026-06-10T23:24:29.560671+00:00",
+          "actor": "AutomatedModelDev_Phase29",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: MR-016 remediation decision + MR-017 opening; governed headline unchanged."
+        }
+      ],
+      "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade"
     }
   ],
   "risk_register": [
@@ -6453,8 +6547,24 @@
       "mitigation_status": "OPEN",
       "related_standard": "Solvency II Art. 234; Daul et al. (2003); McNeil, Frey & Embrechts (2015) QRM ch.7; Aas et al. (2009); IFoA Modelling Practice Note s4",
       "created_at": "2026-06-08T17:28:41.083502+00:00",
-      "updated_at": "2026-06-08T17:28:41.083502+00:00",
-      "notes": "Opened Phase 28 Task 4. Carries forward MR-015 (Phase 27 skew-t copula-FORM residual). Task 2 leakage-free per-block df fit; Task 3 bootstrap residual widening; Task 4 within/cross tail diagnostics confirm cross-block dilution. Monitored."
+      "updated_at": "2026-06-10T23:24:29.560480+00:00",
+      "notes": "Phase 29 Task 4 remediation DECISION: KEEP OPEN. The truncated credit-root vine candidate is the FIRST dependence candidate to NARROW the copula-form residual below BOTH baselines (3,637.3 = -65.33% vs grouped-t 10,491.5 / -40.52% vs skew-t 6,114.9; DISCLOSED), but the nested truth 46,638.9 is NOT inside the Task 3 vine 95% bootstrap CI [38,654.7, 45,284.3], so the pre-registered close/mitigate criteria are NOT met. Remaining vine-FORM limitations are tracked by the NEW MR-017. Carries forward MR-015. Monitored; governed headline unchanged (frozen single-df t; vine NOT adopted without owner sign-off)."
+    },
+    {
+      "risk_id": "MR-017",
+      "title": "Residual nested inner-path joint dynamics not representable by the truncated credit-root pair-link prototype (vine-FORM limitation)",
+      "description": "The Phase 29 truncated credit-root C-vine prototype (max two trees, capped pair-family set, rank-preserving tail tilts on the frozen single-df t base) NARROWS the copula-form residual to 3,637.3 (from skew-t 6,114.9 / grouped-t 10,491.5) and lifts the component SCR +2,314.4 mean (CRN, positive in 100% of replicates), but the nested path-wise truth 46,638.9 remains OUTSIDE the vine 95% bootstrap CI [38,654.7, 45,284.3]. The remaining residual is attributed to (i) the truncation at two trees, (ii) the capped pair-family set and educational tilt simulator (not a full vine calibration), and (iii) nested inner-path joint dynamics that margins-level dependence cannot represent. Task 4 fit-vs-holdout diagnostics show the tilt is concentrated on fitted links (max holdout |lift| 0.0414 <= max fitted-pair |lift| 0.8514), so the narrowing is not an overfit artefact of never-fitted pairs.",
+      "category": "model_error",
+      "likelihood": "MEDIUM",
+      "impact": "HIGH",
+      "overall_rating": "HIGH",
+      "owner": "Head of Capital Modelling (educational placeholder)",
+      "mitigation": "Candidate next steps (design-note-first, owner sign-off required): full conditional pair-copula calibration (h-function based, untruncated where material), nested-aware dependence calibrated on inner-path joint outcomes, or adoption of the vine candidate as a DISCLOSED alternative read-out alongside the governed frozen-t headline. Until then the residual is quantified and disclosed; the nested truth 46,638.9 is reported alongside the governed component 39,975.7.",
+      "mitigation_status": "OPEN",
+      "related_standard": "Aas et al. (2009); Joe (2014) ch.2; Solvency II Art. 234; IFoA Modelling Practice Note s4",
+      "created_at": "2026-06-10T23:24:29.560550+00:00",
+      "updated_at": "2026-06-10T23:24:29.560550+00:00",
+      "notes": "Opened Phase 29 Task 4 alongside the MR-016 KEEP-OPEN decision. MR-015 (skew-t) and MR-016 (grouped-t) carried forward. Monitored."
     }
   ]
 }

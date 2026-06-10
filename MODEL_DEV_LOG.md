@@ -9308,3 +9308,20 @@ Next: Phase 27 Task 5 — offline-UI propagation (contract 1.8.0 -> 1.9.0 ADDITI
 - Governance: ChangeRecord 3a063680d2724e83813241a6b04a81e4 (methodology_change) OWNER_REVIEW; change records 64->65; audit entries 92->93; verify_all True; idempotent.
 - Tests: P29T3 6/0; regression P29T1+P29T2+P28T3 28 passed / 3 env skips (P28T2 fit artifacts not staged this cycle).
 - State: PHASE29_TASK3_COMPLETE_NEXT_TASK4_DIAGNOSTICS; in_progress -> Task 4 (pair-level tail diagnostics + MR-016 remediation decision; nested NOT inside CI so close/mitigate criterion already fails -> expect MR-016 stays OPEN).
+
+---
+
+## 2026-06-10 23:50Z - Phase 29 Task 4 COMPLETE (PASS, 6/6 gates) [claude]
+
+Vine pair-level tail diagnostics + fit-vs-holdout overfit check + MR-016 remediation decision.
+Archive cross-checks bit-identical (Task 2 read-outs + p=0.90 pair diagnostics; Task 3 per-replicate
+and aggregate bootstrap reproduction from master seed 20260610; all dev 0.0). p=0.90 candidate-vs-frozen
+upper-tail lifts concentrated on fitted links (max: rate-liquidity|credit +0.8514; holdout max |lift|
+0.0414, ratio 0.049 -> overfit gate PASS). MR-016 KEEP OPEN (nested 46,638.9 outside vine 95% CI
+[38,654.7, 45,284.3]; narrowing -65.33%/-40.52% disclosed). MR-017 OPENED (vine-FORM limitation;
+register 16->17). MR-010/MR-014 NO refresh (governed move 0.0000%). ChangeRecord
+655dae827a644dc0bbb8a87b74e34ddf (governance_change) OWNER_REVIEW; records 66; audit 94; digest
+d9d55c3460e2 idempotent. pytest 13/0 new; P29 28/0; P28 40/0 (6 env skips). Cycle reclaimed a stale
+lock from a dead duplicate claude instance (21:09Z); no work lost. Env: /sessions 100% full broke
+~/.local scipy - reinstalled to /var/tmp/pylibs_c (PYTHONPATH=/var/tmp/pylibs_c:.).
+Next: Phase 29 Task 5 (offline-UI contract 1.10.0 -> 1.11.0) + PHASE 29 COMPLETE documentation.
