@@ -5,3 +5,24 @@ node_modules/
 par_model_v2/projection/multi_driver_risk_aggregation.py.tmp
 *.pre_t2.bak
 *.bak
+
+# --- multi-agent / sandbox hygiene (see AGENT_COORDINATION.md) ---
+# Scratch, probes, and interrupted-write artifacts
+*.tmp
+*.checkdup
+_gittest.txt
+_sync_probe*.txt
+_*probe*
+_perm_test*
+_wtest*
+_writeprobe*
+*.GOV_BACKUP*
+GOV_BACKUP_pre_*.json
+STATE_BACKUP_pre_*.json
+# Office / editor lock files
+.~lock.*#
+*~
+# Per-phase staging dirs that occasionally leak onto the mount
+.phase*_stage/
+# Stray Windows-style paths accidentally created inside the repo by a sandbox
+C:/

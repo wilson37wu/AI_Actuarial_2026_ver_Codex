@@ -3,6 +3,30 @@ name: "Actuarial Stochastic Model Development — Automated 12h Cycle"
 description: "Autonomous model development task with state persistence, GitHub commits, and Gmail progress reports"
 ---
 
+## ⛔ STEP 0 (MANDATORY, BEFORE ANYTHING ELSE) — Multi-agent coordination preflight
+
+This repo is developed by **two** scheduled agents (Codex + Claude Cowork). To avoid
+clobbering each other, **read `AGENT_COORDINATION.md` and follow it before any work.**
+Concretely, at the very start of every cycle:
+
+1. Get a clean up-to-date `main`. **Claude:** do ALL git in a FRESH `/tmp` clone of
+   `origin/main` — never the mounted `.git` (it ghost-locks). **Codex:** `git fetch
+   origin && git rebase origin/main`.
+2. `python scripts/agent_lock.py preflight --owner claude` (Codex uses `--owner codex`).
+   If it exits **10 (YIELD)** → another agent holds the lock → **stop this run, do no
+   work, leave `main` untouched.**
+3. Else `python scripts/agent_lock.py acquire --owner claude --task "<the in_progress task>"`.
+   If it yields → stop.
+4. Do **exactly one** task (below). Update state/log + a uniquely-named
+   `LATEST_CYCLE_STATUS_<date>_<task>.md`.
+5. Push via fetch-rebase-retry (the helper and AGENT_COORDINATION.md show the pattern).
+6. `python scripts/agent_lock.py release --owner claude`.
+
+Claude runs the **06:00 / 18:00 UTC** window; Codex runs **00:00 / 12:00 UTC**. Never
+force-push `main`. When in doubt, **yield**.
+
+---
+
 # Automated Actuarial Model Development Task
 
 **Task Frequency:** Every 12 hours  
@@ -2348,17 +2372,4 @@ disk /sessions usage to watch.
 
 **Phase 28 Task 4 COMPLETE (PASS, 6/6 pre-registered gates).** Grouped-t within/cross-block, upper/lower tail-dependence DIAGNOSTICS + MR-010/MR-014 no-refresh DECISION + opened MR-016. No new model parameter — a code-free diagnostics + governance task on the FROZEN copula (Sigma, df_NONFIN 37.866 / df_FIN 8.506, homogeneous df 2.9451). Re-drew the grouped-t and single-df t (homogeneous boundary, shared mixing) uniforms on COMMON random numbers at the archived P28T3 per-replicate cop_seeds (200 reps × 20,000 sims) over a tail grid p ∈ {0.80, 0.85, 0.90, 0.95}. **Archive cross-check (T4-G1):** at p=0.90 the recomputed grouped-t within-block (NON-FIN, FIN) upper, cross-block upper and heterogeneity_upper are BIT-identical to the cached P28T3 records (max abs dev 0.0 ≤ 1e-12). **Dilution (T4-G2):** p=0.90 grouped cross-block upper 0.1703 vs single-df t 0.2573 → dilution −0.0871 [−0.0958, −0.0766] (CI excludes 0; grouped ≤ single at every p); grouped within-FIN upper 0.1257 < single 0.1777 (df_FIN 8.5 > frozen → lighter within-block tails); within-block radial asymmetry ~0 (CI spans 0; t-copula radially symmetric within block — finite-sample noise). The independent per-block mixing (not only df_g>frozen) IS the dilution mechanism (homogeneous-boundary within-NON-FIN bit-identical across legs; FIN+cross differ at equal df). **MR refresh (T4-G3):** GOVERNED headline = frozen single-df t (maximal-cross-block, conservative boundary) recovered EXACTLY → move 0.0000% ≤ 1% → NO refresh; the grouped-t DOWN move (−10.93% point / −10.66% bootstrap) is DISCLOSED, not adopted (non-conservative), tracked by MR-016. **MR-016 (T4-G4):** opened "Heterogeneous-tail / cross-block-dilution copula-FORM residual not closed by the grouped-t per-block df" (model_error; MEDIUM × HIGH; OPEN; mitigation vine/pair-copula → Phase 29; EDUCATIONAL). Gates 6/6; digest e86057638b01 (idempotent). pytest 11/0 (P28T4); regression P28T1-T3 35/0, P27T1-T4 48/0 (94 passed); compileall clean. ChangeRecord `0988ea9f865a49c3b938d22dc37af498` (governance_change) OWNER_REVIEW; risk register 15→16; audit 89→90; change records 61→62; verify_all True; governance idempotent.
 
-**NEXT executable task: Phase 28 Task 5** — offline-UI propagation, data contract **1.9.0 → 1.10.0 ADDITIVE**. Surface, from model-output JSON only (zero-install, interactive): (a) **grouped-t vs single-df t vs nested** SCR (component 35,372.5 grouped-t bootstrap / 35,604.4 point, single-df t = frozen-t basis 39,595.1 / 39,975.7 point, nested 46,638.9); (b) the **within/cross-block, upper/lower tail-dependence grid** (grouped vs single, with 95% CI) and the **cross-block dilution** profile (grouped cross-block upper < single at every p; p=0.90 −0.0871); (c) the **bootstrap-CI read-out** [33,034.4, 38,008.5] SE 3.58%; (d) the **residual re-decomposition + widening** (copula-form 6,114.9 → 10,491.5); (e) **df_NONFIN 37.866 / df_FIN 8.506** and (f) **MR-016** in the governance view. ADDITIVE only — no breaking change to the 1.9.x contract; keep the self-test at 0 network / 0 JS errors and external-ref scan clean. **On Phase 28 completion → Phase 29** vine / pair-copula (Aas et al. 2009) — now DOUBLY-to-TRIPLY indicated: neither the skew-t asymmetry scalar (gamma_hat~0) nor the grouped-t block-heterogeneity (df_hat dilutes, cross-block tail dependence confirmed lower than single-df t) closes the UPWARD nested residual on the standalone margins; it is nested inner-path joint structure a copula on standalone margins cannot represent.
-
-**Sandbox note (this cycle):** scipy/numpy reused from `/var/tmp/pylibs` (export PYTHONPATH=/var/tmp/pylibs:$(pwd)); staged P28T2 (`/var/tmp/p28t2_build/verified.npz`, `fit_result.json`) and P28T3 (`/var/tmp/p28t3_stage/partial_*.json` with cop_seeds) inputs survived and were reused. A root-owned stale `tests/__pycache__/*p28t4*.pyc` blocked in-place pytest collection of the new test file; run P28T4 tests from a `/var/tmp` copy with `--import-mode=importlib -p no:cacheprovider` (11/11). Mount write-sync lag was observed on the new test file; the authoritative file-tool view is complete (220 lines, verified).
----
-
-## >>> MOST RECENT STATE (SUPERSEDES ALL BLOCKS ABOVE) - 2026-06-09 (Phase 28 Task 5)
-
-**Phase 28 Task 5 COMPLETE (PASS). PHASE 28 COMPLETE.** Offline-UI propagation is done; data contract **1.9.0 -> 1.10.0 ADDITIVE**. `scripts/build_ui_data.py` now builds a `phase28` section from the governed Phase 28 Task 2/3/4 model-output JSONs (display-layer only, NO recalculation), adds the capital read-outs `grouped_t_copula_scr_component_bootstrap_mean`, `single_t_copula_scr_component_bootstrap_mean`, and `grouped_t_copula_scr_component_point`, and keeps the governance-store risk merge so **MR-016** is visible. `ui_app.html` now has a **Grouped-t Tail (P28)** tab surfacing: grouped-t component SCR **35,372.5** bootstrap mean / **35,604.4** point; single-df t **39,595.1** bootstrap mean / **39,975.7** point; nested path-wise reference **46,638.9**; grouped-t bootstrap CI **[33,034.4, 38,008.5]** with SE **3.58%**; p=0.90 cross-block dilution **-0.0871**; df_NONFIN **37.866** / df_FIN **8.506**; residual widening **6,114.9 -> 10,491.5**; and MR-016 in Governance.
-
-**Verification:** `node scripts/ui_app_self_test.cjs ui_app.html` -> **ok:true**, tabCount **11**, **0 network / 0 JS errors**. External-ref scan clean; `ui_data.json` parses; `ui_app.html` has closing `</html>`. Python aliases hang in this Windows shell, so generated artifacts were emitted with a short Node fallback from the patched Python template; the durable source remains `scripts/build_ui_data.py`.
-
-**NEXT executable task: Phase 29 Task 1** - design-note-first **vine / pair-copula** (Aas et al. 2009) candidate selection and pre-registered gates. Motivation is now triple-confirmed: skew-t gamma_hat ~ 0 did not close the copula-form residual; grouped-t fitted df_g diluted cross-block dependence and widened the residual; MR-016 is OPEN. Task 1 should define a leakage-free vine candidate with frozen standalone margins, exact recovery of the governed single-df t boundary where claimed, pair-family search limits, CRN comparison variants, bootstrap/diagnostic gates, and MR-016 remediation criteria before implementation. Task 2 should implement the chosen prototype only after the design note is governed.
-
-**Standing blockers (human action):** git ghost locks / index state still block automation commits and pushes (`GITHUB_PUSH_BLOCKER.md`); production sign-off remains withheld pending credentialled data + independent APS X2 review. The fully-offline zero-install model-output-only interactive UI requirement remains **SATISFIED**.
+**NEXT executable task: Phase 28 Task 5** — offline-UI propagation, data contract **1.9.0 → 1.10.0 ADDITIVE**. Surface, from model-output JSON only (zero-install, interactive): (a) **grouped-t vs single-df t vs nested** SCR (component 35,372.5 grouped-t bootstrap / 35,604.4 point, single-df t = frozen-t basis 39,595.1 / 39,975.7 point, nested 46,638.9); (b) the **within/cross-block, upper/lower tail-dependence grid** (grouped vs single, with 95% CI) and the **cross-block dilution** profile (grouped cross-block upper < single at every p; p=0.90 −0.0871); (c) the **bootstrap-CI read-out** [33,034.4, 38,008.5] SE 3.58%; (d) the **residual re-decomposition + widening** (copula-form 6,114.9 → 10,491.5); (e) **df_NONFIN 
