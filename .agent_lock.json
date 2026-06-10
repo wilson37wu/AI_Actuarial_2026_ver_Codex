@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-10T19:20:29Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-10T20:08Z-ef6f",
+  "started_at": "2026-06-10T20:08:51Z",
+  "ttl_minutes": 120,
+  "task": "Phase 29 Task 3: vine margin bootstrap",
+  "note": ""
 }
