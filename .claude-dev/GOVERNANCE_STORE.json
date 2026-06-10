@@ -2051,6 +2051,27 @@
       "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
       "digest": "5a1c0bd4a9093afbb4644716820b83d622c74387631a8436bbb4f1a471340c2b",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "61d3fba6f891488588edd1c39254dd29",
+      "timestamp": "2026-06-10T19:16:56.218304+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase29",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 29 Task 2 vine / pair-copula implementation",
+      "details": {
+        "record_id": "5038d450f9694bb884fcd73cf0bb0bbd",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/projection/vine_copula_pair_aggregation.py",
+          "scripts/build_phase29_task2_vine_copula.py",
+          "tests/test_phase29_task2_vine_copula.py",
+          "docs/VINE_COPULA_PROTOTYPE_CARD.md",
+          "docs/validation/PHASE29_TASK2_VINE_COPULA_REPORT.{json,md}"
+        ]
+      },
+      "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
+      "digest": "ab121b52911066563364012f8c9cd03523e78787ee089eab5311fedc4d82ce72",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -6017,6 +6038,70 @@
           "actor": "Phase29Task1DesignNote",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: educational design only; implementation deferred to Task 2; production sign-off withheld pending credentialled data and APS X2 review."
+        }
+      ],
+      "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade"
+    },
+    {
+      "record_id": "5038d450f9694bb884fcd73cf0bb0bbd",
+      "created_at": "2026-06-10T19:16:56.208822+00:00",
+      "title": "Phase 29 Task 2 - implement truncated credit-root vine / pair-copula prototype on frozen standalone margins",
+      "description": "Implemented the pre-registered truncated credit-root vine / pair-copula prototype on frozen standalone margins. The explicit frozen_t_boundary leg reproduced the governed single-df t component before candidate evaluation; family selection used fit rows only; holdout tail diagnostics and frozen/grouped comparison variants are retained.",
+      "change_type": "code_change",
+      "affected_components": [
+        "par_model_v2/projection/vine_copula_pair_aggregation.py",
+        "scripts/build_phase29_task2_vine_copula.py",
+        "tests/test_phase29_task2_vine_copula.py",
+        "docs/VINE_COPULA_PROTOTYPE_CARD.md",
+        "docs/validation/PHASE29_TASK2_VINE_COPULA_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+        "Bedford & Cooke (2002), Vines",
+        "Solvency II Delegated Regulation Article 234",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+        "IA TAS M sections 3.2, 3.6, 3.7"
+      ],
+      "before_snapshot": {
+        "dependency_form": "frozen single-df t plus grouped-t negative super-set",
+        "mr016": "OPEN",
+        "grouped_t_residual": 10491.5
+      },
+      "after_snapshot": {
+        "dependency_form": "truncated credit-root pair-link prototype",
+        "candidate_scr": 42458.5527095696,
+        "candidate_vs_frozen_t_rel": 0.06211025446519636,
+        "candidate_vs_grouped_t_rel": 0.1925088572383702,
+        "gates": {
+          "G1_frozen_t_boundary_exact_recovery": true,
+          "G2_frozen_t_archive_reference_first": true,
+          "G3_rank_invariance_constants_frozen": true,
+          "G4_pre_registered_envelope_only": true,
+          "G5_family_set_capped": true,
+          "G6_leakage_free_fit_holdout_recorded": true,
+          "G7_comparison_variants_retained": true,
+          "G8_directional_disclosed_not_gated": true
+        },
+        "verdict": "PASS"
+      },
+      "impact_assessment": "Code implementation only. Adoption remains deferred pending Task 3 bootstrap and Task 4 MR-016 diagnostics. The governed frozen-t headline is retained unless the later uncertainty evidence supports remediation.",
+      "quantitative_impact": "Candidate component SCR 42458.6; vs frozen-t +6.21%; vs grouped-t +19.25%; boundary recovery dev 0.000e+00.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase29",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-10T19:16:56.208866+00:00",
+          "actor": "AutomatedModelDev_Phase29",
+          "status": "PEER_REVIEW",
+          "comments": "Task 2 gates PASS; frozen boundary and comparison variants retained."
+        },
+        {
+          "timestamp": "2026-06-10T19:16:56.208899+00:00",
+          "actor": "AutomatedModelDev_Phase29",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review; implementation staged for Task 3 bootstrap."
         }
       ],
       "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade"

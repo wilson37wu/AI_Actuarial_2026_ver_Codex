@@ -9284,3 +9284,15 @@ Next: Phase 27 Task 5 — offline-UI propagation (contract 1.8.0 -> 1.9.0 ADDITI
 **Industry Standards Progress:**
 - Solvency II Art. 234 / SOA ASOP 56 / IA TAS M: the acceptance gate remains correctly blocked until leakage-free numerical evidence is produced.
 - Governance: no ChangeRecord was created because the pre-registered numerical gates have not run.
+
+---
+
+## Cycle 2026-06-11 (Claude Cowork, Linux sandbox) - Phase 29 Task 2 COMPLETE
+
+- Coordination: fresh /tmp clone; stale claude lock (2026-06-10 duplicate-run incident) re-acquired as cycle 2026-06-10T19:08Z-df4e; released at end.
+- Regenerated the full staged-input chain (P22T4 outer + 5 slices; P23T2 losses nested 48,707.4 archive-match True; P23T4 13/13; P26T2 12/12 with df 2.9451 / rho 7.22e-16).
+- P29T2 verify/fit/report/governance + pytest: verdict PASS, 8/8 gates. Truncated credit-root C-vine, 2 trees, leakage-free family selection (112/48): 6 student_t, 3 gaussian, 1 survival_clayton, 1 survival_gumbel. Boundary recovery dev 0.0; frozen-t 39,975.654628199336 bit-identical first.
+- HEADLINE: vine candidate component SCR 42,458.5527095696 = +6.21% vs frozen-t, +19.25% vs grouped-t; gap to nested 46,638.9 narrowed to -8.96% -- first candidate moving TOWARD nested. Disclosed, not gated.
+- Governance: ChangeRecord 5038d450f9694bb884fcd73cf0bb0bbd (code_change) OWNER_REVIEW; records 63->64; audit integrity True.
+- Tests: P29T2 9/0; regression P29T1+P28T2 25/0.
+- State: PHASE29_TASK2_COMPLETE_NEXT_TASK3_BOOTSTRAP; in_progress -> Task 3 (vine margin bootstrap >=200x20k, SE<=5%, residual re-decomposition vs 10,491.5 / 6,114.9).

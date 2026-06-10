@@ -1,0 +1,735 @@
+{
+ "run_timestamp": "2026-06-10T19:16:43.015838+00:00",
+ "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
+ "task": "Task 2 - implement selected vine / pair-copula prototype",
+ "verdict": "PASS",
+ "drivers": [
+  "rate",
+  "equity",
+  "credit",
+  "lapse",
+  "mortality",
+  "fx",
+  "liquidity"
+ ],
+ "df_frozen": 2.9451,
+ "df_rematched": 2.9450930033094664,
+ "rho_max_abs_diff": 7.216449660063518e-16,
+ "pathwise_basis_params": {
+  "sigma": 0.225,
+  "alpha": 0.7566891068509882,
+  "benefit_share_fit": 0.8449827924965548,
+  "provenance": "Phase 26 verified composition inputs; no re-tuning"
+ },
+ "result": {
+  "fit": {
+   "structure": "truncated_c_vine_credit_root",
+   "max_vine_trees": 2,
+   "root_driver": 2,
+   "root_driver_name": "credit",
+   "fit_fraction": 0.7,
+   "tail_level_p": 0.9,
+   "fit_indices_digest": "e21ca13d365e",
+   "holdout_indices_digest": "962d65338b8e",
+   "score_version": "p29t2_v1_fit_only_tail_score",
+   "selections": [
+    {
+     "edge": [
+      2,
+      6
+     ],
+     "condition_on": null,
+     "family": "student_t",
+     "strength": 0.22321428571428575,
+     "fit_upper": 0.2678571428571429,
+     "fit_lower": 0.1785714285714286,
+     "holdout_upper": 0.20833333333333337,
+     "holdout_lower": 0.20833333333333337,
+     "fit_score": 0.003985969387755104,
+     "candidate_scores": {
+      "gaussian": 0.10363520408163268,
+      "student_t": 0.003985969387755104,
+      "survival_gumbel": 0.03188775510204083,
+      "survival_clayton": 0.0729432397959184
+     },
+     "n_fit": 112,
+     "n_holdout": 48
+    },
+    {
+     "edge": [
+      2,
+      5
+     ],
+     "condition_on": null,
+     "family": "student_t",
+     "strength": 0.13392857142857145,
+     "fit_upper": 0.0892857142857143,
+     "fit_lower": 0.1785714285714286,
+     "holdout_upper": 0.0,
+     "holdout_lower": 0.0,
+     "fit_score": 0.003985969387755104,
+     "candidate_scores": {
+      "gaussian": 0.03985969387755104,
+      "student_t": 0.003985969387755104,
+      "survival_gumbel": 0.03308354591836736,
+      "survival_clayton": 0.007971938775510208
+     },
+     "n_fit": 112,
+     "n_holdout": 48
+    },
+    {
+     "edge": [
+      0,
+      2
+     ],
+     "condition_on": null,
+     "family": "student_t",
+     "strength": 0.7142857142857144,
+     "fit_upper": 0.7142857142857144,
+     "fit_lower": 0.7142857142857144,
+     "holdout_upper": 0.6250000000000001,
+     "holdout_lower": 0.8333333333333335,
+     "fit_score": 0.0,
+     "candidate_scores": {
+      "gaussian": 1.0204081632653066,
+      "student_t": 0.0,
+      "survival_gumbel": 0.5102040816326533,
+      "survival_clayton": 0.5102040816326533
+     },
+     "n_fit": 112,
+     "n_holdout": 48
+    },
+    {
+     "edge": [
+      1,
+      2
+     ],
+     "condition_on": null,
+     "family": "student_t",
+     "strength": 0.2678571428571429,
+     "fit_upper": 0.3571428571428572,
+     "fit_lower": 0.1785714285714286,
+     "holdout_upper": 0.20833333333333337,
+     "holdout_lower": 0.20833333333333337,
+     "fit_score": 0.015943877551020415,
+     "candidate_scores": {
+      "gaussian": 0.15943877551020416,
+      "student_t": 0.015943877551020415,
+      "survival_gumbel": 0.03188775510204083,
+      "survival_clayton": 0.13233418367346944
+     },
+     "n_fit": 112,
+     "n_holdout": 48
+    },
+    {
+     "edge": [
+      2,
+      3
+     ],
+     "condition_on": null,
+     "family": "student_t",
+     "strength": 0.31250000000000006,
+     "fit_upper": 0.3571428571428572,
+     "fit_lower": 0.2678571428571429,
+     "holdout_upper": 0.0,
+     "holdout_lower": 0.0,
+     "fit_score": 0.003985969387755104,
+     "candidate_scores": {
+      "gaussian": 0.1992984693877552,
+      "student_t": 0.003985969387755104,
+      "survival_gumbel": 0.07174744897959186,
+      "survival_clayton": 0.12874681122448986
+     },
+     "n_fit": 112,
+     "n_holdout": 48
+    },
+    {
+     "edge": [
+      2,
+      4
+     ],
+     "condition_on": null,
+     "family": "student_t",
+     "strength": 0.13392857142857145,
+     "fit_upper": 0.0892857142857143,
+     "fit_lower": 0.1785714285714286,
+     "holdout_upper": 0.0,
+     "holdout_lower": 0.0,
+     "fit_score": 0.003985969387755104,
+     "candidate_scores": {
+      "gaussian": 0.03985969387755104,
+      "student_t": 0.003985969387755104,
+      "survival_gumbel": 0.03308354591836736,
+      "survival_clayton": 0.007971938775510208
+     },
+     "n_fit": 112,
+     "n_holdout": 48
+    },
+    {
+     "edge": [
+      5,
+      6
+     ],
+     "condition_on": 2,
+     "family": "survival_clayton",
+     "strength": 0.75,
+     "fit_upper": 0.0,
+     "fit_lower": 0.9090909090909093,
+     "holdout_upper": 0.0,
+     "holdout_lower": 0.0,
+     "fit_score": 0.0,
+     "candidate_scores": {
+      "gaussian": 0.8264462809917359,
+      "student_t": 0.41322314049586795,
+      "survival_gumbel": 0.9504132231404963,
+      "survival_clayton": 0.0
+     },
+     "n_fit": 11,
+     "n_holdout": 5
+    },
+    {
+     "edge": [
+      0,
+      6
+     ],
+     "condition_on": 2,
+     "family": "survival_gumbel",
+     "strength": 0.75,
+     "fit_upper": 1.8181818181818186,
+     "fit_lower": 0.0,
+     "holdout_upper": 0.0,
+     "holdout_lower": 0.0,
+     "fit_score": 0.0,
+     "candidate_scores": {
+      "gaussian": 3.3057851239669436,
+      "student_t": 1.6528925619834718,
+      "survival_gumbel": 0.0,
+      "survival_clayton": 3.801652892561985
+     },
+     "n_fit": 11,
+     "n_holdout": 5
+    },
+    {
+     "edge": [
+      1,
+      5
+     ],
+     "condition_on": 2,
+     "family": "gaussian",
+     "strength": 0.0,
+     "fit_upper": 0.0,
+     "fit_lower": 0.0,
+     "holdout_upper": 0.0,
+     "holdout_lower": 0.0,
+     "fit_score": 0.0,
+     "candidate_scores": {
+      "gaussian": 0.0,
+      "student_t": 0.0,
+      "survival_gumbel": 0.0,
+      "survival_clayton": 0.0
+     },
+     "n_fit": 11,
+     "n_holdout": 5
+    },
+    {
+     "edge": [
+      3,
+      6
+     ],
+     "condition_on": 2,
+     "family": "gaussian",
+     "strength": 0.0,
+     "fit_upper": 0.0,
+     "fit_lower": 0.0,
+     "holdout_upper": 0.0,
+     "holdout_lower": 0.0,
+     "fit_score": 0.0,
+     "candidate_scores": {
+      "gaussian": 0.0,
+      "student_t": 0.0,
+      "survival_gumbel": 0.0,
+      "survival_clayton": 0.0
+     },
+     "n_fit": 11,
+     "n_holdout": 5
+    },
+    {
+     "edge": [
+      4,
+      6
+     ],
+     "condition_on": 2,
+     "family": "gaussian",
+     "strength": 0.0,
+     "fit_upper": 0.0,
+     "fit_lower": 0.0,
+     "holdout_upper": 0.0,
+     "holdout_lower": 0.0,
+     "fit_score": 0.0,
+     "candidate_scores": {
+      "gaussian": 0.0,
+      "student_t": 0.0,
+      "survival_gumbel": 0.0,
+      "survival_clayton": 0.0
+     },
+     "n_fit": 11,
+     "n_holdout": 5
+    }
+   ],
+   "family_counts": {
+    "gaussian": 3,
+    "student_t": 6,
+    "survival_clayton": 1,
+    "survival_gumbel": 1
+   }
+  },
+  "frozen_t_boundary_readout": {
+   "config": {
+    "n_sim": 200000,
+    "seed": 20260607,
+    "mode": "frozen_t_boundary",
+    "df": 2.9451,
+    "structure": "truncated_c_vine_credit_root",
+    "simulator_version": "p29t2_v1_rank_preserving_tail_tilt",
+    "confidence": 0.995,
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548
+   },
+   "var_without": 163275.05391439144,
+   "es_without": 168745.84486054623,
+   "scr_without": 47269.12222883626,
+   "var_component": 152553.93887183352,
+   "es_component": 157471.34681056417,
+   "scr_component": 39975.654628199336,
+   "mean_component": 112578.28424363419,
+   "clip_binding_share_component": 0.0,
+   "active_share_component": 1.0,
+   "pair_tail_diagnostics": {
+    "level_p": 0.9,
+    "pre_registered_pairs": [
+     {
+      "pair": [
+       0,
+       2
+      ],
+      "upper": 0.7254500000000002,
+      "lower": 0.7248500000000001
+     },
+     {
+      "pair": [
+       0,
+       6
+      ],
+      "upper": 0.18895000000000003,
+      "lower": 0.18975000000000003
+     },
+     {
+      "pair": [
+       1,
+       2
+      ],
+      "upper": 0.4576000000000001,
+      "lower": 0.4615000000000001
+     },
+     {
+      "pair": [
+       1,
+       5
+      ],
+      "upper": 0.14565000000000003,
+      "lower": 0.14945000000000003
+     },
+     {
+      "pair": [
+       2,
+       3
+      ],
+      "upper": 0.23295000000000005,
+      "lower": 0.23130000000000006
+     },
+     {
+      "pair": [
+       2,
+       4
+      ],
+      "upper": 0.19235000000000002,
+      "lower": 0.19405000000000003
+     },
+     {
+      "pair": [
+       2,
+       5
+      ],
+      "upper": 0.14180000000000004,
+      "lower": 0.14210000000000003
+     },
+     {
+      "pair": [
+       2,
+       6
+      ],
+      "upper": 0.25915000000000005,
+      "lower": 0.2602000000000001
+     },
+     {
+      "pair": [
+       3,
+       6
+      ],
+      "upper": 0.15780000000000002,
+      "lower": 0.16135000000000005
+     },
+     {
+      "pair": [
+       4,
+       6
+      ],
+      "upper": 0.21435000000000004,
+      "lower": 0.21745000000000006
+     },
+     {
+      "pair": [
+       5,
+       6
+      ],
+      "upper": 0.13890000000000002,
+      "lower": 0.13880000000000003
+     }
+    ],
+    "holdout_pairs": [
+     {
+      "pair": [
+       0,
+       1
+      ],
+      "upper": 0.4405000000000001,
+      "lower": 0.4434500000000001
+     },
+     {
+      "pair": [
+       3,
+       4
+      ],
+      "upper": 0.21970000000000006,
+      "lower": 0.21785000000000004
+     },
+     {
+      "pair": [
+       0,
+       3
+      ],
+      "upper": 0.22780000000000006,
+      "lower": 0.22915000000000008
+     }
+    ]
+   },
+   "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+   "digest": "32c68a47b00c"
+  },
+  "frozen_t_component_reference_readout": {
+   "config": {
+    "n_sim": 200000,
+    "seed": 20260607,
+    "df": 2.9451,
+    "copula": "t(2.9451)",
+    "confidence": 0.995,
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548,
+    "cuttable_drivers": [
+     "rate",
+     "equity",
+     "lapse",
+     "mortality"
+    ],
+    "carveout_drivers": [
+     "credit",
+     "fx",
+     "liquidity"
+    ]
+   },
+   "var_without": 163275.05391439144,
+   "es_without": 168745.84486054623,
+   "scr_without": 47269.12222883626,
+   "var_level": 152354.34627818983,
+   "es_level": 157170.80867159332,
+   "scr_level": 39794.3216670548,
+   "var_component": 152553.93887183352,
+   "es_component": 157471.34681056417,
+   "scr_component": 39975.654628199336,
+   "mean_component": 112578.28424363419,
+   "mean_level": 112560.02461113503,
+   "component_minus_level_scr": 181.33296114453697,
+   "clip_binding_share_level": 0.0,
+   "clip_binding_share_component": 0.0,
+   "active_share_level": 1.0,
+   "active_share_component": 1.0,
+   "cuttable_share_mean": 0.9929651939408488,
+   "cuttable_share_tail_mean": 0.9742062312375245,
+   "tail_cuttable_share_depression": 0.018758962703324333,
+   "mean_relief_level": 3445.907074420138,
+   "mean_relief_component": 3427.647441920975,
+   "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+   "digest": "c97714b0a831"
+  },
+  "grouped_t_comparison_readout": {
+   "config": {
+    "n_sim": 200000,
+    "seed": 20260607,
+    "block_dfs": [
+     37.866,
+     8.506
+    ],
+    "blocks": [
+     [
+      0,
+      1,
+      3,
+      4
+     ],
+     [
+      2,
+      5,
+      6
+     ]
+    ],
+    "shared_mixing": false,
+    "copula": "grouped_t(dfs=[37.866, 8.506], blocks=[[0, 1, 3, 4], [2, 5, 6]])",
+    "confidence": 0.995,
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548
+   },
+   "var_without": 157899.04631806238,
+   "es_without": 162067.03140005918,
+   "scr_without": 41892.84185080016,
+   "var_component": 148174.27403929288,
+   "es_component": 151657.52144290513,
+   "scr_component": 35604.39191025864,
+   "mean_component": 112569.88212903425,
+   "clip_binding_share_component": 0.0,
+   "active_share_component": 1.0,
+   "tail_dependence": {
+    "level_p": 0.9,
+    "within_block_upper": [
+     0.15898333333333334,
+     0.12503333333333336
+    ],
+    "within_block_lower": [
+     0.16005833333333339,
+     0.1270166666666667
+    ],
+    "cross_block_upper": 0.1704791666666667,
+    "cross_block_lower": 0.17095000000000005,
+    "heterogeneity_upper": -0.011495833333333372
+   },
+   "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+   "digest": "4ec35bd103a2"
+  },
+  "vine_pair_candidate_readout": {
+   "config": {
+    "n_sim": 200000,
+    "seed": 20260607,
+    "mode": "candidate",
+    "df": 2.9451,
+    "structure": "truncated_c_vine_credit_root",
+    "simulator_version": "p29t2_v1_rank_preserving_tail_tilt",
+    "confidence": 0.995,
+    "sigma": 0.225,
+    "alpha": 0.7566891068509882,
+    "benefit_share_fit": 0.8449827924965548
+   },
+   "var_without": 166025.83346841473,
+   "es_without": 171037.7848370931,
+   "scr_without": 50007.95361906715,
+   "var_component": 155044.5194792029,
+   "es_component": 159538.3848714276,
+   "scr_component": 42458.5527095696,
+   "mean_component": 112585.96676963329,
+   "clip_binding_share_component": 0.0,
+   "active_share_component": 1.0,
+   "pair_tail_diagnostics": {
+    "level_p": 0.9,
+    "pre_registered_pairs": [
+     {
+      "pair": [
+       0,
+       2
+      ],
+      "upper": 0.7770500000000001,
+      "lower": 0.7239000000000001
+     },
+     {
+      "pair": [
+       0,
+       6
+      ],
+      "upper": 0.2689000000000001,
+      "lower": 0.20115000000000005
+     },
+     {
+      "pair": [
+       1,
+       2
+      ],
+      "upper": 0.4899000000000001,
+      "lower": 0.4621500000000001
+     },
+     {
+      "pair": [
+       1,
+       5
+      ],
+      "upper": 0.15250000000000002,
+      "lower": 0.14960000000000004
+     },
+     {
+      "pair": [
+       2,
+       3
+      ],
+      "upper": 0.26225000000000004,
+      "lower": 0.23245000000000005
+     },
+     {
+      "pair": [
+       2,
+       4
+      ],
+      "upper": 0.20285000000000006,
+      "lower": 0.19425000000000006
+     },
+     {
+      "pair": [
+       2,
+       5
+      ],
+      "upper": 0.15245000000000003,
+      "lower": 0.14350000000000004
+     },
+     {
+      "pair": [
+       2,
+       6
+      ],
+      "upper": 0.3198500000000001,
+      "lower": 0.27320000000000005
+     },
+     {
+      "pair": [
+       3,
+       6
+      ],
+      "upper": 0.17765000000000003,
+      "lower": 0.16160000000000005
+     },
+     {
+      "pair": [
+       4,
+       6
+      ],
+      "upper": 0.22185000000000005,
+      "lower": 0.21140000000000003
+     },
+     {
+      "pair": [
+       5,
+       6
+      ],
+      "upper": 0.11900000000000004,
+      "lower": 0.12435000000000003
+     }
+    ],
+    "holdout_pairs": [
+     {
+      "pair": [
+       0,
+       1
+      ],
+      "upper": 0.4799000000000001,
+      "lower": 0.4435500000000001
+     },
+     {
+      "pair": [
+       3,
+       4
+      ],
+      "upper": 0.22515000000000004,
+      "lower": 0.21145000000000005
+     },
+     {
+      "pair": [
+       0,
+       3
+      ],
+      "upper": 0.25720000000000004,
+      "lower": 0.23000000000000004
+     }
+    ]
+   },
+   "composition_reconstruction_max_abs_err": 8.731149137020111e-11,
+   "digest": "ae59008f8b5d"
+  },
+  "boundary_recovery_dev": 0.0,
+  "candidate_vs_frozen_t_rel": 0.06211025446519636,
+  "candidate_vs_grouped_t_rel": 0.1925088572383702,
+  "candidate_gap_to_nested_rel": -0.08963220166921604,
+  "gates": {
+   "G1_frozen_t_boundary_exact_recovery": true,
+   "G2_frozen_t_archive_reference_first": true,
+   "G3_rank_invariance_constants_frozen": true,
+   "G4_pre_registered_envelope_only": true,
+   "G5_family_set_capped": true,
+   "G6_leakage_free_fit_holdout_recorded": true,
+   "G7_comparison_variants_retained": true,
+   "G8_directional_disclosed_not_gated": true
+  },
+  "material_finding": "The Phase 29 Task 2 vine-pair candidate is evaluated as a local conditional-dependence prototype on frozen standalone margins. The candidate component SCR is 42458.6 vs frozen-t 39975.7 and grouped-t 35604.4; direction is disclosed and is not a pass/fail gate. The frozen-t boundary remains the governed headline until Task 3 bootstrap and Task 4 MR-016 remediation diagnostics determine whether the vine materially shrinks the residual and brings nested 46638.9 inside the candidate uncertainty band."
+ },
+ "archived_references": {
+  "nested_pathwise_reference": 46638.9,
+  "frozen_t_component_reference": 39975.654628199336,
+  "grouped_t_component_reference": 35604.39894619743,
+  "skewt_residual_reference": 6114.9,
+  "grouped_t_residual_reference": 10491.5
+ },
+ "use_restrictions": {
+  "classification": "EDUCATIONAL",
+  "restrictions": [
+   "The candidate is a governed truncated credit-root pair-link prototype, not an unrestricted R-vine.",
+   "The frozen_t_boundary leg must reproduce the governed single-df t component before candidate outputs are considered.",
+   "Standalone margins, frozen Sigma and homogeneous df 2.9451 remain frozen; the candidate alters only rank dependence.",
+   "Family selection uses fit rows only; holdout tail diagnostics are reported but not used for selection.",
+   "The candidate SCR direction is disclosed, not gate-shopped; adoption requires Task 3 bootstrap and Task 4 MR-016 governance.",
+   "Production use remains prohibited pending credentialled data and independent APS X2 review."
+  ],
+  "references": {
+   "existing_risk": "MR-016",
+   "nested_pathwise_reference": 46638.9,
+   "frozen_t_component_reference": 39975.654628199336,
+   "grouped_t_component_reference": 35604.39894619743,
+   "skewt_residual_reference": 6114.9,
+   "grouped_t_residual_reference": 10491.5
+  }
+ },
+ "standard_references": [
+  "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+  "Bedford & Cooke (2002), Vines",
+  "Solvency II Delegated Regulation Article 234",
+  "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+  "IA TAS M sections 3.2, 3.6, 3.7"
+ ],
+ "affected_components": [
+  "par_model_v2/projection/vine_copula_pair_aggregation.py",
+  "scripts/build_phase29_task2_vine_copula.py",
+  "tests/test_phase29_task2_vine_copula.py",
+  "docs/VINE_COPULA_PROTOTYPE_CARD.md",
+  "docs/validation/PHASE29_TASK2_VINE_COPULA_REPORT.{json,md}"
+ ],
+ "change_record_id": "5038d450f9694bb884fcd73cf0bb0bbd",
+ "change_record_status": "OWNER_REVIEW",
+ "audit_integrity_ok": true,
+ "change_records_total": 64,
+ "audit_entries_total": 92
+}
