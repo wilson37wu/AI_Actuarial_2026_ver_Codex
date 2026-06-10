@@ -226,11 +226,11 @@ def main(use_governance: bool = False) -> dict:
     summary = apply_phase15_task5_governance(store)
 
     os.makedirs(OUT_DIR, exist_ok=True)
-    with open(JSON_PATH, "w") as fh:
+    with open(JSON_PATH, "w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=2)
 
     if use_governance:
-        with open(GOV_PATH, "w") as fh:
+        with open(GOV_PATH, "w", encoding="utf-8") as fh:
             fh.write(store.to_json())
         print("governance: store written ->", GOV_PATH)
 

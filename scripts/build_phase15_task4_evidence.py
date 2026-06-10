@@ -56,9 +56,9 @@ def build(use_governance: bool = False):
     report = eng.run(cfg, governance_store=gs)
 
     os.makedirs(OUT_DIR, exist_ok=True)
-    with open(JSON_PATH, "w") as fh:
+    with open(JSON_PATH, "w", encoding="utf-8") as fh:
         fh.write(report.to_json())
-    with open(MD_PATH, "w") as fh:
+    with open(MD_PATH, "w", encoding="utf-8") as fh:
         fh.write(report.to_markdown())
 
     if gs is not None:
@@ -117,7 +117,7 @@ def build(use_governance: bool = False):
                             comments="Owner review: educational placeholder params; "
                                      "independent APS X2 review pending.")
         gs.add_change_record(rec)
-        with open(GOV_PATH, "w") as fh:
+        with open(GOV_PATH, "w", encoding="utf-8") as fh:
             fh.write(gs.to_json())
         print("governance: ChangeRecord {} added; audit entries {}; integrity {}".format(
             rec.record_id[:8], len(gs.audit_trail.entries), gs.audit_trail.verify_all()))

@@ -385,18 +385,18 @@ def apply_governance(store: GovernanceStore, note: dict) -> dict:
 def main(use_governance: bool = False, fast: bool = False) -> dict:
     note = build_design_note(fast=fast)
     os.makedirs(OUT_DIR, exist_ok=True)
-    with open(JSON_PATH, "w") as fh:
+    with open(JSON_PATH, "w", encoding="utf-8") as fh:
         json.dump(note, fh, indent=1, default=float)
-    with open(MD_PATH, "w") as fh:
+    with open(MD_PATH, "w", encoding="utf-8") as fh:
         fh.write(_md(note))
-    with open(CARD_PATH, "w") as fh:
+    with open(CARD_PATH, "w", encoding="utf-8") as fh:
         fh.write(_card(note))
     out = {"verdict": note["verdict"], "json": JSON_PATH, "md": MD_PATH, "card": CARD_PATH}
     if use_governance:
         store = GovernanceStore.from_json(open(GOV_PATH).read())
         gov = apply_governance(store, note)
         if gov.get("added"):
-            with open(GOV_PATH, "w") as fh:
+            with open(GOV_PATH, "w", encoding="utf-8") as fh:
                 fh.write(store.to_json())
         gov["audit_entries"] = len(store.audit_trail.all())
         gov["audit_integrity_ok"] = store.audit_trail.verify_all()

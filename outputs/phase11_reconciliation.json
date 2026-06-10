@@ -26,7 +26,7 @@
     }
   ],
   "exceptions": [],
-  "generated_at": "2026-06-10T17:54:44Z",
+  "generated_at": "2026-06-10T18:31:20Z",
   "limitation_id": "PHASE11-T2-RECON",
   "n_chunks_done": 4,
   "n_chunks_failed": 0,
@@ -34,6 +34,6 @@
   "n_chunks_total": 4,
   "overall_passed": true,
   "processed_n_policies": 200,
-  "run_id": "448b0e30-fe17-4963-9de2-dae28a06ad70",
+  "run_id": "ceeadabc-62cc-4a39-a121-768a39d21577",
   "source_n_policies": 200
 }

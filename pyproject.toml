@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "par-model-v2"
+version = "1.0.0.dev0"
+description = "PAR Endowment Stochastic ALM & TVOG Model (educational; not cleared for production use)"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26,<3.0",
+    "pandas>=2.2,<3.0",
+    "scipy>=1.13,<2.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["par_model_v2*"]
+
+[tool.setuptools.package-data]
+par_model_v2 = [
+    "**/fixtures/*.json",
+    "viewer/*.js",
+    "viewer/*.html",
+]

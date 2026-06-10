@@ -3,7 +3,7 @@
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-10T17:33:32.669184+00:00",
+    "generated_utc": "2026-06-10T18:34:36.233261+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -1479,7 +1479,7 @@
     "source": "docs/validation/PHASE22_TASK4_AGGREGATION_REPORT.json"
   },
   "proxy": {
-    "verdict": "PASS \u00e2\u20ac\u201d selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)",
+    "verdict": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)",
     "selected_degree": 1,
     "overfit_onset_degree": 2,
     "overfit_onset_terms": 21,
@@ -5329,12 +5329,12 @@
         "author": "AutomatedModelDev_Phase13",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 7 \u00c2\u00a73.3",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "SOA ASOP 56 \u00c2\u00a73.1",
-          "IA TAS M \u00c2\u00a73.5",
-          "IA TAS M \u00c2\u00a73.6",
-          "IFoA APS X2 \u00c2\u00a74.2"
+          "SOA ASOP 7 \u00a73.3",
+          "SOA ASOP 25 \u00a73.3",
+          "SOA ASOP 56 \u00a73.1",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "IFoA APS X2 \u00a74.2"
         ],
         "sign_off_history": [
           {
@@ -5368,10 +5368,10 @@
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
           "CBIRC C-ROSS Reserve Valuation Guidance (2023)",
-          "IA TAS M \u00c2\u00a73.5",
-          "IA TAS M \u00c2\u00a73.7",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "SOA ASOP 56 \u00c2\u00a73.5"
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.7",
+          "SOA ASOP 25 \u00a73.3",
+          "SOA ASOP 56 \u00a73.5"
         ],
         "sign_off_history": [
           {
@@ -5396,7 +5396,7 @@
       },
       {
         "record_id": "20d0fe588afa4c74a2ee814e219e8f82",
-        "title": "Phase 13 Task 4: IA TAS M \u00c2\u00a73.6 validation suite executed (G-06)",
+        "title": "Phase 13 Task 4: IA TAS M \u00a73.6 validation suite executed (G-06)",
         "status": "APPROVED",
         "change_type": "governance_change",
         "created_at": "2026-06-04T07:42:31.873044+00:00",
@@ -5404,17 +5404,17 @@
         "author": "AutomatedModelDev_Phase13",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "IA TAS M \u00c2\u00a73.6",
-          "IA TAS M \u00c2\u00a73.6.5",
-          "APS X2 \u00c2\u00a73",
-          "SOA ASOP 56 \u00c2\u00a73.5"
+          "IA TAS M \u00a73.6",
+          "IA TAS M \u00a73.6.5",
+          "APS X2 \u00a73",
+          "SOA ASOP 56 \u00a73.5"
         ],
         "sign_off_history": [
           {
             "timestamp": "2026-06-04T07:42:31.873066+00:00",
             "actor": "AutomatedModelDev_Phase13",
             "status": "PEER_REVIEW",
-            "comments": "IA TAS M \u00c2\u00a73.6 suite executed; per-requirement evidence attached in validation report."
+            "comments": "IA TAS M \u00a73.6 suite executed; per-requirement evidence attached in validation report."
           },
           {
             "timestamp": "2026-06-04T07:42:31.873081+00:00",
@@ -5432,7 +5432,7 @@
       },
       {
         "record_id": "c518f45fe332426bad7a35b95ea2a82c",
-        "title": "APS X2 Independent Model Review (educational) \u00e2\u20ac\u201d Phase 13 Task 6 (G-08)",
+        "title": "APS X2 Independent Model Review (educational) \u2014 Phase 13 Task 6 (G-08)",
         "status": "APPROVED",
         "change_type": "governance_change",
         "created_at": "2026-06-04T09:16:43.835696+00:00",
@@ -5440,10 +5440,10 @@
         "author": "APS_X2_Independent_Reviewer",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "IFoA APS X2 \u00c2\u00a74.2",
-          "IA TAS M \u00c2\u00a73.6.5",
-          "IFoA Modelling Practice Note \u00c2\u00a74",
-          "SOA ASOP 56 \u00c2\u00a73.5"
+          "IFoA APS X2 \u00a74.2",
+          "IA TAS M \u00a73.6.5",
+          "IFoA Modelling Practice Note \u00a74",
+          "SOA ASOP 56 \u00a73.5"
         ],
         "sign_off_history": [
           {
@@ -5468,7 +5468,7 @@
       },
       {
         "record_id": "592109f8874f461d8137611cb7e14bba",
-        "title": "Runtime P/Q measure enforcement in all simulation paths (G-05 / MR-004) \u00e2\u20ac\u201d Phase 14 Task 1",
+        "title": "Runtime P/Q measure enforcement in all simulation paths (G-05 / MR-004) \u2014 Phase 14 Task 1",
         "status": "IMPLEMENTED",
         "change_type": "MODEL_CODE_CONTROL",
         "created_at": "2026-06-04T10:30:44+00:00",
@@ -5476,8 +5476,8 @@
         "author": "Automated model-dev cycle (Claude)",
         "peer_reviewer": "PENDING_INDEPENDENT_REVIEW",
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.1.3",
-          "IA TAS M \u00c2\u00a73.4"
+          "SOA ASOP 56 \u00a73.1.3",
+          "IA TAS M \u00a73.4"
         ],
         "sign_off_history": [
           {
@@ -5498,12 +5498,12 @@
         "author": "AutomatedModelDev_Phase14",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.4",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.5",
-          "IA TAS M \u00c2\u00a73.6",
-          "IA TAS M \u00c2\u00a73.7",
-          "IFoA APS X2 \u00c2\u00a74.2"
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "IA TAS M \u00a73.7",
+          "IFoA APS X2 \u00a74.2"
         ],
         "sign_off_history": [
           {
@@ -5528,7 +5528,7 @@
       },
       {
         "record_id": "CR-MR009-CLOSE-20260604",
-        "title": "Close MR-009 \u00e2\u20ac\u201d migrate educational guided_examples.py to current model APIs",
+        "title": "Close MR-009 \u2014 migrate educational guided_examples.py to current model APIs",
         "status": "IMPLEMENTED",
         "change_type": "CORRECTION",
         "created_at": "2026-06-04T12:37:49.737472+00:00",
@@ -5536,9 +5536,9 @@
         "author": "Claude Actuarial Agent",
         "peer_reviewer": null,
         "standard_references": [
-          "IA TAS M \u00c2\u00a73.6",
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "SOA ASOP 56 \u00c2\u00a73.2"
+          "IA TAS M \u00a73.6",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 56 \u00a73.2"
         ],
         "sign_off_history": [
           {
@@ -5551,7 +5551,7 @@
       },
       {
         "record_id": "05f624242d144ba6bd06f5e4f3484777",
-        "title": "Phase 14 Task 4: IA TAS M \u00c2\u00a73.6 re-validation against Phase 13 Task 5 backtest (G-06)",
+        "title": "Phase 14 Task 4: IA TAS M \u00a73.6 re-validation against Phase 13 Task 5 backtest (G-06)",
         "status": "OWNER_REVIEW",
         "change_type": "governance_change",
         "created_at": "2026-06-04T13:27:04.938789+00:00",
@@ -5559,13 +5559,13 @@
         "author": "AutomatedModelDev_Phase14",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "IA TAS M \u00c2\u00a73.6",
-          "IA TAS M \u00c2\u00a73.6.4",
-          "IA TAS M \u00c2\u00a73.6.5",
-          "APS X2 \u00c2\u00a73",
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "SOA ASOP 7 \u00c2\u00a73.3"
+          "IA TAS M \u00a73.6",
+          "IA TAS M \u00a73.6.4",
+          "IA TAS M \u00a73.6.5",
+          "APS X2 \u00a73",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "SOA ASOP 7 \u00a73.3"
         ],
         "sign_off_history": [
           {
@@ -5592,10 +5592,10 @@
         "author": "Claude Actuarial Agent",
         "peer_reviewer": "APS X2 Independent Reviewer (pending)",
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.1.3",
-          "SOA ASOP 56 \u00c2\u00a73.4",
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "IA TAS M \u00c2\u00a73.6"
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 56 \u00a73.5",
+          "IA TAS M \u00a73.6"
         ],
         "sign_off_history": [
           {
@@ -5614,7 +5614,7 @@
       },
       {
         "record_id": "916e55220ddd42eca3f43ccb95b6b536",
-        "title": "Phase 14 Task 6 \u00e2\u20ac\u201d Nested-stochastic / LSMC TVOG capital proxy",
+        "title": "Phase 14 Task 6 \u2014 Nested-stochastic / LSMC TVOG capital proxy",
         "status": "OWNER_REVIEW",
         "change_type": "methodology_change",
         "created_at": "2026-06-04T15:27:41.800519+00:00",
@@ -5622,12 +5622,12 @@
         "author": "LSMCProxyEngine (automated Phase 14 Task 6)",
         "peer_reviewer": "automated-regression",
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.1.3",
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.2",
-          "IA TAS M \u00c2\u00a73.6",
-          "IFoA MCEV Principles \u00c2\u00a77"
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2",
+          "IA TAS M \u00a73.6",
+          "IFoA MCEV Principles \u00a77"
         ],
         "sign_off_history": [
           {
@@ -5646,7 +5646,7 @@
       },
       {
         "record_id": "81fe2cedd71747e198ba055bf021e453",
-        "title": "Phase 15 Task 1 \u00e2\u20ac\u201d Two-driver (rates+equity) nested/LSMC capital proxy",
+        "title": "Phase 15 Task 1 \u2014 Two-driver (rates+equity) nested/LSMC capital proxy",
         "status": "OWNER_REVIEW",
         "change_type": "code_change",
         "created_at": "2026-06-04T16:26:28.886561+00:00",
@@ -5654,12 +5654,12 @@
         "author": "MultiDriverCapital-AutoDev",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.1.3",
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.2",
-          "IA TAS M \u00c2\u00a73.6",
-          "IFoA MCEV Principles \u00c2\u00a77",
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2",
+          "IA TAS M \u00a73.6",
+          "IFoA MCEV Principles \u00a77",
           "Longstaff-Schwartz 2001"
         ],
         "sign_off_history": [
@@ -5679,7 +5679,7 @@
       },
       {
         "record_id": "5e21202bf5a843ffb63dce5ad28099a5",
-        "title": "Phase 15 Task 3 \u00e2\u20ac\u201d Correlated risk aggregation (rates + equity guarantee)",
+        "title": "Phase 15 Task 3 \u2014 Correlated risk aggregation (rates + equity guarantee)",
         "status": "OWNER_REVIEW",
         "change_type": "methodology_change",
         "created_at": "2026-06-04T18:28:37.351932+00:00",
@@ -5687,11 +5687,11 @@
         "author": "Claude (automated 12h cycle)",
         "peer_reviewer": "APS X2 independent reviewer (PENDING)",
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "SOA ASOP 56 \u00c2\u00a73.1.3",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.2",
-          "IA TAS M \u00c2\u00a73.6"
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2",
+          "IA TAS M \u00a73.6"
         ],
         "sign_off_history": [
           {
@@ -5718,12 +5718,12 @@
         "author": "MultiDriverTailDiagnostics",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "SOA ASOP 56 \u00c2\u00a73.1.3",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.6",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.6",
           "L'Ecuyer (2018) RQMC",
-          "Glasserman (2003) \u00c2\u00a74"
+          "Glasserman (2003) \u00a74"
         ],
         "sign_off_history": [
           {
@@ -5750,12 +5750,12 @@
         "author": "Phase15Task5GovernanceRefresh",
         "peer_reviewer": null,
         "standard_references": [
-          "IA TAS M \u00c2\u00a73.6",
-          "IA TAS M \u00c2\u00a73.7",
-          "APS X2 \u00c2\u00a73",
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IFoA Modelling Practice Note \u00c2\u00a74"
+          "IA TAS M \u00a73.6",
+          "IA TAS M \u00a73.7",
+          "APS X2 \u00a73",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IFoA Modelling Practice Note \u00a74"
         ],
         "sign_off_history": [
           {
@@ -5782,11 +5782,11 @@
         "author": "Phase17Task5GovernanceRefresh",
         "peer_reviewer": null,
         "standard_references": [
-          "IA TAS M \u00c2\u00a73.6",
-          "IA TAS M \u00c2\u00a73.7",
-          "APS X2 \u00c2\u00a73",
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "SOA ASOP 25 \u00c2\u00a73.3",
+          "IA TAS M \u00a73.6",
+          "IA TAS M \u00a73.7",
+          "APS X2 \u00a73",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
           "IFoA proxy-modelling working party"
         ],
         "sign_off_history": [
@@ -5814,9 +5814,9 @@
         "author": "Phase18Task1CopulaAggregation",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.6",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.6",
           "Solvency II Delegated Reg. Art. 234",
           "IFoA Life Aggregation & Simulation working party",
           "Demarta-McNeil 2005 (t-copula)"
@@ -5846,11 +5846,11 @@
         "author": "AutomatedModelDev_Phase18",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.4",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.5",
-          "IA TAS M \u00c2\u00a73.6",
-          "IFoA APS X2 \u00c2\u00a74.2"
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "IFoA APS X2 \u00a74.2"
         ],
         "sign_off_history": [
           {
@@ -5883,12 +5883,12 @@
         "author": "Phase18Task4GovernanceRefresh",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.5",
-          "SOA ASOP 56 \u00c2\u00a73.1.3",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "SOA ASOP 7 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.2",
-          "IA TAS M \u00c2\u00a73.6",
+          "SOA ASOP 56 \u00a73.5",
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 25 \u00a73.3",
+          "SOA ASOP 7 \u00a73.3",
+          "IA TAS M \u00a73.2",
+          "IA TAS M \u00a73.6",
           "Solvency II Delegated Reg. Art. 234",
           "IFoA Life Aggregation & Simulation working party",
           "L'Ecuyer (2018) RQMC"
@@ -5918,12 +5918,12 @@
         "author": "AutomatedModelDev_Phase19",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 7 \u00c2\u00a73.3",
-          "SOA ASOP 56 \u00c2\u00a73.4",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.5",
-          "IA TAS M \u00c2\u00a73.6",
-          "IFoA APS X2 \u00c2\u00a74.2"
+          "SOA ASOP 7 \u00a73.3",
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "IFoA APS X2 \u00a74.2"
         ],
         "sign_off_history": [
           {
@@ -6155,13 +6155,13 @@
         "author": "AutomatedModelDev_Phase21",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.1.3",
-          "SOA ASOP 56 \u00c2\u00a73.4",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.4",
-          "IA TAS M \u00c2\u00a73.5",
-          "IA TAS M \u00c2\u00a73.6",
-          "IFoA APS X2 \u00c2\u00a74.2"
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.4",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
+          "IFoA APS X2 \u00a74.2"
         ],
         "sign_off_history": [
           {
@@ -6322,15 +6322,15 @@
         "author": "AutomatedModelDev_Phase22",
         "peer_reviewer": "APS_X2_Independent_Reviewer",
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.1.3",
-          "SOA ASOP 56 \u00c2\u00a73.4",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.4",
-          "IA TAS M \u00c2\u00a73.5",
-          "IA TAS M \u00c2\u00a73.6",
+          "SOA ASOP 56 \u00a73.1.3",
+          "SOA ASOP 56 \u00a73.4",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.4",
+          "IA TAS M \u00a73.5",
+          "IA TAS M \u00a73.6",
           "Solvency II Delegated Reg. Art. 142",
           "Solvency II Delegated Reg. Art. 234",
-          "IFoA APS X2 \u00c2\u00a74.2"
+          "IFoA APS X2 \u00a74.2"
         ],
         "sign_off_history": [
           {
@@ -6418,9 +6418,9 @@
         "author": "Phase23Task1DesignNote",
         "peer_reviewer": null,
         "standard_references": [
-          "SOA ASOP 56 \u00c2\u00a73.1.3/\u00c2\u00a73.4/\u00c2\u00a73.5",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.2/\u00c2\u00a73.6",
+          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2/\u00a73.6",
           "Solvency II Delegated Reg. Art. 23 (future management actions)",
           "Solvency II Delegated Reg. Art. 234 (empirically justified diversification)",
           "Solvency II Delegated Reg. Art. 236",
@@ -6582,9 +6582,9 @@
         "standard_references": [
           "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable; effect quantified)",
           "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour)",
-          "SOA ASOP 56 \u00c2\u00a73.1.3/\u00c2\u00a73.4/\u00c2\u00a73.5",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.2/\u00c2\u00a73.6",
+          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2/\u00a73.6",
           "IFoA Life Aggregation & Simulation working party",
           "McNeil-Frey-Embrechts 2015 ch.7",
           "Demarta-McNeil 2005"
@@ -6780,9 +6780,9 @@
         "standard_references": [
           "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable; consistent with how they would be exercised over time)",
           "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour)",
-          "SOA ASOP 56 \u00c2\u00a73.1.3/\u00c2\u00a73.4/\u00c2\u00a73.5",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.2/\u00c2\u00a73.6",
+          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2/\u00a73.6",
           "IFoA Life Aggregation & Simulation working party",
           "CFO Forum MCEV Principle 7 (TVOG; dynamic management actions)"
         ],
@@ -6939,9 +6939,9 @@
         "standard_references": [
           "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour; dependence justified on the basis actually used for capital)",
           "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable)",
-          "SOA ASOP 56 \u00c2\u00a73.1.3/\u00c2\u00a73.4/\u00c2\u00a73.5",
-          "SOA ASOP 25 \u00c2\u00a73.3",
-          "IA TAS M \u00c2\u00a73.2/\u00c2\u00a73.6",
+          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2/\u00a73.6",
           "IFoA Life Aggregation & Simulation working party",
           "CFO Forum MCEV Principle 7 (TVOG; dynamic management actions)"
         ],
@@ -7090,7 +7090,7 @@
     "deployment_gates": [
       {
         "gate_id": "G-01",
-        "description": "Discount rate \u00e2\u2030\u00a4 3.0% in all defaults",
+        "description": "Discount rate \u2264 3.0% in all defaults",
         "status": "CLEARED (educational)",
         "level": "educational",
         "blocking": "Regulatory reserve, pricing",
@@ -7130,7 +7130,7 @@
       },
       {
         "gate_id": "G-06",
-        "description": "IA validation suite \u00e2\u2030\u00a5 80% PASS",
+        "description": "IA validation suite \u2265 80% PASS",
         "status": "CLEARED (educational, 80.6%)",
         "level": "educational",
         "blocking": "All regulatory use cases",
@@ -7165,7 +7165,7 @@
         "description": "MR-005 formally closed in risk register",
         "status": "CLEARED",
         "level": "production",
-        "blocking": "\u00e2\u20ac\u201d (admin only)",
+        "blocking": "\u2014 (admin only)",
         "cleared": true
       },
       {
@@ -7196,8 +7196,8 @@
         "likelihood": "HIGH",
         "impact": "CRITICAL",
         "description": "Current discount rate assumption is 3.5%, exceeding the CBIRC regulatory cap of 3.0% (effective 2023 reserve valuation guidance). This produces an understated liability reserve and overstated solvency margin.",
-        "mitigation": "Reduce discount rate to \u00e2\u2030\u00a43.0% in Phase 4 calibration; document deviation formally per ASOP 25 \u00c2\u00a73.3.",
-        "related_standard": "SOA ASOP 25 \u00c2\u00a73.3; CBIRC Reserve Valuation Guidance 2023",
+        "mitigation": "Reduce discount rate to \u22643.0% in Phase 4 calibration; document deviation formally per ASOP 25 \u00a73.3.",
+        "related_standard": "SOA ASOP 25 \u00a73.3; CBIRC Reserve Valuation Guidance 2023",
         "updated_at": "2026-06-04T05:28:13.393982+00:00"
       },
       {
@@ -7209,9 +7209,9 @@
         "owner": "Assumption Owner",
         "likelihood": "HIGH",
         "impact": "HIGH",
-        "description": "Bond return assumptions (4.0\u00e2\u20ac\u201c5.0%) are 100\u00e2\u20ac\u201c180 bps above current CNY government bond yields (2.2\u00e2\u20ac\u201c2.6% as of calibration date). Equity ERP has not been calibrated. This systematically understates TVOG and liability PV.",
+        "description": "Bond return assumptions (4.0\u20135.0%) are 100\u2013180 bps above current CNY government bond yields (2.2\u20132.6% as of calibration date). Equity ERP has not been calibrated. This systematically understates TVOG and liability PV.",
         "mitigation": "Recalibrate bond returns and ERP to CNY market data in Phase 4 (GBMCalibrator); interim sensitivity analysis required.",
-        "related_standard": "SOA ASOP 56 \u00c2\u00a73.4; SOA ASOP 25 \u00c2\u00a73.3",
+        "related_standard": "SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3",
         "updated_at": "2026-06-04T11:24:19.652316+00:00"
       },
       {
@@ -7223,9 +7223,9 @@
         "owner": "Model Developer",
         "likelihood": "MEDIUM",
         "impact": "CRITICAL",
-        "description": "No dynamic lapse function is implemented. Dynamic lapse is the single most impactful assumption for TVOG and ALM under stressed rate scenarios. Static lapse at current flat rates will materially understate TVOG sensitivity (estimated \u00c2\u00b115\u00e2\u20ac\u201c30% TVOG per \u00c2\u00b125% lapse shock per Phase 1 assessment).",
+        "description": "No dynamic lapse function is implemented. Dynamic lapse is the single most impactful assumption for TVOG and ALM under stressed rate scenarios. Static lapse at current flat rates will materially understate TVOG sensitivity (estimated \u00b115\u201330% TVOG per \u00b125% lapse shock per Phase 1 assessment).",
         "mitigation": "Dynamic lapse implemented and calibrated (Phase 13 Task 2); ChangeRecord assumption=\"dynamic_lapse\" APPROVED.",
-        "related_standard": "SOA ASOP 7 \u00c2\u00a73.3; IA TAS M \u00c2\u00a73.5",
+        "related_standard": "SOA ASOP 7 \u00a73.3; IA TAS M \u00a73.5",
         "updated_at": "2026-06-06T00:17:39.182600+00:00"
       },
       {
@@ -7239,7 +7239,7 @@
         "impact": "CRITICAL",
         "description": "Prior to Phase 2, the codebase did not enforce or document the distinction between real-world (P) and risk-neutral (Q) scenario sets. Mixing measures is a critical actuarial error that invalidates both VaR/ES and TVOG outputs.",
         "mitigation": "Measure enum implemented in esg_process.py (Phase 2). LossDistribution enforces Measure.P for VaR/ES (risk_metrics.py); TVOGEngine enforces Measure.Q (tvog.py). Phase 14 Task 1: runtime guard _enforce_simulation_measure() now validates the requested measure against each generator's declared SUPPORTED_MEASURES in every simulate()/generate() execution path (HullWhite, G2++, GBM, FX, ScenarioSet), and _assert_output_measure() verifies the output measure stamp. 30 dedicated runtime tests (tests/test_measure_enforcement.py) PASS with genuine runtime execution evidence (numpy/scipy/pandas/pytest available in automation sandbox).",
-        "related_standard": "SOA ASOP 56 \u00c2\u00a73.1.3; IA TAS M \u00c2\u00a73.4",
+        "related_standard": "SOA ASOP 56 \u00a73.1.3; IA TAS M \u00a73.4",
         "updated_at": "2026-06-04T10:30:44+00:00"
       },
       {
@@ -7252,8 +7252,8 @@
         "likelihood": "HIGH",
         "impact": "HIGH",
         "description": "DistributedExecutor fails to serialise complex model objects for multiprocessing, causing 7 test failures in the original repository test suite. This blocks all distributed scenario execution, TVOG computation, and VaR/ES integration.",
-        "mitigation": "RESOLVED \u00e2\u20ac\u201d module-level `_execute_task_spec` callable + `make_partial_task` binder; verified by 63 tests.",
-        "related_standard": "SOA ASOP 56 \u00c2\u00a73.5 (scenario adequacy requires successful batch execution)",
+        "mitigation": "RESOLVED \u2014 module-level `_execute_task_spec` callable + `make_partial_task` binder; verified by 63 tests.",
+        "related_standard": "SOA ASOP 56 \u00a73.5 (scenario adequacy requires successful batch execution)",
         "updated_at": "2026-06-04T09:16:43.834338+00:00"
       },
       {
@@ -7266,8 +7266,8 @@
         "likelihood": "HIGH",
         "impact": "CRITICAL",
         "description": "Overall validation readiness assessed at 2/5 (development-grade). Stochastic validation (scenario convergence, martingale test, VaR/ES integration) is entirely absent. Model is not fit for regulatory reporting or production use in current state.",
-        "mitigation": "4-layer validation framework implementation across Phases 3\u00e2\u20ac\u201c4. Full validation cadence in Phase 5.",
-        "related_standard": "SOA ASOP 56 \u00c2\u00a73.5; IA TAS M \u00c2\u00a73.6; APS X2",
+        "mitigation": "4-layer validation framework implementation across Phases 3\u20134. Full validation cadence in Phase 5.",
+        "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; APS X2",
         "updated_at": "2026-05-18T02:18:55.749042+00:00"
       },
       {
@@ -7279,9 +7279,9 @@
         "owner": "Assumption Owner",
         "likelihood": "HIGH",
         "impact": "HIGH",
-        "description": "The model has no documented assumption change control process. Any assumption can be changed without sign-off, impact assessment, or audit trail. This is a material IA TAS M \u00c2\u00a73.7 gap.",
+        "description": "The model has no documented assumption change control process. Any assumption can be changed without sign-off, impact assessment, or audit trail. This is a material IA TAS M \u00a73.7 gap.",
         "mitigation": "GovernanceStore + ChangeRecord + SignOffWorkflow implemented in Phase 2, Task 4 (this module). Requires organisational adoption.",
-        "related_standard": "IA TAS M \u00c2\u00a73.7; IA TAS M \u00c2\u00a73.3",
+        "related_standard": "IA TAS M \u00a73.7; IA TAS M \u00a73.3",
         "updated_at": "2026-05-18T02:18:55.749049+00:00"
       },
       {
@@ -7293,9 +7293,9 @@
         "owner": "Model Developer",
         "likelihood": "HIGH",
         "impact": "CRITICAL",
-        "description": "HullWhiteCalibrator.calibrate() is a NotImplementedError stub. HW1F parameters (a=0.10, \u00cf\u0192_r=0.012) are placeholders producing model swaption vol ~250 bps vs ~42 bps market \u00e2\u20ac\u201d a 6x error. All interest rate paths and ZCB prices derived from these parameters are unreliable.",
+        "description": "HullWhiteCalibrator.calibrate() is a NotImplementedError stub. HW1F parameters (a=0.10, \u03c3_r=0.012) are placeholders producing model swaption vol ~250 bps vs ~42 bps market \u2014 a 6x error. All interest rate paths and ZCB prices derived from these parameters are unreliable.",
         "mitigation": "Implement L-BFGS-B calibration in Phase 4 using CNY swaption market data.",
-        "related_standard": "SOA ASOP 56 \u00c2\u00a73.4; SOA ASOP 25 \u00c2\u00a73.3",
+        "related_standard": "SOA ASOP 56 \u00a73.4; SOA ASOP 25 \u00a73.3",
         "updated_at": "2026-05-18T02:18:55.749056+00:00"
       },
       {
@@ -7307,9 +7307,9 @@
         "owner": "Model Developer",
         "likelihood": "LOW",
         "impact": "LOW",
-        "description": "par_model_v2/examples/guided_examples.py references attributes removed from RiskFreeCurve (calibration_date/model_label/discount_factors) and FixedIncomeInstrument (term_months/par_value/oas_bps) and an outdated project_fixed_income_cashflows signature; tests/test_guided_examples.py errors (3 failed / 46 errors). Surfaced by the Phase 13 Task 4 IA TAS M \u00c2\u00a73.6 validation run. Educational wrapper only; backs no IA TAS M \u00c2\u00a73.6 requirement; production reporting engine (reporting_cycle.py) is tested separately and passes.",
+        "description": "par_model_v2/examples/guided_examples.py references attributes removed from RiskFreeCurve (calibration_date/model_label/discount_factors) and FixedIncomeInstrument (term_months/par_value/oas_bps) and an outdated project_fixed_income_cashflows signature; tests/test_guided_examples.py errors (3 failed / 46 errors). Surfaced by the Phase 13 Task 4 IA TAS M \u00a73.6 validation run. Educational wrapper only; backs no IA TAS M \u00a73.6 requirement; production reporting engine (reporting_cycle.py) is tested separately and passes.",
         "mitigation": "Migrate the fixed-income / TVOG / HK-liability sections of guided_examples.py to the current APIs in a dedicated change-controlled cycle; re-run tests/test_guided_examples.py to green.",
-        "related_standard": "IA TAS M \u00c2\u00a73.6; SOA ASOP 56 \u00c2\u00a73.5",
+        "related_standard": "IA TAS M \u00a73.6; SOA ASOP 56 \u00a73.5",
         "updated_at": "2026-06-04T12:37:49.737472+00:00"
       },
       {
@@ -7323,7 +7323,7 @@
         "impact": "HIGH",
         "description": "The standard-formula (variance-covariance) aggregation fed with the raw ESG rate/equity factor correlation understates the fully-diversified nested tail capital by ~33% (29,031 vs 43,251 at 99.5%). The realised capital-loss correlation is +0.55 vs the -0.15 factor correlation because the equity maturity guarantee and rate-driven guaranteed-benefit legs lose value in the same direction under joint down-rate/down-equity stress.",
         "mitigation": "Benchmark all aggregated figures to the multi-driver nested run; aggregate on the empirical capital-loss correlation rather than the raw ESG factor correlation; document gap in the limitation card. Educational only; not used for any capital decision.",
-        "related_standard": "SOA ASOP 56 \u00c2\u00a73.5; IA TAS M \u00c2\u00a73.6; SOA ASOP 25 \u00c2\u00a73.3",
+        "related_standard": "SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6; SOA ASOP 25 \u00a73.3",
         "updated_at": "2026-06-08T01:31:12.922427+00:00"
       },
       {
@@ -7337,7 +7337,7 @@
         "impact": "HIGH",
         "description": "The Phase 15 multi-driver (short-rate + equity) nested/LSMC economic-capital proxy (Tasks 1-4) is fitted on PLACEHOLDER HW1F / GBM parameters, omits material risk drivers (lapse, mortality/longevity trend, credit spread, FX, liquidity, management action), uses an educational single-guarantee liability, and has NOT been independently reviewed (APS X2). The 99.5% VaR/ES and SCR-proxy figures it produces are illustrative only and must not be used for regulatory or internal economic-capital reporting until parameters are calibrated to credentialled market data, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all multi-driver capital output as EDUCATIONAL ONLY in the limitation card and at the API boundary; bound proxy error by the Task 2 out-of-sample validation (OOS R^2=0.9704, VaR rel err 3.21%) and outer-sampling error by the Task 4 bootstrap CI (SE ~1.66%); benchmark every aggregated figure to the Task 3 nested ground truth. Residual closure requires credentialled-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008).",
-        "related_standard": "IA TAS M \u00c2\u00a73.6; APS X2 \u00c2\u00a73; SOA ASOP 56 \u00c2\u00a73.5",
+        "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5",
         "updated_at": "2026-06-07T08:25:03.762431+00:00"
       },
       {
@@ -7351,7 +7351,7 @@
         "impact": "HIGH",
         "description": "Phase 17 adds a CIR++ mean-reverting credit-spread driver (par_model_v2/stochastic/credit_spread.py) as the third risk factor in the nested/LSMC economic-capital proxy (rate + equity + credit-spread), with a reduced-form hazard x LGD credit-loss component on spread-sensitive backing assets. The CIR++ parameters (mean-reversion, long-run spread, vol, risk premium) and the hazard/LGD assumptions are PLACEHOLDER educational defaults, NOT calibrated to credentialled credit-market data; the trivariate LSMC surface still omits material drivers (lapse, mortality/longevity trend, FX, liquidity, management action) and has NOT been independently reviewed (APS X2). The three-driver 99.5% VaR/ES and SCR-proxy figures are illustrative only and must not be used for regulatory or internal economic-capital reporting until the credit parameters are calibrated, the omitted drivers are brought into the tail, and an independent reviewer signs off.",
         "mitigation": "Classify all three-driver capital output as EDUCATIONAL ONLY in the consolidated limitation card and at the API boundary; bound proxy error by the Task 2 trivariate out-of-sample validation (OOS R^2=0.9751; selected basis deg1/max-int3; leakage-free) and outer-sampling error by the Task 4 three-driver bootstrap CI (VaR 150,859 with 95% CI [149,634, 152,369], SE 692 / +-0.91%); benchmark every aggregated figure to the Task 3 three-driver nested ground truth. Residual closure requires credentialled credit-data calibration + independent APS X2 review (tracked jointly with MR-006 / MR-008 / MR-011).",
-        "related_standard": "IA TAS M \u00c2\u00a73.6; APS X2 \u00c2\u00a73; SOA ASOP 56 \u00c2\u00a73.5; ASOP 25 \u00c2\u00a73.3",
+        "related_standard": "IA TAS M \u00a73.6; APS X2 \u00a73; SOA ASOP 56 \u00a73.5; ASOP 25 \u00a73.3",
         "updated_at": "2026-06-07T09:14:22.447046+00:00"
       },
       {
@@ -7416,7 +7416,7 @@
     {
       "key": "proxy",
       "label": "Out-of-sample proxy validation",
-      "verdict": "PASS \u00e2\u20ac\u201d selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
+      "verdict": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
     },
     {
       "key": "aggregation",

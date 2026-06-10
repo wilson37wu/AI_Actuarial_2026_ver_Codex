@@ -94,9 +94,9 @@ def main() -> int:
     n_inner = int(sys.argv[2]) if len(sys.argv) > 2 else 256
     os.makedirs(OUT_DIR, exist_ok=True)
     d = build(n_outer=n_outer, n_inner=n_inner)
-    with open(os.path.join(OUT_DIR, "PHASE17_RISK_AGGREGATION_REPORT.json"), "w") as fh:
+    with open(os.path.join(OUT_DIR, "PHASE17_RISK_AGGREGATION_REPORT.json"), "w", encoding="utf-8") as fh:
         json.dump(d, fh, indent=2, sort_keys=True)
-    with open(os.path.join(OUT_DIR, "PHASE17_RISK_AGGREGATION_REPORT.md"), "w") as fh:
+    with open(os.path.join(OUT_DIR, "PHASE17_RISK_AGGREGATION_REPORT.md"), "w", encoding="utf-8") as fh:
         fh.write(_md(d))
     print("VERDICT:", d["verdict"])
     print("correlated_scr=%.1f nested_scr=%.1f understate=%.1f%%" % (

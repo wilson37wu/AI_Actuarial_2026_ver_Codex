@@ -303,18 +303,18 @@ def main(use_governance: bool = False) -> dict:
     store = GovernanceStore.from_json(open(GOV_PATH).read())
     if use_governance:
         gov = apply_governance(store, note)
-        with open(GOV_PATH, "w") as fh:
+        with open(GOV_PATH, "w", encoding="utf-8") as fh:
             fh.write(store.to_json())
     note["governance"] = {**gov,
                           "audit_entries": len(store.audit_trail.all()),
                           "audit_integrity_ok": store.audit_trail.verify_all(),
                           "change_records_total": len(store.change_records)}
-    with open(JSON_PATH, "w") as fh:
+    with open(JSON_PATH, "w", encoding="utf-8") as fh:
         json.dump(note, fh, indent=2)
     md = _md(note)
-    with open(MD_PATH, "w") as fh:
+    with open(MD_PATH, "w", encoding="utf-8") as fh:
         fh.write(md)
-    with open(CARD_PATH, "w") as fh:
+    with open(CARD_PATH, "w", encoding="utf-8") as fh:
         fh.write(md)  # card mirrors the note for the docs index
     print("verdict:", note["verdict"], "| governance:", gov,
           "| audit:", note["governance"]["audit_entries"],

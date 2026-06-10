@@ -43,9 +43,9 @@ def main() -> int:
     os.makedirs(OUT_DIR, exist_ok=True)
     json_path = os.path.join(OUT_DIR, "PHASE19_TASK4_TAIL_DIAGNOSTICS_REPORT.json")
     md_path = os.path.join(OUT_DIR, "PHASE19_TASK4_TAIL_DIAGNOSTICS_REPORT.md")
-    with open(json_path, "w") as f:
+    with open(json_path, "w", encoding="utf-8") as f:
         f.write(report.to_json())
-    with open(md_path, "w") as f:
+    with open(md_path, "w", encoding="utf-8") as f:
         f.write(report.to_markdown())
 
     c = report.convergence

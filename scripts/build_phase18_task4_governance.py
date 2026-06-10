@@ -373,14 +373,14 @@ def main(use_governance: bool = False) -> dict:
     store = GovernanceStore.from_json(open(GOV_PATH).read())
     summary = apply(store)
     os.makedirs(OUT_DIR, exist_ok=True)
-    with open(JSON_PATH, "w") as fh:
+    with open(JSON_PATH, "w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=2)
-    with open(MD_PATH, "w") as fh:
+    with open(MD_PATH, "w", encoding="utf-8") as fh:
         fh.write(_md(summary))
-    with open(CARD_PATH, "w") as fh:
+    with open(CARD_PATH, "w", encoding="utf-8") as fh:
         fh.write(_card(summary))
     if use_governance:
-        with open(GOV_PATH, "w") as fh:
+        with open(GOV_PATH, "w", encoding="utf-8") as fh:
             fh.write(store.to_json())
         print("governance: store written ->", GOV_PATH)
     print("MR-010:", summary["mr_010_refreshed"], summary["mr_010_status"],

@@ -160,7 +160,7 @@ def build(n_fit: int = 500, n_outer: int = 5_000) -> Dict[str, object]:
     payload["meta"]["reproducibility_digest"] = digest
 
     os.makedirs(OUT_DIR, exist_ok=True)
-    with open(JSON_PATH, "w") as fh:
+    with open(JSON_PATH, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, indent=1, ensure_ascii=False)
 
     print("fit_r2:", round(float(surface.fit_r2), 4),

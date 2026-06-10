@@ -48,7 +48,7 @@ DATA_TOKEN = "/*__UI_DATA__*/null"
 
 def _load(path: str) -> Optional[dict]:
     try:
-        with open(path) as fh:
+        with open(path, encoding="utf-8") as fh:
             return json.load(fh)
     except (OSError, ValueError):
         return None
@@ -3738,11 +3738,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
 
 def write_outputs(data: Dict[str, Any]) -> None:
-    with open(OUT_JSON, "w") as fh:
+    with open(OUT_JSON, "w", encoding="utf-8") as fh:
         json.dump(data, fh, indent=2, default=str)
     embedded = "/*__UI_DATA__*/" + json.dumps(data, default=str)
     html = HTML_TEMPLATE.replace(DATA_TOKEN, embedded)
-    with open(OUT_HTML, "w") as fh:
+    with open(OUT_HTML, "w", encoding="utf-8") as fh:
         fh.write(html)
 
 

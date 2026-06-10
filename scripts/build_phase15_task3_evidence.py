@@ -43,7 +43,7 @@ def build():
     d = report.to_dict()
 
     os.makedirs(OUT_DIR, exist_ok=True)
-    with open(JSON_PATH, "w") as fh:
+    with open(JSON_PATH, "w", encoding="utf-8") as fh:
         json.dump(d, fh, indent=2, sort_keys=True)
 
     s = d["standalone"]
@@ -127,7 +127,7 @@ def build():
     md.append("**Standards:** " + ", ".join(d["standards"]))
     md.append("")
 
-    with open(MD_PATH, "w") as fh:
+    with open(MD_PATH, "w", encoding="utf-8") as fh:
         fh.write("\n".join(md))
 
     print("WROTE", JSON_PATH)
