@@ -36,6 +36,22 @@ for full component-level limitation cards.
 
 from __future__ import annotations
 
+import pathlib
+import sys
+
+# Make the project root (AI_Actuarial_2026_ver_Codex/) importable so that
+# "from par_model_v2.X import ..." works when the script is run directly.
+_PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
+# Fix Windows console encoding so that Unicode characters (e.g. checkmarks)
+# don't crash with UnicodeEncodeError on CP1252 terminals.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 import json
 import warnings
 from dataclasses import asdict
