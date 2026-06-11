@@ -93,7 +93,7 @@ Each row is a **group of like policies** (a model point), replacing the syntheti
 
 ## 4. How to run the calculation (target workflow)
 
-> **Status 2026-06-11: Steps 2 (input loader) and 3 (run orchestrator) are LIVE.** Step 4 below still describes the target workflow until the GUI currency wire-through (B4) lands. They assume Python 3 is available. In this sandbox, scientific libraries live under `/var/tmp/pylibs`, so prefix commands with `PYTHONPATH=/var/tmp/pylibs:.`; on a normal machine, install the packages in `requirements.txt` once (`pip install -r requirements.txt`) and drop the `/var/tmp/pylibs:` prefix.
+> **Status 2026-06-11: the whole chain is LIVE end-to-end** — Step 2 (input loader), Step 3 (run orchestrator) and Step 4 (GUI build **including the currency wire-through, B4+A1**). They assume Python 3 is available. In this sandbox, scientific libraries live under `/var/tmp/pylibs`, so prefix commands with `PYTHONPATH=/var/tmp/pylibs:.`; on a normal machine, install the packages in `requirements.txt` once (`pip install -r requirements.txt`) and drop the `/var/tmp/pylibs:` prefix.
 
 **Step 1 — fill and save the template.** Complete `production_run/MODEL_INPUTS_TEMPLATE.xlsx` (§3) and save it in the model folder.
 
@@ -116,17 +116,26 @@ You can also run everything through the production wrapper — it calls the orch
 PYTHONPATH=/var/tmp/pylibs:. python3 production_run/run_production_model.py --stage all
 ```
 
-**Step 4 — build the GUI.** Bundle the results into the offline viewer:
+**Step 4 — build the GUI (LIVE, currency-aware).** Bundle the results into the offline viewer:
 ```
 PYTHONPATH=. python3 scripts/build_ui_data.py
 ```
 Outputs (in the model folder): **`ui_data.json`** and **`ui_app.html`**.
+The bundler stamps your **Currency tab** settings and the run's **output label** into the
+contract (`meta.currency`, `meta.currency_source`, `meta.output_label`; contract 1.12.0,
+additive). Every monetary figure in the GUI — SCR cards, aggregation charts, tail CIs,
+phase deep-dives — is then rendered through one `fmtMoney` formatter using your symbol,
+decimal places and thousands separator, and the header shows a `currency` and `run` badge.
+Display sources in priority order: `model_inputs.json` → `docs/validation/RUN_MODEL_SUMMARY.json`
+(the currency recorded on the latest run) → neutral default (plain numbers, exactly the
+pre-1.12.0 display). The chosen source is disclosed in `meta.currency_source`.
 
 **Step 5 — open the GUI.** Double-click **`ui_app.html`** in any modern browser. No server, internet, or install. You can also drag a different `ui_data.json` onto the page to load another run.
 
 ### What you can do today
 - **Validate your inputs (LIVE):** fill the template and run the loader (Step 2). It checks every field (ranges, product types, complete rows), fails with a precise tab/row/field message, and echoes currency, total asset MV, total sum assured and policy count.
 - **Run the model on your inputs (LIVE):** `scripts/run_model.py` (Step 3) — full seven-driver capital aggregation with bootstrap CI and tail diagnostics, results in `docs/validation/RUN_MODEL_*.json`. A worked example on the template's demo book is committed there.
+- **See your currency in the GUI (LIVE):** rebuild with `scripts/build_ui_data.py` (Step 4) — monetary figures pick up your symbol/decimals/thousands separator and the header shows `currency` and `run` badges.
 
 - **View:** double-click `ui_app.html`.
 - **Rebuild the GUI** from the current result files:
@@ -155,7 +164,7 @@ Phase deep-dive tabs surface the dependence-structure track, including **Grouped
 
 ## 6. How parameters flow (so you know what changes what)
 
-- **Currency tab** → output **labels and scale** only. It does not change any number; it changes how numbers are displayed and described.
+- **Currency tab** → output **labels and scale** only. It does not change any number; it changes how numbers are displayed and described. (LIVE: the GUI formats every monetary figure with your symbol/decimals/separator via `fmtMoney` and shows the currency badge in the header; the calibration-market *provenance strings* still read "CNY" until the A2 relabel task.)
 - **Balance Sheet tab** → the **asset side and the liquidity exposure**. Asset MV and the illiquid/forced-sale inputs set the liquidity-driver exposure notional; the liability/reserve sets the size of the liability the capital protects.
 - **Portfolio tab** → the **liability projection**. The model points drive the cash-dividend / reversionary-bonus / guarantee mechanics that produce the liability paths.
 - **Assumptions tab** → the **capital level and management-action relief**. Confidence sets the SCR percentile; the relief scalars set how much management actions offset adverse scenarios. The frozen copula/df govern the *dependence* between drivers and are not user inputs.

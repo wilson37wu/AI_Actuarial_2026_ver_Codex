@@ -9430,3 +9430,23 @@ Pre-registered tree-3 margin bootstrap per PHASE30_TASK1_DESIGN_NOTE task3_accep
 **Env:** sandbox now kills background processes at tool-call boundaries (~45 s/call) — long runs must be staged or profile-reduced; /var/tmp/pylibs rebuilt (scipy/openpyxl/pytest).
 
 **Next:** Phase UIL Task 4 (B4+A1) GUI currency wire-through; then resume Phase 30 Task 4.
+
+---
+
+## 2026-06-11 ~07:10 UTC — Cycle 28 (Claude) — Phase UIL Task 4 (B4+A1): GUI currency wire-through LIVE — PHASE UIL COMPLETE
+
+**Task (single in_progress item).** B4+A1 per `IMPLEMENTATION_PLAN_currency_and_inputs.md`: `build_ui_data.py` stamps currency + output_label into `meta`; `ui_app.html` money formatting routed through `fmtMoney`; `production_run/README` + user manual updated end-to-end; offline GUI contract bump ADDITIVE.
+
+**What shipped.**
+- `scripts/build_ui_data.py`: new `_resolve_currency_meta()` — priority DISCLOSED in `meta.currency_source`: (1) `model_inputs.json` via `par_model_v2.user_inputs.find_model_inputs` (validated user contract), (2) `docs/validation/RUN_MODEL_SUMMARY.json` (currency stamped on the latest `run_model.py` evidence), (3) neutral default (no symbol — bare numbers bit-identical to contract 1.11.0). Broken inputs file degrades softly for DISPLAY metadata only (run path stays fail-loud). Stamps `meta.currency {code,symbol,decimals,scale,thousands}`, `meta.currency_source`, `meta.output_label`. `CONTRACT_VERSION` 1.11.0 → **1.12.0 (ADDITIVE)**; in-app schema doc updated.
+- `ui_app.html` (generated): single `fmtMoney()` formatter (symbol prefix, decimals, thousands separator comma/space/none, negative placement) reading `meta.currency` **dynamically** (drag-and-drop snapshot reload re-resolves); **153 monetary render sites** routed `num()` → `fmtMoney()` (SCR/VaR/ES/CI cards, aggregation tooltips, P23–P29 deep-dive tables); counts/bytes/ratios deliberately stay on generic `num()`; header gains `currency` + `run` badges.
+- `scripts/ui_app_self_test.cjs`: +4 assertions (meta stamped, fmtMoney defined, configured symbol actually renders against money digits, currency badge). Result: **ok:true, 0 network calls, 0 JS errors**.
+- New `tests/test_ui_currency_meta.py` — **9/9**: source priority, run-evidence label precedence, run_settings label fallback, soft degradation on broken inputs, partial-block defaulting, meta stamping, additive-bump guard (major must stay 1), template assertions.
+- `tests/test_phase29_task5_ui_propagation.py`: contract pin `"1.11"` → accept additive 1.x minor ≥ 11 (latest-refresh-supersedes convention, DISCLOSED — same class as the cycle-27 note-pin fix).
+- Docs: `production_run/README.md` ("Not yet wired in" → **LIVE end-to-end** section incl. currency chain + source priority), `production_run/USER_MANUAL_run_and_inputs.md` (§4 all steps LIVE, Step 4 currency-aware, §6 currency-flow note, "what you can do today" + GUI currency).
+
+**Verification.** New tests 9/9; UI-relevant regression selection **336/336** (user_inputs 19 + user_inputs_integration 19 + run-orchestrator-adjacent UI propagation suites P22/P23/P24/P25/P26/P29 T5 + offline viewer 21 + validation dashboard + schema compatibility + governance task5 suites); `test_run_model.py` 23/23; broader selections 402 (group A) + 533 (group B incl. esg_process 79, hybrid_grid 80, integration_e2e 49) + 363 (group C incl. phase13 backtest 24) + guided_examples 64 — **0 failures**; offline `ui_app_self_test` ok:true (0 net / 0 err) against the rebuilt `ui_app.html`; `compileall` clean; built `ui_data.json` re-parsed. Environment notes: scipy installed to `/tmp/pylibs_scipy` (pip ENOSPC on `/sessions`, still ~100% full — standing human ask); one virtiofs mid-write truncation of `build_ui_data.py` on the mount caught by `ast.parse` and recovered by re-applying the patch off-mount and copying back (the corruption mode `AGENT_COORDINATION.md` §5 warns about).
+
+**Governance.** ChangeRecord `f20b5a1b0b6f4432841f9d8ee4a3acd8` (code_change, OWNER_REVIEW); audit **101→102**; change records **73→74**; audit-chain `verify_all` **True**; staging idempotent. Capital impact: **none** (display-only; neutral default renders bit-identically with no inputs).
+
+**State.** Phase UIL Task 4 → completed; **Phase UIL COMPLETE** (B1–B4+A1 all LIVE — the owner-prioritised `production_run/` story is done: template → loader → orchestrator → currency-aware offline GUI). Pointer → **Phase 30 Task 4** (tree-3 vine tail diagnostics + binding STOP-RULE / MR-016/MR-017 decision), resumed from `queued_resume_after_phase_uil` per the parking note. A2 (provenance relabel) / A3 (full re-currency) remain future phases in the implementation plan.

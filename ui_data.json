@@ -1,9 +1,9 @@
 {
-  "contract_version": "1.11.0",
+  "contract_version": "1.12.0",
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-11T00:20:28.845373+00:00",
+    "generated_utc": "2026-06-11T07:17:09.453599+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -13,7 +13,18 @@
       "docs/validation/PHASE15_MULTI_DRIVER_CAPITAL_EVIDENCE.json",
       "docs/validation/PHASE16_LOSS_DISTRIBUTION.json"
     ],
-    "classification": "EDUCATIONAL ONLY -- NOT a regulatory capital model"
+    "classification": "EDUCATIONAL ONLY -- NOT a regulatory capital model",
+    "currency": {
+      "code": "USD",
+      "symbol": "$",
+      "decimals": 0,
+      "scale": "units",
+      "thousands": "comma",
+      "market_label": "Local market",
+      "valuation_date": "2026-01-01"
+    },
+    "currency_source": "docs/validation/RUN_MODEL_SUMMARY.json (latest run_model.py evidence)",
+    "output_label": "WorkedExample_TemplateDemoBook"
   },
   "summary": {
     "tasks_completed": 118,
@@ -25,7 +36,7 @@
     "risks_open": 1,
     "risks_mitigated": 10,
     "production_status": "NOT CLEARED FOR PRODUCTION",
-    "contract_artifacts": 80,
+    "contract_artifacts": 86,
     "calibrated_drivers": 11
   },
   "inventory": [
@@ -35,7 +46,7 @@
       "category": "independent_review",
       "bytes": 3563,
       "sha256": "508174a1c195524fb29921dad324d790642b21757af2774fa59f4837a9f802b4",
-      "mtime_utc": "2026-06-11T00:07:12.961850Z",
+      "mtime_utc": "2026-06-11T07:08:26.784894Z",
       "headline": ""
     },
     {
@@ -44,7 +55,7 @@
       "category": "ia_validation",
       "bytes": 10020,
       "sha256": "59737f5bbccca3d5a2607ac0b3da73c361868410a0fd2e5a77e62767ef42f155",
-      "mtime_utc": "2026-06-11T00:07:12.962851Z",
+      "mtime_utc": "2026-06-11T07:08:26.784894Z",
       "headline": ""
     },
     {
@@ -53,7 +64,7 @@
       "category": "backtest",
       "bytes": 2889,
       "sha256": "d1c14118e4e79202ccd1d49fcc91c271169527b883781f59c1bb76993cd89dbb",
-      "mtime_utc": "2026-06-11T00:07:12.962851Z",
+      "mtime_utc": "2026-06-11T07:08:26.784894Z",
       "headline": ""
     },
     {
@@ -62,7 +73,7 @@
       "category": "ia_validation",
       "bytes": 12560,
       "sha256": "f3ed3fce0b1eaf03a5e318f3c7bfdb127627d8977fff708f02f8bfe7fea14b3e",
-      "mtime_utc": "2026-06-11T00:07:12.962851Z",
+      "mtime_utc": "2026-06-11T07:08:26.785894Z",
       "headline": ""
     },
     {
@@ -71,7 +82,7 @@
       "category": "capital_evidence",
       "bytes": 4954,
       "sha256": "8cca9214e12db0b018f5c97808098c0e1f05989839173e74491d68000b100efc",
-      "mtime_utc": "2026-06-11T00:07:12.962851Z",
+      "mtime_utc": "2026-06-11T07:08:26.785894Z",
       "headline": ""
     },
     {
@@ -80,7 +91,7 @@
       "category": "proxy_validation",
       "bytes": 3411,
       "sha256": "4fbe78d9cf3c907bd04632ed720030f8643f404118192e1a63e9c0980db51188",
-      "mtime_utc": "2026-06-11T00:07:12.962851Z",
+      "mtime_utc": "2026-06-11T07:08:26.785894Z",
       "headline": "PASS \u2014 selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"
     },
     {
@@ -89,7 +100,7 @@
       "category": "risk_aggregation",
       "bytes": 2385,
       "sha256": "4fb8421f8be265d29a2f5013c931d5f7b02099eec0b4c0a12e8f0e5d143d5d2a",
-      "mtime_utc": "2026-06-11T00:07:12.964850Z",
+      "mtime_utc": "2026-06-11T07:08:26.786894Z",
       "headline": "PASS - correlated aggregation reconciles to nested diversified capital"
     },
     {
@@ -98,7 +109,7 @@
       "category": "tail_diagnostics",
       "bytes": 4065,
       "sha256": "e2d8665353732faabb6d5ce5f9c8344c95e75dba64a261df2d8d814e6d43714d",
-      "mtime_utc": "2026-06-11T00:07:12.964850Z",
+      "mtime_utc": "2026-06-11T07:08:26.786894Z",
       "headline": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -107,7 +118,7 @@
       "category": "governance",
       "bytes": 2946,
       "sha256": "57aa0ca3af79d41580a04e72729c0e30714b6c86eda971d856e3fc4dec4146f7",
-      "mtime_utc": "2026-06-11T00:07:12.964850Z",
+      "mtime_utc": "2026-06-11T07:08:26.787894Z",
       "headline": ""
     },
     {
@@ -116,7 +127,7 @@
       "category": "loss_distribution",
       "bytes": 12457,
       "sha256": "863fd04d40b4684ce6be5a5bdc98be8afbea06f577c61aafb651e542eb73fb95",
-      "mtime_utc": "2026-06-11T00:07:12.964850Z",
+      "mtime_utc": "2026-06-11T07:08:26.787894Z",
       "headline": ""
     },
     {
@@ -125,7 +136,7 @@
       "category": "proxy_validation",
       "bytes": 4261,
       "sha256": "e1bb0aecd491f8ba012dffa91d77eb562b97909c6de98d30db20fd5fc7a19953",
-      "mtime_utc": "2026-06-11T00:07:12.965851Z",
+      "mtime_utc": "2026-06-11T07:08:26.787894Z",
       "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)"
     },
     {
@@ -134,7 +145,7 @@
       "category": "risk_aggregation",
       "bytes": 3616,
       "sha256": "d730c2f93172f766afd27e85d6a6a7b1acf49a85a52cbe149ab45ba5ccfc9de6",
-      "mtime_utc": "2026-06-11T00:07:12.965851Z",
+      "mtime_utc": "2026-06-11T07:08:26.788894Z",
       "headline": "PARTIAL - three-driver aggregation evidence generated with review items"
     },
     {
@@ -143,7 +154,7 @@
       "category": "tail_diagnostics",
       "bytes": 4848,
       "sha256": "0597ab9b22ff571fa06020359ede2da792271b1920519a07c197fc82f7e70acd",
-      "mtime_utc": "2026-06-11T00:07:12.965851Z",
+      "mtime_utc": "2026-06-11T07:08:26.788894Z",
       "headline": "PASS - three-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -152,7 +163,7 @@
       "category": "governance",
       "bytes": 3698,
       "sha256": "a0465ceb9af67ac5313dfda30d009ae7ab8a5cfb26140ee0d1953370c846c917",
-      "mtime_utc": "2026-06-11T00:07:12.965851Z",
+      "mtime_utc": "2026-06-11T07:08:26.788894Z",
       "headline": ""
     },
     {
@@ -161,7 +172,7 @@
       "category": "calibration",
       "bytes": 2318,
       "sha256": "fb72bedf5afa3390ad029ec2a85ac8e7b9ffa1d6eb6f459400494dc06669f6d3",
-      "mtime_utc": "2026-06-11T00:07:12.965851Z",
+      "mtime_utc": "2026-06-11T07:08:26.788894Z",
       "headline": ""
     },
     {
@@ -170,7 +181,7 @@
       "category": "risk_aggregation",
       "bytes": 4674,
       "sha256": "12cb7a6749a5a20f8c1190ab484588f4247872b8a5916a3b19b84d0e57ecf360",
-      "mtime_utc": "2026-06-11T00:07:12.965851Z",
+      "mtime_utc": "2026-06-11T07:08:26.788894Z",
       "headline": "PASS - copula aggregation (selected: gaussian) reconciles to nested capital within 1.4% (best 1.4%) vs var-covar 34.5%; MR-010 mitigated"
     },
     {
@@ -179,7 +190,7 @@
       "category": "governance",
       "bytes": 1425,
       "sha256": "27a51932177d00b6cee815cfb6ac9528a6bff5dac951044f59c9b5fdaf5ab54a",
-      "mtime_utc": "2026-06-11T00:07:12.965851Z",
+      "mtime_utc": "2026-06-11T07:08:26.788894Z",
       "headline": ""
     },
     {
@@ -188,7 +199,7 @@
       "category": "proxy_validation",
       "bytes": 4336,
       "sha256": "8e37e976170f3d125e8adb0010bc5b1c2cde27daafd30fac3b097335e2039bb7",
-      "mtime_utc": "2026-06-11T00:07:12.965851Z",
+      "mtime_utc": "2026-06-11T07:08:26.788894Z",
       "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9638, VaR rel err=2.33%, leakage-free, overfit gap=0.0057)"
     },
     {
@@ -197,7 +208,7 @@
       "category": "risk_aggregation",
       "bytes": 10681,
       "sha256": "0caf2126cb3ce2809b191ba7bb19ebabf5f7b9d2681be8b7c3ec44ca6b43e933",
-      "mtime_utc": "2026-06-11T00:07:12.965851Z",
+      "mtime_utc": "2026-06-11T07:08:26.788894Z",
       "headline": "PASS - four-driver copula aggregation (selected: gaussian) reconciles to nested capital within 9.4% vs var-covar 47.4%; MR-010 four-driver mitigation confirmed"
     },
     {
@@ -206,7 +217,7 @@
       "category": "governance",
       "bytes": 1908,
       "sha256": "22b30c94c127fc46450a8f199cd2e98c7962e015879806e7b6b643a0f76eecb8",
-      "mtime_utc": "2026-06-11T00:07:12.966851Z",
+      "mtime_utc": "2026-06-11T07:08:26.789894Z",
       "headline": ""
     },
     {
@@ -215,7 +226,7 @@
       "category": "tail_diagnostics",
       "bytes": 5414,
       "sha256": "070ad3d1f7dc4f0d8b9129c3d57d66fa605fd6851e51a9cff5b32600602f2ce1",
-      "mtime_utc": "2026-06-11T00:07:12.966851Z",
+      "mtime_utc": "2026-06-11T07:08:26.789894Z",
       "headline": "PASS - four-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -224,7 +235,7 @@
       "category": "calibration",
       "bytes": 2525,
       "sha256": "76301095fa676fd0258dacfc5c5c190badbc4fc265391d1e23fe3a8e1806239f",
-      "mtime_utc": "2026-06-11T00:07:12.966851Z",
+      "mtime_utc": "2026-06-11T07:08:26.789894Z",
       "headline": "gate_glapse: PASS"
     },
     {
@@ -233,7 +244,7 @@
       "category": "proxy_validation",
       "bytes": 4005,
       "sha256": "a81154ba3ed62036702497128c15f65b504d21083ae88ad6a5629bc4c03e5233",
-      "mtime_utc": "2026-06-11T00:07:12.966851Z",
+      "mtime_utc": "2026-06-11T07:08:26.789894Z",
       "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
     },
     {
@@ -242,7 +253,7 @@
       "category": "risk_aggregation",
       "bytes": 12824,
       "sha256": "b398fd41fb010059db7d771fc1594d2bdbedd27e5215f40c806b38e7a735efb0",
-      "mtime_utc": "2026-06-11T00:07:12.966851Z",
+      "mtime_utc": "2026-06-11T07:08:26.789894Z",
       "headline": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
     },
     {
@@ -251,7 +262,7 @@
       "category": "governance",
       "bytes": 2166,
       "sha256": "b66145bf609b485ca7312ce4f0f3c966e8a1a9b2a4caf16dd65f64ae2b962fc2",
-      "mtime_utc": "2026-06-11T00:07:12.966851Z",
+      "mtime_utc": "2026-06-11T07:08:26.789894Z",
       "headline": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
     },
     {
@@ -260,7 +271,7 @@
       "category": "tail_diagnostics",
       "bytes": 5770,
       "sha256": "91b284b7861fc22a0b6cbfbb3f35ebe07cbf5375a8dd2b0d48b84f0c7baa0e14",
-      "mtime_utc": "2026-06-11T00:07:12.966851Z",
+      "mtime_utc": "2026-06-11T07:08:26.789894Z",
       "headline": "PASS - five-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -269,7 +280,7 @@
       "category": "other",
       "bytes": 5066,
       "sha256": "f84531c134068c6135adeffad6da0fe51269b9cb4648fdc5f7fa7893d5bd33cd",
-      "mtime_utc": "2026-06-11T00:07:12.967850Z",
+      "mtime_utc": "2026-06-11T07:08:26.789894Z",
       "headline": "gate: PASS"
     },
     {
@@ -278,7 +289,7 @@
       "category": "other",
       "bytes": 19031,
       "sha256": "d50b6f01f0219d9eca9fb9b2defa8523d556972e0554c72620a67c1bfdf9ef2b",
-      "mtime_utc": "2026-06-11T00:07:12.967850Z",
+      "mtime_utc": "2026-06-11T07:08:26.790894Z",
       "headline": "gate: PASS"
     },
     {
@@ -287,7 +298,7 @@
       "category": "other",
       "bytes": 8264,
       "sha256": "40943a84a25f2911cee32f4b43ee0b69e14a0605eb8313c3a5c10616de0d59de",
-      "mtime_utc": "2026-06-11T00:07:12.967850Z",
+      "mtime_utc": "2026-06-11T07:08:26.790894Z",
       "headline": "gate: PASS"
     },
     {
@@ -296,7 +307,7 @@
       "category": "risk_aggregation",
       "bytes": 30876,
       "sha256": "9f1416c8c88b5ca7386e3484c9b03bce412b67478e4e909d3fbad982fec15c6c",
-      "mtime_utc": "2026-06-11T00:07:12.968851Z",
+      "mtime_utc": "2026-06-11T07:08:26.790894Z",
       "headline": ""
     },
     {
@@ -305,7 +316,7 @@
       "category": "tail_diagnostics",
       "bytes": 1309,
       "sha256": "a6aa3debdbfaf84dbb5aa1862ec0fb0dc4d2a8ce01c5122f6661d7dbf3263b87",
-      "mtime_utc": "2026-06-11T00:07:12.968851Z",
+      "mtime_utc": "2026-06-11T07:08:26.790894Z",
       "headline": ""
     },
     {
@@ -314,7 +325,7 @@
       "category": "other",
       "bytes": 9138,
       "sha256": "16bce5e2b90cb8a19819143055614581bd049566995361281d45c580915343f7",
-      "mtime_utc": "2026-06-11T00:07:12.968851Z",
+      "mtime_utc": "2026-06-11T07:08:26.790894Z",
       "headline": ""
     },
     {
@@ -323,7 +334,7 @@
       "category": "other",
       "bytes": 13135,
       "sha256": "7fe3cab55cf7fe89e2392b8719736fba00fc9c171f889e4e81a072d554d16ef8",
-      "mtime_utc": "2026-06-11T00:07:12.968851Z",
+      "mtime_utc": "2026-06-11T07:08:26.790894Z",
       "headline": ""
     },
     {
@@ -332,7 +343,7 @@
       "category": "calibration",
       "bytes": 2655,
       "sha256": "05dc5f9253a49f7e747a724cf1aa01325e1c425e656de77cfc45acbbfd351408",
-      "mtime_utc": "2026-06-11T00:07:12.968851Z",
+      "mtime_utc": "2026-06-11T07:08:26.790894Z",
       "headline": ""
     },
     {
@@ -341,7 +352,7 @@
       "category": "risk_aggregation",
       "bytes": 22693,
       "sha256": "f62c12f74b3d07a6ff4e75466620bed322a0867500433f3d77876a681848c79b",
-      "mtime_utc": "2026-06-11T00:07:12.969851Z",
+      "mtime_utc": "2026-06-11T07:08:26.791893Z",
       "headline": ""
     },
     {
@@ -350,7 +361,7 @@
       "category": "other",
       "bytes": 1983,
       "sha256": "47d87418a722ad1cc6f21382e5db8a004103473bf619db3007d5fd40fd8826fc",
-      "mtime_utc": "2026-06-11T00:07:12.969851Z",
+      "mtime_utc": "2026-06-11T07:08:26.791893Z",
       "headline": "PASS"
     },
     {
@@ -359,7 +370,7 @@
       "category": "other",
       "bytes": 17786,
       "sha256": "c635a3c57126c0ed80ef2877b87f5fb3c11c8832f659d86900451b5f492e9714",
-      "mtime_utc": "2026-06-11T00:07:12.969851Z",
+      "mtime_utc": "2026-06-11T07:08:26.791893Z",
       "headline": ""
     },
     {
@@ -368,7 +379,7 @@
       "category": "proxy_validation",
       "bytes": 13221,
       "sha256": "b775216d97b7c5e81340878cbe2f85e6d32d83cfab41ea2643a804d72d9b5685",
-      "mtime_utc": "2026-06-11T00:07:12.969851Z",
+      "mtime_utc": "2026-06-11T07:08:26.791893Z",
       "headline": ""
     },
     {
@@ -377,7 +388,7 @@
       "category": "other",
       "bytes": 7208,
       "sha256": "b109cff65588311eb8fb44ebd08a5bf7a7b549f916519f1faa037fd38bfdd990",
-      "mtime_utc": "2026-06-11T00:07:12.969851Z",
+      "mtime_utc": "2026-06-11T07:08:26.792894Z",
       "headline": ""
     },
     {
@@ -386,7 +397,7 @@
       "category": "risk_aggregation",
       "bytes": 25306,
       "sha256": "72be26d7b8b96f00ea8d85573e3c1ab8b58363d318e54f39868a59562a0bc302",
-      "mtime_utc": "2026-06-11T00:07:12.969851Z",
+      "mtime_utc": "2026-06-11T07:08:26.792894Z",
       "headline": ""
     },
     {
@@ -395,7 +406,7 @@
       "category": "other",
       "bytes": 2158,
       "sha256": "ee832a9364d2220e20dd1b390cf91b5f417a5c8482e0a014dd50dadcda39ef03",
-      "mtime_utc": "2026-06-11T00:07:12.969851Z",
+      "mtime_utc": "2026-06-11T07:08:26.792894Z",
       "headline": "PASS"
     },
     {
@@ -404,7 +415,7 @@
       "category": "other",
       "bytes": 6923,
       "sha256": "896ca5ab2782ce5cf1331a681b948a5f72d3e0fd1694e457f49bc570608fcccb",
-      "mtime_utc": "2026-06-11T00:07:12.970850Z",
+      "mtime_utc": "2026-06-11T07:08:26.792894Z",
       "headline": "PASS"
     },
     {
@@ -413,7 +424,7 @@
       "category": "risk_aggregation",
       "bytes": 10099,
       "sha256": "e4ebe2e829910a4c52eeeab8bb58b8e275511a37e33ac1a101617ee0c3e35f09",
-      "mtime_utc": "2026-06-11T00:07:12.970850Z",
+      "mtime_utc": "2026-06-11T07:08:26.792894Z",
       "headline": ""
     },
     {
@@ -422,7 +433,7 @@
       "category": "other",
       "bytes": 7440,
       "sha256": "d8b0f03a93ce4af2a5df5ed4292e01be93164bf043d7d882b66866a0925c074e",
-      "mtime_utc": "2026-06-11T00:07:12.970850Z",
+      "mtime_utc": "2026-06-11T07:08:26.793894Z",
       "headline": "PASS"
     },
     {
@@ -431,7 +442,7 @@
       "category": "risk_aggregation",
       "bytes": 9971,
       "sha256": "b28edd5222ace4103d47ec439f1530e1efdd8a48a92d27bf72e5a5bba42ed3d0",
-      "mtime_utc": "2026-06-11T00:07:12.970850Z",
+      "mtime_utc": "2026-06-11T07:08:26.793894Z",
       "headline": "PASS"
     },
     {
@@ -440,7 +451,7 @@
       "category": "other",
       "bytes": 2325,
       "sha256": "57de1ba33ed361aeb1228ebd9aed64b27de8c4b801f4d738c21785aaa9429526",
-      "mtime_utc": "2026-06-11T00:07:12.970850Z",
+      "mtime_utc": "2026-06-11T07:08:26.793894Z",
       "headline": "PASS"
     },
     {
@@ -449,7 +460,7 @@
       "category": "other",
       "bytes": 9421,
       "sha256": "9f92b1956b79378a729f2026a28a48da7143a27dccca4fdba23c80cf2623bc97",
-      "mtime_utc": "2026-06-11T00:07:12.971850Z",
+      "mtime_utc": "2026-06-11T07:08:26.793894Z",
       "headline": "PASS"
     },
     {
@@ -458,7 +469,7 @@
       "category": "risk_aggregation",
       "bytes": 4211,
       "sha256": "8a89c66f3d97e12aeac4c07474deed9aab213bd4002e0a365233ba43cb7b770a",
-      "mtime_utc": "2026-06-11T00:07:12.972851Z",
+      "mtime_utc": "2026-06-11T07:08:26.793894Z",
       "headline": "PASS"
     },
     {
@@ -467,7 +478,7 @@
       "category": "other",
       "bytes": 9338,
       "sha256": "f5c798831abc4430ec9c723a5ac0d56f0e7b82b03631825bcd9774c50e3ea286",
-      "mtime_utc": "2026-06-11T00:07:12.972851Z",
+      "mtime_utc": "2026-06-11T07:08:26.794894Z",
       "headline": "PASS"
     },
     {
@@ -476,7 +487,7 @@
       "category": "other",
       "bytes": 6870,
       "sha256": "e1c2f3df99e38f61a4f0b60d034dee77f405e29f3bb8185b0aa31ab0b2a7c603",
-      "mtime_utc": "2026-06-11T00:07:12.972851Z",
+      "mtime_utc": "2026-06-11T07:08:26.794894Z",
       "headline": "PASS"
     },
     {
@@ -485,7 +496,7 @@
       "category": "tail_diagnostics",
       "bytes": 14513,
       "sha256": "4fb05e3324f6867ed21049db9cebf5721e45bdf97f68d5c388224188a19b18d4",
-      "mtime_utc": "2026-06-11T00:07:12.972851Z",
+      "mtime_utc": "2026-06-11T07:08:26.794894Z",
       "headline": "PASS"
     },
     {
@@ -494,7 +505,7 @@
       "category": "other",
       "bytes": 2869,
       "sha256": "d05a79497b5824a2b3f8e2a2bbcdbf7f9f112a2b5b3320f2f6f542a07d0f6209",
-      "mtime_utc": "2026-06-11T00:07:12.972851Z",
+      "mtime_utc": "2026-06-11T07:08:26.794894Z",
       "headline": "PASS"
     },
     {
@@ -503,7 +514,7 @@
       "category": "other",
       "bytes": 13044,
       "sha256": "d507cb15944cbc4b2ab20a83a1f2eb9c6f25baf064b89753fa25105268568dbe",
-      "mtime_utc": "2026-06-11T00:07:12.973850Z",
+      "mtime_utc": "2026-06-11T07:08:26.795894Z",
       "headline": "PASS"
     },
     {
@@ -512,7 +523,7 @@
       "category": "other",
       "bytes": 7901,
       "sha256": "867470aeb5ed6ed5b9cad07b602cf809e5a71475969469e0eb5046161f581929",
-      "mtime_utc": "2026-06-11T00:07:12.973850Z",
+      "mtime_utc": "2026-06-11T07:08:26.795894Z",
       "headline": "PASS"
     },
     {
@@ -521,7 +532,7 @@
       "category": "other",
       "bytes": 10232,
       "sha256": "ec67b248aadfa61e939d36626af594fb4b41a175f435e0ff026d027d30427b0e",
-      "mtime_utc": "2026-06-11T00:07:12.973850Z",
+      "mtime_utc": "2026-06-11T07:08:26.795894Z",
       "headline": "PASS"
     },
     {
@@ -530,7 +541,7 @@
       "category": "tail_diagnostics",
       "bytes": 18339,
       "sha256": "c6a97f5ee23e999aa10036c3257a6726db1a9b3102cfb8891a798bbbb0f8a508",
-      "mtime_utc": "2026-06-11T00:07:12.974850Z",
+      "mtime_utc": "2026-06-11T07:08:26.795894Z",
       "headline": "PASS"
     },
     {
@@ -539,7 +550,7 @@
       "category": "other",
       "bytes": 3483,
       "sha256": "baf9c9528b5e4002730410087939f2058067dda83e43e1f22bcbeb92a9f7952d",
-      "mtime_utc": "2026-06-11T00:07:12.974850Z",
+      "mtime_utc": "2026-06-11T07:08:26.795894Z",
       "headline": "PASS"
     },
     {
@@ -548,7 +559,7 @@
       "category": "other",
       "bytes": 13972,
       "sha256": "6d05f42494c8dcab29fb729ff5d2474e20a7ef922acdf06a402b9b18eaec8b15",
-      "mtime_utc": "2026-06-11T00:07:12.974850Z",
+      "mtime_utc": "2026-06-11T07:08:26.795894Z",
       "headline": "PASS"
     },
     {
@@ -557,7 +568,7 @@
       "category": "other",
       "bytes": 5891,
       "sha256": "4fcb9e7ed9addb58ddafee24b2febd2ea9d8ffb3b0c7456f7f814421d7e18f10",
-      "mtime_utc": "2026-06-11T00:07:12.974850Z",
+      "mtime_utc": "2026-06-11T07:08:26.796894Z",
       "headline": "PASS"
     },
     {
@@ -566,7 +577,7 @@
       "category": "other",
       "bytes": 6395,
       "sha256": "e8d9b9c2cd6d7240755f6546bebbddb804ca1bc8f0eacc0a33a419cab85ef23c",
-      "mtime_utc": "2026-06-11T00:07:12.974850Z",
+      "mtime_utc": "2026-06-11T07:08:26.796894Z",
       "headline": "PASS"
     },
     {
@@ -575,7 +586,7 @@
       "category": "other",
       "bytes": 6745,
       "sha256": "fe9d356e632ff069303b8d04e203d4cebcbf879d4f6ab50dd881c6caf3e0b8aa",
-      "mtime_utc": "2026-06-11T00:07:12.975851Z",
+      "mtime_utc": "2026-06-11T07:08:26.796894Z",
       "headline": "PASS"
     },
     {
@@ -584,7 +595,7 @@
       "category": "other",
       "bytes": 3625,
       "sha256": "44e62367234d9f3154c8f37dad315ba63c853e5500ac0856b10fb8a8af1d19d0",
-      "mtime_utc": "2026-06-11T00:07:12.975851Z",
+      "mtime_utc": "2026-06-11T07:08:26.796894Z",
       "headline": "PASS"
     },
     {
@@ -593,7 +604,7 @@
       "category": "other",
       "bytes": 15720,
       "sha256": "7666ef1d58cecde77d8ef3ee3b8ced0a1f01a0ef61fee82853fb535408ade2eb",
-      "mtime_utc": "2026-06-11T00:07:12.975851Z",
+      "mtime_utc": "2026-06-11T07:08:26.797894Z",
       "headline": "PASS"
     },
     {
@@ -602,7 +613,7 @@
       "category": "other",
       "bytes": 8021,
       "sha256": "064aad640b12283140a6db897563949d090b6308d01701f1c660dec7c52d0444",
-      "mtime_utc": "2026-06-11T00:07:12.975851Z",
+      "mtime_utc": "2026-06-11T07:08:26.797894Z",
       "headline": "PASS"
     },
     {
@@ -611,7 +622,7 @@
       "category": "other",
       "bytes": 7558,
       "sha256": "1d328228c2a9442e9254f517d1b2379440ba2aede9c7f11989c8939162e36307",
-      "mtime_utc": "2026-06-11T00:07:12.976851Z",
+      "mtime_utc": "2026-06-11T07:08:26.797894Z",
       "headline": "PASS"
     },
     {
@@ -620,7 +631,7 @@
       "category": "tail_diagnostics",
       "bytes": 13223,
       "sha256": "f78ff0c8165b373414b51945eddfd089629be8c11f6eb4dabef7effc79b34c63",
-      "mtime_utc": "2026-06-11T00:07:12.976851Z",
+      "mtime_utc": "2026-06-11T07:08:26.797894Z",
       "headline": "PASS"
     },
     {
@@ -629,7 +640,7 @@
       "category": "other",
       "bytes": 18068,
       "sha256": "8a7ed26422fefbc82bb79a5174080161c074372e15de6b99c5d0cf3cd37c7fa3",
-      "mtime_utc": "2026-06-11T00:07:12.976851Z",
+      "mtime_utc": "2026-06-11T07:08:26.797894Z",
       "headline": "PASS"
     },
     {
@@ -638,7 +649,7 @@
       "category": "other",
       "bytes": 10881,
       "sha256": "1dd636db2cf5ab5aad36bbb33531e5d40354d85d0c5b1444dcd8da1c007b886a",
-      "mtime_utc": "2026-06-11T00:07:12.976851Z",
+      "mtime_utc": "2026-06-11T07:08:26.797894Z",
       "headline": "PASS"
     },
     {
@@ -647,7 +658,7 @@
       "category": "other",
       "bytes": 9486,
       "sha256": "ea8c390712e3dfc36882f39b58a86946924302a4c505100c040c39c042453a6f",
-      "mtime_utc": "2026-06-11T00:07:12.976851Z",
+      "mtime_utc": "2026-06-11T07:08:26.798894Z",
       "headline": "PASS"
     },
     {
@@ -656,7 +667,7 @@
       "category": "tail_diagnostics",
       "bytes": 32931,
       "sha256": "6b8a6ac0c311a59a8cd4491e14df35d847acdac2da418b5d0c0837baf9980188",
-      "mtime_utc": "2026-06-11T00:07:12.976851Z",
+      "mtime_utc": "2026-06-11T07:08:26.798894Z",
       "headline": "PASS"
     },
     {
@@ -665,7 +676,7 @@
       "category": "other",
       "bytes": 5441,
       "sha256": "5007bf768e5dcc234d986eec64c8f7fd75dc83fb22e3917d5bf4f76e6d3a427a",
-      "mtime_utc": "2026-06-11T00:07:12.977850Z",
+      "mtime_utc": "2026-06-11T07:08:26.798894Z",
       "headline": "PASS"
     },
     {
@@ -674,7 +685,7 @@
       "category": "other",
       "bytes": 18183,
       "sha256": "847bc1413e692b0c118f8b1faac21139d9ae1608cd2b3cb17c981a34fc2c49f0",
-      "mtime_utc": "2026-06-11T00:07:12.977850Z",
+      "mtime_utc": "2026-06-11T07:08:26.798894Z",
       "headline": "PASS"
     },
     {
@@ -683,7 +694,7 @@
       "category": "other",
       "bytes": 8555,
       "sha256": "26f86a5740f345aa86e560ece3a3dc0afdfb98fef71f70193d6a1a02a666a384",
-      "mtime_utc": "2026-06-11T00:07:12.977850Z",
+      "mtime_utc": "2026-06-11T07:08:26.798894Z",
       "headline": "PASS"
     },
     {
@@ -692,7 +703,43 @@
       "category": "tail_diagnostics",
       "bytes": 107040,
       "sha256": "1588350fd851ebc5a4967c1b7a719b3526cd33cad0714b154a7e9d439eb06715",
-      "mtime_utc": "2026-06-11T00:07:12.978851Z",
+      "mtime_utc": "2026-06-11T07:08:26.799894Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE29_TASK5_UI_PROPAGATION_REPORT",
+      "path": "docs/validation/PHASE29_TASK5_UI_PROPAGATION_REPORT.json",
+      "category": "other",
+      "bytes": 3637,
+      "sha256": "6f1d848817f11852f7b3e21df6836e1d89976ef824111579783077fa5be628d3",
+      "mtime_utc": "2026-06-11T07:08:26.799894Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE30_TASK1_DESIGN_NOTE",
+      "path": "docs/validation/PHASE30_TASK1_DESIGN_NOTE.json",
+      "category": "other",
+      "bytes": 12022,
+      "sha256": "6937eeafaa804f11315b612d01d4cef2fb7450f2b6ea44f6f58e71c83c967dc0",
+      "mtime_utc": "2026-06-11T07:08:26.799894Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE30_TASK2_TREE3_VINE_REPORT",
+      "path": "docs/validation/PHASE30_TASK2_TREE3_VINE_REPORT.json",
+      "category": "other",
+      "bytes": 29477,
+      "sha256": "3c1e95c32f251efff36e0c30dfe7e0b81d66f501252a280da3c848c2c23095df",
+      "mtime_utc": "2026-06-11T07:08:26.799894Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE30_TASK3_TREE3_MARGIN_BOOTSTRAP_REPORT",
+      "path": "docs/validation/PHASE30_TASK3_TREE3_MARGIN_BOOTSTRAP_REPORT.json",
+      "category": "other",
+      "bytes": 8888,
+      "sha256": "5d9b45ec9ccfd9edb724628157b12a67b1fcfeeab14c3c14f8156bd5d3c17d25",
+      "mtime_utc": "2026-06-11T07:08:26.799894Z",
       "headline": "PASS"
     },
     {
@@ -701,8 +748,26 @@
       "category": "other",
       "bytes": 246277,
       "sha256": "a6f80968ddb150c773aa18ad219bc13cf88e245247f0fab5a57924859169e6ec",
-      "mtime_utc": "2026-06-11T00:07:12.980850Z",
+      "mtime_utc": "2026-06-11T07:08:26.802894Z",
       "headline": ""
+    },
+    {
+      "id": "RUN_MODEL_AGGREGATION_REPORT",
+      "path": "docs/validation/RUN_MODEL_AGGREGATION_REPORT.json",
+      "category": "risk_aggregation",
+      "bytes": 17826,
+      "sha256": "e579092c9f4980b1de762bf6ef80d8f4dc7c2a67293eb266c34b0a6cfe271c59",
+      "mtime_utc": "2026-06-11T07:08:26.802894Z",
+      "headline": ""
+    },
+    {
+      "id": "RUN_MODEL_SUMMARY",
+      "path": "docs/validation/RUN_MODEL_SUMMARY.json",
+      "category": "other",
+      "bytes": 1189,
+      "sha256": "09fda0a0d38b149eb5b854f12115e7f724fff5ef6d8bd38d14f8cf788ca6b1e8",
+      "mtime_utc": "2026-06-11T07:08:26.802894Z",
+      "headline": "REVIEW"
     },
     {
       "id": "PHASE13_HW1F_CALIBRATION_REPORT",
@@ -710,7 +775,7 @@
       "category": "calibration",
       "bytes": 3288,
       "sha256": "442bf6bd3590268050c694fd07cfe717a9c3d81677db8ba77ee61926eece5790",
-      "mtime_utc": "2026-06-11T00:07:12.956851Z",
+      "mtime_utc": "2026-06-11T07:08:26.780894Z",
       "headline": ""
     },
     {
@@ -719,7 +784,7 @@
       "category": "calibration",
       "bytes": 3428,
       "sha256": "cb6dd8337583aa0e0f40505405b73b270455b8bbba691a0e7e8785fa20213717",
-      "mtime_utc": "2026-06-11T00:07:12.956851Z",
+      "mtime_utc": "2026-06-11T07:08:26.780894Z",
       "headline": ""
     },
     {
@@ -728,7 +793,7 @@
       "category": "calibration",
       "bytes": 4593,
       "sha256": "5695186798439b586ac29e2cc0b4aa138bad3c0fc2dd0290a0889fc8c7d99d36",
-      "mtime_utc": "2026-06-11T00:07:12.954850Z",
+      "mtime_utc": "2026-06-11T07:08:26.780894Z",
       "headline": ""
     },
     {
@@ -737,7 +802,7 @@
       "category": "model_risk",
       "bytes": 2444,
       "sha256": "0b0e821f0561a923967319f1ef2560d0e1d4749d93751ff4b1daa41c4f5b0838",
-      "mtime_utc": "2026-06-11T00:07:12.956851Z",
+      "mtime_utc": "2026-06-11T07:08:26.780894Z",
       "headline": ""
     },
     {
@@ -746,7 +811,7 @@
       "category": "dashboard",
       "bytes": 10986,
       "sha256": "4e261345fea5c885217d6beb6998bc4f31faaa00c195bc5b9dbfbd6a182be91b",
-      "mtime_utc": "2026-06-11T00:07:12.954850Z",
+      "mtime_utc": "2026-06-11T07:08:26.780894Z",
       "headline": ""
     }
   ],

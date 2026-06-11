@@ -157,6 +157,20 @@ setTimeout(() => {
   const printCssPresent = /@media print/.test(html);
   const dataTitlePanels = document.querySelectorAll('.panel[data-title]').length;
   const bodyText = document.body.textContent || "";
+
+  // Phase UIL Task 4 (B4+A1): currency wire-through assertions.
+  // Parse the embedded contract to learn the configured currency, then assert
+  // the GUI actually renders money with that symbol and shows the badge.
+  let uiMeta = {};
+  try {
+    const rawData = (document.getElementById("ui-data").textContent || "")
+      .replace("/*__UI_DATA__*/", "").trim();
+    uiMeta = (JSON.parse(rawData) || {}).meta || {};
+  } catch (e) { /* leave uiMeta empty; checks below will fail loudly */ }
+  const curCfg = uiMeta.currency || {};
+  const symEsc = curCfg.symbol
+    ? curCfg.symbol.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") : null;
+  const moneyRe = symEsc ? new RegExp(symEsc + "[0-9][0-9,]*") : null;
   const checks = {
     embeddedParsed: /contract v\d/.test(bodyText),
     tabCount: tabs.length,
@@ -272,6 +286,10 @@ setTimeout(() => {
     vineFrozenHeadlinePresent: /39,976/.test(bodyText),
     mr017Present: /MR-017/.test(bodyText),
     vineNotAdoptedPresent: /NOT adopted/.test(bodyText),
+    currencyMetaStamped: !!(uiMeta.currency && ("currency_source" in uiMeta) && ("output_label" in uiMeta)),
+    fmtMoneyDefined: /function fmtMoney\(/.test(html),
+    moneySymbolRendered: moneyRe ? moneyRe.test(bodyText) : true,
+    currencyBadgePresent: curCfg.code ? (new RegExp("currency " + curCfg.code)).test(bodyText) : true,
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -423,6 +441,10 @@ setTimeout(() => {
     checks.vineFrozenHeadlinePresent &&
     checks.mr017Present &&
     checks.vineNotAdoptedPresent &&
+    checks.currencyMetaStamped &&
+    checks.fmtMoneyDefined &&
+    checks.moneySymbolRendered &&
+    checks.currencyBadgePresent &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

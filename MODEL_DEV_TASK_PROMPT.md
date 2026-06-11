@@ -31,17 +31,19 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
-> **OWNER PRIORITY OVERRIDE (2026-06-11, KCW):** the next scheduled work is
-> **Phase UIL — user-input loader + run orchestrator** (workstream B of
-> `IMPLEMENTATION_PLAN_currency_and_inputs.md`), to complete the
-> `production_run/` story: `scripts/load_user_inputs.py` (B1) →
-> de-hardcoded fixtures (B2) → `scripts/run_model.py` (B3) → GUI currency
-> wire-through (B4+A1). The single in_progress item in
-> `.claude-dev/MODEL_DEV_STATE.json` reflects this. **Phase 30 Task 4 is
-> parked, not cancelled** — it resumes immediately after Phase UIL (see
-> `queued_resume_after_phase_uil` in the state file). Backward compatibility
-> is a hard gate: with no user inputs present, every governed read-out must
-> reproduce bit-identically.
+> **OWNER PRIORITY OVERRIDE — SATISFIED (2026-06-11, cycle 28):** Phase UIL
+> (user-input loader + run orchestrator, workstream B of
+> `IMPLEMENTATION_PLAN_currency_and_inputs.md`) is **COMPLETE**: B1 loader →
+> B2 de-hardcoded fixtures → B3 `scripts/run_model.py` → **B4+A1 GUI currency
+> wire-through (contract 1.12.0, fmtMoney, meta.currency/output_label)** all
+> LIVE; the `production_run/` story is end-to-end (template → loader →
+> run_model → currency-aware offline GUI). Backward-compatibility gate held:
+> no inputs ⇒ governed read-outs bit-identical, GUI neutral display.
+> **The single in_progress item is now Phase 30 Task 4** (tree-3 vine tail
+> diagnostics + binding STOP-RULE / MR-016/MR-017 decision), resumed from
+> `queued_resume_after_phase_uil` exactly as the parking note directed.
+> Remaining currency work (A2 provenance relabel, A3 full re-currency) stays
+> in the implementation plan as future phases.
 
 
 **Task Frequency:** Every 12 hours  

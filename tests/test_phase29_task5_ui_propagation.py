@@ -203,8 +203,12 @@ class TestHtmlEmbed:
                       re.S)
         # fall back: data token replaced inline - just parse the json blob
         assert '"phase29"' in html
-        assert '"contract_version": "1.11' in html.replace("'", '"') \
-            or '"contract_version":"1.11' in html.replace(" ", "")
+        # contract pin: additive bumps supersede (1.11 P29T5 -> 1.12 UIL T4
+        # currency meta); accept any 1.x with minor >= 11 so future ADDITIVE
+        # bumps do not re-break this pin (breaking = major bump, still fails).
+        mver = re.search(r'"contract_version"\s*:\s*"1\.(\d+)',
+                         html.replace("'", '"'))
+        assert mver is not None and int(mver.group(1)) >= 11
 
     def test_zero_external_references(self, html):
         for needle in ("http://", "https://cdn", "src=\"http",

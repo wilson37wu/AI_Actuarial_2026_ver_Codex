@@ -14,7 +14,12 @@ Everything else in the repository is developer territory:
 ## Quick start
 
 ```bash
-# 1. Full run (ESG + assets + liabilities + stochastic interaction)
+# 0. (optional) Your own numbers: fill MODEL_INPUTS_TEMPLATE.xlsx, then
+python3 scripts/load_user_inputs.py --template production_run/MODEL_INPUTS_TEMPLATE.xlsx --out production_run/model_inputs.json
+
+# 1. Full run (ESG + assets + liabilities + stochastic interaction;
+#    runs the user-input capital orchestrator automatically when
+#    production_run/model_inputs.json exists)
 python3 production_run/run_production_model.py --stage all
 
 # 2. Rebuild the offline GUI from the results
@@ -47,12 +52,29 @@ the GUI itself needs nothing at all (single self-contained HTML file).
   ALM projection where asset returns, crediting and liability cash flows
   interact path by path.
 
-## Not yet wired in
+## Your own inputs + currency — LIVE end-to-end (Phase UIL, 2026-06-11)
 
-`scripts/load_user_inputs.py` / `scripts/run_model.py` (reading your own
-numbers from `MODEL_INPUTS_TEMPLATE.xlsx` into the run) are **planned but not
-yet implemented** — see `IMPLEMENTATION_PLAN_currency_and_inputs.md`. Until
-then the stages run on the governed example portfolio.
+The full user chain is implemented — see `USER_MANUAL_run_and_inputs.md` §4:
+
+1. `scripts/load_user_inputs.py` validates the workbook and writes a
+   schema-versioned `model_inputs.json` (B1).
+2. `scripts/run_model.py --inputs model_inputs.json` threads your numbers
+   through the governed seven-driver engine and writes
+   `docs/validation/RUN_MODEL_*.json` (B2+B3).
+3. `scripts/build_ui_data.py` (or `production_run/build_gui.py`) stamps your
+   **reporting currency and run label** into the GUI contract (`meta.currency`,
+   `meta.output_label`, contract 1.12.0) and every monetary figure in
+   `ui_app.html` is formatted with your symbol / decimals / thousands
+   separator via a single `fmtMoney` formatter (B4+A1).
+
+With **no** `model_inputs.json` everything reproduces the governed default
+run bit-identically and the GUI shows plain numbers (neutral currency), so
+the chain is fully backward-compatible. Currency display sources, in
+priority order: `model_inputs.json` → `docs/validation/RUN_MODEL_SUMMARY.json`
+→ neutral default (the source used is disclosed in `meta.currency_source`).
+Relabel of the calibration-market provenance strings (A2) and full
+re-currency calibration (A3) remain future work — see
+`IMPLEMENTATION_PLAN_currency_and_inputs.md`.
 
 ## Status
 

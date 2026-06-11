@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.11.0"
+CONTRACT_VERSION = "1.12.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -42,6 +42,18 @@ STATE_PATH = os.path.join(REPO, ".claude-dev", "MODEL_DEV_STATE.json")
 VIEWER_DATA = os.path.join(REPO, "viewer_data.json")
 OUT_JSON = os.path.join(REPO, "ui_data.json")
 OUT_HTML = os.path.join(REPO, "ui_app.html")
+RUN_SUMMARY_PATH = os.path.join(VAL, "RUN_MODEL_SUMMARY.json")
+
+# Neutral display default (Phase UIL Task 4 / plan A1): with no user inputs
+# and no run_model evidence, money renders exactly as before -- bare numbers,
+# no symbol, comma thousands. Backward-compatible by construction.
+NEUTRAL_CURRENCY: Dict[str, Any] = {
+    "code": None,
+    "symbol": "",
+    "decimals": 0,
+    "scale": "units",
+    "thousands": "comma",
+}
 
 DATA_TOKEN = "/*__UI_DATA__*/null"
 
@@ -2102,6 +2114,70 @@ def _build_phase29() -> Dict[str, Any]:
     return out
 
 
+def _resolve_currency_meta() -> Dict[str, Any]:
+    """Phase UIL Task 4 (B4+A1): resolve the reporting-currency block and the
+    user-run ``output_label`` for ``meta`` -- single source of truth for every
+    monetary label in the GUI.
+
+    Priority (most-specific first):
+      1. ``model_inputs.json`` via :func:`par_model_v2.user_inputs.find_model_inputs`
+         (explicit path -> $PAR_MODEL_INPUTS -> repo root -> production_run/) --
+         the validated user contract is authoritative for display currency.
+      2. ``docs/validation/RUN_MODEL_SUMMARY.json`` -- the currency stamped on
+         the latest scripts/run_model.py evidence (covers a repo that has run
+         evidence but no longer carries the inputs file).
+      3. ``NEUTRAL_CURRENCY`` -- no symbol; money renders bit-identically to
+         the pre-1.12.0 contract (bare numbers).
+
+    Returns a dict with keys ``currency``, ``currency_source``, ``output_label``
+    (output_label may be None). Never raises -- a broken inputs file degrades
+    to the next source and the degradation is DISCLOSED in currency_source.
+    """
+    currency = None
+    source = "NEUTRAL_DEFAULT (no user inputs; bare-number display)"
+    output_label = None
+
+    run_summary = _load(RUN_SUMMARY_PATH) or {}
+    if isinstance(run_summary.get("output_label"), str):
+        output_label = run_summary["output_label"]
+
+    try:
+        import sys as _sys
+        if REPO not in _sys.path:
+            _sys.path.insert(0, REPO)
+        from par_model_v2.user_inputs import find_model_inputs, UserInputsError
+        try:
+            inputs = find_model_inputs()
+        except UserInputsError:
+            inputs = None  # broken file: fail soft for DISPLAY metadata only
+        if isinstance(inputs, dict) and isinstance(inputs.get("currency"), dict):
+            currency = dict(inputs["currency"])
+            source = "model_inputs.json (validated user contract)"
+            rs = inputs.get("run_settings") or {}
+            if output_label is None and isinstance(rs.get("output_label"), str):
+                output_label = rs["output_label"]
+    except Exception:  # pragma: no cover -- import failure degrades softly
+        pass
+
+    if currency is None and isinstance(run_summary.get("currency"), dict):
+        currency = dict(run_summary["currency"])
+        source = ("docs/validation/RUN_MODEL_SUMMARY.json "
+                  "(latest run_model.py evidence)")
+
+    if currency is None:
+        currency = dict(NEUTRAL_CURRENCY)
+
+    # Defensive defaults so the GUI formatter never sees a partial block.
+    for k, v in NEUTRAL_CURRENCY.items():
+        currency.setdefault(k, v)
+
+    return {
+        "currency": currency,
+        "currency_source": source,
+        "output_label": output_label,
+    }
+
+
 def build_ui_data() -> Dict[str, Any]:
     base = _load(VIEWER_DATA) or {}
     state = _load(STATE_PATH) or {}
@@ -2114,6 +2190,13 @@ def build_ui_data() -> Dict[str, Any]:
     meta.setdefault("model_version", gov.get("model_version", state.get("model_version", "")))
     meta["generated_utc"] = now
     meta["classification"] = meta.get("classification", "EDUCATIONAL -- not for production capital reporting")
+    # Phase UIL Task 4 (B4+A1): currency + output_label stamped into meta
+    # (additive contract 1.12.0; absent inputs -> neutral default, display
+    # unchanged vs 1.11.0).
+    _cur = _resolve_currency_meta()
+    meta["currency"] = _cur["currency"]
+    meta["currency_source"] = _cur["currency_source"]
+    meta["output_label"] = _cur["output_label"]
 
     inventory = _build_inventory()
     calibrations = _build_calibrations()
@@ -2431,6 +2514,19 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function num(x,d){ if(x==null||isNaN(x)) return "--";
     return Number(x).toLocaleString(undefined,{maximumFractionDigits:(d==null?0:d)}); }
+  // Phase UIL Task 4 (B4+A1): single money formatter driven by meta.currency.
+  // Neutral default (no symbol, comma thousands, 0 dp) renders bit-identically
+  // to the old bare-number display, so contract 1.12.0 stays additive.
+  function curMeta(){ return (DATA && DATA.meta && DATA.meta.currency) || null; }
+  function fmtMoney(x){
+    if(x==null||isNaN(x)) return "--";
+    var c = curMeta()||{}, d = (c.decimals!=null?c.decimals:0);
+    var neg = Number(x)<0, v = Math.abs(Number(x));
+    var parts = v.toFixed(d).split(".");
+    var sep = (c.thousands==="space")?" ":(c.thousands==="none")?"":",";
+    var ip = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+    return (neg?"-":"")+(c.symbol||"")+ip+(parts.length>1?("."+parts[1]):"");
+  }
   function chipClass(s){ s=String(s||"").toUpperCase();
     if(/PASS|CLEAR|MITIGAT|APPROV|OK/.test(s)) return "pass";
     if(/WARN|REVIEW|PLACEHOLD|OPEN|DRAFT/.test(s)) return "warn";
@@ -2505,7 +2601,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     document.getElementById("subtitle").innerHTML =
       esc(m.classification||"") +
       ' <span class="badge">contract v'+esc(DATA.contract_version||"?")+'</span>'+
-      ' <span class="badge">generated '+esc((m.generated_utc||"").slice(0,19))+'Z</span>';
+      ' <span class="badge">generated '+esc((m.generated_utc||"").slice(0,19))+'Z</span>'+
+      ((m.currency&&m.currency.code)?(' <span class="badge">currency '+esc(m.currency.code)+
+        (m.currency.symbol?(' ('+esc(m.currency.symbol)+')'):'')+'</span>'):'')+
+      (m.output_label?(' <span class="badge">run '+esc(m.output_label)+'</span>'):'');
   }
 
   function renderOverview(){
@@ -2518,7 +2617,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       ["Risks mitigated",(s.risks_mitigated!=null? s.risks_mitigated:"--")+" / open "+(s.risks_open!=null?s.risks_open:"--")],
       ["Artifacts catalogued", (DATA.inventory||[]).length],
       ["Calibrated drivers", (DATA.calibrations||[]).length],
-      ["Nested 99.5% SCR", num(cap.nested_scr)],
+      ["Nested 99.5% SCR", fmtMoney(cap.nested_scr)],
       ["Production status", s.production_status||"educational"]
     ];
     var html = '<div class="cards">';
@@ -2788,9 +2887,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var cop=cap.copula||{}, cands=cop.candidates||[], nested=cap.nested_scr, sel=cap.selected_copula;
     var D=[
       {label:"Standalone sum", value:cap.standalone_sum, color:"#5a6b7d",
-        tip:"<b>Standalone sum</b><br>Naive add-up (no diversification): "+num(cap.standalone_sum)},
+        tip:"<b>Standalone sum</b><br>Naive add-up (no diversification): "+fmtMoney(cap.standalone_sum)},
       {label:"Var-covar", value:cap.var_covar_scr, color:"#ffb454",
-        tip:"<b>Var-covar (formula)</b><br>SCR: "+num(cap.var_covar_scr)+
+        tip:"<b>Var-covar (formula)</b><br>SCR: "+fmtMoney(cap.var_covar_scr)+
           "<br>Rel err vs nested: "+(cap.formula_vs_nested_rel_error!=null?(cap.formula_vs_nested_rel_error*100).toFixed(1)+"%":"--")+
           "<br>Gaussian-correlation closed form; understates the tail."}
     ];
@@ -2798,14 +2897,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       var is=(c.name===sel);
       D.push({label:String(c.name).replace(/_/g,"-"), value:c.aggregated_scr,
         color:is?"#4f9cff":"#33506e", stroke:is?"var(--ink)":null,
-        tip:"<b>"+c.name+(is?" (selected)":"")+"</b><br>Aggregated SCR: "+num(c.aggregated_scr)+
+        tip:"<b>"+c.name+(is?" (selected)":"")+"</b><br>Aggregated SCR: "+fmtMoney(c.aggregated_scr)+
           "<br>Rel err vs nested: "+(c.scr_rel_error_vs_nested*100).toFixed(1)+"%"+
-          "<br>Diversification benefit: "+num(c.diversification_benefit)+
+          "<br>Diversification benefit: "+fmtMoney(c.diversification_benefit)+
           "<br>Upper-tail dependence: "+Number(c.upper_tail_dependence).toFixed(3)+
           "<br>AIC: "+Number(c.aic).toFixed(1)});
     });
     var reflines=(nested!=null)?[{label:"Nested benchmark", value:nested, color:"var(--pass)",
-      tip:"<b>Nested-simulation benchmark</b><br>SCR: "+num(nested)+"<br>The capital figure all aggregators are judged against."}]:[];
+      tip:"<b>Nested-simulation benchmark</b><br>SCR: "+fmtMoney(nested)+"<br>The capital figure all aggregators are judged against."}]:[];
     var note="";
     if(cap.esg_understatement_pct!=null)
       note='<p class="cap" style="margin-top:8px">Var-covar understates the nested benchmark by <b>'+
@@ -2822,11 +2921,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var vci=tail.var_ci||[null,null], eci=tail.es_ci||[null,null];
     var rows=[
       {label:"VaR 99.5%", point:tail.final_var, lo:vci[0], hi:vci[1], color:"#4f9cff",
-        tip:"<b>99.5% VaR</b><br>Point estimate: "+num(tail.final_var)+
-          "<br>95% bootstrap CI: ["+num(vci[0])+", "+num(vci[1])+"]<br>Std error: "+num(tail.var_se)},
+        tip:"<b>99.5% VaR</b><br>Point estimate: "+fmtMoney(tail.final_var)+
+          "<br>95% bootstrap CI: ["+fmtMoney(vci[0])+", "+fmtMoney(vci[1])+"]<br>Std error: "+fmtMoney(tail.var_se)},
       {label:"ES 99.5%", point:tail.final_es, lo:eci[0], hi:eci[1], color:"#39d98a",
-        tip:"<b>99.5% Expected Shortfall</b><br>Point estimate: "+num(tail.final_es)+
-          "<br>95% bootstrap CI: ["+num(eci[0])+", "+num(eci[1])+"]<br>Std error: "+num(tail.es_se)}
+        tip:"<b>99.5% Expected Shortfall</b><br>Point estimate: "+fmtMoney(tail.final_es)+
+          "<br>95% bootstrap CI: ["+fmtMoney(eci[0])+", "+fmtMoney(eci[1])+"]<br>Std error: "+fmtMoney(tail.es_se)}
     ];
     var ratios='<p class="cap" style="margin-top:8px">Variance-reduction efficiency &mdash; Sobol vs MC: <b>'+
       esc(num(tail.sobol_ratio,2))+'x</b>'+
@@ -2834,7 +2933,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       '. Both point and CI are bounded, so the metric is reproducible within sampling noise.</p>';
     if(tail.nested_disclosure){
       ratios+='<p class="cap">Honest small-sample disclosure (nested, n_outer='+esc(num(tail.nested_n_outer))+
-        '): 95% CI ['+esc(num((tail.nested_var_ci||[])[0]))+', '+esc(num((tail.nested_var_ci||[])[1]))+
+        '): 95% CI ['+esc(fmtMoney((tail.nested_var_ci||[])[0]))+', '+esc(fmtMoney((tail.nested_var_ci||[])[1]))+
         ']. '+esc(tail.nested_disclosure)+'</p>';
     }
     return '<div class="chartwrap"><h4>99.5% VaR &amp; ES with 95% bootstrap confidence intervals</h4>'+
@@ -2871,7 +2970,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ];
     var html = '<div class="cards">';
     cardRows.forEach(function(r){ if(r[1]!=null) html += '<div class="card"><div class="k">'+esc(r[0])+
-      '</div><div class="v">'+num(r[1])+'</div></div>'; });
+      '</div><div class="v">'+fmtMoney(r[1])+'</div></div>'; });
     html += '</div>';
     var nd = cap.n_drivers||5;
     var ndWord = (nd===7?"Seven":nd===6?"Six":"Five");
@@ -2925,10 +3024,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var ncw=ma.nested_capital_without||{}, ncwa=ma.nested_capital_with||{};
     var html='<div class="cards">';
     [
-      ["Nested SCR without actions",num(a.nested_scr_without)],
-      ["Nested SCR with actions",num(a.nested_scr_with)],
-      ["Nested VaR 99.5 without",num(ncw.var_liability)],
-      ["Nested VaR 99.5 with",num(ncwa.var_liability)],
+      ["Nested SCR without actions",fmtMoney(a.nested_scr_without)],
+      ["Nested SCR with actions",fmtMoney(a.nested_scr_with)],
+      ["Nested VaR 99.5 without",fmtMoney(ncw.var_liability)],
+      ["Nested VaR 99.5 with",fmtMoney(ncwa.var_liability)],
       ["Action active (outer nodes)",a.active_share_full!=null?(100*a.active_share_full).toFixed(1)+"%":"--"],
       ["At max-relief floor",a.floor_share_full!=null?(100*a.floor_share_full).toFixed(1)+"%":"--"],
       ["OOS R2 with actions",ma.oos_r2_with_actions!=null?Number(ma.oos_r2_with_actions).toFixed(4):"--"],
@@ -2958,10 +3057,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
      ["Var-covar w/o",a.var_covar_scr_without,"#ffb454"],
      ["Var-covar WITH",a.var_covar_scr_with,"#a8762f"]
     ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
     if(D.length){
       html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; with vs without management actions</h4>'+
-        '<p class="cap">Nested (with-actions '+num(a.nested_scr_with)+') is the capital reference. '+
+        '<p class="cap">Nested (with-actions '+fmtMoney(a.nested_scr_with)+') is the capital reference. '+
         'Copula and var-covar read-outs on the with-actions basis are diagnostics &mdash; see the '+
         'saturation finding below. Matched t df '+esc(a.df_matched)+' is identical with/without actions '+
         '(rank invariance: the action is a monotone marginal transform).</p>'+
@@ -2977,7 +3076,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       ts.forEach(function(t){
         html+='<tr><td>'+esc(num(t.cr_trigger,2))+'</td><td>'+esc(num(t.cr_floor,2))+'</td>'+
           '<td>'+(t.active_share_nested!=null?(100*t.active_share_nested).toFixed(1)+"%":"--")+'</td>'+
-          '<td>'+num(t.nested_scr_reduction)+'</td>'+
+          '<td>'+fmtMoney(t.nested_scr_reduction)+'</td>'+
           '<td>'+(t.oos_r2_with_actions!=null?Number(t.oos_r2_with_actions).toFixed(4):"--")+'</td>'+
           '<td>'+chip(t.verdict)+'</td></tr>';
       });
@@ -2989,8 +3088,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         '<table class="matable"><thead><tr><th>Driver</th><th>Without</th><th>With</th>'+
         '<th>Delta</th></tr></thead><tbody>';
       drv.forEach(function(d,i){
-        html+='<tr><td>'+esc(d)+'</td><td>'+num(swo[i])+'</td><td>'+num(sw[i])+'</td>'+
-          '<td>'+num(sw[i]-swo[i])+'</td></tr>';
+        html+='<tr><td>'+esc(d)+'</td><td>'+fmtMoney(swo[i])+'</td><td>'+fmtMoney(sw[i])+'</td>'+
+          '<td>'+fmtMoney(sw[i]-swo[i])+'</td></tr>';
       });
       html+='</tbody></table>';
       if(a.anchoring_convention)
@@ -3018,11 +3117,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var ipd=ip.outer_vs_inner_path_delta||{};
     var html='<div class="cards">';
     [
-      ["Nested SCR with actions (reference)",num(ja.nested_scr_with)],
-      ["Joint-action t-SCR",num(ja.t_scr_joint)],
+      ["Nested SCR with actions (reference)",fmtMoney(ja.nested_scr_with)],
+      ["Joint-action t-SCR",fmtMoney(ja.t_scr_joint)],
       ["t rel err - joint action",ja.t_rel_error_joint!=null?(100*ja.t_rel_error_joint).toFixed(2)+"%":"--"],
       ["t rel err - standalone action",ja.t_rel_error_standalone_baseline!=null?(100*ja.t_rel_error_standalone_baseline).toFixed(2)+"%":"--"],
-      ["Inner-path SCR delta (vs outer-node)",ipd.nested_scr_delta!=null?"+"+num(ipd.nested_scr_delta)+" (+4.0%)":"--"],
+      ["Inner-path SCR delta (vs outer-node)",ipd.nested_scr_delta!=null?"+"+fmtMoney(ipd.nested_scr_delta)+" (+4.0%)":"--"],
       ["99.5% tail saturation share",fnd.tail_saturation_share_at_995!=null?(100*fnd.tail_saturation_share_at_995).toFixed(1)+"%":"--"],
       ["Bootstrap SCR SE (% of mean)",fnd.bootstrap_scr_se_pct_of_mean!=null?(100*fnd.bootstrap_scr_se_pct_of_mean).toFixed(1)+"%":"--"],
       ["Matched t df (rank-invariant)",ja.df_matched!=null?String(ja.df_matched):"--"]
@@ -3041,8 +3140,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       rows.forEach(function(r){
         var w=dmc(r[1],"without"), s=dmc(r[1],"standalone_action"), j=dmc(r[1],"joint_action");
         var d=(dm[r[1]]||{}).joint_minus_standalone_scr;
-        html+='<tr><td>'+esc(r[0])+'</td><td>'+num(w)+'</td><td>'+num(s)+'</td><td>'+num(j)+'</td>'+
-          '<td>'+(d!=null?num(d):"--")+'</td></tr>';
+        html+='<tr><td>'+esc(r[0])+'</td><td>'+fmtMoney(w)+'</td><td>'+fmtMoney(s)+'</td><td>'+fmtMoney(j)+'</td>'+
+          '<td>'+(d!=null?fmtMoney(d):"--")+'</td></tr>';
       });
       html+='</tbody></table>';
       var D=[];
@@ -3054,11 +3153,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
        ["Gauss JOINT",dmc("gaussian","joint_action"),"#9a7bff"],
        ["Var-covar WITH",dmc("var_covar","standalone_action"),"#ffb454"]
       ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-        tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+        tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
       if(D.length){
         html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; joint-action vs standalone-action basis</h4>'+
           '<p class="cap">The joint-action basis (rule applied ONCE to the aggregated liability) sits '+
-          num(ja.t_scr_joint)+' vs nested-with '+num(ja.nested_scr_with)+' &mdash; rel err '+
+          fmtMoney(ja.t_scr_joint)+' vs nested-with '+fmtMoney(ja.nested_scr_with)+' &mdash; rel err '+
           (ja.t_rel_error_joint!=null?(100*ja.t_rel_error_joint).toFixed(2)+"%":"--")+
           ' against 22.54% on the standalone-action basis. Var-covar understates nested-with by 56.4% (MR-010 refresh).</p>'+
           barChart(D,{w:760,h:300,mB:64})+'</div>';
@@ -3070,10 +3169,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         '<table class="swtable"><thead><tr><th>Confidence</th><th>SCR without</th><th>SCR with (joint)</th>'+
         '<th>Tail saturation share</th><th>Mean residual cut factor</th><th>Relief at VaR</th></tr></thead><tbody>';
       sw.forEach(function(s){
-        html+='<tr><td>'+(100*s.confidence).toFixed(1)+'%</td><td>'+num(s.scr_without)+'</td>'+
-          '<td>'+num(s.scr_with)+'</td><td>'+(100*s.tail_saturation_share).toFixed(1)+'%</td>'+
+        html+='<tr><td>'+(100*s.confidence).toFixed(1)+'%</td><td>'+fmtMoney(s.scr_without)+'</td>'+
+          '<td>'+fmtMoney(s.scr_with)+'</td><td>'+(100*s.tail_saturation_share).toFixed(1)+'%</td>'+
           '<td>'+(s.tail_mean_cut_factor!=null?Number(s.tail_mean_cut_factor).toFixed(4):"--")+'</td>'+
-          '<td>'+num(s.relief_at_var)+'</td></tr>';
+          '<td>'+fmtMoney(s.relief_at_var)+'</td></tr>';
       });
       html+='</tbody></table>'+
         '<p class="note">At 99.5% the joint tail is 100.0% saturated &mdash; the action delivers max relief (12%) '+
@@ -3082,9 +3181,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     if(bt.mean!=null){
       html+='<div class="subh">Margin bootstrap (copula FROZEN per SII Art. 234; 200 &times; 20k; n_obs=160)</div>'+
         '<div class="cards">'+
-        '<div class="card"><div class="k">Bootstrap SCR mean</div><div class="v">'+num(bt.mean)+'</div></div>'+
-        '<div class="card"><div class="k">SCR SE</div><div class="v">'+num(bt.se)+'</div></div>'+
-        '<div class="card"><div class="k">95% CI</div><div class="v">['+num(bt.ci_lo_95)+', '+num(bt.ci_hi_95)+']</div></div>'+
+        '<div class="card"><div class="k">Bootstrap SCR mean</div><div class="v">'+fmtMoney(bt.mean)+'</div></div>'+
+        '<div class="card"><div class="k">SCR SE</div><div class="v">'+fmtMoney(bt.se)+'</div></div>'+
+        '<div class="card"><div class="k">95% CI</div><div class="v">['+fmtMoney(bt.ci_lo_95)+', '+fmtMoney(bt.ci_hi_95)+']</div></div>'+
         '<div class="card"><div class="k">Nested-with inside CI</div><div class="v">'+(fnd.nested_with_inside_bootstrap_ci?"✓ yes":"✗ no")+'</div></div>'+
         '</div>'+
         '<p class="note">Prefix-convergence SCR delta '+(fnd.scr_prefix_final_rel_delta!=null?(100*fnd.scr_prefix_final_rel_delta).toFixed(2)+"%":"--")+
@@ -3095,10 +3194,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       html+='<div class="subh">Inner-path action dynamics (Task 3) &mdash; outer-node vs inner-path basis</div>'+
         '<table class="ptable iptable"><thead><tr><th>Read-out (nested, 500 outer nodes)</th>'+
         '<th>Outer-node transform</th><th>Inner-path basis</th><th>Delta</th></tr></thead><tbody>'+
-        '<tr><td>VaR 99.5</td><td>'+num(ipd.nested_var_99_5_outer_node)+'</td><td>'+num(ipd.nested_var_99_5_inner_path)+'</td>'+
-        '<td>+'+num(ipd.nested_var_99_5_delta)+'</td></tr>'+
-        '<tr><td>SCR</td><td>'+num(ipd.nested_scr_outer_node)+'</td><td>'+num(ipd.nested_scr_inner_path)+'</td>'+
-        '<td>+'+num(ipd.nested_scr_delta)+' (+4.0%)</td></tr>'+
+        '<tr><td>VaR 99.5</td><td>'+fmtMoney(ipd.nested_var_99_5_outer_node)+'</td><td>'+fmtMoney(ipd.nested_var_99_5_inner_path)+'</td>'+
+        '<td>+'+fmtMoney(ipd.nested_var_99_5_delta)+'</td></tr>'+
+        '<tr><td>SCR</td><td>'+fmtMoney(ipd.nested_scr_outer_node)+'</td><td>'+fmtMoney(ipd.nested_scr_inner_path)+'</td>'+
+        '<td>+'+fmtMoney(ipd.nested_scr_delta)+' (+4.0%)</td></tr>'+
         '</tbody></table>'+
         '<p class="note">The bonus cut applies to the INNER-PATH policyholder-benefit cashflows only (guaranteed + '+
         'equity-guarantee PV); the asset-side credit loss and analytic FX/liquidity offsets are non-cuttable. The '+
@@ -3134,10 +3233,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var ncp=(dc.nested_capital_with_pathwise||{}).scr_proxy;
     var html='<div class="cards">';
     [
-      ["Nested SCR without actions",num(ncw)],
-      ["Nested SCR with (horizon basis)",num(nch)],
-      ["Nested SCR with (PATH-WISE) - reference",num(ncp)],
-      ["Path-wise &minus; horizon SCR",dl.scr_delta!=null?"+"+num(dl.scr_delta)+" (+"+(100*dl.scr_delta_rel_to_horizon).toFixed(2)+"%)":"--"],
+      ["Nested SCR without actions",fmtMoney(ncw)],
+      ["Nested SCR with (horizon basis)",fmtMoney(nch)],
+      ["Nested SCR with (PATH-WISE) - reference",fmtMoney(ncp)],
+      ["Path-wise &minus; horizon SCR",dl.scr_delta!=null?"+"+fmtMoney(dl.scr_delta)+" (+"+(100*dl.scr_delta_rel_to_horizon).toFixed(2)+"%)":"--"],
       ["Path-wise action share",dc.pathwise_action_share!=null?(100*dc.pathwise_action_share).toFixed(1)+"%":"--"],
       ["Cut-then-restore share",dc.pathwise_restoration_share!=null?(100*dc.pathwise_restoration_share).toFixed(1)+"%":"--"],
       ["Proxy OOS R2 (path-wise basis)",px.oos_r2_with_actions!=null?Number(px.oos_r2_with_actions).toFixed(4):"--"],
@@ -3158,9 +3257,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       rows.forEach(function(r){
         var w=dmc(r[1],"without"), h=dmc(r[1],"with_horizon"), q=dmc(r[1],"with_pathwise");
         var d=dmp(r[1]).scr_delta, dp=dmp(r[1]).scr_delta_pct;
-        html+='<tr><td>'+esc(r[0])+'</td><td>'+num(w)+'</td><td>'+num(h)+'</td>'+
-          '<td>'+(q!=null?num(q):"-- (no path-wise analogue, DISCLOSED)")+'</td>'+
-          '<td>'+(d!=null?"+"+num(d)+" (+"+(100*dp).toFixed(1)+"%)":"--")+'</td></tr>';
+        html+='<tr><td>'+esc(r[0])+'</td><td>'+fmtMoney(w)+'</td><td>'+fmtMoney(h)+'</td>'+
+          '<td>'+(q!=null?fmtMoney(q):"-- (no path-wise analogue, DISCLOSED)")+'</td>'+
+          '<td>'+(d!=null?"+"+fmtMoney(d)+" (+"+(100*dp).toFixed(1)+"%)":"--")+'</td></tr>';
       });
       html+='</tbody></table>';
       var D=[];
@@ -3173,7 +3272,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
        ["Gauss PATH-WISE",dmc("gaussian","with_pathwise"),"#9a7bff"],
        ["Var-covar horizon",dmc("var_covar","with_horizon"),"#ffb454"]
       ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-        tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+        tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
       if(D.length){
         html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; path-wise vs horizon declaration basis</h4>'+
           '<p class="cap">The path-wise basis relieves LESS at every level and confidence &mdash; the horizon basis '+
@@ -3190,11 +3289,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         '<th>SCR with (path-wise)</th><th>Tail saturation share</th><th>Mean smoothed relief fraction</th>'+
         '<th>Path-wise &minus; horizon</th></tr></thead><tbody>';
       sw.forEach(function(s){
-        html+='<tr><td>'+(100*s.confidence).toFixed(1)+'%</td><td>'+num(s.scr_without)+'</td>'+
-          '<td>'+num(s.scr_horizon)+'</td><td>'+num(s.scr_pathwise)+'</td>'+
+        html+='<tr><td>'+(100*s.confidence).toFixed(1)+'%</td><td>'+fmtMoney(s.scr_without)+'</td>'+
+          '<td>'+fmtMoney(s.scr_horizon)+'</td><td>'+fmtMoney(s.scr_pathwise)+'</td>'+
           '<td>'+(100*s.tail_saturation_share).toFixed(1)+'%</td>'+
           '<td>'+(s.tail_mean_smoothed_relief_fraction!=null?Number(s.tail_mean_smoothed_relief_fraction).toFixed(4):"--")+'</td>'+
-          '<td>+'+num(s.pathwise_minus_horizon_scr)+'</td></tr>';
+          '<td>+'+fmtMoney(s.pathwise_minus_horizon_scr)+'</td></tr>';
       });
       html+='</tbody></table>'+
         '<p class="note">At 99.5% the raw governed cut saturates 100.0% of the tail, but the mean smoothed relief '+
@@ -3205,12 +3304,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     if(bt.mean!=null){
       html+='<div class="subh">Margin bootstrap (copula FROZEN per SII Art. 234; 200 &times; 20k; n_obs=160)</div>'+
         '<div class="cards">'+
-        '<div class="card"><div class="k">Bootstrap SCR mean (t path-wise)</div><div class="v">'+num(bt.mean)+'</div></div>'+
-        '<div class="card"><div class="k">SCR SE</div><div class="v">'+num(bt.se)+'</div></div>'+
-        '<div class="card"><div class="k">95% CI</div><div class="v">['+num(bt.ci_lo_95)+', '+num(bt.ci_hi_95)+']</div></div>'+
+        '<div class="card"><div class="k">Bootstrap SCR mean (t path-wise)</div><div class="v">'+fmtMoney(bt.mean)+'</div></div>'+
+        '<div class="card"><div class="k">SCR SE</div><div class="v">'+fmtMoney(bt.se)+'</div></div>'+
+        '<div class="card"><div class="k">95% CI</div><div class="v">['+fmtMoney(bt.ci_lo_95)+', '+fmtMoney(bt.ci_hi_95)+']</div></div>'+
         '<div class="card"><div class="k">Nested path-wise inside CI</div><div class="v">'+(fnd.nested_pathwise_inside_bootstrap_ci?"✓ yes":"✗ no (OUTSIDE)")+'</div></div>'+
         '</div>'+
-        '<p class="note">The nested path-wise reference '+num(ncp)+' sits OUTSIDE the 95% CI &mdash; the analytic '+
+        '<p class="note">The nested path-wise reference '+fmtMoney(ncp)+' sits OUTSIDE the 95% CI &mdash; the analytic '+
         're-anchoring understates the nested path-wise SCR by '+
         (fnd.t_pathwise_vs_nested_pathwise_rel_err!=null?(100*fnd.t_pathwise_vs_nested_pathwise_rel_err).toFixed(1)+"%":"--")+
         ' beyond margin noise: the quantified, DISCLOSED motivation for the next-phase full path-wise copula '+
@@ -3264,12 +3363,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var gapRel=co.gap_to_nested_component_t_rel;
     var html='<div class="cards">';
     [
-      ["Nested SCR (path-wise) - reference",num(nestedRef)],
-      ["Component (FULL re-agg) t SCR",num(ct.scr_component)],
-      ["Re-anchored (LEVEL) t SCR",num(ct.scr_level)],
-      ["Composition correction (full &minus; re-anchored)",cc.mean!=null?"+"+num(cc.mean)+" (+"+(100*compRel).toFixed(2)+"%)":"--"],
-      ["Bootstrap mean t SCR (component)",num(ci.mean)],
-      ["Bootstrap 95% CI (component t)",ci.ci_lo!=null?"["+num(ci.ci_lo)+", "+num(ci.ci_hi)+"]":"--"],
+      ["Nested SCR (path-wise) - reference",fmtMoney(nestedRef)],
+      ["Component (FULL re-agg) t SCR",fmtMoney(ct.scr_component)],
+      ["Re-anchored (LEVEL) t SCR",fmtMoney(ct.scr_level)],
+      ["Composition correction (full &minus; re-anchored)",cc.mean!=null?"+"+fmtMoney(cc.mean)+" (+"+(100*compRel).toFixed(2)+"%)":"--"],
+      ["Bootstrap mean t SCR (component)",fmtMoney(ci.mean)],
+      ["Bootstrap 95% CI (component t)",ci.ci_lo!=null?"["+fmtMoney(ci.ci_lo)+", "+fmtMoney(ci.ci_hi)+"]":"--"],
       ["Bootstrap SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
       ["Nested inside 95% CI?",bo.headline_nested_inside_95ci?"✓ yes":"✗ no (OUTSIDE)"],
       ["Gap to nested (component, t)",gapRel!=null?(100*gapRel).toFixed(2)+"%":"--"],
@@ -3287,14 +3386,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       '(below the 1% MR trigger - MR-015 stays free). Copula FROZEN per SII Art. 234.</p>';
     // ---- point matrix: bases x {t, gaussian} with component-basis 95% CI ----
     function pmc(b,k){ return (pm[b]||{})[k]; }
-    function mci(b,k){ var r=(mc[b]||{})[k]; return (r&&r.ci_lo!=null)?("["+num(r.ci_lo)+", "+num(r.ci_hi)+"]"):"--"; }
+    function mci(b,k){ var r=(mc[b]||{})[k]; return (r&&r.ci_lo!=null)?("["+fmtMoney(r.ci_lo)+", "+fmtMoney(r.ci_hi)+"]"):"--"; }
     var brows=[["Without actions","without"],["Re-anchored (LEVEL)","level"],["Component (FULL re-agg)","component"]];
     html+='<div class="subh">Re-aggregation basis matrix (99.5% / 1y SCR) &mdash; without &rarr; re-anchored &rarr; full component (Task 2 point, Task 3 frozen-copula CI)</div>'+
       '<table class="ptable p26matrix"><thead><tr><th>Basis</th><th>t-copula SCR</th><th>t 95% CI (bootstrap)</th>'+
       '<th>Gaussian SCR</th></tr></thead><tbody>';
     brows.forEach(function(r){
-      html+='<tr><td>'+esc(r[0])+'</td><td>'+num(pmc(r[1],"t"))+'</td><td>'+mci(r[1],"t")+'</td>'+
-        '<td>'+num(pmc(r[1],"g"))+'</td></tr>';
+      html+='<tr><td>'+esc(r[0])+'</td><td>'+fmtMoney(pmc(r[1],"t"))+'</td><td>'+mci(r[1],"t")+'</td>'+
+        '<td>'+fmtMoney(pmc(r[1],"g"))+'</td></tr>';
     });
     html+='</tbody></table>';
     // ---- SCR bar chart ----
@@ -3306,11 +3405,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
      ["Nested PATH-WISE ref",nestedRef,"#ffb454"],
      ["Component (gauss)",pmc("component","g"),"#9a7bff"]
     ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
     if(D.length){
       html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; full re-aggregation vs re-anchored vs nested reference</h4>'+
         '<p class="cap">The full component basis and the re-anchored level basis are economically interchangeable on the '+
-        'frozen copula; both sit well below the nested path-wise reference '+num(nestedRef)+' &mdash; a COPULA-FORM gap, not a basis choice.</p>'+
+        'frozen copula; both sit well below the nested path-wise reference '+fmtMoney(nestedRef)+' &mdash; a COPULA-FORM gap, not a basis choice.</p>'+
         barChart(D,{w:760,h:300,mB:64})+'</div>';
     }
     // ---- paired delta decomposition (common-random-number) ----
@@ -3326,32 +3425,32 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       '<table class="ptable p26dtable"><thead><tr><th>Effect</th><th>Mean</th><th>95% CI</th><th>Excludes zero?</th></tr></thead><tbody>';
     drows.forEach(function(r){
       var d=pd(r[1]);
-      html+='<tr><td>'+r[0]+'</td><td>'+(d.mean!=null?"+"+num(d.mean):"--")+'</td>'+
-        '<td>'+(d.ci_lo!=null?"[+"+num(d.ci_lo)+", +"+num(d.ci_hi)+"]":"--")+'</td>'+
+      html+='<tr><td>'+r[0]+'</td><td>'+(d.mean!=null?"+"+fmtMoney(d.mean):"--")+'</td>'+
+        '<td>'+(d.ci_lo!=null?"[+"+fmtMoney(d.ci_lo)+", +"+fmtMoney(d.ci_hi)+"]":"--")+'</td>'+
         '<td>'+(d.excludes_zero?"✓ yes (significant)":"no")+'</td></tr>';
     });
     html+='</tbody></table>'+
       '<p class="note">Every effect is statistically significant on the paired bootstrap, but the composition correction is the '+
-      'smallest by two orders of magnitude: management-action relief (+'+num((pd("management_relief_t").mean))+') dominates the capital picture.</p>';
+      'smallest by two orders of magnitude: management-action relief (+'+fmtMoney((pd("management_relief_t").mean))+') dominates the capital picture.</p>';
     // ---- residual gap decomposition ----
     if(Object.keys(gd).length){
       html+='<div class="subh">Residual gap to nested truth (Task 3) &mdash; copula-form vs relief-surface</div>'+
         '<table class="ptable p26gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share of gap</th><th>Basis</th></tr></thead><tbody>'+
-        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+        '<tr><td>Relief-surface error</td><td>'+fmtMoney(gd.relief_surface_part_abs)+'</td><td>'+
           (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
           '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
-        '<tr><td>Copula-form residual</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+        '<tr><td>Copula-form residual</td><td>'+fmtMoney(gd.copula_form_residual_abs)+'</td><td>'+
           (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"%":"--")+
           '</td><td>nested joint tail heavier than frozen t copula</td></tr>'+
-        '<tr><td>Total gap (nested &minus; component)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+        '<tr><td>Total gap (nested &minus; component)</td><td>'+fmtMoney(gd.gap_total_abs)+'</td><td>'+
           (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"%":"--")+
           '</td><td>nested with-actions reference</td></tr>'+
         '</tbody></table>'+
         '<p class="note">The residual is COPULA-FORM DOMINATED ('+
         (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1):"--")+
-        '% of the gap): the copula-form residual '+num(gd.copula_form_residual_abs)+' EXCEEDS the entire gaussian&rarr;t '+
-        'dependence-form sensitivity ('+num(gd.dependence_form_sensitivity_t_minus_g)+'). The governed relief surface mis-prices SCR by only 1.16% of nested. '+
-        'The nested path-wise reference '+num(nestedRef)+' lies OUTSIDE the component-basis 95% CI ['+num(ci.ci_lo)+', '+num(ci.ci_hi)+'] '+
+        '% of the gap): the copula-form residual '+fmtMoney(gd.copula_form_residual_abs)+' EXCEEDS the entire gaussian&rarr;t '+
+        'dependence-form sensitivity ('+fmtMoney(gd.dependence_form_sensitivity_t_minus_g)+'). The governed relief surface mis-prices SCR by only 1.16% of nested. '+
+        'The nested path-wise reference '+fmtMoney(nestedRef)+' lies OUTSIDE the component-basis 95% CI ['+fmtMoney(ci.ci_lo)+', '+fmtMoney(ci.ci_hi)+'] '+
         '&mdash; the gap is a copula-FORM limitation, NOT a basis-choice effect. DISCLOSED.</p>';
     }
     html+=maGateGrid(co.gates,"Task 2 pre-registered gates (per-driver composition transform on the frozen copula)");
@@ -3381,10 +3480,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var html='<div class="cards">';
     [
       ["gamma_hat (fitted upper-tail skew)",gh!=null?Number(gh).toExponential(2):"--"],
-      ["Skew-t component SCR (bootstrap mean)",num(sk.mean)],
-      ["Symmetric-t component SCR (mean)",num(sy.mean)],
-      ["Nested SCR (path-wise) - reference",num(nestedRef)],
-      ["Skew-t 95% CI",sk.ci_lo!=null?"["+num(sk.ci_lo)+", "+num(sk.ci_hi)+"]":"--"],
+      ["Skew-t component SCR (bootstrap mean)",fmtMoney(sk.mean)],
+      ["Symmetric-t component SCR (mean)",fmtMoney(sy.mean)],
+      ["Nested SCR (path-wise) - reference",fmtMoney(nestedRef)],
+      ["Skew-t 95% CI",sk.ci_lo!=null?"["+fmtMoney(sk.ci_lo)+", "+fmtMoney(sk.ci_hi)+"]":"--"],
       ["Skew-t SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
       ["Nested inside 95% CI?",bo.headline_nested_inside_95ci?"✓ yes":"✗ no (OUTSIDE)"],
       ["Radial asymmetry (mean, p=0.90)",bo.radial_asymmetry_mean!=null?Number(bo.radial_asymmetry_mean).toExponential(2):"--"],
@@ -3406,11 +3505,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
      ["Skew-t CI hi",sk.ci_hi,"#2fd0a8"],
      ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
     ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
     if(D.length){
       html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; skew-t vs symmetric-t vs nested reference</h4>'+
         '<p class="cap">With gamma_hat &asymp; 0 the skew-t and symmetric-t bases coincide; both sit well below the nested path-wise reference '+
-        num(nestedRef)+' &mdash; a COPULA-FORM gap unaffected by the upper-tail-asymmetry scalar.</p>'+
+        fmtMoney(nestedRef)+' &mdash; a COPULA-FORM gap unaffected by the upper-tail-asymmetry scalar.</p>'+
         barChart(D,{w:760,h:300,mB:64})+'</div>';
     }
     var rows=td.rows||[];
@@ -3440,18 +3539,18 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     if(Object.keys(gd).length){
       html+='<div class="subh">Residual gap to nested truth &mdash; copula-form vs relief-surface (skew-t re-decomposition)</div>'+
         '<table class="ptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share of gap</th><th>Basis</th></tr></thead><tbody>'+
-        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+        '<tr><td>Relief-surface error</td><td>'+fmtMoney(gd.relief_surface_part_abs)+'</td><td>'+
           (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
           '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
-        '<tr><td>Copula-form residual (skew-t)</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+        '<tr><td>Copula-form residual (skew-t)</td><td>'+fmtMoney(gd.copula_form_residual_abs)+'</td><td>'+
           (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"%":"--")+
-          '</td><td>frozen-t '+num(gd.copula_form_residual_frozen_t)+' &rarr; skew-t '+num(gd.copula_form_residual_abs)+'</td></tr>'+
-        '<tr><td>Total gap (nested &minus; skew-t)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+          '</td><td>frozen-t '+fmtMoney(gd.copula_form_residual_frozen_t)+' &rarr; skew-t '+fmtMoney(gd.copula_form_residual_abs)+'</td></tr>'+
+        '<tr><td>Total gap (nested &minus; skew-t)</td><td>'+fmtMoney(gd.gap_total_abs)+'</td><td>'+
           (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"%":"--")+
           '</td><td>nested with-actions reference</td></tr>'+
         '</tbody></table>'+
-        '<p class="note">The skew-t scalar lifts the frozen-t component SCR by only '+num(gd.skewt_minus_sym_lift)+' on common random numbers; '+
-        'the copula-form residual moves '+num(gd.copula_form_residual_frozen_t)+' &rarr; '+num(gd.copula_form_residual_abs)+' ('+
+        '<p class="note">The skew-t scalar lifts the frozen-t component SCR by only '+fmtMoney(gd.skewt_minus_sym_lift)+' on common random numbers; '+
+        'the copula-form residual moves '+fmtMoney(gd.copula_form_residual_frozen_t)+' &rarr; '+fmtMoney(gd.copula_form_residual_abs)+' ('+
         (gd.copula_form_residual_reduction_rel!=null?(100*gd.copula_form_residual_reduction_rel).toFixed(2):"--")+'% reduction) &mdash; '+
         'RE-CONFIRMED as NOT closed by a single upper-tail-asymmetry scalar. Mitigation: grouped-t / vine escalation (Phase 28). Tracked by MR-015. DISCLOSED.</p>';
     }
@@ -3486,15 +3585,15 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var html='<div class="cards">';
     [
       ["df_NONFIN / df_FIN",dfs.length>1?(Number(dfs[0]).toFixed(3)+" / "+Number(dfs[1]).toFixed(3)):"--"],
-      ["Grouped-t component SCR (bootstrap mean)",num(gr.mean)],
-      ["Grouped-t component SCR (point)",num(grpPoint)],
-      ["Single-df t component SCR (mean)",num(sg.mean)],
-      ["Single-df t component SCR (point)",num(sngPoint)],
-      ["Nested SCR (path-wise) - reference",num(nestedRef)],
-      ["Grouped-t 95% CI",gr.ci_lo!=null?"["+num(gr.ci_lo)+", "+num(gr.ci_hi)+"]":"--"],
+      ["Grouped-t component SCR (bootstrap mean)",fmtMoney(gr.mean)],
+      ["Grouped-t component SCR (point)",fmtMoney(grpPoint)],
+      ["Single-df t component SCR (mean)",fmtMoney(sg.mean)],
+      ["Single-df t component SCR (point)",fmtMoney(sngPoint)],
+      ["Nested SCR (path-wise) - reference",fmtMoney(nestedRef)],
+      ["Grouped-t 95% CI",gr.ci_lo!=null?"["+fmtMoney(gr.ci_lo)+", "+fmtMoney(gr.ci_hi)+"]":"--"],
       ["Grouped-t SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
       ["Nested inside grouped 95% CI?",bo.headline_nested_inside_95ci?"yes":"no (OUTSIDE)"],
-      ["Grouped minus single (CRN mean)",num(bo.grouped_minus_single_mean)],
+      ["Grouped minus single (CRN mean)",fmtMoney(bo.grouped_minus_single_mean)],
       ["Cross-block dilution at p=0.90",mean(p90.grp_minus_sng_cross_upper,4)+" "+ci(p90.grp_minus_sng_cross_upper,4)],
       ["MR-016",td.mr016_opened?"OPEN (tracked)":"--"]
     ].forEach(function(c){ html+='<div class="card"><div class="k">'+c[0]+
@@ -3510,10 +3609,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
      ["Single-df t point",sngPoint,"#2b5d99"],
      ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
     ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
     if(D.length){
       html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; grouped-t vs single-df t vs nested reference</h4>'+
-        '<p class="cap">The grouped-t component sits below the single-df t boundary and farther below the nested path-wise reference '+num(nestedRef)+
+        '<p class="cap">The grouped-t component sits below the single-df t boundary and farther below the nested path-wise reference '+fmtMoney(nestedRef)+
         '; the widening is informative model-form evidence, not a failed recalibration.</p>'+barChart(D,{w:760,h:300,mB:72})+'</div>';
     }
     var rows=td.rows||[];
@@ -3547,21 +3646,21 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     if(Object.keys(gd).length){
       html+='<div class="subh">Residual gap to nested truth &mdash; grouped-t re-decomposition and widening</div>'+
         '<table class="ptable p28gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share / move</th><th>Basis</th></tr></thead><tbody>'+
-        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+        '<tr><td>Relief-surface error</td><td>'+fmtMoney(gd.relief_surface_part_abs)+'</td><td>'+
           (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
           '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
-        '<tr><td>Copula-form residual (grouped-t)</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+        '<tr><td>Copula-form residual (grouped-t)</td><td>'+fmtMoney(gd.copula_form_residual_abs)+'</td><td>'+
           (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"% of gap":"--")+
-          '</td><td>skew-t reconfirmed '+num(gd.copula_form_residual_skewt_reconfirmed)+' &rarr; grouped-t '+num(gd.copula_form_residual_abs)+'</td></tr>'+
-        '<tr><td>Residual widening vs skew-t</td><td>'+num(gd.copula_form_residual_change_vs_skewt_abs)+'</td><td>'+
+          '</td><td>skew-t reconfirmed '+fmtMoney(gd.copula_form_residual_skewt_reconfirmed)+' &rarr; grouped-t '+fmtMoney(gd.copula_form_residual_abs)+'</td></tr>'+
+        '<tr><td>Residual widening vs skew-t</td><td>'+fmtMoney(gd.copula_form_residual_change_vs_skewt_abs)+'</td><td>'+
           (gd.copula_form_residual_change_vs_skewt_rel!=null?("+"+(100*gd.copula_form_residual_change_vs_skewt_rel).toFixed(2)+"%"):"--")+
           '</td><td>informative negative super-set result; vine escalation</td></tr>'+
-        '<tr><td>Total gap (nested &minus; grouped-t)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+        '<tr><td>Total gap (nested &minus; grouped-t)</td><td>'+fmtMoney(gd.gap_total_abs)+'</td><td>'+
           (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"% of nested":"--")+
           '</td><td>nested with-actions reference</td></tr>'+
         '</tbody></table>'+
-        '<p class="note">The nested reference '+num(nestedRef)+' is OUTSIDE the grouped-t CI ['+num(gr.ci_lo)+', '+num(gr.ci_hi)+']; '+
-        'the copula-form residual WIDENS from '+num(gd.copula_form_residual_skewt_reconfirmed)+' to '+num(gd.copula_form_residual_abs)+
+        '<p class="note">The nested reference '+fmtMoney(nestedRef)+' is OUTSIDE the grouped-t CI ['+fmtMoney(gr.ci_lo)+', '+fmtMoney(gr.ci_hi)+']; '+
+        'the copula-form residual WIDENS from '+fmtMoney(gd.copula_form_residual_skewt_reconfirmed)+' to '+fmtMoney(gd.copula_form_residual_abs)+
         '. This confirms the residual is nested inner-path joint structure that a copula on standalone margins cannot represent. DISCLOSED; Phase 29 vine / pair-copula is the fallback.</p>';
     }
     html+='<div class="subh">MR refresh and governance decision</div>'+
@@ -3609,13 +3708,13 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var html='<div class="cards">';
     [
       ["Structure",(co.structure||"--")+(co.max_vine_trees!=null?" ("+co.max_vine_trees+" trees, root "+(co.root_driver_name||"?")+")":"")],
-      ["Vine candidate SCR (point)",num(vinePoint)],
-      ["Vine candidate SCR (bootstrap mean)",num(vi.mean)],
-      ["Frozen single-df t SCR (point)",num(frzPoint)],
-      ["Frozen single-df t SCR (mean)",num(fz.mean)],
-      ["Grouped-t SCR (point) - P28 ref",num(grpPoint)],
-      ["Nested SCR (path-wise) - reference",num(nestedRef)],
-      ["Vine 95% CI",vi.ci_lo!=null?"["+num(vi.ci_lo)+", "+num(vi.ci_hi)+"]":"--"],
+      ["Vine candidate SCR (point)",fmtMoney(vinePoint)],
+      ["Vine candidate SCR (bootstrap mean)",fmtMoney(vi.mean)],
+      ["Frozen single-df t SCR (point)",fmtMoney(frzPoint)],
+      ["Frozen single-df t SCR (mean)",fmtMoney(fz.mean)],
+      ["Grouped-t SCR (point) - P28 ref",fmtMoney(grpPoint)],
+      ["Nested SCR (path-wise) - reference",fmtMoney(nestedRef)],
+      ["Vine 95% CI",vi.ci_lo!=null?"["+fmtMoney(vi.ci_lo)+", "+fmtMoney(vi.ci_hi)+"]":"--"],
       ["Vine SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
       ["Nested inside vine 95% CI?",bo.headline_nested_inside_95ci?"yes":"no (OUTSIDE)"],
       ["Holdout/fit max-lift ratio",oc.holdout_to_fit_max_lift_ratio!=null?Number(oc.holdout_to_fit_max_lift_ratio).toFixed(3):"--"],
@@ -3624,8 +3723,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       '</div><div class="v">'+esc(c[1])+'</div></div>'; });
     html+='</div>';
     html+='<p class="note"><b>MATERIAL FINDING.</b> The truncated credit-root C-vine is the FIRST dependence candidate to move TOWARD the nested path-wise reference: '+
-      'it RAISES upper-tail co-dependence on ALL fitted links and NARROWS the copula-form residual to '+num(gd.copula_form_residual_abs)+
-      ' (-65.33% vs grouped-t '+num(bo.grouped_t_copula_form_residual_ref)+', -40.52% vs skew-t '+num(bo.skewt_reconfirmed_copula_form_residual_ref)+'). '+
+      'it RAISES upper-tail co-dependence on ALL fitted links and NARROWS the copula-form residual to '+fmtMoney(gd.copula_form_residual_abs)+
+      ' (-65.33% vs grouped-t '+fmtMoney(bo.grouped_t_copula_form_residual_ref)+', -40.52% vs skew-t '+fmtMoney(bo.skewt_reconfirmed_copula_form_residual_ref)+'). '+
       'The nested truth remains OUTSIDE the vine 95% CI, so MR-016 stays OPEN (narrowing DISCLOSED) and MR-017 tracks the residual vine-FORM limitations. '+
       'The vine is DISCLOSED, not adopted into the governed headline.</p>';
     var D=[];
@@ -3636,10 +3735,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
      ["Grouped-t point (P28)",grpPoint,"#7a8aa0"],
      ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
     ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
     if(D.length){
       html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; vine vs grouped-t vs single-df t vs nested reference</h4>'+
-        '<p class="cap">The vine candidate sits ABOVE the single-df t boundary and is the first candidate to narrow the gap to the nested path-wise reference '+num(nestedRef)+
+        '<p class="cap">The vine candidate sits ABOVE the single-df t boundary and is the first candidate to narrow the gap to the nested path-wise reference '+fmtMoney(nestedRef)+
         ' (-8.96%); the move is disclosed, not gated.</p>'+barChart(D,{w:760,h:300,mB:84})+'</div>';
     }
     if(rows.length){
@@ -3675,28 +3774,28 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     if(Object.keys(gd).length){
       html+='<div class="subh">Residual gap to nested truth &mdash; vine re-decomposition and narrowing</div>'+
         '<table class="ptable p29gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share / move</th><th>Basis</th></tr></thead><tbody>'+
-        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+        '<tr><td>Relief-surface error</td><td>'+fmtMoney(gd.relief_surface_part_abs)+'</td><td>'+
           (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
           '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
-        '<tr><td>Copula-form residual (vine)</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+        '<tr><td>Copula-form residual (vine)</td><td>'+fmtMoney(gd.copula_form_residual_abs)+'</td><td>'+
           (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"% of gap":"--")+
-          '</td><td>grouped-t '+num(bo.grouped_t_copula_form_residual_ref)+' / skew-t '+num(bo.skewt_reconfirmed_copula_form_residual_ref)+' &rarr; vine '+num(gd.copula_form_residual_abs)+'</td></tr>'+
-        '<tr><td>Residual narrowing vs grouped-t</td><td>'+num((bo.grouped_t_copula_form_residual_ref||0)-(gd.copula_form_residual_abs||0))+'</td><td>'+
+          '</td><td>grouped-t '+fmtMoney(bo.grouped_t_copula_form_residual_ref)+' / skew-t '+fmtMoney(bo.skewt_reconfirmed_copula_form_residual_ref)+' &rarr; vine '+fmtMoney(gd.copula_form_residual_abs)+'</td></tr>'+
+        '<tr><td>Residual narrowing vs grouped-t</td><td>'+fmtMoney((bo.grouped_t_copula_form_residual_ref||0)-(gd.copula_form_residual_abs||0))+'</td><td>'+
           (mr.residual_change_vs_grouped_t_rel!=null?((100*mr.residual_change_vs_grouped_t_rel).toFixed(2)+"%"):"--")+
           '</td><td>first candidate to NARROW below BOTH baselines (vs skew-t '+
           (mr.residual_change_vs_skewt_rel!=null?((100*mr.residual_change_vs_skewt_rel).toFixed(2)+"%"):"--")+')</td></tr>'+
-        '<tr><td>Total gap (nested &minus; vine)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+        '<tr><td>Total gap (nested &minus; vine)</td><td>'+fmtMoney(gd.gap_total_abs)+'</td><td>'+
           (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"% of nested":"--")+
           '</td><td>nested with-actions reference</td></tr>'+
         '</tbody></table>'+
-        '<p class="note">The nested reference '+num(nestedRef)+' is OUTSIDE the vine CI ['+num(vi.ci_lo)+', '+num(vi.ci_hi)+']; '+
+        '<p class="note">The nested reference '+fmtMoney(nestedRef)+' is OUTSIDE the vine CI ['+fmtMoney(vi.ci_lo)+', '+fmtMoney(vi.ci_hi)+']; '+
         'the pre-registered close criteria (inside-CI AND material shrink) are NOT met, so MR-016 stays OPEN with the narrowing DISCLOSED; '+
         'MR-017 tracks the residual vine-FORM limitations (2-tree truncation, capped families, educational tilt simulator, nested inner-path dynamics).</p>';
     }
     html+='<div class="subh">MR remediation and governance decision</div>'+
       '<table class="ptable"><thead><tr><th>Decision</th><th>Value</th><th>Rationale</th></tr></thead><tbody>'+
       '<tr><td>Governed headline move</td><td>'+(mr.governed_headline_relative_move!=null?(100*mr.governed_headline_relative_move).toFixed(4)+"%":"--")+
-      '</td><td>Frozen single-df t boundary '+num(mr.governed_headline_reference)+' recovered bit-identically; MR-010/MR-014 no-refresh.</td></tr>'+
+      '</td><td>Frozen single-df t boundary '+fmtMoney(mr.governed_headline_reference)+' recovered bit-identically; MR-010/MR-014 no-refresh.</td></tr>'+
       '<tr><td>MR-016</td><td>'+(mr.mr016_decision==="KEEP_OPEN"?"KEEP OPEN":esc(mr.mr016_decision||"--"))+
       '</td><td>Nested NOT inside the vine 95% CI; residual narrowing ('+
       (mr.residual_materially_shrinks?"material":"--")+') DISCLOSED, close criteria not met.</td></tr>'+
@@ -3923,7 +4022,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       "ui_data.json -- stable offline UI contract (v"+(DATA&&DATA.contract_version||"1.0.0")+")",
       "{",
       "  contract_version : string   // bump on breaking schema change",
-      "  meta         : {model_name, model_version, generated_utc, classification}",
+      "  meta         : {model_name, model_version, generated_utc, classification,",
+      "                  currency:{code,symbol,decimals,scale,thousands},  // v1.12.0+",
+      "                  currency_source, output_label}                    // v1.12.0+",
       "  summary      : {tasks_completed, tasks_total, phases_completed, gates_cleared,",
       "                  gates_total, risks_open, risks_mitigated, production_status, ...}",
       "  inventory    : [{id, path, category, bytes, sha256, mtime_utc, headline}]",
