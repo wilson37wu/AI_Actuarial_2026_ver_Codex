@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.14.0"
+CONTRACT_VERSION = "1.15.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -43,6 +43,7 @@ VIEWER_DATA = os.path.join(REPO, "viewer_data.json")
 OUT_JSON = os.path.join(REPO, "ui_data.json")
 OUT_HTML = os.path.join(REPO, "ui_app.html")
 RUN_SUMMARY_PATH = os.path.join(VAL, "RUN_MODEL_SUMMARY.json")
+AGG_REPORT_PATH = os.path.join(VAL, "RUN_MODEL_AGGREGATION_REPORT.json")
 
 # Neutral display default (Phase UIL Task 4 / plan A1): with no user inputs
 # and no run_model evidence, money renders exactly as before -- bare numbers,
@@ -2153,6 +2154,65 @@ def _build_owner_decision_p31() -> Dict[str, Any]:
     return out
 
 
+def _build_user_run(meta: Dict[str, Any]) -> Dict[str, Any]:
+    """Phase 32 Task 3 / gap G2 (contract 1.15.0, additive): user-input
+    run-result surface. Carries the latest ``scripts/run_model.py`` evidence
+    VERBATIM (bit-for-bit; nothing recomputed, nothing re-derived) so the
+    offline UI can render the user-input run: headline read-outs and
+    bootstrap CIs from ``RUN_MODEL_SUMMARY.json``, plus the run
+    configuration, model-point counts and input provenance
+    (``model_inputs.json`` -> ``par_model_v2.user_inputs`` loader ->
+    ``run_model``) from the pinned evidence report
+    ``RUN_MODEL_AGGREGATION_REPORT.json``. The currency / output_label
+    display provenance is copied from the ALREADY-STAMPED ``meta`` block
+    (single source of truth: :func:`_resolve_currency_meta`), so the panel
+    discloses exactly what build_ui_data.py stamped -- by construction.
+    Returns ``{}`` when no user run is embedded; the GUI then renders a
+    graceful neutral fallback (no JS errors, no blank tab). Display-layer
+    only -- no model calculation."""
+    out: Dict[str, Any] = {}
+    summ = _load(RUN_SUMMARY_PATH)
+    if not isinstance(summ, dict) or not isinstance(summ.get("headline"),
+                                                    dict):
+        return out  # graceful fallback: no user-input run embedded
+    for key in ("run_timestamp", "output_label", "currency", "inputs",
+                "headline", "bootstrap_ci", "verdict", "duration_seconds",
+                "evidence", "wall_clock_seconds"):
+        if key in summ:
+            out[key] = summ[key]
+    rep = _load(AGG_REPORT_PATH)
+    if isinstance(rep, dict):
+        for key in ("run_plan", "inputs_provenance", "use_restrictions"):
+            if isinstance(rep.get(key), dict):
+                out[key] = rep[key]
+    out["display_provenance"] = {
+        "currency": meta.get("currency"),
+        "currency_source": meta.get("currency_source"),
+        "output_label": meta.get("output_label"),
+        "note": ("copied verbatim from meta.currency / meta.currency_source"
+                 " / meta.output_label as stamped by scripts/build_ui_data"
+                 ".py _resolve_currency_meta() -- single source of truth "
+                 "for every monetary label in this GUI"),
+    }
+    out["source"] = "docs/validation/RUN_MODEL_SUMMARY.json"
+    out["evidence_source"] = (
+        "docs/validation/RUN_MODEL_AGGREGATION_REPORT.json")
+    out["narrative"] = (
+        "The latest user-input run (scripts/run_model.py) is surfaced "
+        "VERBATIM for browsing: every figure is carried bit-for-bit from "
+        "the run summary and its pinned aggregation-report evidence -- "
+        "nothing is recomputed by the display layer. The run prices the "
+        "user portfolio via the validated model_inputs.json contract "
+        "(input provenance model_inputs.json -> par_model_v2.user_inputs "
+        "loader -> run_model) on bit-identical governed parameters; the "
+        "frozen seven-driver dependence is never user-settable. The "
+        "governed capital read-outs in the other tabs are UNCHANGED by "
+        "this surface, and the book-scaling figure is a DISCLOSED "
+        "APPROXIMATION, not a governed result."
+    )
+    return out
+
+
 def _build_phase30() -> Dict[str, Any]:
     """Phase 30 (contract 1.13.0, additive): post-vine dependence roadmap
     decision - tree-3 vine deepening + BINDING stop-rule. Normalises the
@@ -2556,6 +2616,7 @@ def build_ui_data() -> Dict[str, Any]:
             _p30_bt.get("task2_tree3_candidate_component_point"))
 
     owner_decision_p31 = _build_owner_decision_p31()
+    user_run = _build_user_run(meta)
 
     governance = dict(base.get("governance", {}))
     _base_risks = list(governance.get("risk_register", []) or [])
@@ -2606,6 +2667,7 @@ def build_ui_data() -> Dict[str, Any]:
         "phase29": phase29,
         "phase30": phase30,
         "owner_decision_p31": owner_decision_p31,
+        "user_run": user_run,
         "governance": governance,
         "verdicts": _build_verdicts(base.get("verdicts", [])),
     }
@@ -2766,6 +2828,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="phase29" class="panel" data-title="Vine Tail (P29)"></div>
   <div id="phase30" class="panel" data-title="Stop-Rule (P30)"></div>
   <div id="ownerdecision" class="panel" data-title="Owner Decision (P31)"></div>
+  <div id="userrun" class="panel" data-title="User Run (UIL)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
 </div>
 
@@ -2820,6 +2883,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["phase29","Vine Tail (P29)"],
     ["phase30","Stop-Rule (P30)"],
     ["ownerdecision","Owner Decision (P31)"],
+    ["userrun","User Run (UIL)"],
     ["governance","Governance"]
   ];
 
@@ -4224,6 +4288,120 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  function renderUserRun(){
+    var el=document.getElementById("userrun"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var ur=DATA.user_run||{};
+    var hl=ur.headline||{};
+    if(!Object.keys(hl).length){
+      el.innerHTML='<p class="muted">No user-input run is embedded in this snapshot (requires contract v1.15.0+ and a scripts/run_model.py run present at build time). '+
+        'To embed one: fill production_run/MODEL_INPUTS_TEMPLATE.xlsx, export model_inputs.json, run scripts/run_model.py, then rebuild this GUI with scripts/build_ui_data.py. '+
+        'The governed read-outs in the other tabs are unaffected.</p>';
+      return;
+    }
+    var bc=ur.bootstrap_ci||{};
+    var rp=ur.run_plan||{}; var rpv=rp.provenance||{};
+    var ip=ur.inputs_provenance||{};
+    var rprod=(ip.representative_product||{});
+    var rep=rprod.representative_product||{};
+    var pf=rprod.portfolio_summary||{};
+    var bs=rprod.book_scaling||{};
+    var liq=(ip.liquidity_exposure||{});
+    var dp=ur.display_provenance||{};
+    var dpc=dp.currency||{};
+    var sa=hl.standalone_scr||{};
+    var usr=ur.use_restrictions||{};
+    function pct(x,d){ return x!=null?(Number(x)).toFixed(d==null?2:d)+"%":"--"; }
+    function ci2(a){ return (a&&a.length===2)?"["+fmtMoney(a[0])+", "+fmtMoney(a[1])+"]":"--"; }
+    var html='<p class="note"><b>User-input run results (Phase UIL) - read-only surface.</b> '+
+      'Every figure is carried bit-for-bit from the embedded run evidence; the display layer recomputes NOTHING. '+
+      'Input provenance: <span class="mono">model_inputs.json &rarr; par_model_v2.user_inputs loader &rarr; scripts/run_model.py</span>.</p>';
+    html+='<div class="cards">';
+    [
+      ["Run label",esc(ur.output_label||"--")],
+      ["Run timestamp (UTC)",esc(String(ur.run_timestamp||"--").slice(0,19))],
+      ["Run verdict",chip(ur.verdict)],
+      ["Nested SCR (99.5% / 1y)",fmtMoney(hl.nested_scr)],
+      ["Selected copula SCR",fmtMoney(hl.copula_scr)+" ("+esc(hl.copula_selected||"--")+")"],
+      ["Var-covar SCR",fmtMoney(hl.var_covar_scr)],
+      ["ESG understatement",hl.esg_understatement_pct!=null?pct(hl.esg_understatement_pct):"--"],
+      ["Model points priced",pf.n_policies!=null?String(pf.n_policies)+" PAR rows ("+String(rprod.gmmb_rows_disclosed!=null?rprod.gmmb_rows_disclosed:"--")+" GMMB row(s) disclosed, out of engine scope)":"--"],
+      ["Run wall clock",ur.wall_clock_seconds!=null?Number(ur.wall_clock_seconds).toFixed(1)+" s":"--"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+c[0]+
+      '</div><div class="v">'+c[1]+'</div></div>'; });
+    html+='</div>';
+    var D=[]; var names={rate:"Rate",equity:"Equity",credit:"Credit",lapse:"Lapse",mortality:"Mortality",fx:"FX",liquidity:"Liquidity"};
+    var cols={rate:"#4f9cff",equity:"#9a7bff",credit:"#2fd0a8",lapse:"#ffb454",mortality:"#7a8aa0",fx:"#ff6b6b",liquidity:"#2b5d99"};
+    Object.keys(names).forEach(function(k){ if(sa[k]!=null) D.push({label:names[k],value:sa[k],color:cols[k],
+      tip:"<b>"+names[k]+" standalone SCR</b><br>"+fmtMoney(sa[k])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>Standalone SCR by driver - user-input run (bit-for-bit from RUN_MODEL_SUMMARY.json)</h4>'+
+        '<p class="cap">Nested SCR '+fmtMoney(hl.nested_scr)+' &middot; '+esc(hl.copula_selected||"--")+' copula '+fmtMoney(hl.copula_scr)+' &middot; var-covar '+fmtMoney(hl.var_covar_scr)+'</p>'+
+        barChart(D,{w:760,h:300,mB:84})+'</div>';
+    }
+    if(Object.keys(sa).length){
+      html+='<div class="subh">Standalone SCR per driver</div>'+
+        '<table class="ptable urscr"><thead><tr><th>Driver</th><th>Standalone SCR</th></tr></thead><tbody>';
+      Object.keys(names).forEach(function(k){ if(sa[k]!=null) html+='<tr><td>'+names[k]+'</td><td>'+fmtMoney(sa[k])+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    if(Object.keys(bc).length){
+      html+='<div class="subh">Tail bootstrap confidence intervals (n='+esc(String(bc.n_bootstrap!=null?bc.n_bootstrap:"--"))+')</div>'+
+        '<table class="ptable urci"><thead><tr><th>Read-out</th><th>Value</th></tr></thead><tbody>'+
+        '<tr><td>VaR 99.5% (point)</td><td>'+fmtMoney(bc.var_point)+'</td></tr>'+
+        '<tr><td>VaR 95% CI</td><td>'+ci2(bc.var_ci)+'</td></tr>'+
+        '<tr><td>ES 95% CI</td><td>'+ci2(bc.es_ci)+'</td></tr>'+
+        '<tr><td>VaR CI relative half-width</td><td>'+(bc.var_ci_rel_halfwidth!=null?pct(100*bc.var_ci_rel_halfwidth):"--")+'</td></tr>'+
+        '</tbody></table>';
+    }
+    if(Object.keys(rp).length){
+      html+='<div class="subh">Run configuration (with per-setting provenance)</div>'+
+        '<table class="ptable urplan"><thead><tr><th>Setting</th><th>Value</th><th>Provenance</th></tr></thead><tbody>';
+      [["n_outer",rp.n_outer],["n_inner",rp.n_inner],["n_sim",rp.n_sim],["seed",rp.seed],
+       ["bootstrap_replicates",rp.bootstrap_replicates],["horizon_months",rp.horizon_months],
+       ["confidence",rp.confidence],["run_tail",rp.run_tail],["output_label",rp.output_label]
+      ].forEach(function(r){ html+='<tr><td class="mono">'+r[0]+'</td><td>'+esc(String(r[1]==null?"--":r[1]))+'</td><td class="mono">'+esc(String(rpv[r[0]]||"--"))+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    if(Object.keys(pf).length||Object.keys(rep).length){
+      html+='<div class="subh">Model points &amp; portfolio (validated user contract)</div>'+
+        '<table class="ptable urpf"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>';
+      [["PAR model points (n_policies)",pf.n_policies],
+       ["&nbsp;&nbsp;cash-dividend / reversionary-bonus",pf.n_cash_dividend!=null?String(pf.n_cash_dividend)+" / "+String(pf.n_reversionary_bonus):null],
+       ["GMMB rows disclosed (out of engine scope)",rprod.gmmb_rows_disclosed],
+       ["Total sum assured (model points)",pf.total_sum_assured!=null?fmtMoney(pf.total_sum_assured):null],
+       ["Total annual premium (model points)",pf.total_annual_premium!=null?fmtMoney(pf.total_annual_premium):null],
+       ["Representative product (inforce-weighted)",Object.keys(rep).length?("age "+rep.issue_age+" "+esc(rep.gender||"")+", SA "+fmtMoney(rep.sum_assured)+", premium "+fmtMoney(rep.annual_premium)+", term "+rep.term_years+"y"):null],
+       ["Term snap note",rep.term_snap_note],
+       ["Portfolio digest (sha256)",rprod.portfolio_digest],
+       ["Book scaling (DISCLOSED APPROXIMATION)",bs.linear_scale_factor!=null?("&times;"+num(bs.linear_scale_factor)+" to "+num(bs.policy_count_total)+" policies / "+fmtMoney(bs.sum_assured_total)+" book SA - "+esc(bs.note||"")):null],
+       ["Liquidity exposure notional",((liq.derivation||{}).exposure_notional!=null)?fmtMoney(liq.derivation.exposure_notional)+" ("+esc(liq.source||"--")+")":null]
+      ].forEach(function(r){ if(r[1]!=null) html+='<tr><td>'+r[0]+'</td><td class="mono">'+(typeof r[1]==="string"?r[1]:esc(String(r[1])))+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    html+='<div class="subh">Input &amp; display provenance (exactly as stamped by build_ui_data.py)</div>'+
+      '<table class="ptable urprov"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>'+
+      '<tr><td>Inputs file</td><td class="mono">'+esc(ur.inputs||String(ip.model_inputs||"ABSENT (governed default)"))+'</td></tr>'+
+      '<tr><td>Input chain</td><td class="mono">model_inputs.json &rarr; par_model_v2.user_inputs loader &rarr; scripts/run_model.py</td></tr>'+
+      '<tr><td>Run evidence</td><td class="mono">'+esc(ur.evidence_source||"")+'</td></tr>'+
+      '<tr><td>Run summary</td><td class="mono">'+esc(ur.source||"")+'</td></tr>'+
+      '<tr><td>Display currency (stamped)</td><td>'+esc(String(dpc.code||"--"))+(dpc.symbol?(' ('+esc(dpc.symbol)+')'):'')+', '+esc(String(dpc.decimals!=null?dpc.decimals:"--"))+' dp, '+esc(String(dpc.thousands||"--"))+' thousands</td></tr>'+
+      '<tr><td>Currency source (stamped)</td><td class="mono">'+esc(dp.currency_source||"--")+'</td></tr>'+
+      '<tr><td>Output label (stamped)</td><td class="mono">'+esc(String(dp.output_label||"--"))+'</td></tr>'+
+      '<tr><td>Frozen dependence</td><td>'+esc(String(ip.frozen_dependence||"--"))+'</td></tr>'+
+      '</tbody></table>';
+    if((usr.permitted_uses||[]).length||(usr.prohibited_uses||[]).length){
+      html+='<div class="subh">Use restrictions ('+esc(String(usr.status||"--"))+')</div><ul class="cap">';
+      (usr.permitted_uses||[]).forEach(function(u){ html+='<li>PERMITTED: '+esc(u)+'</li>'; });
+      (usr.prohibited_uses||[]).forEach(function(u){ html+='<li>PROHIBITED: '+esc(u)+'</li>'; });
+      html+='</ul>';
+    }
+    html+='<p class="note">'+esc(ur.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(ur.source||"")+' &middot; '+esc(ur.evidence_source||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
   function renderPhase29(){
     var el=document.getElementById("phase29"); if(!el) return;
     if(!DATA){ el.innerHTML=dz(); return; }
@@ -4583,6 +4761,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       "                   diagnostics:{method,n_obs,fit_r2,converged,criteria[],fit_bars}}]",
       "  owner_decision_p31 : {evidence_pack, owner_options, owner_option_order,",
       "                  signoff_workflow, decision_record_template, ...}  // v1.14.0+",
+      "  user_run     : {run_timestamp, output_label, currency, inputs, headline,",
+      "                  bootstrap_ci, verdict, run_plan, inputs_provenance,",
+      "                  display_provenance, use_restrictions, ...}        // v1.15.0+",
       "  governance   : {audit_entries, audit_integrity_ok, change_records,",
       "                  deployment_gates, risk_register}",
       "  verdicts     : [{name, verdict}]",
@@ -4714,7 +4895,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderOwnerDecision(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderOwnerDecision(); renderUserRun(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

@@ -152,6 +152,22 @@ setTimeout(() => {
   const odO2 = odText.indexOf("O2_accept_residual_with_monitoring");
   const odO3 = odText.indexOf("O3_fund_second_independent_nested_run");
 
+  // Phase 32 Task 3 (gap G2): open the User Run (UIL) panel and count its
+  // elements - headline cards, standalone-SCR table + bar chart, bootstrap
+  // CI table, run-configuration table (with per-setting provenance),
+  // model-point/portfolio table, input & display provenance table.
+  const urTab = tabs.find(t => t.getAttribute("data-target") === "userrun");
+  if (urTab) urTab.click();
+  const urCards = document.querySelectorAll("#userrun .card").length;
+  const urScrRows = document.querySelectorAll("#userrun table.urscr tbody tr").length;
+  const urCiRows = document.querySelectorAll("#userrun table.urci tbody tr").length;
+  const urPlanRows = document.querySelectorAll("#userrun table.urplan tbody tr").length;
+  const urPfRows = document.querySelectorAll("#userrun table.urpf tbody tr").length;
+  const urProvRows = document.querySelectorAll("#userrun table.urprov tbody tr").length;
+  const urBarRects = document.querySelectorAll("#userrun svg.chart rect.bar").length;
+  const urEl = document.getElementById("userrun");
+  const urText = (urEl && urEl.textContent) || "";
+
   // UI Task 4: open the Governance & assumptions view and click through every sub-view.
   const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
   if (govTab) govTab.click();
@@ -350,6 +366,27 @@ setTimeout(() => {
     odStopRulePresent: /escalation ENDS/.test(odText),
     odMrOpenPresent: /MR-016/.test(odText) && /MR-017/.test(odText),
     odSingleRunCaveatPresent: /SINGLE run/.test(odText),
+    userRunTabPresent: !!urTab,
+    urCards, urScrRows, urCiRows, urPlanRows, urPfRows, urProvRows, urBarRects,
+    urTabTextPresent: /User Run \(UIL\)/.test(bodyText),
+    urRunLabelPresent: /WorkedExample_TemplateDemoBook/.test(urText),
+    urNestedScrPresent: /71,112/.test(urText),
+    urCopulaScrPresent: /49,826/.test(urText) && /gaussian/.test(urText),
+    urVarCovarScrPresent: /37,626/.test(urText),
+    urLapseScrPresent: /30,360/.test(urText),
+    urEquityScrPresent: /21,207/.test(urText),
+    urVarCiPresent: /192,141/.test(urText) && /191,055/.test(urText) && /193,042/.test(urText),
+    urEsgUnderstatementPresent: /0\.47%/.test(urText),
+    urVerdictPresent: /REVIEW/.test(urText),
+    urSeedPresent: /20260608/.test(urText),
+    urModelPointCountsPresent: /2 PAR rows \(1 GMMB row/.test(urText),
+    urInputChainPresent: /model_inputs\.json/.test(urText) && /par_model_v2\.user_inputs loader/.test(urText) && /run_model/.test(urText),
+    urCurrencySourceStamped: uiMeta.currency_source ? urText.indexOf(uiMeta.currency_source) >= 0 : false,
+    urOutputLabelStamped: uiMeta.output_label ? urText.indexOf(uiMeta.output_label) >= 0 : false,
+    urDigestPresent: /48bc9c19/.test(urText),
+    urBookScalingDisclosedPresent: /DISCLOSED APPROXIMATION/.test(urText),
+    urFrozenDependencePresent: /never user-settable/.test(urText),
+    urNothingRecomputedPresent: /recomputes NOTHING/.test(urText),
     currencyMetaStamped: !!(uiMeta.currency && ("currency_source" in uiMeta) && ("output_label" in uiMeta)),
     fmtMoneyDefined: /function fmtMoney\(/.test(html),
     moneySymbolRendered: moneyRe ? moneyRe.test(bodyText) : true,
@@ -547,6 +584,33 @@ setTimeout(() => {
     checks.odStopRulePresent &&
     checks.odMrOpenPresent &&
     checks.odSingleRunCaveatPresent &&
+    checks.userRunTabPresent &&
+    checks.urCards >= 8 &&
+    checks.urScrRows === 7 &&
+    checks.urCiRows === 4 &&
+    checks.urPlanRows === 9 &&
+    checks.urPfRows >= 8 &&
+    checks.urProvRows === 8 &&
+    checks.urBarRects >= 7 &&
+    checks.urTabTextPresent &&
+    checks.urRunLabelPresent &&
+    checks.urNestedScrPresent &&
+    checks.urCopulaScrPresent &&
+    checks.urVarCovarScrPresent &&
+    checks.urLapseScrPresent &&
+    checks.urEquityScrPresent &&
+    checks.urVarCiPresent &&
+    checks.urEsgUnderstatementPresent &&
+    checks.urVerdictPresent &&
+    checks.urSeedPresent &&
+    checks.urModelPointCountsPresent &&
+    checks.urInputChainPresent &&
+    checks.urCurrencySourceStamped &&
+    checks.urOutputLabelStamped &&
+    checks.urDigestPresent &&
+    checks.urBookScalingDisclosedPresent &&
+    checks.urFrozenDependencePresent &&
+    checks.urNothingRecomputedPresent &&
     checks.currencyMetaStamped &&
     checks.fmtMoneyDefined &&
     checks.moneySymbolRendered &&

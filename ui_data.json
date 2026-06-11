@@ -1,9 +1,9 @@
 {
-  "contract_version": "1.14.0",
+  "contract_version": "1.15.0",
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-11T14:17:11.795320+00:00",
+    "generated_utc": "2026-06-11T15:16:00.149266+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -36,7 +36,7 @@
     "risks_open": 1,
     "risks_mitigated": 10,
     "production_status": "NOT CLEARED FOR PRODUCTION",
-    "contract_artifacts": 92,
+    "contract_artifacts": 93,
     "calibrated_drivers": 11
   },
   "inventory": [
@@ -795,6 +795,15 @@
       "sha256": "45fb2e59d96b0e7b150fc462a55c8f7d1e9a8b47b5bab6e36cdfd41459a5b7f4",
       "mtime_utc": "2026-06-11T13:17:18Z",
       "headline": ""
+    },
+    {
+      "id": "PHASE32_TASK2_OWNER_PACK_SURFACE_REPORT",
+      "path": "docs/validation/PHASE32_TASK2_OWNER_PACK_SURFACE_REPORT.json",
+      "category": "other",
+      "bytes": 3293,
+      "sha256": "0b129c3c2c5a18a9c051c23503f4d9d095fca4614a3dd39154fb83d86b1f2e10",
+      "mtime_utc": "2026-06-11T14:22:09Z",
+      "headline": "PASS"
     },
     {
       "id": "PROJECTION_REFERENCE_RUN",
@@ -11324,6 +11333,178 @@
     "source": "docs/validation/PHASE31_TASK2_OWNER_DECISION_PACK.json",
     "one_page_summary_source": "docs/validation/PHASE31_TASK3_OWNER_SUMMARY.{json,md}",
     "narrative": "The Phase 31 owner decision pack is surfaced VERBATIM for browsing: every figure is carried bit-for-bit from the assembled pack (itself gated bit-for-bit against the frozen archived references); the three options appear in registry order with NO default and no steering language; the decision record stays BLANK until the model owner completes workflow step 4. The display layer performs no calculation and the governed headline (frozen single-df t component basis) is unchanged."
+  },
+  "user_run": {
+    "run_timestamp": "2026-06-11T06:24:24.113908+00:00",
+    "output_label": "WorkedExample_TemplateDemoBook",
+    "currency": {
+      "code": "USD",
+      "symbol": "$",
+      "decimals": 0,
+      "scale": "units",
+      "thousands": "comma",
+      "market_label": "Local market",
+      "valuation_date": "2026-01-01"
+    },
+    "inputs": "production_run/model_inputs.json",
+    "headline": {
+      "nested_scr": 71112.05935353745,
+      "copula_selected": "gaussian",
+      "copula_scr": 49825.854878830345,
+      "var_covar_scr": 37625.87169423637,
+      "standalone_scr": {
+        "rate": 15740.704656600166,
+        "equity": 21206.773662311054,
+        "credit": 7709.873580639818,
+        "lapse": 30360.362242001695,
+        "mortality": 381.1154575620555,
+        "fx": 3414.427260991953,
+        "liquidity": 52.71822416481139
+      },
+      "esg_understatement_pct": 0.47089323475815387
+    },
+    "bootstrap_ci": {
+      "var_point": 192141.08016533384,
+      "var_ci": [
+        191055.21527037953,
+        193042.3760191425
+      ],
+      "es_ci": [
+        196768.30428082845,
+        200043.5408869306
+      ],
+      "var_ci_rel_halfwidth": 0.005171098098993369,
+      "n_bootstrap": 50
+    },
+    "verdict": "REVIEW",
+    "duration_seconds": 7.784018701997411,
+    "evidence": "RUN_MODEL_AGGREGATION_REPORT.json",
+    "wall_clock_seconds": 7.804,
+    "run_plan": {
+      "n_outer": 100,
+      "n_inner": 4,
+      "seed": 20260608,
+      "n_sim": 20000,
+      "bootstrap_replicates": 50,
+      "horizon_months": 12,
+      "confidence": 0.995,
+      "output_label": "WorkedExample_TemplateDemoBook",
+      "run_tail": true,
+      "inputs_source": "production_run/model_inputs.json",
+      "provenance": {
+        "n_outer": "cli",
+        "n_inner": "cli",
+        "seed": "run_settings",
+        "n_sim": "run_settings",
+        "bootstrap_replicates": "cli",
+        "horizon_months": "run_settings",
+        "confidence": "user_inputs",
+        "output_label": "cli"
+      }
+    },
+    "inputs_provenance": {
+      "model_inputs": "production_run/model_inputs.json",
+      "representative_product": {
+        "source": "user_portfolio_inforce_weighted_mean",
+        "representative_product": {
+          "issue_age": 47,
+          "gender": "M",
+          "sum_assured": 120000.0,
+          "annual_premium": 5600.0,
+          "term_years": 20,
+          "term_years_weighted_mean": 22.0,
+          "term_snap_note": "weighted-mean term 22.00 snapped to nearest supported product term 20 (VALID_TERMS=(5, 10, 20))"
+        },
+        "portfolio_summary": {
+          "n_policies": 2,
+          "n_cash_dividend": 1,
+          "n_reversionary_bonus": 1,
+          "total_sum_assured": 250000.0,
+          "total_annual_premium": 11500.0,
+          "total_initial_vested_bonus": 12000.0,
+          "mean_sum_assured": 125000.0,
+          "mean_annual_premium": 5750.0,
+          "mean_issue_age": 47.5,
+          "issue_age_min": 45,
+          "issue_age_max": 50,
+          "sum_assured_min": 100000.0,
+          "sum_assured_max": 150000.0,
+          "term_mix": {
+            "20": 1,
+            "25": 1
+          },
+          "gender_mix": {
+            "M": 1,
+            "F": 1
+          },
+          "channel_mix": {
+            "DIRECT": 2
+          }
+        },
+        "portfolio_digest": "48bc9c19f5a544f29be87e672858e426b9b9ee9e5cb1b8a4c27d3d9772dee877",
+        "gmmb_rows_disclosed": 1,
+        "book_scaling": {
+          "policy_count_total": 2000.0,
+          "sum_assured_total": 240000000.0,
+          "representative_sum_assured": 120000.0,
+          "linear_scale_factor": 2000.0,
+          "note": "DISCLOSED APPROXIMATION, not a governed result: the engine prices one representative model point; multiplying per-point capital by linear_scale_factor assumes homogeneous-book linear scaling."
+        }
+      },
+      "liquidity_exposure": {
+        "source": "user_inputs",
+        "derivation": {
+          "backing_asset_mv": 100000.0,
+          "illiquid_share": 0.45,
+          "forced_sale_fraction": 0.4,
+          "exposure_notional": 18000.0
+        }
+      },
+      "frozen_dependence": "calibrated seven-driver correlation (governed, never user-settable)"
+    },
+    "use_restrictions": {
+      "model": "SevenDriverLiquidityRiskAggregator",
+      "status": "EDUCATIONAL",
+      "permitted_uses": [
+        "Teaching multi-risk economic-capital aggregation with a liquidity/funding-spread driver",
+        "Demonstrating var-covar vs copula vs nested reconciliation across seven correlated drivers",
+        "Methodology prototyping for tail-dependent aggregation and RQMC tail diagnostics"
+      ],
+      "prohibited_uses": [
+        "Pricing, reserving, or regulatory capital for any real block of business",
+        "Any production use before credentialled-data calibration of the liquidity exposure notional and 7x7 liquidity couplings plus an independent APS X2 review"
+      ],
+      "key_limitations": [
+        "Liquidity exposure notional and liquidity correlation couplings are educational placeholders (process params are G-LIQ calibrated to an educational HKD proxy).",
+        "Single systemic liquidity factor; no asset-class segmentation, bid-ask microstructure, or funding-ladder granularity.",
+        "Analytic haircut ignores the simulation premium ceiling clamp (immaterial at calibrated parameters; verified < 0.03%).",
+        "n_outer for the nested benchmark is small for a 99.5% metric; the wide nested bootstrap CI is disclosed and the convergence evidence is carried by the copula-simulated study."
+      ],
+      "standards": [
+        "SOA ASOP 56 3.1.3/3.4/3.5",
+        "SOA ASOP 25 3.3",
+        "IA TAS M 3.2/3.5/3.6/3.7",
+        "Solvency II Delegated Reg. Art. 234",
+        "EIOPA volatility-adjustment methodology"
+      ]
+    },
+    "display_provenance": {
+      "currency": {
+        "code": "USD",
+        "symbol": "$",
+        "decimals": 0,
+        "scale": "units",
+        "thousands": "comma",
+        "market_label": "Local market",
+        "valuation_date": "2026-01-01"
+      },
+      "currency_source": "docs/validation/RUN_MODEL_SUMMARY.json (latest run_model.py evidence)",
+      "output_label": "WorkedExample_TemplateDemoBook",
+      "note": "copied verbatim from meta.currency / meta.currency_source / meta.output_label as stamped by scripts/build_ui_data.py _resolve_currency_meta() -- single source of truth for every monetary label in this GUI"
+    },
+    "source": "docs/validation/RUN_MODEL_SUMMARY.json",
+    "evidence_source": "docs/validation/RUN_MODEL_AGGREGATION_REPORT.json",
+    "narrative": "The latest user-input run (scripts/run_model.py) is surfaced VERBATIM for browsing: every figure is carried bit-for-bit from the run summary and its pinned aggregation-report evidence -- nothing is recomputed by the display layer. The run prices the user portfolio via the validated model_inputs.json contract (input provenance model_inputs.json -> par_model_v2.user_inputs loader -> run_model) on bit-identical governed parameters; the frozen seven-driver dependence is never user-settable. The governed capital read-outs in the other tabs are UNCHANGED by this surface, and the book-scaling figure is a DISCLOSED APPROXIMATION, not a governed result."
   },
   "governance": {
     "audit_entries": 81,

@@ -2450,6 +2450,31 @@
       "phase": "Phase 32: Zero-Install Offline UI Consolidation",
       "digest": "9bb9443fd050266e8ee3f9a1f0853a5e79db2d469174f1da26f533a13f9a4f1e",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "1eab8ced870148489fd4b3316c3e163d",
+      "timestamp": "2026-06-11T15:23:02.444846+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase32",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 32 Task 3 user-input run-result surface (gap G2); contract 1.15.0 additive; graceful fallback proven",
+      "details": {
+        "record_id": "fcdac39175ea472f8edadd9dd8aa3249",
+        "ui_contract": "1.15.0",
+        "self_test_ok": true,
+        "fallback_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "scripts/ui_app_userrun_fallback_test.cjs",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+      "digest": "bf642f8640789ccfc77c4008800f08ee3c39e4acdc7e119993297b64f38f9b51",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -7571,6 +7596,70 @@
           "actor": "AutomatedModelDev_Phase32",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Gap G1 of the Phase 32 design note is closed: the owner decision pack is now browsable offline. The Phase 31 decision itself remains PENDING and entirely with the model owner (workflow step 4); nothing in this change steers or defaults that decision."
+        }
+      ],
+      "phase": "Phase 32: Zero-Install Offline UI Consolidation"
+    },
+    {
+      "record_id": "fcdac39175ea472f8edadd9dd8aa3249",
+      "created_at": "2026-06-11T15:23:02.444760+00:00",
+      "title": "Phase 32 Task 3 - user-input run-result surface (gap G2) in the zero-install offline UI",
+      "description": "Phase 32 Task 3 closed gap G2 of the Phase 32 Task 1 design note: the latest scripts/run_model.py user-input run is now a browsable first-class 'User Run (UIL)' tab in the zero-install offline UI (ui_data contract bumped ADDITIVELY 1.14.0 -> 1.15.0). The new user_run section carries RUN_MODEL_SUMMARY.json VERBATIM (headline nested/copula/var-covar SCRs, per-driver standalone SCRs, tail bootstrap CIs, verdict) plus the run_plan (with per-setting provenance), inputs_provenance (model-point counts, representative product, portfolio digest, book-scaling DISCLOSED APPROXIMATION, liquidity exposure) and use_restrictions blocks of RUN_MODEL_AGGREGATION_REPORT.json - bit-for-bit, nothing recomputed. The currency / output_label display provenance is copied from the ALREADY-STAMPED meta block (single source of truth _resolve_currency_meta()) and asserted bit-identical. A dedicated fallback self-test strips user_run and proves the graceful neutral fallback (no JS errors, no blank tab, no leaked run figures). Suite: ui_app 223 checks ok:true 0 network / 0 JS errors; fallback, offline viewer and combined GUI green; 0 external references; every pre-existing ui_data key bit-identical. The UI performs no calculation; NO model parameter changes.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "scripts/ui_app_userrun_fallback_test.cjs",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "IFoA Modelling Practice Note s4 (documentation & independent review)",
+        "SOA ASOP 23 s3 (data quality - input provenance disclosed end-to-end)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.14.0 (owner-decision surface; user-input run evidence not browsable)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.15.0 (additive)",
+        "headline_readouts": {
+          "output_label": "WorkedExample_TemplateDemoBook",
+          "verdict": "REVIEW",
+          "nested_scr": 71112.05935353745,
+          "copula_selected": "gaussian",
+          "copula_scr": 49825.854878830345,
+          "var_covar_scr": 37625.87169423637,
+          "var_point": 192141.08016533384,
+          "n_model_points": 2,
+          "currency_source": "docs/validation/RUN_MODEL_SUMMARY.json (latest run_model.py evidence)"
+        },
+        "self_test_ok": true,
+        "fallback_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 223
+      },
+      "impact_assessment": "Display-layer only: the UI bundler reads the pinned run_model evidence JSONs and performs no model calculation, so no model output changes. Additive contract bump keeps existing consumers working. The governed capital read-outs are visually and numerically UNCHANGED; the user-run surface is clearly scoped to the user-input run and its book-scaling figure is labelled a DISCLOSED APPROXIMATION. Absent run evidence degrades to a neutral fallback message (proven by the dedicated fallback self-test), so the artifact remains valid for repos without user runs.",
+      "quantitative_impact": "UI now displays (bit-for-bit from the run evidence): run 'WorkedExample_TemplateDemoBook' verdict REVIEW; nested SCR 71112.1; gaussian copula SCR 49825.9; var-covar 37625.9; VaR point 192141.1; 2 PAR model points; currency source 'docs/validation/RUN_MODEL_SUMMARY.json (latest run_model.py evidence)'. jsdom self-test ok with 0 network calls and 0 JS errors over 223 checks; fallback test ok=True.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase32",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T15:23:02.444809+00:00",
+          "actor": "AutomatedModelDev_Phase32",
+          "status": "PEER_REVIEW",
+          "comments": "UI propagation verified by the contract checks (run summary + evidence-report blocks carried bit-for-bit; display provenance bit-identical to the stamped meta block; additive diff clean) + jsdom self-tests (0 network / 0 JS errors across ui_app, the dedicated user-run fallback test, offline viewer and combined GUI); display-layer change only; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-11T15:23:02.444823+00:00",
+          "actor": "AutomatedModelDev_Phase32",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap G2 of the Phase 32 design note is closed: the user-input run results are now browsable offline with full input provenance (model_inputs.json -> par_model_v2.user_inputs loader -> run_model) and the stamped currency/output_label disclosure. The governed capital read-outs are unchanged."
         }
       ],
       "phase": "Phase 32: Zero-Install Offline UI Consolidation"

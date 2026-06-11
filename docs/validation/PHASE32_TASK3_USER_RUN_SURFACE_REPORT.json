@@ -1,0 +1,155 @@
+{
+  "task": "Phase 32 Task 3 - user-input run-result surface (gap G2)",
+  "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+  "generated_utc": "2026-06-11T15:23:02.596741+00:00",
+  "verdict": "PASS",
+  "gap_closed": "G2",
+  "next": "Task 4 (gap G3): governed read-out completeness sweep",
+  "ui_contract_checks": {
+    "contract_version": "1.15.0",
+    "contract_is_1_15_0": true,
+    "user_run_section_present": true,
+    "summary_bit_for_bit_all_keys": true,
+    "summary_bit_for_bit_detail": {
+      "run_timestamp": true,
+      "output_label": true,
+      "currency": true,
+      "inputs": true,
+      "headline": true,
+      "bootstrap_ci": true,
+      "verdict": true,
+      "duration_seconds": true,
+      "evidence": true,
+      "wall_clock_seconds": true
+    },
+    "report_blocks_bit_for_bit": true,
+    "report_blocks_bit_for_bit_detail": {
+      "run_plan": true,
+      "inputs_provenance": true,
+      "use_restrictions": true
+    },
+    "source_pinned": true,
+    "evidence_source_pinned": true,
+    "display_currency_is_stamped_meta": true,
+    "display_currency_source_is_stamped_meta": true,
+    "display_output_label_is_stamped_meta": true,
+    "model_point_counts_carried": true,
+    "input_chain_in_html": true,
+    "panel_div_in_html": true,
+    "tab_title_in_html": true,
+    "renderer_in_html": true,
+    "fallback_message_in_html": true,
+    "zero_external_refs": true,
+    "single_file_bytes": 529073,
+    "additive_check": {
+      "previous": "/tmp/patch/ui_data_prev.json",
+      "top_level_keys_differing": [
+        "meta",
+        "summary",
+        "inventory"
+      ],
+      "meta_diffs": [
+        "generated_utc"
+      ],
+      "pre_existing_inventory_entries_changed": [],
+      "inventory_entries_added": [
+        "PHASE32_TASK2_OWNER_PACK_SURFACE_REPORT"
+      ],
+      "summary_recount_only": [
+        "contract_artifacts"
+      ]
+    },
+    "additive_ok": true,
+    "all_passed": true,
+    "headline_readouts": {
+      "output_label": "WorkedExample_TemplateDemoBook",
+      "verdict": "REVIEW",
+      "nested_scr": 71112.05935353745,
+      "copula_selected": "gaussian",
+      "copula_scr": 49825.854878830345,
+      "var_covar_scr": 37625.87169423637,
+      "var_point": 192141.08016533384,
+      "n_model_points": 2,
+      "currency_source": "docs/validation/RUN_MODEL_SUMMARY.json (latest run_model.py evidence)"
+    }
+  },
+  "self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 223,
+    "failed_checks": [],
+    "ur_checks": {
+      "userRunTabPresent": true,
+      "urCards": 9,
+      "urScrRows": 7,
+      "urCiRows": 4,
+      "urPlanRows": 9,
+      "urPfRows": 10,
+      "urProvRows": 8,
+      "urBarRects": 7,
+      "urTabTextPresent": true,
+      "urRunLabelPresent": true,
+      "urNestedScrPresent": true,
+      "urCopulaScrPresent": true,
+      "urVarCovarScrPresent": true,
+      "urLapseScrPresent": true,
+      "urEquityScrPresent": true,
+      "urVarCiPresent": true,
+      "urEsgUnderstatementPresent": true,
+      "urVerdictPresent": true,
+      "urSeedPresent": true,
+      "urModelPointCountsPresent": true,
+      "urInputChainPresent": true,
+      "urCurrencySourceStamped": true,
+      "urOutputLabelStamped": true,
+      "urDigestPresent": true,
+      "urBookScalingDisclosedPresent": true,
+      "urFrozenDependencePresent": true,
+      "urNothingRecomputedPresent": true
+    },
+    "cached": true
+  },
+  "fallback_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 9,
+    "failed_checks": [],
+    "ur_checks": {
+      "userRunTabPresent": true,
+      "fallbackMessagePresent": true,
+      "fallbackHowToPresent": true,
+      "fallbackNeutral": true
+    },
+    "cached": true
+  },
+  "offline_viewer_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 11,
+    "failed_checks": [],
+    "ur_checks": {},
+    "cached": true
+  },
+  "combined_gui_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 27,
+    "failed_checks": [],
+    "ur_checks": {},
+    "cached": true
+  },
+  "governance": {
+    "added_change_record": true,
+    "change_record_id": "fcdac39175ea472f8edadd9dd8aa3249",
+    "change_record_status": "OWNER_REVIEW",
+    "audit_entries_before": 109,
+    "audit_entries_after": 110,
+    "change_records_before": 81,
+    "change_records_after": 82,
+    "audit_integrity_ok": true
+  }
+}

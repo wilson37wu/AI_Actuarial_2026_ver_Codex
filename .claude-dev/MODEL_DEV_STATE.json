@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-11T14:22:00Z",
-  "last_run_duration_minutes": 35,
-  "last_run_note": "Phase 32 Task 2 (gap G1) PASS: Owner Decision (P31) tab in ui_app.html; contract 1.13.0->1.14.0 ADDITIVE; pack carried bit-for-bit; neutrality + BLANK decision record pinned; self-tests 196 checks ok 0/0 (+viewer 11, combined 27); ChangeRecord 63b701f440eb4cfb9c83f7c34ce9f009 OWNER_REVIEW; next Task 3 = G2 user-input run-result surface (contract -> 1.15.0 additive)",
+  "last_run": "2026-06-11T15:55:00Z",
+  "last_run_duration_minutes": 45,
+  "last_run_note": "Phase 32 Task 3 (gap G2) PASS: User Run (UIL) tab in ui_app.html; contract 1.14.0->1.15.0 ADDITIVE; run summary + run_plan/inputs_provenance/use_restrictions carried bit-for-bit; display provenance == stamped meta; graceful fallback proven (dedicated jsdom test); self-tests 223 checks ok 0/0 (+viewer 11, combined 27); ChangeRecord fcdac39175ea472f8edadd9dd8aa3249 OWNER_REVIEW; next Task 4 = G3 governed read-out completeness sweep",
   "current_phase": "Phase 32: Zero-Install Offline UI Consolidation",
-  "overall_status": "PHASE32_TASK2_COMPLETE_NEXT_TASK3_G2_USER_INPUT_RUN_SURFACE",
+  "overall_status": "PHASE32_TASK3_COMPLETE_NEXT_TASK4_G3_COMPLETENESS_SWEEP",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -563,12 +563,13 @@
       "description": "Standing directive (post-Phase 31): focus on the zero-install offline user interface. The UI must depend on NOTHING pre-installed - calculation is done by the stochastic model; the UI consumes ONLY model-output JSON and displays it graphically and interactively. Design-note-first; every contract change ADDITIVE.",
       "completed": [
         "Task 1: design note pre-registering the UI consolidation pass - (a) baseline audit: ui_app.html self-test (0 network / 0 JS errors), external-ref scan, single-file/zero-install verification, tab + contract-version inventory; (b) gap list vs the standing directive (owner-decision-pack surface (additive contract bump), input-loader run results, any governed read-outs not yet surfaced); (c) pre-registered acceptance criteria for each gap; NO model parameter changes.",
-        "Task 2 (gap G1) DONE: browsable owner-decision-pack surface in ui_app.html - additive 'Owner Decision (P31)' surface: evidence-pack key figures, the three options (registry order, neutral, NO default), sign-off workflow position, decision-record status rendered BLANK until the owner decides; ui_data contract 1.13.0 -> 1.14.0 ADDITIVE; every figure bit-for-bit from PHASE31_TASK2_OWNER_DECISION_PACK.json; self-tests green (0 network / 0 JS errors); zero-install preserved; per the pre-registered acceptance criteria in docs/validation/PHASE32_TASK1_DESIGN_NOTE.md."
+        "Task 2 (gap G1) DONE: browsable owner-decision-pack surface in ui_app.html - additive 'Owner Decision (P31)' surface: evidence-pack key figures, the three options (registry order, neutral, NO default), sign-off workflow position, decision-record status rendered BLANK until the owner decides; ui_data contract 1.13.0 -> 1.14.0 ADDITIVE; every figure bit-for-bit from PHASE31_TASK2_OWNER_DECISION_PACK.json; self-tests green (0 network / 0 JS errors); zero-install preserved; per the pre-registered acceptance criteria in docs/validation/PHASE32_TASK1_DESIGN_NOTE.md.",
+        "Task 3 (gap G2) DONE: user-input run-result surface in ui_app.html - additive 'User Run (UIL)' tab: RUN_MODEL_SUMMARY.json carried VERBATIM (headline nested 71,112.06 / gaussian copula 49,825.85 / var-covar 37,625.87; per-driver standalone SCRs; tail bootstrap CIs; verdict REVIEW) plus run_plan (per-setting provenance), inputs_provenance (model-point counts 2 PAR rows / 1 GMMB disclosed; portfolio digest; book-scaling DISCLOSED APPROXIMATION; liquidity exposure) and use_restrictions from RUN_MODEL_AGGREGATION_REPORT.json; input chain model_inputs.json -> par_model_v2.user_inputs loader -> run_model disclosed; currency/output_label display provenance copied from the stamped meta block (bit-identical by construction); GRACEFUL neutral fallback proven by dedicated jsdom test (scripts/ui_app_userrun_fallback_test.cjs: no JS errors, no blank tab, no leaked figures); ui_data contract 1.14.0 -> 1.15.0 ADDITIVE (pre-existing keys bit-identical); ui_app self-test 223 checks ok 0/0 (27 new); viewer 11 / combined 27 ok; zero-install preserved (0 external refs); per the pre-registered G2 acceptance criteria."
       ],
       "in_progress": [
-        "Task 3 (gap G2): user-input run-result surface in ui_app.html - additive panel for the Phase UIL user-input run (RUN_MODEL_SUMMARY.json: run configuration, model-point counts, input provenance model_inputs.json -> loader -> run_model; currency/output_label provenance exactly as stamped by build_ui_data.py); GRACEFUL neutral fallback when no user run is embedded (no JS errors, no blank tab); ui_data contract 1.14.0 -> 1.15.0 ADDITIVE; self-tests green (0 network / 0 JS errors); zero-install preserved; per the pre-registered G2 acceptance criteria in docs/validation/PHASE32_TASK1_DESIGN_NOTE.md."
+        "Task 4 (gap G3): governed read-out completeness sweep - inventory-driven diff of the governance store (ChangeRecords, audit trail, model-risk register) and the validation-report registry against the ui_data governance section; surface any governed read-out not yet visible ADDITIVELY (contract bump only if the sweep finds missing read-outs); documented inventory diff committed with the change; figures bit-for-bit from the governance store / archived reports; self-tests ok:true 0/0; zero-install preserved; NO model parameter changes; per the pre-registered G3 acceptance criteria in docs/validation/PHASE32_TASK1_DESIGN_NOTE.md."
       ],
-      "next": "Task 4 (gap G3): governed read-out completeness sweep; Task 5: phase summary + final consolidated re-audit, PHASE 32 COMPLETE."
+      "next": "Task 5: phase summary + final consolidated re-audit (self-tests, external-ref scan, contract inventory), PHASE 32 COMPLETE; then research the next improvement phase."
     }
   },
   "repository_info": {
