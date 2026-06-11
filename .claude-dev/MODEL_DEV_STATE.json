@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-11T08:05:00Z",
- "last_run_duration_minutes": null,
- "last_run_note": "Phase UIL Task 4 (B4+A1) complete: GUI currency wire-through LIVE (meta.currency + output_label, fmtMoney, contract 1.12.0 additive); Phase UIL COMPLETE; pointer -> Phase 30 Task 4 (tree-3 tail diagnostics + binding stop-rule / MR-016/MR-017 decision).",
+ "last_run": "2026-06-11T09:05:00Z",
+ "last_run_duration_minutes": 55,
+ "last_run_note": "Phase 30 Task 4 complete: tree-3 tail diagnostics PASS 6/6 gates; BINDING STOP-RULE APPLIED (MR-016+MR-017 KEEP OPEN; dependence-FORM escalation under MR-016 ENDS; Phase 31 = owner decision package); MR-010/MR-014 no refresh; pointer -> Phase 30 Task 5 (offline-UI propagation).",
  "current_phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
- "overall_status": "PHASE_UIL_COMPLETE_NEXT_PHASE30_TASK4_STOP_RULE_DECISION",
+ "overall_status": "PHASE30_TASK4_COMPLETE_NEXT_TASK5_UI_PROPAGATION",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -526,10 +526,11 @@
    "completed": [
     "Task 1: design-note-first option study + pre-registered gates for the post-vine dependence roadmap (MR-016/MR-017 remediation path): quantify expected residual closure per option, cost/benefit, governance criteria (close/mitigate/adopt/stop), and select ONE next step. No implementation before the design note is committed with gates.",
     "Task 2: pre-registered tree-3 vine deepening implemented (PASS). DUAL boundary bit-identical (frozen-t 39,975.654628199336; 2-tree vine 42,458.5527095696; both devs 0.0). Leakage-free joint-conditional fit on the four pre-registered third-tree pairs selected gaussian / zero strength for ALL FOUR pairs: with 160 outer scenarios the joint-conditional mask (both conditioners > 0.90) leaves n_fit <= 3 rows, so there is NO empirical support for incremental tree-3 dependence at the pre-registered tail level. Candidate is therefore bit-identical to the 2-tree vine (42,458.5527095696; +6.21% vs frozen-t, +0.00% vs vine2). Disclosed, not gate-shopped. ChangeRecord 2b34607c654d4f01b1dc88b70914fa3a OWNER_REVIEW.",
-    "Task 3: tree-3 vine margin bootstrap (200 x 20,000; master seed 20260611) on the FROZEN P30T2 tree-3 fit (PASS). Tree-3 component SCR mean 41,751.9, 95% CI [38,593.7, 44,556.4], SE 1,589.2 = 3.81% of mean (<= 5% gate PASS). Nested 46,638.9 OUTSIDE the CI -> the pre-registered STOP-RULE TRIGGER is MET and recorded (decision at Task 4; no gate-shopping). Paired CRN deltas: tree-3 minus 2-tree vine EXACTLY ZERO in all 200 replicates (zero-strength bit-identity contract holds across the full bootstrap distribution); tree-3 minus frozen-t mean +2,303.7 (100% positive) - the pair-link lift is carried entirely by the P29 2-tree fit. Archive cross-check first: frozen-t 39,975.654628199336, 2-tree vine and tree-3 candidate both 42,458.5527095696 bit-identical. Bootstrap digest 7b2a0cbcbb35; tree-3 fit digest f689e11e81fa. ChangeRecord 736029a064514f8681fd0af592ddab97 methodology_change OWNER_REVIEW; records 69->70; audit 97->98; verify_all True; idempotent. NEW vine_tree3_bootstrap.py + build script + 10/0 tests; regression P30T2/P29T3/P29T2 30/0; compileall clean."
+    "Task 3: tree-3 vine margin bootstrap (200 x 20,000; master seed 20260611) on the FROZEN P30T2 tree-3 fit (PASS). Tree-3 component SCR mean 41,751.9, 95% CI [38,593.7, 44,556.4], SE 1,589.2 = 3.81% of mean (<= 5% gate PASS). Nested 46,638.9 OUTSIDE the CI -> the pre-registered STOP-RULE TRIGGER is MET and recorded (decision at Task 4; no gate-shopping). Paired CRN deltas: tree-3 minus 2-tree vine EXACTLY ZERO in all 200 replicates (zero-strength bit-identity contract holds across the full bootstrap distribution); tree-3 minus frozen-t mean +2,303.7 (100% positive) - the pair-link lift is carried entirely by the P29 2-tree fit. Archive cross-check first: frozen-t 39,975.654628199336, 2-tree vine and tree-3 candidate both 42,458.5527095696 bit-identical. Bootstrap digest 7b2a0cbcbb35; tree-3 fit digest f689e11e81fa. ChangeRecord 736029a064514f8681fd0af592ddab97 methodology_change OWNER_REVIEW; records 69->70; audit 97->98; verify_all True; idempotent. NEW vine_tree3_bootstrap.py + build script + 10/0 tests; regression P30T2/P29T3/P29T2 30/0; compileall clean.",
+    "Task 4: tree-3 vine tail diagnostics + BINDING STOP-RULE / MR decision (PASS, gates 6/6). Per-pair upper/lower tail co-dependence for 6 tree-1 + 5 tree-2 + 4 tree-3 (joint-conditional on both pre-registered conditioners) + 3 HOLDOUT pairs, tree-3 candidate vs frozen-t on CRN, 95% CIs over the 200 archived Task 3 replicates at p in {0.80,0.85,0.90,0.95}. Archive cross-checks BIT-identical (per-replicate 0.0; aggregate mean/CI/min/max 0.0); zero-strength uniform bit-identity max|U_t3-U_v2| = 0.0 across all 200 replicates (tree-3 == 2-tree vine re-verified at the uniform level). Overfit gate PASS: max holdout |mean lift| 0.0412 <= max fitted-pair |mean lift| 0.8449 (ratio 0.049, equal to the P29 reference 0.049); holdout disclosure complete; all four tree-3 selections zero strength (n_fit <= 3). BINDING DECISION per pre-registered criteria: nested 46,638.9 OUTSIDE [38,593.7, 44,556.4] AND residual UNCHANGED at 3,637.298487404965 (bit-identity; NOT strictly below the threshold) -> MR-016 KEEP OPEN + MR-017 KEEP OPEN + STOP-RULE APPLIED: dependence-FORM escalation under MR-016 ENDS (no further copula-structure candidates without owner sign-off); Phase 31 = OWNER DECISION PACKAGE (option C; option B only as owner-approved escalation). MR-010/MR-014: NO refresh (governed headline frozen-t 39,975.654628199336 recovered bit-identically, move +0.0000% <= 1%). Idempotent digest 9e10a3b86332. ChangeRecord b1c2649394b747388aaa432560039587 governance_change OWNER_REVIEW; records 74->75; audit 102->103; risks 17 (no new MR); verify_all True; idempotent re-run. NEW vine_tree3_tail_diagnostics.py + build script + 15/0 tests; regression P30T3/P30T2/P29T4/P29T3 44/0 + governance 54/0; compileall clean. Educational; production sign-off withheld."
    ],
    "in_progress": [
-    "Task 4: tree-3 vine tail diagnostics + binding STOP-RULE / MR decision per PHASE30_TASK1_DESIGN_NOTE task4_acceptance_criteria: per-pair tail diagnostics including the four tree-3 conditional pairs (holdout pairs disclosed with CIs); overfit check (holdout-to-fit max-lift ratio vs P29 reference 0.049; concentration gate as P29T4); MR decision - mitigate MR-016/MR-017 ONLY if nested inside CI AND residual < 3,637.3, otherwise KEEP OPEN and APPLY THE STOP-RULE (Task 3 recorded the trigger as MET: nested 46,638.9 outside [38,593.7, 44,556.4], so the expected outcome is KEEP OPEN + stop-rule applied -> dependence-FORM escalation under MR-016 ENDS; Phase 31 = owner decision package). MR-010/MR-014 refresh only if governed headline moves > 1% (it must not: headline stays frozen-t). governance_change ChangeRecord OWNER_REVIEW; risk-register update idempotent."
+    "Task 5: offline-UI propagation of the Phase 30 stop-rule decision per repo convention: surface the tree-3 candidate read-out, the binding stop-rule decision (MR-016/MR-017 KEEP OPEN; dependence-FORM escalation ENDS) and the Phase 31 owner-decision-package directive in the offline viewer/combined GUI (ADDITIVE data-contract bump; build_ui_data + combined app data regenerated; offline_viewer_self_test + combined_gui_self_test PASS; governed headline display unchanged frozen-t)."
    ],
    "next": "On Task 1 completion: execute the selected option as Phase 30 Tasks 2-4 (implementation, bootstrap/validation, MR decision), then Task 5 offline-UI propagation per repo convention.",
    "queue_note": "RESUMED 2026-06-11 (cycle 28): Phase UIL complete (B1-B4+A1 all LIVE); Phase 30 Task 4 moved back into in_progress per the owner directive parking note."
@@ -864,7 +865,7 @@
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
   "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
  },
- "last_updated": "2026-06-11T08:05:00Z",
+ "last_updated": "2026-06-11T09:05:00Z",
  "cycle_2026_06_08_phase26_task2": {
   "verdict": "PASS",
   "gates": "6/6 pre-registered",
@@ -1136,5 +1137,16 @@
   "tests": "9/9 new; UI regression 336/336; run_model 23/23; selections 402+533+363+64; self-test ok:true",
   "capital_impact": "none (display-only)",
   "next": "Phase 30 Task 4 (resumed from queued_resume_after_phase_uil)"
+ },
+ "cycle_2026_06_11_phase30_task4": {
+  "timestamp": "2026-06-11T09:05:00Z",
+  "agent": "claude-cowork",
+  "task": "Phase 30 Task 4 - tree-3 tail diagnostics + binding stop-rule / MR decision",
+  "verdict": "PASS (gates 6/6)",
+  "headline": "STOP-RULE APPLIED: dependence-FORM escalation under MR-016 ENDS; MR-016 + MR-017 KEEP OPEN; Phase 31 = owner decision package (option C). Overfit gate PASS (holdout/fit ratio 0.049 = P29 ref). Governed headline unchanged (frozen-t, move 0.0000%).",
+  "change_record": "b1c2649394b747388aaa432560039587",
+  "digest": "9e10a3b86332",
+  "new_tests": "15/0",
+  "regression": "44/0 phase + 54/0 governance"
  }
 }

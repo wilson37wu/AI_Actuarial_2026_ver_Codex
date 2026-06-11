@@ -2294,6 +2294,30 @@
       "phase": "Phase UIL Task 4 (B4+A1): GUI currency wire-through",
       "digest": "264a76fef7410c2a4aee66b7dd04aca982b6309dcd2c7cd1ed9bd244db0653b3",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "d113ddfb23e24752adb78763d6d574e7",
+      "timestamp": "2026-06-11T08:20:42.986128+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase30",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 30 Task 4 tree-3 tail diagnostics + BINDING STOP-RULE decision (MR-016/MR-017 KEEP OPEN; dependence-FORM escalation ends)",
+      "details": {
+        "record_id": "b1c2649394b747388aaa432560039587",
+        "change_type": "governance_change",
+        "mr016_decision": "KEEP_OPEN",
+        "mr017_decision": "KEEP_OPEN",
+        "stop_rule_applied": true,
+        "affected_components": [
+          "par_model_v2/projection/vine_tree3_tail_diagnostics.py",
+          "scripts/build_phase30_task4_tree3_tail_diagnostics.py",
+          "tests/test_phase30_task4_tree3_tail_diagnostics.py",
+          "docs/TREE3_TAIL_DIAGNOSTICS_CARD.md",
+          "docs/validation/PHASE30_TASK4_TREE3_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+        ]
+      },
+      "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+      "digest": "d0ddcafb6506d36dba3b520be63551239065fae8871fe087586db7fa5711288d",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -6976,6 +7000,82 @@
       "assumption_owner": null,
       "sign_off_history": [],
       "phase": "Phase UIL: User-Input Loader + Run Orchestrator"
+    },
+    {
+      "record_id": "b1c2649394b747388aaa432560039587",
+      "created_at": "2026-06-11T08:20:42.986063+00:00",
+      "title": "Phase 30 Task 4 - tree-3 vine pair-level tail diagnostics + fit-vs-holdout overfit check + BINDING STOP-RULE decision (MR-016 and MR-017 KEEP OPEN; dependence-FORM escalation under MR-016 ENDS; Phase 31 = owner decision package)",
+      "description": "Per-pair upper/lower tail co-dependence diagnostics for the six first-tree links, five second-tree links (conditional on the root upper tail), FOUR tree-3 links (joint-conditional on both pre-registered conditioners) and three holdout pairs, tree-3 candidate vs frozen-t boundary on COMMON random numbers, re-drawn at the archived Task 3 bootstrap seeds (per-replicate and aggregate SCR cross-checks BIT-identical; zero-strength uniform bit-identity tree-3 == vine-2 re-verified across all 200 replicates). Pre-registered fit-vs-holdout overfit gate PASS. BINDING STOP-RULE decision: MR-016 and MR-017 KEEP OPEN (nested 46,638.9 outside the tree-3 95% CI; residual UNCHANGED at 3,637.3 by bit-identity) and the STOP-RULE IS APPLIED - dependence-FORM escalation under MR-016 ENDS; Phase 31 = owner decision package (option C). MR-010/MR-014: NO refresh (governed headline move 0.0000% <= 1%; nothing adopted without owner sign-off). No new model parameter.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/projection/vine_tree3_tail_diagnostics.py",
+        "scripts/build_phase30_task4_tree3_tail_diagnostics.py",
+        "tests/test_phase30_task4_tree3_tail_diagnostics.py",
+        "docs/TREE3_TAIL_DIAGNOSTICS_CARD.md",
+        "docs/validation/PHASE30_TASK4_TREE3_TAIL_DIAGNOSTICS_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+        "Joe (2014), Dependence Modeling with Copulas, ch.2 (tail dependence)",
+        "Solvency II Delegated Regulation Article 234",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+        "IA TAS M sections 3.2, 3.6, 3.7",
+        "IFoA Modelling Practice Note s4 (model risk register)"
+      ],
+      "before_snapshot": {
+        "tree3_pair_level_tail_diagnostics": "not yet reported for the tree-3 candidate",
+        "mr016": "OPEN (stop-rule trigger recorded at Task 3, not decided)",
+        "mr017": "OPEN (no Task 4 decision)",
+        "stop_rule": "trigger MET (Task 3); decision pending",
+        "mr_register_count": 17
+      },
+      "after_snapshot": {
+        "archive_crosscheck_bit_identical": true,
+        "uniform_bit_identity_max_abs_dev": 0.0,
+        "overfit_gate_pass": true,
+        "max_holdout_abs_mean_lift": 0.04123250000000001,
+        "max_fit_abs_mean_lift": 0.8448996179419851,
+        "holdout_to_fit_ratio": 0.04880165539716368,
+        "mr016_decision": "KEEP_OPEN",
+        "mr017_decision": "KEEP_OPEN",
+        "stop_rule_applied": true,
+        "dependence_form_escalation_ends": true,
+        "nested_inside_ci": false,
+        "mr_register_count": 17,
+        "mr010_mr014_refresh_required": false,
+        "governed_headline_move": 0.0,
+        "gates": {
+          "T4_G1_archive_crosscheck_bit_identical": true,
+          "T4_G2_pair_tail_grid_complete": true,
+          "T4_G3_fit_vs_holdout_overfit_check": true,
+          "T4_G4_stop_rule_mr_decision_per_preregistered_criteria": true,
+          "T4_G5_mr010_mr014_no_refresh": true,
+          "T4_G6_zero_strength_bit_identity_and_digest": true
+        },
+        "verdict": "PASS",
+        "digest": "9e10a3b86332"
+      },
+      "impact_assessment": "Diagnostic + governance only: no governed parameter changes (copula Sigma / homogeneous df / P29T2 2-tree fit / P30T2 tree-3 selections and relief scalars FROZEN). The tree-3 candidate adds ZERO incremental dependence (zero-strength bit-identity re-verified), so the 2-tree vine's residual narrowing stands as the best dependence-FORM result; the pre-registered STOP-RULE is APPLIED and dependence-FORM escalation under MR-016 ENDS. The governed frozen single-df t headline is unchanged, so MR-010/MR-014 quantifications stand. Phase 31 is the owner decision package. Educational classification retained; production sign-off withheld.",
+      "quantitative_impact": "p=0.90 max fitted-pair |mean lift| 0.8449; max holdout |mean lift| 0.0412 (ratio 0.049; P29 ref 0.049); archive cross-check per-replicate max abs dev 0.0e+00 / aggregate 0.0e+00; uniform bit-identity 0.0e+00; MR-016 + MR-017 KEEP OPEN (nested 46,638.9 vs CI hi 44556.4; residual unchanged 3,637.3); STOP-RULE APPLIED; governed headline move +0.0000% -> no MR-010/MR-014 refresh.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase30",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T08:20:42.986087+00:00",
+          "actor": "AutomatedModelDev_Phase30",
+          "status": "PEER_REVIEW",
+          "comments": "Archive cross-checks bit-identical; zero-strength bit-identity re-verified; overfit gate PASS; STOP-RULE APPLIED per pre-registered criteria (MR-016 + MR-017 KEEP OPEN); new unit tests PASS."
+        },
+        {
+          "timestamp": "2026-06-11T08:20:42.986101+00:00",
+          "actor": "AutomatedModelDev_Phase30",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: binding stop-rule decision - dependence-FORM escalation under MR-016 ends; Phase 31 owner decision package; governed headline unchanged."
+        }
+      ],
+      "phase": "Phase 30: Post-Vine Dependence Roadmap Decision"
     }
   ],
   "risk_register": [
@@ -7232,8 +7332,8 @@
       "mitigation_status": "OPEN",
       "related_standard": "Solvency II Art. 234; Daul et al. (2003); McNeil, Frey & Embrechts (2015) QRM ch.7; Aas et al. (2009); IFoA Modelling Practice Note s4",
       "created_at": "2026-06-08T17:28:41.083502+00:00",
-      "updated_at": "2026-06-10T23:24:29.560480+00:00",
-      "notes": "Phase 29 Task 4 remediation DECISION: KEEP OPEN. The truncated credit-root vine candidate is the FIRST dependence candidate to NARROW the copula-form residual below BOTH baselines (3,637.3 = -65.33% vs grouped-t 10,491.5 / -40.52% vs skew-t 6,114.9; DISCLOSED), but the nested truth 46,638.9 is NOT inside the Task 3 vine 95% bootstrap CI [38,654.7, 45,284.3], so the pre-registered close/mitigate criteria are NOT met. Remaining vine-FORM limitations are tracked by the NEW MR-017. Carries forward MR-015. Monitored; governed headline unchanged (frozen single-df t; vine NOT adopted without owner sign-off)."
+      "updated_at": "2026-06-11T08:20:42.985903+00:00",
+      "notes": "Phase 30 Task 4 BINDING STOP-RULE decision: KEEP OPEN; STOP-RULE APPLIED. The pre-registered tree-3 deepening (P30T2) selected gaussian / zero strength on ALL FOUR third-tree pairs (n_fit <= 3 joint-conditional support), so the tree-3 candidate is BIT-identical to the 2-tree vine (42,458.55; residual UNCHANGED at 3,637.3) and nested 46,638.9 remains OUTSIDE the Task 3 tree-3 95% bootstrap CI [38,593.7, 44,556.4]. Dependence-FORM escalation under MR-016 ENDS: no further copula-structure candidates may be opened without owner sign-off. Phase 31 = owner decision package (option C); option B (nested-aware calibration) only as an owner-approved escalation. Carries forward MR-015. Governed headline unchanged (frozen single-df t; nothing adopted)."
     },
     {
       "risk_id": "MR-017",
@@ -7248,8 +7348,8 @@
       "mitigation_status": "OPEN",
       "related_standard": "Aas et al. (2009); Joe (2014) ch.2; Solvency II Art. 234; IFoA Modelling Practice Note s4",
       "created_at": "2026-06-10T23:24:29.560550+00:00",
-      "updated_at": "2026-06-10T23:24:29.560550+00:00",
-      "notes": "Opened Phase 29 Task 4 alongside the MR-016 KEEP-OPEN decision. MR-015 (skew-t) and MR-016 (grouped-t) carried forward. Monitored."
+      "updated_at": "2026-06-11T08:20:42.985936+00:00",
+      "notes": "Phase 30 Task 4 decision: KEEP OPEN. The residual vine-FORM limitation is now FULLY QUANTIFIED at the pre-registered escalation depth: deepening the truncation (tree 3) adds ZERO incremental dependence at the pre-registered joint-conditional tail level (no empirical support with 160 outer scenarios), so the remaining residual 3,637.3 is attributed to nested inner-path joint dynamics that margins-level dependence cannot represent, NOT to the truncation depth. STOP-RULE APPLIED (with MR-016): dependence-FORM escalation ENDS; remediation moves to the Phase 31 owner decision package (adopt the vine as a DISCLOSED alternative read-out, fund a second independent nested run, or accept and disclose the quantified residual)."
     }
   ]
 }
