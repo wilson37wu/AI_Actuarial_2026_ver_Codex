@@ -335,3 +335,299 @@ def validate_owner_package(pack: Dict, options: Dict, workflow: List[Dict]) -> D
     checks["every_step_has_standards"] = all(len(s["standards"]) >= 1 for s in workflow)
     checks["no_parameter_changes"] = NO_MODEL_PARAMETER_CHANGES is True
     return {"checks": checks, "ok": all(checks.values()), "n_checks": len(checks)}
+
+
+# ---------------------------------------------------------------------------
+# Phase 31 Task 2 - pack ASSEMBLY (exactly per the Task 1 registry)
+# ---------------------------------------------------------------------------
+
+#: Version of the assembled owner pack document (Task 2).
+PACK_DOC_VERSION = "1.0.0"
+
+#: Stable identifier of the assembled pack document.
+PACK_DOC_ID = "PHASE31_OWNER_DECISION_PACK"
+
+#: Phrases that would break the pre-registered NEUTRALITY requirement
+#: (the pack must present the options without steering the owner).
+NEUTRALITY_FORBIDDEN_PHRASES = (
+    "we recommend",
+    "is recommended",
+    "recommended option",
+    "preferred option",
+    "we prefer",
+    "best option",
+    "default option",
+    "you should choose",
+    "the owner should choose",
+)
+
+#: Sections an assembled pack MUST contain to be self-contained
+#: (IFoA MPN s4: usable by a technically competent third party
+#: without repo access).
+REQUIRED_PACK_SECTIONS = (
+    "metadata",
+    "purpose",
+    "how_to_read",
+    "evidence_pack",
+    "figure_provenance",
+    "owner_options",
+    "signoff_workflow",
+    "decision_record_template",
+    "glossary",
+    "limitations",
+    "standard_references",
+)
+
+#: Glossary terms the pack must define for self-containment.
+REQUIRED_GLOSSARY_TERMS = (
+    "component SCR",
+    "governed headline",
+    "copula-form residual",
+    "nested path-wise reference",
+    "bootstrap CI95",
+    "C-vine copula",
+    "binding stop-rule",
+    "MR-016",
+    "MR-017",
+)
+
+
+def decision_record_template() -> Dict:
+    """Blank decision record for the owner to complete (step 4 of the
+    sign-off workflow).  All decision fields are EMPTY by construction -
+    the pack pre-fills nothing (neutrality)."""
+    return {
+        "decision_option_id": "",
+        "rationale": "",
+        "decided_by": "",
+        "decided_at": "",
+        "peer_reviewer": "",
+        "follow_up_change_record_id": "",
+        "instructions": (
+            "To be completed by the model owner at workflow step 4. Select "
+            "exactly one of O1/O2/O3, record the rationale, and open a "
+            "governance ChangeRecord referencing this pack."
+        ),
+    }
+
+
+def _glossary() -> Dict[str, str]:
+    return {
+        "component SCR": (
+            "the 99.5th-percentile one-year loss for the modelled risk "
+            "aggregation component, before diversification with other "
+            "balance-sheet components"
+        ),
+        "governed headline": (
+            "the component SCR figure currently approved for use - the "
+            "frozen single-df t-copula read-out "
+            f"{FROZEN_T_COMPONENT_SCR_REFERENCE:,.1f}; it has not moved "
+            "through any escalation P27->P30"
+        ),
+        "copula-form residual": (
+            "the absolute difference between a copula candidate's component "
+            "SCR and the nested path-wise reference, holding margins and "
+            "calibration fixed - it isolates the dependence-FORM effect"
+        ),
+        "nested path-wise reference": (
+            "a full nested stochastic re-simulation that applies the "
+            "governed management-action rule inside every joint scenario "
+            f"({NESTED_PATHWISE_SCR_REFERENCE:,.1f}); ONE run exists, so "
+            "its own sampling error is unquantified"
+        ),
+        "bootstrap CI95": (
+            "the 95% confidence interval for a candidate's component SCR "
+            "obtained by resampling the joint scenario set"
+        ),
+        "C-vine copula": (
+            "a vine copula built from a cascade of bivariate copulas "
+            "around root nodes; 'truncated 2-tree' means only the first "
+            "two trees carry fitted dependence"
+        ),
+        "binding stop-rule": (
+            "the pre-registered Phase 30 rule that ENDS dependence-form "
+            "escalation once an added vine tree fits zero strength while "
+            "the nested reference stays outside the candidate's 95% CI"
+        ),
+        "MR-016": (
+            "model-risk register item: quantified copula-form residual "
+            "(dependence form) - OPEN, disclosed"
+        ),
+        "MR-017": (
+            "model-risk register item: vine-form limitations (truncation; "
+            "nested outside 95% CI) - OPEN, disclosed"
+        ),
+    }
+
+
+def _figure_provenance() -> Dict[str, str]:
+    """Where every headline figure in the pack comes from (frozen archived
+    constants; nothing recomputed at assembly time)."""
+    return {
+        "governed_headline": (
+            "par_model_v2.projection.vine_copula_upgrade."
+            "FROZEN_T_COMPONENT_SCR_REFERENCE (frozen at Phase 26; "
+            "re-affirmed bit-for-bit every phase through P30)"
+        ),
+        "vine2_point": (
+            "par_model_v2.projection.dependence_roadmap."
+            "VINE2_COMPONENT_SCR_POINT (Phase 29 Task 2 archived run)"
+        ),
+        "vine2_bootstrap": (
+            "par_model_v2.projection.dependence_roadmap."
+            "VINE2_COMPONENT_SCR_BOOTSTRAP_MEAN / VINE2_BOOTSTRAP_CI95 "
+            "(Phase 29 Task 4 archived bootstrap)"
+        ),
+        "tree3_bootstrap": (
+            "par_model_v2.projection.vine_tree3_tail_diagnostics."
+            "P30T3_TREE3_COMPONENT_MEAN / P30T3_TREE3_CI_LO / "
+            "P30T3_TREE3_CI_HI (Phase 30 Task 3 archived bootstrap)"
+        ),
+        "nested_reference": (
+            "par_model_v2.projection.vine_copula_upgrade."
+            "NESTED_PATHWISE_SCR_REFERENCE (Phase 24 archived nested run)"
+        ),
+        "residual_ladder": (
+            "par_model_v2.projection.grouped_t_upgrade.COPULA_FORM_RESIDUAL_ABS "
+            "(P26 frozen-t), "
+            "vine_copula_upgrade.GROUPED_T_COPULA_FORM_RESIDUAL_ABS (P28), "
+            "vine_copula_upgrade.SKEWT_RECONFIRMED_COPULA_FORM_RESIDUAL_ABS "
+            "(P27), dependence_roadmap.VINE2_COPULA_FORM_RESIDUAL_POINT "
+            "(P29/P30)"
+        ),
+        "gap_decomposition": (
+            "par_model_v2.projection.dependence_roadmap."
+            "VINE2_GAP_TOTAL_POINT / VINE2_COPULA_FORM_RESIDUAL_POINT "
+            "(Phase 29 Task 4 archived decomposition)"
+        ),
+    }
+
+
+def assemble_owner_pack() -> Dict:
+    """Assemble the owner decision pack EXACTLY per the Task 1 registry.
+
+    Pure function of the frozen archived constants: the evidence section IS
+    :func:`evidence_pack_registry`, the options ARE :func:`owner_options`,
+    the workflow IS :func:`signoff_workflow` - reproduced bit-for-bit, with
+    the self-containment material (purpose, reading guide, provenance,
+    glossary, blank decision record) wrapped around them.
+    """
+    return {
+        "metadata": {
+            "pack_id": PACK_DOC_ID,
+            "pack_version": PACK_DOC_VERSION,
+            "phase": "Phase 31: Owner Decision Package (Dependence)",
+            "task": "Task 2 - assembly per the Task 1 frozen registry",
+            "classification": "EDUCATIONAL",
+            "no_model_parameter_changes": NO_MODEL_PARAMETER_CHANGES,
+            "design_note": "docs/validation/PHASE31_TASK1_DESIGN_NOTE.{json,md}",
+        },
+        "purpose": (
+            "Give the model owner everything needed to decide how to "
+            "dispose of the quantified dependence-form residual "
+            f"{VINE2_COPULA_FORM_RESIDUAL_POINT:,.1f} between the governed "
+            f"frozen single-df t headline {FROZEN_T_COMPONENT_SCR_REFERENCE:,.1f} "
+            f"and the nested path-wise reference {NESTED_PATHWISE_SCR_REFERENCE:,.1f}, "
+            "after the Phase 30 binding stop-rule ended dependence-FORM "
+            "escalation. Three options are presented neutrally; the choice "
+            "rests solely with the model owner."
+        ),
+        "how_to_read": [
+            "Section 'evidence_pack' holds every governed and disclosed "
+            "figure with its status; nothing in it is a proposal.",
+            "Section 'figure_provenance' states the frozen archived source "
+            "of each figure; no figure was recomputed at assembly time.",
+            "Section 'owner_options' lists the three pre-registered options "
+            "in fixed order O1/O2/O3 with their acceptance criteria; the "
+            "ordering is registry order, not preference order.",
+            "Section 'signoff_workflow' is the six-step decision process; "
+            "the owner decides at step 4 using the blank "
+            "'decision_record_template'.",
+            "The glossary defines every technical term used, so the pack "
+            "can be read without access to the model repository.",
+        ],
+        "evidence_pack": evidence_pack_registry(),
+        "figure_provenance": _figure_provenance(),
+        "owner_options": owner_options(),
+        "owner_option_order": list(OWNER_OPTION_IDS),
+        "escalation_option_id": ESCALATION_OPTION_ID,
+        "signoff_workflow": signoff_workflow(),
+        "decision_record_template": decision_record_template(),
+        "glossary": _glossary(),
+        "limitations": [
+            "the nested reference is a SINGLE run; its sampling error is "
+            "unquantified (the subject of option O3)",
+            "acceptance criteria constrain but cannot bind the owner; "
+            "variations re-open the design note via a new ChangeRecord",
+            "the residual ladder compares copula FORMS on a fixed margin/"
+            "calibration basis; margin-side model risk is tracked separately",
+        ],
+        "standard_references": [
+            "IFoA Model Practice Note (MPN) section 4 (documentation, "
+            "independent review, communication)",
+            "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, "
+            "reliance, documentation of decisions)",
+            "SOA ASOP 41 (actuarial communications)",
+            "Solvency II Delegated Regulation Article 124 (validation "
+            "standards)",
+        ],
+    }
+
+
+def validate_assembled_pack(doc: Dict) -> Dict:
+    """Task 2 gate: the ASSEMBLED pack re-passes the Task 1 envelope gate
+    bit-for-bit AND satisfies the assembly-specific acceptance criteria
+    frozen in the Task 1 design note (s6)."""
+    import json as _json
+
+    checks: Dict[str, bool] = {}
+
+    # -- frozen Task 1 gate, re-run against the assembled pack's own data --
+    base = validate_owner_package(
+        doc["evidence_pack"], doc["owner_options"], doc["signoff_workflow"])
+    checks["task1_gate_ok_on_assembled_pack"] = base["ok"]
+    checks["task1_gate_n_checks_21"] = base["n_checks"] == 21
+
+    # -- bit-for-bit reproduction of the registry ------------------------
+    checks["evidence_bit_for_bit"] = doc["evidence_pack"] == evidence_pack_registry()
+    checks["options_bit_for_bit"] = doc["owner_options"] == owner_options()
+    checks["workflow_bit_for_bit"] = doc["signoff_workflow"] == signoff_workflow()
+    checks["option_order_is_registry_order"] = (
+        tuple(doc["owner_option_order"]) == OWNER_OPTION_IDS
+    )
+
+    # -- neutrality -------------------------------------------------------
+    text = _json.dumps(doc, default=float).lower()
+    checks["no_steering_language"] = not any(
+        p in text for p in NEUTRALITY_FORBIDDEN_PHRASES)
+    tmpl = doc["decision_record_template"]
+    checks["decision_fields_blank"] = all(
+        tmpl[k] == "" for k in (
+            "decision_option_id", "rationale", "decided_by", "decided_at",
+            "peer_reviewer", "follow_up_change_record_id"))
+    checks["no_recommended_key"] = not any(
+        "recommend" in k.lower() or "preferred" in k.lower()
+        for k in doc.keys())
+
+    # -- self-containment (IFoA MPN s4) ------------------------------------
+    checks["all_required_sections"] = all(
+        s in doc for s in REQUIRED_PACK_SECTIONS)
+    checks["glossary_complete"] = all(
+        t in doc["glossary"] for t in REQUIRED_GLOSSARY_TERMS)
+    checks["provenance_covers_headline_figures"] = all(
+        k in doc["figure_provenance"] for k in (
+            "governed_headline", "vine2_point", "nested_reference",
+            "residual_ladder", "gap_decomposition"))
+    checks["standards_cited"] = len(doc["standard_references"]) >= 3
+    checks["purpose_states_residual"] = (
+        f"{VINE2_COPULA_FORM_RESIDUAL_POINT:,.1f}" in doc["purpose"])
+
+    # -- envelope ----------------------------------------------------------
+    md = doc["metadata"]
+    checks["pack_identity"] = (
+        md["pack_id"] == PACK_DOC_ID and md["pack_version"] == PACK_DOC_VERSION)
+    checks["educational_no_param_changes"] = (
+        md["classification"] == "EDUCATIONAL"
+        and md["no_model_parameter_changes"] is True)
+
+    return {"checks": checks, "ok": all(checks.values()), "n_checks": len(checks)}

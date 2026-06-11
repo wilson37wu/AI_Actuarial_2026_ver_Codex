@@ -1,0 +1,289 @@
+{
+ "pack": {
+  "metadata": {
+   "pack_id": "PHASE31_OWNER_DECISION_PACK",
+   "pack_version": "1.0.0",
+   "phase": "Phase 31: Owner Decision Package (Dependence)",
+   "task": "Task 2 - assembly per the Task 1 frozen registry",
+   "classification": "EDUCATIONAL",
+   "no_model_parameter_changes": true,
+   "design_note": "docs/validation/PHASE31_TASK1_DESIGN_NOTE.{json,md}"
+  },
+  "purpose": "Give the model owner everything needed to decide how to dispose of the quantified dependence-form residual 3,637.3 between the governed frozen single-df t headline 39,975.7 and the nested path-wise reference 46,638.9, after the Phase 30 binding stop-rule ended dependence-FORM escalation. Three options are presented neutrally; the choice rests solely with the model owner.",
+  "how_to_read": [
+   "Section 'evidence_pack' holds every governed and disclosed figure with its status; nothing in it is a proposal.",
+   "Section 'figure_provenance' states the frozen archived source of each figure; no figure was recomputed at assembly time.",
+   "Section 'owner_options' lists the three pre-registered options in fixed order O1/O2/O3 with their acceptance criteria; the ordering is registry order, not preference order.",
+   "Section 'signoff_workflow' is the six-step decision process; the owner decides at step 4 using the blank 'decision_record_template'.",
+   "The glossary defines every technical term used, so the pack can be read without access to the model repository."
+  ],
+  "evidence_pack": {
+   "governed_headline": {
+    "label": "governed component SCR headline (frozen single-df t)",
+    "value": 39975.654628199336,
+    "rank_invariance_df": 2.9451,
+    "move_pct_through_p27_p30": 0.0,
+    "status": "GOVERNED - unchanged by every escalation P27->P30"
+   },
+   "disclosed_candidates": {
+    "vine2": {
+     "label": "truncated 2-tree credit-root C-vine (Phase 29)",
+     "component_scr_point": 42458.5527095696,
+     "bootstrap_mean": 41917.634842687556,
+     "bootstrap_ci95": [
+      38654.68530800363,
+      45284.252553628474
+     ],
+     "adopted": false
+    },
+    "tree3": {
+     "label": "tree-3 C-vine candidate (Phase 30; zero strength)",
+     "component_scr_point": 42458.5527095696,
+     "bootstrap_mean": 41751.92733111887,
+     "bootstrap_ci95": [
+      38593.73891844572,
+      44556.44856853384
+     ],
+     "bit_identical_to_vine2": true,
+     "adopted": false
+    }
+   },
+   "nested_reference": {
+    "label": "nested path-wise SCR reference (single run)",
+    "value": 46638.9,
+    "inside_vine2_ci95": false,
+    "inside_tree3_ci95": false,
+    "single_run_caveat": "ONE nested run only; its own sampling error is unquantified - the motivation for option O3"
+   },
+   "residual_ladder": [
+    {
+     "form": "grouped-t (P28)",
+     "copula_form_residual_abs": 10491.5
+    },
+    {
+     "form": "frozen single-df t (P26)",
+     "copula_form_residual_abs": 6120.196568775231
+    },
+    {
+     "form": "skew-t (P27)",
+     "copula_form_residual_abs": 6114.9
+    },
+    {
+     "form": "2-tree / tree-3 vine (P29/P30)",
+     "copula_form_residual_abs": 3637.298487404965
+    }
+   ],
+   "gap_decomposition": {
+    "total_gap_point": 4180.3472904304,
+    "copula_form_part": 3637.298487404965
+   },
+   "risk_register_status": {
+    "MR-016": "OPEN - quantified copula-form residual disclosed",
+    "MR-017": "OPEN - vine-form limitations (truncation)",
+    "stop_rule_record": {
+     "trigger": "nested path-wise reference outside the tree-3 candidate 95% bootstrap CI at Phase 30 Task 4",
+     "trigger_met": true,
+     "applied": true,
+     "effect": "dependence-FORM escalation under MR-016 ENDS",
+     "mr016_disposition": "KEEP OPEN (quantified residual disclosed)",
+     "mr017_disposition": "KEEP OPEN (vine-form limitations)",
+     "governed_headline_move_pct": 0.0,
+     "tree3_zero_strength": true,
+     "tree3_bit_identical_to_vine2": true
+    }
+   },
+   "escalation_history": [
+    {
+     "phase": "Phase 26",
+     "form": "frozen single-df t (path-wise re-aggregation)",
+     "copula_form_residual_abs": 6120.196568775231,
+     "outcome": "baseline quantified residual"
+    },
+    {
+     "phase": "Phase 27",
+     "form": "skew-t copula",
+     "copula_form_residual_abs": 6114.9,
+     "outcome": "no material closure vs frozen-t; not adopted"
+    },
+    {
+     "phase": "Phase 28",
+     "form": "grouped-t / heterogeneous tail",
+     "copula_form_residual_abs": 10491.5,
+     "outcome": "residual WIDENED; rejected"
+    },
+    {
+     "phase": "Phase 29",
+     "form": "truncated 2-tree credit-root C-vine",
+     "copula_form_residual_abs": 3637.298487404965,
+     "outcome": "first POSITIVE result; nested still outside 95% CI; DISCLOSED, not adopted"
+    },
+    {
+     "phase": "Phase 30",
+     "form": "tree-3 C-vine deepening",
+     "copula_form_residual_abs": 3637.298487404965,
+     "outcome": "all four pre-registered third-tree pairs fitted zero strength; BIT-IDENTICAL to 2-tree vine; binding stop-rule APPLIED"
+    }
+   ]
+  },
+  "figure_provenance": {
+   "governed_headline": "par_model_v2.projection.vine_copula_upgrade.FROZEN_T_COMPONENT_SCR_REFERENCE (frozen at Phase 26; re-affirmed bit-for-bit every phase through P30)",
+   "vine2_point": "par_model_v2.projection.dependence_roadmap.VINE2_COMPONENT_SCR_POINT (Phase 29 Task 2 archived run)",
+   "vine2_bootstrap": "par_model_v2.projection.dependence_roadmap.VINE2_COMPONENT_SCR_BOOTSTRAP_MEAN / VINE2_BOOTSTRAP_CI95 (Phase 29 Task 4 archived bootstrap)",
+   "tree3_bootstrap": "par_model_v2.projection.vine_tree3_tail_diagnostics.P30T3_TREE3_COMPONENT_MEAN / P30T3_TREE3_CI_LO / P30T3_TREE3_CI_HI (Phase 30 Task 3 archived bootstrap)",
+   "nested_reference": "par_model_v2.projection.vine_copula_upgrade.NESTED_PATHWISE_SCR_REFERENCE (Phase 24 archived nested run)",
+   "residual_ladder": "par_model_v2.projection.grouped_t_upgrade.COPULA_FORM_RESIDUAL_ABS (P26 frozen-t), vine_copula_upgrade.GROUPED_T_COPULA_FORM_RESIDUAL_ABS (P28), vine_copula_upgrade.SKEWT_RECONFIRMED_COPULA_FORM_RESIDUAL_ABS (P27), dependence_roadmap.VINE2_COPULA_FORM_RESIDUAL_POINT (P29/P30)",
+   "gap_decomposition": "par_model_v2.projection.dependence_roadmap.VINE2_GAP_TOTAL_POINT / VINE2_COPULA_FORM_RESIDUAL_POINT (Phase 29 Task 4 archived decomposition)"
+  },
+  "owner_options": {
+   "O1_adopt_disclosed_vine_readout": {
+    "what": "Adopt the disclosed 2-tree vine read-out (42,458.6) as the governed component-SCR headline, replacing the frozen single-df t (39,975.7).",
+    "capital_effect_abs": 2482.8980813702656,
+    "acceptance_criteria": [
+     "explicit owner sign-off recorded in a governance ChangeRecord (model_change) BEFORE any headline switch",
+     "a written MR-017 mitigation plan for the residual vine-form limitations (truncation; nested outside 95% CI)",
+     "full re-run of the UI/state propagation chain so every disclosure surface shows the new governed basis",
+     "risk-register update: MR-016 re-pointed at the REMAINING residual 3,637.3, not closed"
+    ],
+    "escalation_path_open": false,
+    "governance_risk": "HIGH - adopts a candidate whose 95% CI excludes the nested reference"
+   },
+   "O2_accept_residual_with_monitoring": {
+    "what": "Keep the frozen single-df t headline; formally ACCEPT the quantified copula-form residual 3,637.3 as a documented model limitation.",
+    "capital_effect_abs": 0.0,
+    "acceptance_criteria": [
+     "a documented residual TOLERANCE (absolute and as % of the governed headline) signed by the owner",
+     "a pre-registered MONITORING TRIGGER (re-open MR-016 escalation if a future recalibration moves the residual beyond tolerance)",
+     "annual re-affirmation entry in the risk register (MR-016/MR-017 stay OPEN with ACCEPTED disposition)"
+    ],
+    "escalation_path_open": false,
+    "governance_risk": "MEDIUM - residual persists but is quantified, disclosed and monitored"
+   },
+   "O3_fund_second_independent_nested_run": {
+    "what": "Fund former roadmap option B: a SECOND, independent nested path-wise run (fresh seeds, independent implementation checks) to quantify the sampling error of the nested reference 46,638.9 - the only escalation path the Phase 30 binding stop-rule left open.",
+    "capital_effect_abs": 0.0,
+    "acceptance_criteria": [
+     "pre-registered design note BEFORE the run (seeds, scenario count, acceptance gates) - no peeking at the existing nested figure when fixing gates",
+     "the run is INDEPENDENT: new random seeds and an independent reviewer of the run configuration (ASOP 56 s3.5 reliance)",
+     "decision rule fixed in advance: if the two nested runs bracket the vine CI differently, the owner package is re-issued with the pooled estimate; copula-FORM escalation stays ENDED either way"
+    ],
+    "escalation_path_open": true,
+    "governance_risk": "LOW - adds information only; no model change"
+   }
+  },
+  "owner_option_order": [
+   "O1_adopt_disclosed_vine_readout",
+   "O2_accept_residual_with_monitoring",
+   "O3_fund_second_independent_nested_run"
+  ],
+  "escalation_option_id": "O3_fund_second_independent_nested_run",
+  "signoff_workflow": [
+   {
+    "step": 1,
+    "actor": "preparer (model development)",
+    "action": "assemble the evidence pack EXACTLY per evidence_pack_registry(); bit-for-bit consistency gate against the frozen archived references",
+    "standards": [
+     "ASOP 56 s3.1.3 (understanding the model)",
+     "IFoA MPN s4 (documentation sufficient for a technically competent third party)"
+    ]
+   },
+   {
+    "step": 2,
+    "actor": "independent peer reviewer",
+    "action": "review pack completeness, figure provenance and the neutral presentation of all three options (no recommendation embedded)",
+    "standards": [
+     "ASOP 56 s3.4 (reliance on others)",
+     "IFoA MPN s4.3 (independent review proportionate to materiality)"
+    ]
+   },
+   {
+    "step": 3,
+    "actor": "model owner",
+    "action": "owner review meeting: walk through governed headline, disclosed candidates, residual ladder, stop-rule record and the three options with their pre-registered acceptance criteria",
+    "standards": [
+     "ASOP 56 s3.5 (evaluation and mitigation of model risk)",
+     "IFoA MPN s4.4 (communication of limitations to the decision maker)"
+    ]
+   },
+   {
+    "step": 4,
+    "actor": "model owner",
+    "action": "record the decision (O1/O2/O3) and its rationale in a governance ChangeRecord; the decision is NOT made by the model developer or any agent",
+    "standards": [
+     "ASOP 56 s3.6 (documentation of decisions)",
+     "IFoA MPN s4.5 (clear ownership of the decision)"
+    ]
+   },
+   {
+    "step": 5,
+    "actor": "preparer (model development)",
+    "action": "execute the selected option's acceptance criteria; update MR-016/MR-017 dispositions accordingly",
+    "standards": [
+     "ASOP 56 s3.5",
+     "IFoA MPN s4.6 (follow-up actions)"
+    ]
+   },
+   {
+    "step": 6,
+    "actor": "preparer (model development)",
+    "action": "propagate any NEW disclosure surface to the offline UI (additive contract bump only) and archive the pack",
+    "standards": [
+     "IFoA MPN s4 (audit trail)",
+     "ASOP 41 (actuarial communications)"
+    ]
+   }
+  ],
+  "decision_record_template": {
+   "decision_option_id": "",
+   "rationale": "",
+   "decided_by": "",
+   "decided_at": "",
+   "peer_reviewer": "",
+   "follow_up_change_record_id": "",
+   "instructions": "To be completed by the model owner at workflow step 4. Select exactly one of O1/O2/O3, record the rationale, and open a governance ChangeRecord referencing this pack."
+  },
+  "glossary": {
+   "component SCR": "the 99.5th-percentile one-year loss for the modelled risk aggregation component, before diversification with other balance-sheet components",
+   "governed headline": "the component SCR figure currently approved for use - the frozen single-df t-copula read-out 39,975.7; it has not moved through any escalation P27->P30",
+   "copula-form residual": "the absolute difference between a copula candidate's component SCR and the nested path-wise reference, holding margins and calibration fixed - it isolates the dependence-FORM effect",
+   "nested path-wise reference": "a full nested stochastic re-simulation that applies the governed management-action rule inside every joint scenario (46,638.9); ONE run exists, so its own sampling error is unquantified",
+   "bootstrap CI95": "the 95% confidence interval for a candidate's component SCR obtained by resampling the joint scenario set",
+   "C-vine copula": "a vine copula built from a cascade of bivariate copulas around root nodes; 'truncated 2-tree' means only the first two trees carry fitted dependence",
+   "binding stop-rule": "the pre-registered Phase 30 rule that ENDS dependence-form escalation once an added vine tree fits zero strength while the nested reference stays outside the candidate's 95% CI",
+   "MR-016": "model-risk register item: quantified copula-form residual (dependence form) - OPEN, disclosed",
+   "MR-017": "model-risk register item: vine-form limitations (truncation; nested outside 95% CI) - OPEN, disclosed"
+  },
+  "limitations": [
+   "the nested reference is a SINGLE run; its sampling error is unquantified (the subject of option O3)",
+   "acceptance criteria constrain but cannot bind the owner; variations re-open the design note via a new ChangeRecord",
+   "the residual ladder compares copula FORMS on a fixed margin/calibration basis; margin-side model risk is tracked separately"
+  ],
+  "standard_references": [
+   "IFoA Model Practice Note (MPN) section 4 (documentation, independent review, communication)",
+   "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation of decisions)",
+   "SOA ASOP 41 (actuarial communications)",
+   "Solvency II Delegated Regulation Article 124 (validation standards)"
+  ]
+ },
+ "assembly_gate": {
+  "checks": {
+   "task1_gate_ok_on_assembled_pack": true,
+   "task1_gate_n_checks_21": true,
+   "evidence_bit_for_bit": true,
+   "options_bit_for_bit": true,
+   "workflow_bit_for_bit": true,
+   "option_order_is_registry_order": true,
+   "no_steering_language": true,
+   "decision_fields_blank": true,
+   "no_recommended_key": true,
+   "all_required_sections": true,
+   "glossary_complete": true,
+   "provenance_covers_headline_figures": true,
+   "standards_cited": true,
+   "purpose_states_residual": true,
+   "pack_identity": true,
+   "educational_no_param_changes": true
+  },
+  "ok": true,
+  "n_checks": 16
+ }
+}

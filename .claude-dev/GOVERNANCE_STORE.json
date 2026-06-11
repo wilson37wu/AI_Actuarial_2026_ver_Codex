@@ -2363,6 +2363,27 @@
       "phase": "Phase 31: Owner Decision Package (Dependence)",
       "digest": "3ca98b2a5e4ab82365ed5bf07ffb216aeb03a1339a3cb2e151fd914d41cf5c56",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "2c976880f0da47b0981a5224d9dc364b",
+      "timestamp": "2026-06-11T11:13:38.432704+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase31Task2OwnerPackAssembly",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 31 Task 2 owner decision pack assembled",
+      "details": {
+        "record_id": "2d572dbcb6a44e96bc012fe2f73b511e",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/governance/owner_decision_package.py (Task 2 assembly + gate additions)",
+          "tests/test_phase31_task2_owner_pack_assembly.py",
+          "scripts/build_phase31_task2_assemble_owner_pack.py",
+          "docs/validation/PHASE31_TASK2_OWNER_DECISION_PACK.{json,md}"
+        ]
+      },
+      "phase": "Phase 31: Owner Decision Package (Dependence)",
+      "digest": "e015ab2392b31dcd3d2e628699ed475fb60c91fa2cfdc33983f81e7dcd731be4",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -7249,6 +7270,64 @@
           "actor": "Phase31Task1OwnerDecisionPackage",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: pure governance pre-registration; pack assembly deferred to Task 2."
+        }
+      ],
+      "phase": "Phase 31: Owner Decision Package (Dependence)"
+    },
+    {
+      "record_id": "2d572dbcb6a44e96bc012fe2f73b511e",
+      "created_at": "2026-06-11T11:13:38.432634+00:00",
+      "title": "Phase 31 Task 2 - assemble the owner decision pack (dependence) exactly per the Task 1 frozen registry; dual gate PASS",
+      "description": "Assembled the Phase 31 owner decision pack exactly per the Task 1 frozen registry: evidence pack, three options and sign-off workflow reproduced bit-for-bit, wrapped with purpose, reading guide, figure provenance, glossary and a blank decision record for self-containment (IFoA MPN s4). Dual gate PASS: Task 1 envelope gate (21 checks) re-run on the assembled pack plus the Task 2 assembly gate (16 checks: reproduction, neutrality, self-containment). No capital output changed.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/governance/owner_decision_package.py (Task 2 assembly + gate additions)",
+        "tests/test_phase31_task2_owner_pack_assembly.py",
+        "scripts/build_phase31_task2_assemble_owner_pack.py",
+        "docs/validation/PHASE31_TASK2_OWNER_DECISION_PACK.{json,md}"
+      ],
+      "standard_references": [
+        "IFoA Model Practice Note (MPN) section 4 (documentation, independent review, communication)",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation of decisions)",
+        "SOA ASOP 41 (actuarial communications)",
+        "Solvency II Delegated Regulation Article 124 (validation standards)"
+      ],
+      "before_snapshot": {
+        "pack_assembled": false,
+        "registry_frozen": "Phase 31 Task 1 design note (21-gate PASS)",
+        "next_task": "Phase 31 Task 2 assemble the owner decision pack"
+      },
+      "after_snapshot": {
+        "pack_assembled": true,
+        "pack_id": "PHASE31_OWNER_DECISION_PACK",
+        "pack_version": "1.0.0",
+        "assembly_gate_ok": true,
+        "assembly_gate_checks": 16,
+        "owner_option_ids": [
+          "O1_adopt_disclosed_vine_readout",
+          "O2_accept_residual_with_monitoring",
+          "O3_fund_second_independent_nested_run"
+        ],
+        "decision_recorded": false
+      },
+      "impact_assessment": "Governance only. The pack is now ready for workflow step 2 (independent peer review) and step 3-4 (owner review and decision). The governed frozen-t headline is unchanged and no model parameter moves.",
+      "quantitative_impact": "Pack figures (assembled, bit-for-bit): governed headline 39,975.7; disclosed vine point 42,458.6; nested 46,638.9; residual 3,637.3. No governed capital figures changed.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase31Task2OwnerPackAssembly",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T11:13:38.432666+00:00",
+          "actor": "Phase31Task2OwnerPackAssembly",
+          "status": "PEER_REVIEW",
+          "comments": "Assembled pack: dual gate PASS (21 envelope + 16 assembly checks); tests added."
+        },
+        {
+          "timestamp": "2026-06-11T11:13:38.432681+00:00",
+          "actor": "Phase31Task2OwnerPackAssembly",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: the assembled, neutral decision pack. The owner decides O1/O2/O3 at workflow step 4; nothing is pre-selected."
         }
       ],
       "phase": "Phase 31: Owner Decision Package (Dependence)"

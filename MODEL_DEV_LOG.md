@@ -9486,3 +9486,18 @@ Pass 3 (same session, owner-approved): 11 redundant root docs deleted (GITHUB_PU
 - **Governance:** ChangeRecord `2e7ef53d089a42a2943dc06cf1204269` (governance_change) OWNER_REVIEW; audit 104→105; change records 76→77; verify_all True.
 - **Evidence:** docs/validation/PHASE31_TASK1_DESIGN_NOTE.{json,md}; docs/OWNER_DECISION_PACKAGE_CARD.md; docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-11_p31t1.md.
 - **Next:** Phase 31 Task 2 — assemble the owner decision pack EXACTLY per the frozen registry (bit-for-bit reproduction gate; neutral presentation; self-contained document).
+
+## 2026-06-11 11:25 UTC - Claude Cowork - Phase 31 Task 2 (owner decision pack ASSEMBLY) - PASS
+
+- Assembled the owner decision pack EXACTLY per the Task 1 frozen registry: `assemble_owner_pack()` /
+  `validate_assembled_pack()` / `decision_record_template()` added to
+  `par_model_v2/governance/owner_decision_package.py`.
+- Dual gate PASS: Task 1 envelope gate 21/21 re-run on the ASSEMBLED pack + Task 2 assembly gate 16/16
+  (bit-for-bit reproduction; neutrality - no steering language, blank decision record; self-containment -
+  purpose, reading guide, figure provenance, 9-term glossary per IFoA MPN s4).
+- Outputs `docs/validation/PHASE31_TASK2_OWNER_DECISION_PACK.{json,md}`; builder
+  `scripts/build_phase31_task2_assemble_owner_pack.py`.
+- Governance: ChangeRecord 2d572dbcb6a44e96bc012fe2f73b511e (governance_change) OWNER_REVIEW; audit
+  105->106; records 77->78; verify_all true. 24 new tests; 263 passed (phase31+governance+audit selection).
+- Figures unchanged bit-for-bit: governed 39,975.654628 | vine 42,458.5527 | nested 46,638.9 | residual 3,637.3.
+- NEXT: Phase 31 Task 3 - owner-facing summary; then standing directive (zero-install offline UI).
