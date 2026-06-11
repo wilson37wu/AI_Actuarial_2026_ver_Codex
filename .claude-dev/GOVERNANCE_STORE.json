@@ -2341,6 +2341,28 @@
       "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
       "digest": "ecc3141a1bf16a8501d2f0ad16bd5bec3987d0512ae1bf7410c1139800f3b5bf",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "55dd76126f8e4d73a6faaabdd507f5fb",
+      "timestamp": "2026-06-11T10:14:53.029634+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase31Task1OwnerDecisionPackage",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 31 Task 1 owner decision package design note",
+      "details": {
+        "record_id": "2e7ef53d089a42a2943dc06cf1204269",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/governance/owner_decision_package.py (NEW, tested helper module)",
+          "tests/test_phase31_task1_owner_decision_package.py",
+          "scripts/build_phase31_task1_owner_decision_design_note.py",
+          "docs/validation/PHASE31_TASK1_DESIGN_NOTE.{json,md}",
+          "docs/OWNER_DECISION_PACKAGE_CARD.md"
+        ]
+      },
+      "phase": "Phase 31: Owner Decision Package (Dependence)",
+      "digest": "3ca98b2a5e4ab82365ed5bf07ffb216aeb03a1339a3cb2e151fd914d41cf5c56",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -7171,6 +7193,65 @@
         }
       ],
       "phase": "Phase 30: Post-Vine Dependence Roadmap Decision"
+    },
+    {
+      "record_id": "2e7ef53d089a42a2943dc06cf1204269",
+      "created_at": "2026-06-11T10:14:53.029556+00:00",
+      "title": "Phase 31 Task 1 - design note: owner decision package (dependence) pre-registration (evidence pack, three options, sign-off workflow)",
+      "description": "Design note pre-registering the Phase 31 owner decision package: evidence-pack contents (governed headline, disclosed vine/tree-3 read-outs with CIs, nested reference, residual ladder, MR-016/MR-017 + stop-rule record, P26->P30 escalation history), the three owner options with fixed acceptance criteria, and the sign-off workflow per IFoA MPN s4 / ASOP 56. No capital output changed; no new copula-structure candidates (binding stop-rule).",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/governance/owner_decision_package.py (NEW, tested helper module)",
+        "tests/test_phase31_task1_owner_decision_package.py",
+        "scripts/build_phase31_task1_owner_decision_design_note.py",
+        "docs/validation/PHASE31_TASK1_DESIGN_NOTE.{json,md}",
+        "docs/OWNER_DECISION_PACKAGE_CARD.md"
+      ],
+      "standard_references": [
+        "IFoA Model Practice Note (MPN) section 4 (documentation, independent review, communication)",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation of decisions)",
+        "SOA ASOP 41 (actuarial communications)",
+        "Solvency II Delegated Regulation Article 124 (validation standards)",
+        "Solvency II Delegated Regulation Article 234 (aggregation including tail behaviour)"
+      ],
+      "before_snapshot": {
+        "mr016": "OPEN (stop-rule applied; dependence-FORM escalation ended)",
+        "mr017": "OPEN (vine-form limitations)",
+        "next_task": "Phase 31 Task 1 owner decision package design note"
+      },
+      "after_snapshot": {
+        "evidence_pack_registered": true,
+        "owner_option_ids": [
+          "O1_adopt_disclosed_vine_readout",
+          "O2_accept_residual_with_monitoring",
+          "O3_fund_second_independent_nested_run"
+        ],
+        "escalation_option_id": "O3_fund_second_independent_nested_run",
+        "signoff_workflow_steps": 6,
+        "validation_gate_ok": true,
+        "verdict": "PASS"
+      },
+      "impact_assessment": "Governance only. Freezes the owner decision package contents, options and acceptance criteria before assembly (Task 2); the governed frozen-t headline is unchanged and no model parameter moves.",
+      "quantitative_impact": "Registered figures: governed headline 39,975.7; disclosed vine point 42,458.6; nested 46,638.9; residual 3,637.3. No governed capital figures changed.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase31Task1OwnerDecisionPackage",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T10:14:53.029591+00:00",
+          "actor": "Phase31Task1OwnerDecisionPackage",
+          "status": "PEER_REVIEW",
+          "comments": "Pack registry + three options + workflow pre-registered; helper tests added."
+        },
+        {
+          "timestamp": "2026-06-11T10:14:53.029604+00:00",
+          "actor": "Phase31Task1OwnerDecisionPackage",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: pure governance pre-registration; pack assembly deferred to Task 2."
+        }
+      ],
+      "phase": "Phase 31: Owner Decision Package (Dependence)"
     }
   ],
   "risk_register": [

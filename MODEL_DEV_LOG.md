@@ -9474,3 +9474,15 @@ Pass 3 (same session, owner-approved): 11 redundant root docs deleted (GITHUB_PU
 - **Governance:** ChangeRecord `3ea0836fc67f405dbef26e5f954e680d` (code_change) OWNER_REVIEW; audit 103→104; change records 75→76; verify_all True.
 - **Evidence:** docs/validation/PHASE30_TASK5_UI_PROPAGATION_REPORT.{json,md}; docs/UI_PROPAGATION_CARD_P30.md; docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-11_p30t5.md.
 - **Next:** Phase 31 Task 1 — owner decision package design note (pre-registered option C).
+
+---
+
+## 2026-06-11 (Claude Cowork cycle) — Phase 31 Task 1: owner decision package (dependence) DESIGN NOTE — **PASS**
+
+- **Pure governance (design-note-first).** Pre-registered, BEFORE pack assembly: (a) the evidence-pack registry — governed frozen-t headline 39,975.654628199336 (move 0.0000% through P27–P30), disclosed 2-tree vine 42,458.5527 (boot mean 41,917.6, CI [38,654.7, 45,284.3]) and BIT-IDENTICAL tree-3 candidate (boot mean 41,751.9, CI [38,593.7, 44,556.4]), nested reference 46,638.9 (outside BOTH CIs; single-run caveat), residual ladder grouped-t 10,491.5 → frozen-t 6,120.2 → skew-t 6,114.9 → vine 3,637.3, MR-016/MR-017 OPEN + full stop-rule record, P26→P30 escalation history; (b) THREE owner options with fixed acceptance criteria — **O1 adopt** the disclosed vine read-out (owner sign-off + MR-017 mitigation plan + full propagation), **O2 accept** the residual (documented tolerance + monitoring trigger + annual re-affirmation), **O3 fund** a second independent nested run (pre-registered gates, independent seeds/review — the ONLY escalation path the stop-rule left open); (c) a 6-step sign-off workflow per IFoA MPN s4 / ASOP 56 (preparer → independent reviewer → owner review → owner decision ChangeRecord → disposition → disclosure/archive).
+- **Validation gate 21/21 PASS** — every registered figure is checked bit-for-bit against the frozen archived constants (single source of truth: the projection modules); tamper tests confirm the gate trips on headline/adoption/option/workflow corruption.
+- **NO model parameter changes; NO new copula-structure candidates** (Phase 30 binding stop-rule honoured). Capital outputs unchanged.
+- **New tested module** `par_model_v2/governance/owner_decision_package.py`; builder `scripts/build_phase31_task1_owner_decision_design_note.py`; pytest **29/29 new** (`tests/test_phase31_task1_owner_decision_package.py`).
+- **Governance:** ChangeRecord `2e7ef53d089a42a2943dc06cf1204269` (governance_change) OWNER_REVIEW; audit 104→105; change records 76→77; verify_all True.
+- **Evidence:** docs/validation/PHASE31_TASK1_DESIGN_NOTE.{json,md}; docs/OWNER_DECISION_PACKAGE_CARD.md; docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-11_p31t1.md.
+- **Next:** Phase 31 Task 2 — assemble the owner decision pack EXACTLY per the frozen registry (bit-for-bit reproduction gate; neutral presentation; self-contained document).

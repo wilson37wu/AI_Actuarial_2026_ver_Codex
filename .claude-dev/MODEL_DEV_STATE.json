@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-11T09:40:00Z",
- "last_run_duration_minutes": 55,
- "last_run_note": "Phase 30 Task 5 UI propagation complete; PHASE 30 COMPLETE; stop-rule applied; Phase 31 owner decision package opened.",
+ "last_run": "2026-06-11T10:25:00Z",
+ "last_run_duration_minutes": 20,
+ "last_run_note": "Phase 31 Task 1 owner decision package design note complete (pre-registration; pure governance; 21-gate PASS).",
  "current_phase": "Phase 31: Owner Decision Package (Dependence)",
- "overall_status": "PHASE30_TASK4_COMPLETE_NEXT_TASK5_UI_PROPAGATION",
+ "overall_status": "PHASE31_TASK1_COMPLETE_NEXT_TASK2_ASSEMBLE_PACK",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -549,9 +549,11 @@
   "Phase 31: Owner Decision Package (Dependence)": {
    "status": "in_progress",
    "description": "Owner decision package (pre-registered option C): consolidated evidence pack for the dependence-residual decision - governed frozen-t headline 39,975.7 vs disclosed vine read-out 42,458.6 vs nested 46,638.9, quantified residual 3,637.3, MR-016/MR-017 status, stop-rule record - for an owner adopt / accept-residual / fund-option-B decision. Dependence-FORM escalation is CLOSED per the binding stop-rule; no new copula-structure candidates.",
-   "completed": [],
+   "completed": [
+    "Task 1: design note pre-registering the owner decision package - evidence-pack registry (governed frozen-t headline 39,975.654628199336; disclosed vine/tree-3 read-outs with CIs; nested 46,638.9; residual ladder 10,491.5 -> 6,120.2 -> 6,114.9 -> 3,637.3; MR-016/MR-017 + stop-rule record; P26->P30 escalation history), THREE owner options with fixed acceptance criteria (O1 adopt / O2 accept residual / O3 fund second independent nested run - only open escalation path), 6-step sign-off workflow per IFoA MPN s4 / ASOP 56; 21-check validation gate ALL PASS; ChangeRecord 2e7ef53d089a42a2943dc06cf1204269 (governance_change) OWNER_REVIEW; NO model parameter changes."
+   ],
    "in_progress": [
-    "Task 1: design-note-first owner decision package - pre-register the evidence-pack contents, decision options (adopt disclosed read-out / accept residual / fund option B second independent nested run), acceptance criteria and sign-off workflow; governance_change ChangeRecord OWNER_REVIEW; NO model parameter changes."
+    "Task 2: assemble the owner decision pack EXACTLY per the Task 1 registry - bit-for-bit reproduction gate (validate_owner_package ok:true against the ASSEMBLED pack), neutral presentation of all three options, self-contained owner document (docs/validation/PHASE31_TASK2_OWNER_DECISION_PACK.{json,md}); governance ChangeRecord OWNER_REVIEW; NO model parameter changes."
    ],
    "next": "On Task 1 completion: Task 2 assemble the evidence pack; Task 3 owner-facing summary + offline-UI propagation if a new disclosure surface is added."
   }
@@ -873,7 +875,7 @@
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
   "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
  },
- "last_updated": "2026-06-11T09:40:00Z",
+ "last_updated": "2026-06-11T10:25:00Z",
  "cycle_2026_06_08_phase26_task2": {
   "verdict": "PASS",
   "gates": "6/6 pre-registered",
@@ -1177,5 +1179,30 @@
   "phase30_status": "COMPLETE (Tasks 1-5)",
   "stop_rule": "APPLIED - dependence-FORM escalation under MR-016 ENDS; MR-016/MR-017 KEEP OPEN; governed headline move 0.0000%",
   "next": "Phase 31 Task 1 - owner decision package design note (option C)"
+ },
+ "cycle_2026_06_11_phase31_task1": {
+  "timestamp": "2026-06-11T10:25:00Z",
+  "agent": "claude-cowork",
+  "task": "Phase 31 Task 1 - owner decision package (dependence) DESIGN NOTE: pre-register evidence pack, three owner options + acceptance criteria, sign-off workflow",
+  "verdict": "PASS",
+  "classification": "EDUCATIONAL / governance_change - NO model parameter changes, NO new copula-structure candidates (P30 binding stop-rule honoured)",
+  "new_module": "par_model_v2/governance/owner_decision_package.py",
+  "builder": "scripts/build_phase31_task1_owner_decision_design_note.py (--governance)",
+  "validation_gate": "21/21 checks PASS (bit-for-bit vs frozen archived references)",
+  "owner_options": [
+   "O1_adopt_disclosed_vine_readout (requires owner sign-off + MR-017 mitigation plan)",
+   "O2_accept_residual_with_monitoring (tolerance + monitoring trigger)",
+   "O3_fund_second_independent_nested_run (ONLY open escalation path)"
+  ],
+  "change_record": "2e7ef53d089a42a2943dc06cf1204269",
+  "governance": "audit 104->105; change records 76->77; verify_all True",
+  "tests": "29/29 new (test_phase31_task1_owner_decision_package.py)",
+  "evidence": [
+   "docs/validation/PHASE31_TASK1_DESIGN_NOTE.json",
+   "docs/validation/PHASE31_TASK1_DESIGN_NOTE.md",
+   "docs/OWNER_DECISION_PACKAGE_CARD.md",
+   "docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-11_p31t1.md"
+  ],
+  "next": "Phase 31 Task 2 - assemble the owner decision pack per the frozen registry"
  }
 }
