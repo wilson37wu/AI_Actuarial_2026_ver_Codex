@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-11T10:07Z-7fe2",
-  "started_at": "2026-06-11T10:07:42Z",
-  "ttl_minutes": 120,
-  "task": "Phase 31 Task 1: owner decision package design note",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-11T10:16:57Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
