@@ -182,4 +182,4 @@ Phase deep-dive tabs surface the dependence-structure track, including **Grouped
 
 ---
 
-*Companion documents: `production_run/MODEL_INPUTS_TEMPLATE.xlsx` (the input template) and `IMPLEMENTATION_PLAN_currency_and_inputs.md` (the code changes that wire the template and the generic currency into the engine).*
+*Companion documents: `production_run/MODEL_INPUTS_TEMPLATE.xlsx` (the input template) and the Phase UIL implementation (currency + input loader, LIVE since 2026-06-11; original plan retained in git history as `IMPLEMENTATION_PLAN_currency_and_inputs.md`).*

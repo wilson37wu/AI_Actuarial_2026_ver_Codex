@@ -73,8 +73,9 @@ the chain is fully backward-compatible. Currency display sources, in
 priority order: `model_inputs.json` → `docs/validation/RUN_MODEL_SUMMARY.json`
 → neutral default (the source used is disclosed in `meta.currency_source`).
 Relabel of the calibration-market provenance strings (A2) and full
-re-currency calibration (A3) remain future work — see
-`IMPLEMENTATION_PLAN_currency_and_inputs.md`.
+re-currency calibration (A3) remain future work — the original
+currency + input-loader plan (implemented as Phase UIL, 2026-06-11) is
+retained in git history as `IMPLEMENTATION_PLAN_currency_and_inputs.md`.
 
 ## Status
 
