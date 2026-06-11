@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T10:16:57Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-11T11:08Z-08cd",
+  "started_at": "2026-06-11T11:08:02Z",
+  "ttl_minutes": 120,
+  "task": "Phase 31 Task 2 - assemble owner decision pack",
+  "note": ""
 }
