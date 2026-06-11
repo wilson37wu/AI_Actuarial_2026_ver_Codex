@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T03:21:41Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-11T03:33Z-8e9b",
+  "started_at": "2026-06-11T03:33:59Z",
+  "ttl_minutes": 120,
+  "task": "Interactive: repo restructure + production_run folder (user-requested)",
+  "note": ""
 }
