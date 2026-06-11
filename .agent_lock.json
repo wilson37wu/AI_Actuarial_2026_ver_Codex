@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-11T08:34Z-d1d2",
-  "started_at": "2026-06-11T08:34:15Z",
-  "ttl_minutes": 120,
-  "task": "Interactive repo cleanup (user-requested): purge tracked probe/junk files, extend .gitignore guards",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-11T08:35:00Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
