@@ -1,10 +1,10 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-11T03:19:58.708198+00:00",
+ "last_run": "2026-06-11T03:45:13.571269+00:00",
  "last_run_duration_minutes": null,
- "last_run_note": "Phase 30 Task 3 PASS - tree-3 margin bootstrap; stop-rule trigger MET (recorded); Task 4 (tail diagnostics + binding stop-rule/MR decision) next.",
- "current_phase": "Phase 30: Post-Vine Dependence Roadmap Decision (in progress)",
+ "last_run_note": "OWNER DIRECTIVE (interactive): state pointer moved to Phase UIL Task 1 (scripts/load_user_inputs.py). Phase 30 Task 4 parked in queued_resume_after_phase_uil and resumes immediately after Phase UIL.",
+ "current_phase": "Phase UIL: User-Input Loader + Run Orchestrator (owner-prioritised 2026-06-11)",
  "overall_status": "PHASE30_TASK1_COMPLETE_NEXT_TASK2_TREE3_VINE",
  "phases": {
   "Phase 1: Model Review & Documentation": {
@@ -528,10 +528,26 @@
     "Task 2: pre-registered tree-3 vine deepening implemented (PASS). DUAL boundary bit-identical (frozen-t 39,975.654628199336; 2-tree vine 42,458.5527095696; both devs 0.0). Leakage-free joint-conditional fit on the four pre-registered third-tree pairs selected gaussian / zero strength for ALL FOUR pairs: with 160 outer scenarios the joint-conditional mask (both conditioners > 0.90) leaves n_fit <= 3 rows, so there is NO empirical support for incremental tree-3 dependence at the pre-registered tail level. Candidate is therefore bit-identical to the 2-tree vine (42,458.5527095696; +6.21% vs frozen-t, +0.00% vs vine2). Disclosed, not gate-shopped. ChangeRecord 2b34607c654d4f01b1dc88b70914fa3a OWNER_REVIEW.",
     "Task 3: tree-3 vine margin bootstrap (200 x 20,000; master seed 20260611) on the FROZEN P30T2 tree-3 fit (PASS). Tree-3 component SCR mean 41,751.9, 95% CI [38,593.7, 44,556.4], SE 1,589.2 = 3.81% of mean (<= 5% gate PASS). Nested 46,638.9 OUTSIDE the CI -> the pre-registered STOP-RULE TRIGGER is MET and recorded (decision at Task 4; no gate-shopping). Paired CRN deltas: tree-3 minus 2-tree vine EXACTLY ZERO in all 200 replicates (zero-strength bit-identity contract holds across the full bootstrap distribution); tree-3 minus frozen-t mean +2,303.7 (100% positive) - the pair-link lift is carried entirely by the P29 2-tree fit. Archive cross-check first: frozen-t 39,975.654628199336, 2-tree vine and tree-3 candidate both 42,458.5527095696 bit-identical. Bootstrap digest 7b2a0cbcbb35; tree-3 fit digest f689e11e81fa. ChangeRecord 736029a064514f8681fd0af592ddab97 methodology_change OWNER_REVIEW; records 69->70; audit 97->98; verify_all True; idempotent. NEW vine_tree3_bootstrap.py + build script + 10/0 tests; regression P30T2/P29T3/P29T2 30/0; compileall clean."
    ],
-   "in_progress": [
+   "in_progress": [],
+   "next": "On Task 1 completion: execute the selected option as Phase 30 Tasks 2-4 (implementation, bootstrap/validation, MR decision), then Task 5 offline-UI propagation per repo convention.",
+   "queued_resume_after_phase_uil": [
     "Task 4: tree-3 vine tail diagnostics + binding STOP-RULE / MR decision per PHASE30_TASK1_DESIGN_NOTE task4_acceptance_criteria: per-pair tail diagnostics including the four tree-3 conditional pairs (holdout pairs disclosed with CIs); overfit check (holdout-to-fit max-lift ratio vs P29 reference 0.049; concentration gate as P29T4); MR decision - mitigate MR-016/MR-017 ONLY if nested inside CI AND residual < 3,637.3, otherwise KEEP OPEN and APPLY THE STOP-RULE (Task 3 recorded the trigger as MET: nested 46,638.9 outside [38,593.7, 44,556.4], so the expected outcome is KEEP OPEN + stop-rule applied -> dependence-FORM escalation under MR-016 ENDS; Phase 31 = owner decision package). MR-010/MR-014 refresh only if governed headline moves > 1% (it must not: headline stays frozen-t). governance_change ChangeRecord OWNER_REVIEW; risk-register update idempotent."
    ],
-   "next": "On Task 1 completion: execute the selected option as Phase 30 Tasks 2-4 (implementation, bootstrap/validation, MR decision), then Task 5 offline-UI propagation per repo convention."
+   "queue_note": "OWNER DIRECTIVE 2026-06-11 (interactive, KCW): Phase UIL (user-input loader + run orchestrator) jumps the queue to complete the production_run story. Phase 30 Task 4 is NOT cancelled - it is the first task after Phase UIL completes. Move it back into in_progress at that point."
+  },
+  "Phase UIL: User-Input Loader + Run Orchestrator (owner-prioritised 2026-06-11)": {
+   "status": "in_progress",
+   "description": "OWNER-PRIORITISED (KCW, interactive 2026-06-11): implement workstream B of IMPLEMENTATION_PLAN_currency_and_inputs.md so a user can run the model on their own numbers from production_run/MODEL_INPUTS_TEMPLATE.xlsx with no developer involvement. Design note = the implementation plan; follow it, additive and backward-compatible (every fixture fallback unchanged; frozen copula/df values stay governed read-only; the governed frozen-t headline must reproduce bit-identically when no user inputs are supplied).",
+   "completed": [],
+   "in_progress": [
+    "Task 1 (B1): scripts/load_user_inputs.py - read production_run/MODEL_INPUTS_TEMPLATE.xlsx (openpyxl) by tab name + header; validate ranges (shares in (0,1], positive MV, confidence in (0,1), product types in allowed set, complete portfolio rows); write schema-versioned model_inputs.json; fail loudly with tab/row/field in the message; echo currency, total asset MV, total SA, policy count. Pure I/O + validation, no model math. New tests tests/test_user_inputs.py; ChangeRecord code_change OWNER_REVIEW; update production_run/USER_MANUAL_run_and_inputs.md section 4 to mark the loader LIVE."
+   ],
+   "next": [
+    "Task 2 (B2): de-hardcode fixtures additively - phase22_liquidity_exposure_calibration.py (balance-sheet inputs from model_inputs.json w/ fixture fallback 100,000/0.55/0.40), portfolio_generator.py (user model points w/ synthetic fallback), capital path confidence/sigma/alpha/benefit_share from inputs (governed defaults 0.995/0.225/0.7567/0.8450). Frozen copula/df NEVER user-settable. Regression: governed read-outs bit-identical with no inputs present.",
+    "Task 3 (B3): scripts/run_model.py orchestrator - single entry point --inputs model_inputs.json; threads inputs through the existing P22T4 aggregator -> standalone losses -> copula aggregation -> bootstrap -> tail diagnostics; writes the same docs/validation/*.json shape the GUI consumes; honours n_sim, seed, bootstrap_replicates, horizon, output_label. Wire production_run/run_production_model.py to call it when model_inputs.json exists.",
+    "Task 4 (B4+A1): build_ui_data.py stamps currency + output_label into meta; ui_app.html money formatting routed through fmtMoney; production_run/README + user manual updated end-to-end; offline GUI contract bump ADDITIVE.",
+    "THEN: resume Phase 30 Task 4 (tree-3 tail diagnostics + binding stop-rule / MR-016/MR-017 decision) - see phases['Phase 30']['queued_resume_after_phase_uil']."
+   ]
   }
  },
  "repository_info": {
@@ -851,7 +867,7 @@
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
   "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
  },
- "last_updated": "2026-06-11T03:19:58.708198+00:00",
+ "last_updated": "2026-06-11T03:45:13.571269+00:00",
  "cycle_2026_06_08_phase26_task2": {
   "verdict": "PASS",
   "gates": "6/6 pre-registered",

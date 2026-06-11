@@ -31,6 +31,19 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **OWNER PRIORITY OVERRIDE (2026-06-11, KCW):** the next scheduled work is
+> **Phase UIL — user-input loader + run orchestrator** (workstream B of
+> `IMPLEMENTATION_PLAN_currency_and_inputs.md`), to complete the
+> `production_run/` story: `scripts/load_user_inputs.py` (B1) →
+> de-hardcoded fixtures (B2) → `scripts/run_model.py` (B3) → GUI currency
+> wire-through (B4+A1). The single in_progress item in
+> `.claude-dev/MODEL_DEV_STATE.json` reflects this. **Phase 30 Task 4 is
+> parked, not cancelled** — it resumes immediately after Phase UIL (see
+> `queued_resume_after_phase_uil` in the state file). Backward compatibility
+> is a hard gate: with no user inputs present, every governed read-out must
+> reproduce bit-identically.
+
+
 **Task Frequency:** Every 12 hours  
 **Repository:** https://github.com/wilson37wu/AI_Actuarial_2026_ver_Codex
 **State File:** `.claude-dev/MODEL_DEV_STATE.json`  
