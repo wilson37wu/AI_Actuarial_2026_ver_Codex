@@ -2405,6 +2405,28 @@
       "phase": "Phase 31: Owner Decision Package (Dependence)",
       "digest": "fe85c7d9a0b596027a69e73485e5f061ccd4331be8d2c1e0a959581879353a2c",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "9600e8d1f13444cd8ac28487d5f5bec5",
+      "timestamp": "2026-06-11T13:13:52.124598+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase32Task1UIConsolidationDesign",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 32 Task 1 UI consolidation design note",
+      "details": {
+        "record_id": "b29f48e784984b7aae3189decae92f44",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/viewer/ui_consolidation.py",
+          "tests/test_phase32_task1_design_note.py",
+          "scripts/build_phase32_task1_design_note.py",
+          "docs/validation/PHASE32_TASK1_DESIGN_NOTE.{json,md}",
+          "docs/UI_CONSOLIDATION_DESIGN_CARD.md"
+        ]
+      },
+      "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+      "digest": "b147b13cc49353b56a2998e895967f351fc198156aef33838f433690589698c8",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -7407,6 +7429,65 @@
         }
       ],
       "phase": "Phase 31: Owner Decision Package (Dependence)"
+    },
+    {
+      "record_id": "b29f48e784984b7aae3189decae92f44",
+      "created_at": "2026-06-11T13:13:52.124514+00:00",
+      "title": "Phase 32 Task 1 - zero-install offline UI consolidation design note; baseline audit green (3 self-tests, 0 network / 0 JS errors, 0 external refs, contract 1.13.0, 13 tabs); 3 gaps pre-registered (G1 owner pack surface, G2 user-input run results, G3 governed read-out sweep)",
+      "description": "Pre-registered the Phase 32 zero-install offline UI consolidation pass per the standing scheduled-task directive. (a) Baseline audit measured and frozen: ui_app (172 checks) / offline_viewer (11) / combined_gui (27) self-tests all ok:true with 0 network calls and 0 JS errors; 0 external references across the three HTML artifacts; embedded contract 1.13.0; 13 tabs. (b) Three gaps pre-registered in priority order, one per cycle: G1 browsable owner-decision-pack surface (contract 1.13.0 -> 1.14.0 ADDITIVE, figures bit-for-bit from the assembled pack, neutrality and blank decision record preserved); G2 user-input run-result surface (Phase UIL outputs incl. currency/output_label provenance); G3 governed read-out completeness sweep. (c) Acceptance criteria pre-registered per gap + common criteria (self-tests green, additive-only, zero-install, no recomputation in display layer). Gate PASS with LIVE repo cross-checks. NO model parameter changes; binding stop-rule honoured.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/viewer/ui_consolidation.py",
+        "tests/test_phase32_task1_design_note.py",
+        "scripts/build_phase32_task1_design_note.py",
+        "docs/validation/PHASE32_TASK1_DESIGN_NOTE.{json,md}",
+        "docs/UI_CONSOLIDATION_DESIGN_CARD.md"
+      ],
+      "standard_references": [
+        "IFoA Model Practice Note (MPN) section 4 (documentation and communication)",
+        "SOA ASOP 41 (actuarial communications - clarity for the intended user)",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.6 (model risk, reliance, documentation)"
+      ],
+      "before_snapshot": {
+        "design_note_exists": false,
+        "ui_contract": "1.13.0",
+        "phase31": "COMPLETE (owner decision pending with model owner)"
+      },
+      "after_snapshot": {
+        "design_note_exists": true,
+        "doc_id": "PHASE32_TASK1_DESIGN_NOTE",
+        "doc_version": "1.0.0",
+        "gate_ok": true,
+        "gate_checks": 18,
+        "gaps_preregistered": [
+          "G1",
+          "G2",
+          "G3"
+        ],
+        "ui_contract": "1.13.0",
+        "ui_contract_bump": false
+      },
+      "impact_assessment": "Governance only. No artifact, contract, or model change this cycle; the note binds Tasks 2-4 to additive-only, zero-install, display-only changes with pre-registered acceptance criteria. The governed frozen-t headline is untouched.",
+      "quantitative_impact": "None (design note). Baseline frozen: contract 1.13.0; 13 tabs; self-test checks 172/11/27; external refs 0. No governed capital figure changed.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase32Task1UIConsolidationDesign",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T13:13:52.124557+00:00",
+          "actor": "Phase32Task1UIConsolidationDesign",
+          "status": "PEER_REVIEW",
+          "comments": "Design note: gate PASS incl. live repo cross-checks; tests added."
+        },
+        {
+          "timestamp": "2026-06-11T13:13:52.124575+00:00",
+          "actor": "Phase32Task1UIConsolidationDesign",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: consolidation scope and gap priority (G1 owner pack surface first). No model or contract change until Task 2."
+        }
+      ],
+      "phase": "Phase 32: Zero-Install Offline UI Consolidation"
     }
   ],
   "risk_register": [

@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-11T12:35:00Z",
+ "last_run": "2026-06-11T13:25:00Z",
  "last_run_duration_minutes": 20,
- "last_run_note": "Phase 31 Task 3 owner summary PASS; PHASE 31 COMPLETE; Phase 32 (zero-install offline UI consolidation) opened",
+ "last_run_note": "Phase 32 Task 1 design note PASS (gate 18/18, tests 18/0); gaps G1/G2/G3 pre-registered; next Task 2 = G1 owner-pack surface (contract -> 1.14.0 additive)",
  "current_phase": "Phase 32: Zero-Install Offline UI Consolidation",
- "overall_status": "PHASE31_TASK2_COMPLETE_NEXT_TASK3_OWNER_SUMMARY",
+ "overall_status": "PHASE32_TASK1_COMPLETE_NEXT_TASK2_G1_OWNER_PACK_SURFACE",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -561,11 +561,13 @@
   "Phase 32: Zero-Install Offline UI Consolidation": {
    "status": "in_progress",
    "description": "Standing directive (post-Phase 31): focus on the zero-install offline user interface. The UI must depend on NOTHING pre-installed - calculation is done by the stochastic model; the UI consumes ONLY model-output JSON and displays it graphically and interactively. Design-note-first; every contract change ADDITIVE.",
-   "completed": [],
-   "in_progress": [
+   "completed": [
     "Task 1: design note pre-registering the UI consolidation pass - (a) baseline audit: ui_app.html self-test (0 network / 0 JS errors), external-ref scan, single-file/zero-install verification, tab + contract-version inventory; (b) gap list vs the standing directive (owner-decision-pack surface (additive contract bump), input-loader run results, any governed read-outs not yet surfaced); (c) pre-registered acceptance criteria for each gap; NO model parameter changes."
    ],
-   "next": "Task 2+: close the gaps from the Task 1 audit in priority order, one task per cycle, additive contract bumps only, self-test green after every change."
+   "in_progress": [
+    "Task 2 (gap G1): browsable owner-decision-pack surface in ui_app.html - additive 'Owner Decision (P31)' surface: evidence-pack key figures, the three options (registry order, neutral, NO default), sign-off workflow position, decision-record status rendered BLANK until the owner decides; ui_data contract 1.13.0 -> 1.14.0 ADDITIVE; every figure bit-for-bit from PHASE31_TASK2_OWNER_DECISION_PACK.json; self-tests green (0 network / 0 JS errors); zero-install preserved; per the pre-registered acceptance criteria in docs/validation/PHASE32_TASK1_DESIGN_NOTE.md."
+   ],
+   "next": "Task 3 (gap G2): user-input run-result surface; Task 4 (gap G3): governed read-out completeness sweep; Task 5: phase summary + final consolidated re-audit, PHASE 32 COMPLETE."
   }
  },
  "repository_info": {
@@ -885,7 +887,7 @@
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
   "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
  },
- "last_updated": "2026-06-11T12:35:00Z",
+ "last_updated": "2026-06-11T13:25:00Z",
  "cycle_2026_06_08_phase26_task2": {
   "verdict": "PASS",
   "gates": "6/6 pre-registered",
@@ -1253,5 +1255,41 @@
    "docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-11_p31t3.md"
   ],
   "next": "Phase 32 Task 1 - zero-install offline UI consolidation design note (standing directive)"
+ },
+ "cycle_2026_06_11_phase32_task1": {
+  "utc": "2026-06-11T13:25Z",
+  "agent": "claude-cowork",
+  "task": "Phase 32 Task 1 - zero-install offline UI consolidation design note",
+  "verdict": "PASS",
+  "baseline": {
+   "ui_app_self_test": "ok 172 checks 0/0",
+   "offline_viewer": "ok 11 0/0",
+   "combined_gui": "ok 27 0/0",
+   "external_refs": 0,
+   "contract": "1.13.0",
+   "tabs": 13
+  },
+  "gaps": [
+   "G1 owner-decision-pack surface (->1.14.0 additive)",
+   "G2 user-input run-result surface",
+   "G3 governed read-out completeness sweep"
+  ],
+  "gate": "18/18 incl. live repo cross-checks",
+  "tests": "18/0 new; 101/0 with phase31 suites",
+  "governance": {
+   "record_id": "b29f48e784984b7aae3189decae92f44",
+   "change_type": "governance_change",
+   "status": "OWNER_REVIEW",
+   "records": 80,
+   "audit": 108,
+   "verify_all": true
+  },
+  "files": [
+   "par_model_v2/viewer/ui_consolidation.py",
+   "scripts/build_phase32_task1_design_note.py",
+   "tests/test_phase32_task1_design_note.py",
+   "docs/validation/PHASE32_TASK1_DESIGN_NOTE.{json,md}",
+   "docs/UI_CONSOLIDATION_DESIGN_CARD.md"
+  ]
  }
 }
