@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T07:58:23Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-11T08:08Z-1ec7",
+  "started_at": "2026-06-11T08:08:17Z",
+  "ttl_minutes": 120,
+  "task": "Phase 30 Task 4: tree-3 tail diagnostics + binding stop-rule / MR decision",
+  "note": ""
 }
