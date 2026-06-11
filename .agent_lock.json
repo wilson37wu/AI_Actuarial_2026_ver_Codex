@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T03:39:56Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-11T03:41Z-bbc4",
+  "started_at": "2026-06-11T03:41:45Z",
+  "ttl_minutes": 120,
+  "task": "Interactive: outputs/ junk removal (follow-up to restructure)",
+  "note": ""
 }
