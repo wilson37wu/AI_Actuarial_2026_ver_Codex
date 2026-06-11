@@ -9325,3 +9325,19 @@ d9d55c3460e2 idempotent. pytest 13/0 new; P29 28/0; P28 40/0 (6 env skips). Cycl
 lock from a dead duplicate claude instance (21:09Z); no work lost. Env: /sessions 100% full broke
 ~/.local scipy - reinstalled to /var/tmp/pylibs_c (PYTHONPATH=/var/tmp/pylibs_c:.).
 Next: Phase 29 Task 5 (offline-UI contract 1.10.0 -> 1.11.0) + PHASE 29 COMPLETE documentation.
+
+---
+
+## 2026-06-11 ~00:40Z - Phase 29 Task 5 COMPLETE (PASS) - PHASE 29 COMPLETE [claude]
+
+Offline-UI propagation of the vine / pair-copula dependence upgrade; data contract 1.10.0 -> 1.11.0 ADDITIVE.
+
+- Coordination: fresh /tmp clone (`cycle_clone_20260611T000657`) of origin/main; preflight PROCEED (lock free, released 23:28Z by previous claude cycle); acquired cycle 2026-06-11T00:08Z-0bb6. NOTE: this run fired in the 00:00Z (Codex) window - scheduler drift; no Codex activity was present and the lock CAS push arbitrated cleanly per protocol.
+- ENVIRONMENT FINDING: writes to the mounted working folder from the session sandbox are SILENTLY TRUNCATED at the previous file size (observed on a 237KB edit of scripts/build_ui_data.py coming back at exactly the old 223,051 bytes, mid-line). All edits this cycle were therefore done directly in the /tmp clone; the mount carries the synced post-commit state. /sessions remains 99% full - standing human ask.
+- scripts/build_ui_data.py: CONTRACT_VERSION 1.11.0; new `_build_phase29()` (display-layer normalisation of the P29 T2/T3/T4 validation reports - no model calculation); new `phase29` contract section {copula, bootstrap, tail, narrative}; additive capital read-outs `vine_copula_scr_component_point` 42,458.5527095696 and `vine_copula_scr_component_bootstrap_mean` 41,917.634842687556; new **Vine Tail (P29)** tab with SCR comparison chart (vine point/mean vs single-df t point/mean vs grouped-t vs nested 46,638.9), canonical p=0.90 pair-level tail table (14 rows = 6 first-tree + 5 second-tree|credit + 3 never-fitted holdout, candidate-vs-frozen upper/lower with 95% CIs), upper-tail lift profile chart (largest: rate-liquidity|credit +0.8514), residual re-decomposition table (vine copula-form residual 3,637.3 = -65.33% vs grouped-t / -40.52% vs skew-t - first candidate to NARROW below both baselines), MR decision table (MR-016 KEEP OPEN, MR-017 OPENED, governed headline move 0.0000%, vine DISCLOSED not adopted), 20 gate crits (T2 8 + T3 6 + T4 6).
+- scripts/ui_app_self_test.cjs: +16 Phase 29 checks (panel cards/crits/rows/bars + text assertions incl. 42,459/41,918 SCRs, CI [38,655, 45,284], -65.33%/-40.52% narrowing, +0.8514 lift, 0.049 overfit ratio, MR-017, NOT-adopted). Self-test: ok:true, 150 checks, 0 network calls, 0 JS errors (jsdom from /tmp npm install; mount node_modules too slow over virtiofs).
+- New: scripts/build_phase29_task5_ui_propagation.py (39 substantive contract checks, jsdom re-run, governance, evidence report); tests/test_phase29_task5_ui_propagation.py (21/0); docs/validation/PHASE29_TASK5_UI_PROPAGATION_REPORT.{json,md}; docs/UI_PROPAGATION_CARD_P29.md.
+- Governance: ChangeRecord 242342e615a146c1a1fdedc6381a9fc9 (code_change) OWNER_REVIEW; change records 66->67; audit entries 94->95; verify_all True; idempotent (re-run added nothing). Store re-parsed OK after write.
+- Tests: P29T5 21/0 new; regression P29 T1-T5 63/0; UI suites P22-P26 T5 115/0; P28 T2-T4 24/0 (6 env skips); compileall clean.
+- **PHASE 29 COMPLETE (Tasks 1-5).** The vine candidate remains a DISCLOSED alternative read-out; the governed headline is the frozen single-df t 39,975.654628199336 (recovered bit-identically through every P29 task).
+- State: PHASE29_COMPLETE_NEXT_PHASE30_TASK1_DESIGN_NOTE; in_progress -> Phase 30 Task 1 (design-note-first post-vine dependence roadmap decision per MR-016/MR-017: deeper conditional pair-copula calibration vs nested-aware dependence calibration vs owner adoption package vs stop-rule; pre-registered gates before ANY implementation).

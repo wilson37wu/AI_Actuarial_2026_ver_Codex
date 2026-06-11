@@ -2116,6 +2116,29 @@
       "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
       "digest": "644c9003ee2041fd7a02c4b5e3792c0586232c275b372354ffc9cd82a6e7e97c",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "b2abfacdc7254695a90b13ef01eea94a",
+      "timestamp": "2026-06-11T00:24:27.185092+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase29",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 29 Task 5 offline-UI propagation; PHASE 29 COMPLETE",
+      "details": {
+        "record_id": "242342e615a146c1a1fdedc6381a9fc9",
+        "ui_contract": "1.11.0",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
+      "digest": "bdc2bac063eba520720cf98f267403e27fd71d4616e479d76d2bef03f699c253",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -6288,6 +6311,80 @@
           "actor": "AutomatedModelDev_Phase29",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: MR-016 remediation decision + MR-017 opening; governed headline unchanged."
+        }
+      ],
+      "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade"
+    },
+    {
+      "record_id": "242342e615a146c1a1fdedc6381a9fc9",
+      "created_at": "2026-06-11T00:24:27.184994+00:00",
+      "title": "Phase 29 Task 5 - offline-UI propagation of the vine / pair-copula dependence upgrade view",
+      "description": "Phase 29 Task 5 propagated the vine / pair-copula dependence-upgrade results to the zero-install offline UI. scripts/build_ui_data.py (contract bumped ADDITIVELY to v1.11.0) now surfaces a first-class Vine Tail (P29) panel: (1) the Task 2 truncated credit-root C-vine prototype on FROZEN standalone margins / Sigma / df 2.9451 with EXACT frozen-t boundary recovery (dev 0.0) - vine candidate component SCR 42,458.6 = +6.21% vs frozen-t 39,975.7 and +19.25% vs grouped-t 35,604.4, narrowing the gap to the nested path-wise reference 46,638.9 to -8.96% (FIRST candidate to move TOWARD nested; disclosed, not gated; leakage-free family selection surfaced); (2) the Task 3 vine margin bootstrap (200x20k on the frozen fit) - vine SCR mean 41,917.6, 95% CI [38,654.7, 45,284.3], SE 4.04% <= 5%, nested OUTSIDE the CI; the copula-form residual NARROWS to 3,637.3 (-65.33% vs grouped-t 10,491.5, -40.52% vs skew-t 6,114.9) - the first candidate to NARROW below BOTH baselines; (3) the Task 4 pair-level tail-dependence grid (p in {0.80,0.85,0.90,0.95}, candidate vs frozen, fitted first/second tree + never-fitted holdout pairs, 95% CIs; largest lift rate-liquidity|credit +0.8514 at p=0.90), the fit-vs-holdout overfit gate (holdout/fit max-lift ratio 0.049, PASS, holdout disclosure complete), and the MR-016 KEEP-OPEN / MR-017 OPENED remediation decision with the governed headline (frozen single-df t 39,975.7) recovered bit-identically (move 0.0000% -> MR-010/MR-014 no refresh). Additive capital read-outs vine_copula_scr_component_point and vine_copula_scr_component_bootstrap_mean added. The UI performs no calculation; it consumes only already-produced model output JSONs. The vine remains DISCLOSED, not adopted, pending owner sign-off. PHASE 29 COMPLETE (Tasks 1-5).",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "Solvency II Art. 234 (dependence justification - frozen copula/margins + rank-invariance displayed; vine DISCLOSED, not adopted)",
+        "Aas, Czado, Frigessi & Bakken (2009) pair-copula constructions",
+        "Efron & Tibshirani (1993) bootstrap"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.10.0 (grouped-t tail panel; no vine / pair-copula panel, pair-level tail grid, overfit read-out or MR-016/MR-017 status)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.11.0 (additive)",
+        "headline_readouts": {
+          "vine_point": 42458.5527095696,
+          "vine_bootstrap_mean": 41917.634842687556,
+          "vine_bootstrap_ci": [
+            38654.68530800363,
+            45284.252553628474
+          ],
+          "vine_se_frac": 0.04041834921658041,
+          "frozen_point": 39975.654628199336,
+          "grouped_point": 35604.39191025864,
+          "nested_reference": 46638.9,
+          "gap_to_nested_rel": -0.08963220166921604,
+          "copula_form_residual": 3637.298487404965,
+          "residual_change_vs_grouped_t_rel": -0.6533099664104308,
+          "residual_change_vs_skewt_rel": -0.4051744938748033,
+          "max_fit_lift": 0.8514015735106508,
+          "max_holdout_lift": 0.04136750000000001,
+          "overfit_ratio": 0.04858753059314438,
+          "mr016_decision": "KEEP_OPEN",
+          "mr017_opened": true,
+          "governed_headline_move": 0.0
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 150
+      },
+      "impact_assessment": "Display-layer only: the UI bundler reads validation-report JSONs and performs no model calculation, so no model output changes. Additive contract bump keeps existing consumers working. The governed headline remains the frozen single-df t component basis; the vine candidate is surfaced as a DISCLOSED alternative read-out only, pending owner sign-off. Completes the Phase 29 per-task offline-UI propagation requirement; PHASE 29 COMPLETE (Tasks 1-5).",
+      "quantitative_impact": "UI now displays: vine candidate SCR 42459 point / 41918 bootstrap mean, 95% CI [38655, 45284], SE 4.04%; frozen-t 39976; grouped-t 35604; nested 46639 OUTSIDE the CI; copula-form residual 3637 (-65.33% vs grouped-t, -40.52% vs skew-t); max fitted lift +0.8514 vs max holdout lift 0.0414 (ratio 0.049); MR-016 KEEP_OPEN, MR-017 opened True; governed headline move 0.0000%. jsdom self-test ok with 0 network calls and 0 JS errors over 150 checks.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase29",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T00:24:27.185043+00:00",
+          "actor": "AutomatedModelDev_Phase29",
+          "status": "PEER_REVIEW",
+          "comments": "UI propagation verified by the contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only. The first-to-narrow residual finding, the nested-OUTSIDE-CI disclosure, the fit-vs-holdout overfit evidence and the MR-016 KEEP-OPEN / MR-017 OPENED decision are carried into the display verbatim; copula and margins remain FROZEN per SII Art. 234 and the vine is NOT adopted into the governed headline."
+        },
+        {
+          "timestamp": "2026-06-11T00:24:27.185056+00:00",
+          "actor": "AutomatedModelDev_Phase29",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. PHASE 29 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review. Owner adoption decision for the vine candidate as a disclosed alternative read-out is tracked under MR-017 / next-phase re-assessment."
         }
       ],
       "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade"

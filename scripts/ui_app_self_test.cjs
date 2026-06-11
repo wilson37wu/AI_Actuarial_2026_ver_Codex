@@ -110,6 +110,15 @@ setTimeout(() => {
   const p28GapRows = document.querySelectorAll("#phase28 table.p28gaptable tbody tr").length;
   const p28BarRects = document.querySelectorAll("#phase28 svg.chart rect.bar").length;
 
+  // Phase 29 Task 5: open the Vine Tail (P29) panel and count its elements.
+  const p29Tab = tabs.find(t => t.getAttribute("data-target") === "phase29");
+  if (p29Tab) p29Tab.click();
+  const p29Cards = document.querySelectorAll("#phase29 .card").length;
+  const p29GateCrits = document.querySelectorAll("#phase29 .crit").length;
+  const p29PairRows = document.querySelectorAll("#phase29 table.p29pairs tbody tr").length;
+  const p29GapRows = document.querySelectorAll("#phase29 table.p29gaptable tbody tr").length;
+  const p29BarRects = document.querySelectorAll("#phase29 svg.chart rect.bar").length;
+
   // UI Task 4: open the Governance & assumptions view and click through every sub-view.
   const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
   if (govTab) govTab.click();
@@ -251,6 +260,18 @@ setTimeout(() => {
     blockDfPresent: /37\.866/.test(bodyText) && /8\.506/.test(bodyText),
     mr016Present: /MR-016/.test(bodyText),
     vineEscalationPresent: /vine \/ pair-copula/.test(bodyText),
+    phase29TabPresent: !!p29Tab,
+    p29Cards, p29GateCrits, p29PairRows, p29GapRows, p29BarRects,
+    vineTailTabTextPresent: /Vine Tail \(P29\)/.test(bodyText),
+    vineScrPresent: /42,459/.test(bodyText) && /41,918/.test(bodyText),
+    vineBootstrapCiPresent: /38,655/.test(bodyText) && /45,284/.test(bodyText),
+    vineNestedOutsidePresent: /OUTSIDE/.test(bodyText) && /46,639/.test(bodyText),
+    vineResidualNarrowingPresent: /-65\.33%/.test(bodyText) && /-40\.52%/.test(bodyText),
+    vineRateLiquidityLiftPresent: /\+0\.8514/.test(bodyText),
+    vineOverfitRatioPresent: /0\.049/.test(bodyText),
+    vineFrozenHeadlinePresent: /39,976/.test(bodyText),
+    mr017Present: /MR-017/.test(bodyText),
+    vineNotAdoptedPresent: /NOT adopted/.test(bodyText),
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -386,6 +407,22 @@ setTimeout(() => {
     checks.blockDfPresent &&
     checks.mr016Present &&
     checks.vineEscalationPresent &&
+    checks.phase29TabPresent &&
+    checks.p29Cards >= 12 &&
+    checks.p29GateCrits >= 19 &&
+    checks.p29PairRows === 14 &&
+    checks.p29GapRows === 4 &&
+    checks.p29BarRects >= 6 &&
+    checks.vineTailTabTextPresent &&
+    checks.vineScrPresent &&
+    checks.vineBootstrapCiPresent &&
+    checks.vineNestedOutsidePresent &&
+    checks.vineResidualNarrowingPresent &&
+    checks.vineRateLiquidityLiftPresent &&
+    checks.vineOverfitRatioPresent &&
+    checks.vineFrozenHeadlinePresent &&
+    checks.mr017Present &&
+    checks.vineNotAdoptedPresent &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

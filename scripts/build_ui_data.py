@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.10.0"
+CONTRACT_VERSION = "1.11.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -1911,6 +1911,197 @@ def _build_phase28() -> Dict[str, Any]:
     return out
 
 
+def _build_phase29() -> Dict[str, Any]:
+    """Phase 29 (contract 1.11.0, additive): vine / pair-copula dependence
+    upgrade. Normalises the already-produced Task 2 truncated credit-root
+    C-vine prototype read-out, Task 3 vine margin bootstrap, and Task 4
+    pair-level tail diagnostics + fit-vs-holdout overfit check + MR-016/MR-017
+    decision for the offline UI. Display-layer only - no model calculation."""
+    out: Dict[str, Any] = {}
+    drivers: List[str] = []
+
+    def _pname(idx):
+        try:
+            return drivers[int(idx)]
+        except (TypeError, ValueError, IndexError):
+            return str(idx)
+
+    t2 = _load(os.path.join(VAL, "PHASE29_TASK2_VINE_COPULA_REPORT.json"))
+    if isinstance(t2, dict) and isinstance(t2.get("result"), dict):
+        r = t2["result"]
+        drivers = list(t2.get("drivers") or [])
+        fit = r.get("fit", {}) or {}
+        vine = r.get("vine_pair_candidate_readout", {}) or {}
+        frz = r.get("frozen_t_component_reference_readout", {}) or {}
+        bnd = r.get("frozen_t_boundary_readout", {}) or {}
+        grp = r.get("grouped_t_comparison_readout", {}) or {}
+        out["copula"] = {
+            "drivers": drivers,
+            "df_frozen": t2.get("df_frozen"),
+            "df_rematched": t2.get("df_rematched"),
+            "rho_max_abs_diff": t2.get("rho_max_abs_diff"),
+            "structure": fit.get("structure"),
+            "max_vine_trees": fit.get("max_vine_trees"),
+            "root_driver_name": fit.get("root_driver_name"),
+            "fit_fraction": fit.get("fit_fraction"),
+            "tail_level_p": fit.get("tail_level_p"),
+            "family_counts": fit.get("family_counts", {}),
+            "fit_indices_digest": fit.get("fit_indices_digest"),
+            "holdout_indices_digest": fit.get("holdout_indices_digest"),
+            "vine_candidate_readout": {
+                "scr_component": vine.get("scr_component"),
+                "scr_without": vine.get("scr_without"),
+                "var_component": vine.get("var_component"),
+                "es_component": vine.get("es_component"),
+            },
+            "frozen_t_reference_scr_component": frz.get("scr_component"),
+            "frozen_t_boundary_scr_component": bnd.get("scr_component"),
+            "grouped_t_comparison_scr_component": grp.get("scr_component"),
+            "boundary_recovery_dev": r.get("boundary_recovery_dev"),
+            "candidate_vs_frozen_t_rel": r.get("candidate_vs_frozen_t_rel"),
+            "candidate_vs_grouped_t_rel": r.get("candidate_vs_grouped_t_rel"),
+            "candidate_gap_to_nested_rel":
+                r.get("candidate_gap_to_nested_rel"),
+            "material_finding": r.get("material_finding"),
+            "gates": r.get("gates", {}),
+            "verdict": t2.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE29_TASK2_VINE_COPULA_REPORT.json"),
+            "change_record_id": t2.get("change_record_id"),
+        }
+    t3 = _load(os.path.join(
+        VAL, "PHASE29_TASK3_VINE_MARGIN_BOOTSTRAP_REPORT.json"))
+    if isinstance(t3, dict) and isinstance(t3.get("result"), dict):
+        r = t3["result"]
+        out["bootstrap"] = {
+            "config": r.get("config", {}),
+            "vine_component_scr_ci": r.get("vine_component_scr_ci", {}),
+            "frozen_t_component_scr_ci":
+                r.get("frozen_t_component_scr_ci", {}),
+            "without_vine_scr_ci": r.get("without_vine_scr_ci", {}),
+            "vine_minus_frozen_mean": r.get("vine_minus_frozen_mean"),
+            "vine_minus_frozen_min": r.get("vine_minus_frozen_min"),
+            "vine_minus_frozen_max": r.get("vine_minus_frozen_max"),
+            "vine_minus_frozen_pos_share":
+                r.get("vine_minus_frozen_pos_share"),
+            "directional_disclosed_direction":
+                r.get("directional_disclosed_direction"),
+            "nested_pathwise_reference": r.get("nested_pathwise_reference"),
+            "task2_frozen_t_component_point":
+                r.get("task2_frozen_t_component_point"),
+            "task2_vine_candidate_component_point":
+                r.get("task2_vine_candidate_component_point"),
+            "headline_nested_inside_95ci":
+                r.get("headline_nested_inside_95ci"),
+            "se_frac_of_mean": r.get("se_frac_of_mean"),
+            "se_gate_pass": r.get("se_gate_pass"),
+            "residual_gap_redecomposition_point":
+                r.get("residual_gap_redecomposition_point", {}),
+            "residual_gap_redecomposition_bootstrap_mean":
+                r.get("residual_gap_redecomposition_bootstrap_mean", {}),
+            "grouped_t_copula_form_residual_ref":
+                r.get("grouped_t_copula_form_residual_ref"),
+            "skewt_reconfirmed_copula_form_residual_ref":
+                r.get("skewt_reconfirmed_copula_form_residual_ref"),
+            "gates": r.get("gates", {}),
+            "digest": r.get("digest"),
+            "verdict": t3.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE29_TASK3_VINE_MARGIN_BOOTSTRAP_REPORT.json"),
+            "change_record_id": t3.get("change_record_id"),
+        }
+    t4 = _load(os.path.join(
+        VAL, "PHASE29_TASK4_VINE_TAIL_DIAGNOSTICS_REPORT.json"))
+    if isinstance(t4, dict) and isinstance(t4.get("result"), dict):
+        r = t4["result"]
+        if not drivers:
+            drivers = list(t4.get("drivers") or [])
+        pts = r.get("pair_tail_summary", {}) or {}
+
+        def _m(blk):
+            v = blk or {}
+            return {"mean": v.get("mean"), "ci_lo": v.get("ci_lo"),
+                    "ci_hi": v.get("ci_hi")}
+
+        levels: Dict[str, Any] = {}
+        for pk in sorted(pts.keys()):
+            blk = pts[pk] or {}
+            try:
+                p_val = float(pk) / 100.0
+            except ValueError:
+                p_val = None
+            rows = []
+            for tree, label in (("first_tree", "first"),
+                                ("second_tree", "second"),
+                                ("holdout", "holdout")):
+                for e in (blk.get(tree) or []):
+                    pr = e.get("pair") or [None, None]
+                    cond = e.get("condition_on")
+                    rows.append({
+                        "tree": label,
+                        "pair": pr,
+                        "pair_label": "%s-%s" % (_pname(pr[0]),
+                                                 _pname(pr[1])),
+                        "cond_label": (None if cond is None
+                                       else _pname(cond)),
+                        "cand_upper": _m(e.get("cand_upper")),
+                        "cand_lower": _m(e.get("cand_lower")),
+                        "frz_upper": _m(e.get("frz_upper")),
+                        "frz_lower": _m(e.get("frz_lower")),
+                        "lift_upper": _m(e.get("lift_upper")),
+                        "lift_lower": _m(e.get("lift_lower")),
+                    })
+            levels[pk] = {"p": p_val, "rows": rows}
+        cfg = r.get("config", {}) or {}
+        out["tail"] = {
+            "drivers": drivers,
+            "df_frozen": t4.get("df_frozen"),
+            "p_grid": cfg.get("p_grid", []),
+            "canonical_p": cfg.get("canonical_p"),
+            "fit_structure": cfg.get("fit_structure"),
+            "levels": levels,
+            "overfit_check": r.get("overfit_check", {}),
+            "mr_remediation_decision":
+                r.get("mr_remediation_decision", {}),
+            "archive_crosscheck": r.get("archive_crosscheck", {}),
+            "gates": r.get("gates", {}),
+            "verdict": t4.get("verdict"),
+            "digest": r.get("digest"),
+            "source": ("docs/validation/"
+                       "PHASE29_TASK4_VINE_TAIL_DIAGNOSTICS_REPORT.json"),
+            "change_record_id": t4.get("change_record_id"),
+        }
+    if out:
+        out["narrative"] = (
+            "Phase 29 escalated beyond a single copula on standalone margins "
+            "to a truncated credit-root C-vine / pair-copula candidate (Aas "
+            "et al. 2009): first-tree links anchored on credit, second-tree "
+            "links conditioned on credit, max two trees, capped family set, "
+            "frozen standalone margins / Sigma / df 2.9451 with EXACT "
+            "frozen-t boundary recovery (dev 0.0). MATERIAL FINDING: the vine "
+            "candidate is the FIRST dependence candidate to move TOWARD the "
+            "nested path-wise reference 46,638.9 - component SCR 42,458.6 "
+            "point / 41,917.6 bootstrap mean (+6.21% vs frozen-t), gap to "
+            "nested narrowed to -8.96%, and the copula-form residual NARROWS "
+            "to 3,637.3 (-65.33% vs grouped-t 10,491.5, -40.52% vs skew-t "
+            "6,114.9). At p=0.90 the candidate RAISES upper-tail "
+            "co-dependence on ALL 11 fitted links (largest: rate-liquidity "
+            "given credit +0.8514) while the largest holdout-pair lift is "
+            "0.0414 (holdout/fit ratio 0.049 - overfit gate PASS). The "
+            "nested truth nevertheless remains OUTSIDE the vine 95% CI "
+            "[38,654.7, 45,284.3], so the pre-registered close criteria are "
+            "NOT met: MR-016 stays OPEN with the narrowing DISCLOSED and "
+            "MR-017 is opened for the residual vine-FORM limitations "
+            "(2-tree truncation, capped families, educational tilt "
+            "simulator, nested inner-path dynamics). The governed headline "
+            "remains the frozen single-df t 39,975.7 (recovered "
+            "bit-identically, move 0.0000%; MR-010/MR-014 unchanged); the "
+            "vine is DISCLOSED, not adopted, pending owner sign-off. Copula "
+            "and margins remain frozen per SII Art. 234; production sign-off "
+            "withheld (educational).")
+    return out
+
+
 def build_ui_data() -> Dict[str, Any]:
     base = _load(VIEWER_DATA) or {}
     state = _load(STATE_PATH) or {}
@@ -1999,6 +2190,21 @@ def build_ui_data() -> Dict[str, Any]:
         capital["grouped_t_copula_scr_component_point"] = (
             _p28_cp.get("scr_component"))
 
+    phase29 = _build_phase29()
+    _p29_bt = (phase29.get("bootstrap") or {})
+    _p29_ci = _p29_bt.get("vine_component_scr_ci") or {}
+    if _p29_ci.get("mean") is not None:
+        # Additive capital read-out: vine / pair-copula candidate bootstrap
+        # mean SCR on the component basis (Phase 29 Task 3 - DISCLOSED, not
+        # adopted into the governed headline).
+        capital["vine_copula_scr_component_bootstrap_mean"] = (
+            _p29_ci.get("mean"))
+    if _p29_bt.get("task2_vine_candidate_component_point") is not None:
+        # Additive capital read-out: vine candidate point SCR (Phase 29
+        # Task 2 - DISCLOSED alternative read-out).
+        capital["vine_copula_scr_component_point"] = (
+            _p29_bt.get("task2_vine_candidate_component_point"))
+
     governance = dict(base.get("governance", {}))
     _base_risks = list(governance.get("risk_register", []) or [])
     _have = {str(x.get("risk_id")) for x in _base_risks}
@@ -2045,6 +2251,7 @@ def build_ui_data() -> Dict[str, Any]:
         "phase26": phase26,
         "phase27": phase27,
         "phase28": phase28,
+        "phase29": phase29,
         "governance": governance,
         "verdicts": _build_verdicts(base.get("verdicts", [])),
     }
@@ -2202,6 +2409,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="phase26" class="panel" data-title="Full Re-Agg (P26)"></div>
   <div id="phase27" class="panel" data-title="Skew-t Tail (P27)"></div>
   <div id="phase28" class="panel" data-title="Grouped-t Tail (P28)"></div>
+  <div id="phase29" class="panel" data-title="Vine Tail (P29)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
 </div>
 
@@ -2240,6 +2448,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["phase26","Full Re-Agg (P26)"],
     ["phase27","Skew-t Tail (P27)"],
     ["phase28","Grouped-t Tail (P28)"],
+    ["phase29","Vine Tail (P29)"],
     ["governance","Governance"]
   ];
 
@@ -3373,6 +3582,141 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  function renderPhase29(){
+    var el=document.getElementById("phase29"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var p=DATA.phase29||{};
+    var co=p.copula||{}, bo=p.bootstrap||{}, td=p.tail||{};
+    if(!Object.keys(co).length&&!Object.keys(bo).length&&!Object.keys(td).length){
+      el.innerHTML='<p class="muted">No Phase 29 vine / pair-copula tail-dependence data in this snapshot (requires contract v1.11.0+).</p>';
+      return;
+    }
+    var vi=bo.vine_component_scr_ci||{}, fz=bo.frozen_t_component_scr_ci||{};
+    var vinePoint=bo.task2_vine_candidate_component_point!=null?bo.task2_vine_candidate_component_point:(co.vine_candidate_readout||{}).scr_component;
+    var frzPoint=bo.task2_frozen_t_component_point!=null?bo.task2_frozen_t_component_point:co.frozen_t_reference_scr_component;
+    var grpPoint=co.grouped_t_comparison_scr_component;
+    var nestedRef=bo.nested_pathwise_reference;
+    var gd=bo.residual_gap_redecomposition_point||{};
+    var mr=td.mr_remediation_decision||{};
+    var oc=td.overfit_check||{};
+    var fc=co.family_counts||{};
+    var fcs=Object.keys(fc).map(function(k){ return fc[k]+" "+k; }).join(", ");
+    var canon=String(td.canonical_p!=null?Math.round(100*td.canonical_p):"90");
+    var lv=(td.levels||{})[canon]||{};
+    var rows=lv.rows||[];
+    function mean(m,d){ return (m&&m.mean!=null)?Number(m.mean).toFixed(d==null?4:d):"--"; }
+    function ci(m,d){ return (m&&m.ci_lo!=null)?"["+Number(m.ci_lo).toFixed(d==null?4:d)+", "+Number(m.ci_hi).toFixed(d==null?4:d)+"]":"--"; }
+    var html='<div class="cards">';
+    [
+      ["Structure",(co.structure||"--")+(co.max_vine_trees!=null?" ("+co.max_vine_trees+" trees, root "+(co.root_driver_name||"?")+")":"")],
+      ["Vine candidate SCR (point)",num(vinePoint)],
+      ["Vine candidate SCR (bootstrap mean)",num(vi.mean)],
+      ["Frozen single-df t SCR (point)",num(frzPoint)],
+      ["Frozen single-df t SCR (mean)",num(fz.mean)],
+      ["Grouped-t SCR (point) - P28 ref",num(grpPoint)],
+      ["Nested SCR (path-wise) - reference",num(nestedRef)],
+      ["Vine 95% CI",vi.ci_lo!=null?"["+num(vi.ci_lo)+", "+num(vi.ci_hi)+"]":"--"],
+      ["Vine SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
+      ["Nested inside vine 95% CI?",bo.headline_nested_inside_95ci?"yes":"no (OUTSIDE)"],
+      ["Holdout/fit max-lift ratio",oc.holdout_to_fit_max_lift_ratio!=null?Number(oc.holdout_to_fit_max_lift_ratio).toFixed(3):"--"],
+      ["MR-016 / MR-017",(mr.mr016_decision==="KEEP_OPEN"?"KEEP OPEN":"--")+" / "+(mr.open_mr017?"OPENED":"--")]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+c[0]+
+      '</div><div class="v">'+esc(c[1])+'</div></div>'; });
+    html+='</div>';
+    html+='<p class="note"><b>MATERIAL FINDING.</b> The truncated credit-root C-vine is the FIRST dependence candidate to move TOWARD the nested path-wise reference: '+
+      'it RAISES upper-tail co-dependence on ALL fitted links and NARROWS the copula-form residual to '+num(gd.copula_form_residual_abs)+
+      ' (-65.33% vs grouped-t '+num(bo.grouped_t_copula_form_residual_ref)+', -40.52% vs skew-t '+num(bo.skewt_reconfirmed_copula_form_residual_ref)+'). '+
+      'The nested truth remains OUTSIDE the vine 95% CI, so MR-016 stays OPEN (narrowing DISCLOSED) and MR-017 tracks the residual vine-FORM limitations. '+
+      'The vine is DISCLOSED, not adopted into the governed headline.</p>';
+    var D=[];
+    [["Vine candidate mean",vi.mean,"#4f9cff"],
+     ["Vine candidate point",vinePoint,"#2fd0a8"],
+     ["Single-df t mean",fz.mean,"#9a7bff"],
+     ["Single-df t point",frzPoint,"#2b5d99"],
+     ["Grouped-t point (P28)",grpPoint,"#7a8aa0"],
+     ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
+    ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; vine vs grouped-t vs single-df t vs nested reference</h4>'+
+        '<p class="cap">The vine candidate sits ABOVE the single-df t boundary and is the first candidate to narrow the gap to the nested path-wise reference '+num(nestedRef)+
+        ' (-8.96%); the move is disclosed, not gated.</p>'+barChart(D,{w:760,h:300,mB:84})+'</div>';
+    }
+    if(rows.length){
+      html+='<div class="subh">Pair-level tail dependence at canonical p=0.'+canon+' (200&times;20k CRN bootstrap, 95% CI) &mdash; fitted first/second tree + never-fitted holdout</div>'+
+        '<table class="ptable p29pairs"><thead><tr><th>Pair</th><th>Tree</th><th>Candidate U</th><th>Frozen-t U</th>'+
+        '<th>Lift U (cand &minus; frz)</th><th>Lift L</th></tr></thead><tbody>';
+      rows.forEach(function(rw){
+        var tl=rw.tree==="second"?("2nd | "+(rw.cond_label||"?")):(rw.tree==="holdout"?"holdout":"1st");
+        html+='<tr><td>'+esc(rw.pair_label)+'</td><td>'+esc(tl)+'</td>'+
+          '<td>'+mean(rw.cand_upper,4)+' '+ci(rw.cand_upper,4)+'</td>'+
+          '<td>'+mean(rw.frz_upper,4)+' '+ci(rw.frz_upper,4)+'</td>'+
+          '<td>'+mean(rw.lift_upper,4)+' '+ci(rw.lift_upper,4)+'</td>'+
+          '<td>'+mean(rw.lift_lower,4)+' '+ci(rw.lift_lower,4)+'</td></tr>';
+      });
+      html+='</tbody></table>';
+      var TD=[];
+      rows.forEach(function(rw){
+        if(rw.lift_upper&&rw.lift_upper.mean!=null){
+          var hold=rw.tree==="holdout";
+          TD.push({label:rw.pair_label+(rw.tree==="second"?" | "+(rw.cond_label||""):"")+(hold?" (holdout)":""),
+            value:rw.lift_upper.mean,color:hold?"#7a8aa0":(rw.tree==="second"?"#2fd0a8":"#4f9cff"),
+            tip:"<b>"+rw.pair_label+"</b> ("+rw.tree+")<br>upper-tail lift at p=0."+canon+": "+rw.lift_upper.mean.toFixed(4)});
+        }
+      });
+      if(TD.length){
+        html+='<div class="chartwrap"><h4>Candidate-vs-frozen upper-tail lift profile at p=0.'+canon+'</h4>'+
+          '<p class="cap">The tilt concentrates on the fitted links (largest: rate-liquidity given credit +0.8514); the largest holdout lift is '+
+          (oc.max_holdout_pair_abs_mean_lift!=null?Number(oc.max_holdout_pair_abs_mean_lift).toFixed(4):"--")+
+          ' (holdout/fit ratio '+(oc.holdout_to_fit_max_lift_ratio!=null?Number(oc.holdout_to_fit_max_lift_ratio).toFixed(3):"--")+' &mdash; overfit gate PASS).</p>'+
+          barChart(TD,{w:760,h:320,mB:110})+'</div>';
+      }
+    }
+    if(Object.keys(gd).length){
+      html+='<div class="subh">Residual gap to nested truth &mdash; vine re-decomposition and narrowing</div>'+
+        '<table class="ptable p29gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share / move</th><th>Basis</th></tr></thead><tbody>'+
+        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+          (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
+          '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
+        '<tr><td>Copula-form residual (vine)</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+          (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"% of gap":"--")+
+          '</td><td>grouped-t '+num(bo.grouped_t_copula_form_residual_ref)+' / skew-t '+num(bo.skewt_reconfirmed_copula_form_residual_ref)+' &rarr; vine '+num(gd.copula_form_residual_abs)+'</td></tr>'+
+        '<tr><td>Residual narrowing vs grouped-t</td><td>'+num((bo.grouped_t_copula_form_residual_ref||0)-(gd.copula_form_residual_abs||0))+'</td><td>'+
+          (mr.residual_change_vs_grouped_t_rel!=null?((100*mr.residual_change_vs_grouped_t_rel).toFixed(2)+"%"):"--")+
+          '</td><td>first candidate to NARROW below BOTH baselines (vs skew-t '+
+          (mr.residual_change_vs_skewt_rel!=null?((100*mr.residual_change_vs_skewt_rel).toFixed(2)+"%"):"--")+')</td></tr>'+
+        '<tr><td>Total gap (nested &minus; vine)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+          (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"% of nested":"--")+
+          '</td><td>nested with-actions reference</td></tr>'+
+        '</tbody></table>'+
+        '<p class="note">The nested reference '+num(nestedRef)+' is OUTSIDE the vine CI ['+num(vi.ci_lo)+', '+num(vi.ci_hi)+']; '+
+        'the pre-registered close criteria (inside-CI AND material shrink) are NOT met, so MR-016 stays OPEN with the narrowing DISCLOSED; '+
+        'MR-017 tracks the residual vine-FORM limitations (2-tree truncation, capped families, educational tilt simulator, nested inner-path dynamics).</p>';
+    }
+    html+='<div class="subh">MR remediation and governance decision</div>'+
+      '<table class="ptable"><thead><tr><th>Decision</th><th>Value</th><th>Rationale</th></tr></thead><tbody>'+
+      '<tr><td>Governed headline move</td><td>'+(mr.governed_headline_relative_move!=null?(100*mr.governed_headline_relative_move).toFixed(4)+"%":"--")+
+      '</td><td>Frozen single-df t boundary '+num(mr.governed_headline_reference)+' recovered bit-identically; MR-010/MR-014 no-refresh.</td></tr>'+
+      '<tr><td>MR-016</td><td>'+(mr.mr016_decision==="KEEP_OPEN"?"KEEP OPEN":esc(mr.mr016_decision||"--"))+
+      '</td><td>Nested NOT inside the vine 95% CI; residual narrowing ('+
+      (mr.residual_materially_shrinks?"material":"--")+') DISCLOSED, close criteria not met.</td></tr>'+
+      '<tr><td>MR-017</td><td>'+(mr.open_mr017?"OPENED":"--")+'</td><td>Residual vine-FORM limitation tracked (truncation / family cap / tilt simulator / inner-path dynamics).</td></tr>'+
+      '<tr><td>Vine adoption</td><td>DISCLOSED only</td><td>NOT adopted into the governed headline without owner sign-off.</td></tr>'+
+      '</tbody></table>';
+    if(fcs){
+      html+='<p class="note">Leakage-free family selection (fit digest '+esc(co.fit_indices_digest||"--")+' / holdout digest '+esc(co.holdout_indices_digest||"--")+
+        '): '+esc(fcs)+'. Boundary recovery dev '+esc(co.boundary_recovery_dev)+'; df '+esc(co.df_rematched)+' / rho max|diff| '+esc(co.rho_max_abs_diff)+' FROZEN.</p>';
+    }
+    html+=maGateGrid(co.gates,"Task 2 pre-registered gates (vine / pair-copula prototype)");
+    html+=maGateGrid(bo.gates,"Task 3 pre-registered gates (vine margin bootstrap + residual re-decomposition)");
+    html+=maGateGrid(td.gates,"Task 4 pre-registered gates (pair-level tail diagnostics + overfit check + MR-016/MR-017)");
+    html+='<p class="note">'+esc(p.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(co.source||"")+' &middot; '+esc(bo.source||"")+' &middot; '+esc(td.source||"")+
+      ' &middot; ChangeRecords '+esc(co.change_record_id||"")+' / '+esc(bo.change_record_id||"")+' / '+esc(td.change_record_id||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
   // ---- Governance & assumptions view (UI Task 4) ----
   var GLIK=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
   var GIMP=["VERY_LOW","LOW","MEDIUM","HIGH","CRITICAL"];
@@ -3724,7 +4068,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 
