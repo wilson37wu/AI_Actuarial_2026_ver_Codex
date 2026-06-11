@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T09:05:49Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-11T09:07Z-aad3",
+  "started_at": "2026-06-11T09:07:52Z",
+  "ttl_minutes": 120,
+  "task": "Phase 30 Task 5 - offline-UI propagation of stop-rule decision (contract 1.12.0 -> 1.13.0)",
+  "note": ""
 }
