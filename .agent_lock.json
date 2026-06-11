@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T17:16:58Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-11T18:07Z-6325",
+  "started_at": "2026-06-11T18:07:45Z",
+  "ttl_minutes": 120,
+  "task": "Phase 33 Task 1: design note - offline UI interactive analytics baseline + gap list",
+  "note": ""
 }
