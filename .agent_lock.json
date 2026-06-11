@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-11T15:08Z-f7b7",
-  "started_at": "2026-06-11T15:08:07Z",
-  "ttl_minutes": 120,
-  "task": "Phase 32 Task 3: G2 user-input run-result surface (contract 1.14.0->1.15.0)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-11T15:25:16Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
