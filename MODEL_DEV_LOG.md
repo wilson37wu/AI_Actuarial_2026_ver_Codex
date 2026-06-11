@@ -9454,3 +9454,7 @@ Pre-registered tree-3 margin bootstrap per PHASE30_TASK1_DESIGN_NOTE task3_accep
 ## 2026-06-11 — Phase 30 Task 4 (Claude Cowork)
 
 Tree-3 tail diagnostics + BINDING STOP-RULE decision: PASS 6/6 gates. 6+5+4+3 pair tail grid on CRN at archived T3 seeds (archive cross-checks bit-identical; uniform bit-identity 0.0 across 200 replicates). Overfit gate PASS (holdout/fit ratio 0.049 = P29 ref). Decision per pre-registered criteria: nested 46,638.9 outside [38,593.7, 44,556.4]; residual unchanged 3,637.3 -> MR-016 + MR-017 KEEP OPEN; STOP-RULE APPLIED (dependence-FORM escalation under MR-016 ENDS); Phase 31 = owner decision package. MR-010/MR-014 no refresh (headline move 0.0000%). ChangeRecord b1c2649394b747388aaa432560039587 OWNER_REVIEW; digest 9e10a3b86332; 15 new tests; regression 44/0 + 54/0. Next: Phase 30 Task 5 offline-UI propagation.
+
+## 2026-06-11 — Interactive repo cleanup (Claude Cowork)
+
+User-requested housekeeping consistent with the 2026-06-11 restructure: 65 tracked probe/junk paths removed (root write-probes, agent scratch, temp self-test, 55 G05 environment/venv probe snapshots, 4 generated daily-briefing artifacts); render_test.cjs moved to scripts/; .gitignore extended to guard re-entry. No model code or state changed; outputs/phase11_reconciliation.json kept (referenced).
