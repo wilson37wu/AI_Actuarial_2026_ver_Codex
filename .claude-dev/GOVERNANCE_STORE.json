@@ -2182,6 +2182,27 @@
       "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
       "digest": "07b2c84130023e25e32cf93077cb49eea79d9260fbfefea6795f09475851ba9f",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "fa64362dfb3a4a048f7f9cf53230e989",
+      "timestamp": "2026-06-11T03:18:03.439260+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase30",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 30 Task 3 tree-3 vine margin bootstrap",
+      "details": {
+        "record_id": "736029a064514f8681fd0af592ddab97",
+        "change_type": "methodology_change",
+        "affected_components": [
+          "par_model_v2/projection/vine_tree3_bootstrap.py",
+          "scripts/build_phase30_task3_tree3_margin_bootstrap.py",
+          "tests/test_phase30_task3_tree3_margin_bootstrap.py",
+          "docs/TREE3_MARGIN_BOOTSTRAP_CARD.md",
+          "docs/validation/PHASE30_TASK3_TREE3_MARGIN_BOOTSTRAP_REPORT.{json,md}"
+        ]
+      },
+      "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+      "digest": "2d6887c213d16535716a6fba0771ba59e5fa1d76b7cb871302f822cf84020175",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -6588,6 +6609,80 @@
           "actor": "AutomatedModelDev_Phase30",
           "status": "OWNER_REVIEW",
           "comments": "Owner review; implementation staged for Task 3 bootstrap."
+        }
+      ],
+      "phase": "Phase 30: Post-Vine Dependence Roadmap Decision"
+    },
+    {
+      "record_id": "736029a064514f8681fd0af592ddab97",
+      "created_at": "2026-06-11T03:18:03.439190+00:00",
+      "title": "Phase 30 Task 3 - tree-3 vine margin bootstrap on the component basis with paired CRN deltas vs the 2-tree vine and frozen-t boundaries and the pre-registered stop-rule trigger recorded",
+      "description": "Tree-3 vine margin bootstrap (200 x 20,000) on the FROZEN Phase 30 Task 2 tree-3 fit (all four pre-registered pairs gaussian / zero strength): per-replicate joint row resample of the realised standalone-loss rows; copula Sigma / df / 2-tree fit / tree-3 selections and governed relief scalars frozen; tree-3 candidate vs 2-tree vine vs frozen-t boundary on common random numbers; paired deltas with sign and CI; the pre-registered stop-rule trigger status recorded for the Task 4 decision.",
+      "change_type": "methodology_change",
+      "affected_components": [
+        "par_model_v2/projection/vine_tree3_bootstrap.py",
+        "scripts/build_phase30_task3_tree3_margin_bootstrap.py",
+        "tests/test_phase30_task3_tree3_margin_bootstrap.py",
+        "docs/TREE3_MARGIN_BOOTSTRAP_CARD.md",
+        "docs/validation/PHASE30_TASK3_TREE3_MARGIN_BOOTSTRAP_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+        "Bedford & Cooke (2002), Vines",
+        "Solvency II Delegated Regulation Article 234",
+        "Solvency II Delegated Regulation Article 124",
+        "Efron & Tibshirani (1993), An Introduction to the Bootstrap",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+        "IA TAS M sections 3.2, 3.6, 3.7"
+      ],
+      "before_snapshot": {
+        "tree3_candidate_uncertainty": "point read-out only (Task 2)",
+        "mr016": "OPEN",
+        "mr017": "OPEN",
+        "stop_rule": "pre-registered, trigger status unknown"
+      },
+      "after_snapshot": {
+        "tree3_component_scr_ci": {
+          "mean": 41751.92733111887,
+          "ci_lo": 38593.73891844572,
+          "ci_hi": 44556.44856853384,
+          "se": 1589.2196125506248,
+          "se_frac_of_mean": 0.03806338327682744
+        },
+        "headline_nested_inside_95ci": false,
+        "stop_rule_trigger_met": true,
+        "tree3_minus_vine2_all_exactly_zero": true,
+        "tree3_minus_frozen_mean": 2303.7124035981797,
+        "gates": {
+          "C1_headline_nested_inside_95ci_OR_stop_rule_trigger_recorded": true,
+          "C1_headline_nested_inside_95ci_raw": false,
+          "C2_se_le_5pct_of_mean": true,
+          "C3_archive_crosscheck_bit_identical": true,
+          "C4_copula_and_fits_frozen": true,
+          "C5_paired_crn_deltas_with_sign_and_ci": true,
+          "C5_tree3_minus_vine2_exactly_zero": true,
+          "C6_reproducible_chunk_independent": true
+        },
+        "verdict": "PASS"
+      },
+      "impact_assessment": "Uncertainty quantification only; no production parameter changes. The stop-rule trigger status is RECORDED here; the binding stop-rule decision (ending dependence-FORM escalation under MR-016) is Task 4 (tail diagnostics + MR decision). The governed frozen-t headline is retained.",
+      "quantitative_impact": "Tree-3 component SCR mean 41751.9, 95% CI [38593.7, 44556.4], SE/mean 3.81%; nested 46,638.9 inside CI: NO; stop-rule trigger MET; tree3-vine2 delta exactly zero in all replicates; tree3-frozen mean lift +2303.7.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase30",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T03:18:03.439224+00:00",
+          "actor": "AutomatedModelDev_Phase30",
+          "status": "PEER_REVIEW",
+          "comments": "Task 3 gates PASS; bootstrap distribution + paired CRN deltas + stop-rule trigger archived."
+        },
+        {
+          "timestamp": "2026-06-11T03:18:03.439238+00:00",
+          "actor": "AutomatedModelDev_Phase30",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review; stop-rule / MR-016 decision staged for Task 4."
         }
       ],
       "phase": "Phase 30: Post-Vine Dependence Roadmap Decision"

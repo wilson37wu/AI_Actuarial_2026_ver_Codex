@@ -1,0 +1,205 @@
+{
+ "run_timestamp": "2026-06-11T03:18:01.475656+00:00",
+ "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+ "task": "Task 3 - tree-3 vine margin bootstrap + paired CRN deltas + stop-rule trigger recording",
+ "verdict": "PASS",
+ "drivers": [
+  "rate",
+  "equity",
+  "credit",
+  "lapse",
+  "mortality",
+  "fx",
+  "liquidity"
+ ],
+ "df_frozen": 2.9451,
+ "df_rematched": 2.9450930033094664,
+ "rho_max_abs_diff": 7.216449660063518e-16,
+ "pathwise_basis_params": {
+  "sigma": 0.225,
+  "alpha": 0.7566891068509882,
+  "benefit_share_fit": 0.8449827924965548,
+  "provenance": "Phase 26 verified composition inputs; no re-tuning"
+ },
+ "result": {
+  "config": {
+   "n_replicates": 200,
+   "n_sim_per_replicate": 20000,
+   "master_seed": 20260611,
+   "df_frozen": 2.9451,
+   "tree3_structure": "truncated_c_vine_credit_root_tree3",
+   "tree3_fit_digest_frozen": "f689e11e81fa",
+   "confidence": 0.995,
+   "ci_level": 0.95,
+   "resampling": "joint row resample WITH replacement; copula Sigma + df + P29T2 2-tree fit + P30T2 tree-3 selections FROZEN; tree-3 candidate vs 2-tree vine vs frozen-t boundary on COMMON base t-copula draw"
+  },
+  "tree3_component_scr_ci": {
+   "n": 200,
+   "mean": 41751.92733111887,
+   "se": 1589.2196125506248,
+   "se_frac_of_mean": 0.03806338327682744,
+   "ci_level": 0.95,
+   "ci_lo": 38593.73891844572,
+   "ci_hi": 44556.44856853384,
+   "min": 37106.821882422955,
+   "max": 45158.01151946334
+  },
+  "vine2_component_scr_ci": {
+   "n": 200,
+   "mean": 41751.92733111887,
+   "se": 1589.2196125506248,
+   "se_frac_of_mean": 0.03806338327682744,
+   "ci_level": 0.95,
+   "ci_lo": 38593.73891844572,
+   "ci_hi": 44556.44856853384,
+   "min": 37106.821882422955,
+   "max": 45158.01151946334
+  },
+  "frozen_t_component_scr_ci": {
+   "n": 200,
+   "mean": 39448.2149275207,
+   "se": 1479.5444871523318,
+   "se_frac_of_mean": 0.0375059933604281,
+   "ci_level": 0.95,
+   "ci_lo": 36445.89294763363,
+   "ci_hi": 42257.63751868343,
+   "min": 35225.401703258656,
+   "max": 42967.935968183796
+  },
+  "without_tree3_scr_ci": {
+   "n": 200,
+   "mean": 49228.121802888025,
+   "se": 1814.9431768347727,
+   "se_frac_of_mean": 0.03686801588941175,
+   "ci_level": 0.95,
+   "ci_lo": 45475.48008351486,
+   "ci_hi": 52378.5149262133,
+   "min": 43979.24262767931,
+   "max": 53120.032211808386
+  },
+  "tree3_minus_vine2_ci": {
+   "n": 200,
+   "mean": 0.0,
+   "se": 0.0,
+   "se_frac_of_mean": 0.0,
+   "ci_level": 0.95,
+   "ci_lo": 0.0,
+   "ci_hi": 0.0,
+   "min": 0.0,
+   "max": 0.0
+  },
+  "tree3_minus_vine2_max_abs": 0.0,
+  "tree3_minus_vine2_all_exactly_zero": true,
+  "tree3_minus_frozen_ci": {
+   "n": 200,
+   "mean": 2303.7124035981797,
+   "se": 442.59106333368806,
+   "se_frac_of_mean": 0.19212079712832336,
+   "ci_level": 0.95,
+   "ci_lo": 1589.0293306816536,
+   "ci_hi": 3213.287863947957,
+   "min": 1225.03660543343,
+   "max": 3841.5353215047653
+  },
+  "tree3_minus_frozen_mean": 2303.7124035981797,
+  "tree3_minus_frozen_pos_share": 1.0,
+  "nested_pathwise_reference": 46638.9,
+  "task2_frozen_t_component_point": 39975.654628199336,
+  "task2_vine2_component_point": 42458.5527095696,
+  "task2_tree3_candidate_component_point": 42458.5527095696,
+  "p29t3_vine2_bootstrap_ci_reference": [
+   38654.68530800363,
+   45284.252553628474
+  ],
+  "p29t3_vine2_bootstrap_mean_reference": 41917.634842687556,
+  "headline_nested_inside_95ci": false,
+  "stop_rule_assessment": {
+   "nested_pathwise_reference": 46638.9,
+   "tree3_ci_lo": 38593.73891844572,
+   "tree3_ci_hi": 44556.44856853384,
+   "nested_inside_tree3_95ci": false,
+   "stop_rule_trigger_met": true,
+   "stop_rule_decision_stage": "Phase 30 Task 4 (not this bootstrap)",
+   "stop_rule_text": "STOP-RULE (pre-registered, PHASE30_TASK1_DESIGN_NOTE): if the Phase 30 tree-3 vine still leaves the nested reference 46,638.9 outside its 95% bootstrap CI at Task 4, dependence-FORM escalation under MR-016 ENDS. No further copula-structure candidates may be opened without owner sign-off; Phase 31 becomes the owner decision package (option C), with option B available only as an owner-approved escalation funding a second independent nested run.",
+   "interpretation": "Nested 46,638.9 OUTSIDE the tree-3 candidate 95% CI [38593.7, 44556.4]; the pre-registered stop-rule trigger is MET - recorded here, decided at Task 4."
+  },
+  "se_frac_of_mean": 0.03806338327682744,
+  "se_gate_pass": true,
+  "residual_gap_redecomposition_point": {
+   "nested_scr": 46638.9,
+   "scr_component_vine": 42458.5527095696,
+   "scr_component_frozen_t": 39975.654628199336,
+   "gap_total_abs": 4180.3472904304,
+   "gap_total_rel_to_nested": 0.08963220166921604,
+   "relief_surface_rel_err_source": 0.01164368805922599,
+   "relief_surface_part_abs": 543.0488030254351,
+   "relief_surface_share_of_gap": 0.12990518856377692,
+   "copula_form_residual_abs": 3637.298487404965,
+   "copula_form_share_of_gap": 0.870094811436223,
+   "copula_form_residual_grouped_t": 10491.5,
+   "copula_form_residual_skewt": 6114.9,
+   "copula_form_residual_change_vs_grouped_t_abs": -6854.201512595035,
+   "copula_form_residual_change_vs_grouped_t_rel": -0.6533099664104308,
+   "copula_form_residual_change_vs_skewt_abs": -2477.601512595035,
+   "copula_form_residual_change_vs_skewt_rel": -0.40517449387480337,
+   "vine_minus_frozen_lift": 2482.8980813702656,
+   "copula_form_residual_narrowed_vs_skewt": true,
+   "copula_form_dominant": true,
+   "residual_closed_by_vine": false,
+   "interpretation": "The truncated credit-root pair-link candidate lifts the component SCR by +2482.9 vs the frozen-t boundary on common random numbers. The copula-form residual moves from the grouped-t 10,491.5 / skew-t-reconfirmed 6,114.9 baselines to 3637.3 (change vs grouped-t -6854.2 = -65.33%; vs skew-t -2477.6 = -40.52%). The residual NARROWS below the skew-t baseline -- the FIRST dependence candidate to move the margin-aggregation read-out TOWARD the nested path-wise truth; the remaining residual lives in the nested inner-path joint dynamics and is a disclosed model-form limitation (MR-016), decided in Task 4."
+  },
+  "relief_surface_rel_err_source": 0.01164368805922599,
+  "gates": {
+   "C1_headline_nested_inside_95ci_OR_stop_rule_trigger_recorded": true,
+   "C1_headline_nested_inside_95ci_raw": false,
+   "C2_se_le_5pct_of_mean": true,
+   "C3_archive_crosscheck_bit_identical": true,
+   "C4_copula_and_fits_frozen": true,
+   "C5_paired_crn_deltas_with_sign_and_ci": true,
+   "C5_tree3_minus_vine2_exactly_zero": true,
+   "C6_reproducible_chunk_independent": true
+  },
+  "digest": "7b2a0cbcbb35"
+ },
+ "archived_references": {
+  "nested_pathwise_reference": 46638.9,
+  "frozen_t_component_reference": 39975.654628199336,
+  "vine2_component_reference": 42458.5527095696,
+  "tree3_candidate_component_reference": 42458.5527095696,
+  "p29t3_vine2_bootstrap_ci": [
+   38654.68530800363,
+   45284.252553628474
+  ]
+ },
+ "use_restrictions": {
+  "classification": "EDUCATIONAL",
+  "restrictions": [
+   "The bootstrap resamples the realised standalone-loss rows only; it does NOT re-fit the vine (2-tree fit frozen at Phase 29 Task 2; tree-3 selections frozen at Phase 30 Task 2 - all four gaussian / zero strength), the copula Sigma / df, or the governed relief scalars (sigma/alpha/beta_fit) - SII Art. 234.",
+   "Percentile CI/SE quantify Monte-Carlo + finite-sample uncertainty of the FROZEN tree-3 candidate component SCR; they do NOT quantify copula-form (margin-aggregation vs nested-dynamics) model error, which is disclosed separately (MR-016 / MR-017).",
+   "The tree-3 vs 2-tree delta is EXACTLY zero by the bit-identity contract (zero-strength tree-3 layer); it is computed and disclosed per replicate, not assumed.",
+   "The nested reference 46,638.9 is the single-path proxy nested truth (P25T2/P25T3); whether it falls outside the tree-3 95% CI feeds the pre-registered STOP-RULE, which is DECIDED at Phase 30 Task 4, not by this bootstrap.",
+   "Action / copula parameters remain educational placeholders pending credentialled data + independent APS X2 review."
+  ]
+ },
+ "standard_references": [
+  "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+  "Bedford & Cooke (2002), Vines",
+  "Solvency II Delegated Regulation Article 234",
+  "Solvency II Delegated Regulation Article 124",
+  "Efron & Tibshirani (1993), An Introduction to the Bootstrap",
+  "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+  "IA TAS M sections 3.2, 3.6, 3.7"
+ ],
+ "affected_components": [
+  "par_model_v2/projection/vine_tree3_bootstrap.py",
+  "scripts/build_phase30_task3_tree3_margin_bootstrap.py",
+  "tests/test_phase30_task3_tree3_margin_bootstrap.py",
+  "docs/TREE3_MARGIN_BOOTSTRAP_CARD.md",
+  "docs/validation/PHASE30_TASK3_TREE3_MARGIN_BOOTSTRAP_REPORT.{json,md}"
+ ],
+ "change_record_id": "736029a064514f8681fd0af592ddab97",
+ "change_record_status": "OWNER_REVIEW",
+ "audit_integrity_ok": true,
+ "change_records_total": 70,
+ "audit_entries_total": 98
+}
