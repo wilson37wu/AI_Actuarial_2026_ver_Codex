@@ -2244,6 +2244,29 @@
       "phase": "Phase UIL: User-Input Loader + Run Orchestrator",
       "digest": "b917a1c82be6ee5138973e2ec6be74866b45bc28e45fbad33a4a5e049096af88",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "edc37351aaee46e6bfb81466b2a2c58e",
+      "timestamp": "2026-06-11T06:24:54.659635+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_PhaseUIL",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase UIL Task 3 run orchestrator (B3)",
+      "details": {
+        "record_id": "92142116880240d2828d9eaac365f696",
+        "change_type": "code_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "scripts/run_model.py",
+          "production_run/run_production_model.py",
+          "production_run/USER_MANUAL_run_and_inputs.md",
+          "tests/test_run_model.py",
+          "docs/validation/RUN_MODEL_AGGREGATION_REPORT.json",
+          "docs/validation/RUN_MODEL_SUMMARY.json"
+        ]
+      },
+      "phase": "Phase UIL: User-Input Loader + Run Orchestrator",
+      "digest": "f441136d0d7b4faeb2ca379061c752e8b12fae5b51d5c20b01809c49f429c07e",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -6829,6 +6852,60 @@
           "actor": "AutomatedModelDev_PhaseUIL",
           "status": "OWNER_REVIEW",
           "comments": "Self-review (automated dev): additive plumbing, bit-identical fallback gate; owner sign-off requested per plan B2."
+        }
+      ],
+      "phase": "Phase UIL: User-Input Loader + Run Orchestrator"
+    },
+    {
+      "record_id": "92142116880240d2828d9eaac365f696",
+      "created_at": "2026-06-11T06:24:54.659566+00:00",
+      "title": "Phase UIL Task 3 - run orchestrator (B3): scripts/run_model.py single entry point threading model_inputs.json through the governed seven-driver engine",
+      "description": "New scripts/run_model.py: single user-facing entry point (python3 scripts/run_model.py --inputs model_inputs.json) threading validated user inputs through the UNCHANGED governed Phase 22 Task 4 seven-driver engine: standalone losses -> 7x7 var-covar -> copula aggregation (AIC on realised losses) -> nested benchmark -> bootstrap SCR CIs -> tail diagnostics. Honours Run Settings n_sim / seed / bootstrap_replicates / horizon_months / output_label and Assumptions confidence (CLI flags override; per-field provenance recorded). Representative capital model point: governed synthetic 45/M/100,000/5,000/20y with no inputs (bit-identical parameters), else the inforce-weighted mean of the user PAR rows with the term snapped to the nearest supported product term and the book totals + linear scale factor DISCLOSED as approximation (not a governed result); GMMB rows split out and disclosed. Liquidity exposure notional: user balance sheet via the B2 resolve_exposure_spec overlay, else the archived G-LIQX calibration (fail-loud on placeholders). Frozen seven-driver correlation always governed, never user-settable. Writes docs/validation/RUN_MODEL_AGGREGATION_REPORT.json (same structural 'aggregation' contract as PHASE22_TASK4_AGGREGATION_REPORT.json, the snapshot build_ui_data.py parses) + RUN_MODEL_SUMMARY.json, both re-parse-guarded; governed evidence files are never overwritten. production_run/run_production_model.py gains a 'capital' stage that calls the orchestrator automatically under --stage all when model_inputs.json exists (skipped with a pointer message otherwise; explicit --stage capital runs the governed-default profile; no seed pass-through so the template seed wins).",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/run_model.py",
+        "production_run/run_production_model.py",
+        "production_run/USER_MANUAL_run_and_inputs.md",
+        "tests/test_run_model.py",
+        "docs/validation/RUN_MODEL_AGGREGATION_REPORT.json",
+        "docs/validation/RUN_MODEL_SUMMARY.json"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 sections 3.2 (model inputs), 3.5 (model-use restriction) and 3.6 (testing)",
+        "IA TAS M sections 3.2 (data) and 3.7 (change control)",
+        "Solvency II Delegated Regulation Article 234 (aggregation basis unchanged)",
+        "IMPLEMENTATION_PLAN_currency_and_inputs.md workstream B3 (owner-approved design note)"
+      ],
+      "before_snapshot": {
+        "entry_point": "developer build scripts only (per-phase, not user-facing)",
+        "user_run_path": "template -> load_user_inputs.py -> model_inputs.json -> (manual)",
+        "production_run_stages": "esg / assets / liabilities / interaction"
+      },
+      "after_snapshot": {
+        "entry_point": "scripts/run_model.py LIVE (B3); manual section 4 step 3 LIVE",
+        "production_run_stages": "esg / assets / liabilities / interaction / capital",
+        "tests": "tests/test_run_model.py 23 passed (plan resolution, parameter-identity vs archived P22T4 config/exposure, weighted-mean representative product, GUI structural contract, fail-loud gates)",
+        "regression_gate": "no model_inputs.json -> resolved plan + product + exposure notional parameter-identical to archived Phase 22 Task 4 evidence (asserted against the committed report)",
+        "worked_example": "template demo book (3 model points, 2,500 policies, USD) run end-to-end; evidence docs/validation/RUN_MODEL_*.json"
+      },
+      "impact_assessment": "Additive orchestration layer over governed primitives; no engine, calibration or dependence-structure change, so no governed capital read-out moves. User runs write to NEW RUN_MODEL_* evidence files; governed PHASE*_REPORT.json files are read-only inputs. Model-use restriction propagated into every output. Risk: users may misread the disclosed linear book-scaling approximation as a governed result - mitigated by explicit notes in the report, summary and manual.",
+      "quantitative_impact": "None to governed evidence (orchestrator is read-only over governed parameters and writes separate RUN_MODEL_* files). User runs reflect the user's book / balance sheet / run settings by design; worked example (template demo book, n_sim 20,000, seed 20260608) committed as evidence.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_PhaseUIL",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T06:24:54.659606+00:00",
+          "actor": "AutomatedModelDev_PhaseUIL",
+          "status": "PEER_REVIEW",
+          "comments": "B3 orchestrator + 23 tests green; parameter-identity gate vs archived P22T4 asserted in tests."
+        },
+        {
+          "timestamp": "2026-06-11T06:24:54.659616+00:00",
+          "actor": "AutomatedModelDev_PhaseUIL",
+          "status": "OWNER_REVIEW",
+          "comments": "Self-review (automated dev): additive entry point over unchanged governed engine; owner sign-off requested per plan B3."
         }
       ],
       "phase": "Phase UIL: User-Input Loader + Run Orchestrator"

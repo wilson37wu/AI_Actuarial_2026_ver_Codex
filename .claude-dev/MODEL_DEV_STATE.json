@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-11T05:30:00Z",
+ "last_run": "2026-06-11T07:05:00Z",
  "last_run_duration_minutes": null,
- "last_run_note": "Phase UIL Task 2 (B2) complete: optional user-input plumbing with governed bit-identical fallbacks; pointer -> Task 3 (B3 run orchestrator).",
+ "last_run_note": "Phase UIL Task 3 (B3) complete: run orchestrator LIVE end-to-end (template -> loader -> run_model.py -> RUN_MODEL_*.json); pointer -> Task 4 (B4+A1 GUI currency wire-through).",
  "current_phase": "Phase UIL: User-Input Loader + Run Orchestrator (owner-prioritised 2026-06-11)",
- "overall_status": "PHASE_UIL_TASK1_COMPLETE_NEXT_TASK2_B2_DEHARDCODE",
+ "overall_status": "PHASE_UIL_TASK3_COMPLETE_NEXT_TASK4_B4_A1_GUI_WIRETHROUGH",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -540,13 +540,13 @@
    "description": "OWNER-PRIORITISED (KCW, interactive 2026-06-11): implement workstream B of IMPLEMENTATION_PLAN_currency_and_inputs.md so a user can run the model on their own numbers from production_run/MODEL_INPUTS_TEMPLATE.xlsx with no developer involvement. Design note = the implementation plan; follow it, additive and backward-compatible (every fixture fallback unchanged; frozen copula/df values stay governed read-only; the governed frozen-t headline must reproduce bit-identically when no user inputs are supplied).",
    "completed": [
     "Task 1 (B1): scripts/load_user_inputs.py - read production_run/MODEL_INPUTS_TEMPLATE.xlsx (openpyxl) by tab name + header; validate ranges (shares in (0,1], positive MV, confidence in (0,1), product types in allowed set, complete portfolio rows); write schema-versioned model_inputs.json; fail loudly with tab/row/field in the message; echo currency, total asset MV, total SA, policy count. Pure I/O + validation, no model math. New tests tests/test_user_inputs.py; ChangeRecord code_change OWNER_REVIEW; update production_run/USER_MANUAL_run_and_inputs.md section 4 to mark the loader LIVE. [DONE 2026-06-11: loader LIVE; 19/19 tests; ChangeRecord dcbc94cdcc474cb9951d762bfeb358b2 code_change OWNER_REVIEW; audit 98->99, changes 70->71, verify_all True]",
-    "Task 2 (B2): de-hardcode fixtures additively - phase22_liquidity_exposure_calibration.py (balance-sheet inputs from model_inputs.json w/ fixture fallback 100,000/0.55/0.40), portfolio_generator.py (user model points w/ synthetic fallback), capital path confidence/sigma/alpha/benefit_share from inputs (governed defaults 0.995/0.225/0.7567/0.8450). Frozen copula/df NEVER user-settable. Regression: governed read-outs bit-identical with no inputs present. [DONE 2026-06-11 (2nd cycle): par_model_v2/user_inputs.py single access point (path->env->production_run, absent->None/governed defaults, broken->UserInputsError); phase22 resolve_exposure_spec overlay w/ exposure_source provenance; portfolio_from_model_points + build_portfolio (user book vs synthetic, fail-loud row validation, GMMB split for B3); capital_params governed defaults 0.995/0.225/0.7567/0.8450; 19/19 new tests tests/test_user_inputs_integration.py incl. exact-equality bit-identical gates; existing 35 portfolio/phase22 tests unchanged; ChangeRecord 0dbc8cd110044a8186fe0f0bd8a50df3 code_change OWNER_REVIEW; audit 99->100, changes 71->72, verify_all True]"
+    "Task 2 (B2): de-hardcode fixtures additively - phase22_liquidity_exposure_calibration.py (balance-sheet inputs from model_inputs.json w/ fixture fallback 100,000/0.55/0.40), portfolio_generator.py (user model points w/ synthetic fallback), capital path confidence/sigma/alpha/benefit_share from inputs (governed defaults 0.995/0.225/0.7567/0.8450). Frozen copula/df NEVER user-settable. Regression: governed read-outs bit-identical with no inputs present. [DONE 2026-06-11 (2nd cycle): par_model_v2/user_inputs.py single access point (path->env->production_run, absent->None/governed defaults, broken->UserInputsError); phase22 resolve_exposure_spec overlay w/ exposure_source provenance; portfolio_from_model_points + build_portfolio (user book vs synthetic, fail-loud row validation, GMMB split for B3); capital_params governed defaults 0.995/0.225/0.7567/0.8450; 19/19 new tests tests/test_user_inputs_integration.py incl. exact-equality bit-identical gates; existing 35 portfolio/phase22 tests unchanged; ChangeRecord 0dbc8cd110044a8186fe0f0bd8a50df3 code_change OWNER_REVIEW; audit 99->100, changes 71->72, verify_all True]",
+    "Task 3 (B3): scripts/run_model.py orchestrator - single entry point --inputs model_inputs.json; threads inputs through the existing P22T4 aggregator -> standalone losses -> copula aggregation -> bootstrap -> tail diagnostics; writes the same docs/validation/*.json shape the GUI consumes; honours n_sim, seed, bootstrap_replicates, horizon, output_label. Wire production_run/run_production_model.py to call it when model_inputs.json exists. [DONE 2026-06-11 (cycle 27): scripts/run_model.py LIVE - plan resolution governed-defaults <- Run Settings <- CLI w/ per-field provenance; representative product = governed 45/M/100k/5k/20y (no inputs, parameter-identity asserted vs archived P22T4 config) or inforce-weighted mean of user PAR rows (term snapped to VALID_TERMS, book totals + linear scale factor DISCLOSED approximation, GMMB rows split + disclosed); exposure notional from user balance sheet via B2 overlay else archived G-LIQX (fail-loud on placeholders); frozen correlation never user-settable; writes docs/validation/RUN_MODEL_AGGREGATION_REPORT.json (same structural 'aggregation' contract as PHASE22_TASK4 snapshot) + RUN_MODEL_SUMMARY.json, re-parse-guarded, governed evidence never overwritten; production_run/run_production_model.py 'capital' stage auto-runs under --stage all when model_inputs.json exists (template seed wins; skip + pointer otherwise); worked example on the template demo book (3 model points / 2,500 policies / USD, n_sim 20k seed 20260608) committed as evidence, wire-through verified end-to-end; manual section 4 step 3 marked LIVE. 23 new tests tests/test_run_model.py; UIL-area regression 86 PASS; phase22/30/vine/user_inputs 189 PASS; governance/audit 205 PASS after disclosed forward-compat fix of the two stale P24T3 MR-014 note pins (P25T4 refresh supersedes, latest-refresh-supersedes per repo convention - same class as the cycle-20 fix); ChangeRecord 92142116880240d2828d9eaac365f696 code_change OWNER_REVIEW; audit 100->101, changes 72->73, verify_all True]"
    ],
    "in_progress": [
-    "Task 3 (B3): scripts/run_model.py orchestrator - single entry point --inputs model_inputs.json; threads inputs through the existing P22T4 aggregator -> standalone losses -> copula aggregation -> bootstrap -> tail diagnostics; writes the same docs/validation/*.json shape the GUI consumes; honours n_sim, seed, bootstrap_replicates, horizon, output_label. Wire production_run/run_production_model.py to call it when model_inputs.json exists."
+    "Task 4 (B4+A1): build_ui_data.py stamps currency + output_label into meta; ui_app.html money formatting routed through fmtMoney; production_run/README + user manual updated end-to-end; offline GUI contract bump ADDITIVE."
    ],
    "next": [
-    "Task 4 (B4+A1): build_ui_data.py stamps currency + output_label into meta; ui_app.html money formatting routed through fmtMoney; production_run/README + user manual updated end-to-end; offline GUI contract bump ADDITIVE.",
     "THEN: resume Phase 30 Task 4 (tree-3 tail diagnostics + binding stop-rule / MR-016/MR-017 decision) - see phases['Phase 30']['queued_resume_after_phase_uil']."
    ]
   }
@@ -1117,5 +1117,19 @@
    "policy_count": 2500
   },
   "capital_impact": "none - pure I/O + validation; no model code path consumes model_inputs.json yet (B2 next)"
+ },
+ "cycle_2026_06_11_phase_uil_task3": {
+  "task": "Phase UIL Task 3 (B3): scripts/run_model.py orchestrator",
+  "verdict": "COMPLETE",
+  "change_record": "92142116880240d2828d9eaac365f696",
+  "evidence": [
+   "docs/validation/RUN_MODEL_AGGREGATION_REPORT.json",
+   "docs/validation/RUN_MODEL_SUMMARY.json"
+  ],
+  "tests": "23 new (test_run_model.py); 86 UIL-area + 189 related + 205 governance/audit PASS",
+  "disclosed": [
+   "two stale P24T3 MR-014 note-pin tests fixed forward-compatibly (P25T4 supersession), pre-existing on origin/main",
+   "worked example run at reduced profile n_outer 100 / n_inner 4 (sandbox wall-clock limit); governed default profile 160/24/200k parameter-identity asserted in tests instead of re-run"
+  ]
  }
 }

@@ -9414,3 +9414,19 @@ Pre-registered tree-3 margin bootstrap per PHASE30_TASK1_DESIGN_NOTE task3_accep
 - **Governance:** ChangeRecord `0dbc8cd110044a8186fe0f0bd8a50df3` code_change **OWNER_REVIEW** (`scripts/build_phase_uil_task2_governance.py`, idempotent); audit 99→100; changes 71→72; `verify_all` True.
 - **Capital impact:** none with no inputs file (regression-gated). Frozen copula/df params remain governed read-only.
 - **State:** Phase UIL Task 2 → completed; **in_progress → Task 3 (B3) `scripts/run_model.py` orchestrator**.
+
+---
+
+## 2026-06-11 06:00 UTC — Cycle 27 (Claude) — Phase UIL Task 3 (B3): run orchestrator LIVE
+
+**Lock:** acquired 06:08 UTC (cycle_id 2026-06-11T06:08Z-9291), released end of cycle. Remote main was ahead of the mount at start (Task 2 pushed 05:22 UTC); worked from a fresh full clone.
+
+**Done:** `scripts/run_model.py` — single entry point `--inputs model_inputs.json` threading user inputs through the unchanged governed P22T4 seven-driver engine (standalone losses → var-covar → copula AIC → nested → bootstrap CIs → tail diagnostics); honours n_sim/seed/bootstrap_replicates/horizon_months/output_label (+ optional n_outer/n_inner) and confidence, CLI overrides, per-field provenance. Representative product: governed 45/M/100k/5k/20y with no inputs (parameter-identity vs archived P22T4 asserted in tests) or inforce-weighted mean of user PAR rows (term snapped to VALID_TERMS; book totals + linear scale factor DISCLOSED approximation; GMMB rows split + disclosed). Exposure notional: user balance sheet via B2 overlay else archived G-LIQX, fail-loud on placeholders; frozen correlation never user-settable. Writes docs/validation/RUN_MODEL_AGGREGATION_REPORT.json (same structural `aggregation` contract as the PHASE22_TASK4 snapshot) + RUN_MODEL_SUMMARY.json, re-parse-guarded; governed evidence never overwritten. `production_run/run_production_model.py` capital stage auto-runs under --stage all when model_inputs.json exists (template seed wins). Worked example committed (template demo book, n_sim 20k, seed 20260608, n_outer 100/n_inner 4 — sandbox wall-clock limit, disclosed): nested SCR 71,112.1 / gaussian copula 49,825.9 / var-covar 37,625.9, deterministic re-run bit-identical. Manual §4 Step 3 LIVE.
+
+**Governance:** ChangeRecord 92142116880240d2828d9eaac365f696 code_change OWNER_REVIEW; audit 100→101; changes 72→73; verify_all True; idempotent builder `scripts/build_phase_uil_task3_governance.py`.
+
+**Tests:** 23 new (test_run_model.py); regression selections 86 + 189 + 205 PASS; compileall clean. Disclosed forward-compat fix of two PRE-EXISTING red tests (P24T3 MR-014 note pins superseded by the P25T4 path-wise refresh; latest-refresh-supersedes convention, same class as cycle 20).
+
+**Env:** sandbox now kills background processes at tool-call boundaries (~45 s/call) — long runs must be staged or profile-reduced; /var/tmp/pylibs rebuilt (scipy/openpyxl/pytest).
+
+**Next:** Phase UIL Task 4 (B4+A1) GUI currency wire-through; then resume Phase 30 Task 4.

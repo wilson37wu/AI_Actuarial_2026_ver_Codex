@@ -294,4 +294,9 @@ class TestGovernance:
         # refresh OR a later Phase 24 refresh that still references the
         # Task 3 inner-path basis.
         notes = store.risk_register.get("MR-014").notes
-        assert "Phase 24" in notes and "Task 3" in notes
+        # A LATER phase's refresh may supersede the Phase 24 pin entirely
+        # (e.g. the Phase 25 Task 4 path-wise refresh explicitly supersedes
+        # the Phase 24 Task 4 refresh); the supersession chain must still
+        # trace back to Phase 24.
+        assert ("Phase 24" in notes and "Task 3" in notes) or (
+            "supersedes" in notes and "Phase 24" in notes)

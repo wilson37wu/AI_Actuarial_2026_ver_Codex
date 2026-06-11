@@ -93,7 +93,7 @@ Each row is a **group of like policies** (a model point), replacing the syntheti
 
 ## 4. How to run the calculation (target workflow)
 
-> **Status 2026-06-11: Step 2 (the input loader) is LIVE.** Steps 3-4 below still describe the target workflow until the orchestrator (B3) and GUI wire-through (B4) land. They assume Python 3 is available. In this sandbox, scientific libraries live under `/var/tmp/pylibs`, so prefix commands with `PYTHONPATH=/var/tmp/pylibs:.`; on a normal machine, install the packages in `requirements.txt` once (`pip install -r requirements.txt`) and drop the `/var/tmp/pylibs:` prefix.
+> **Status 2026-06-11: Steps 2 (input loader) and 3 (run orchestrator) are LIVE.** Step 4 below still describes the target workflow until the GUI currency wire-through (B4) lands. They assume Python 3 is available. In this sandbox, scientific libraries live under `/var/tmp/pylibs`, so prefix commands with `PYTHONPATH=/var/tmp/pylibs:.`; on a normal machine, install the packages in `requirements.txt` once (`pip install -r requirements.txt`) and drop the `/var/tmp/pylibs:` prefix.
 
 **Step 1 — fill and save the template.** Complete `production_run/MODEL_INPUTS_TEMPLATE.xlsx` (§3) and save it in the model folder.
 
@@ -103,11 +103,18 @@ PYTHONPATH=/var/tmp/pylibs:. python3 scripts/load_user_inputs.py --template prod
 ```
 The loader checks ranges (e.g. shares in 0–1, positive asset values), echoes the currency and totals, and stops with a clear message if anything is missing.
 
-**Step 3 — run the model.** The orchestrator consumes `model_inputs.json`, runs the projection + capital aggregation, and writes the result JSONs:
+**Step 3 — run the model (LIVE).** The orchestrator consumes `model_inputs.json`, threads it through the governed seven-driver engine, and writes the result JSONs:
 ```
 PYTHONPATH=/var/tmp/pylibs:. python3 scripts/run_model.py --inputs model_inputs.json
 ```
-This produces the standalone driver losses, the copula aggregation (single-df t headline + grouped-t diagnostic), the bootstrap SCR confidence interval, and the tail diagnostics — into `docs/validation/*.json`.
+This produces the standalone driver losses, the 7×7 var-covar and copula aggregation (AIC selection on the realised losses), the nested benchmark, the bootstrap SCR confidence interval, and the tail diagnostics — into `docs/validation/RUN_MODEL_AGGREGATION_REPORT.json` (full evidence, same shape as the governed Phase 22 Task 4 snapshot) and `docs/validation/RUN_MODEL_SUMMARY.json` (one-screen headline). Governed evidence files are never overwritten. Run Settings (`n_sim`, seed, bootstrap replicates, horizon, output label) and the Assumptions confidence are honoured; CLI flags (`--n-sim`, `--seed`, `--label`, `--no-tail`, `--n-outer`, `--n-inner`, …) override the template. With **no** `model_inputs.json` the same command reproduces the governed default profile (synthetic book, archived calibrations) — parameter-identical to the governed Phase 22 Task 4 run.
+
+Notes on how your inputs are used: the engine prices one **representative model point** — with a user portfolio this is the inforce-weighted mean of your PAR rows (the term snaps to the nearest supported product term: 5/10/20y); your book totals and a **disclosed linear scale factor** are reported alongside (an approximation, not a governed result). `GMMB_EQ` rows are split out and disclosed, not priced by the PAR engine. Your balance sheet drives the liquidity exposure notional (`illiquid MV × forced-sale fraction`); the frozen dependence parameters are never user-settable.
+
+You can also run everything through the production wrapper — it calls the orchestrator automatically when a `model_inputs.json` exists (and skips the capital stage with a pointer message otherwise):
+```
+PYTHONPATH=/var/tmp/pylibs:. python3 production_run/run_production_model.py --stage all
+```
 
 **Step 4 — build the GUI.** Bundle the results into the offline viewer:
 ```
@@ -119,6 +126,7 @@ Outputs (in the model folder): **`ui_data.json`** and **`ui_app.html`**.
 
 ### What you can do today
 - **Validate your inputs (LIVE):** fill the template and run the loader (Step 2). It checks every field (ranges, product types, complete rows), fails with a precise tab/row/field message, and echoes currency, total asset MV, total sum assured and policy count.
+- **Run the model on your inputs (LIVE):** `scripts/run_model.py` (Step 3) — full seven-driver capital aggregation with bootstrap CI and tail diagnostics, results in `docs/validation/RUN_MODEL_*.json`. A worked example on the template's demo book is committed there.
 
 - **View:** double-click `ui_app.html`.
 - **Rebuild the GUI** from the current result files:

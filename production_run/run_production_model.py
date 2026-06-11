@@ -11,6 +11,10 @@ library code in ``par_model_v2`` (no developer scripts needed):
   interaction  Stochastic asset-liability interaction: TVOG (cost of the
                embedded guarantee across stochastic scenarios) + dynamic ALM
                projection (assets and liabilities projected together).
+  capital      Seven-driver capital aggregation via scripts/run_model.py
+               (Phase UIL B3). Under --stage all it runs AUTOMATICALLY when a
+               model_inputs.json is present (the user's template inputs are
+               threaded through the engine); skipped otherwise.
   all          All of the above, plus a consolidated run summary.
 
 Usage (from the repository root or from production_run/):
@@ -128,11 +132,46 @@ def stage_interaction(out_dir: Path) -> dict:
     return result
 
 
+def stage_capital(out_dir: Path) -> dict:
+    """Seven-driver capital aggregation via the B3 orchestrator.
+
+    Called automatically under --stage all when a model_inputs.json exists
+    (production_run/model_inputs.json, repo root, or $PAR_MODEL_INPUTS); an
+    explicit --stage capital runs the governed-default profile even without
+    user inputs. Results land in docs/validation/RUN_MODEL_*.json (the shape
+    build_ui_data.py consumes) and a pointer is echoed into out_dir.
+    """
+    import subprocess
+
+    from par_model_v2.user_inputs import find_model_inputs
+
+    inputs = find_model_inputs()
+    # NOTE: no --seed pass-through -- the orchestrator resolves the seed from
+    # the template Run Settings (or its governed default); this script's
+    # --seed only governs the ESG stage.
+    cmd = [sys.executable, str(REPO_ROOT / "scripts" / "run_model.py")]
+    if inputs is not None:
+        cmd += ["--inputs", str(inputs["_source_path"])]
+    proc = subprocess.run(cmd, cwd=str(REPO_ROOT))
+    if proc.returncode != 0:
+        raise RuntimeError("scripts/run_model.py exited %d" % proc.returncode)
+    summary_path = REPO_ROOT / "docs" / "validation" / "RUN_MODEL_SUMMARY.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    result = {"stage": "capital",
+              "orchestrator": "scripts/run_model.py",
+              "model_inputs": (inputs or {}).get("_source_path",
+                                                 "ABSENT (governed default)"),
+              "summary": summary}
+    _write(out_dir, "capital_result.json", result)
+    return result
+
+
 STAGES = {
     "esg": "Economic Scenario Generator",
     "assets": "Asset cash-flow / pricing",
     "liabilities": "Liability cash-flow valuation",
     "interaction": "Stochastic asset-liability interaction (TVOG + ALM)",
+    "capital": "Seven-driver capital aggregation (scripts/run_model.py)",
 }
 
 
@@ -157,6 +196,17 @@ def main() -> int:
            "stages_completed": [], "stages_failed": {}}
 
     todo = list(STAGES) if args.stage == "all" else [args.stage]
+    if args.stage == "all":
+        from par_model_v2.user_inputs import find_model_inputs
+        try:
+            has_inputs = find_model_inputs() is not None
+        except Exception:
+            has_inputs = True   # present-but-broken: let the stage fail loud
+        if not has_inputs:
+            todo.remove("capital")
+            print("\n(capital stage skipped: no model_inputs.json found; "
+                  "run scripts/load_user_inputs.py first or use "
+                  "--stage capital for the governed-default profile)")
     for st in todo:
         print("\n=== {} : {} ===".format(st, STAGES[st]))
         try:
@@ -168,6 +218,8 @@ def main() -> int:
                 stage_liabilities(out_dir)
             elif st == "interaction":
                 stage_interaction(out_dir)
+            elif st == "capital":
+                stage_capital(out_dir)
             run["stages_completed"].append(st)
             print("[OK] {} -> {}/{}_result.json".format(st, out_dir, st))
         except Exception as exc:                     # noqa: BLE001
