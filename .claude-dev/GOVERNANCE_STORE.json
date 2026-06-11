@@ -2161,6 +2161,27 @@
       "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
       "digest": "d9ce890b6a1ebbcb4451a93153e12e94b0bec22cb67fb71c9ef91ab3c8b0c555",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "e7b5a0a1b8b341ee9fdc5614e8af6aa1",
+      "timestamp": "2026-06-11T02:33:11.205538+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase30",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 30 Task 2 tree-3 vine deepening",
+      "details": {
+        "record_id": "2b34607c654d4f01b1dc88b70914fa3a",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/projection/vine_tree3_aggregation.py",
+          "scripts/build_phase30_task2_tree3_vine.py",
+          "tests/test_phase30_task2_tree3_vine.py",
+          "docs/TREE3_VINE_PROTOTYPE_CARD.md",
+          "docs/validation/PHASE30_TASK2_TREE3_VINE_REPORT.{json,md}"
+        ]
+      },
+      "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+      "digest": "07b2c84130023e25e32cf93077cb49eea79d9260fbfefea6795f09475851ba9f",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -6497,6 +6518,76 @@
           "actor": "Phase30Task1RoadmapDecision",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: educational design only; implementation deferred to Task 2."
+        }
+      ],
+      "phase": "Phase 30: Post-Vine Dependence Roadmap Decision"
+    },
+    {
+      "record_id": "2b34607c654d4f01b1dc88b70914fa3a",
+      "created_at": "2026-06-11T02:33:11.205396+00:00",
+      "title": "Phase 30 Task 2 - implement pre-registered tree-3 deepening of the truncated credit-root vine on the frozen Phase 29 2-tree fit",
+      "description": "Implemented the pre-registered Phase 30 tree-3 deepening of the truncated credit-root C-vine over the FROZEN Phase 29 2-tree fit. Both boundary legs (frozen single-df t and archived 2-tree vine) reproduced their archived read-outs bit-identically before the candidate ran; tree-3 family selection used fit rows only; frozen-t, grouped-t and 2-tree vine comparison variants are retained on common random numbers.",
+      "change_type": "code_change",
+      "affected_components": [
+        "par_model_v2/projection/vine_tree3_aggregation.py",
+        "scripts/build_phase30_task2_tree3_vine.py",
+        "tests/test_phase30_task2_tree3_vine.py",
+        "docs/TREE3_VINE_PROTOTYPE_CARD.md",
+        "docs/validation/PHASE30_TASK2_TREE3_VINE_REPORT.{json,md}"
+      ],
+      "standard_references": [
+        "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+        "Bedford & Cooke (2002), Vines",
+        "Solvency II Delegated Regulation Article 234",
+        "Solvency II Delegated Regulation Article 124",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+        "IA TAS M sections 3.2, 3.6, 3.7"
+      ],
+      "before_snapshot": {
+        "dependency_form": "frozen single-df t; disclosed 2-tree vine candidate",
+        "mr016": "OPEN",
+        "mr017": "OPEN",
+        "vine2_candidate_scr": 42458.5527095696,
+        "vine2_residual": 3637.3
+      },
+      "after_snapshot": {
+        "dependency_form": "tree-3 deepened credit-root pair-link prototype",
+        "candidate_scr": 42458.5527095696,
+        "candidate_vs_vine2_rel": 0.0,
+        "candidate_vs_frozen_t_rel": 0.06211025446519636,
+        "candidate_residual_abs": 4180.3472904304,
+        "gates": {
+          "G1_dual_boundary_bit_identical": true,
+          "G2_frozen_t_archive_reference_first": true,
+          "G3_vine2_archive_reference_recovered": true,
+          "G4_rank_invariance_constants_frozen": true,
+          "G5_tree12_fit_frozen_from_phase29": true,
+          "G6_pre_registered_tree3_envelope_only": true,
+          "G7_family_set_capped": true,
+          "G8_leakage_free_fit_holdout_recorded": true,
+          "G9_comparison_variants_retained_crn": true,
+          "G10_directional_disclosed_not_gated": true
+        },
+        "verdict": "PASS"
+      },
+      "impact_assessment": "Code implementation only. Adoption remains deferred pending Task 3 bootstrap and Task 4 MR-016/MR-017 diagnostics, subject to the pre-registered stop-rule. The governed frozen-t headline is retained.",
+      "quantitative_impact": "Candidate component SCR 42458.6; vs 2-tree vine +0.00%; vs frozen-t +6.21%; dual boundary devs 0.000e+00 / 0.000e+00.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase30",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T02:33:11.205437+00:00",
+          "actor": "AutomatedModelDev_Phase30",
+          "status": "PEER_REVIEW",
+          "comments": "Task 2 gates PASS; dual boundary and CRN comparison variants retained."
+        },
+        {
+          "timestamp": "2026-06-11T02:33:11.205453+00:00",
+          "actor": "AutomatedModelDev_Phase30",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review; implementation staged for Task 3 bootstrap."
         }
       ],
       "phase": "Phase 30: Post-Vine Dependence Roadmap Decision"

@@ -1,9 +1,9 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-11T01:22:16.266453+00:00",
+ "last_run": "2026-06-11T02:33:59.087929+00:00",
  "last_run_duration_minutes": null,
- "last_run_note": "Phase 30 Task 1 COMPLETE (PASS) - design-note-first post-vine dependence roadmap decision. OPTION A SELECTED (tree-3 vine deepening) under a pre-registered 3-rule decision rule; option B (nested-aware calibration) REJECTED for circularity without a second independent nested run; option C scheduled as the post-Phase-30 owner package REGARDLESS; option D embedded as a BINDING conditional stop-rule (if nested 46,638.9 stays outside the tree-3 vine 95% CI at Task 4, dependence-FORM escalation under MR-016 ENDS). Headroom: needed bootstrap-mean lift 1,354.6 (+3.23%) = 37.2% of the remaining point residual 3,637.3; max dependence-addressable share of total gap 87.0% (relief-surface 543.0 not addressable). Synthetic tree-3 truncation pre-study (n=200k, seed 30): truncation gap +4.83% VaR99.5, leakage-free holdout closure 85.7% (fitted s3 on fit half only), joint triple-tail targeting >> holdout drift, 2-tree boundary recovery exact 0.0; digest 5a2abc2ff92c. NEW par_model_v2/projection/dependence_roadmap.py; scripts/build_phase30_task1_dependence_roadmap.py; tests 20/0; docs/validation/PHASE30_TASK1_DESIGN_NOTE.{json,md}; docs/DEPENDENCE_ROADMAP_DECISION_CARD.md. ChangeRecord 94c904819c4c4cb0938d23db922f603b governance_change OWNER_REVIEW; records 67->68; audit 95->96; verify_all True; idempotent. Regression: P29 T1-T5 63/0; P28 24/0 (6 env skips); compileall clean. Next: Phase 30 Task 2 tree-3 implementation.",
+ "last_run_note": "Phase 30 Task 2 COMPLETE (PASS) - tree-3 vine deepening implemented inside the pre-registered envelope. Dual boundary recovery bit-identical; leakage-free fit found ZERO tree-3 signal (all gaussian, strength 0; joint-conditional n_fit <= 3 of 160 scenarios); candidate SCR 42,458.5527095696 == 2-tree vine. Material: the 160-scenario outer set cannot support joint-conditional (tree-3) calibration at p=0.90; stop-rule trigger at Task 3/4 is now the expected path. Governed headline unchanged (frozen-t 39,975.65).",
  "current_phase": "Phase 30: Post-Vine Dependence Roadmap Decision (in progress)",
  "overall_status": "PHASE30_TASK1_COMPLETE_NEXT_TASK2_TREE3_VINE",
  "phases": {
@@ -524,10 +524,11 @@
    "status": "in_progress",
    "description": "Design-note-first re-assessment of the next dependence sophistication step now that Phase 29 closed with MR-016 KEEP OPEN and MR-017 OPENED. Candidate options to evaluate and pre-register BEFORE any implementation: (a) deeper conditional pair-copula calibration (relax the 2-tree truncation and/or widen the family set with leakage-free selection), (b) nested-aware dependence calibration (fit dependence to nested inner-path joint dynamics rather than standalone margins), (c) owner adoption decision package for the vine candidate as a DISCLOSED alternative read-out, (d) stop-rule assessment (diminishing returns vs credentialled-data calibration priority). EDUCATIONAL; governed headline remains the frozen single-df t.",
    "completed": [
-    "Task 1: design-note-first option study + pre-registered gates for the post-vine dependence roadmap (MR-016/MR-017 remediation path): quantify expected residual closure per option, cost/benefit, governance criteria (close/mitigate/adopt/stop), and select ONE next step. No implementation before the design note is committed with gates."
+    "Task 1: design-note-first option study + pre-registered gates for the post-vine dependence roadmap (MR-016/MR-017 remediation path): quantify expected residual closure per option, cost/benefit, governance criteria (close/mitigate/adopt/stop), and select ONE next step. No implementation before the design note is committed with gates.",
+    "Task 2: pre-registered tree-3 vine deepening implemented (PASS). DUAL boundary bit-identical (frozen-t 39,975.654628199336; 2-tree vine 42,458.5527095696; both devs 0.0). Leakage-free joint-conditional fit on the four pre-registered third-tree pairs selected gaussian / zero strength for ALL FOUR pairs: with 160 outer scenarios the joint-conditional mask (both conditioners > 0.90) leaves n_fit <= 3 rows, so there is NO empirical support for incremental tree-3 dependence at the pre-registered tail level. Candidate is therefore bit-identical to the 2-tree vine (42,458.5527095696; +6.21% vs frozen-t, +0.00% vs vine2). Disclosed, not gate-shopped. ChangeRecord 2b34607c654d4f01b1dc88b70914fa3a OWNER_REVIEW."
    ],
    "in_progress": [
-    "Task 2: implement the pre-registered tree-3 vine deepening per PHASE30_TASK1_DESIGN_NOTE: four third-tree conditional pairs (fx-rate|credit,liquidity; rate-lapse|credit,liquidity; lapse-mortality|credit,liquidity; equity-liquidity|credit,fx) over the FROZEN Phase 29 2-tree fit; same four pair families; DUAL boundary recovery bit-identical (frozen-t 39,975.654628199336 AND 2-tree vine 42,458.5527095696) before any candidate run; leakage-free fit/holdout; CRN comparison variants (frozen-t, grouped-t, 2-tree vine); code_change ChangeRecord OWNER_REVIEW."
+    "Task 3: tree-3 vine margin bootstrap (>= 200 x 20,000; SE <= 5%) per PHASE30_TASK1_DESIGN_NOTE. NOTE: the Task 2 candidate is bit-identical to the 2-tree vine (all four tree-3 pairs gaussian/zero-strength under n_fit <= 3 joint-conditional support), so the bootstrap is expected to reproduce the Phase 29 Task 3 CI [38,654.7, 45,284.3] with nested 46,638.9 OUTSIDE -> record the pre-registered STOP-RULE trigger in the report (no gate-shopping); paired CRN deltas (tree-3 minus 2-tree; tree-3 minus frozen-t) expected ~0; methodology_change ChangeRecord OWNER_REVIEW."
    ],
    "next": "On Task 1 completion: execute the selected option as Phase 30 Tasks 2-4 (implementation, bootstrap/validation, MR decision), then Task 5 offline-UI propagation per repo convention."
   }
@@ -1018,5 +1019,38 @@
   "tests": "21/0 new; P29 63/0; UI suites 115/0; P28 24/0 (6 env skips)",
   "phase29_status": "COMPLETE (Tasks 1-5)",
   "next": "Phase 30 Task 1 design-note-first roadmap decision"
+ },
+ "cycle_2026_06_11_phase30_task2": {
+  "date": "2026-06-11",
+  "agent": "claude",
+  "task": "Phase 30 Task 2 - tree-3 vine deepening",
+  "verdict": "PASS",
+  "gates_all_pass": true,
+  "dual_boundary": {
+   "frozen_t_dev": 0.0,
+   "vine2_dev": 0.0,
+   "frozen_t_scr": 39975.654628199336,
+   "vine2_scr": 42458.5527095696
+  },
+  "candidate_scr": 42458.5527095696,
+  "candidate_vs_vine2_rel": 0.0,
+  "candidate_vs_frozen_t_rel": 0.06211025446519636,
+  "tree3_family_counts": {
+   "gaussian": 4,
+   "student_t": 0,
+   "survival_clayton": 0,
+   "survival_gumbel": 0
+  },
+  "data_support_disclosure": "joint-conditional mask (both conditioners > 0.90) leaves n_fit in {3,3,3,1} of 112 fit rows (160 scenarios total); tree-3 calibration empirically empty; selections degenerate to zero-strength gaussian; candidate bit-identical to 2-tree vine",
+  "change_record_id": "2b34607c654d4f01b1dc88b70914fa3a",
+  "change_record_status": "OWNER_REVIEW",
+  "tests": "24 passed (tests/test_phase30_task2_tree3_vine.py 15; tests/test_phase29_task2_vine_copula.py 9)",
+  "artifacts": [
+   "par_model_v2/projection/vine_tree3_aggregation.py",
+   "scripts/build_phase30_task2_tree3_vine.py",
+   "tests/test_phase30_task2_tree3_vine.py",
+   "docs/validation/PHASE30_TASK2_TREE3_VINE_REPORT.{json,md}",
+   "docs/TREE3_VINE_PROTOTYPE_CARD.md"
+  ]
  }
 }

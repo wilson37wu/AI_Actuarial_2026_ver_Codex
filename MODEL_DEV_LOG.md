@@ -9357,3 +9357,12 @@ Design-note-first option study for the MR-016/MR-017 remediation path; ONE optio
 - Governance: ChangeRecord 94c904819c4c4cb0938d23db922f603b (governance_change) OWNER_REVIEW; records 67->68; audit 95->96; verify_all True; idempotent re-run added nothing; store re-parsed OK after write.
 - Tests: P30T1 20/0 new; regression P29 T1-T5 63/0; P28 T2-T4 24/0 (6 env skips); compileall clean. Env: /var/tmp/pylibs_c (scipy) reused; pip install of scipy failed ENOSPC - /sessions disk still 99-100% full (standing human ask).
 - State: PHASE30_TASK1_COMPLETE_NEXT_TASK2_TREE3_VINE; in_progress -> Phase 30 Task 2 (tree-3 implementation per the design-note gates).
+
+## 2026-06-11 - Phase 30 Task 2 (claude): tree-3 vine deepening - PASS
+
+- Implemented the pre-registered tree-3 deepening (PHASE30_TASK1_DESIGN_NOTE section 5) over the FROZEN Phase 29 2-tree fit: `par_model_v2/projection/vine_tree3_aggregation.py`, chunked runner `scripts/build_phase30_task2_tree3_vine.py`, 15 new tests.
+- DUAL boundary recovery bit-identical BEFORE any candidate run: frozen-t 39,975.654628199336 (dev 0.0) AND 2-tree vine 42,458.5527095696 (dev 0.0).
+- Leakage-free joint-conditional fit (fit rows only; digests identical to Phase 29: e21ca13d365e / 962d65338b8e) selected gaussian / zero strength for ALL FOUR third-tree pairs. Root cause disclosed: with 160 outer scenarios, the joint-conditional mask (both conditioners > 0.90) leaves n_fit in {3, 3, 3, 1} rows - empirically empty at the pre-registered tail level.
+- Candidate is therefore bit-identical to the 2-tree vine: SCR 42,458.5527095696 (+6.21% vs frozen-t, +0.00% vs 2-tree). Disclosed, not gate-shopped. All 10 gates PASS.
+- Material implication: the Task 3 bootstrap is expected to reproduce the Phase 29 CI [38,654.7, 45,284.3] with nested 46,638.9 OUTSIDE, i.e. the pre-registered STOP-RULE will trigger; dependence-FORM escalation under MR-016 then ENDS and Phase 31 becomes the owner decision package (option C).
+- ChangeRecord 2b34607c654d4f01b1dc88b70914fa3a (code_change, OWNER_REVIEW); audit integrity OK. Governed headline unchanged (frozen-t).
