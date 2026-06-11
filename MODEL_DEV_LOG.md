@@ -9501,3 +9501,16 @@ Pass 3 (same session, owner-approved): 11 redundant root docs deleted (GITHUB_PU
   105->106; records 77->78; verify_all true. 24 new tests; 263 passed (phase31+governance+audit selection).
 - Figures unchanged bit-for-bit: governed 39,975.654628 | vine 42,458.5527 | nested 46,638.9 | residual 3,637.3.
 - NEXT: Phase 31 Task 3 - owner-facing summary; then standing directive (zero-install offline UI).
+
+---
+
+## 2026-06-11 (Claude Cowork) - Phase 31 Task 3: owner-facing summary - PASS; PHASE 31 COMPLETE
+
+- `owner_summary()` + 25-check `validate_owner_summary()` gate: ONE-PAGE neutral summary derived
+  bit-for-bit from the assembled pack (368/650 words); no new figures; registry-order options;
+  decision blank. Builder `scripts/build_phase31_task3_owner_summary.py` (idempotent, --governance).
+- Offline-UI decision: NO new disclosure surface -> NO contract bump.
+- ChangeRecord `dc8595e9baed4e3dafa0d7927d2cbf39` (governance_change) OWNER_REVIEW; audit 106->107;
+  records 78->79; verify_all true. 30 new tests; 83 passed across Phase 31 suites.
+- PHASE 31 COMPLETE. Phase 32 opened: zero-install offline UI consolidation (standing directive);
+  next task = Phase 32 Task 1 design note (baseline UI audit + gap list + acceptance criteria).

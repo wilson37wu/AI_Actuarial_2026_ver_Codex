@@ -631,3 +631,226 @@ def validate_assembled_pack(doc: Dict) -> Dict:
         and md["no_model_parameter_changes"] is True)
 
     return {"checks": checks, "ok": all(checks.values()), "n_checks": len(checks)}
+
+
+# ---------------------------------------------------------------------------
+# Phase 31 Task 3 - owner-facing SUMMARY of the assembled pack
+# ---------------------------------------------------------------------------
+
+#: Version of the owner-facing summary document (Task 3).
+SUMMARY_DOC_VERSION = "1.0.0"
+
+#: Stable identifier of the owner-facing summary document.
+SUMMARY_DOC_ID = "PHASE31_OWNER_DECISION_SUMMARY"
+
+#: Hard word cap - the summary is a ONE-PAGE owner document; anything
+#: longer belongs in the full pack (which the summary must point to).
+SUMMARY_MAX_WORDS = 650
+
+#: Sections the owner-facing summary MUST contain.
+REQUIRED_SUMMARY_SECTIONS = (
+    "metadata",
+    "decision_required",
+    "key_figures",
+    "options_at_a_glance",
+    "what_happens_next",
+    "where_to_find_detail",
+    "caveats",
+)
+
+
+def owner_summary() -> Dict:
+    """Owner-facing ONE-PAGE summary of the assembled decision pack.
+
+    Pure function of :func:`assemble_owner_pack`: every figure is read from
+    the assembled pack (itself bit-for-bit from the frozen archived
+    constants) - NOTHING is recomputed and NO new figure is introduced.
+    Neutrality is preserved: options appear in registry order with their
+    pack attributes; no option is pre-selected or steered toward.
+    """
+    pack = assemble_owner_pack()
+    ev = pack["evidence_pack"]
+    gh = ev["governed_headline"]
+    v2 = ev["disclosed_candidates"]["vine2"]
+    nr = ev["nested_reference"]
+    gap = ev["gap_decomposition"]
+    rr = ev["risk_register_status"]
+    return {
+        "metadata": {
+            "summary_id": SUMMARY_DOC_ID,
+            "summary_version": SUMMARY_DOC_VERSION,
+            "derived_from": {
+                "pack_id": PACK_DOC_ID,
+                "pack_version": PACK_DOC_VERSION,
+            },
+            "phase": "Phase 31: Owner Decision Package (Dependence)",
+            "task": "Task 3 - owner-facing summary of the assembled pack",
+            "classification": "EDUCATIONAL",
+            "no_model_parameter_changes": NO_MODEL_PARAMETER_CHANGES,
+        },
+        "decision_required": (
+            "Decide how to dispose of the quantified dependence-form "
+            f"residual {gap['copula_form_part']:,.1f} between the governed "
+            f"component SCR headline {gh['value']:,.1f} and the nested "
+            f"path-wise reference {nr['value']:,.1f}. Dependence-FORM "
+            "escalation is CLOSED by the Phase 30 binding stop-rule; three "
+            "pre-registered options remain open. The choice rests solely "
+            "with the model owner - nothing is pre-selected."
+        ),
+        "key_figures": {
+            "governed_headline": gh["value"],
+            "headline_move_through_p27_p30_pct": gh["move_pct_through_p27_p30"],
+            "disclosed_vine_point": v2["component_scr_point"],
+            "disclosed_vine_ci95": list(v2["bootstrap_ci95"]),
+            "nested_reference": nr["value"],
+            "nested_inside_vine_ci95": nr["inside_vine2_ci95"],
+            "copula_form_residual": gap["copula_form_part"],
+            "total_gap": gap["total_gap_point"],
+        },
+        "options_at_a_glance": [
+            {
+                "option_id": oid,
+                "summary": pack["owner_options"][oid]["what"],
+                "capital_effect_abs": pack["owner_options"][oid]["capital_effect_abs"],
+                "governance_risk": pack["owner_options"][oid]["governance_risk"],
+                "escalation_path_open": pack["owner_options"][oid]["escalation_path_open"],
+            }
+            for oid in pack["owner_option_order"]
+        ],
+        "what_happens_next": [
+            {"step": s["step"], "actor": s["actor"], "action": s["action"]}
+            for s in pack["signoff_workflow"]
+        ],
+        "where_to_find_detail": {
+            "full_pack_id": PACK_DOC_ID,
+            "full_pack_files": "docs/validation/PHASE31_TASK2_OWNER_DECISION_PACK.{json,md}",
+            "design_note_files": "docs/validation/PHASE31_TASK1_DESIGN_NOTE.{json,md}",
+            "note": (
+                "every figure above is reproduced bit-for-bit from the full "
+                "pack; the pack adds provenance, acceptance criteria, the "
+                "glossary and the blank decision record"
+            ),
+        },
+        "caveats": [
+            nr["single_run_caveat"],
+            "the Phase 30 binding stop-rule ENDED dependence-form "
+            "escalation; O3 is the only open escalation path",
+            f"risk register: MR-016 {rr[MR016_RISK_ID]}; "
+            f"MR-017 {rr[MR017_RISK_ID]}",
+        ],
+    }
+
+
+def _summary_word_count(summary: Dict) -> int:
+    """Total words across all string leaves of the summary document."""
+    n = 0
+    stack = [summary]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, dict):
+            stack.extend(node.values())
+        elif isinstance(node, (list, tuple)):
+            stack.extend(node)
+        elif isinstance(node, str):
+            n += len(node.split())
+    return n
+
+
+def validate_owner_summary(summary: Dict) -> Dict:
+    """Task 3 gate: the summary is faithful (bit-for-bit vs the assembled
+    pack), neutral, decision-blank, self-locating and one-page."""
+    import json as _json
+
+    pack = assemble_owner_pack()
+    ev = pack["evidence_pack"]
+    gh = ev["governed_headline"]
+    v2 = ev["disclosed_candidates"]["vine2"]
+    nr = ev["nested_reference"]
+    gap = ev["gap_decomposition"]
+    kf = summary.get("key_figures", {})
+    md = summary.get("metadata", {})
+    checks: Dict[str, bool] = {}
+
+    # -- identity / envelope ------------------------------------------------
+    checks["summary_identity"] = (
+        md.get("summary_id") == SUMMARY_DOC_ID
+        and md.get("summary_version") == SUMMARY_DOC_VERSION
+    )
+    checks["derived_from_assembled_pack"] = md.get("derived_from") == {
+        "pack_id": PACK_DOC_ID, "pack_version": PACK_DOC_VERSION}
+    checks["educational_no_param_changes"] = (
+        md.get("classification") == "EDUCATIONAL"
+        and md.get("no_model_parameter_changes") is True
+    )
+    checks["all_required_sections"] = all(
+        s in summary for s in REQUIRED_SUMMARY_SECTIONS)
+
+    # -- figure fidelity (bit-for-bit vs the assembled pack) ----------------
+    checks["governed_headline_bit_for_bit"] = (
+        kf.get("governed_headline") == gh["value"])
+    checks["vine_point_bit_for_bit"] = (
+        kf.get("disclosed_vine_point") == v2["component_scr_point"])
+    checks["vine_ci_bit_for_bit"] = (
+        kf.get("disclosed_vine_ci95") == list(v2["bootstrap_ci95"]))
+    checks["nested_bit_for_bit"] = kf.get("nested_reference") == nr["value"]
+    checks["residual_bit_for_bit"] = (
+        kf.get("copula_form_residual") == gap["copula_form_part"])
+    checks["total_gap_bit_for_bit"] = (
+        kf.get("total_gap") == gap["total_gap_point"])
+    checks["headline_move_zero"] = (
+        kf.get("headline_move_through_p27_p30_pct") == 0.0)
+    checks["nested_ci_flag_consistent"] = (
+        kf.get("nested_inside_vine_ci95") == nr["inside_vine2_ci95"])
+    checks["decision_states_residual"] = (
+        f"{gap['copula_form_part']:,.1f}" in summary.get("decision_required", ""))
+
+    # -- options: registry order, pack attributes, no steering --------------
+    opts = summary.get("options_at_a_glance", [])
+    checks["options_in_registry_order"] = (
+        tuple(o.get("option_id") for o in opts) == OWNER_OPTION_IDS)
+    checks["option_attributes_bit_for_bit"] = all(
+        o.get("summary") == pack["owner_options"][o["option_id"]]["what"]
+        and o.get("capital_effect_abs")
+        == pack["owner_options"][o["option_id"]]["capital_effect_abs"]
+        and o.get("escalation_path_open")
+        == pack["owner_options"][o["option_id"]]["escalation_path_open"]
+        for o in opts
+    ) if checks["options_in_registry_order"] else False
+    checks["only_o3_escalation_open"] = all(
+        o.get("escalation_path_open") == (o.get("option_id") == ESCALATION_OPTION_ID)
+        for o in opts
+    )
+
+    # -- neutrality / decision-blank ----------------------------------------
+    text = _json.dumps(summary, default=float).lower()
+    checks["no_steering_language"] = not any(
+        p in text for p in NEUTRALITY_FORBIDDEN_PHRASES)
+    checks["no_recommended_key"] = not any(
+        "recommend" in k.lower() or "preferred" in k.lower()
+        for k in summary.keys())
+    checks["no_decision_prefilled"] = "decision_option_id" not in text
+
+    # -- workflow faithfulness ----------------------------------------------
+    wf = summary.get("what_happens_next", [])
+    checks["workflow_steps_match_pack"] = (
+        [(s.get("step"), s.get("actor")) for s in wf]
+        == [(s["step"], s["actor"]) for s in pack["signoff_workflow"]]
+    )
+
+    # -- self-location + caveats -------------------------------------------
+    loc = summary.get("where_to_find_detail", {})
+    checks["points_to_full_pack"] = (
+        loc.get("full_pack_id") == PACK_DOC_ID
+        and "PHASE31_TASK2_OWNER_DECISION_PACK" in loc.get("full_pack_files", "")
+        and "PHASE31_TASK1_DESIGN_NOTE" in loc.get("design_note_files", "")
+    )
+    caveats = " ".join(summary.get("caveats", [])).lower()
+    checks["single_run_caveat_present"] = "one nested run" in caveats
+    checks["stop_rule_closure_stated"] = "stop-rule" in caveats
+    checks["risk_register_stated"] = (
+        "mr-016" in caveats and "mr-017" in caveats)
+
+    # -- one-page constraint --------------------------------------------------
+    checks["one_page_word_cap"] = _summary_word_count(summary) <= SUMMARY_MAX_WORDS
+
+    return {"checks": checks, "ok": all(checks.values()), "n_checks": len(checks)}
