@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-11T13:08Z-5252",
-  "started_at": "2026-06-11T13:08:04Z",
-  "ttl_minutes": 120,
-  "task": "Phase 32 Task 1: UI consolidation design note",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-11T13:17:01Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
