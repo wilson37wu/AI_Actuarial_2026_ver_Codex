@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T15:25:16Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-11T16:07Z-1c66",
+  "started_at": "2026-06-11T16:07:41Z",
+  "ttl_minutes": 120,
+  "task": "Phase 32 Task 4: G3 governed read-out completeness sweep",
+  "note": ""
 }
