@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-11T16:55:00Z",
-  "last_run_duration_minutes": 45,
-  "last_run_note": "Phase 32 Task 4 (gap G3) PASS: governed read-out completeness sweep; inventory diff found 28 of 82 ChangeRecords missing from the embedded snapshot (audit store total 110 vs 81-entry verified snapshot; risk register 17/17 and validation registry complete); contract 1.15.0->1.16.0 ADDITIVE (new governance.change_records_supplement + governance.store_sync keys; pre-existing keys bit-identical); all 82 records now in the offline timeline/distributions/CSV (store-synced badged); store-wide status counts + store totals disclosed in a Governance-store sync panel; self-tests 232 checks ok 0/0 (+fallback, viewer 11, combined 27); ChangeRecord cc4aa0251c384357a753a40949c6eda0 OWNER_REVIEW; next Task 5 = phase summary + final consolidated re-audit, PHASE 32 COMPLETE",
-  "current_phase": "Phase 32: Zero-Install Offline UI Consolidation",
-  "overall_status": "PHASE32_TASK4_COMPLETE_NEXT_TASK5_PHASE_SUMMARY_FINAL_REAUDIT",
+  "last_run": "2026-06-11T17:15:00Z",
+  "last_run_duration_minutes": 25,
+  "last_run_note": "Phase 32 Task 5 PASS: phase summary + final consolidated re-audit; PHASE 32 COMPLETE. Re-audit clean: 4 self-tests ok 0net/0err (ui_app 232, fallback 9, viewer 11, combined 27 checks); 0 external refs across 3 HTML artifacts; contract 1.16.0 (21 top-level keys; 3 additive bumps from the 1.13.0 baseline, gaps G1/G2/G3 closed); store 84 ChangeRecords/112 audit/17 risk; 5/5 gates; tests 9/0; idempotent. ChangeRecord 56bd6b845c3c462cbe135584b552833f governance_change OWNER_REVIEW; verify_all True. NEXT: Phase 33 Task 1 design note (offline-UI interactive analytics & usability; stop-rule + MR-016/MR-017 owner decision remain standing constraints).",
+  "current_phase": "Phase 33: Offline UI Interactive Analytics & Usability",
+  "overall_status": "PHASE32_COMPLETE_NEXT_PHASE33_TASK1_DESIGN_NOTE",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -559,18 +559,26 @@
       "completion_note": "PHASE 31 COMPLETE 2026-06-11: design note (T1, 21-gate), assembled pack (T2, dual gate 21+16), owner summary (T3, 25-gate). The dependence-residual decision now rests with the model owner (O1 adopt / O2 accept residual / O3 fund second nested run). Dependence-FORM escalation CLOSED per the P30 binding stop-rule. Standing directive now in effect: zero-install offline UI focus."
     },
     "Phase 32: Zero-Install Offline UI Consolidation": {
-      "status": "in_progress",
+      "status": "completed",
       "description": "Standing directive (post-Phase 31): focus on the zero-install offline user interface. The UI must depend on NOTHING pre-installed - calculation is done by the stochastic model; the UI consumes ONLY model-output JSON and displays it graphically and interactively. Design-note-first; every contract change ADDITIVE.",
       "completed": [
         "Task 1: design note pre-registering the UI consolidation pass - (a) baseline audit: ui_app.html self-test (0 network / 0 JS errors), external-ref scan, single-file/zero-install verification, tab + contract-version inventory; (b) gap list vs the standing directive (owner-decision-pack surface (additive contract bump), input-loader run results, any governed read-outs not yet surfaced); (c) pre-registered acceptance criteria for each gap; NO model parameter changes.",
         "Task 2 (gap G1) DONE: browsable owner-decision-pack surface in ui_app.html - additive 'Owner Decision (P31)' surface: evidence-pack key figures, the three options (registry order, neutral, NO default), sign-off workflow position, decision-record status rendered BLANK until the owner decides; ui_data contract 1.13.0 -> 1.14.0 ADDITIVE; every figure bit-for-bit from PHASE31_TASK2_OWNER_DECISION_PACK.json; self-tests green (0 network / 0 JS errors); zero-install preserved; per the pre-registered acceptance criteria in docs/validation/PHASE32_TASK1_DESIGN_NOTE.md.",
         "Task 3 (gap G2) DONE: user-input run-result surface in ui_app.html - additive 'User Run (UIL)' tab: RUN_MODEL_SUMMARY.json carried VERBATIM (headline nested 71,112.06 / gaussian copula 49,825.85 / var-covar 37,625.87; per-driver standalone SCRs; tail bootstrap CIs; verdict REVIEW) plus run_plan (per-setting provenance), inputs_provenance (model-point counts 2 PAR rows / 1 GMMB disclosed; portfolio digest; book-scaling DISCLOSED APPROXIMATION; liquidity exposure) and use_restrictions from RUN_MODEL_AGGREGATION_REPORT.json; input chain model_inputs.json -> par_model_v2.user_inputs loader -> run_model disclosed; currency/output_label display provenance copied from the stamped meta block (bit-identical by construction); GRACEFUL neutral fallback proven by dedicated jsdom test (scripts/ui_app_userrun_fallback_test.cjs: no JS errors, no blank tab, no leaked figures); ui_data contract 1.14.0 -> 1.15.0 ADDITIVE (pre-existing keys bit-identical); ui_app self-test 223 checks ok 0/0 (27 new); viewer 11 / combined 27 ok; zero-install preserved (0 external refs); per the pre-registered G2 acceptance criteria.",
-        "Task 4 (gap G3): governed read-out completeness sweep - 28 missing ChangeRecords store-synced bit-for-bit; store totals + status counts disclosed; contract 1.16.0 ADDITIVE; self-tests 232 ok 0/0; ChangeRecord cc4aa0251c384357a753a40949c6eda0 OWNER_REVIEW"
+        "Task 4 (gap G3): governed read-out completeness sweep - 28 missing ChangeRecords store-synced bit-for-bit; store totals + status counts disclosed; contract 1.16.0 ADDITIVE; self-tests 232 ok 0/0; ChangeRecord cc4aa0251c384357a753a40949c6eda0 OWNER_REVIEW",
+        "Task 5: phase summary + final consolidated re-audit (self-tests, external-ref scan, contract inventory); PHASE 32 COMPLETE (report PHASE32_TASK5_PHASE_SUMMARY_REPORT, 5/5 gates, tests 9/0)"
       ],
+      "in_progress": [],
+      "next": null
+    },
+    "Phase 33: Offline UI Interactive Analytics & Usability": {
+      "status": "in_progress",
+      "description": "Extend the zero-install offline UI's interactivity/usability per the standing directive (calculation chain complete; UI consumes ONLY model-output JSON). Constraints: binding Phase 30 stop-rule (NO new copula-structure candidates) and the pending MR-016/MR-017 owner decision (Phase 31 pack). Design-note-first; ONE gap per cycle; every change ADDITIVE; zero-install invariants gated (0 external refs, 0 network, 0 JS errors).",
+      "completed": [],
       "in_progress": [
-        "Task 5: phase summary + final consolidated re-audit (self-tests, external-ref scan, contract inventory) and PHASE 32 COMPLETE documentation; then research the next improvement phase."
+        "Task 1: design note - measured baseline + prioritised gap list with pre-registered acceptance criteria. Candidate gaps: (a) interactive cross-phase SCR comparator (user-selectable baseline, deltas, CI overlay - all figures already embedded); (b) embedded-distribution drill-down (precomputed quantile/CDF grids embedded by build_ui_data, display-layer only); (c) printable owner sign-off / report pack (print CSS + complete CSV export coverage); (d) accessibility & usability pass (keyboard nav, ARIA, state-persistent tabs) with self-test coverage."
       ],
-      "next": "After PHASE 32 COMPLETE: research the next improvement phase (the design-note stop-rule and the MR-016/MR-017 owner decision remain standing constraints)."
+      "next": "Task 2+: one gap per cycle in design-note priority order"
     }
   },
   "repository_info": {

@@ -1,0 +1,127 @@
+{
+  "task": "Phase 32 Task 5 - phase summary + final consolidated re-audit; PHASE 32 COMPLETE",
+  "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+  "generated_utc": "2026-06-11T17:15:06.215202+00:00",
+  "verdict": "PASS",
+  "phase_status": "PHASE 32 COMPLETE",
+  "re_audit": {
+    "self_tests": {
+      "ui_app": {
+        "ok": true,
+        "n_checks": 232,
+        "failed_checks": [],
+        "network_calls": 0,
+        "js_errors": 0
+      },
+      "userrun_fallback": {
+        "ok": true,
+        "n_checks": 9,
+        "failed_checks": [],
+        "network_calls": 0,
+        "js_errors": 0
+      },
+      "offline_viewer": {
+        "ok": true,
+        "n_checks": 11,
+        "failed_checks": [],
+        "network_calls": 0,
+        "js_errors": 0
+      },
+      "combined_gui": {
+        "ok": true,
+        "n_checks": 27,
+        "failed_checks": [],
+        "network_calls": 0,
+        "js_errors": 0
+      }
+    },
+    "artifacts": {
+      "ui_app.html": {
+        "bytes": 572915,
+        "external_refs": 0
+      },
+      "model_result_viewer.html": {
+        "bytes": 142620,
+        "external_refs": 0
+      },
+      "combined_model_app.html": {
+        "bytes": 456204,
+        "external_refs": 0
+      }
+    },
+    "inventory": {
+      "contract_version": "1.16.0",
+      "top_level_keys": [
+        "calibrations",
+        "capital",
+        "contract_version",
+        "governance",
+        "inventory",
+        "loss",
+        "management_actions",
+        "meta",
+        "owner_decision_p31",
+        "phase24",
+        "phase25",
+        "phase26",
+        "phase27",
+        "phase28",
+        "phase29",
+        "phase30",
+        "proxy",
+        "summary",
+        "tail",
+        "user_run",
+        "verdicts"
+      ],
+      "n_top_level_keys": 21,
+      "governance_store": {
+        "change_records": 84,
+        "audit_trail": 112,
+        "risk_register": 17
+      }
+    }
+  },
+  "baseline_task1": {
+    "contract": "1.13.0",
+    "ui_app_checks": 172,
+    "viewer_checks": 11,
+    "combined_checks": 27,
+    "external_refs": 0
+  },
+  "task_verdicts": {
+    "Task 1 (design note)": {
+      "present": true,
+      "verdict": "PASS"
+    },
+    "Task 2 (G1 owner-pack surface)": {
+      "present": true,
+      "verdict": "PASS"
+    },
+    "Task 3 (G2 user-run surface)": {
+      "present": true,
+      "verdict": "PASS"
+    },
+    "Task 4 (G3 governance sweep)": {
+      "present": true,
+      "verdict": "PASS"
+    }
+  },
+  "gates": {
+    "G1_all_self_tests_ok_0net_0err": true,
+    "G2_zero_external_refs_all_artifacts": true,
+    "G3_contract_is_1_16_0_additive_chain": true,
+    "G4_all_task_reports_present_pass": true,
+    "G5_checks_grew_vs_baseline": true
+  },
+  "governance": {
+    "added_change_record": false,
+    "change_record_id": "56bd6b845c3c462cbe135584b552833f",
+    "change_record_status": "OWNER_REVIEW",
+    "audit_entries_before": 112,
+    "audit_entries_after": 112,
+    "change_records_before": 84,
+    "change_records_after": 84,
+    "audit_integrity_ok": true
+  }
+}

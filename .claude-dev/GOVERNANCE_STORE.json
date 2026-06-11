@@ -2499,6 +2499,28 @@
       "phase": "Phase 32: Zero-Install Offline UI Consolidation",
       "digest": "dc7f4c3f7055dafc5584b32510b6afaba9e2e95dc6d3e18831aa4b0fe975b695",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "0559ee67687b48648bf7bc6ad6d8b383",
+      "timestamp": "2026-06-11T17:13:58.896569+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase32",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 32 Task 5 phase summary + final consolidated re-audit; PHASE 32 COMPLETE",
+      "details": {
+        "record_id": "56bd6b845c3c462cbe135584b552833f",
+        "gates": {
+          "G1_all_self_tests_ok_0net_0err": true,
+          "G2_zero_external_refs_all_artifacts": true,
+          "G3_contract_is_1_16_0_additive_chain": true,
+          "G4_all_task_reports_present_pass": true,
+          "G5_checks_grew_vs_baseline": true
+        },
+        "ui_contract": "1.16.0",
+        "ui_app_checks": 232
+      },
+      "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+      "digest": "258ce545552a32e84b32d01c81655bebb77c6fdcf6ac3f341fb5513615ce9d7b",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -7754,6 +7776,58 @@
           "actor": "AutomatedModelDev_Phase32",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Gap G3 of the Phase 32 design note is closed: every governed ChangeRecord is now visible offline with store-wide status counts and full store totals disclosed; the governed capital read-outs are unchanged."
+        }
+      ],
+      "phase": "Phase 32: Zero-Install Offline UI Consolidation"
+    },
+    {
+      "record_id": "56bd6b845c3c462cbe135584b552833f",
+      "created_at": "2026-06-11T17:13:58.896489+00:00",
+      "title": "Phase 32 Task 5 - phase summary + final consolidated re-audit; PHASE 32 COMPLETE",
+      "description": "Phase 32 Task 5 closes the phase per the Task 1 design note: a final consolidated re-audit of the zero-install offline UI plus the phase summary. Re-audit: all four jsdom self-tests ok:true with 0 network calls and 0 JS errors (ui_app 232 checks, user-run fallback 9, offline viewer 11, combined GUI 27); 0 external references across the three HTML artifacts; embedded ui_data contract 1.16.0 with 21 top-level keys; governance store 83 ChangeRecords / 111 audit entries / 17 risk-register items. Phase summary: gaps G1 (owner-decision-pack surface, 1.13.0->1.14.0), G2 (user-input run-result surface, 1.14.0->1.15.0) and G3 (governed read-out completeness sweep, 1.15.0->1.16.0) all closed ADDITIVELY; every task verdict PASS from the committed evidence reports. PHASE 32 COMPLETE. No artifact changed by this task - audit + documentation only.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "docs/validation/PHASE32_TASK5_PHASE_SUMMARY_REPORT.json",
+        "docs/validation/PHASE32_TASK5_PHASE_SUMMARY_REPORT.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "IFoA Modelling Practice Note s4 (documentation & independent review)"
+      ],
+      "before_snapshot": {
+        "phase_status": "PHASE32_TASK4_COMPLETE_NEXT_TASK5"
+      },
+      "after_snapshot": {
+        "phase_status": "PHASE 32 COMPLETE",
+        "gates": {
+          "G1_all_self_tests_ok_0net_0err": true,
+          "G2_zero_external_refs_all_artifacts": true,
+          "G3_contract_is_1_16_0_additive_chain": true,
+          "G4_all_task_reports_present_pass": true,
+          "G5_checks_grew_vs_baseline": true
+        },
+        "contract": "1.16.0"
+      },
+      "impact_assessment": "Documentation/governance only: no model calculation, no artifact modified, no contract change. The governed capital read-outs are untouched. The binding stop-rule (Phase 30) and the MR-016/MR-017 owner decision (Phase 31 pack) remain the standing constraints for any future dependence work.",
+      "quantitative_impact": "Final re-audit: ui_app 232 checks (baseline 172, +60); viewer 11; combined 27; fallback 9; 0 network / 0 JS errors / 0 external refs everywhere; contract 1.13.0 -> 1.16.0 across three additive bumps; governance store 83 ChangeRecords / 111 audit entries / 17 risk items all surfaced offline.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase32",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T17:13:58.896521+00:00",
+          "actor": "AutomatedModelDev_Phase32",
+          "status": "PEER_REVIEW",
+          "comments": "Re-audit verified by direct execution of all four offline self-tests (0 network / 0 JS errors / 0 failed checks), the external-reference scan (0 across all three artifacts) and the contract + governance-store inventory; every Phase 32 task verdict read from the committed evidence reports; no artifact or parameter changed."
+        },
+        {
+          "timestamp": "2026-06-11T17:13:58.896537+00:00",
+          "actor": "AutomatedModelDev_Phase32",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. PHASE 32 COMPLETE: the three design-note gaps are closed additively (contract 1.16.0) and the final consolidated re-audit is clean."
         }
       ],
       "phase": "Phase 32: Zero-Install Offline UI Consolidation"
