@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-11T03:44Z-ec72",
-  "started_at": "2026-06-11T03:44:44Z",
-  "ttl_minutes": 120,
-  "task": "Interactive: set state pointer to owner-prioritised user-input loader phase",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-11T03:45:42Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
