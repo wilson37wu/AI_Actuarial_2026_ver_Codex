@@ -9406,3 +9406,11 @@ Pre-registered tree-3 margin bootstrap per PHASE30_TASK1_DESIGN_NOTE task3_accep
 - **Governance:** ChangeRecord `dcbc94cdcc474cb9951d762bfeb358b2` code_change **OWNER_REVIEW** (`scripts/build_phase_uil_task1_governance.py`, idempotent); audit 98→99; changes 70→71; `verify_all` True.
 - **Capital impact:** none (pure I/O; nothing consumes `model_inputs.json` until B2).
 - **State:** Phase UIL Task 1 → completed; **in_progress → Task 2 (B2) de-hardcode fixtures additively**.
+
+## 2026-06-11 (2nd cycle) — Phase UIL Task 2 (B2): de-hardcoded fixtures — COMPLETE
+- **Agent:** Claude Cowork (lock 05:10Z–end of cycle). Preflight saw the 04:09Z B1 cycle's push land just before acquire; proceeded to the pointer task.
+- **Code:** new `par_model_v2/user_inputs.py` (single access point: path → `PAR_MODEL_INPUTS` → `production_run/model_inputs.json`; absent → governed defaults, broken → `UserInputsError`); phase22 `resolve_exposure_spec` overlay (additive, `exposure_source` provenance, gate untouched); portfolio generator `split_model_points` / `portfolio_from_model_points` / `build_portfolio` (user book vs synthetic, fail-loud row validation, GMMB split for B3); `capital_params` governed defaults 0.995/0.225/0.7567/0.8450.
+- **Tests:** `tests/test_user_inputs_integration.py` — **19 passed** incl. exact-equality bit-identical no-inputs gates and `build_portfolio` digest regression; existing portfolio/phase22 suites **35 passed unchanged**.
+- **Governance:** ChangeRecord `0dbc8cd110044a8186fe0f0bd8a50df3` code_change **OWNER_REVIEW** (`scripts/build_phase_uil_task2_governance.py`, idempotent); audit 99→100; changes 71→72; `verify_all` True.
+- **Capital impact:** none with no inputs file (regression-gated). Frozen copula/df params remain governed read-only.
+- **State:** Phase UIL Task 2 → completed; **in_progress → Task 3 (B3) `scripts/run_model.py` orchestrator**.
