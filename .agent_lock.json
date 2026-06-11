@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T08:35:00Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-11T08:36Z-927b",
+  "started_at": "2026-06-11T08:36:45Z",
+  "ttl_minutes": 120,
+  "task": "Interactive repo cleanup pass 2: prune repetitive G05 snapshot logs",
+  "note": ""
 }
