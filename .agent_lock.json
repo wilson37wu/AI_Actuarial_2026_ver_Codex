@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-11T07:08Z-5755",
-  "started_at": "2026-06-11T07:08:41Z",
-  "ttl_minutes": 120,
-  "task": "Phase UIL Task 4 (B4+A1): GUI currency wire-through",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-11T07:58:23Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
