@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.12.0"
+CONTRACT_VERSION = "1.13.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -2114,6 +2114,219 @@ def _build_phase29() -> Dict[str, Any]:
     return out
 
 
+def _build_phase30() -> Dict[str, Any]:
+    """Phase 30 (contract 1.13.0, additive): post-vine dependence roadmap
+    decision - tree-3 vine deepening + BINDING stop-rule. Normalises the
+    Task 1 roadmap design note, the Task 2 tree-3 vine candidate (zero
+    incremental strength - bit-identical to the 2-tree vine), the Task 3
+    margin bootstrap and the Task 4 tail diagnostics + stop-rule / MR
+    decision for the offline UI. Display-layer only - no model calculation."""
+    out: Dict[str, Any] = {}
+    drivers: List[str] = []
+
+    def _pname(idx):
+        try:
+            return drivers[int(idx)]
+        except (TypeError, ValueError, IndexError):
+            return str(idx)
+
+    def _cond_label(cond):
+        if cond is None:
+            return None
+        if isinstance(cond, (list, tuple)):
+            return ",".join(_pname(c) for c in cond)
+        return _pname(cond)
+
+    t1 = _load(os.path.join(VAL, "PHASE30_TASK1_DESIGN_NOTE.json"))
+    if isinstance(t1, dict):
+        out["roadmap"] = {
+            "selected_option": t1.get("selected_option"),
+            "stop_rule": t1.get("stop_rule"),
+            "post_phase30_commitment": t1.get("post_phase30_commitment"),
+            "verdict": t1.get("verdict"),
+            "source": "docs/validation/PHASE30_TASK1_DESIGN_NOTE.json",
+        }
+    t2 = _load(os.path.join(VAL, "PHASE30_TASK2_TREE3_VINE_REPORT.json"))
+    if isinstance(t2, dict) and isinstance(t2.get("result"), dict):
+        r = t2["result"]
+        drivers = list(t2.get("drivers") or [])
+        fit = r.get("fit", {}) or {}
+        cand = r.get("tree3_candidate_readout", {}) or {}
+        frz = r.get("frozen_t_component_reference_readout", {}) or {}
+        v2 = r.get("vine2_boundary_readout", {}) or {}
+        grp = r.get("grouped_t_comparison_readout", {}) or {}
+        edges = [{"pair": e.get("pair"),
+                  "condition_on": e.get("condition_on"),
+                  "names": e.get("names")}
+                 for e in (t2.get("third_tree_edges") or [])]
+        out["tree3"] = {
+            "drivers": drivers,
+            "df_frozen": t2.get("df_frozen"),
+            "df_rematched": t2.get("df_rematched"),
+            "rho_max_abs_diff": t2.get("rho_max_abs_diff"),
+            "structure": fit.get("structure"),
+            "max_vine_trees": fit.get("max_vine_trees"),
+            "frozen_tree12_digest": fit.get("frozen_tree12_digest"),
+            "tree3_family_counts": fit.get("tree3_family_counts", {}),
+            "third_tree_edges": edges,
+            "tree3_candidate_scr_component": cand.get("scr_component"),
+            "frozen_t_reference_scr_component": frz.get("scr_component"),
+            "vine2_boundary_scr_component": v2.get("scr_component"),
+            "grouped_t_comparison_scr_component": grp.get("scr_component"),
+            "boundary_t_recovery_dev": r.get("boundary_t_recovery_dev"),
+            "boundary_vine2_recovery_dev":
+                r.get("boundary_vine2_recovery_dev"),
+            "candidate_vs_frozen_t_rel": r.get("candidate_vs_frozen_t_rel"),
+            "candidate_vs_vine2_rel": r.get("candidate_vs_vine2_rel"),
+            "candidate_vs_grouped_t_rel":
+                r.get("candidate_vs_grouped_t_rel"),
+            "candidate_gap_to_nested_rel":
+                r.get("candidate_gap_to_nested_rel"),
+            "candidate_residual_abs": r.get("candidate_residual_abs"),
+            "material_finding": r.get("material_finding"),
+            "gates": r.get("gates", {}),
+            "verdict": t2.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE30_TASK2_TREE3_VINE_REPORT.json"),
+            "change_record_id": t2.get("change_record_id"),
+        }
+    t3 = _load(os.path.join(
+        VAL, "PHASE30_TASK3_TREE3_MARGIN_BOOTSTRAP_REPORT.json"))
+    if isinstance(t3, dict) and isinstance(t3.get("result"), dict):
+        r = t3["result"]
+        out["bootstrap"] = {
+            "config": r.get("config", {}),
+            "tree3_component_scr_ci": r.get("tree3_component_scr_ci", {}),
+            "vine2_component_scr_ci": r.get("vine2_component_scr_ci", {}),
+            "frozen_t_component_scr_ci":
+                r.get("frozen_t_component_scr_ci", {}),
+            "tree3_minus_vine2_max_abs": r.get("tree3_minus_vine2_max_abs"),
+            "tree3_minus_vine2_all_exactly_zero":
+                r.get("tree3_minus_vine2_all_exactly_zero"),
+            "tree3_minus_frozen_mean": r.get("tree3_minus_frozen_mean"),
+            "tree3_minus_frozen_pos_share":
+                r.get("tree3_minus_frozen_pos_share"),
+            "nested_pathwise_reference": r.get("nested_pathwise_reference"),
+            "task2_frozen_t_component_point":
+                r.get("task2_frozen_t_component_point"),
+            "task2_vine2_component_point":
+                r.get("task2_vine2_component_point"),
+            "task2_tree3_candidate_component_point":
+                r.get("task2_tree3_candidate_component_point"),
+            "p29t3_vine2_bootstrap_mean_reference":
+                r.get("p29t3_vine2_bootstrap_mean_reference"),
+            "headline_nested_inside_95ci":
+                r.get("headline_nested_inside_95ci"),
+            "stop_rule_assessment": r.get("stop_rule_assessment", {}),
+            "se_frac_of_mean": r.get("se_frac_of_mean"),
+            "se_gate_pass": r.get("se_gate_pass"),
+            "residual_gap_redecomposition_point":
+                r.get("residual_gap_redecomposition_point", {}),
+            "gates": r.get("gates", {}),
+            "digest": r.get("digest"),
+            "verdict": t3.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE30_TASK3_TREE3_MARGIN_BOOTSTRAP_REPORT.json"),
+            "change_record_id": t3.get("change_record_id"),
+        }
+    t4 = _load(os.path.join(
+        VAL, "PHASE30_TASK4_TREE3_TAIL_DIAGNOSTICS_REPORT.json"))
+    if isinstance(t4, dict) and isinstance(t4.get("result"), dict):
+        r = t4["result"]
+        if not drivers:
+            drivers = list(t4.get("drivers") or [])
+        pts = r.get("pair_tail_summary", {}) or {}
+
+        def _m(blk):
+            v = blk or {}
+            return {"mean": v.get("mean"), "ci_lo": v.get("ci_lo"),
+                    "ci_hi": v.get("ci_hi")}
+
+        levels: Dict[str, Any] = {}
+        for pk in sorted(pts.keys()):
+            blk = pts[pk] or {}
+            try:
+                p_val = float(pk) / 100.0
+            except ValueError:
+                p_val = None
+            rows = []
+            for tree, label in (("first_tree", "first"),
+                                ("second_tree", "second"),
+                                ("third_tree", "third"),
+                                ("holdout", "holdout")):
+                for e in (blk.get(tree) or []):
+                    pr = e.get("pair") or [None, None]
+                    rows.append({
+                        "tree": label,
+                        "pair": pr,
+                        "pair_label": "%s-%s" % (_pname(pr[0]),
+                                                 _pname(pr[1])),
+                        "cond_label": _cond_label(e.get("condition_on")),
+                        "cand_upper": _m(e.get("cand_upper")),
+                        "cand_lower": _m(e.get("cand_lower")),
+                        "frz_upper": _m(e.get("frz_upper")),
+                        "frz_lower": _m(e.get("frz_lower")),
+                        "lift_upper": _m(e.get("lift_upper")),
+                        "lift_lower": _m(e.get("lift_lower")),
+                    })
+            levels[pk] = {"p": p_val, "rows": rows}
+        cfg = r.get("config", {}) or {}
+        out["tail"] = {
+            "drivers": drivers,
+            "df_frozen": t4.get("df_frozen"),
+            "p_grid": cfg.get("p_grid", []),
+            "canonical_p": cfg.get("canonical_p"),
+            "fit_structure": cfg.get("tree3_structure"),
+            "levels": levels,
+            "overfit_check": r.get("overfit_check", {}),
+            "archive_crosscheck": r.get("archive_crosscheck", {}),
+            "gates": r.get("gates", {}),
+            "verdict": t4.get("verdict"),
+            "digest": r.get("digest"),
+            "source": ("docs/validation/"
+                       "PHASE30_TASK4_TREE3_TAIL_DIAGNOSTICS_REPORT.json"),
+            "change_record_id": t4.get("change_record_id"),
+        }
+        out["stop_rule"] = dict(r.get("stop_rule_mr_decision", {}) or {})
+        out["stop_rule"]["source"] = out["tail"]["source"]
+        out["stop_rule"]["change_record_id"] = t4.get("change_record_id")
+    if out:
+        out["narrative"] = (
+            "Phase 30 closed the post-vine dependence roadmap. Option A "
+            "(tree-3 deepening of the FROZEN P29 credit-root C-vine) was "
+            "selected design-note-first with a pre-registered BINDING "
+            "stop-rule (option D embedded) and executed as Tasks 2-4 on "
+            "frozen margins / Sigma / df 2.9451 with DUAL boundary recovery "
+            "bit-identical FIRST (frozen-t 39,975.7 AND 2-tree vine "
+            "42,458.6, both dev 0.0). MATERIAL FINDING: the four "
+            "pre-registered joint-conditional third-tree pairs have "
+            "empirically EMPTY calibration support (n_fit {3,3,3,1} of 112 "
+            "fit rows under the both-conditioners > 0.90 mask), so the "
+            "selections degenerate to zero-strength gaussian and the tree-3 "
+            "candidate is BIT-IDENTICAL to the 2-tree vine: component SCR "
+            "42,458.6 point / 41,751.9 bootstrap mean, 95% CI [38,593.7, "
+            "44,556.4], SE 3.81% (gate PASS); per-replicate tree-3 minus "
+            "2-tree vine EXACTLY ZERO in all 200 replicates. The nested "
+            "path-wise reference 46,638.9 remains OUTSIDE the CI and the "
+            "copula-form residual 3,637.3 is UNCHANGED vs the 2-tree vine "
+            "(still -65.33% vs grouped-t and -40.52% vs skew-t), so the "
+            "pre-registered close criteria are NOT met: MR-016 and MR-017 "
+            "KEEP OPEN and the STOP-RULE IS APPLIED - dependence-FORM "
+            "escalation under MR-016 ENDS; no further copula-structure "
+            "candidates may be opened without owner sign-off. Phase 31 is "
+            "the owner decision package (option C): governed frozen-t "
+            "headline 39,975.7 vs the disclosed vine read-out 42,458.6 vs "
+            "nested 46,638.9 with the quantified residual 3,637.3, for an "
+            "adopt / accept-residual / fund-option-B decision. The governed "
+            "headline remains the frozen single-df t (recovered "
+            "bit-identically, move 0.0000%; MR-010/MR-014 unchanged); the "
+            "fit-vs-holdout overfit gate PASSES (holdout/fit ratio 0.049 = "
+            "P29 reference). The tree-3 vine is DISCLOSED, not adopted. "
+            "Copula and margins remain frozen per SII Art. 234; production "
+            "sign-off withheld (educational).")
+    return out
+
+
 def _resolve_currency_meta() -> Dict[str, Any]:
     """Phase UIL Task 4 (B4+A1): resolve the reporting-currency block and the
     user-run ``output_label`` for ``meta`` -- single source of truth for every
@@ -2288,6 +2501,21 @@ def build_ui_data() -> Dict[str, Any]:
         capital["vine_copula_scr_component_point"] = (
             _p29_bt.get("task2_vine_candidate_component_point"))
 
+    phase30 = _build_phase30()
+    _p30_bt = (phase30.get("bootstrap") or {})
+    _p30_ci = _p30_bt.get("tree3_component_scr_ci") or {}
+    if _p30_ci.get("mean") is not None:
+        # Additive capital read-out: tree-3 vine candidate bootstrap mean SCR
+        # (Phase 30 Task 3 - DISCLOSED; bit-identical to the 2-tree vine,
+        # stop-rule applied at Task 4).
+        capital["tree3_vine_scr_component_bootstrap_mean"] = (
+            _p30_ci.get("mean"))
+    if _p30_bt.get("task2_tree3_candidate_component_point") is not None:
+        # Additive capital read-out: tree-3 vine candidate point SCR (Phase 30
+        # Task 2 - DISCLOSED alternative read-out, not adopted).
+        capital["tree3_vine_scr_component_point"] = (
+            _p30_bt.get("task2_tree3_candidate_component_point"))
+
     governance = dict(base.get("governance", {}))
     _base_risks = list(governance.get("risk_register", []) or [])
     _have = {str(x.get("risk_id")) for x in _base_risks}
@@ -2335,6 +2563,7 @@ def build_ui_data() -> Dict[str, Any]:
         "phase27": phase27,
         "phase28": phase28,
         "phase29": phase29,
+        "phase30": phase30,
         "governance": governance,
         "verdicts": _build_verdicts(base.get("verdicts", [])),
     }
@@ -2493,6 +2722,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="phase27" class="panel" data-title="Skew-t Tail (P27)"></div>
   <div id="phase28" class="panel" data-title="Grouped-t Tail (P28)"></div>
   <div id="phase29" class="panel" data-title="Vine Tail (P29)"></div>
+  <div id="phase30" class="panel" data-title="Stop-Rule (P30)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
 </div>
 
@@ -2545,6 +2775,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["phase27","Skew-t Tail (P27)"],
     ["phase28","Grouped-t Tail (P28)"],
     ["phase29","Vine Tail (P29)"],
+    ["phase30","Stop-Rule (P30)"],
     ["governance","Governance"]
   ];
 
@@ -3681,6 +3912,146 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  function renderPhase30(){
+    var el=document.getElementById("phase30"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var p=DATA.phase30||{};
+    var rm=p.roadmap||{}, t3=p.tree3||{}, bo=p.bootstrap||{}, sr=p.stop_rule||{}, td=p.tail||{};
+    if(!Object.keys(t3).length&&!Object.keys(bo).length&&!Object.keys(sr).length){
+      el.innerHTML='<p class="muted">No Phase 30 tree-3 / stop-rule data in this snapshot (requires contract v1.13.0+).</p>';
+      return;
+    }
+    var ci=bo.tree3_component_scr_ci||{};
+    var gd=bo.residual_gap_redecomposition_point||{};
+    var oc=td.overfit_check||{};
+    var t3Point=bo.task2_tree3_candidate_component_point!=null?bo.task2_tree3_candidate_component_point:t3.tree3_candidate_scr_component;
+    var v2Point=bo.task2_vine2_component_point!=null?bo.task2_vine2_component_point:t3.vine2_boundary_scr_component;
+    var frzPoint=bo.task2_frozen_t_component_point!=null?bo.task2_frozen_t_component_point:t3.frozen_t_reference_scr_component;
+    var grpPoint=t3.grouped_t_comparison_scr_component;
+    var nestedRef=sr.nested_scr!=null?sr.nested_scr:bo.nested_pathwise_reference;
+    var canon=String(td.canonical_p!=null?Math.round(100*td.canonical_p):"90");
+    var lv=(td.levels||{})[canon]||{}; var rows=lv.rows||[];
+    function mean(m,d){ return (m&&m.mean!=null)?Number(m.mean).toFixed(d==null?4:d):"--"; }
+    function ci95(m,d){ return (m&&m.ci_lo!=null)?"["+Number(m.ci_lo).toFixed(d==null?4:d)+", "+Number(m.ci_hi).toFixed(d==null?4:d)+"]":"--"; }
+    var html='<div class="cards">';
+    [
+      ["Roadmap decision (T1)",String(rm.selected_option||"--")],
+      ["Tree-3 candidate SCR (point)",fmtMoney(t3Point)],
+      ["Tree-3 SCR (bootstrap mean)",fmtMoney(ci.mean)],
+      ["Tree-3 95% CI",ci.ci_lo!=null?"["+fmtMoney(ci.ci_lo)+", "+fmtMoney(ci.ci_hi)+"]":"--"],
+      ["2-tree vine SCR (P29 ref)",fmtMoney(v2Point)],
+      ["Frozen single-df t (GOVERNED)",fmtMoney(frzPoint)],
+      ["Nested SCR (path-wise) - reference",fmtMoney(nestedRef)],
+      ["SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
+      ["Nested inside tree-3 95% CI?",sr.nested_inside_ci===true?"yes":"no (OUTSIDE)"],
+      ["STOP-RULE applied?",sr.stop_rule_applied?"YES - dependence-FORM escalation ENDS":"no"],
+      ["MR-016 / MR-017",(sr.mr016_decision==="KEEP_OPEN"?"KEEP OPEN":String(sr.mr016_decision||"--"))+" / "+(sr.mr017_decision==="KEEP_OPEN"?"KEEP OPEN":String(sr.mr017_decision||"--"))],
+      ["Governed headline move",sr.governed_headline_relative_move!=null?(100*sr.governed_headline_relative_move).toFixed(4)+"%":"--"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+esc(c[0])+
+      '</div><div class="v">'+esc(c[1])+'</div></div>'; });
+    html+='</div>';
+    html+='<p class="note"><b>BINDING STOP-RULE (pre-registered at Task 1, applied at Task 4).</b> '+esc(sr.rationale||rm.stop_rule||"")+'</p>';
+    var D=[];
+    [["Tree-3 candidate mean",ci.mean,"#4f9cff"],
+     ["Tree-3 candidate point",t3Point,"#2fd0a8"],
+     ["2-tree vine point (P29)",v2Point,"#9a7bff"],
+     ["Single-df t (GOVERNED)",frzPoint,"#2b5d99"],
+     ["Grouped-t point (P28)",grpPoint,"#7a8aa0"],
+     ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
+    ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; tree-3 vs 2-tree vine vs single-df t vs nested reference</h4>'+
+        '<p class="cap">The tree-3 candidate is BIT-IDENTICAL to the 2-tree vine (all four pre-registered third-tree pairs zero-strength); nested '+fmtMoney(nestedRef)+
+        ' remains OUTSIDE the tree-3 95% CI ['+fmtMoney(ci.ci_lo)+', '+fmtMoney(ci.ci_hi)+'], so the pre-registered stop-rule binds.</p>'+
+        barChart(D,{w:760,h:300,mB:84})+'</div>';
+    }
+    var edges=t3.third_tree_edges||[];
+    if(edges.length){
+      var fc=t3.tree3_family_counts||{};
+      var fcs=Object.keys(fc).map(function(k){ return fc[k]+" "+k; }).join(", ");
+      var sup=(oc.tree3_fit_support_n_fit||[]).join(", ");
+      html+='<div class="subh">Pre-registered third-tree conditional pairs (joint-conditional on both conditioners)</div>'+
+        '<table class="ptable p30edges"><thead><tr><th>#</th><th>Pair | conditioners</th></tr></thead><tbody>';
+      edges.forEach(function(e,i){ html+='<tr><td>'+(i+1)+'</td><td>'+esc(e.names||"")+'</td></tr>'; });
+      html+='</tbody></table>'+
+        '<p class="note"><b>Data-support DISCLOSURE.</b> Joint-conditional fit support n_fit = {'+esc(sup)+'} of 112 fit rows (both-conditioners &gt; 0.90 mask); tree-3 calibration is empirically EMPTY: selections degenerate to zero-strength gaussian ('+esc(fcs)+
+        ') and the candidate tail field is exactly the 2-tree vine&#39;s (max |tree-3 &minus; 2-tree| = '+esc(bo.tree3_minus_vine2_max_abs)+', exactly zero in all replicates: '+esc(bo.tree3_minus_vine2_all_exactly_zero)+').</p>';
+    }
+    if(rows.length){
+      html+='<div class="subh">Pair-level tail dependence at canonical p=0.'+canon+' (200&times;20k CRN bootstrap, 95% CI) &mdash; fitted tree 1/2/3 + never-fitted holdout</div>'+
+        '<table class="ptable p30pairs"><thead><tr><th>Pair</th><th>Tree</th><th>Candidate U</th><th>Frozen-t U</th>'+
+        '<th>Lift U (cand &minus; frz)</th><th>Lift L</th></tr></thead><tbody>';
+      rows.forEach(function(rw){
+        var tl=rw.tree==="second"?("2nd | "+(rw.cond_label||"?")):(rw.tree==="third"?("3rd | "+(rw.cond_label||"?")):(rw.tree==="holdout"?"holdout":"1st"));
+        html+='<tr><td>'+esc(rw.pair_label)+'</td><td>'+esc(tl)+'</td>'+
+          '<td>'+mean(rw.cand_upper,4)+' '+ci95(rw.cand_upper,4)+'</td>'+
+          '<td>'+mean(rw.frz_upper,4)+' '+ci95(rw.frz_upper,4)+'</td>'+
+          '<td>'+mean(rw.lift_upper,4)+' '+ci95(rw.lift_upper,4)+'</td>'+
+          '<td>'+mean(rw.lift_lower,4)+' '+ci95(rw.lift_lower,4)+'</td></tr>';
+      });
+      html+='</tbody></table>';
+      var TD=[];
+      rows.forEach(function(rw){
+        if(rw.lift_upper&&rw.lift_upper.mean!=null){
+          var col=rw.tree==="holdout"?"#7a8aa0":(rw.tree==="third"?"#ffd166":(rw.tree==="second"?"#2fd0a8":"#4f9cff"));
+          TD.push({label:rw.pair_label+(rw.cond_label?" | "+rw.cond_label:"")+(rw.tree==="holdout"?" (holdout)":""),
+            value:rw.lift_upper.mean,color:col,
+            tip:"<b>"+rw.pair_label+"</b> ("+rw.tree+")<br>upper-tail lift at p=0."+canon+": "+rw.lift_upper.mean.toFixed(4)});
+        }
+      });
+      if(TD.length){
+        html+='<div class="chartwrap"><h4>Candidate-vs-frozen upper-tail lift profile at p=0.'+canon+' (tree-3 links carry ZERO incremental tilt)</h4>'+
+          '<p class="cap">Max fitted-pair |mean lift| '+(oc.max_fit_pair_abs_mean_lift!=null?Number(oc.max_fit_pair_abs_mean_lift).toFixed(4):"--")+
+          ' vs max holdout '+(oc.max_holdout_pair_abs_mean_lift!=null?Number(oc.max_holdout_pair_abs_mean_lift).toFixed(4):"--")+
+          ' (holdout/fit ratio '+(oc.holdout_to_fit_max_lift_ratio!=null?Number(oc.holdout_to_fit_max_lift_ratio).toFixed(3):"--")+' = P29 reference &mdash; overfit gate PASS).</p>'+
+          barChart(TD,{w:760,h:320,mB:110})+'</div>';
+      }
+    }
+    if(Object.keys(gd).length){
+      html+='<div class="subh">Residual gap to nested truth &mdash; tree-3 re-decomposition (UNCHANGED vs the 2-tree vine)</div>'+
+        '<table class="ptable p30gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share / move</th><th>Basis</th></tr></thead><tbody>'+
+        '<tr><td>Relief-surface error</td><td>'+fmtMoney(gd.relief_surface_part_abs)+'</td><td>'+
+          (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
+          '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
+        '<tr><td>Copula-form residual (tree-3)</td><td>'+fmtMoney(gd.copula_form_residual_abs)+'</td><td>'+
+          (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"% of gap":"--")+
+          '</td><td>UNCHANGED vs 2-tree vine '+fmtMoney(sr.tree3_copula_form_residual)+' (zero-strength tree 3)</td></tr>'+
+        '<tr><td>Residual vs earlier baselines</td><td>&mdash;</td><td>'+
+          (sr.residual_change_vs_grouped_t_rel!=null?((100*sr.residual_change_vs_grouped_t_rel).toFixed(2)+"% vs grouped-t"):"--")+
+          '</td><td>still -65.33% vs grouped-t / '+
+          (sr.residual_change_vs_skewt_rel!=null?((100*sr.residual_change_vs_skewt_rel).toFixed(2)+"%"):"--")+' vs skew-t (inherited from the 2-tree vine)</td></tr>'+
+        '<tr><td>Total gap (nested &minus; candidate)</td><td>'+fmtMoney(gd.gap_total_abs)+'</td><td>'+
+          (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"% of nested":"--")+
+          '</td><td>nested with-actions reference</td></tr>'+
+        '</tbody></table>';
+    }
+    html+='<div class="subh">Binding stop-rule and MR decision (Task 4)</div>'+
+      '<table class="ptable"><thead><tr><th>Decision</th><th>Value</th><th>Rationale</th></tr></thead><tbody>'+
+      '<tr><td>Stop-rule trigger (nested outside tree-3 CI)</td><td>'+(sr.stop_rule_trigger_met?"MET":"not met")+
+      '</td><td>nested '+fmtMoney(nestedRef)+' vs tree-3 95% CI ['+fmtMoney(ci.ci_lo)+', '+fmtMoney(ci.ci_hi)+'].</td></tr>'+
+      '<tr><td>Dependence-FORM escalation (MR-016)</td><td>'+(sr.dependence_form_escalation_ends?"ENDS":"continues")+
+      '</td><td>No further copula-structure candidates without owner sign-off.</td></tr>'+
+      '<tr><td>MR-016</td><td>'+(sr.mr016_decision==="KEEP_OPEN"?"KEEP OPEN":esc(sr.mr016_decision||"--"))+
+      '</td><td>Close criteria require inside-CI AND strict residual shrink; neither holds (residual unchanged, zero-strength tree 3).</td></tr>'+
+      '<tr><td>MR-017</td><td>'+(sr.mr017_decision==="KEEP_OPEN"?"KEEP OPEN":esc(sr.mr017_decision||"--"))+
+      '</td><td>Residual vine-FORM limitations remain tracked.</td></tr>'+
+      '<tr><td>Governed headline move</td><td>'+(sr.governed_headline_relative_move!=null?(100*sr.governed_headline_relative_move).toFixed(4)+"%":"--")+
+      '</td><td>Frozen single-df t boundary '+fmtMoney(sr.governed_headline_reference)+' recovered bit-identically; MR-010/MR-014 no refresh.</td></tr>'+
+      '<tr><td>Tree-3 / vine adoption</td><td>DISCLOSED only</td><td>NOT adopted into the governed headline without owner sign-off.</td></tr>'+
+      '</tbody></table>';
+    html+='<div class="subh">Phase 31 directive (owner decision package)</div>'+
+      '<p class="note">'+esc(sr.phase31_directive||rm.post_phase30_commitment||"")+'</p>';
+    html+=maGateGrid(t3.gates,"Task 2 pre-registered gates (tree-3 vine deepening, dual boundary)");
+    html+=maGateGrid(bo.gates,"Task 3 pre-registered gates (tree-3 margin bootstrap; C1_raw is the DISCLOSED stop-rule branch)");
+    html+=maGateGrid(td.gates,"Task 4 pre-registered gates (tail diagnostics + binding stop-rule / MR decision)");
+    html+='<p class="note">'+esc(p.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(rm.source||"")+' &middot; '+esc(t3.source||"")+' &middot; '+esc(bo.source||"")+' &middot; '+esc(td.source||"")+
+      ' &middot; ChangeRecords '+esc(t3.change_record_id||"")+' / '+esc(bo.change_record_id||"")+' / '+esc(td.change_record_id||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
   function renderPhase29(){
     var el=document.getElementById("phase29"); if(!el) return;
     if(!DATA){ el.innerHTML=dz(); return; }
@@ -4169,7 +4540,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

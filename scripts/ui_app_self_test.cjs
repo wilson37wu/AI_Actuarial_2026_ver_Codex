@@ -119,6 +119,18 @@ setTimeout(() => {
   const p29GapRows = document.querySelectorAll("#phase29 table.p29gaptable tbody tr").length;
   const p29BarRects = document.querySelectorAll("#phase29 svg.chart rect.bar").length;
 
+  // Phase 30 Task 5: open the Stop-Rule (P30) panel and count its elements.
+  const p30Tab = tabs.find(t => t.getAttribute("data-target") === "phase30");
+  if (p30Tab) p30Tab.click();
+  const p30Cards = document.querySelectorAll("#phase30 .card").length;
+  const p30GateCrits = document.querySelectorAll("#phase30 .crit").length;
+  const p30PairRows = document.querySelectorAll("#phase30 table.p30pairs tbody tr").length;
+  const p30EdgeRows = document.querySelectorAll("#phase30 table.p30edges tbody tr").length;
+  const p30GapRows = document.querySelectorAll("#phase30 table.p30gaptable tbody tr").length;
+  const p30BarRects = document.querySelectorAll("#phase30 svg.chart rect.bar").length;
+  const p30El = document.getElementById("phase30");
+  const p30Text = (p30El && p30El.textContent) || "";
+
   // UI Task 4: open the Governance & assumptions view and click through every sub-view.
   const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
   if (govTab) govTab.click();
@@ -286,6 +298,19 @@ setTimeout(() => {
     vineFrozenHeadlinePresent: /39,976/.test(bodyText),
     mr017Present: /MR-017/.test(bodyText),
     vineNotAdoptedPresent: /NOT adopted/.test(bodyText),
+    phase30TabPresent: !!p30Tab,
+    p30Cards, p30GateCrits, p30PairRows, p30EdgeRows, p30GapRows, p30BarRects,
+    stopRuleTabTextPresent: /Stop-Rule \(P30\)/.test(bodyText),
+    p30StopRuleAppliedPresent: /STOP-RULE/.test(p30Text) && /escalation ENDS/.test(p30Text),
+    p30Tree3ScrPresent: /42,459/.test(p30Text) && /41,752/.test(p30Text),
+    p30BootstrapCiPresent: /38,594/.test(p30Text) && /44,556/.test(p30Text),
+    p30NestedOutsidePresent: /OUTSIDE/.test(p30Text) && /46,639/.test(p30Text),
+    p30ZeroStrengthPresent: /zero-strength/.test(p30Text),
+    p30Mr016KeepOpenPresent: /MR-016/.test(p30Text) && /KEEP OPEN/.test(p30Text),
+    p30Mr017Present: /MR-017/.test(p30Text),
+    p30Phase31Present: /Phase 31/.test(p30Text) && /OWNER DECISION PACKAGE/i.test(p30Text),
+    p30GovernedHeadlinePresent: /39,976/.test(p30Text) && /0\.0000%/.test(p30Text),
+    p30OverfitRatioPresent: /0\.049/.test(p30Text),
     currencyMetaStamped: !!(uiMeta.currency && ("currency_source" in uiMeta) && ("output_label" in uiMeta)),
     fmtMoneyDefined: /function fmtMoney\(/.test(html),
     moneySymbolRendered: moneyRe ? moneyRe.test(bodyText) : true,
@@ -441,6 +466,24 @@ setTimeout(() => {
     checks.vineFrozenHeadlinePresent &&
     checks.mr017Present &&
     checks.vineNotAdoptedPresent &&
+    checks.phase30TabPresent &&
+    checks.p30Cards >= 10 &&
+    checks.p30GateCrits >= 22 &&
+    checks.p30PairRows === 18 &&
+    checks.p30EdgeRows === 4 &&
+    checks.p30GapRows === 4 &&
+    checks.p30BarRects >= 6 &&
+    checks.stopRuleTabTextPresent &&
+    checks.p30StopRuleAppliedPresent &&
+    checks.p30Tree3ScrPresent &&
+    checks.p30BootstrapCiPresent &&
+    checks.p30NestedOutsidePresent &&
+    checks.p30ZeroStrengthPresent &&
+    checks.p30Mr016KeepOpenPresent &&
+    checks.p30Mr017Present &&
+    checks.p30Phase31Present &&
+    checks.p30GovernedHeadlinePresent &&
+    checks.p30OverfitRatioPresent &&
     checks.currencyMetaStamped &&
     checks.fmtMoneyDefined &&
     checks.moneySymbolRendered &&

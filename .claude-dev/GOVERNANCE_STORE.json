@@ -2318,6 +2318,29 @@
       "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
       "digest": "d0ddcafb6506d36dba3b520be63551239065fae8871fe087586db7fa5711288d",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "f26bd1a6c2b7418380124eae75f1faf9",
+      "timestamp": "2026-06-11T09:18:08.077837+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase30",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 30 Task 5 offline-UI propagation; PHASE 30 COMPLETE; stop-rule applied, Phase 31 = owner decision package",
+      "details": {
+        "record_id": "3ea0836fc67f405dbef26e5f954e680d",
+        "ui_contract": "1.13.0",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+      "digest": "ecc3141a1bf16a8501d2f0ad16bd5bec3987d0512ae1bf7410c1139800f3b5bf",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -7073,6 +7096,78 @@
           "actor": "AutomatedModelDev_Phase30",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: binding stop-rule decision - dependence-FORM escalation under MR-016 ends; Phase 31 owner decision package; governed headline unchanged."
+        }
+      ],
+      "phase": "Phase 30: Post-Vine Dependence Roadmap Decision"
+    },
+    {
+      "record_id": "3ea0836fc67f405dbef26e5f954e680d",
+      "created_at": "2026-06-11T09:18:08.077735+00:00",
+      "title": "Phase 30 Task 5 - offline-UI propagation of the tree-3 vine candidate and the binding stop-rule decision view",
+      "description": "Phase 30 Task 5 propagated the post-vine dependence roadmap decision and the BINDING STOP-RULE outcome to the zero-install offline UI. scripts/build_ui_data.py (contract bumped ADDITIVELY to v1.13.0) now surfaces a first-class Stop-Rule (P30) panel: (1) the Task 1 roadmap decision (option A tree-3 vine deepening selected design-note-first; binding stop-rule pre-registered; Phase 31 owner decision package committed regardless of outcome); (2) the Task 2 tree-3 candidate on the FROZEN P29 2-tree fit with DUAL boundary recovery bit-identical (frozen-t 39,975.7 AND 2-tree vine 42,458.6, dev 0.0) and the data-support DISCLOSURE that all four pre-registered third-tree pairs are zero-strength (joint-conditional fit support n_fit {3,3,3,1} of 112 rows) so the candidate is BIT-IDENTICAL to the 2-tree vine; (3) the Task 3 margin bootstrap (200x20k) - tree-3 SCR mean 41,751.9, 95% CI [38,593.7, 44,556.4], SE 3.81% <= 5%, nested 46,638.9 OUTSIDE the CI, per-replicate tree-3 minus 2-tree vine EXACTLY ZERO in all 200 replicates; (4) the Task 4 pair-level tail grid (6 first-tree + 5 second-tree + 4 third-tree + 3 holdout pairs with 95% CIs), the overfit gate (holdout/fit ratio 0.049 = P29 reference, PASS), and the BINDING STOP-RULE APPLIED: MR-016 and MR-017 KEEP OPEN, dependence-FORM escalation under MR-016 ENDS, Phase 31 = owner decision package (option C); governed headline (frozen single-df t 39,975.7) recovered bit-identically (move 0.0000% -> MR-010/MR-014 no refresh). Additive capital read-outs tree3_vine_scr_component_point and tree3_vine_scr_component_bootstrap_mean added. The UI performs no calculation; it consumes only already-produced model output JSONs. The tree-3 / vine candidates remain DISCLOSED, not adopted, pending owner sign-off. PHASE 30 COMPLETE (Tasks 1-5).",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "Solvency II Art. 234 (dependence justification - frozen copula/margins; tree-3 vine DISCLOSED, not adopted)",
+        "Aas, Czado, Frigessi & Bakken (2009) pair-copula constructions",
+        "IFoA Modelling Practice Note s4 (model risk register / stop-rule)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.12.0 (vine tail panel + currency wire-through; no tree-3 / stop-rule panel, roadmap decision or Phase 31 directive)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.13.0 (additive)",
+        "headline_readouts": {
+          "tree3_point": 42458.5527095696,
+          "tree3_bootstrap_mean": 41751.92733111887,
+          "tree3_bootstrap_ci": [
+            38593.73891844572,
+            44556.44856853384
+          ],
+          "tree3_se_frac": 0.03806338327682744,
+          "vine2_point": 42458.5527095696,
+          "frozen_point": 39975.654628199336,
+          "grouped_point": 35604.39191025864,
+          "nested_reference": 46638.9,
+          "copula_form_residual": 3637.298487404965,
+          "overfit_ratio": 0.04880165539716368,
+          "stop_rule_applied": true,
+          "mr016_decision": "KEEP_OPEN",
+          "mr017_decision": "KEEP_OPEN",
+          "governed_headline_move": 0.0,
+          "phase31_directive": "Phase 31 = OWNER DECISION PACKAGE (design-note option C): consolidated read-out of the governed frozen-t headline 39,975.7, the disclosed 2-tree vine / tree-3 candidate 42,458.6, the nested reference 46,638.9 and the quantified residual 3,637.3, for an owner adoption / escalation / accept decision. Option B (nested-aware dependence calibration) remains available ONLY as an owner-approved escalation funding a second independent nested run."
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 172
+      },
+      "impact_assessment": "Display-layer only: the UI bundler reads validation-report JSONs and performs no model calculation, so no model output changes. Additive contract bump keeps existing consumers working. The governed headline remains the frozen single-df t component basis; the tree-3 / 2-tree vine candidates are surfaced as DISCLOSED alternative read-outs only, pending owner sign-off. Completes the Phase 30 per-task offline-UI propagation requirement; PHASE 30 COMPLETE (Tasks 1-5); next phase is the owner decision package (option C).",
+      "quantitative_impact": "UI now displays: tree-3 candidate SCR 42459 point / 41752 bootstrap mean, 95% CI [38594, 44556], SE 3.81%; 2-tree vine 42459 (tree-3 minus 2-tree EXACTLY ZERO); frozen-t 39976 (governed); grouped-t 35604; nested 46639 OUTSIDE the CI; copula-form residual 3637 UNCHANGED; overfit ratio 0.049; STOP-RULE applied True; MR-016 KEEP_OPEN / MR-017 KEEP_OPEN; governed headline move 0.0000%. jsdom self-test ok with 0 network calls and 0 JS errors over 172 checks.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase30",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T09:18:08.077801+00:00",
+          "actor": "AutomatedModelDev_Phase30",
+          "status": "PEER_REVIEW",
+          "comments": "UI propagation verified by the contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only. The zero-strength tree-3 finding, the nested-OUTSIDE-CI disclosure, the BINDING STOP-RULE decision (dependence-FORM escalation ENDS) and the Phase 31 owner-decision-package directive are carried into the display verbatim; copula and margins remain FROZEN per SII Art. 234 and neither vine candidate is adopted into the governed headline."
+        },
+        {
+          "timestamp": "2026-06-11T09:18:08.077813+00:00",
+          "actor": "AutomatedModelDev_Phase30",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. PHASE 30 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review. Phase 31 is the owner decision package: adopt the disclosed vine read-out vs accept the residual vs fund a second independent nested run (option B), per the pre-registered stop-rule."
         }
       ],
       "phase": "Phase 30: Post-Vine Dependence Roadmap Decision"

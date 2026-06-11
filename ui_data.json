@@ -1,9 +1,9 @@
 {
-  "contract_version": "1.12.0",
+  "contract_version": "1.13.0",
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-11T07:17:09.453599+00:00",
+    "generated_utc": "2026-06-11T09:15:30.699673+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -36,7 +36,7 @@
     "risks_open": 1,
     "risks_mitigated": 10,
     "production_status": "NOT CLEARED FOR PRODUCTION",
-    "contract_artifacts": 86,
+    "contract_artifacts": 87,
     "calibrated_drivers": 11
   },
   "inventory": [
@@ -46,7 +46,7 @@
       "category": "independent_review",
       "bytes": 3563,
       "sha256": "508174a1c195524fb29921dad324d790642b21757af2774fa59f4837a9f802b4",
-      "mtime_utc": "2026-06-11T07:08:26.784894Z",
+      "mtime_utc": "2026-06-11T09:07:02.835000Z",
       "headline": ""
     },
     {
@@ -55,7 +55,7 @@
       "category": "ia_validation",
       "bytes": 10020,
       "sha256": "59737f5bbccca3d5a2607ac0b3da73c361868410a0fd2e5a77e62767ef42f155",
-      "mtime_utc": "2026-06-11T07:08:26.784894Z",
+      "mtime_utc": "2026-06-11T09:07:02.835000Z",
       "headline": ""
     },
     {
@@ -64,7 +64,7 @@
       "category": "backtest",
       "bytes": 2889,
       "sha256": "d1c14118e4e79202ccd1d49fcc91c271169527b883781f59c1bb76993cd89dbb",
-      "mtime_utc": "2026-06-11T07:08:26.784894Z",
+      "mtime_utc": "2026-06-11T09:07:02.837000Z",
       "headline": ""
     },
     {
@@ -73,7 +73,7 @@
       "category": "ia_validation",
       "bytes": 12560,
       "sha256": "f3ed3fce0b1eaf03a5e318f3c7bfdb127627d8977fff708f02f8bfe7fea14b3e",
-      "mtime_utc": "2026-06-11T07:08:26.785894Z",
+      "mtime_utc": "2026-06-11T09:07:02.840000Z",
       "headline": ""
     },
     {
@@ -82,7 +82,7 @@
       "category": "capital_evidence",
       "bytes": 4954,
       "sha256": "8cca9214e12db0b018f5c97808098c0e1f05989839173e74491d68000b100efc",
-      "mtime_utc": "2026-06-11T07:08:26.785894Z",
+      "mtime_utc": "2026-06-11T09:07:02.840000Z",
       "headline": ""
     },
     {
@@ -91,7 +91,7 @@
       "category": "proxy_validation",
       "bytes": 3411,
       "sha256": "4fbe78d9cf3c907bd04632ed720030f8643f404118192e1a63e9c0980db51188",
-      "mtime_utc": "2026-06-11T07:08:26.785894Z",
+      "mtime_utc": "2026-06-11T09:07:02.841000Z",
       "headline": "PASS \u2014 selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"
     },
     {
@@ -100,7 +100,7 @@
       "category": "risk_aggregation",
       "bytes": 2385,
       "sha256": "4fb8421f8be265d29a2f5013c931d5f7b02099eec0b4c0a12e8f0e5d143d5d2a",
-      "mtime_utc": "2026-06-11T07:08:26.786894Z",
+      "mtime_utc": "2026-06-11T09:07:02.841000Z",
       "headline": "PASS - correlated aggregation reconciles to nested diversified capital"
     },
     {
@@ -109,7 +109,7 @@
       "category": "tail_diagnostics",
       "bytes": 4065,
       "sha256": "e2d8665353732faabb6d5ce5f9c8344c95e75dba64a261df2d8d814e6d43714d",
-      "mtime_utc": "2026-06-11T07:08:26.786894Z",
+      "mtime_utc": "2026-06-11T09:07:02.845000Z",
       "headline": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -118,7 +118,7 @@
       "category": "governance",
       "bytes": 2946,
       "sha256": "57aa0ca3af79d41580a04e72729c0e30714b6c86eda971d856e3fc4dec4146f7",
-      "mtime_utc": "2026-06-11T07:08:26.787894Z",
+      "mtime_utc": "2026-06-11T09:07:02.845000Z",
       "headline": ""
     },
     {
@@ -127,7 +127,7 @@
       "category": "loss_distribution",
       "bytes": 12457,
       "sha256": "863fd04d40b4684ce6be5a5bdc98be8afbea06f577c61aafb651e542eb73fb95",
-      "mtime_utc": "2026-06-11T07:08:26.787894Z",
+      "mtime_utc": "2026-06-11T09:07:02.847000Z",
       "headline": ""
     },
     {
@@ -136,7 +136,7 @@
       "category": "proxy_validation",
       "bytes": 4261,
       "sha256": "e1bb0aecd491f8ba012dffa91d77eb562b97909c6de98d30db20fd5fc7a19953",
-      "mtime_utc": "2026-06-11T07:08:26.787894Z",
+      "mtime_utc": "2026-06-11T09:07:02.848000Z",
       "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)"
     },
     {
@@ -145,7 +145,7 @@
       "category": "risk_aggregation",
       "bytes": 3616,
       "sha256": "d730c2f93172f766afd27e85d6a6a7b1acf49a85a52cbe149ab45ba5ccfc9de6",
-      "mtime_utc": "2026-06-11T07:08:26.788894Z",
+      "mtime_utc": "2026-06-11T09:07:02.848000Z",
       "headline": "PARTIAL - three-driver aggregation evidence generated with review items"
     },
     {
@@ -154,7 +154,7 @@
       "category": "tail_diagnostics",
       "bytes": 4848,
       "sha256": "0597ab9b22ff571fa06020359ede2da792271b1920519a07c197fc82f7e70acd",
-      "mtime_utc": "2026-06-11T07:08:26.788894Z",
+      "mtime_utc": "2026-06-11T09:07:02.848000Z",
       "headline": "PASS - three-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -163,7 +163,7 @@
       "category": "governance",
       "bytes": 3698,
       "sha256": "a0465ceb9af67ac5313dfda30d009ae7ab8a5cfb26140ee0d1953370c846c917",
-      "mtime_utc": "2026-06-11T07:08:26.788894Z",
+      "mtime_utc": "2026-06-11T09:07:02.851000Z",
       "headline": ""
     },
     {
@@ -172,7 +172,7 @@
       "category": "calibration",
       "bytes": 2318,
       "sha256": "fb72bedf5afa3390ad029ec2a85ac8e7b9ffa1d6eb6f459400494dc06669f6d3",
-      "mtime_utc": "2026-06-11T07:08:26.788894Z",
+      "mtime_utc": "2026-06-11T09:07:02.851000Z",
       "headline": ""
     },
     {
@@ -181,7 +181,7 @@
       "category": "risk_aggregation",
       "bytes": 4674,
       "sha256": "12cb7a6749a5a20f8c1190ab484588f4247872b8a5916a3b19b84d0e57ecf360",
-      "mtime_utc": "2026-06-11T07:08:26.788894Z",
+      "mtime_utc": "2026-06-11T09:07:02.852000Z",
       "headline": "PASS - copula aggregation (selected: gaussian) reconciles to nested capital within 1.4% (best 1.4%) vs var-covar 34.5%; MR-010 mitigated"
     },
     {
@@ -190,7 +190,7 @@
       "category": "governance",
       "bytes": 1425,
       "sha256": "27a51932177d00b6cee815cfb6ac9528a6bff5dac951044f59c9b5fdaf5ab54a",
-      "mtime_utc": "2026-06-11T07:08:26.788894Z",
+      "mtime_utc": "2026-06-11T09:07:02.855000Z",
       "headline": ""
     },
     {
@@ -199,7 +199,7 @@
       "category": "proxy_validation",
       "bytes": 4336,
       "sha256": "8e37e976170f3d125e8adb0010bc5b1c2cde27daafd30fac3b097335e2039bb7",
-      "mtime_utc": "2026-06-11T07:08:26.788894Z",
+      "mtime_utc": "2026-06-11T09:07:02.857000Z",
       "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9638, VaR rel err=2.33%, leakage-free, overfit gap=0.0057)"
     },
     {
@@ -208,7 +208,7 @@
       "category": "risk_aggregation",
       "bytes": 10681,
       "sha256": "0caf2126cb3ce2809b191ba7bb19ebabf5f7b9d2681be8b7c3ec44ca6b43e933",
-      "mtime_utc": "2026-06-11T07:08:26.788894Z",
+      "mtime_utc": "2026-06-11T09:07:02.858000Z",
       "headline": "PASS - four-driver copula aggregation (selected: gaussian) reconciles to nested capital within 9.4% vs var-covar 47.4%; MR-010 four-driver mitigation confirmed"
     },
     {
@@ -217,7 +217,7 @@
       "category": "governance",
       "bytes": 1908,
       "sha256": "22b30c94c127fc46450a8f199cd2e98c7962e015879806e7b6b643a0f76eecb8",
-      "mtime_utc": "2026-06-11T07:08:26.789894Z",
+      "mtime_utc": "2026-06-11T09:07:02.860000Z",
       "headline": ""
     },
     {
@@ -226,7 +226,7 @@
       "category": "tail_diagnostics",
       "bytes": 5414,
       "sha256": "070ad3d1f7dc4f0d8b9129c3d57d66fa605fd6851e51a9cff5b32600602f2ce1",
-      "mtime_utc": "2026-06-11T07:08:26.789894Z",
+      "mtime_utc": "2026-06-11T09:07:02.860000Z",
       "headline": "PASS - four-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -235,7 +235,7 @@
       "category": "calibration",
       "bytes": 2525,
       "sha256": "76301095fa676fd0258dacfc5c5c190badbc4fc265391d1e23fe3a8e1806239f",
-      "mtime_utc": "2026-06-11T07:08:26.789894Z",
+      "mtime_utc": "2026-06-11T09:07:02.861000Z",
       "headline": "gate_glapse: PASS"
     },
     {
@@ -244,7 +244,7 @@
       "category": "proxy_validation",
       "bytes": 4005,
       "sha256": "a81154ba3ed62036702497128c15f65b504d21083ae88ad6a5629bc4c03e5233",
-      "mtime_utc": "2026-06-11T07:08:26.789894Z",
+      "mtime_utc": "2026-06-11T09:07:02.862000Z",
       "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
     },
     {
@@ -253,7 +253,7 @@
       "category": "risk_aggregation",
       "bytes": 12824,
       "sha256": "b398fd41fb010059db7d771fc1594d2bdbedd27e5215f40c806b38e7a735efb0",
-      "mtime_utc": "2026-06-11T07:08:26.789894Z",
+      "mtime_utc": "2026-06-11T09:07:02.864000Z",
       "headline": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
     },
     {
@@ -262,7 +262,7 @@
       "category": "governance",
       "bytes": 2166,
       "sha256": "b66145bf609b485ca7312ce4f0f3c966e8a1a9b2a4caf16dd65f64ae2b962fc2",
-      "mtime_utc": "2026-06-11T07:08:26.789894Z",
+      "mtime_utc": "2026-06-11T09:07:02.864000Z",
       "headline": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
     },
     {
@@ -271,7 +271,7 @@
       "category": "tail_diagnostics",
       "bytes": 5770,
       "sha256": "91b284b7861fc22a0b6cbfbb3f35ebe07cbf5375a8dd2b0d48b84f0c7baa0e14",
-      "mtime_utc": "2026-06-11T07:08:26.789894Z",
+      "mtime_utc": "2026-06-11T09:07:02.864000Z",
       "headline": "PASS - five-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -280,7 +280,7 @@
       "category": "other",
       "bytes": 5066,
       "sha256": "f84531c134068c6135adeffad6da0fe51269b9cb4648fdc5f7fa7893d5bd33cd",
-      "mtime_utc": "2026-06-11T07:08:26.789894Z",
+      "mtime_utc": "2026-06-11T09:07:02.865000Z",
       "headline": "gate: PASS"
     },
     {
@@ -289,7 +289,7 @@
       "category": "other",
       "bytes": 19031,
       "sha256": "d50b6f01f0219d9eca9fb9b2defa8523d556972e0554c72620a67c1bfdf9ef2b",
-      "mtime_utc": "2026-06-11T07:08:26.790894Z",
+      "mtime_utc": "2026-06-11T09:07:02.866000Z",
       "headline": "gate: PASS"
     },
     {
@@ -298,7 +298,7 @@
       "category": "other",
       "bytes": 8264,
       "sha256": "40943a84a25f2911cee32f4b43ee0b69e14a0605eb8313c3a5c10616de0d59de",
-      "mtime_utc": "2026-06-11T07:08:26.790894Z",
+      "mtime_utc": "2026-06-11T09:07:02.868000Z",
       "headline": "gate: PASS"
     },
     {
@@ -307,7 +307,7 @@
       "category": "risk_aggregation",
       "bytes": 30876,
       "sha256": "9f1416c8c88b5ca7386e3484c9b03bce412b67478e4e909d3fbad982fec15c6c",
-      "mtime_utc": "2026-06-11T07:08:26.790894Z",
+      "mtime_utc": "2026-06-11T09:07:02.870000Z",
       "headline": ""
     },
     {
@@ -316,7 +316,7 @@
       "category": "tail_diagnostics",
       "bytes": 1309,
       "sha256": "a6aa3debdbfaf84dbb5aa1862ec0fb0dc4d2a8ce01c5122f6661d7dbf3263b87",
-      "mtime_utc": "2026-06-11T07:08:26.790894Z",
+      "mtime_utc": "2026-06-11T09:07:02.870000Z",
       "headline": ""
     },
     {
@@ -325,7 +325,7 @@
       "category": "other",
       "bytes": 9138,
       "sha256": "16bce5e2b90cb8a19819143055614581bd049566995361281d45c580915343f7",
-      "mtime_utc": "2026-06-11T07:08:26.790894Z",
+      "mtime_utc": "2026-06-11T09:07:02.872000Z",
       "headline": ""
     },
     {
@@ -334,7 +334,7 @@
       "category": "other",
       "bytes": 13135,
       "sha256": "7fe3cab55cf7fe89e2392b8719736fba00fc9c171f889e4e81a072d554d16ef8",
-      "mtime_utc": "2026-06-11T07:08:26.790894Z",
+      "mtime_utc": "2026-06-11T09:07:02.872000Z",
       "headline": ""
     },
     {
@@ -343,7 +343,7 @@
       "category": "calibration",
       "bytes": 2655,
       "sha256": "05dc5f9253a49f7e747a724cf1aa01325e1c425e656de77cfc45acbbfd351408",
-      "mtime_utc": "2026-06-11T07:08:26.790894Z",
+      "mtime_utc": "2026-06-11T09:07:02.873000Z",
       "headline": ""
     },
     {
@@ -352,7 +352,7 @@
       "category": "risk_aggregation",
       "bytes": 22693,
       "sha256": "f62c12f74b3d07a6ff4e75466620bed322a0867500433f3d77876a681848c79b",
-      "mtime_utc": "2026-06-11T07:08:26.791893Z",
+      "mtime_utc": "2026-06-11T09:07:02.874000Z",
       "headline": ""
     },
     {
@@ -361,7 +361,7 @@
       "category": "other",
       "bytes": 1983,
       "sha256": "47d87418a722ad1cc6f21382e5db8a004103473bf619db3007d5fd40fd8826fc",
-      "mtime_utc": "2026-06-11T07:08:26.791893Z",
+      "mtime_utc": "2026-06-11T09:07:02.874000Z",
       "headline": "PASS"
     },
     {
@@ -370,7 +370,7 @@
       "category": "other",
       "bytes": 17786,
       "sha256": "c635a3c57126c0ed80ef2877b87f5fb3c11c8832f659d86900451b5f492e9714",
-      "mtime_utc": "2026-06-11T07:08:26.791893Z",
+      "mtime_utc": "2026-06-11T09:07:02.877000Z",
       "headline": ""
     },
     {
@@ -379,7 +379,7 @@
       "category": "proxy_validation",
       "bytes": 13221,
       "sha256": "b775216d97b7c5e81340878cbe2f85e6d32d83cfab41ea2643a804d72d9b5685",
-      "mtime_utc": "2026-06-11T07:08:26.791893Z",
+      "mtime_utc": "2026-06-11T09:07:02.877000Z",
       "headline": ""
     },
     {
@@ -388,7 +388,7 @@
       "category": "other",
       "bytes": 7208,
       "sha256": "b109cff65588311eb8fb44ebd08a5bf7a7b549f916519f1faa037fd38bfdd990",
-      "mtime_utc": "2026-06-11T07:08:26.792894Z",
+      "mtime_utc": "2026-06-11T09:07:02.877000Z",
       "headline": ""
     },
     {
@@ -397,7 +397,7 @@
       "category": "risk_aggregation",
       "bytes": 25306,
       "sha256": "72be26d7b8b96f00ea8d85573e3c1ab8b58363d318e54f39868a59562a0bc302",
-      "mtime_utc": "2026-06-11T07:08:26.792894Z",
+      "mtime_utc": "2026-06-11T09:07:02.878000Z",
       "headline": ""
     },
     {
@@ -406,7 +406,7 @@
       "category": "other",
       "bytes": 2158,
       "sha256": "ee832a9364d2220e20dd1b390cf91b5f417a5c8482e0a014dd50dadcda39ef03",
-      "mtime_utc": "2026-06-11T07:08:26.792894Z",
+      "mtime_utc": "2026-06-11T09:07:02.880000Z",
       "headline": "PASS"
     },
     {
@@ -415,7 +415,7 @@
       "category": "other",
       "bytes": 6923,
       "sha256": "896ca5ab2782ce5cf1331a681b948a5f72d3e0fd1694e457f49bc570608fcccb",
-      "mtime_utc": "2026-06-11T07:08:26.792894Z",
+      "mtime_utc": "2026-06-11T09:07:02.880000Z",
       "headline": "PASS"
     },
     {
@@ -424,7 +424,7 @@
       "category": "risk_aggregation",
       "bytes": 10099,
       "sha256": "e4ebe2e829910a4c52eeeab8bb58b8e275511a37e33ac1a101617ee0c3e35f09",
-      "mtime_utc": "2026-06-11T07:08:26.792894Z",
+      "mtime_utc": "2026-06-11T09:07:02.881000Z",
       "headline": ""
     },
     {
@@ -433,7 +433,7 @@
       "category": "other",
       "bytes": 7440,
       "sha256": "d8b0f03a93ce4af2a5df5ed4292e01be93164bf043d7d882b66866a0925c074e",
-      "mtime_utc": "2026-06-11T07:08:26.793894Z",
+      "mtime_utc": "2026-06-11T09:07:02.881000Z",
       "headline": "PASS"
     },
     {
@@ -442,7 +442,7 @@
       "category": "risk_aggregation",
       "bytes": 9971,
       "sha256": "b28edd5222ace4103d47ec439f1530e1efdd8a48a92d27bf72e5a5bba42ed3d0",
-      "mtime_utc": "2026-06-11T07:08:26.793894Z",
+      "mtime_utc": "2026-06-11T09:07:02.881000Z",
       "headline": "PASS"
     },
     {
@@ -451,7 +451,7 @@
       "category": "other",
       "bytes": 2325,
       "sha256": "57de1ba33ed361aeb1228ebd9aed64b27de8c4b801f4d738c21785aaa9429526",
-      "mtime_utc": "2026-06-11T07:08:26.793894Z",
+      "mtime_utc": "2026-06-11T09:07:02.881999Z",
       "headline": "PASS"
     },
     {
@@ -460,7 +460,7 @@
       "category": "other",
       "bytes": 9421,
       "sha256": "9f92b1956b79378a729f2026a28a48da7143a27dccca4fdba23c80cf2623bc97",
-      "mtime_utc": "2026-06-11T07:08:26.793894Z",
+      "mtime_utc": "2026-06-11T09:07:02.885000Z",
       "headline": "PASS"
     },
     {
@@ -469,7 +469,7 @@
       "category": "risk_aggregation",
       "bytes": 4211,
       "sha256": "8a89c66f3d97e12aeac4c07474deed9aab213bd4002e0a365233ba43cb7b770a",
-      "mtime_utc": "2026-06-11T07:08:26.793894Z",
+      "mtime_utc": "2026-06-11T09:07:02.885000Z",
       "headline": "PASS"
     },
     {
@@ -478,7 +478,7 @@
       "category": "other",
       "bytes": 9338,
       "sha256": "f5c798831abc4430ec9c723a5ac0d56f0e7b82b03631825bcd9774c50e3ea286",
-      "mtime_utc": "2026-06-11T07:08:26.794894Z",
+      "mtime_utc": "2026-06-11T09:07:02.888000Z",
       "headline": "PASS"
     },
     {
@@ -487,7 +487,7 @@
       "category": "other",
       "bytes": 6870,
       "sha256": "e1c2f3df99e38f61a4f0b60d034dee77f405e29f3bb8185b0aa31ab0b2a7c603",
-      "mtime_utc": "2026-06-11T07:08:26.794894Z",
+      "mtime_utc": "2026-06-11T09:07:02.889000Z",
       "headline": "PASS"
     },
     {
@@ -496,7 +496,7 @@
       "category": "tail_diagnostics",
       "bytes": 14513,
       "sha256": "4fb05e3324f6867ed21049db9cebf5721e45bdf97f68d5c388224188a19b18d4",
-      "mtime_utc": "2026-06-11T07:08:26.794894Z",
+      "mtime_utc": "2026-06-11T09:07:02.889000Z",
       "headline": "PASS"
     },
     {
@@ -505,7 +505,7 @@
       "category": "other",
       "bytes": 2869,
       "sha256": "d05a79497b5824a2b3f8e2a2bbcdbf7f9f112a2b5b3320f2f6f542a07d0f6209",
-      "mtime_utc": "2026-06-11T07:08:26.794894Z",
+      "mtime_utc": "2026-06-11T09:07:02.889000Z",
       "headline": "PASS"
     },
     {
@@ -514,7 +514,7 @@
       "category": "other",
       "bytes": 13044,
       "sha256": "d507cb15944cbc4b2ab20a83a1f2eb9c6f25baf064b89753fa25105268568dbe",
-      "mtime_utc": "2026-06-11T07:08:26.795894Z",
+      "mtime_utc": "2026-06-11T09:07:02.891999Z",
       "headline": "PASS"
     },
     {
@@ -523,7 +523,7 @@
       "category": "other",
       "bytes": 7901,
       "sha256": "867470aeb5ed6ed5b9cad07b602cf809e5a71475969469e0eb5046161f581929",
-      "mtime_utc": "2026-06-11T07:08:26.795894Z",
+      "mtime_utc": "2026-06-11T09:07:02.893000Z",
       "headline": "PASS"
     },
     {
@@ -532,7 +532,7 @@
       "category": "other",
       "bytes": 10232,
       "sha256": "ec67b248aadfa61e939d36626af594fb4b41a175f435e0ff026d027d30427b0e",
-      "mtime_utc": "2026-06-11T07:08:26.795894Z",
+      "mtime_utc": "2026-06-11T09:07:02.895000Z",
       "headline": "PASS"
     },
     {
@@ -541,7 +541,7 @@
       "category": "tail_diagnostics",
       "bytes": 18339,
       "sha256": "c6a97f5ee23e999aa10036c3257a6726db1a9b3102cfb8891a798bbbb0f8a508",
-      "mtime_utc": "2026-06-11T07:08:26.795894Z",
+      "mtime_utc": "2026-06-11T09:07:02.896000Z",
       "headline": "PASS"
     },
     {
@@ -550,7 +550,7 @@
       "category": "other",
       "bytes": 3483,
       "sha256": "baf9c9528b5e4002730410087939f2058067dda83e43e1f22bcbeb92a9f7952d",
-      "mtime_utc": "2026-06-11T07:08:26.795894Z",
+      "mtime_utc": "2026-06-11T09:07:02.897000Z",
       "headline": "PASS"
     },
     {
@@ -559,7 +559,7 @@
       "category": "other",
       "bytes": 13972,
       "sha256": "6d05f42494c8dcab29fb729ff5d2474e20a7ef922acdf06a402b9b18eaec8b15",
-      "mtime_utc": "2026-06-11T07:08:26.795894Z",
+      "mtime_utc": "2026-06-11T09:07:02.898000Z",
       "headline": "PASS"
     },
     {
@@ -568,7 +568,7 @@
       "category": "other",
       "bytes": 5891,
       "sha256": "4fcb9e7ed9addb58ddafee24b2febd2ea9d8ffb3b0c7456f7f814421d7e18f10",
-      "mtime_utc": "2026-06-11T07:08:26.796894Z",
+      "mtime_utc": "2026-06-11T09:07:02.900000Z",
       "headline": "PASS"
     },
     {
@@ -577,7 +577,7 @@
       "category": "other",
       "bytes": 6395,
       "sha256": "e8d9b9c2cd6d7240755f6546bebbddb804ca1bc8f0eacc0a33a419cab85ef23c",
-      "mtime_utc": "2026-06-11T07:08:26.796894Z",
+      "mtime_utc": "2026-06-11T09:07:02.900000Z",
       "headline": "PASS"
     },
     {
@@ -586,7 +586,7 @@
       "category": "other",
       "bytes": 6745,
       "sha256": "fe9d356e632ff069303b8d04e203d4cebcbf879d4f6ab50dd881c6caf3e0b8aa",
-      "mtime_utc": "2026-06-11T07:08:26.796894Z",
+      "mtime_utc": "2026-06-11T09:07:02.903000Z",
       "headline": "PASS"
     },
     {
@@ -595,7 +595,7 @@
       "category": "other",
       "bytes": 3625,
       "sha256": "44e62367234d9f3154c8f37dad315ba63c853e5500ac0856b10fb8a8af1d19d0",
-      "mtime_utc": "2026-06-11T07:08:26.796894Z",
+      "mtime_utc": "2026-06-11T09:07:02.903000Z",
       "headline": "PASS"
     },
     {
@@ -604,7 +604,7 @@
       "category": "other",
       "bytes": 15720,
       "sha256": "7666ef1d58cecde77d8ef3ee3b8ced0a1f01a0ef61fee82853fb535408ade2eb",
-      "mtime_utc": "2026-06-11T07:08:26.797894Z",
+      "mtime_utc": "2026-06-11T09:07:02.906000Z",
       "headline": "PASS"
     },
     {
@@ -613,7 +613,7 @@
       "category": "other",
       "bytes": 8021,
       "sha256": "064aad640b12283140a6db897563949d090b6308d01701f1c660dec7c52d0444",
-      "mtime_utc": "2026-06-11T07:08:26.797894Z",
+      "mtime_utc": "2026-06-11T09:07:02.907000Z",
       "headline": "PASS"
     },
     {
@@ -622,7 +622,7 @@
       "category": "other",
       "bytes": 7558,
       "sha256": "1d328228c2a9442e9254f517d1b2379440ba2aede9c7f11989c8939162e36307",
-      "mtime_utc": "2026-06-11T07:08:26.797894Z",
+      "mtime_utc": "2026-06-11T09:07:02.908000Z",
       "headline": "PASS"
     },
     {
@@ -631,7 +631,7 @@
       "category": "tail_diagnostics",
       "bytes": 13223,
       "sha256": "f78ff0c8165b373414b51945eddfd089629be8c11f6eb4dabef7effc79b34c63",
-      "mtime_utc": "2026-06-11T07:08:26.797894Z",
+      "mtime_utc": "2026-06-11T09:07:02.908000Z",
       "headline": "PASS"
     },
     {
@@ -640,7 +640,7 @@
       "category": "other",
       "bytes": 18068,
       "sha256": "8a7ed26422fefbc82bb79a5174080161c074372e15de6b99c5d0cf3cd37c7fa3",
-      "mtime_utc": "2026-06-11T07:08:26.797894Z",
+      "mtime_utc": "2026-06-11T09:07:02.908000Z",
       "headline": "PASS"
     },
     {
@@ -649,7 +649,7 @@
       "category": "other",
       "bytes": 10881,
       "sha256": "1dd636db2cf5ab5aad36bbb33531e5d40354d85d0c5b1444dcd8da1c007b886a",
-      "mtime_utc": "2026-06-11T07:08:26.797894Z",
+      "mtime_utc": "2026-06-11T09:07:02.909000Z",
       "headline": "PASS"
     },
     {
@@ -658,7 +658,7 @@
       "category": "other",
       "bytes": 9486,
       "sha256": "ea8c390712e3dfc36882f39b58a86946924302a4c505100c040c39c042453a6f",
-      "mtime_utc": "2026-06-11T07:08:26.798894Z",
+      "mtime_utc": "2026-06-11T09:07:02.910000Z",
       "headline": "PASS"
     },
     {
@@ -667,7 +667,7 @@
       "category": "tail_diagnostics",
       "bytes": 32931,
       "sha256": "6b8a6ac0c311a59a8cd4491e14df35d847acdac2da418b5d0c0837baf9980188",
-      "mtime_utc": "2026-06-11T07:08:26.798894Z",
+      "mtime_utc": "2026-06-11T09:07:02.912000Z",
       "headline": "PASS"
     },
     {
@@ -676,7 +676,7 @@
       "category": "other",
       "bytes": 5441,
       "sha256": "5007bf768e5dcc234d986eec64c8f7fd75dc83fb22e3917d5bf4f76e6d3a427a",
-      "mtime_utc": "2026-06-11T07:08:26.798894Z",
+      "mtime_utc": "2026-06-11T09:07:02.913000Z",
       "headline": "PASS"
     },
     {
@@ -685,7 +685,7 @@
       "category": "other",
       "bytes": 18183,
       "sha256": "847bc1413e692b0c118f8b1faac21139d9ae1608cd2b3cb17c981a34fc2c49f0",
-      "mtime_utc": "2026-06-11T07:08:26.798894Z",
+      "mtime_utc": "2026-06-11T09:07:02.914000Z",
       "headline": "PASS"
     },
     {
@@ -694,7 +694,7 @@
       "category": "other",
       "bytes": 8555,
       "sha256": "26f86a5740f345aa86e560ece3a3dc0afdfb98fef71f70193d6a1a02a666a384",
-      "mtime_utc": "2026-06-11T07:08:26.798894Z",
+      "mtime_utc": "2026-06-11T09:07:02.916000Z",
       "headline": "PASS"
     },
     {
@@ -703,7 +703,7 @@
       "category": "tail_diagnostics",
       "bytes": 107040,
       "sha256": "1588350fd851ebc5a4967c1b7a719b3526cd33cad0714b154a7e9d439eb06715",
-      "mtime_utc": "2026-06-11T07:08:26.799894Z",
+      "mtime_utc": "2026-06-11T09:07:02.920000Z",
       "headline": "PASS"
     },
     {
@@ -712,7 +712,7 @@
       "category": "other",
       "bytes": 3637,
       "sha256": "6f1d848817f11852f7b3e21df6836e1d89976ef824111579783077fa5be628d3",
-      "mtime_utc": "2026-06-11T07:08:26.799894Z",
+      "mtime_utc": "2026-06-11T09:07:02.923000Z",
       "headline": "PASS"
     },
     {
@@ -721,7 +721,7 @@
       "category": "other",
       "bytes": 12022,
       "sha256": "6937eeafaa804f11315b612d01d4cef2fb7450f2b6ea44f6f58e71c83c967dc0",
-      "mtime_utc": "2026-06-11T07:08:26.799894Z",
+      "mtime_utc": "2026-06-11T09:07:02.924999Z",
       "headline": "PASS"
     },
     {
@@ -730,7 +730,7 @@
       "category": "other",
       "bytes": 29477,
       "sha256": "3c1e95c32f251efff36e0c30dfe7e0b81d66f501252a280da3c848c2c23095df",
-      "mtime_utc": "2026-06-11T07:08:26.799894Z",
+      "mtime_utc": "2026-06-11T09:07:02.927999Z",
       "headline": "PASS"
     },
     {
@@ -739,7 +739,16 @@
       "category": "other",
       "bytes": 8888,
       "sha256": "5d9b45ec9ccfd9edb724628157b12a67b1fcfeeab14c3c14f8156bd5d3c17d25",
-      "mtime_utc": "2026-06-11T07:08:26.799894Z",
+      "mtime_utc": "2026-06-11T09:07:02.929000Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE30_TASK4_TREE3_TAIL_DIAGNOSTICS_REPORT",
+      "path": "docs/validation/PHASE30_TASK4_TREE3_TAIL_DIAGNOSTICS_REPORT.json",
+      "category": "tail_diagnostics",
+      "bytes": 140460,
+      "sha256": "5c833723cb3a31b795a609e8520a8e964efba10d85d20525aaac6eb801f55ecb",
+      "mtime_utc": "2026-06-11T09:07:02.930000Z",
       "headline": "PASS"
     },
     {
@@ -748,7 +757,7 @@
       "category": "other",
       "bytes": 246277,
       "sha256": "a6f80968ddb150c773aa18ad219bc13cf88e245247f0fab5a57924859169e6ec",
-      "mtime_utc": "2026-06-11T07:08:26.802894Z",
+      "mtime_utc": "2026-06-11T09:07:02.935000Z",
       "headline": ""
     },
     {
@@ -757,7 +766,7 @@
       "category": "risk_aggregation",
       "bytes": 17826,
       "sha256": "e579092c9f4980b1de762bf6ef80d8f4dc7c2a67293eb266c34b0a6cfe271c59",
-      "mtime_utc": "2026-06-11T07:08:26.802894Z",
+      "mtime_utc": "2026-06-11T09:07:02.935000Z",
       "headline": ""
     },
     {
@@ -766,7 +775,7 @@
       "category": "other",
       "bytes": 1189,
       "sha256": "09fda0a0d38b149eb5b854f12115e7f724fff5ef6d8bd38d14f8cf788ca6b1e8",
-      "mtime_utc": "2026-06-11T07:08:26.802894Z",
+      "mtime_utc": "2026-06-11T09:07:02.935000Z",
       "headline": "REVIEW"
     },
     {
@@ -775,7 +784,7 @@
       "category": "calibration",
       "bytes": 3288,
       "sha256": "442bf6bd3590268050c694fd07cfe717a9c3d81677db8ba77ee61926eece5790",
-      "mtime_utc": "2026-06-11T07:08:26.780894Z",
+      "mtime_utc": "2026-06-11T09:07:02.794000Z",
       "headline": ""
     },
     {
@@ -784,7 +793,7 @@
       "category": "calibration",
       "bytes": 3428,
       "sha256": "cb6dd8337583aa0e0f40505405b73b270455b8bbba691a0e7e8785fa20213717",
-      "mtime_utc": "2026-06-11T07:08:26.780894Z",
+      "mtime_utc": "2026-06-11T09:07:02.795000Z",
       "headline": ""
     },
     {
@@ -793,7 +802,7 @@
       "category": "calibration",
       "bytes": 4593,
       "sha256": "5695186798439b586ac29e2cc0b4aa138bad3c0fc2dd0290a0889fc8c7d99d36",
-      "mtime_utc": "2026-06-11T07:08:26.780894Z",
+      "mtime_utc": "2026-06-11T09:07:02.794000Z",
       "headline": ""
     },
     {
@@ -802,7 +811,7 @@
       "category": "model_risk",
       "bytes": 2444,
       "sha256": "0b0e821f0561a923967319f1ef2560d0e1d4749d93751ff4b1daa41c4f5b0838",
-      "mtime_utc": "2026-06-11T07:08:26.780894Z",
+      "mtime_utc": "2026-06-11T09:07:02.794000Z",
       "headline": ""
     },
     {
@@ -811,7 +820,7 @@
       "category": "dashboard",
       "bytes": 10986,
       "sha256": "4e261345fea5c885217d6beb6998bc4f31faaa00c195bc5b9dbfbd6a182be91b",
-      "mtime_utc": "2026-06-11T07:08:26.780894Z",
+      "mtime_utc": "2026-06-11T09:07:02.792000Z",
       "headline": ""
     }
   ],
@@ -1518,7 +1527,9 @@
     "single_t_copula_scr_component_bootstrap_mean": 39595.06073760497,
     "grouped_t_copula_scr_component_point": 35604.39894619743,
     "vine_copula_scr_component_bootstrap_mean": 41917.634842687556,
-    "vine_copula_scr_component_point": 42458.5527095696
+    "vine_copula_scr_component_point": 42458.5527095696,
+    "tree3_vine_scr_component_bootstrap_mean": 41751.92733111887,
+    "tree3_vine_scr_component_point": 42458.5527095696
   },
   "tail": {
     "verdict": "PASS - seven-driver 99.5% capital metric converges (copula-simulated, last VaR delta < 0.5%), is bounded by simulated and honest small-sample nested bootstrap CIs, and benefits from Sobol-RQMC variance reduction",
@@ -7863,6 +7874,3140 @@
     },
     "narrative": "Phase 29 escalated beyond a single copula on standalone margins to a truncated credit-root C-vine / pair-copula candidate (Aas et al. 2009): first-tree links anchored on credit, second-tree links conditioned on credit, max two trees, capped family set, frozen standalone margins / Sigma / df 2.9451 with EXACT frozen-t boundary recovery (dev 0.0). MATERIAL FINDING: the vine candidate is the FIRST dependence candidate to move TOWARD the nested path-wise reference 46,638.9 - component SCR 42,458.6 point / 41,917.6 bootstrap mean (+6.21% vs frozen-t), gap to nested narrowed to -8.96%, and the copula-form residual NARROWS to 3,637.3 (-65.33% vs grouped-t 10,491.5, -40.52% vs skew-t 6,114.9). At p=0.90 the candidate RAISES upper-tail co-dependence on ALL 11 fitted links (largest: rate-liquidity given credit +0.8514) while the largest holdout-pair lift is 0.0414 (holdout/fit ratio 0.049 - overfit gate PASS). The nested truth nevertheless remains OUTSIDE the vine 95% CI [38,654.7, 45,284.3], so the pre-registered close criteria are NOT met: MR-016 stays OPEN with the narrowing DISCLOSED and MR-017 is opened for the residual vine-FORM limitations (2-tree truncation, capped families, educational tilt simulator, nested inner-path dynamics). The governed headline remains the frozen single-df t 39,975.7 (recovered bit-identically, move 0.0000%; MR-010/MR-014 unchanged); the vine is DISCLOSED, not adopted, pending owner sign-off. Copula and margins remain frozen per SII Art. 234; production sign-off withheld (educational)."
   },
+  "phase30": {
+    "roadmap": {
+      "selected_option": "A_tree3_vine_deepening",
+      "stop_rule": "STOP-RULE (pre-registered): if the Phase 30 tree-3 vine still leaves the nested reference 46,638.9 outside its 95% bootstrap CI at Task 4, dependence-FORM escalation under MR-016 ENDS. No further copula-structure candidates may be opened without owner sign-off; Phase 31 becomes the owner decision package (option C), with option B available only as an owner-approved escalation funding a second independent nested run.",
+      "post_phase30_commitment": "Phase 31 is the owner decision package (option C) REGARDLESS of outcome: adopt-the-disclosed-read-out vs accept-residual vs fund option B with a second independent nested run.",
+      "verdict": "PASS",
+      "source": "docs/validation/PHASE30_TASK1_DESIGN_NOTE.json"
+    },
+    "tree3": {
+      "drivers": [
+        "rate",
+        "equity",
+        "credit",
+        "lapse",
+        "mortality",
+        "fx",
+        "liquidity"
+      ],
+      "df_frozen": 2.9451,
+      "df_rematched": 2.9450930033094664,
+      "rho_max_abs_diff": 7.216449660063518e-16,
+      "structure": "truncated_c_vine_credit_root_tree3",
+      "max_vine_trees": 3,
+      "frozen_tree12_digest": "d9a81eab2e6da699",
+      "tree3_family_counts": {
+        "gaussian": 4,
+        "student_t": 0,
+        "survival_clayton": 0,
+        "survival_gumbel": 0
+      },
+      "third_tree_edges": [
+        {
+          "pair": [
+            5,
+            0
+          ],
+          "condition_on": [
+            2,
+            6
+          ],
+          "names": "fx-rate | credit,liquidity"
+        },
+        {
+          "pair": [
+            0,
+            3
+          ],
+          "condition_on": [
+            2,
+            6
+          ],
+          "names": "rate-lapse | credit,liquidity"
+        },
+        {
+          "pair": [
+            3,
+            4
+          ],
+          "condition_on": [
+            2,
+            6
+          ],
+          "names": "lapse-mortality | credit,liquidity"
+        },
+        {
+          "pair": [
+            1,
+            6
+          ],
+          "condition_on": [
+            2,
+            5
+          ],
+          "names": "equity-liquidity | credit,fx"
+        }
+      ],
+      "tree3_candidate_scr_component": 42458.5527095696,
+      "frozen_t_reference_scr_component": 39975.654628199336,
+      "vine2_boundary_scr_component": 42458.5527095696,
+      "grouped_t_comparison_scr_component": 35604.39191025864,
+      "boundary_t_recovery_dev": 0.0,
+      "boundary_vine2_recovery_dev": 0.0,
+      "candidate_vs_frozen_t_rel": 0.06211025446519636,
+      "candidate_vs_vine2_rel": 0.0,
+      "candidate_vs_grouped_t_rel": 0.1925088572383702,
+      "candidate_gap_to_nested_rel": -0.08963220166921604,
+      "candidate_residual_abs": 4180.3472904304,
+      "material_finding": "The Phase 30 Task 2 tree-3 vine candidate deepens the FROZEN Phase 29 2-tree credit-root C-vine with the four pre-registered joint-conditional third-tree pairs. The candidate component SCR is 42458.6 vs 2-tree vine 42458.6, frozen-t 39975.7 and grouped-t 35604.4; direction is disclosed and is not a pass/fail gate. Both boundary legs reproduced their archived references bit-identically before the candidate ran. The frozen-t boundary remains the governed headline; Task 3 bootstrap decides whether the nested reference 46638.9 enters the candidate 95% CI or the pre-registered stop-rule triggers.",
+      "gates": {
+        "G1_dual_boundary_bit_identical": true,
+        "G2_frozen_t_archive_reference_first": true,
+        "G3_vine2_archive_reference_recovered": true,
+        "G4_rank_invariance_constants_frozen": true,
+        "G5_tree12_fit_frozen_from_phase29": true,
+        "G6_pre_registered_tree3_envelope_only": true,
+        "G7_family_set_capped": true,
+        "G8_leakage_free_fit_holdout_recorded": true,
+        "G9_comparison_variants_retained_crn": true,
+        "G10_directional_disclosed_not_gated": true
+      },
+      "verdict": "PASS",
+      "source": "docs/validation/PHASE30_TASK2_TREE3_VINE_REPORT.json",
+      "change_record_id": "2b34607c654d4f01b1dc88b70914fa3a"
+    },
+    "bootstrap": {
+      "config": {
+        "n_replicates": 200,
+        "n_sim_per_replicate": 20000,
+        "master_seed": 20260611,
+        "df_frozen": 2.9451,
+        "tree3_structure": "truncated_c_vine_credit_root_tree3",
+        "tree3_fit_digest_frozen": "f689e11e81fa",
+        "confidence": 0.995,
+        "ci_level": 0.95,
+        "resampling": "joint row resample WITH replacement; copula Sigma + df + P29T2 2-tree fit + P30T2 tree-3 selections FROZEN; tree-3 candidate vs 2-tree vine vs frozen-t boundary on COMMON base t-copula draw"
+      },
+      "tree3_component_scr_ci": {
+        "n": 200,
+        "mean": 41751.92733111887,
+        "se": 1589.2196125506248,
+        "se_frac_of_mean": 0.03806338327682744,
+        "ci_level": 0.95,
+        "ci_lo": 38593.73891844572,
+        "ci_hi": 44556.44856853384,
+        "min": 37106.821882422955,
+        "max": 45158.01151946334
+      },
+      "vine2_component_scr_ci": {
+        "n": 200,
+        "mean": 41751.92733111887,
+        "se": 1589.2196125506248,
+        "se_frac_of_mean": 0.03806338327682744,
+        "ci_level": 0.95,
+        "ci_lo": 38593.73891844572,
+        "ci_hi": 44556.44856853384,
+        "min": 37106.821882422955,
+        "max": 45158.01151946334
+      },
+      "frozen_t_component_scr_ci": {
+        "n": 200,
+        "mean": 39448.2149275207,
+        "se": 1479.5444871523318,
+        "se_frac_of_mean": 0.0375059933604281,
+        "ci_level": 0.95,
+        "ci_lo": 36445.89294763363,
+        "ci_hi": 42257.63751868343,
+        "min": 35225.401703258656,
+        "max": 42967.935968183796
+      },
+      "tree3_minus_vine2_max_abs": 0.0,
+      "tree3_minus_vine2_all_exactly_zero": true,
+      "tree3_minus_frozen_mean": 2303.7124035981797,
+      "tree3_minus_frozen_pos_share": 1.0,
+      "nested_pathwise_reference": 46638.9,
+      "task2_frozen_t_component_point": 39975.654628199336,
+      "task2_vine2_component_point": 42458.5527095696,
+      "task2_tree3_candidate_component_point": 42458.5527095696,
+      "p29t3_vine2_bootstrap_mean_reference": 41917.634842687556,
+      "headline_nested_inside_95ci": false,
+      "stop_rule_assessment": {
+        "nested_pathwise_reference": 46638.9,
+        "tree3_ci_lo": 38593.73891844572,
+        "tree3_ci_hi": 44556.44856853384,
+        "nested_inside_tree3_95ci": false,
+        "stop_rule_trigger_met": true,
+        "stop_rule_decision_stage": "Phase 30 Task 4 (not this bootstrap)",
+        "stop_rule_text": "STOP-RULE (pre-registered, PHASE30_TASK1_DESIGN_NOTE): if the Phase 30 tree-3 vine still leaves the nested reference 46,638.9 outside its 95% bootstrap CI at Task 4, dependence-FORM escalation under MR-016 ENDS. No further copula-structure candidates may be opened without owner sign-off; Phase 31 becomes the owner decision package (option C), with option B available only as an owner-approved escalation funding a second independent nested run.",
+        "interpretation": "Nested 46,638.9 OUTSIDE the tree-3 candidate 95% CI [38593.7, 44556.4]; the pre-registered stop-rule trigger is MET - recorded here, decided at Task 4."
+      },
+      "se_frac_of_mean": 0.03806338327682744,
+      "se_gate_pass": true,
+      "residual_gap_redecomposition_point": {
+        "nested_scr": 46638.9,
+        "scr_component_vine": 42458.5527095696,
+        "scr_component_frozen_t": 39975.654628199336,
+        "gap_total_abs": 4180.3472904304,
+        "gap_total_rel_to_nested": 0.08963220166921604,
+        "relief_surface_rel_err_source": 0.01164368805922599,
+        "relief_surface_part_abs": 543.0488030254351,
+        "relief_surface_share_of_gap": 0.12990518856377692,
+        "copula_form_residual_abs": 3637.298487404965,
+        "copula_form_share_of_gap": 0.870094811436223,
+        "copula_form_residual_grouped_t": 10491.5,
+        "copula_form_residual_skewt": 6114.9,
+        "copula_form_residual_change_vs_grouped_t_abs": -6854.201512595035,
+        "copula_form_residual_change_vs_grouped_t_rel": -0.6533099664104308,
+        "copula_form_residual_change_vs_skewt_abs": -2477.601512595035,
+        "copula_form_residual_change_vs_skewt_rel": -0.40517449387480337,
+        "vine_minus_frozen_lift": 2482.8980813702656,
+        "copula_form_residual_narrowed_vs_skewt": true,
+        "copula_form_dominant": true,
+        "residual_closed_by_vine": false,
+        "interpretation": "The truncated credit-root pair-link candidate lifts the component SCR by +2482.9 vs the frozen-t boundary on common random numbers. The copula-form residual moves from the grouped-t 10,491.5 / skew-t-reconfirmed 6,114.9 baselines to 3637.3 (change vs grouped-t -6854.2 = -65.33%; vs skew-t -2477.6 = -40.52%). The residual NARROWS below the skew-t baseline -- the FIRST dependence candidate to move the margin-aggregation read-out TOWARD the nested path-wise truth; the remaining residual lives in the nested inner-path joint dynamics and is a disclosed model-form limitation (MR-016), decided in Task 4."
+      },
+      "gates": {
+        "C1_headline_nested_inside_95ci_OR_stop_rule_trigger_recorded": true,
+        "C1_headline_nested_inside_95ci_raw": false,
+        "C2_se_le_5pct_of_mean": true,
+        "C3_archive_crosscheck_bit_identical": true,
+        "C4_copula_and_fits_frozen": true,
+        "C5_paired_crn_deltas_with_sign_and_ci": true,
+        "C5_tree3_minus_vine2_exactly_zero": true,
+        "C6_reproducible_chunk_independent": true
+      },
+      "digest": "7b2a0cbcbb35",
+      "verdict": "PASS",
+      "source": "docs/validation/PHASE30_TASK3_TREE3_MARGIN_BOOTSTRAP_REPORT.json",
+      "change_record_id": "736029a064514f8681fd0af592ddab97"
+    },
+    "tail": {
+      "drivers": [
+        "rate",
+        "equity",
+        "credit",
+        "lapse",
+        "mortality",
+        "fx",
+        "liquidity"
+      ],
+      "df_frozen": 2.9451,
+      "p_grid": [
+        0.8,
+        0.85,
+        0.9,
+        0.95
+      ],
+      "canonical_p": 0.9,
+      "fit_structure": "truncated_c_vine_credit_root_tree3",
+      "levels": {
+        "80": {
+          "p": 0.8,
+          "rows": [
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                6
+              ],
+              "pair_label": "credit-liquidity",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.3502412500000001,
+                "ci_lo": 0.33774375000000006,
+                "ci_hi": 0.3617687500000001
+              },
+              "cand_lower": {
+                "mean": 0.3323050000000001,
+                "ci_lo": 0.3204875000000001,
+                "ci_hi": 0.34653125000000007
+              },
+              "frz_upper": {
+                "mean": 0.32183875,
+                "ci_lo": 0.30499375000000006,
+                "ci_hi": 0.3362687500000001
+              },
+              "frz_lower": {
+                "mean": 0.3215675000000001,
+                "ci_lo": 0.3049875000000001,
+                "ci_hi": 0.3392625000000001
+              },
+              "lift_upper": {
+                "mean": 0.0284025,
+                "ci_lo": 0.016743749999999932,
+                "ci_hi": 0.03976250000000001
+              },
+              "lift_lower": {
+                "mean": 0.010737500000000004,
+                "ci_lo": 0.001225000000000033,
+                "ci_hi": 0.022006249999999967
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                5
+              ],
+              "pair_label": "credit-fx",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.2056425,
+                "ci_lo": 0.19619375000000006,
+                "ci_hi": 0.21601875000000006
+              },
+              "cand_lower": {
+                "mean": 0.2007925,
+                "ci_lo": 0.18950000000000006,
+                "ci_hi": 0.21150625000000003
+              },
+              "frz_upper": {
+                "mean": 0.20101500000000003,
+                "ci_lo": 0.18849375000000004,
+                "ci_hi": 0.21350625000000006
+              },
+              "frz_lower": {
+                "mean": 0.19962375000000004,
+                "ci_lo": 0.18698750000000006,
+                "ci_hi": 0.21278125000000003
+              },
+              "lift_upper": {
+                "mean": 0.0046275000000000005,
+                "ci_lo": -0.0017562500000000004,
+                "ci_hi": 0.01100625000000001
+              },
+              "lift_lower": {
+                "mean": 0.001168750000000001,
+                "ci_lo": -0.0050187500000000015,
+                "ci_hi": 0.007756250000000008
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                0,
+                2
+              ],
+              "pair_label": "rate-credit",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.7641225000000003,
+                "ci_lo": 0.7549875000000001,
+                "ci_hi": 0.7730187500000001
+              },
+              "cand_lower": {
+                "mean": 0.7568612500000002,
+                "ci_lo": 0.7482437500000002,
+                "ci_hi": 0.7665375000000002
+              },
+              "frz_upper": {
+                "mean": 0.7566012500000002,
+                "ci_lo": 0.7324687500000001,
+                "ci_hi": 0.7812937500000002
+              },
+              "frz_lower": {
+                "mean": 0.7567550000000002,
+                "ci_lo": 0.7284750000000002,
+                "ci_hi": 0.7822625000000002
+              },
+              "lift_upper": {
+                "mean": 0.007521250000000014,
+                "ci_lo": -0.011806249999999921,
+                "ci_hi": 0.027518750000000085
+              },
+              "lift_lower": {
+                "mean": 0.00010625000000001216,
+                "ci_lo": -0.021006250000000014,
+                "ci_hi": 0.022543750000000085
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                1,
+                2
+              ],
+              "pair_label": "equity-credit",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.53012875,
+                "ci_lo": 0.5157437500000002,
+                "ci_hi": 0.5410000000000001
+              },
+              "cand_lower": {
+                "mean": 0.5206237500000002,
+                "ci_lo": 0.5087375000000001,
+                "ci_hi": 0.5320000000000001
+              },
+              "frz_upper": {
+                "mean": 0.5196312500000001,
+                "ci_lo": 0.49321875000000015,
+                "ci_hi": 0.5412500000000001
+              },
+              "frz_lower": {
+                "mean": 0.5196212500000001,
+                "ci_lo": 0.4972500000000001,
+                "ci_hi": 0.5392562500000001
+              },
+              "lift_upper": {
+                "mean": 0.010497500000000003,
+                "ci_lo": -0.004024999999999999,
+                "ci_hi": 0.02900624999999997
+              },
+              "lift_lower": {
+                "mean": 0.0010024999999999967,
+                "ci_lo": -0.013749999999999929,
+                "ci_hi": 0.017006249999999966
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                3
+              ],
+              "pair_label": "credit-lapse",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.31111875000000005,
+                "ci_lo": 0.29898125000000003,
+                "ci_hi": 0.3235187500000001
+              },
+              "cand_lower": {
+                "mean": 0.3004712500000001,
+                "ci_lo": 0.28822500000000006,
+                "ci_hi": 0.31325625000000007
+              },
+              "frz_upper": {
+                "mean": 0.2973312500000001,
+                "ci_lo": 0.28073125000000004,
+                "ci_hi": 0.31250625000000004
+              },
+              "frz_lower": {
+                "mean": 0.2980337500000001,
+                "ci_lo": 0.28175000000000006,
+                "ci_hi": 0.3167937500000001
+              },
+              "lift_upper": {
+                "mean": 0.013787500000000006,
+                "ci_lo": 0.004993750000000006,
+                "ci_hi": 0.023274999999999997
+              },
+              "lift_lower": {
+                "mean": 0.002437500000000001,
+                "ci_lo": -0.007012500000000004,
+                "ci_hi": 0.012500000000000011
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                4
+              ],
+              "pair_label": "credit-mortality",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.2593500000000001,
+                "ci_lo": 0.24725000000000005,
+                "ci_hi": 0.27325000000000005
+              },
+              "cand_lower": {
+                "mean": 0.25483625000000004,
+                "ci_lo": 0.24300000000000005,
+                "ci_hi": 0.26725000000000004
+              },
+              "frz_upper": {
+                "mean": 0.25401000000000007,
+                "ci_lo": 0.23897500000000008,
+                "ci_hi": 0.2695000000000001
+              },
+              "frz_lower": {
+                "mean": 0.2535275000000001,
+                "ci_lo": 0.23824375000000006,
+                "ci_hi": 0.27077500000000004
+              },
+              "lift_upper": {
+                "mean": 0.005340000000000003,
+                "ci_lo": -0.0037625000000000275,
+                "ci_hi": 0.013756249999999987
+              },
+              "lift_lower": {
+                "mean": 0.0013087499999999996,
+                "ci_lo": -0.0062624999999999756,
+                "ci_hi": 0.01100000000000001
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                5,
+                6
+              ],
+              "pair_label": "fx-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.3285125000000001,
+                "ci_lo": 0.2912187500000001,
+                "ci_hi": 0.36500000000000005
+              },
+              "cand_lower": {
+                "mean": 0.19015,
+                "ci_lo": 0.16371875000000005,
+                "ci_hi": 0.21753125000000004
+              },
+              "frz_upper": {
+                "mean": 0.3024558040104975,
+                "ci_lo": 0.26348125274271494,
+                "ci_hi": 0.3429891216020996
+              },
+              "frz_lower": {
+                "mean": 0.24740902873689335,
+                "ci_lo": 0.22294139993573445,
+                "ci_hi": 0.28023737859110065
+              },
+              "lift_upper": {
+                "mean": 0.026056695989502568,
+                "ci_lo": 0.007238027222516974,
+                "ci_hi": 0.04410598892756634
+              },
+              "lift_lower": {
+                "mean": -0.05725902873689329,
+                "ci_lo": -0.07737065263272234,
+                "ci_hi": -0.04160411154229042
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                0,
+                6
+              ],
+              "pair_label": "rate-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 1.2783750000000003,
+                "ci_lo": 1.2224375,
+                "ci_hi": 1.3337500000000002
+              },
+              "cand_lower": {
+                "mean": 0.003131250000000001,
+                "ci_lo": 0.0,
+                "ci_hi": 0.0075000000000000015
+              },
+              "frz_upper": {
+                "mean": 1.091611283223503,
+                "ci_lo": 1.0403814512833924,
+                "ci_hi": 1.1487483999098713
+              },
+              "frz_lower": {
+                "mean": 0.0034948544520297365,
+                "ci_lo": 0.0,
+                "ci_hi": 0.007589220788598011
+              },
+              "lift_upper": {
+                "mean": 0.1867637167764974,
+                "ci_lo": 0.14995206869684824,
+                "ci_hi": 0.23266173559923561
+              },
+              "lift_lower": {
+                "mean": -0.00036360445202973624,
+                "ci_lo": -0.0025195864406337976,
+                "ci_hi": 0.0012715009633182037
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                1,
+                5
+              ],
+              "pair_label": "equity-fx",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.5570500000000002,
+                "ci_lo": 0.5149687500000001,
+                "ci_hi": 0.6050625000000001
+              },
+              "cand_lower": {
+                "mean": 0.09461875000000003,
+                "ci_lo": 0.07500000000000001,
+                "ci_hi": 0.11503125000000003
+              },
+              "frz_upper": {
+                "mean": 0.5243130324888523,
+                "ci_lo": 0.4762362861626437,
+                "ci_hi": 0.5755110813204263
+              },
+              "frz_lower": {
+                "mean": 0.10268908232085078,
+                "ci_lo": 0.08136203995757772,
+                "ci_hi": 0.12552280233050808
+              },
+              "lift_upper": {
+                "mean": 0.03273696751114778,
+                "ci_lo": 0.010844671080576088,
+                "ci_hi": 0.05579580262095019
+              },
+              "lift_lower": {
+                "mean": -0.008070332320850753,
+                "ci_lo": -0.014424198363629891,
+                "ci_hi": -0.0013282204684317658
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                3,
+                6
+              ],
+              "pair_label": "lapse-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.5586312500000001,
+                "ci_lo": 0.5100000000000001,
+                "ci_hi": 0.6025000000000001
+              },
+              "cand_lower": {
+                "mean": 0.14958125000000003,
+                "ci_lo": 0.12621875000000005,
+                "ci_hi": 0.17628125000000003
+              },
+              "frz_upper": {
+                "mean": 0.46462474119964753,
+                "ci_lo": 0.42123169963792845,
+                "ci_hi": 0.5034326234284342
+              },
+              "frz_lower": {
+                "mean": 0.1823154673429048,
+                "ci_lo": 0.15369869308625428,
+                "ci_hi": 0.2147456269863117
+              },
+              "lift_upper": {
+                "mean": 0.0940065088003526,
+                "ci_lo": 0.06657161990765248,
+                "ci_hi": 0.11710677537558896
+              },
+              "lift_lower": {
+                "mean": -0.03273421734290474,
+                "ci_lo": -0.04758892240387,
+                "ci_hi": -0.018113030012284342
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                4,
+                6
+              ],
+              "pair_label": "mortality-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.5585062500000002,
+                "ci_lo": 0.5148750000000002,
+                "ci_hi": 0.6012500000000001
+              },
+              "cand_lower": {
+                "mean": 0.24040625000000004,
+                "ci_lo": 0.21118750000000006,
+                "ci_hi": 0.27378125000000003
+              },
+              "frz_upper": {
+                "mean": 0.4996091445053933,
+                "ci_lo": 0.4606703919490288,
+                "ci_hi": 0.5441129103263767
+              },
+              "frz_lower": {
+                "mean": 0.28682313575031215,
+                "ci_lo": 0.25591847124017564,
+                "ci_hi": 0.32020174069900054
+              },
+              "lift_upper": {
+                "mean": 0.05889710549460685,
+                "ci_lo": 0.034802989830189125,
+                "ci_hi": 0.08381351028759355
+              },
+              "lift_lower": {
+                "mean": -0.0464168857503121,
+                "ci_lo": -0.06425250019762113,
+                "ci_hi": -0.028957063537440743
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                0,
+                5
+              ],
+              "pair_label": "rate-fx",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 0.6982546884920421,
+                "ci_lo": 0.6060387739062092,
+                "ci_hi": 0.7865055232718193
+              },
+              "cand_lower": {
+                "mean": 0.022249409181511224,
+                "ci_lo": 0.007178622153604672,
+                "ci_hi": 0.03984890203805111
+              },
+              "frz_upper": {
+                "mean": 0.6325598132722406,
+                "ci_lo": 0.5444972128791828,
+                "ci_hi": 0.7310468669009351
+              },
+              "frz_lower": {
+                "mean": 0.028916551001751327,
+                "ci_lo": 0.011754796556871188,
+                "ci_hi": 0.050264703070475966
+              },
+              "lift_upper": {
+                "mean": 0.06569487521980161,
+                "ci_lo": 0.021819009003163047,
+                "ci_hi": 0.11615705676115967
+              },
+              "lift_lower": {
+                "mean": -0.0066671418202401056,
+                "ci_lo": -0.018717412752848838,
+                "ci_hi": -0.00030058504089364266
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                0,
+                3
+              ],
+              "pair_label": "rate-lapse",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 1.253998209725479,
+                "ci_lo": 1.1402501525935869,
+                "ci_hi": 1.373780411920522
+              },
+              "cand_lower": {
+                "mean": 0.02005046095438904,
+                "ci_lo": 0.0036074385840067177,
+                "ci_hi": 0.036286953483426025
+              },
+              "frz_upper": {
+                "mean": 1.0266162452766379,
+                "ci_lo": 0.9209443997245026,
+                "ci_hi": 1.1515652920402462
+              },
+              "frz_lower": {
+                "mean": 0.026646711172607213,
+                "ci_lo": 0.004098940230076203,
+                "ci_hi": 0.04737065922594254
+              },
+              "lift_upper": {
+                "mean": 0.2273819644488412,
+                "ci_lo": 0.16480211228509312,
+                "ci_hi": 0.2878948838120192
+              },
+              "lift_lower": {
+                "mean": -0.006596250218218175,
+                "ci_lo": -0.017381045865919084,
+                "ci_hi": 3.8989569869318024e-05
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                3,
+                4
+              ],
+              "pair_label": "lapse-mortality",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 0.6148248948014863,
+                "ci_lo": 0.5330869258167528,
+                "ci_hi": 0.6957311435320611
+              },
+              "cand_lower": {
+                "mean": 0.35320001224068887,
+                "ci_lo": 0.2929898817872171,
+                "ci_hi": 0.4190853266060381
+              },
+              "frz_upper": {
+                "mean": 0.5462766538403662,
+                "ci_lo": 0.4614009773945045,
+                "ci_hi": 0.6290643319560257
+              },
+              "frz_lower": {
+                "mean": 0.3929715255549875,
+                "ci_lo": 0.3213144916551542,
+                "ci_hi": 0.47117466504375205
+              },
+              "lift_upper": {
+                "mean": 0.06854824096112,
+                "ci_lo": 0.026490598616131785,
+                "ci_hi": 0.11127675461689363
+              },
+              "lift_lower": {
+                "mean": -0.039771513314298616,
+                "ci_lo": -0.07483282576510604,
+                "ci_hi": -0.0061624141520195625
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                1,
+                6
+              ],
+              "pair_label": "equity-liquidity",
+              "cond_label": "credit,fx",
+              "cand_upper": {
+                "mean": 1.0836449063689855,
+                "ci_lo": 0.9503172363482788,
+                "ci_hi": 1.2131468531468534
+              },
+              "cand_lower": {
+                "mean": 0.20109973446045806,
+                "ci_lo": 0.13638989886020772,
+                "ci_hi": 0.2711541896558569
+              },
+              "frz_upper": {
+                "mean": 0.9591404036992672,
+                "ci_lo": 0.8332309582309584,
+                "ci_hi": 1.0745413537717061
+              },
+              "frz_lower": {
+                "mean": 0.21712266203778516,
+                "ci_lo": 0.14834290339171,
+                "ci_hi": 0.2844025555135035
+              },
+              "lift_upper": {
+                "mean": 0.12450450266971817,
+                "ci_lo": 0.05260086307199183,
+                "ci_hi": 0.1953284972004302
+              },
+              "lift_lower": {
+                "mean": -0.01602292757732708,
+                "ci_lo": -0.047882634235034,
+                "ci_hi": 0.014936223953235838
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                0,
+                1
+              ],
+              "pair_label": "rate-equity",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.5142375000000001,
+                "ci_lo": 0.5009875000000001,
+                "ci_hi": 0.5245062500000001
+              },
+              "cand_lower": {
+                "mean": 0.5021462500000001,
+                "ci_lo": 0.48923750000000016,
+                "ci_hi": 0.51550625
+              },
+              "frz_upper": {
+                "mean": 0.5007175,
+                "ci_lo": 0.47874375000000013,
+                "ci_hi": 0.5170437500000001
+              },
+              "frz_lower": {
+                "mean": 0.5012075000000001,
+                "ci_lo": 0.47924375000000013,
+                "ci_hi": 0.5252500000000001
+              },
+              "lift_upper": {
+                "mean": 0.013519999999999999,
+                "ci_lo": -1.2499999999999357e-05,
+                "ci_hi": 0.03075
+              },
+              "lift_lower": {
+                "mean": 0.0009387500000000005,
+                "ci_lo": -0.014793750000000034,
+                "ci_hi": 0.017012500000000014
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                3,
+                4
+              ],
+              "pair_label": "lapse-mortality",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.28576375000000004,
+                "ci_lo": 0.2730000000000001,
+                "ci_hi": 0.2985437500000001
+              },
+              "cand_lower": {
+                "mean": 0.28094375000000005,
+                "ci_lo": 0.26800000000000007,
+                "ci_hi": 0.2935062500000001
+              },
+              "frz_upper": {
+                "mean": 0.2823462500000001,
+                "ci_lo": 0.26623750000000007,
+                "ci_hi": 0.29800000000000004
+              },
+              "frz_lower": {
+                "mean": 0.2826000000000001,
+                "ci_lo": 0.2659875000000001,
+                "ci_hi": 0.29927500000000007
+              },
+              "lift_upper": {
+                "mean": 0.003417500000000002,
+                "ci_lo": -0.005249999999999979,
+                "ci_hi": 0.01224999999999993
+              },
+              "lift_lower": {
+                "mean": -0.0016562500000000008,
+                "ci_lo": -0.010768749999999981,
+                "ci_hi": 0.008018749999999956
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                0,
+                3
+              ],
+              "pair_label": "rate-lapse",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.3073862500000001,
+                "ci_lo": 0.2957437500000001,
+                "ci_hi": 0.3207562500000001
+              },
+              "cand_lower": {
+                "mean": 0.29565250000000004,
+                "ci_lo": 0.2842437500000001,
+                "ci_hi": 0.30850000000000005
+              },
+              "frz_upper": {
+                "mean": 0.29199125000000004,
+                "ci_lo": 0.2747375000000001,
+                "ci_hi": 0.31075
+              },
+              "frz_lower": {
+                "mean": 0.29343625000000007,
+                "ci_lo": 0.27699375000000004,
+                "ci_hi": 0.30853125000000003
+              },
+              "lift_upper": {
+                "mean": 0.015395000000000002,
+                "ci_lo": 0.005487500000000008,
+                "ci_hi": 0.027249999999999996
+              },
+              "lift_lower": {
+                "mean": 0.0022162500000000003,
+                "ci_lo": -0.00650625000000006,
+                "ci_hi": 0.011262499999999984
+              }
+            }
+          ]
+        },
+        "85": {
+          "p": 0.85,
+          "rows": [
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                6
+              ],
+              "pair_label": "credit-liquidity",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.32756833333333335,
+                "ci_lo": 0.31397499999999995,
+                "ci_hi": 0.34099999999999997
+              },
+              "cand_lower": {
+                "mean": 0.29902999999999996,
+                "ci_lo": 0.285975,
+                "ci_hi": 0.313675
+              },
+              "frz_upper": {
+                "mean": 0.28762999999999994,
+                "ci_lo": 0.2676666666666666,
+                "ci_hi": 0.30434999999999995
+              },
+              "frz_lower": {
+                "mean": 0.2869366666666667,
+                "ci_lo": 0.27064999999999995,
+                "ci_hi": 0.3050166666666666
+              },
+              "lift_upper": {
+                "mean": 0.03993833333333332,
+                "ci_lo": 0.02865000000000001,
+                "ci_hi": 0.05166666666666664
+              },
+              "lift_lower": {
+                "mean": 0.01209333333333333,
+                "ci_lo": 0.0019583333333333423,
+                "ci_hi": 0.02366666666666667
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                5
+              ],
+              "pair_label": "credit-fx",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.177585,
+                "ci_lo": 0.1653333333333333,
+                "ci_hi": 0.18933333333333333
+              },
+              "cand_lower": {
+                "mean": 0.17109166666666667,
+                "ci_lo": 0.1589833333333333,
+                "ci_hi": 0.18366666666666664
+              },
+              "frz_upper": {
+                "mean": 0.1709483333333333,
+                "ci_lo": 0.15665833333333332,
+                "ci_hi": 0.18467499999999998
+              },
+              "frz_lower": {
+                "mean": 0.16971166666666662,
+                "ci_lo": 0.1563333333333333,
+                "ci_hi": 0.1850083333333333
+              },
+              "lift_upper": {
+                "mean": 0.006636666666666667,
+                "ci_lo": -3.3333333333327684e-05,
+                "ci_hi": 0.014341666666666671
+              },
+              "lift_lower": {
+                "mean": 0.0013800000000000002,
+                "ci_lo": -0.005025,
+                "ci_hi": 0.00799999999999998
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                0,
+                2
+              ],
+              "pair_label": "rate-credit",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.7567799999999998,
+                "ci_lo": 0.7446499999999998,
+                "ci_hi": 0.7663416666666666
+              },
+              "cand_lower": {
+                "mean": 0.7384833333333332,
+                "ci_lo": 0.7266499999999999,
+                "ci_hi": 0.7513416666666666
+              },
+              "frz_upper": {
+                "mean": 0.7380549999999999,
+                "ci_lo": 0.7102999999999999,
+                "ci_hi": 0.7703416666666666
+              },
+              "frz_lower": {
+                "mean": 0.7377449999999999,
+                "ci_lo": 0.7066083333333333,
+                "ci_hi": 0.7673916666666666
+              },
+              "lift_upper": {
+                "mean": 0.01872499999999998,
+                "ci_lo": -0.007383333333333295,
+                "ci_hi": 0.04500833333333327
+              },
+              "lift_lower": {
+                "mean": 0.000738333333333338,
+                "ci_lo": -0.025066666666666678,
+                "ci_hi": 0.027025000000000028
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                1,
+                2
+              ],
+              "pair_label": "equity-credit",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.5063249999999999,
+                "ci_lo": 0.49365,
+                "ci_hi": 0.5199999999999999
+              },
+              "cand_lower": {
+                "mean": 0.48962999999999995,
+                "ci_lo": 0.4736583333333333,
+                "ci_hi": 0.5043333333333332
+              },
+              "frz_upper": {
+                "mean": 0.48875833333333335,
+                "ci_lo": 0.4623333333333332,
+                "ci_hi": 0.5126916666666667
+              },
+              "frz_lower": {
+                "mean": 0.4881833333333333,
+                "ci_lo": 0.46298333333333325,
+                "ci_hi": 0.5120083333333333
+              },
+              "lift_upper": {
+                "mean": 0.01756666666666667,
+                "ci_lo": -2.4999999999995935e-05,
+                "ci_hi": 0.03667500000000001
+              },
+              "lift_lower": {
+                "mean": 0.0014466666666666666,
+                "ci_lo": -0.01499999999999996,
+                "ci_hi": 0.017675
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                3
+              ],
+              "pair_label": "credit-lapse",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.28289666666666663,
+                "ci_lo": 0.2696583333333333,
+                "ci_hi": 0.29567499999999997
+              },
+              "cand_lower": {
+                "mean": 0.26671999999999996,
+                "ci_lo": 0.25165833333333326,
+                "ci_hi": 0.28101666666666664
+              },
+              "frz_upper": {
+                "mean": 0.26307333333333327,
+                "ci_lo": 0.24197499999999997,
+                "ci_hi": 0.27967499999999995
+              },
+              "frz_lower": {
+                "mean": 0.26374499999999995,
+                "ci_lo": 0.244325,
+                "ci_hi": 0.28301666666666664
+              },
+              "lift_upper": {
+                "mean": 0.019823333333333335,
+                "ci_lo": 0.009658333333333324,
+                "ci_hi": 0.03169166666666668
+              },
+              "lift_lower": {
+                "mean": 0.0029749999999999998,
+                "ci_lo": -0.008008333333333338,
+                "ci_hi": 0.01333333333333331
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                4
+              ],
+              "pair_label": "credit-mortality",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.22905166666666665,
+                "ci_lo": 0.21565833333333329,
+                "ci_hi": 0.24334166666666662
+              },
+              "cand_lower": {
+                "mean": 0.22238666666666662,
+                "ci_lo": 0.2076583333333333,
+                "ci_hi": 0.2356833333333333
+              },
+              "frz_upper": {
+                "mean": 0.2214483333333333,
+                "ci_lo": 0.2059833333333333,
+                "ci_hi": 0.2370083333333333
+              },
+              "frz_lower": {
+                "mean": 0.22095333333333328,
+                "ci_lo": 0.20299166666666665,
+                "ci_hi": 0.23834999999999995
+              },
+              "lift_upper": {
+                "mean": 0.007603333333333331,
+                "ci_lo": -0.0010083333333333598,
+                "ci_hi": 0.01633333333333331
+              },
+              "lift_lower": {
+                "mean": 0.001433333333333332,
+                "ci_lo": -0.006341666666666661,
+                "ci_hi": 0.008666666666666656
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                5,
+                6
+              ],
+              "pair_label": "fx-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.3604222222222222,
+                "ci_lo": 0.3088333333333333,
+                "ci_hi": 0.4178333333333333
+              },
+              "cand_lower": {
+                "mean": 0.1732222222222222,
+                "ci_lo": 0.13549999999999995,
+                "ci_hi": 0.21344444444444446
+              },
+              "frz_upper": {
+                "mean": 0.3202726524433884,
+                "ci_lo": 0.2691083470670421,
+                "ci_hi": 0.3738558191614024
+              },
+              "frz_lower": {
+                "mean": 0.26054485071102074,
+                "ci_lo": 0.22184648082911082,
+                "ci_hi": 0.3039936174803811
+              },
+              "lift_upper": {
+                "mean": 0.04014956977883382,
+                "ci_lo": 0.016191598476138915,
+                "ci_hi": 0.06813657066730934
+              },
+              "lift_lower": {
+                "mean": -0.08732262848879856,
+                "ci_lo": -0.11651992327329254,
+                "ci_hi": -0.058624393571378455
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                0,
+                6
+              ],
+              "pair_label": "rate-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 1.621822222222222,
+                "ci_lo": 1.546611111111111,
+                "ci_hi": 1.7066666666666666
+              },
+              "cand_lower": {
+                "mean": 0.002633333333333333,
+                "ci_lo": 0.0,
+                "ci_hi": 0.008888888888888887
+              },
+              "frz_upper": {
+                "mean": 1.2619360208855932,
+                "ci_lo": 1.1776720299426306,
+                "ci_hi": 1.3507713828092025
+              },
+              "frz_lower": {
+                "mean": 0.003262495197539565,
+                "ci_lo": 0.0,
+                "ci_hi": 0.009044752144613744
+              },
+              "lift_upper": {
+                "mean": 0.3598862013366289,
+                "ci_lo": 0.28962985479932213,
+                "ci_hi": 0.4183224659902687
+              },
+              "lift_lower": {
+                "mean": -0.0006291618642062321,
+                "ci_lo": -0.004319843729759275,
+                "ci_hi": 0.002222222222222222
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                1,
+                5
+              ],
+              "pair_label": "equity-fx",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.6301888888888888,
+                "ci_lo": 0.5687777777777777,
+                "ci_hi": 0.6888888888888888
+              },
+              "cand_lower": {
+                "mean": 0.08929999999999999,
+                "ci_lo": 0.0643888888888889,
+                "ci_hi": 0.11555555555555554
+              },
+              "frz_upper": {
+                "mean": 0.5748600112538594,
+                "ci_lo": 0.5101163750717904,
+                "ci_hi": 0.632962450155073
+              },
+              "frz_lower": {
+                "mean": 0.10105632179446612,
+                "ci_lo": 0.07293407574155553,
+                "ci_hi": 0.12977583287985972
+              },
+              "lift_upper": {
+                "mean": 0.05532887763502934,
+                "ci_lo": 0.028845515609704803,
+                "ci_hi": 0.0832255242992538
+              },
+              "lift_lower": {
+                "mean": -0.011756321794466135,
+                "ci_lo": -0.023151562907751673,
+                "ci_hi": -0.001956284047631591
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                3,
+                6
+              ],
+              "pair_label": "lapse-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.6567666666666666,
+                "ci_lo": 0.5821666666666665,
+                "ci_hi": 0.7311666666666665
+              },
+              "cand_lower": {
+                "mean": 0.13802222222222219,
+                "ci_lo": 0.10666666666666666,
+                "ci_hi": 0.16894444444444442
+              },
+              "frz_upper": {
+                "mean": 0.50599674514656,
+                "ci_lo": 0.44514107094027217,
+                "ci_hi": 0.5699591708572028
+              },
+              "frz_lower": {
+                "mean": 0.18817736839055438,
+                "ci_lo": 0.15151141224685152,
+                "ci_hi": 0.2260743606771961
+              },
+              "lift_upper": {
+                "mean": 0.15076992152010654,
+                "ci_lo": 0.1066386482360543,
+                "ci_hi": 0.1905521265143348
+              },
+              "lift_lower": {
+                "mean": -0.050155146168332186,
+                "ci_lo": -0.07698232047619076,
+                "ci_hi": -0.028401103563026487
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                4,
+                6
+              ],
+              "pair_label": "mortality-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.6436555555555554,
+                "ci_lo": 0.5799444444444443,
+                "ci_hi": 0.7066666666666666
+              },
+              "cand_lower": {
+                "mean": 0.22932222222222223,
+                "ci_lo": 0.18655555555555556,
+                "ci_hi": 0.2733333333333333
+              },
+              "frz_upper": {
+                "mean": 0.548218826484324,
+                "ci_lo": 0.48715146478365856,
+                "ci_hi": 0.621986515098277
+              },
+              "frz_lower": {
+                "mean": 0.3016093644106927,
+                "ci_lo": 0.2518541372997444,
+                "ci_hi": 0.3475214643681807
+              },
+              "lift_upper": {
+                "mean": 0.09543672907123148,
+                "ci_lo": 0.05843980867749094,
+                "ci_hi": 0.12684498761469815
+              },
+              "lift_lower": {
+                "mean": -0.07228714218847046,
+                "ci_lo": -0.09583089932313185,
+                "ci_hi": -0.04570352473879728
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                0,
+                5
+              ],
+              "pair_label": "rate-fx",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 0.84097234971565,
+                "ci_lo": 0.7117865597307546,
+                "ci_hi": 0.9943899360654396
+              },
+              "cand_lower": {
+                "mean": 0.017872540061403753,
+                "ci_lo": 0.0,
+                "ci_hi": 0.0462291476872662
+              },
+              "frz_upper": {
+                "mean": 0.7337942679455068,
+                "ci_lo": 0.6142823440931166,
+                "ci_hi": 0.8736188510491917
+              },
+              "frz_lower": {
+                "mean": 0.02786622689422618,
+                "ci_lo": 0.007499062617172853,
+                "ci_hi": 0.06650134669408325
+              },
+              "lift_upper": {
+                "mean": 0.10717808177014307,
+                "ci_lo": 0.01548161685361961,
+                "ci_hi": 0.18885656961285152
+              },
+              "lift_lower": {
+                "mean": -0.009993686832822424,
+                "ci_lo": -0.030639117788735546,
+                "ci_hi": 0.0
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                0,
+                3
+              ],
+              "pair_label": "rate-lapse",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 1.6122859376128502,
+                "ci_lo": 1.448207594376949,
+                "ci_hi": 1.815272242991934
+              },
+              "cand_lower": {
+                "mean": 0.01665904484386405,
+                "ci_lo": 0.0,
+                "ci_hi": 0.03997012069665954
+              },
+              "frz_upper": {
+                "mean": 1.2255651669915748,
+                "ci_lo": 1.049788851790599,
+                "ci_hi": 1.4091639159496656
+              },
+              "frz_lower": {
+                "mean": 0.026424530602400055,
+                "ci_lo": 0.0,
+                "ci_hi": 0.054843920456568676
+              },
+              "lift_upper": {
+                "mean": 0.3867207706212759,
+                "ci_lo": 0.26340448873587324,
+                "ci_hi": 0.48349853493308736
+              },
+              "lift_lower": {
+                "mean": -0.009765485758536007,
+                "ci_lo": -0.027568364277739513,
+                "ci_hi": 0.0
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                3,
+                4
+              ],
+              "pair_label": "lapse-mortality",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 0.7354755608489936,
+                "ci_lo": 0.6177835821558786,
+                "ci_hi": 0.8480709963447223
+              },
+              "cand_lower": {
+                "mean": 0.3802250176442603,
+                "ci_lo": 0.2874376275502178,
+                "ci_hi": 0.47485247257896673
+              },
+              "frz_upper": {
+                "mean": 0.6341388875559647,
+                "ci_lo": 0.5030809364247644,
+                "ci_hi": 0.7548697722346587
+              },
+              "frz_lower": {
+                "mean": 0.45035415104910415,
+                "ci_lo": 0.3371750181554103,
+                "ci_hi": 0.5603489389960458
+              },
+              "lift_upper": {
+                "mean": 0.10133667329302881,
+                "ci_lo": 0.02808661224935314,
+                "ci_hi": 0.1699187861166858
+              },
+              "lift_lower": {
+                "mean": -0.07012913340484385,
+                "ci_lo": -0.13310742711084037,
+                "ci_hi": -0.013056863740595557
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                1,
+                6
+              ],
+              "pair_label": "equity-liquidity",
+              "cond_label": "credit,fx",
+              "cand_upper": {
+                "mean": 1.3766655262762901,
+                "ci_lo": 1.1624986154570376,
+                "ci_hi": 1.5844427982756002
+              },
+              "cand_lower": {
+                "mean": 0.22030804836546256,
+                "ci_lo": 0.13675431254940257,
+                "ci_hi": 0.3245680411173089
+              },
+              "frz_upper": {
+                "mean": 1.1741292561605425,
+                "ci_lo": 0.9696579768270943,
+                "ci_hi": 1.3857716446419521
+              },
+              "frz_lower": {
+                "mean": 0.247755889721675,
+                "ci_lo": 0.14724831188481377,
+                "ci_hi": 0.35965018441678187
+              },
+              "lift_upper": {
+                "mean": 0.20253627011574765,
+                "ci_lo": 0.08339769382511193,
+                "ci_hi": 0.3249916616300214
+              },
+              "lift_lower": {
+                "mean": -0.027447841356212477,
+                "ci_lo": -0.08276901429681296,
+                "ci_hi": 0.018725993022036987
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                0,
+                1
+              ],
+              "pair_label": "rate-equity",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.49192833333333325,
+                "ci_lo": 0.4773083333333332,
+                "ci_hi": 0.504675
+              },
+              "cand_lower": {
+                "mean": 0.4704516666666666,
+                "ci_lo": 0.4569749999999999,
+                "ci_hi": 0.4850083333333332
+              },
+              "frz_upper": {
+                "mean": 0.4694633333333333,
+                "ci_lo": 0.44497499999999995,
+                "ci_hi": 0.49235833333333323
+              },
+              "frz_lower": {
+                "mean": 0.46895666666666663,
+                "ci_lo": 0.44499999999999995,
+                "ci_hi": 0.4930166666666666
+              },
+              "lift_upper": {
+                "mean": 0.022465000000000002,
+                "ci_lo": 0.004983333333333341,
+                "ci_hi": 0.03967500000000007
+              },
+              "lift_lower": {
+                "mean": 0.0014949999999999994,
+                "ci_lo": -0.013341666666666694,
+                "ci_hi": 0.01934166666666665
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                3,
+                4
+              ],
+              "pair_label": "lapse-mortality",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.25263499999999994,
+                "ci_lo": 0.23896666666666663,
+                "ci_hi": 0.26634166666666664
+              },
+              "cand_lower": {
+                "mean": 0.24654666666666664,
+                "ci_lo": 0.23432499999999998,
+                "ci_hi": 0.26066666666666666
+              },
+              "frz_upper": {
+                "mean": 0.24835166666666664,
+                "ci_lo": 0.2319583333333333,
+                "ci_hi": 0.2653583333333333
+              },
+              "frz_lower": {
+                "mean": 0.24901666666666664,
+                "ci_lo": 0.2319583333333333,
+                "ci_hi": 0.26672499999999993
+              },
+              "lift_upper": {
+                "mean": 0.0042833333333333334,
+                "ci_lo": -0.005008333333333335,
+                "ci_hi": 0.013341666666666672
+              },
+              "lift_lower": {
+                "mean": -0.0024699999999999995,
+                "ci_lo": -0.012008333333333341,
+                "ci_hi": 0.007699999999999995
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                0,
+                3
+              ],
+              "pair_label": "rate-lapse",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.28037833333333334,
+                "ci_lo": 0.2659583333333333,
+                "ci_hi": 0.29700833333333326
+              },
+              "cand_lower": {
+                "mean": 0.2618033333333333,
+                "ci_lo": 0.2486583333333333,
+                "ci_hi": 0.27599999999999997
+              },
+              "frz_upper": {
+                "mean": 0.25825833333333326,
+                "ci_lo": 0.23764999999999997,
+                "ci_hi": 0.2803416666666666
+              },
+              "frz_lower": {
+                "mean": 0.259065,
+                "ci_lo": 0.23954166666666665,
+                "ci_hi": 0.27933333333333327
+              },
+              "lift_upper": {
+                "mean": 0.02212,
+                "ci_lo": 0.012324999999999977,
+                "ci_hi": 0.03368333333333335
+              },
+              "lift_lower": {
+                "mean": 0.0027383333333333305,
+                "ci_lo": -0.006666666666666654,
+                "ci_hi": 0.014333333333333309
+              }
+            }
+          ]
+        },
+        "90": {
+          "p": 0.9,
+          "rows": [
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                6
+              ],
+              "pair_label": "credit-liquidity",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.3171750000000001,
+                "ci_lo": 0.3014625000000001,
+                "ci_hi": 0.33402500000000007
+              },
+              "cand_lower": {
+                "mean": 0.2686550000000001,
+                "ci_lo": 0.25350000000000006,
+                "ci_hi": 0.2850250000000001
+              },
+              "frz_upper": {
+                "mean": 0.25529500000000005,
+                "ci_lo": 0.23848750000000005,
+                "ci_hi": 0.2775500000000001
+              },
+              "frz_lower": {
+                "mean": 0.2540800000000001,
+                "ci_lo": 0.23700000000000004,
+                "ci_hi": 0.2735000000000001
+              },
+              "lift_upper": {
+                "mean": 0.061880000000000004,
+                "ci_lo": 0.04797499999999999,
+                "ci_hi": 0.07751250000000007
+              },
+              "lift_lower": {
+                "mean": 0.014575000000000006,
+                "ci_lo": 0.003500000000000003,
+                "ci_hi": 0.024999999999999994
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                5
+              ],
+              "pair_label": "credit-fx",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.15387750000000003,
+                "ci_lo": 0.14048750000000004,
+                "ci_hi": 0.16651250000000006
+              },
+              "cand_lower": {
+                "mean": 0.14484250000000004,
+                "ci_lo": 0.12748750000000003,
+                "ci_hi": 0.15905000000000008
+              },
+              "frz_upper": {
+                "mean": 0.14454500000000003,
+                "ci_lo": 0.12798750000000003,
+                "ci_hi": 0.15750000000000003
+              },
+              "frz_lower": {
+                "mean": 0.14323000000000002,
+                "ci_lo": 0.12500000000000003,
+                "ci_hi": 0.16001250000000003
+              },
+              "lift_upper": {
+                "mean": 0.0093325,
+                "ci_lo": 0.003487499999999978,
+                "ci_hi": 0.016499999999999987
+              },
+              "lift_lower": {
+                "mean": 0.001612499999999999,
+                "ci_lo": -0.004000000000000004,
+                "ci_hi": 0.008000000000000007
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                0,
+                2
+              ],
+              "pair_label": "rate-credit",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.7760750000000003,
+                "ci_lo": 0.7639500000000001,
+                "ci_hi": 0.7900500000000001
+              },
+              "cand_lower": {
+                "mean": 0.7194400000000002,
+                "ci_lo": 0.7034875000000002,
+                "ci_hi": 0.7360125000000001
+              },
+              "frz_upper": {
+                "mean": 0.7186875,
+                "ci_lo": 0.6874500000000002,
+                "ci_hi": 0.7506250000000003
+              },
+              "frz_lower": {
+                "mean": 0.7181900000000002,
+                "ci_lo": 0.6854375000000001,
+                "ci_hi": 0.7565250000000002
+              },
+              "lift_upper": {
+                "mean": 0.05738750000000003,
+                "ci_lo": 0.030449999999999984,
+                "ci_hi": 0.08405000000000008
+              },
+              "lift_lower": {
+                "mean": 0.0012499999999999894,
+                "ci_lo": -0.02801250000000013,
+                "ci_hi": 0.030037500000000033
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                1,
+                2
+              ],
+              "pair_label": "equity-credit",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.49010000000000004,
+                "ci_lo": 0.4759875000000002,
+                "ci_hi": 0.5075375000000002
+              },
+              "cand_lower": {
+                "mean": 0.4578200000000001,
+                "ci_lo": 0.4385000000000001,
+                "ci_hi": 0.4765250000000001
+              },
+              "frz_upper": {
+                "mean": 0.45702500000000007,
+                "ci_lo": 0.42797500000000005,
+                "ci_hi": 0.48800000000000016
+              },
+              "frz_lower": {
+                "mean": 0.4553775000000001,
+                "ci_lo": 0.42298750000000007,
+                "ci_hi": 0.4870500000000001
+              },
+              "lift_upper": {
+                "mean": 0.033075,
+                "ci_lo": 0.00946249999999996,
+                "ci_hi": 0.05149999999999999
+              },
+              "lift_lower": {
+                "mean": 0.0024425000000000015,
+                "ci_lo": -0.017999999999999964,
+                "ci_hi": 0.023025000000000025
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                3
+              ],
+              "pair_label": "credit-lapse",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.26220250000000006,
+                "ci_lo": 0.24500000000000005,
+                "ci_hi": 0.2785125000000001
+              },
+              "cand_lower": {
+                "mean": 0.23482250000000005,
+                "ci_lo": 0.21747500000000003,
+                "ci_hi": 0.2525125000000001
+              },
+              "frz_upper": {
+                "mean": 0.23137750000000004,
+                "ci_lo": 0.20945000000000005,
+                "ci_hi": 0.25250000000000006
+              },
+              "frz_lower": {
+                "mean": 0.23134750000000004,
+                "ci_lo": 0.21047500000000005,
+                "ci_hi": 0.2510125000000001
+              },
+              "lift_upper": {
+                "mean": 0.03082500000000001,
+                "ci_lo": 0.018987500000000018,
+                "ci_hi": 0.041512500000000015
+              },
+              "lift_lower": {
+                "mean": 0.0034750000000000015,
+                "ci_lo": -0.00799999999999998,
+                "ci_hi": 0.014012499999999987
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                4
+              ],
+              "pair_label": "credit-mortality",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.20330000000000006,
+                "ci_lo": 0.18696250000000006,
+                "ci_hi": 0.22010000000000005
+              },
+              "cand_lower": {
+                "mean": 0.19274500000000003,
+                "ci_lo": 0.17800000000000005,
+                "ci_hi": 0.20750000000000005
+              },
+              "frz_upper": {
+                "mean": 0.19125750000000002,
+                "ci_lo": 0.17250000000000004,
+                "ci_hi": 0.20802500000000004
+              },
+              "frz_lower": {
+                "mean": 0.19109500000000004,
+                "ci_lo": 0.17245000000000005,
+                "ci_hi": 0.20801250000000004
+              },
+              "lift_upper": {
+                "mean": 0.012042500000000005,
+                "ci_lo": 0.002487500000000005,
+                "ci_hi": 0.021525000000000023
+              },
+              "lift_lower": {
+                "mean": 0.0016499999999999998,
+                "ci_lo": -0.006000000000000005,
+                "ci_hi": 0.01100000000000001
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                5,
+                6
+              ],
+              "pair_label": "fx-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.4480000000000001,
+                "ci_lo": 0.3798750000000001,
+                "ci_hi": 0.5250000000000001
+              },
+              "cand_lower": {
+                "mean": 0.15852500000000003,
+                "ci_lo": 0.10487500000000004,
+                "ci_hi": 0.22000000000000003
+              },
+              "frz_upper": {
+                "mean": 0.3821646303031864,
+                "ci_lo": 0.3089272612933655,
+                "ci_hi": 0.45921723952739
+              },
+              "frz_lower": {
+                "mean": 0.3070686823422669,
+                "ci_lo": 0.24353360103038116,
+                "ci_hi": 0.3910504026720771
+              },
+              "lift_upper": {
+                "mean": 0.06583536969681364,
+                "ci_lo": 0.021484044648851577,
+                "ci_hi": 0.11234298707749599
+              },
+              "lift_lower": {
+                "mean": -0.14854368234226686,
+                "ci_lo": -0.20987980676699416,
+                "ci_hi": -0.10283328010220384
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                0,
+                6
+              ],
+              "pair_label": "rate-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 2.4778250000000006,
+                "ci_lo": 2.3500000000000005,
+                "ci_hi": 2.620625000000001
+              },
+              "cand_lower": {
+                "mean": 0.0024000000000000002,
+                "ci_lo": 0.0,
+                "ci_hi": 0.010000000000000002
+              },
+              "frz_upper": {
+                "mean": 1.6329253820580154,
+                "ci_lo": 1.4903423250996823,
+                "ci_hi": 1.7932801364889446
+              },
+              "frz_lower": {
+                "mean": 0.0035613040319254553,
+                "ci_lo": 0.0,
+                "ci_hi": 0.014761296603059977
+              },
+              "lift_upper": {
+                "mean": 0.8448996179419851,
+                "ci_lo": 0.7207455238448129,
+                "ci_hi": 0.9797116843432998
+              },
+              "lift_lower": {
+                "mean": -0.0011613040319254546,
+                "ci_lo": -0.009915296287138092,
+                "ci_hi": 0.00018547929717886377
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                1,
+                5
+              ],
+              "pair_label": "equity-fx",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.8144000000000001,
+                "ci_lo": 0.7150000000000001,
+                "ci_hi": 0.9250000000000002
+              },
+              "cand_lower": {
+                "mean": 0.09322500000000002,
+                "ci_lo": 0.05987500000000003,
+                "ci_hi": 0.14000000000000004
+              },
+              "frz_upper": {
+                "mean": 0.7097249156535287,
+                "ci_lo": 0.6103243947869462,
+                "ci_hi": 0.8094314811528811
+              },
+              "frz_lower": {
+                "mean": 0.11450624583015807,
+                "ci_lo": 0.07135394283650044,
+                "ci_hi": 0.1629108573591572
+              },
+              "lift_upper": {
+                "mean": 0.10467508434647155,
+                "ci_lo": 0.056763808327115146,
+                "ci_hi": 0.1597888102339465
+              },
+              "lift_lower": {
+                "mean": -0.021281245830158065,
+                "ci_lo": -0.04898002985181988,
+                "ci_hi": -0.0018220869550004265
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                3,
+                6
+              ],
+              "pair_label": "lapse-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.9021000000000002,
+                "ci_lo": 0.7896250000000002,
+                "ci_hi": 1.0252500000000002
+              },
+              "cand_lower": {
+                "mean": 0.12890000000000001,
+                "ci_lo": 0.08500000000000002,
+                "ci_hi": 0.18012500000000006
+              },
+              "frz_upper": {
+                "mean": 0.618573068712694,
+                "ci_lo": 0.5260437428579022,
+                "ci_hi": 0.731457928645014
+              },
+              "frz_lower": {
+                "mean": 0.21765481805336143,
+                "ci_lo": 0.162091038188683,
+                "ci_hi": 0.2737864473467966
+              },
+              "lift_upper": {
+                "mean": 0.28352693128730616,
+                "ci_lo": 0.21648403714301473,
+                "ci_hi": 0.3677929561187095
+              },
+              "lift_lower": {
+                "mean": -0.0887548180533614,
+                "ci_lo": -0.1315570930183737,
+                "ci_hi": -0.04013667766653881
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                4,
+                6
+              ],
+              "pair_label": "mortality-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.8620500000000001,
+                "ci_lo": 0.7448750000000002,
+                "ci_hi": 0.9801250000000002
+              },
+              "cand_lower": {
+                "mean": 0.22692500000000002,
+                "ci_lo": 0.16500000000000004,
+                "ci_hi": 0.29500000000000004
+              },
+              "frz_upper": {
+                "mean": 0.6705757344454061,
+                "ci_lo": 0.5630773586030158,
+                "ci_hi": 0.7875963180655349
+              },
+              "frz_lower": {
+                "mean": 0.35955082879291866,
+                "ci_lo": 0.2832844617140216,
+                "ci_hi": 0.4534232609309107
+              },
+              "lift_upper": {
+                "mean": 0.19147426555459415,
+                "ci_lo": 0.12264193287476845,
+                "ci_hi": 0.2551144659783146
+              },
+              "lift_lower": {
+                "mean": -0.13262582879291857,
+                "ci_lo": -0.18441162127346342,
+                "ci_hi": -0.08963883274061021
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                0,
+                5
+              ],
+              "pair_label": "rate-fx",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 1.1250853824989206,
+                "ci_lo": 0.9104219190827784,
+                "ci_hi": 1.3689855245842806
+              },
+              "cand_lower": {
+                "mean": 0.01639226799372425,
+                "ci_lo": 0.0,
+                "ci_hi": 0.04846919405220425
+              },
+              "frz_upper": {
+                "mean": 0.9671561374230457,
+                "ci_lo": 0.7462872377930552,
+                "ci_hi": 1.2678367233101584
+              },
+              "frz_lower": {
+                "mean": 0.034387306469769896,
+                "ci_lo": 0.0,
+                "ci_hi": 0.09600670475506319
+              },
+              "lift_upper": {
+                "mean": 0.1579292450758748,
+                "ci_lo": -0.005922026863626716,
+                "ci_hi": 0.333511865695872
+              },
+              "lift_lower": {
+                "mean": -0.017995038476045652,
+                "ci_lo": -0.05133053917942589,
+                "ci_hi": 0.0
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                0,
+                3
+              ],
+              "pair_label": "rate-lapse",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 2.3618848353050237,
+                "ci_lo": 2.016160878198644,
+                "ci_hi": 2.7362427457098293
+              },
+              "cand_lower": {
+                "mean": 0.01318885578317035,
+                "ci_lo": 0.0,
+                "ci_hi": 0.04733949901514501
+              },
+              "frz_upper": {
+                "mean": 1.6572763173558587,
+                "ci_lo": 1.3025259558665356,
+                "ci_hi": 1.9886153283615067
+              },
+              "frz_lower": {
+                "mean": 0.031206927529358355,
+                "ci_lo": 0.0,
+                "ci_hi": 0.09600196419635991
+              },
+              "lift_upper": {
+                "mean": 0.7046085179491653,
+                "ci_lo": 0.488218984962406,
+                "ci_hi": 0.9571207814278772
+              },
+              "lift_lower": {
+                "mean": -0.018018071746188004,
+                "ci_lo": -0.05880945290564111,
+                "ci_hi": 0.0
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                3,
+                4
+              ],
+              "pair_label": "lapse-mortality",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 0.9898161419117735,
+                "ci_lo": 0.7479648941212892,
+                "ci_hi": 1.211227215208215
+              },
+              "cand_lower": {
+                "mean": 0.4401042936928896,
+                "ci_lo": 0.2835128181246654,
+                "ci_hi": 0.6297591000880239
+              },
+              "frz_upper": {
+                "mean": 0.8288052441062689,
+                "ci_lo": 0.6057656482861402,
+                "ci_hi": 1.0768292727285957
+              },
+              "frz_lower": {
+                "mean": 0.5948958731971536,
+                "ci_lo": 0.3998343685300208,
+                "ci_hi": 0.8252464578264569
+              },
+              "lift_upper": {
+                "mean": 0.16101089780550454,
+                "ci_lo": 0.017078834240547427,
+                "ci_hi": 0.3155400078137662
+              },
+              "lift_lower": {
+                "mean": -0.15479157950426406,
+                "ci_lo": -0.2785250647825283,
+                "ci_hi": -0.029686809856831937
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                1,
+                6
+              ],
+              "pair_label": "equity-liquidity",
+              "cond_label": "credit,fx",
+              "cand_upper": {
+                "mean": 1.986778862492291,
+                "ci_lo": 1.547184799186579,
+                "ci_hi": 2.3384080583727234
+              },
+              "cand_lower": {
+                "mean": 0.2618826555290123,
+                "ci_lo": 0.09965952344282855,
+                "ci_hi": 0.46075812433769003
+              },
+              "frz_upper": {
+                "mean": 1.6472536364211305,
+                "ci_lo": 1.279310164650148,
+                "ci_hi": 2.030343716433942
+              },
+              "frz_lower": {
+                "mean": 0.3181869177868543,
+                "ci_lo": 0.14133031403971535,
+                "ci_hi": 0.5674263648065422
+              },
+              "lift_upper": {
+                "mean": 0.33952522607116065,
+                "ci_lo": 0.0864183816945393,
+                "ci_hi": 0.6063664002272051
+              },
+              "lift_lower": {
+                "mean": -0.056304262257842075,
+                "ci_lo": -0.18651232229102807,
+                "ci_hi": 0.028855563386865016
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                0,
+                1
+              ],
+              "pair_label": "rate-equity",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.4783250000000001,
+                "ci_lo": 0.4624625000000001,
+                "ci_hi": 0.49501250000000013
+              },
+              "cand_lower": {
+                "mean": 0.4382375000000001,
+                "ci_lo": 0.4185000000000001,
+                "ci_hi": 0.4555250000000001
+              },
+              "frz_upper": {
+                "mean": 0.4370925000000001,
+                "ci_lo": 0.4094750000000001,
+                "ci_hi": 0.46602500000000013
+              },
+              "frz_lower": {
+                "mean": 0.4362425000000001,
+                "ci_lo": 0.4084625000000001,
+                "ci_hi": 0.4665250000000001
+              },
+              "lift_upper": {
+                "mean": 0.04123250000000001,
+                "ci_lo": 0.021999999999999964,
+                "ci_hi": 0.058050000000000115
+              },
+              "lift_lower": {
+                "mean": 0.001995000000000003,
+                "ci_lo": -0.017050000000000006,
+                "ci_hi": 0.020537500000000028
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                3,
+                4
+              ],
+              "pair_label": "lapse-mortality",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.22343250000000003,
+                "ci_lo": 0.20696250000000005,
+                "ci_hi": 0.24200000000000005
+              },
+              "cand_lower": {
+                "mean": 0.21381750000000005,
+                "ci_lo": 0.19798750000000007,
+                "ci_hi": 0.22950000000000007
+              },
+              "frz_upper": {
+                "mean": 0.21767250000000005,
+                "ci_lo": 0.19750000000000004,
+                "ci_hi": 0.23800000000000007
+              },
+              "frz_lower": {
+                "mean": 0.21704250000000003,
+                "ci_lo": 0.19648750000000006,
+                "ci_hi": 0.23751250000000004
+              },
+              "lift_upper": {
+                "mean": 0.00576,
+                "ci_lo": -0.006012500000000003,
+                "ci_hi": 0.014999999999999986
+              },
+              "lift_lower": {
+                "mean": -0.003225,
+                "ci_lo": -0.013012499999999982,
+                "ci_hi": 0.006500000000000007
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                0,
+                3
+              ],
+              "pair_label": "rate-lapse",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.25921250000000007,
+                "ci_lo": 0.23850000000000005,
+                "ci_hi": 0.278
+              },
+              "cand_lower": {
+                "mean": 0.22926000000000005,
+                "ci_lo": 0.21348750000000005,
+                "ci_hi": 0.24451250000000005
+              },
+              "frz_upper": {
+                "mean": 0.22602250000000004,
+                "ci_lo": 0.20350000000000004,
+                "ci_hi": 0.24550000000000005
+              },
+              "frz_lower": {
+                "mean": 0.22618750000000007,
+                "ci_lo": 0.20648750000000007,
+                "ci_hi": 0.24901250000000003
+              },
+              "lift_upper": {
+                "mean": 0.03319000000000001,
+                "ci_lo": 0.021487499999999993,
+                "ci_hi": 0.04600000000000001
+              },
+              "lift_lower": {
+                "mean": 0.0030724999999999993,
+                "ci_lo": -0.008512500000000006,
+                "ci_hi": 0.013012499999999986
+              }
+            }
+          ]
+        },
+        "95": {
+          "p": 0.95,
+          "rows": [
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                6
+              ],
+              "pair_label": "credit-liquidity",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.33121999999999974,
+                "ci_lo": 0.3079749999999997,
+                "ci_hi": 0.3590249999999997
+              },
+              "cand_lower": {
+                "mean": 0.2405549999999998,
+                "ci_lo": 0.2169999999999998,
+                "ci_hi": 0.26504999999999973
+              },
+              "frz_upper": {
+                "mean": 0.22348999999999983,
+                "ci_lo": 0.19699999999999981,
+                "ci_hi": 0.2520249999999998
+              },
+              "frz_lower": {
+                "mean": 0.2209249999999998,
+                "ci_lo": 0.19797499999999985,
+                "ci_hi": 0.2499999999999998
+              },
+              "lift_upper": {
+                "mean": 0.1077299999999999,
+                "ci_lo": 0.08597499999999991,
+                "ci_hi": 0.1280499999999999
+              },
+              "lift_lower": {
+                "mean": 0.019629999999999984,
+                "ci_lo": 0.006000000000000005,
+                "ci_hi": 0.034999999999999976
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                5
+              ],
+              "pair_label": "credit-fx",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.13488999999999987,
+                "ci_lo": 0.1149749999999999,
+                "ci_hi": 0.15307499999999988
+              },
+              "cand_lower": {
+                "mean": 0.1205599999999999,
+                "ci_lo": 0.10097499999999991,
+                "ci_hi": 0.14102499999999987
+              },
+              "frz_upper": {
+                "mean": 0.1201649999999999,
+                "ci_lo": 0.10099999999999991,
+                "ci_hi": 0.13999999999999987
+              },
+              "frz_lower": {
+                "mean": 0.1184049999999999,
+                "ci_lo": 0.09797499999999991,
+                "ci_hi": 0.13999999999999987
+              },
+              "lift_upper": {
+                "mean": 0.014724999999999986,
+                "ci_lo": 0.0040000000000000036,
+                "ci_hi": 0.023999999999999966
+              },
+              "lift_lower": {
+                "mean": 0.0021549999999999976,
+                "ci_lo": -0.004999999999999964,
+                "ci_hi": 0.010000000000000009
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                0,
+                2
+              ],
+              "pair_label": "rate-credit",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.8102049999999993,
+                "ci_lo": 0.7929749999999993,
+                "ci_hi": 0.8290749999999993
+              },
+              "cand_lower": {
+                "mean": 0.6968899999999993,
+                "ci_lo": 0.6749749999999994,
+                "ci_hi": 0.7200249999999994
+              },
+              "frz_upper": {
+                "mean": 0.6963499999999994,
+                "ci_lo": 0.6519499999999994,
+                "ci_hi": 0.7410749999999994
+              },
+              "frz_lower": {
+                "mean": 0.6945299999999993,
+                "ci_lo": 0.6439999999999995,
+                "ci_hi": 0.7469999999999993
+              },
+              "lift_upper": {
+                "mean": 0.1138549999999999,
+                "ci_lo": 0.06999999999999995,
+                "ci_hi": 0.1530249999999999
+              },
+              "lift_lower": {
+                "mean": 0.0023600000000000023,
+                "ci_lo": -0.038999999999999924,
+                "ci_hi": 0.04402499999999993
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                1,
+                2
+              ],
+              "pair_label": "equity-credit",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.4853599999999995,
+                "ci_lo": 0.4619249999999996,
+                "ci_hi": 0.5070249999999996
+              },
+              "cand_lower": {
+                "mean": 0.42463499999999965,
+                "ci_lo": 0.39699999999999963,
+                "ci_hi": 0.44999999999999957
+              },
+              "frz_upper": {
+                "mean": 0.42436499999999966,
+                "ci_lo": 0.3858749999999997,
+                "ci_hi": 0.4650499999999996
+              },
+              "frz_lower": {
+                "mean": 0.4219649999999996,
+                "ci_lo": 0.37899999999999967,
+                "ci_hi": 0.4560499999999996
+              },
+              "lift_upper": {
+                "mean": 0.06099499999999995,
+                "ci_lo": 0.03600000000000003,
+                "ci_hi": 0.08704999999999992
+              },
+              "lift_lower": {
+                "mean": 0.0026699999999999953,
+                "ci_lo": -0.02202499999999996,
+                "ci_hi": 0.027024999999999976
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                3
+              ],
+              "pair_label": "credit-lapse",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.24923999999999974,
+                "ci_lo": 0.2249749999999998,
+                "ci_hi": 0.2730499999999998
+              },
+              "cand_lower": {
+                "mean": 0.20304999999999981,
+                "ci_lo": 0.18097499999999986,
+                "ci_hi": 0.22704999999999984
+              },
+              "frz_upper": {
+                "mean": 0.1993499999999998,
+                "ci_lo": 0.17199999999999985,
+                "ci_hi": 0.2290749999999998
+              },
+              "frz_lower": {
+                "mean": 0.19838999999999982,
+                "ci_lo": 0.16897499999999985,
+                "ci_hi": 0.2289999999999998
+              },
+              "lift_upper": {
+                "mean": 0.049889999999999955,
+                "ci_lo": 0.032999999999999974,
+                "ci_hi": 0.06402499999999996
+              },
+              "lift_lower": {
+                "mean": 0.004659999999999997,
+                "ci_lo": -0.00799999999999998,
+                "ci_hi": 0.018024999999999992
+              }
+            },
+            {
+              "tree": "first",
+              "pair": [
+                2,
+                4
+              ],
+              "pair_label": "credit-mortality",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.18019499999999986,
+                "ci_lo": 0.15697499999999984,
+                "ci_hi": 0.20099999999999982
+              },
+              "cand_lower": {
+                "mean": 0.16425999999999988,
+                "ci_lo": 0.14497499999999988,
+                "ci_hi": 0.18399999999999983
+              },
+              "frz_upper": {
+                "mean": 0.16200999999999988,
+                "ci_lo": 0.13497499999999987,
+                "ci_hi": 0.18407499999999985
+              },
+              "frz_lower": {
+                "mean": 0.16205999999999984,
+                "ci_lo": 0.14197499999999988,
+                "ci_hi": 0.18304999999999985
+              },
+              "lift_upper": {
+                "mean": 0.018184999999999986,
+                "ci_lo": 0.005974999999999955,
+                "ci_hi": 0.029999999999999943
+              },
+              "lift_lower": {
+                "mean": 0.0021999999999999993,
+                "ci_lo": -0.007024999999999974,
+                "ci_hi": 0.012024999999999987
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                5,
+                6
+              ],
+              "pair_label": "fx-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 0.7713999999999994,
+                "ci_lo": 0.5594999999999996,
+                "ci_hi": 0.9999999999999992
+              },
+              "cand_lower": {
+                "mean": 0.13739999999999988,
+                "ci_lo": 0.039999999999999966,
+                "ci_hi": 0.2399999999999998
+              },
+              "frz_upper": {
+                "mean": 0.6020508412945401,
+                "ci_lo": 0.39679595873957857,
+                "ci_hi": 0.7853081722524317
+              },
+              "frz_lower": {
+                "mean": 0.47464099642431296,
+                "ci_lo": 0.2992835546980693,
+                "ci_hi": 0.7052203065134094
+              },
+              "lift_upper": {
+                "mean": 0.16934915870545914,
+                "ci_lo": 0.04609958932238189,
+                "ci_hi": 0.32365425395515796
+              },
+              "lift_lower": {
+                "mean": -0.33724099642431304,
+                "ci_lo": -0.5053467126612521,
+                "ci_hi": -0.210498652944896
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                0,
+                6
+              ],
+              "pair_label": "rate-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 5.349999999999995,
+                "ci_lo": 4.8799999999999955,
+                "ci_hi": 5.820499999999994
+              },
+              "cand_lower": {
+                "mean": 0.002199999999999998,
+                "ci_lo": 0.0,
+                "ci_hi": 0.019999999999999983
+              },
+              "frz_upper": {
+                "mean": 2.741993678988038,
+                "ci_lo": 2.3035049831899572,
+                "ci_hi": 3.145636075227028
+              },
+              "frz_lower": {
+                "mean": 0.005019580054443862,
+                "ci_lo": 0.0,
+                "ci_hi": 0.02137445887445886
+              },
+              "lift_upper": {
+                "mean": 2.6080063210119575,
+                "ci_lo": 2.142516629565719,
+                "ci_hi": 2.966015226265161
+              },
+              "lift_lower": {
+                "mean": -0.002819580054443864,
+                "ci_lo": -0.02061855670103091,
+                "ci_hi": 0.0003733956781927716
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                1,
+                5
+              ],
+              "pair_label": "equity-fx",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 1.429299999999999,
+                "ci_lo": 1.139499999999999,
+                "ci_hi": 1.6799999999999986
+              },
+              "cand_lower": {
+                "mean": 0.11699999999999988,
+                "ci_lo": 0.03950000000000005,
+                "ci_hi": 0.21999999999999978
+              },
+              "frz_upper": {
+                "mean": 1.1383507180785408,
+                "ci_lo": 0.8633938886662101,
+                "ci_hi": 1.3954749782120073
+              },
+              "frz_lower": {
+                "mean": 0.1689573168483917,
+                "ci_lo": 0.07808884285004664,
+                "ci_hi": 0.27982666420800273
+              },
+              "lift_upper": {
+                "mean": 0.29094928192145775,
+                "ci_lo": 0.13444104573634333,
+                "ci_hi": 0.44176270327060957
+              },
+              "lift_lower": {
+                "mean": -0.0519573168483918,
+                "ci_lo": -0.12429027144838502,
+                "ci_hi": 0.0020710574262770647
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                3,
+                6
+              ],
+              "pair_label": "lapse-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 1.7539999999999987,
+                "ci_lo": 1.4399999999999986,
+                "ci_hi": 2.100499999999998
+              },
+              "cand_lower": {
+                "mean": 0.12999999999999987,
+                "ci_lo": 0.039999999999999966,
+                "ci_hi": 0.2204999999999999
+              },
+              "frz_upper": {
+                "mean": 0.9903328734705579,
+                "ci_lo": 0.7429838314551683,
+                "ci_hi": 1.2558485391175833
+              },
+              "frz_lower": {
+                "mean": 0.33191850477229756,
+                "ci_lo": 0.16029668899552077,
+                "ci_hi": 0.46561873940514675
+              },
+              "lift_upper": {
+                "mean": 0.7636671265294405,
+                "ci_lo": 0.5264800718503764,
+                "ci_hi": 1.0154264927908196
+              },
+              "lift_lower": {
+                "mean": -0.20191850477229764,
+                "ci_lo": -0.3401028006080434,
+                "ci_hi": -0.08133808613235766
+              }
+            },
+            {
+              "tree": "second",
+              "pair": [
+                4,
+                6
+              ],
+              "pair_label": "mortality-liquidity",
+              "cond_label": "credit",
+              "cand_upper": {
+                "mean": 1.5883999999999987,
+                "ci_lo": 1.339999999999999,
+                "ci_hi": 1.8804999999999985
+              },
+              "cand_lower": {
+                "mean": 0.24019999999999977,
+                "ci_lo": 0.1199999999999999,
+                "ci_hi": 0.37999999999999967
+              },
+              "frz_upper": {
+                "mean": 1.0853320888070446,
+                "ci_lo": 0.809939496687093,
+                "ci_hi": 1.3474312511249364
+              },
+              "frz_lower": {
+                "mean": 0.5640233907785922,
+                "ci_lo": 0.3504367798294169,
+                "ci_hi": 0.7791192706590827
+              },
+              "lift_upper": {
+                "mean": 0.5030679111929539,
+                "ci_lo": 0.3062311731547389,
+                "ci_hi": 0.7250002258015952
+              },
+              "lift_lower": {
+                "mean": -0.32382339077859235,
+                "ci_lo": -0.5216927975463307,
+                "ci_hi": -0.17607116041722853
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                0,
+                5
+              ],
+              "pair_label": "rate-fx",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 1.920136545348193,
+                "ci_lo": 1.3091931216931207,
+                "ci_hi": 2.609632107023409
+              },
+              "cand_lower": {
+                "mean": 0.010885859239553495,
+                "ci_lo": 0.0,
+                "ci_hi": 0.0638977635782747
+              },
+              "frz_upper": {
+                "mean": 1.722609372845274,
+                "ci_lo": 0.9520757020757011,
+                "ci_hi": 2.5464947987336024
+              },
+              "frz_lower": {
+                "mean": 0.0491879299342105,
+                "ci_lo": 0.0,
+                "ci_hi": 0.1886792452830187
+              },
+              "lift_upper": {
+                "mean": 0.19752717250291887,
+                "ci_lo": -0.2973585998159296,
+                "ci_hi": 0.6559530325317273
+              },
+              "lift_lower": {
+                "mean": -0.038302070694657006,
+                "ci_lo": -0.18357197976506884,
+                "ci_hi": 0.0
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                0,
+                3
+              ],
+              "pair_label": "rate-lapse",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 4.4902192489323065,
+                "ci_lo": 3.5771586836102935,
+                "ci_hi": 5.307425774047933
+              },
+              "cand_lower": {
+                "mean": 0.01004411768292471,
+                "ci_lo": 0.0,
+                "ci_hi": 0.06289804178322714
+              },
+              "frz_upper": {
+                "mean": 2.9573170019736943,
+                "ci_lo": 2.015563412937629,
+                "ci_hi": 3.8566562097038015
+              },
+              "frz_lower": {
+                "mean": 0.04626395721127958,
+                "ci_lo": 0.0,
+                "ci_hi": 0.20312418232246568
+              },
+              "lift_upper": {
+                "mean": 1.5329022469586118,
+                "ci_lo": 0.8035336831290236,
+                "ci_hi": 2.316805057286792
+              },
+              "lift_lower": {
+                "mean": -0.036219839528354864,
+                "ci_lo": -0.1860682460334708,
+                "ci_hi": 0.0
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                3,
+                4
+              ],
+              "pair_label": "lapse-mortality",
+              "cond_label": "credit,liquidity",
+              "cand_upper": {
+                "mean": 1.6843842498556159,
+                "ci_lo": 1.1275315281899099,
+                "ci_hi": 2.2631704846062903
+              },
+              "cand_lower": {
+                "mean": 0.6043404355127475,
+                "ci_lo": 0.302939575394665,
+                "ci_hi": 1.0120039682539674
+              },
+              "frz_upper": {
+                "mean": 1.4718790067632197,
+                "ci_lo": 0.897461423593827,
+                "ci_hi": 2.1890547263681572
+              },
+              "frz_lower": {
+                "mean": 1.0147379237931369,
+                "ci_lo": 0.507218939835233,
+                "ci_hi": 1.612415254237287
+              },
+              "lift_upper": {
+                "mean": 0.21250524309239624,
+                "ci_lo": -0.1595921319391411,
+                "ci_hi": 0.6807955677081136
+              },
+              "lift_lower": {
+                "mean": -0.41039748828038936,
+                "ci_lo": -0.803204514840366,
+                "ci_hi": -0.02584645376678584
+              }
+            },
+            {
+              "tree": "third",
+              "pair": [
+                1,
+                6
+              ],
+              "pair_label": "equity-liquidity",
+              "cond_label": "credit,fx",
+              "cand_upper": {
+                "mean": 3.9479321337016517,
+                "ci_lo": 2.5709726443768974,
+                "ci_hi": 5.0826552590642535
+              },
+              "cand_lower": {
+                "mean": 0.3762648358970704,
+                "ci_lo": 0.0,
+                "ci_hi": 0.8484934086628996
+              },
+              "frz_upper": {
+                "mean": 3.093756957926238,
+                "ci_lo": 1.8687860522392883,
+                "ci_hi": 4.223169465120302
+              },
+              "frz_lower": {
+                "mean": 0.5746147399312249,
+                "ci_lo": 0.0,
+                "ci_hi": 1.231496062992125
+              },
+              "lift_upper": {
+                "mean": 0.8541751757754138,
+                "ci_lo": 0.07327222897875052,
+                "ci_hi": 1.8165513662757469
+              },
+              "lift_lower": {
+                "mean": -0.19834990403415462,
+                "ci_lo": -0.6461121284264048,
+                "ci_hi": 0.14213650576509665
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                0,
+                1
+              ],
+              "pair_label": "rate-equity",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.4733449999999996,
+                "ci_lo": 0.4489749999999996,
+                "ci_hi": 0.49702499999999955
+              },
+              "cand_lower": {
+                "mean": 0.4042099999999996,
+                "ci_lo": 0.37899999999999967,
+                "ci_hi": 0.4290249999999996
+              },
+              "frz_upper": {
+                "mean": 0.40223499999999957,
+                "ci_lo": 0.3639999999999997,
+                "ci_hi": 0.44417499999999965
+              },
+              "frz_lower": {
+                "mean": 0.4022899999999997,
+                "ci_lo": 0.3639999999999997,
+                "ci_hi": 0.43809999999999966
+              },
+              "lift_upper": {
+                "mean": 0.07110999999999994,
+                "ci_lo": 0.04497499999999993,
+                "ci_hi": 0.10099999999999987
+              },
+              "lift_lower": {
+                "mean": 0.0019199999999999968,
+                "ci_lo": -0.027050000000000015,
+                "ci_hi": 0.023025000000000025
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                3,
+                4
+              ],
+              "pair_label": "lapse-mortality",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.19464999999999982,
+                "ci_lo": 0.17194999999999985,
+                "ci_hi": 0.2190249999999998
+              },
+              "cand_lower": {
+                "mean": 0.18230499999999986,
+                "ci_lo": 0.15697499999999984,
+                "ci_hi": 0.20402499999999982
+              },
+              "frz_upper": {
+                "mean": 0.18691499999999983,
+                "ci_lo": 0.15897499999999987,
+                "ci_hi": 0.21404999999999982
+              },
+              "frz_lower": {
+                "mean": 0.18630499999999983,
+                "ci_lo": 0.16097499999999987,
+                "ci_hi": 0.21102499999999982
+              },
+              "lift_upper": {
+                "mean": 0.007734999999999992,
+                "ci_lo": -0.007025000000000029,
+                "ci_hi": 0.01899999999999999
+              },
+              "lift_lower": {
+                "mean": -0.003999999999999996,
+                "ci_lo": -0.016025000000000008,
+                "ci_hi": 0.009999999999999981
+              }
+            },
+            {
+              "tree": "holdout",
+              "pair": [
+                0,
+                3
+              ],
+              "pair_label": "rate-lapse",
+              "cond_label": null,
+              "cand_upper": {
+                "mean": 0.2433299999999998,
+                "ci_lo": 0.2179999999999998,
+                "ci_hi": 0.26602499999999973
+              },
+              "cand_lower": {
+                "mean": 0.19839999999999983,
+                "ci_lo": 0.17494999999999986,
+                "ci_hi": 0.22104999999999983
+              },
+              "frz_upper": {
+                "mean": 0.19381999999999983,
+                "ci_lo": 0.16297499999999984,
+                "ci_hi": 0.2220249999999998
+              },
+              "frz_lower": {
+                "mean": 0.1940949999999998,
+                "ci_lo": 0.16597499999999984,
+                "ci_hi": 0.21999999999999978
+              },
+              "lift_upper": {
+                "mean": 0.049509999999999964,
+                "ci_lo": 0.03297499999999995,
+                "ci_hi": 0.06509999999999999
+              },
+              "lift_lower": {
+                "mean": 0.004304999999999998,
+                "ci_lo": -0.007000000000000006,
+                "ci_hi": 0.01702499999999999
+              }
+            }
+          ]
+        }
+      },
+      "overfit_check": {
+        "canonical_p": 0.9,
+        "n_fit_pairs": 15,
+        "n_holdout_pairs": 3,
+        "max_fit_pair_abs_mean_lift": 0.8448996179419851,
+        "max_holdout_pair_abs_mean_lift": 0.04123250000000001,
+        "holdout_to_fit_max_lift_ratio": 0.04880165539716368,
+        "p29_holdout_to_fit_reference": 0.049,
+        "ratio_vs_p29_reference_disclosed": true,
+        "holdout_disclosure_complete": true,
+        "concentration_ok": true,
+        "overfit_gate_pass": true,
+        "tree3_fit_support_n_fit": [
+          3,
+          3,
+          3,
+          1
+        ],
+        "tree3_fit_all_zero_strength": true,
+        "note": "Holdout pairs were never used in family selection; their candidate-vs-frozen lifts are DISCLOSED with CIs at every grid level. The gate requires the largest holdout |mean lift| <= the largest fitted-pair |mean lift| (tilt concentrated on fitted links; fitted = tree-1 + tree-2 + tree-3) AND complete holdout disclosure. The holdout-to-fit max-lift ratio is disclosed against the P29 Task 4 reference 0.049. The four tree-3 links carry ZERO incremental tilt (zero-strength selections under n_fit <= 3 joint-conditional support), so the candidate tail field is exactly the 2-tree vine's."
+      },
+      "archive_crosscheck": {
+        "per_replicate_max_abs_dev": 0.0,
+        "aggregate_max_abs_dev": 0.0,
+        "bit_identical": true,
+        "uniform_bit_identity_max_abs_dev": 0.0,
+        "tree3_minus_vine2_all_exactly_zero": true,
+        "t3_tree3_mean_ref": 41751.92733111887,
+        "t3_frozen_mean_ref": 39448.2149275207
+      },
+      "gates": {
+        "T4_G1_archive_crosscheck_bit_identical": true,
+        "T4_G2_pair_tail_grid_complete": true,
+        "T4_G3_fit_vs_holdout_overfit_check": true,
+        "T4_G4_stop_rule_mr_decision_per_preregistered_criteria": true,
+        "T4_G5_mr010_mr014_no_refresh": true,
+        "T4_G6_zero_strength_bit_identity_and_digest": true
+      },
+      "verdict": "PASS",
+      "digest": "9e10a3b86332",
+      "source": "docs/validation/PHASE30_TASK4_TREE3_TAIL_DIAGNOSTICS_REPORT.json",
+      "change_record_id": "b1c2649394b747388aaa432560039587"
+    },
+    "stop_rule": {
+      "existing_risk_id": "MR-016",
+      "next_risk_id": "MR-017",
+      "nested_scr": 46638.9,
+      "tree3_ci": [
+        38593.73891844572,
+        44556.44856853384
+      ],
+      "nested_inside_ci": false,
+      "tree3_copula_form_residual": 3637.298487404965,
+      "residual_improvement_threshold": 3637.298487404965,
+      "residual_shrinks_strictly": false,
+      "residual_unchanged_vs_vine2": true,
+      "residual_change_vs_grouped_t_rel": -0.6533099664104308,
+      "residual_change_vs_skewt_rel": -0.4051744938748033,
+      "mitigate_criteria_met": false,
+      "mr016_decision": "KEEP_OPEN",
+      "mr017_decision": "KEEP_OPEN",
+      "stop_rule_trigger_met": true,
+      "stop_rule_applied": true,
+      "dependence_form_escalation_ends": true,
+      "phase31_directive": "Phase 31 = OWNER DECISION PACKAGE (design-note option C): consolidated read-out of the governed frozen-t headline 39,975.7, the disclosed 2-tree vine / tree-3 candidate 42,458.6, the nested reference 46,638.9 and the quantified residual 3,637.3, for an owner adoption / escalation / accept decision. Option B (nested-aware dependence calibration) remains available ONLY as an owner-approved escalation funding a second independent nested run.",
+      "governed_headline_reference": 39975.654628199336,
+      "boundary_scr_recomputed": 39975.654628199336,
+      "governed_headline_relative_move": 0.0,
+      "mr_refresh_trigger": 0.01,
+      "mr010_mr014_refresh_required": false,
+      "rationale": "The pre-registered mitigation criteria require BOTH nested 46638.9 INSIDE the tree-3 95% bootstrap CI [38593.7, 44556.4] AND a STRICT residual improvement below the 2-tree vine residual 3637.3. Neither holds: the tree-3 candidate is bit-identical to the 2-tree vine (all four pre-registered third-tree pairs zero strength under n_fit <= 3 joint-conditional support), so the residual is UNCHANGED, and nested remains OUTSIDE the CI. MR-016 and MR-017 KEEP OPEN and the STOP-RULE IS APPLIED: dependence-FORM escalation under MR-016 ENDS (no further copula-structure candidates without owner sign-off); Phase 31 is the owner decision package. The GOVERNED headline remains the frozen single-df t 39975.7 (recovered bit-identically, move 0.0000%), so MR-010/MR-014 quantifications are unchanged.",
+      "source": "docs/validation/PHASE30_TASK4_TREE3_TAIL_DIAGNOSTICS_REPORT.json",
+      "change_record_id": "b1c2649394b747388aaa432560039587"
+    },
+    "narrative": "Phase 30 closed the post-vine dependence roadmap. Option A (tree-3 deepening of the FROZEN P29 credit-root C-vine) was selected design-note-first with a pre-registered BINDING stop-rule (option D embedded) and executed as Tasks 2-4 on frozen margins / Sigma / df 2.9451 with DUAL boundary recovery bit-identical FIRST (frozen-t 39,975.7 AND 2-tree vine 42,458.6, both dev 0.0). MATERIAL FINDING: the four pre-registered joint-conditional third-tree pairs have empirically EMPTY calibration support (n_fit {3,3,3,1} of 112 fit rows under the both-conditioners > 0.90 mask), so the selections degenerate to zero-strength gaussian and the tree-3 candidate is BIT-IDENTICAL to the 2-tree vine: component SCR 42,458.6 point / 41,751.9 bootstrap mean, 95% CI [38,593.7, 44,556.4], SE 3.81% (gate PASS); per-replicate tree-3 minus 2-tree vine EXACTLY ZERO in all 200 replicates. The nested path-wise reference 46,638.9 remains OUTSIDE the CI and the copula-form residual 3,637.3 is UNCHANGED vs the 2-tree vine (still -65.33% vs grouped-t and -40.52% vs skew-t), so the pre-registered close criteria are NOT met: MR-016 and MR-017 KEEP OPEN and the STOP-RULE IS APPLIED - dependence-FORM escalation under MR-016 ENDS; no further copula-structure candidates may be opened without owner sign-off. Phase 31 is the owner decision package (option C): governed frozen-t headline 39,975.7 vs the disclosed vine read-out 42,458.6 vs nested 46,638.9 with the quantified residual 3,637.3, for an adopt / accept-residual / fund-option-B decision. The governed headline remains the frozen single-df t (recovered bit-identically, move 0.0000%; MR-010/MR-014 unchanged); the fit-vs-holdout overfit gate PASSES (holdout/fit ratio 0.049 = P29 reference). The tree-3 vine is DISCLOSED, not adopted. Copula and margins remain frozen per SII Art. 234; production sign-off withheld (educational)."
+  },
   "governance": {
     "audit_entries": 81,
     "audit_integrity_ok": true,
@@ -9958,7 +13103,7 @@
         "description": "The realised standalone within-FIN upper co-exceedance (0.125) sits BELOW the cross-block level (0.172), so the leakage-free per-block df fit pins df_NONFIN 37.866 / df_FIN 8.506 ABOVE the frozen 2.9451 (lighter within-block tails); on common random numbers the grouped-t therefore DILUTES cross-block co-movement vs the single-df t maximal-cross-block boundary (grouped cross-block upper 0.1703 < single 0.2573 at p=0.90) and moves the disclosed component SCR DOWN 10.93%. The copula-FORM residual to the nested truth WIDENS from the skew-t-reconfirmed 6,114.9 to 10,491.5 (Phase 28 Task 3). This is the SECOND negative super-set result after the skew-t (gamma_hat ~ 0): a single copula on the standalone margins, whether asymmetric or block-heterogeneous, cannot close the UPWARD nested residual; it lives in nested inner-path joint dynamics.",
         "mitigation": "Escalate the dependence structure beyond a single copula on the standalone margins: vine / pair-copula (Aas et al. 2009 - pair-copula constructions capturing conditional / inner-path joint dynamics) as the general fallback, scheduled for Phase 29. Until then the residual is quantified, disclosed, and the path-wise nested truth (46,638.9) is reported alongside the governed frozen-copula component (39,975.7, the conservative maximal-cross-block boundary) so users see the conservative bound; the grouped-t DOWN move is DISCLOSED, not adopted.",
         "related_standard": "Solvency II Art. 234; Daul et al. (2003); McNeil, Frey & Embrechts (2015) QRM ch.7; Aas et al. (2009); IFoA Modelling Practice Note s4",
-        "updated_at": "2026-06-10T23:24:29.560480+00:00"
+        "updated_at": "2026-06-11T08:20:42.985903+00:00"
       },
       {
         "risk_id": "MR-017",
@@ -9972,7 +13117,7 @@
         "description": "The Phase 29 truncated credit-root C-vine prototype (max two trees, capped pair-family set, rank-preserving tail tilts on the frozen single-df t base) NARROWS the copula-form residual to 3,637.3 (from skew-t 6,114.9 / grouped-t 10,491.5) and lifts the component SCR +2,314.4 mean (CRN, positive in 100% of replicates), but the nested path-wise truth 46,638.9 remains OUTSIDE the vine 95% bootstrap CI [38,654.7, 45,284.3]. The remaining residual is attributed to (i) the truncation at two trees, (ii) the capped pair-family set and educational tilt simulator (not a full vine calibration), and (iii) nested inner-path joint dynamics that margins-level dependence cannot represent. Task 4 fit-vs-holdout diagnostics show the tilt is concentrated on fitted links (max holdout |lift| 0.0414 <= max fitted-pair |lift| 0.8514), so the narrowing is not an overfit artefact of never-fitted pairs.",
         "mitigation": "Candidate next steps (design-note-first, owner sign-off required): full conditional pair-copula calibration (h-function based, untruncated where material), nested-aware dependence calibrated on inner-path joint outcomes, or adoption of the vine candidate as a DISCLOSED alternative read-out alongside the governed frozen-t headline. Until then the residual is quantified and disclosed; the nested truth 46,638.9 is reported alongside the governed component 39,975.7.",
         "related_standard": "Aas et al. (2009); Joe (2014) ch.2; Solvency II Art. 234; IFoA Modelling Practice Note s4",
-        "updated_at": "2026-06-10T23:24:29.560550+00:00"
+        "updated_at": "2026-06-11T08:20:42.985936+00:00"
       }
     ]
   },

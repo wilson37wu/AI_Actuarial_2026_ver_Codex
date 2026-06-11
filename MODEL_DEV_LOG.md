@@ -9462,3 +9462,15 @@ User-requested housekeeping consistent with the 2026-06-11 restructure: 65 track
 Pass 2 (same session): 199 repetitive timestamped G05 monitoring snapshots pruned (latest of each family + all cited evidence kept; DEPLOYMENT_READINESS_CHECKLIST-cited environment probe restored with gitignore exemption).
 
 Pass 3 (same session, owner-approved): 11 redundant root docs deleted (GITHUB_PUSH_BLOCKER resolved-incident doc; IMPLEMENTATION_PLAN_currency_and_inputs superseded by the live Phase UIL implementation, live citations patched; the 9-file Path-2 onboarding family). Reference analysis kept all scripts, all root UI artifacts (combined-GUI build inputs), and the state template.
+
+---
+
+## 2026-06-11 (Claude Cowork cycle) — Phase 30 Task 5: offline-UI propagation of the binding stop-rule decision — **PHASE 30 COMPLETE**
+
+- **Contract 1.12.0 → 1.13.0 (ADDITIVE).** New `phase30` section {roadmap, tree3, bootstrap, stop_rule, tail, narrative} in `ui_data.json`; new first-class **Stop-Rule (P30)** tab in `ui_app.html` (tabCount 13).
+- Surfaced from model-output JSON only (zero install): T1 roadmap decision (option A, binding stop-rule pre-registered); T2 tree-3 candidate 42,458.6 BIT-IDENTICAL to the 2-tree vine (all 4 third-tree pairs zero-strength, n_fit {3,3,3,1} of 112 — data-support DISCLOSURE); T3 bootstrap mean 41,751.9, 95% CI [38,593.7, 44,556.4], SE 3.81%, nested 46,638.9 OUTSIDE; T4 STOP-RULE APPLIED — MR-016/MR-017 KEEP OPEN, dependence-FORM escalation ENDS, Phase 31 = owner decision package; overfit ratio 0.049 PASS; governed headline move 0.0000%.
+- Additive capital read-outs: `tree3_vine_scr_component_point` 42,458.5527095696; `tree3_vine_scr_component_bootstrap_mean` 41,751.92733111887.
+- **Verification:** ui contract checks 44/44 PASS (builder `scripts/build_phase30_task5_ui_propagation.py`); jsdom self-test ok:true (172 checks, 0 network / 0 JS errors); offline_viewer_self_test ok:true; combined_gui_self_test ok:true (viewer_data.json unchanged); pytest 35/35 new + 171/0 UI-propagation regression + 9/0 currency + 42/0 run_model/user_inputs.
+- **Governance:** ChangeRecord `3ea0836fc67f405dbef26e5f954e680d` (code_change) OWNER_REVIEW; audit 103→104; change records 75→76; verify_all True.
+- **Evidence:** docs/validation/PHASE30_TASK5_UI_PROPAGATION_REPORT.{json,md}; docs/UI_PROPAGATION_CARD_P30.md; docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-11_p30t5.md.
+- **Next:** Phase 31 Task 1 — owner decision package design note (pre-registered option C).
