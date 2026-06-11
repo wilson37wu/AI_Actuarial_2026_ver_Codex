@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T13:17:01Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-11T14:08Z-111a",
+  "started_at": "2026-06-11T14:08:13Z",
+  "ttl_minutes": 120,
+  "task": "Phase 32 Task 2: owner-decision-pack UI surface (G1)",
+  "note": ""
 }
