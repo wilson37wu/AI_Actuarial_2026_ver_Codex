@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.15.0"
+CONTRACT_VERSION = "1.16.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -2644,6 +2644,60 @@ def build_ui_data() -> Dict[str, Any]:
     if _base_risks:
         governance["risk_register"] = _base_risks
 
+    # ----------------------------------------------------------------- #
+    # Phase 32 Task 4 (gap G3): governed read-out completeness sweep.
+    # Inventory-driven diff of the governance store against the embedded
+    # governance section. Missing ChangeRecords are surfaced ADDITIVELY
+    # via NEW keys only (change_records_supplement + store_sync); every
+    # pre-existing governance key stays bit-identical. All figures are
+    # carried bit-for-bit from .claude-dev/GOVERNANCE_STORE.json --
+    # nothing is recomputed by the display layer.
+    _embedded_cr = list(governance.get("change_records", []) or [])
+    _embedded_cr_ids = {str(c.get("record_id")) for c in _embedded_cr}
+    _store_cr = (gov.get("change_records") or []) if isinstance(gov, dict) \
+        else []
+    _cr_supplement: List[Dict[str, Any]] = []
+    for _c in _store_cr:
+        _cid = str(_c.get("record_id"))
+        if _cid and _cid not in _embedded_cr_ids:
+            _cr_supplement.append({
+                "record_id": _c.get("record_id"),
+                "title": _c.get("title"),
+                "status": _c.get("status"),
+                "change_type": _c.get("change_type"),
+                "created_at": _c.get("created_at"),
+                "author": _c.get("author"),
+                "phase": _c.get("phase"),
+                "peer_reviewer": _c.get("peer_reviewer"),
+                "standard_references": _c.get("standard_references"),
+                "sign_off_history": _c.get("sign_off_history"),
+                "store_synced": True,
+            })
+    if _cr_supplement:
+        governance["change_records_supplement"] = _cr_supplement
+    _cr_status_counts: Dict[str, int] = {}
+    for _c in _store_cr:
+        _s = str(_c.get("status"))
+        _cr_status_counts[_s] = _cr_status_counts.get(_s, 0) + 1
+    _store_audit = (gov.get("audit_trail") or []) if isinstance(gov, dict) \
+        else []
+    governance["store_sync"] = {
+        "source": ".claude-dev/GOVERNANCE_STORE.json",
+        "swept_by": ("Phase 32 Task 4 (gap G3) governed read-out "
+                     "completeness sweep"),
+        "change_records_store_total": len(_store_cr),
+        "change_records_embedded": len(_embedded_cr),
+        "change_records_supplemented": len(_cr_supplement),
+        "change_record_status_counts": _cr_status_counts,
+        "audit_trail_store_entries": len(_store_audit),
+        "audit_entries_embedded": governance.get("audit_entries"),
+        "risk_register_store_total": len(_store_risks),
+        "risk_register_embedded": len(governance.get("risk_register", [])
+                                      or []),
+        "sweep_report": ("docs/validation/"
+                         "PHASE32_TASK4_GOVERNANCE_SWEEP_REPORT.json"),
+    }
+
     summary = dict(base.get("summary", {}))
     summary["contract_artifacts"] = len(inventory)
     summary["calibrated_drivers"] = len(calibrations)
@@ -4642,18 +4696,24 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   function govChangesBlock(g){
     var recs=(g.change_records||[]).slice();
+    var supp=(g.change_records_supplement||[]);
+    recs=recs.concat(supp);
     if(!recs.length) return '<div class="chartwrap"><p class="muted">No change records in snapshot.</p></div>';
     recs.sort(function(a,b){ return String(b.created_at||'').localeCompare(String(a.created_at||'')); });
+    var suppNote=supp.length?('<p class="cap">Completeness sweep (Phase 32 Task 4): '+supp.length+' record(s) synced '+
+      'bit-for-bit from the governance store and marked <span class="badge">store-sync</span>; '+
+      'the snapshot export carried '+((g.change_records||[]).length)+' of '+recs.length+' governed records.</p>'):'';
     var h='<div class="chartwrap"><h4>ChangeRecord approval timeline</h4>'+
       '<p class="cap">Newest first. Each record carries its standards basis and a full peer-review &rarr; owner-review &rarr; '+
-      'approval sign-off chain. Click a record to expand its sign-off history.</p><div class="timeline">';
+      'approval sign-off chain. Click a record to expand its sign-off history.</p>'+suppNote+'<div class="timeline">';
     recs.forEach(function(c,i){
       var refs=(c.standard_references||[]).map(function(x){return '<span class="badge">'+esc(x)+'</span>';}).join(' ');
       var soh=(c.sign_off_history||[]).map(function(x){
         return '<div class="tl-soh"><span class="mono">'+esc(String(x.timestamp||'').slice(0,19).replace('T',' '))+'</span> '+
           chip(x.status)+' <b>'+esc(x.actor||'')+'</b><div class="params">'+esc(x.comments||'')+'</div></div>'; }).join('');
+      var syncBadge=c.store_synced?' <span class="badge">store-sync</span>':'';
       h+='<div class="tl-item"><div class="tl-dot '+chipClass(c.status)+'"></div><div class="tl-body">'+
-        '<div class="tl-head crow" data-i="'+i+'" style="cursor:pointer">'+chip(c.status)+' <b>'+esc(c.title||'')+'</b> '+chip(c.change_type)+'</div>'+
+        '<div class="tl-head crow" data-i="'+i+'" style="cursor:pointer">'+chip(c.status)+' <b>'+esc(c.title||'')+'</b> '+chip(c.change_type)+syncBadge+'</div>'+
         '<div class="params">'+esc(String(c.created_at||'').slice(0,10))+' &middot; '+esc(c.phase||'')+' &middot; '+
         esc(c.author||'')+' &rarr; '+esc(c.peer_reviewer||'')+' &middot; <span class="mono">'+esc(String(c.record_id||'').slice(0,8))+'</span></div>'+
         '<div class="cdet" data-i="'+i+'" style="display:none"><div class="subh">Standards basis</div>'+(refs||'<span class="muted">none</span>')+
@@ -4664,10 +4724,25 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   function govAuditBlock(g){
     var it=govIntegrity(g), statusDist={}, typeDist={};
-    (g.change_records||[]).forEach(function(c){ statusDist[c.status]=(statusDist[c.status]||0)+1;
+    var allRecs=(g.change_records||[]).concat(g.change_records_supplement||[]);
+    allRecs.forEach(function(c){ statusDist[c.status]=(statusDist[c.status]||0)+1;
       typeDist[c.change_type]=(typeDist[c.change_type]||0)+1; });
     function dist(o){ return Object.keys(o).map(function(k){ return '<tr><td>'+chip(k)+'</td><td>'+o[k]+'</td></tr>'; }).join(''); }
     var badge='<div class="auditbadge '+(it.ok?'ok':'bad')+'">'+(it.ok?'✓ AUDIT TRAIL VERIFIED':'✗ AUDIT TRAIL INTEGRITY FAILURE')+'</div>';
+    var ss=g.store_sync, ssHtml='';
+    if(ss){
+      ssHtml='<div class="storesync"><h4 style="margin-top:18px">Governance-store sync (Phase 32 Task 4 completeness sweep)</h4>'+
+        '<p class="cap">Inventory-driven diff of the full governance store against this embedded export. Counts are carried '+
+        'bit-for-bit from <span class="mono">'+esc(ss.source||'')+'</span>; the display layer recomputes nothing.</p>'+
+        '<div class="cards">'+
+        '<div class="card"><div class="k">ChangeRecords in store</div><div class="v">'+ss.change_records_store_total+'</div></div>'+
+        '<div class="card"><div class="k">In snapshot export</div><div class="v">'+ss.change_records_embedded+'</div></div>'+
+        '<div class="card"><div class="k">Synced by sweep</div><div class="v">'+ss.change_records_supplemented+'</div></div>'+
+        '<div class="card"><div class="k">Audit entries in store</div><div class="v">'+ss.audit_trail_store_entries+'</div></div>'+
+        '<div class="card"><div class="k">Risk register (store / shown)</div><div class="v">'+ss.risk_register_store_total+
+          ' / '+ss.risk_register_embedded+'</div></div>'+
+        '</div><p class="cap">Sweep evidence: <span class="mono">'+esc(ss.sweep_report||'')+'</span></p></div>';
+    }
     return '<div class="chartwrap"><h4>Audit-trail integrity (recomputed offline)</h4>'+
       '<p class="cap">Recomputed from the embedded governance export: integrity holds when every audit entry is verified '+
       'and none failed. Sign-off steps are the human-review evidence behind each approved change.</p>'+badge+
@@ -4677,9 +4752,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       '<div class="card"><div class="k">Failed</div><div class="v" style="color:'+(it.failed?'var(--fail)':'var(--pass)')+'">'+it.failed+'</div></div>'+
       '<div class="card"><div class="k">Sign-off steps</div><div class="v">'+it.signoff_steps+'</div></div></div>'+
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px">'+
-      '<div><div class="subh">Change records by status</div><table><tbody>'+dist(statusDist)+'</tbody></table></div>'+
-      '<div><div class="subh">Change records by type</div><table><tbody>'+dist(typeDist)+'</tbody></table></div>'+
-      '</div></div>';
+      '<div><div class="subh">Change records by status (incl. store-synced)</div><table><tbody>'+dist(statusDist)+'</tbody></table></div>'+
+      '<div><div class="subh">Change records by type (incl. store-synced)</div><table><tbody>'+dist(typeDist)+'</tbody></table></div>'+
+      '</div>'+ssHtml+'</div>';
   }
 
   function renderGovernance(){
@@ -4765,6 +4840,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       "                  bootstrap_ci, verdict, run_plan, inputs_provenance,",
       "                  display_provenance, use_restrictions, ...}        // v1.15.0+",
       "  governance   : {audit_entries, audit_integrity_ok, change_records,",
+      "                  change_records_supplement, store_sync,   // v1.16.0+",
       "                  deployment_gates, risk_register}",
       "  verdicts     : [{name, verdict}]",
       "}"
@@ -4804,7 +4880,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   function buildRiskCSV(){ var rr=(DATA&&DATA.governance&&DATA.governance.risk_register)||[];
     return rowsToCSV(["risk_id","title","overall_rating","mitigation_status","category","likelihood","impact","owner","related_standard","updated_at","description","mitigation"],
       rr.map(function(r){ return [r.risk_id,r.title,r.overall_rating,r.mitigation_status,r.category,r.likelihood,r.impact,r.owner,r.related_standard,r.updated_at,r.description,r.mitigation]; })); }
-  function buildChangesCSV(){ var cr=(DATA&&DATA.governance&&DATA.governance.change_records)||[];
+  function buildChangesCSV(){ var gg=(DATA&&DATA.governance)||{};
+    var cr=(gg.change_records||[]).concat(gg.change_records_supplement||[]);
     return rowsToCSV(["record_id","title","status","change_type","phase","author","peer_reviewer","created_at","standard_references","signoff_steps"],
       cr.map(function(c){ return [c.record_id,c.title,c.status,c.change_type,c.phase,c.author,c.peer_reviewer,c.created_at,(c.standard_references||[]).join("; "),(c.sign_off_history||[]).length]; })); }
   window.__uiExport={ inventoryCSV:buildInventoryCSV, riskCSV:buildRiskCSV, changesCSV:buildChangesCSV };

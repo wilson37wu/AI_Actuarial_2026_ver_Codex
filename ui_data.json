@@ -1,9 +1,9 @@
 {
-  "contract_version": "1.15.0",
+  "contract_version": "1.16.0",
   "meta": {
     "model_name": "PAR Fund Stochastic ALM & TVOG",
     "model_version": "0.2.0",
-    "generated_utc": "2026-06-11T15:16:00.149266+00:00",
+    "generated_utc": "2026-06-11T16:18:58.171282+00:00",
     "source_files": [
       ".claude-dev/GOVERNANCE_STORE.json",
       ".claude-dev/MODEL_DEV_STATE.json",
@@ -36,7 +36,7 @@
     "risks_open": 1,
     "risks_mitigated": 10,
     "production_status": "NOT CLEARED FOR PRODUCTION",
-    "contract_artifacts": 93,
+    "contract_artifacts": 94,
     "calibrated_drivers": 11
   },
   "inventory": [
@@ -46,7 +46,7 @@
       "category": "independent_review",
       "bytes": 3563,
       "sha256": "508174a1c195524fb29921dad324d790642b21757af2774fa59f4837a9f802b4",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.616885Z",
       "headline": ""
     },
     {
@@ -55,7 +55,7 @@
       "category": "ia_validation",
       "bytes": 10020,
       "sha256": "59737f5bbccca3d5a2607ac0b3da73c361868410a0fd2e5a77e62767ef42f155",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.616885Z",
       "headline": ""
     },
     {
@@ -64,7 +64,7 @@
       "category": "backtest",
       "bytes": 2889,
       "sha256": "d1c14118e4e79202ccd1d49fcc91c271169527b883781f59c1bb76993cd89dbb",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.617885Z",
       "headline": ""
     },
     {
@@ -73,7 +73,7 @@
       "category": "ia_validation",
       "bytes": 12560,
       "sha256": "f3ed3fce0b1eaf03a5e318f3c7bfdb127627d8977fff708f02f8bfe7fea14b3e",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.618885Z",
       "headline": ""
     },
     {
@@ -82,7 +82,7 @@
       "category": "capital_evidence",
       "bytes": 4954,
       "sha256": "8cca9214e12db0b018f5c97808098c0e1f05989839173e74491d68000b100efc",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.619885Z",
       "headline": ""
     },
     {
@@ -91,7 +91,7 @@
       "category": "proxy_validation",
       "bytes": 3411,
       "sha256": "4fbe78d9cf3c907bd04632ed720030f8643f404118192e1a63e9c0980db51188",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.619885Z",
       "headline": "PASS \u2014 selected degree 1 validated OOS (R^2=0.9704, VaR rel err=3.21%, leakage-free, overfit gap=0.0017)"
     },
     {
@@ -100,7 +100,7 @@
       "category": "risk_aggregation",
       "bytes": 2385,
       "sha256": "4fb8421f8be265d29a2f5013c931d5f7b02099eec0b4c0a12e8f0e5d143d5d2a",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.622885Z",
       "headline": "PASS - correlated aggregation reconciles to nested diversified capital"
     },
     {
@@ -109,7 +109,7 @@
       "category": "tail_diagnostics",
       "bytes": 4065,
       "sha256": "e2d8665353732faabb6d5ce5f9c8344c95e75dba64a261df2d8d814e6d43714d",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.622885Z",
       "headline": "PASS - 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -118,7 +118,7 @@
       "category": "governance",
       "bytes": 2946,
       "sha256": "57aa0ca3af79d41580a04e72729c0e30714b6c86eda971d856e3fc4dec4146f7",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.622885Z",
       "headline": ""
     },
     {
@@ -127,7 +127,7 @@
       "category": "loss_distribution",
       "bytes": 12457,
       "sha256": "863fd04d40b4684ce6be5a5bdc98be8afbea06f577c61aafb651e542eb73fb95",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.623885Z",
       "headline": ""
     },
     {
@@ -136,7 +136,7 @@
       "category": "proxy_validation",
       "bytes": 4261,
       "sha256": "e1bb0aecd491f8ba012dffa91d77eb562b97909c6de98d30db20fd5fc7a19953",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.623885Z",
       "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9751, VaR rel err=7.05%, leakage-free, overfit gap=0.0034)"
     },
     {
@@ -145,7 +145,7 @@
       "category": "risk_aggregation",
       "bytes": 3616,
       "sha256": "d730c2f93172f766afd27e85d6a6a7b1acf49a85a52cbe149ab45ba5ccfc9de6",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.624885Z",
       "headline": "PARTIAL - three-driver aggregation evidence generated with review items"
     },
     {
@@ -154,7 +154,7 @@
       "category": "tail_diagnostics",
       "bytes": 4848,
       "sha256": "0597ab9b22ff571fa06020359ede2da792271b1920519a07c197fc82f7e70acd",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.624885Z",
       "headline": "PASS - three-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -163,7 +163,7 @@
       "category": "governance",
       "bytes": 3698,
       "sha256": "a0465ceb9af67ac5313dfda30d009ae7ab8a5cfb26140ee0d1953370c846c917",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.624885Z",
       "headline": ""
     },
     {
@@ -172,7 +172,7 @@
       "category": "calibration",
       "bytes": 2318,
       "sha256": "fb72bedf5afa3390ad029ec2a85ac8e7b9ffa1d6eb6f459400494dc06669f6d3",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.625885Z",
       "headline": ""
     },
     {
@@ -181,7 +181,7 @@
       "category": "risk_aggregation",
       "bytes": 4674,
       "sha256": "12cb7a6749a5a20f8c1190ab484588f4247872b8a5916a3b19b84d0e57ecf360",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.626885Z",
       "headline": "PASS - copula aggregation (selected: gaussian) reconciles to nested capital within 1.4% (best 1.4%) vs var-covar 34.5%; MR-010 mitigated"
     },
     {
@@ -190,7 +190,7 @@
       "category": "governance",
       "bytes": 1425,
       "sha256": "27a51932177d00b6cee815cfb6ac9528a6bff5dac951044f59c9b5fdaf5ab54a",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.626885Z",
       "headline": ""
     },
     {
@@ -199,7 +199,7 @@
       "category": "proxy_validation",
       "bytes": 4336,
       "sha256": "8e37e976170f3d125e8adb0010bc5b1c2cde27daafd30fac3b097335e2039bb7",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.627885Z",
       "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9638, VaR rel err=2.33%, leakage-free, overfit gap=0.0057)"
     },
     {
@@ -208,7 +208,7 @@
       "category": "risk_aggregation",
       "bytes": 10681,
       "sha256": "0caf2126cb3ce2809b191ba7bb19ebabf5f7b9d2681be8b7c3ec44ca6b43e933",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.629885Z",
       "headline": "PASS - four-driver copula aggregation (selected: gaussian) reconciles to nested capital within 9.4% vs var-covar 47.4%; MR-010 four-driver mitigation confirmed"
     },
     {
@@ -217,7 +217,7 @@
       "category": "governance",
       "bytes": 1908,
       "sha256": "22b30c94c127fc46450a8f199cd2e98c7962e015879806e7b6b643a0f76eecb8",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.629885Z",
       "headline": ""
     },
     {
@@ -226,7 +226,7 @@
       "category": "tail_diagnostics",
       "bytes": 5414,
       "sha256": "070ad3d1f7dc4f0d8b9129c3d57d66fa605fd6851e51a9cff5b32600602f2ce1",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.629885Z",
       "headline": "PASS - four-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -235,7 +235,7 @@
       "category": "calibration",
       "bytes": 2525,
       "sha256": "76301095fa676fd0258dacfc5c5c190badbc4fc265391d1e23fe3a8e1806239f",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.629885Z",
       "headline": "gate_glapse: PASS"
     },
     {
@@ -244,7 +244,7 @@
       "category": "proxy_validation",
       "bytes": 4005,
       "sha256": "a81154ba3ed62036702497128c15f65b504d21083ae88ad6a5629bc4c03e5233",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.630885Z",
       "headline": "PASS \u2014 selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)"
     },
     {
@@ -253,7 +253,7 @@
       "category": "risk_aggregation",
       "bytes": 12824,
       "sha256": "b398fd41fb010059db7d771fc1594d2bdbedd27e5215f40c806b38e7a735efb0",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.631885Z",
       "headline": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
     },
     {
@@ -262,7 +262,7 @@
       "category": "governance",
       "bytes": 2166,
       "sha256": "b66145bf609b485ca7312ce4f0f3c966e8a1a9b2a4caf16dd65f64ae2b962fc2",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.631885Z",
       "headline": "PASS - five-driver copula aggregation (selected: gaussian) reconciles to nested capital within 6.5% vs var-covar 48.8%; MR-010 five-driver mitigation confirmed"
     },
     {
@@ -271,7 +271,7 @@
       "category": "tail_diagnostics",
       "bytes": 5770,
       "sha256": "91b284b7861fc22a0b6cbfbb3f35ebe07cbf5375a8dd2b0d48b84f0c7baa0e14",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.633885Z",
       "headline": "PASS - five-driver 99.5% capital metric converges, is bounded by a bootstrap CI, and benefits from variance reduction"
     },
     {
@@ -280,7 +280,7 @@
       "category": "other",
       "bytes": 5066,
       "sha256": "f84531c134068c6135adeffad6da0fe51269b9cb4648fdc5f7fa7893d5bd33cd",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.633885Z",
       "headline": "gate: PASS"
     },
     {
@@ -289,7 +289,7 @@
       "category": "other",
       "bytes": 19031,
       "sha256": "d50b6f01f0219d9eca9fb9b2defa8523d556972e0554c72620a67c1bfdf9ef2b",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.633885Z",
       "headline": "gate: PASS"
     },
     {
@@ -298,7 +298,7 @@
       "category": "other",
       "bytes": 8264,
       "sha256": "40943a84a25f2911cee32f4b43ee0b69e14a0605eb8313c3a5c10616de0d59de",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.633885Z",
       "headline": "gate: PASS"
     },
     {
@@ -307,7 +307,7 @@
       "category": "risk_aggregation",
       "bytes": 30876,
       "sha256": "9f1416c8c88b5ca7386e3484c9b03bce412b67478e4e909d3fbad982fec15c6c",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.633885Z",
       "headline": ""
     },
     {
@@ -316,7 +316,7 @@
       "category": "tail_diagnostics",
       "bytes": 1309,
       "sha256": "a6aa3debdbfaf84dbb5aa1862ec0fb0dc4d2a8ce01c5122f6661d7dbf3263b87",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.634885Z",
       "headline": ""
     },
     {
@@ -325,7 +325,7 @@
       "category": "other",
       "bytes": 9138,
       "sha256": "16bce5e2b90cb8a19819143055614581bd049566995361281d45c580915343f7",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.634885Z",
       "headline": ""
     },
     {
@@ -334,7 +334,7 @@
       "category": "other",
       "bytes": 13135,
       "sha256": "7fe3cab55cf7fe89e2392b8719736fba00fc9c171f889e4e81a072d554d16ef8",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.634885Z",
       "headline": ""
     },
     {
@@ -343,7 +343,7 @@
       "category": "calibration",
       "bytes": 2655,
       "sha256": "05dc5f9253a49f7e747a724cf1aa01325e1c425e656de77cfc45acbbfd351408",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.635885Z",
       "headline": ""
     },
     {
@@ -352,7 +352,7 @@
       "category": "risk_aggregation",
       "bytes": 22693,
       "sha256": "f62c12f74b3d07a6ff4e75466620bed322a0867500433f3d77876a681848c79b",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.636885Z",
       "headline": ""
     },
     {
@@ -361,7 +361,7 @@
       "category": "other",
       "bytes": 1983,
       "sha256": "47d87418a722ad1cc6f21382e5db8a004103473bf619db3007d5fd40fd8826fc",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.636885Z",
       "headline": "PASS"
     },
     {
@@ -370,7 +370,7 @@
       "category": "other",
       "bytes": 17786,
       "sha256": "c635a3c57126c0ed80ef2877b87f5fb3c11c8832f659d86900451b5f492e9714",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.636885Z",
       "headline": ""
     },
     {
@@ -379,7 +379,7 @@
       "category": "proxy_validation",
       "bytes": 13221,
       "sha256": "b775216d97b7c5e81340878cbe2f85e6d32d83cfab41ea2643a804d72d9b5685",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.637885Z",
       "headline": ""
     },
     {
@@ -388,7 +388,7 @@
       "category": "other",
       "bytes": 7208,
       "sha256": "b109cff65588311eb8fb44ebd08a5bf7a7b549f916519f1faa037fd38bfdd990",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.638885Z",
       "headline": ""
     },
     {
@@ -397,7 +397,7 @@
       "category": "risk_aggregation",
       "bytes": 25306,
       "sha256": "72be26d7b8b96f00ea8d85573e3c1ab8b58363d318e54f39868a59562a0bc302",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.639885Z",
       "headline": ""
     },
     {
@@ -406,7 +406,7 @@
       "category": "other",
       "bytes": 2158,
       "sha256": "ee832a9364d2220e20dd1b390cf91b5f417a5c8482e0a014dd50dadcda39ef03",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.639885Z",
       "headline": "PASS"
     },
     {
@@ -415,7 +415,7 @@
       "category": "other",
       "bytes": 6923,
       "sha256": "896ca5ab2782ce5cf1331a681b948a5f72d3e0fd1694e457f49bc570608fcccb",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.640885Z",
       "headline": "PASS"
     },
     {
@@ -424,7 +424,7 @@
       "category": "risk_aggregation",
       "bytes": 10099,
       "sha256": "e4ebe2e829910a4c52eeeab8bb58b8e275511a37e33ac1a101617ee0c3e35f09",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.640885Z",
       "headline": ""
     },
     {
@@ -433,7 +433,7 @@
       "category": "other",
       "bytes": 7440,
       "sha256": "d8b0f03a93ce4af2a5df5ed4292e01be93164bf043d7d882b66866a0925c074e",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.640885Z",
       "headline": "PASS"
     },
     {
@@ -442,7 +442,7 @@
       "category": "risk_aggregation",
       "bytes": 9971,
       "sha256": "b28edd5222ace4103d47ec439f1530e1efdd8a48a92d27bf72e5a5bba42ed3d0",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.641885Z",
       "headline": "PASS"
     },
     {
@@ -451,7 +451,7 @@
       "category": "other",
       "bytes": 2325,
       "sha256": "57de1ba33ed361aeb1228ebd9aed64b27de8c4b801f4d738c21785aaa9429526",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.641885Z",
       "headline": "PASS"
     },
     {
@@ -460,7 +460,7 @@
       "category": "other",
       "bytes": 9421,
       "sha256": "9f92b1956b79378a729f2026a28a48da7143a27dccca4fdba23c80cf2623bc97",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.641885Z",
       "headline": "PASS"
     },
     {
@@ -469,7 +469,7 @@
       "category": "risk_aggregation",
       "bytes": 4211,
       "sha256": "8a89c66f3d97e12aeac4c07474deed9aab213bd4002e0a365233ba43cb7b770a",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.642885Z",
       "headline": "PASS"
     },
     {
@@ -478,7 +478,7 @@
       "category": "other",
       "bytes": 9338,
       "sha256": "f5c798831abc4430ec9c723a5ac0d56f0e7b82b03631825bcd9774c50e3ea286",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.642885Z",
       "headline": "PASS"
     },
     {
@@ -487,7 +487,7 @@
       "category": "other",
       "bytes": 6870,
       "sha256": "e1c2f3df99e38f61a4f0b60d034dee77f405e29f3bb8185b0aa31ab0b2a7c603",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.644885Z",
       "headline": "PASS"
     },
     {
@@ -496,7 +496,7 @@
       "category": "tail_diagnostics",
       "bytes": 14513,
       "sha256": "4fb05e3324f6867ed21049db9cebf5721e45bdf97f68d5c388224188a19b18d4",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.645885Z",
       "headline": "PASS"
     },
     {
@@ -505,7 +505,7 @@
       "category": "other",
       "bytes": 2869,
       "sha256": "d05a79497b5824a2b3f8e2a2bbcdbf7f9f112a2b5b3320f2f6f542a07d0f6209",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.645885Z",
       "headline": "PASS"
     },
     {
@@ -514,7 +514,7 @@
       "category": "other",
       "bytes": 13044,
       "sha256": "d507cb15944cbc4b2ab20a83a1f2eb9c6f25baf064b89753fa25105268568dbe",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.646885Z",
       "headline": "PASS"
     },
     {
@@ -523,7 +523,7 @@
       "category": "other",
       "bytes": 7901,
       "sha256": "867470aeb5ed6ed5b9cad07b602cf809e5a71475969469e0eb5046161f581929",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.647885Z",
       "headline": "PASS"
     },
     {
@@ -532,7 +532,7 @@
       "category": "other",
       "bytes": 10232,
       "sha256": "ec67b248aadfa61e939d36626af594fb4b41a175f435e0ff026d027d30427b0e",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.647885Z",
       "headline": "PASS"
     },
     {
@@ -541,7 +541,7 @@
       "category": "tail_diagnostics",
       "bytes": 18339,
       "sha256": "c6a97f5ee23e999aa10036c3257a6726db1a9b3102cfb8891a798bbbb0f8a508",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.647885Z",
       "headline": "PASS"
     },
     {
@@ -550,7 +550,7 @@
       "category": "other",
       "bytes": 3483,
       "sha256": "baf9c9528b5e4002730410087939f2058067dda83e43e1f22bcbeb92a9f7952d",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.648885Z",
       "headline": "PASS"
     },
     {
@@ -559,7 +559,7 @@
       "category": "other",
       "bytes": 13972,
       "sha256": "6d05f42494c8dcab29fb729ff5d2474e20a7ef922acdf06a402b9b18eaec8b15",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.648885Z",
       "headline": "PASS"
     },
     {
@@ -568,7 +568,7 @@
       "category": "other",
       "bytes": 5891,
       "sha256": "4fcb9e7ed9addb58ddafee24b2febd2ea9d8ffb3b0c7456f7f814421d7e18f10",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.649885Z",
       "headline": "PASS"
     },
     {
@@ -577,7 +577,7 @@
       "category": "other",
       "bytes": 6395,
       "sha256": "e8d9b9c2cd6d7240755f6546bebbddb804ca1bc8f0eacc0a33a419cab85ef23c",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.650885Z",
       "headline": "PASS"
     },
     {
@@ -586,7 +586,7 @@
       "category": "other",
       "bytes": 6745,
       "sha256": "fe9d356e632ff069303b8d04e203d4cebcbf879d4f6ab50dd881c6caf3e0b8aa",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.651885Z",
       "headline": "PASS"
     },
     {
@@ -595,7 +595,7 @@
       "category": "other",
       "bytes": 3625,
       "sha256": "44e62367234d9f3154c8f37dad315ba63c853e5500ac0856b10fb8a8af1d19d0",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.651885Z",
       "headline": "PASS"
     },
     {
@@ -604,7 +604,7 @@
       "category": "other",
       "bytes": 15720,
       "sha256": "7666ef1d58cecde77d8ef3ee3b8ced0a1f01a0ef61fee82853fb535408ade2eb",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.652885Z",
       "headline": "PASS"
     },
     {
@@ -613,7 +613,7 @@
       "category": "other",
       "bytes": 8021,
       "sha256": "064aad640b12283140a6db897563949d090b6308d01701f1c660dec7c52d0444",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.652885Z",
       "headline": "PASS"
     },
     {
@@ -622,7 +622,7 @@
       "category": "other",
       "bytes": 7558,
       "sha256": "1d328228c2a9442e9254f517d1b2379440ba2aede9c7f11989c8939162e36307",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.654885Z",
       "headline": "PASS"
     },
     {
@@ -631,7 +631,7 @@
       "category": "tail_diagnostics",
       "bytes": 13223,
       "sha256": "f78ff0c8165b373414b51945eddfd089629be8c11f6eb4dabef7effc79b34c63",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.656885Z",
       "headline": "PASS"
     },
     {
@@ -640,7 +640,7 @@
       "category": "other",
       "bytes": 18068,
       "sha256": "8a7ed26422fefbc82bb79a5174080161c074372e15de6b99c5d0cf3cd37c7fa3",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.656885Z",
       "headline": "PASS"
     },
     {
@@ -649,7 +649,7 @@
       "category": "other",
       "bytes": 10881,
       "sha256": "1dd636db2cf5ab5aad36bbb33531e5d40354d85d0c5b1444dcd8da1c007b886a",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.656885Z",
       "headline": "PASS"
     },
     {
@@ -658,7 +658,7 @@
       "category": "other",
       "bytes": 9486,
       "sha256": "ea8c390712e3dfc36882f39b58a86946924302a4c505100c040c39c042453a6f",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.656885Z",
       "headline": "PASS"
     },
     {
@@ -667,7 +667,7 @@
       "category": "tail_diagnostics",
       "bytes": 32931,
       "sha256": "6b8a6ac0c311a59a8cd4491e14df35d847acdac2da418b5d0c0837baf9980188",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.657885Z",
       "headline": "PASS"
     },
     {
@@ -676,7 +676,7 @@
       "category": "other",
       "bytes": 5441,
       "sha256": "5007bf768e5dcc234d986eec64c8f7fd75dc83fb22e3917d5bf4f76e6d3a427a",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.659885Z",
       "headline": "PASS"
     },
     {
@@ -685,7 +685,7 @@
       "category": "other",
       "bytes": 18183,
       "sha256": "847bc1413e692b0c118f8b1faac21139d9ae1608cd2b3cb17c981a34fc2c49f0",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.660885Z",
       "headline": "PASS"
     },
     {
@@ -694,7 +694,7 @@
       "category": "other",
       "bytes": 8555,
       "sha256": "26f86a5740f345aa86e560ece3a3dc0afdfb98fef71f70193d6a1a02a666a384",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.660885Z",
       "headline": "PASS"
     },
     {
@@ -703,7 +703,7 @@
       "category": "tail_diagnostics",
       "bytes": 107040,
       "sha256": "1588350fd851ebc5a4967c1b7a719b3526cd33cad0714b154a7e9d439eb06715",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.662885Z",
       "headline": "PASS"
     },
     {
@@ -712,7 +712,7 @@
       "category": "other",
       "bytes": 3637,
       "sha256": "6f1d848817f11852f7b3e21df6836e1d89976ef824111579783077fa5be628d3",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.662885Z",
       "headline": "PASS"
     },
     {
@@ -721,7 +721,7 @@
       "category": "other",
       "bytes": 12022,
       "sha256": "6937eeafaa804f11315b612d01d4cef2fb7450f2b6ea44f6f58e71c83c967dc0",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.665885Z",
       "headline": "PASS"
     },
     {
@@ -730,7 +730,7 @@
       "category": "other",
       "bytes": 29477,
       "sha256": "3c1e95c32f251efff36e0c30dfe7e0b81d66f501252a280da3c848c2c23095df",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.665885Z",
       "headline": "PASS"
     },
     {
@@ -739,7 +739,7 @@
       "category": "other",
       "bytes": 8888,
       "sha256": "5d9b45ec9ccfd9edb724628157b12a67b1fcfeeab14c3c14f8156bd5d3c17d25",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.665885Z",
       "headline": "PASS"
     },
     {
@@ -748,7 +748,7 @@
       "category": "tail_diagnostics",
       "bytes": 140460,
       "sha256": "5c833723cb3a31b795a609e8520a8e964efba10d85d20525aaac6eb801f55ecb",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.667885Z",
       "headline": "PASS"
     },
     {
@@ -757,7 +757,7 @@
       "category": "other",
       "bytes": 4291,
       "sha256": "fd214b90bd5a4861a99f645f80224dd60426f15180e0f047c1247a29234b71ce",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.667885Z",
       "headline": "PASS"
     },
     {
@@ -766,7 +766,7 @@
       "category": "other",
       "bytes": 11557,
       "sha256": "b8c9c049df9f690f1e59746a898dc0266170892f47818cf64bef3a1aea3ce1ba",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.668885Z",
       "headline": "PASS"
     },
     {
@@ -775,7 +775,7 @@
       "category": "other",
       "bytes": 14377,
       "sha256": "88f951c8a1cdb6a888de9bb29259350dd766418c475578c416e1222b55f33d68",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.668885Z",
       "headline": ""
     },
     {
@@ -784,7 +784,7 @@
       "category": "other",
       "bytes": 5560,
       "sha256": "5993dd832e42d7bdad9e9a8c082d8dcff4c355c03ae1a435f53d3e68817c4129",
-      "mtime_utc": "2026-06-11T12:24:18Z",
+      "mtime_utc": "2026-06-11T16:07:10.669885Z",
       "headline": ""
     },
     {
@@ -793,7 +793,7 @@
       "category": "other",
       "bytes": 6546,
       "sha256": "45fb2e59d96b0e7b150fc462a55c8f7d1e9a8b47b5bab6e36cdfd41459a5b7f4",
-      "mtime_utc": "2026-06-11T13:17:18Z",
+      "mtime_utc": "2026-06-11T16:07:10.670885Z",
       "headline": ""
     },
     {
@@ -802,7 +802,16 @@
       "category": "other",
       "bytes": 3293,
       "sha256": "0b129c3c2c5a18a9c051c23503f4d9d095fca4614a3dd39154fb83d86b1f2e10",
-      "mtime_utc": "2026-06-11T14:22:09Z",
+      "mtime_utc": "2026-06-11T16:07:10.671885Z",
+      "headline": "PASS"
+    },
+    {
+      "id": "PHASE32_TASK3_USER_RUN_SURFACE_REPORT",
+      "path": "docs/validation/PHASE32_TASK3_USER_RUN_SURFACE_REPORT.json",
+      "category": "other",
+      "bytes": 4402,
+      "sha256": "3694708c51f1c933172bfc1c639bba26cb85b1b18731881da780464de9e6af2a",
+      "mtime_utc": "2026-06-11T16:07:10.673885Z",
       "headline": "PASS"
     },
     {
@@ -811,7 +820,7 @@
       "category": "other",
       "bytes": 246277,
       "sha256": "a6f80968ddb150c773aa18ad219bc13cf88e245247f0fab5a57924859169e6ec",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.676885Z",
       "headline": ""
     },
     {
@@ -820,7 +829,7 @@
       "category": "risk_aggregation",
       "bytes": 17826,
       "sha256": "e579092c9f4980b1de762bf6ef80d8f4dc7c2a67293eb266c34b0a6cfe271c59",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.676885Z",
       "headline": ""
     },
     {
@@ -829,7 +838,7 @@
       "category": "other",
       "bytes": 1189,
       "sha256": "09fda0a0d38b149eb5b854f12115e7f724fff5ef6d8bd38d14f8cf788ca6b1e8",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.676885Z",
       "headline": "REVIEW"
     },
     {
@@ -838,7 +847,7 @@
       "category": "calibration",
       "bytes": 3288,
       "sha256": "442bf6bd3590268050c694fd07cfe717a9c3d81677db8ba77ee61926eece5790",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.589885Z",
       "headline": ""
     },
     {
@@ -847,7 +856,7 @@
       "category": "calibration",
       "bytes": 3428,
       "sha256": "cb6dd8337583aa0e0f40505405b73b270455b8bbba691a0e7e8785fa20213717",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.591885Z",
       "headline": ""
     },
     {
@@ -856,7 +865,7 @@
       "category": "calibration",
       "bytes": 4593,
       "sha256": "5695186798439b586ac29e2cc0b4aa138bad3c0fc2dd0290a0889fc8c7d99d36",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.588885Z",
       "headline": ""
     },
     {
@@ -865,7 +874,7 @@
       "category": "model_risk",
       "bytes": 2444,
       "sha256": "0b0e821f0561a923967319f1ef2560d0e1d4749d93751ff4b1daa41c4f5b0838",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.589885Z",
       "headline": ""
     },
     {
@@ -874,7 +883,7 @@
       "category": "dashboard",
       "bytes": 10986,
       "sha256": "4e261345fea5c885217d6beb6998bc4f31faaa00c195bc5b9dbfbd6a182be91b",
-      "mtime_utc": "2026-06-11T12:07:12Z",
+      "mtime_utc": "2026-06-11T16:07:10.587885Z",
       "headline": ""
     }
   ],
@@ -13617,7 +13626,937 @@
         "related_standard": "Aas et al. (2009); Joe (2014) ch.2; Solvency II Art. 234; IFoA Modelling Practice Note s4",
         "updated_at": "2026-06-11T08:20:42.985936+00:00"
       }
-    ]
+    ],
+    "change_records_supplement": [
+      {
+        "record_id": "391700530a174ec1bc3b99a0c16e808d",
+        "title": "Phase 27 Task 1 - design note: richer upper-tail dependence copula (skew-t upper-tail-asymmetry parameter on the frozen t copula)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-08T08:17:43.280792+00:00",
+        "author": "Phase27Task1DesignNote",
+        "phase": "Phase 27: Richer Tail-Dependence Copula",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour; dependence justified on the basis actually used for capital)",
+          "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable)",
+          "SOA ASOP 56 \u00a73.1.3/\u00a73.4/\u00a73.5",
+          "SOA ASOP 25 \u00a73.3",
+          "IA TAS M \u00a73.2/\u00a73.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "Demarta & McNeil (2005), The t copula and related copulas (skew-t copula)",
+          "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7 (GH skew-t; tail dependence)",
+          "Daul, De Giorgi, Lindskog & McNeil (2003), The grouped t-copula",
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence (vines)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T08:17:43.280833+00:00",
+            "actor": "Phase27Task1DesignNote",
+            "status": "PEER_REVIEW",
+            "comments": "Design note + new unit tests PASS; no existing module touched; gamma=0 nests the governed freeze exactly."
+          },
+          {
+            "timestamp": "2026-06-08T08:17:43.280849+00:00",
+            "actor": "Phase27Task1DesignNote",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: synthetic-mechanism scope + copula-form residual remediation path documented; sign-off withheld."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "6bb5db0a06734369a0eb6d5ff48e84bc",
+        "title": "Phase 27 Task 2 - GH skew-t copula re-aggregation on the frozen copula (upper-tail-asymmetry lever; gamma fitted leakage-free to standalone upper-tail co-exceedances)",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-08T09:21:34.069789+00:00",
+        "author": "AutomatedModelDev_Phase27",
+        "phase": "Phase 27: Richer Tail-Dependence Copula",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 234 (aggregation incl. tail behaviour)",
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "Demarta & McNeil (2005), The t copula and related copulas (skew-t copula)",
+          "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T09:21:34.069821+00:00",
+            "actor": "AutomatedModelDev_Phase27",
+            "status": "PEER_REVIEW",
+            "comments": "Pre-registered Task 2 gates 7/7 PASS; gamma=0 exact recovery; frozen-t component bit-identical; new unit tests PASS."
+          },
+          {
+            "timestamp": "2026-06-08T09:21:34.069836+00:00",
+            "actor": "AutomatedModelDev_Phase27",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: copula-form super-set (skew-t); fitted gamma~0 (disclosed material finding); sign-off withheld pending Task 3."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "46c3318c27ae469daf7c0e40f8d99a41",
+        "title": "Phase 27 Task 3 - skew-t-copula margin bootstrap on the component basis + residual-gap RE-decomposition (copula-form reduction vs frozen-t 6,120.2)",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-08T10:21:52.107681+00:00",
+        "author": "AutomatedModelDev_Phase27",
+        "phase": "Phase 27: Richer Upper-Tail-Dependence Copula (skew-t)",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 234 (aggregation)",
+          "Demarta & McNeil (2005) The t copula and related copulas",
+          "McNeil, Frey & Embrechts (2015) QRM ch. 7",
+          "SOA ASOP 56 section 3.1.3/3.5",
+          "IA TAS M section 3.6",
+          "Efron & Tibshirani (1993) bootstrap"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T10:21:52.107710+00:00",
+            "actor": "AutomatedModelDev_Phase27",
+            "status": "PEER_REVIEW",
+            "comments": "SE gate PASS; directional gate PASS (skew-t not widen gap); archive cross-check bit-identical; bootstrap digest recorded; new unit tests PASS."
+          },
+          {
+            "timestamp": "2026-06-08T10:21:52.107726+00:00",
+            "actor": "AutomatedModelDev_Phase27",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: methodology addition (uncertainty band + disclosed residual RE-decomposition); copula/gamma/scalars frozen; gamma_hat~0 -> residual re-confirmed open; grouped-t escalation flagged for Phase 28; sign-off withheld pending Task 4 MR-015."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "00f05366af9349d5ba1f4609a239f51b",
+        "title": "Phase 27 Task 4 - skew-t tail diagnostics + MR-010/MR-014 refresh decision + MR-015 copula-form residual opened",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-08T12:14:06.348+00:00",
+        "author": "AutomatedModelDev_Phase27",
+        "phase": "Phase 27: Richer Upper-Tail-Dependence Copula (skew-t)",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 234 (aggregation incl. tail behaviour)",
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "SOA ASOP 56 section 3.1.3/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6/3.7",
+          "Demarta & McNeil (2005) The t copula and related copulas",
+          "McNeil, Frey & Embrechts (2015) QRM ch. 7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T12:14:06.348+00:00",
+            "actor": "AutomatedModelDev_Phase27",
+            "status": "PEER_REVIEW",
+            "comments": "Tail diagnostics recorded; MR refresh decision below trigger; MR-015 opened."
+          },
+          {
+            "timestamp": "2026-06-08T12:14:06.348+00:00",
+            "actor": "AutomatedModelDev_Phase27",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Production sign-off withheld pending credentialled data and APS X2 review."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "b92691ef320f4109b818520b0365beab",
+        "title": "Phase 28 Task 1 - design note: grouped-t / heterogeneous tail-dependence copula (per-block degrees of freedom on the frozen correlation Sigma)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-08T14:20:36.358720+00:00",
+        "author": "Phase28Task1DesignNote",
+        "phase": "Phase 28: Grouped-t / Heterogeneous Tail-Dependence",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Reg. Art. 234 (empirically justified diversification incl. tail behaviour; dependence justified on the basis actually used for capital)",
+          "Solvency II Delegated Reg. Art. 23 (future management actions: objective, realistic, verifiable)",
+          "SOA ASOP 56 3.1.3/3.4/3.5",
+          "SOA ASOP 25 3.3",
+          "IA TAS M 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "Daul, De Giorgi, Lindskog & McNeil (2003), The grouped t-copula",
+          "Demarta & McNeil (2005), The t copula and related copulas",
+          "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7 (grouped t; tail dependence)",
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence (vines)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T14:20:36.358758+00:00",
+            "actor": "Phase28Task1DesignNote",
+            "status": "PEER_REVIEW",
+            "comments": "Design note + new unit tests PASS; no existing module touched; homogeneous boundary nests the governed freeze exactly; two-sided sign disclosed."
+          },
+          {
+            "timestamp": "2026-06-08T14:20:36.358780+00:00",
+            "actor": "Phase28Task1DesignNote",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: synthetic-mechanism scope + heterogeneous-tail remediation path documented; two-sided aggregate sign disclosed; sign-off withheld."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "85a6b858662c42f095b62e4719e04836",
+        "title": "Phase 28 Task 2 - grouped-t copula re-aggregation on the frozen copula (per-block df_g heterogeneous tail dependence; df_g fitted leakage-free to standalone within-block upper co-exceedances)",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-08T15:18:52.736458+00:00",
+        "author": "AutomatedModelDev_Phase28",
+        "phase": "Phase 28: Grouped-t Heterogeneous Tail-Dependence Copula",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 234 (aggregation incl. tail behaviour)",
+          "Solvency II Delegated Regulation Article 23 (future management actions)",
+          "SOA ASOP 56 section 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M section 3.2/3.6",
+          "IFoA Life Aggregation & Simulation working party",
+          "Daul, De Giorgi, Lindskog & McNeil (2003), The grouped t-copula",
+          "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T15:18:52.736494+00:00",
+            "actor": "AutomatedModelDev_Phase28",
+            "status": "PEER_REVIEW",
+            "comments": "Pre-registered Task 2 gates PASS; homogeneous-boundary exact recovery; frozen-t component bit-identical; single-df t comparison retained; new unit tests PASS."
+          },
+          {
+            "timestamp": "2026-06-08T15:18:52.736511+00:00",
+            "actor": "AutomatedModelDev_Phase28",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: copula-form super-set (grouped-t per-block df); two-sided heterogeneity lever (direction disclosed); sign-off withheld pending Task 3 bootstrap."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "32bae3c32f0040a08a9696c23e02a062",
+        "title": "Phase 28 Task 3 - grouped-t-copula margin bootstrap on the component basis + residual-gap RE-decomposition (copula-form change vs skew-t-reconfirmed 6,114.9)",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-08T16:16:57.080090+00:00",
+        "author": "AutomatedModelDev_Phase28",
+        "phase": "Phase 28: Grouped-t Heterogeneous Tail-Dependence Copula",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 234 (aggregation incl. tail behaviour)",
+          "Daul, De Giorgi, Lindskog & McNeil (2003), The grouped t-copula",
+          "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7",
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions (vine, Phase 29 fallback)",
+          "SOA ASOP 56 section 3.1.3/3.5",
+          "IA TAS M section 3.6",
+          "Efron & Tibshirani (1993), An Introduction to the Bootstrap"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T16:16:57.080124+00:00",
+            "actor": "AutomatedModelDev_Phase28",
+            "status": "PEER_REVIEW",
+            "comments": "SE gate PASS; directional DISCLOSED (grouped-t two-sided); archive cross-check bit-identical; bootstrap digest recorded; new unit tests PASS."
+          },
+          {
+            "timestamp": "2026-06-08T16:16:57.080139+00:00",
+            "actor": "AutomatedModelDev_Phase28",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: methodology addition (uncertainty band + disclosed residual RE-decomposition); copula/df_g/scalars frozen; residual WIDENS -> grouped-t does NOT close the nested residual; vine escalation flagged for Phase 29; sign-off withheld pending Task 4 MR-016."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "0988ea9f865a49c3b938d22dc37af498",
+        "title": "Phase 28 Task 4 - grouped-t within/cross-block tail-dependence diagnostics + MR-010/MR-014 no-refresh decision + open MR-016 (heterogeneous-tail / cross-block-dilution copula-FORM residual)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-08T17:28:41.083590+00:00",
+        "author": "AutomatedModelDev_Phase28",
+        "phase": "Phase 28: Grouped-t / Heterogeneous Tail-Dependence",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Solvency II Delegated Regulation Article 234 (aggregation incl. tail behaviour)",
+          "Daul, De Giorgi, Lindskog & McNeil (2003), The grouped t-copula",
+          "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7 (tail dependence)",
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions (vine, Phase 29 fallback)",
+          "IFoA Modelling Practice Note section 4 (model risk register)",
+          "SOA ASOP 56 section 3.5 (model-use restrictions)",
+          "IA TAS M section 3.2/3.6"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-08T17:28:41.083608+00:00",
+            "actor": "AutomatedModelDev_Phase28",
+            "status": "PEER_REVIEW",
+            "comments": "Archive cross-check bit-identical at p=0.90; grouped-t dilutes cross-block co-movement at every p; MR refresh decision NO (governed move 0.00%); MR-016 opened; new unit tests PASS."
+          },
+          {
+            "timestamp": "2026-06-08T17:28:41.083620+00:00",
+            "actor": "AutomatedModelDev_Phase28",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: diagnostic + governance addition; copula/df_g/scalars frozen; MR-010/MR-014 not refreshed (governed headline move 0.00%; grouped-t DOWN move disclosed, not adopted); MR-016 opened for the heterogeneous-tail / cross-block-dilution copula-FORM residual with vine / pair-copula mitigation (Phase 29); sign-off withheld pending credentialled data + APS X2 review."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "f5c26bca4c964309b6afe13650023b46",
+        "title": "Phase 29 Task 1 - design note: vine / pair-copula dependence upgrade (truncated credit-root C-vine on frozen standalone margins)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-09T00:21:10.590519+00:00",
+        "author": "Phase29Task1DesignNote",
+        "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+          "Bedford & Cooke (2002), Vines",
+          "Solvency II Delegated Regulation Article 234",
+          "Solvency II Delegated Regulation Article 23",
+          "SOA ASOP 56 sections 3.1.3/3.4/3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M sections 3.2/3.6/3.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-09T00:21:10.590549+00:00",
+            "actor": "Phase29Task1DesignNote",
+            "status": "PEER_REVIEW",
+            "comments": "Design note and helper module added; frozen boundary, capped search envelope, leakage controls and bootstrap gates pre-registered."
+          },
+          {
+            "timestamp": "2026-06-09T00:21:10.590561+00:00",
+            "actor": "Phase29Task1DesignNote",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: educational design only; implementation deferred to Task 2; production sign-off withheld pending credentialled data and APS X2 review."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "5038d450f9694bb884fcd73cf0bb0bbd",
+        "title": "Phase 29 Task 2 - implement truncated credit-root vine / pair-copula prototype on frozen standalone margins",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-10T19:16:56.208822+00:00",
+        "author": "AutomatedModelDev_Phase29",
+        "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+          "Bedford & Cooke (2002), Vines",
+          "Solvency II Delegated Regulation Article 234",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+          "IA TAS M sections 3.2, 3.6, 3.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-10T19:16:56.208866+00:00",
+            "actor": "AutomatedModelDev_Phase29",
+            "status": "PEER_REVIEW",
+            "comments": "Task 2 gates PASS; frozen boundary and comparison variants retained."
+          },
+          {
+            "timestamp": "2026-06-10T19:16:56.208899+00:00",
+            "actor": "AutomatedModelDev_Phase29",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review; implementation staged for Task 3 bootstrap."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "3a063680d2724e83813241a6b04a81e4",
+        "title": "Phase 29 Task 3 - vine / pair-copula margin bootstrap on the component basis + residual-gap RE-decomposition vs grouped-t 10,491.5 and skew-t-reconfirmed 6,114.9",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-10T20:18:36.855572+00:00",
+        "author": "AutomatedModelDev_Phase29",
+        "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+          "Bedford & Cooke (2002), Vines",
+          "Solvency II Delegated Regulation Article 234",
+          "Efron & Tibshirani (1993), An Introduction to the Bootstrap",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+          "IA TAS M sections 3.2, 3.6, 3.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-10T20:18:36.855601+00:00",
+            "actor": "AutomatedModelDev_Phase29",
+            "status": "PEER_REVIEW",
+            "comments": "Task 3 gates PASS; bootstrap distribution + re-decomposition archived."
+          },
+          {
+            "timestamp": "2026-06-10T20:18:36.855613+00:00",
+            "actor": "AutomatedModelDev_Phase29",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review; MR-016 remediation decision staged for Task 4."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "655dae827a644dc0bbb8a87b74e34ddf",
+        "title": "Phase 29 Task 4 - vine pair-level tail diagnostics + fit-vs-holdout overfit check + MR-016 remediation decision (KEEP OPEN; narrowing disclosed) + open MR-017 (residual vine-FORM limitation)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-10T23:24:29.560635+00:00",
+        "author": "AutomatedModelDev_Phase29",
+        "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+          "Joe (2014), Dependence Modeling with Copulas, ch.2 (tail dependence)",
+          "Solvency II Delegated Regulation Article 234",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+          "IA TAS M sections 3.2, 3.6, 3.7",
+          "IFoA Modelling Practice Note s4 (model risk register)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-10T23:24:29.560656+00:00",
+            "actor": "AutomatedModelDev_Phase29",
+            "status": "PEER_REVIEW",
+            "comments": "Archive cross-checks bit-identical; overfit gate PASS; MR-016 KEEP OPEN per pre-registered criteria; MR-017 opened; new unit tests PASS."
+          },
+          {
+            "timestamp": "2026-06-10T23:24:29.560671+00:00",
+            "actor": "AutomatedModelDev_Phase29",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: MR-016 remediation decision + MR-017 opening; governed headline unchanged."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "242342e615a146c1a1fdedc6381a9fc9",
+        "title": "Phase 29 Task 5 - offline-UI propagation of the vine / pair-copula dependence upgrade view",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-11T00:24:27.184994+00:00",
+        "author": "AutomatedModelDev_Phase29",
+        "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+          "Solvency II Art. 234 (dependence justification - frozen copula/margins + rank-invariance displayed; vine DISCLOSED, not adopted)",
+          "Aas, Czado, Frigessi & Bakken (2009) pair-copula constructions",
+          "Efron & Tibshirani (1993) bootstrap"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T00:24:27.185043+00:00",
+            "actor": "AutomatedModelDev_Phase29",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by the contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only. The first-to-narrow residual finding, the nested-OUTSIDE-CI disclosure, the fit-vs-holdout overfit evidence and the MR-016 KEEP-OPEN / MR-017 OPENED decision are carried into the display verbatim; copula and margins remain FROZEN per SII Art. 234 and the vine is NOT adopted into the governed headline."
+          },
+          {
+            "timestamp": "2026-06-11T00:24:27.185056+00:00",
+            "actor": "AutomatedModelDev_Phase29",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. PHASE 29 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review. Owner adoption decision for the vine candidate as a disclosed alternative read-out is tracked under MR-017 / next-phase re-assessment."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "94c904819c4c4cb0938d23db922f603b",
+        "title": "Phase 30 Task 1 - design note: post-vine dependence roadmap decision (option A tree-3 vine deepening selected; stop-rule pre-registered)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-11T01:19:58.800797+00:00",
+        "author": "Phase30Task1RoadmapDecision",
+        "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+          "Bedford & Cooke (2002), Vines - a new graphical model for dependent random variables",
+          "Solvency II Delegated Regulation Article 234 (aggregation including tail behaviour)",
+          "Solvency II Delegated Regulation Article 124 (validation standards: independence of validation data)",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+          "SOA ASOP 25 section 3.3",
+          "IA TAS M sections 3.2, 3.6, 3.7",
+          "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T01:19:58.800821+00:00",
+            "actor": "Phase30Task1RoadmapDecision",
+            "status": "PEER_REVIEW",
+            "comments": "Option study + decision rule + stop-rule pre-registered; helper tests added."
+          },
+          {
+            "timestamp": "2026-06-11T01:19:58.800833+00:00",
+            "actor": "Phase30Task1RoadmapDecision",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: educational design only; implementation deferred to Task 2."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "2b34607c654d4f01b1dc88b70914fa3a",
+        "title": "Phase 30 Task 2 - implement pre-registered tree-3 deepening of the truncated credit-root vine on the frozen Phase 29 2-tree fit",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-11T02:33:11.205396+00:00",
+        "author": "AutomatedModelDev_Phase30",
+        "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+          "Bedford & Cooke (2002), Vines",
+          "Solvency II Delegated Regulation Article 234",
+          "Solvency II Delegated Regulation Article 124",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+          "IA TAS M sections 3.2, 3.6, 3.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T02:33:11.205437+00:00",
+            "actor": "AutomatedModelDev_Phase30",
+            "status": "PEER_REVIEW",
+            "comments": "Task 2 gates PASS; dual boundary and CRN comparison variants retained."
+          },
+          {
+            "timestamp": "2026-06-11T02:33:11.205453+00:00",
+            "actor": "AutomatedModelDev_Phase30",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review; implementation staged for Task 3 bootstrap."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "736029a064514f8681fd0af592ddab97",
+        "title": "Phase 30 Task 3 - tree-3 vine margin bootstrap on the component basis with paired CRN deltas vs the 2-tree vine and frozen-t boundaries and the pre-registered stop-rule trigger recorded",
+        "status": "OWNER_REVIEW",
+        "change_type": "methodology_change",
+        "created_at": "2026-06-11T03:18:03.439190+00:00",
+        "author": "AutomatedModelDev_Phase30",
+        "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+          "Bedford & Cooke (2002), Vines",
+          "Solvency II Delegated Regulation Article 234",
+          "Solvency II Delegated Regulation Article 124",
+          "Efron & Tibshirani (1993), An Introduction to the Bootstrap",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+          "IA TAS M sections 3.2, 3.6, 3.7"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T03:18:03.439224+00:00",
+            "actor": "AutomatedModelDev_Phase30",
+            "status": "PEER_REVIEW",
+            "comments": "Task 3 gates PASS; bootstrap distribution + paired CRN deltas + stop-rule trigger archived."
+          },
+          {
+            "timestamp": "2026-06-11T03:18:03.439238+00:00",
+            "actor": "AutomatedModelDev_Phase30",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review; stop-rule / MR-016 decision staged for Task 4."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "dcbc94cdcc474cb9951d762bfeb358b2",
+        "title": "Phase UIL Task 1 - user-input loader scripts/load_user_inputs.py: template xlsx -> validated schema-versioned model_inputs.json (pure I/O, no model math)",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-11T04:13:56.068626+00:00",
+        "author": "AutomatedModelDev_PhaseUIL",
+        "phase": "Phase UIL: User-Input Loader + Run Orchestrator",
+        "peer_reviewer": null,
+        "standard_references": [
+          "SOA ASOP 56 section 3.2 (model inputs) and 3.5 (reliance on data supplied by others)",
+          "ASOP 23 Data Quality (review and validation of data used in the model)",
+          "IA TAS M sections 3.2 (data) and 3.7 (change control)",
+          "IMPLEMENTATION_PLAN_currency_and_inputs.md workstream B1 (owner-approved design note)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T04:13:56.068665+00:00",
+            "actor": "AutomatedModelDev_PhaseUIL",
+            "status": "PEER_REVIEW",
+            "comments": "Loader + 19 unit tests green; manual section 4 marked LIVE; owner review requested per plan B1."
+          },
+          {
+            "timestamp": "2026-06-11T04:14:13.835939+00:00",
+            "actor": "AutomatedModelDev_PhaseUIL",
+            "status": "OWNER_REVIEW",
+            "comments": "Self-review (automated dev): pure I/O tooling, no capital impact; owner sign-off requested per plan B1."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "0dbc8cd110044a8186fe0f0bd8a50df3",
+        "title": "Phase UIL Task 2 - de-hardcode fixtures (B2): optional model_inputs.json plumbing with governed bit-identical fallbacks (par_model_v2/user_inputs.py)",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-11T05:20:51.167723+00:00",
+        "author": "AutomatedModelDev_PhaseUIL",
+        "phase": "Phase UIL: User-Input Loader + Run Orchestrator",
+        "peer_reviewer": null,
+        "standard_references": [
+          "SOA ASOP 56 sections 3.2 (model inputs) and 3.6 (model testing - regression gate)",
+          "ASOP 23 Data Quality (validation of data supplied by others before use)",
+          "IA TAS M sections 3.2 (data) and 3.7 (change control)",
+          "IMPLEMENTATION_PLAN_currency_and_inputs.md workstream B2 (owner-approved design note)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T05:20:51.167781+00:00",
+            "actor": "AutomatedModelDev_PhaseUIL",
+            "status": "PEER_REVIEW",
+            "comments": "B2 hooks + 19 integration tests green; existing 35 phase22/portfolio tests unchanged."
+          },
+          {
+            "timestamp": "2026-06-11T05:20:51.167795+00:00",
+            "actor": "AutomatedModelDev_PhaseUIL",
+            "status": "OWNER_REVIEW",
+            "comments": "Self-review (automated dev): additive plumbing, bit-identical fallback gate; owner sign-off requested per plan B2."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "92142116880240d2828d9eaac365f696",
+        "title": "Phase UIL Task 3 - run orchestrator (B3): scripts/run_model.py single entry point threading model_inputs.json through the governed seven-driver engine",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-11T06:24:54.659566+00:00",
+        "author": "AutomatedModelDev_PhaseUIL",
+        "phase": "Phase UIL: User-Input Loader + Run Orchestrator",
+        "peer_reviewer": null,
+        "standard_references": [
+          "SOA ASOP 56 sections 3.2 (model inputs), 3.5 (model-use restriction) and 3.6 (testing)",
+          "IA TAS M sections 3.2 (data) and 3.7 (change control)",
+          "Solvency II Delegated Regulation Article 234 (aggregation basis unchanged)",
+          "IMPLEMENTATION_PLAN_currency_and_inputs.md workstream B3 (owner-approved design note)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T06:24:54.659606+00:00",
+            "actor": "AutomatedModelDev_PhaseUIL",
+            "status": "PEER_REVIEW",
+            "comments": "B3 orchestrator + 23 tests green; parameter-identity gate vs archived P22T4 asserted in tests."
+          },
+          {
+            "timestamp": "2026-06-11T06:24:54.659616+00:00",
+            "actor": "AutomatedModelDev_PhaseUIL",
+            "status": "OWNER_REVIEW",
+            "comments": "Self-review (automated dev): additive entry point over unchanged governed engine; owner sign-off requested per plan B3."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "f20b5a1b0b6f4432841f9d8ee4a3acd8",
+        "title": "Phase UIL Task 4 - GUI currency wire-through (B4+A1): meta.currency + output_label stamped, fmtMoney money formatting, contract 1.12.0",
+        "status": "DRAFT",
+        "change_type": "code_change",
+        "created_at": "2026-06-11T07:55:55.079274+00:00",
+        "author": "Claude (automated dev cycle 28, 2026-06-11 06:00 UTC window)",
+        "phase": "Phase UIL: User-Input Loader + Run Orchestrator",
+        "peer_reviewer": null,
+        "standard_references": [
+          "ASOP 41 (communication of monetary amounts)",
+          "TAS M 3.7 (change log)",
+          "ASOP 56 3.5 (model use restrictions unchanged)"
+        ],
+        "sign_off_history": [],
+        "store_synced": true
+      },
+      {
+        "record_id": "b1c2649394b747388aaa432560039587",
+        "title": "Phase 30 Task 4 - tree-3 vine pair-level tail diagnostics + fit-vs-holdout overfit check + BINDING STOP-RULE decision (MR-016 and MR-017 KEEP OPEN; dependence-FORM escalation under MR-016 ENDS; Phase 31 = owner decision package)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-11T08:20:42.986063+00:00",
+        "author": "AutomatedModelDev_Phase30",
+        "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+        "peer_reviewer": null,
+        "standard_references": [
+          "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+          "Joe (2014), Dependence Modeling with Copulas, ch.2 (tail dependence)",
+          "Solvency II Delegated Regulation Article 234",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+          "IA TAS M sections 3.2, 3.6, 3.7",
+          "IFoA Modelling Practice Note s4 (model risk register)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T08:20:42.986087+00:00",
+            "actor": "AutomatedModelDev_Phase30",
+            "status": "PEER_REVIEW",
+            "comments": "Archive cross-checks bit-identical; zero-strength bit-identity re-verified; overfit gate PASS; STOP-RULE APPLIED per pre-registered criteria (MR-016 + MR-017 KEEP OPEN); new unit tests PASS."
+          },
+          {
+            "timestamp": "2026-06-11T08:20:42.986101+00:00",
+            "actor": "AutomatedModelDev_Phase30",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: binding stop-rule decision - dependence-FORM escalation under MR-016 ends; Phase 31 owner decision package; governed headline unchanged."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "3ea0836fc67f405dbef26e5f954e680d",
+        "title": "Phase 30 Task 5 - offline-UI propagation of the tree-3 vine candidate and the binding stop-rule decision view",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-11T09:18:08.077735+00:00",
+        "author": "AutomatedModelDev_Phase30",
+        "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+          "Solvency II Art. 234 (dependence justification - frozen copula/margins; tree-3 vine DISCLOSED, not adopted)",
+          "Aas, Czado, Frigessi & Bakken (2009) pair-copula constructions",
+          "IFoA Modelling Practice Note s4 (model risk register / stop-rule)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T09:18:08.077801+00:00",
+            "actor": "AutomatedModelDev_Phase30",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by the contract checks + jsdom self-test (0 network / 0 JS errors); display-layer change only. The zero-strength tree-3 finding, the nested-OUTSIDE-CI disclosure, the BINDING STOP-RULE decision (dependence-FORM escalation ENDS) and the Phase 31 owner-decision-package directive are carried into the display verbatim; copula and margins remain FROZEN per SII Art. 234 and neither vine candidate is adopted into the governed headline."
+          },
+          {
+            "timestamp": "2026-06-11T09:18:08.077813+00:00",
+            "actor": "AutomatedModelDev_Phase30",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. PHASE 30 COMPLETE at the educational level; production sign-off remains withheld pending credentialled-data calibration and independent APS X2 review. Phase 31 is the owner decision package: adopt the disclosed vine read-out vs accept the residual vs fund a second independent nested run (option B), per the pre-registered stop-rule."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "2e7ef53d089a42a2943dc06cf1204269",
+        "title": "Phase 31 Task 1 - design note: owner decision package (dependence) pre-registration (evidence pack, three options, sign-off workflow)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-11T10:14:53.029556+00:00",
+        "author": "Phase31Task1OwnerDecisionPackage",
+        "phase": "Phase 31: Owner Decision Package (Dependence)",
+        "peer_reviewer": null,
+        "standard_references": [
+          "IFoA Model Practice Note (MPN) section 4 (documentation, independent review, communication)",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation of decisions)",
+          "SOA ASOP 41 (actuarial communications)",
+          "Solvency II Delegated Regulation Article 124 (validation standards)",
+          "Solvency II Delegated Regulation Article 234 (aggregation including tail behaviour)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T10:14:53.029591+00:00",
+            "actor": "Phase31Task1OwnerDecisionPackage",
+            "status": "PEER_REVIEW",
+            "comments": "Pack registry + three options + workflow pre-registered; helper tests added."
+          },
+          {
+            "timestamp": "2026-06-11T10:14:53.029604+00:00",
+            "actor": "Phase31Task1OwnerDecisionPackage",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: pure governance pre-registration; pack assembly deferred to Task 2."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "2d572dbcb6a44e96bc012fe2f73b511e",
+        "title": "Phase 31 Task 2 - assemble the owner decision pack (dependence) exactly per the Task 1 frozen registry; dual gate PASS",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-11T11:13:38.432634+00:00",
+        "author": "Phase31Task2OwnerPackAssembly",
+        "phase": "Phase 31: Owner Decision Package (Dependence)",
+        "peer_reviewer": null,
+        "standard_references": [
+          "IFoA Model Practice Note (MPN) section 4 (documentation, independent review, communication)",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation of decisions)",
+          "SOA ASOP 41 (actuarial communications)",
+          "Solvency II Delegated Regulation Article 124 (validation standards)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T11:13:38.432666+00:00",
+            "actor": "Phase31Task2OwnerPackAssembly",
+            "status": "PEER_REVIEW",
+            "comments": "Assembled pack: dual gate PASS (21 envelope + 16 assembly checks); tests added."
+          },
+          {
+            "timestamp": "2026-06-11T11:13:38.432681+00:00",
+            "actor": "Phase31Task2OwnerPackAssembly",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: the assembled, neutral decision pack. The owner decides O1/O2/O3 at workflow step 4; nothing is pre-selected."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "dc8595e9baed4e3dafa0d7927d2cbf39",
+        "title": "Phase 31 Task 3 - owner-facing summary of the assembled decision pack; fidelity/neutrality gate PASS; NO new disclosure surface (no UI contract bump); PHASE 31 COMPLETE",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-11T12:22:11.157802+00:00",
+        "author": "Phase31Task3OwnerSummary",
+        "phase": "Phase 31: Owner Decision Package (Dependence)",
+        "peer_reviewer": null,
+        "standard_references": [
+          "IFoA Model Practice Note (MPN) section 4 (documentation, independent review, communication)",
+          "SOA ASOP 41 (actuarial communications - clarity for the intended user)",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation of decisions)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T12:22:11.157844+00:00",
+            "actor": "Phase31Task3OwnerSummary",
+            "status": "PEER_REVIEW",
+            "comments": "Owner summary: fidelity/neutrality gate PASS (25 checks); tests added."
+          },
+          {
+            "timestamp": "2026-06-11T12:22:11.157863+00:00",
+            "actor": "Phase31Task3OwnerSummary",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: the one-page summary plus the full pack. The owner decides O1/O2/O3 at workflow step 4; nothing is pre-selected."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "b29f48e784984b7aae3189decae92f44",
+        "title": "Phase 32 Task 1 - zero-install offline UI consolidation design note; baseline audit green (3 self-tests, 0 network / 0 JS errors, 0 external refs, contract 1.13.0, 13 tabs); 3 gaps pre-registered (G1 owner pack surface, G2 user-input run results, G3 governed read-out sweep)",
+        "status": "OWNER_REVIEW",
+        "change_type": "governance_change",
+        "created_at": "2026-06-11T13:13:52.124514+00:00",
+        "author": "Phase32Task1UIConsolidationDesign",
+        "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+        "peer_reviewer": null,
+        "standard_references": [
+          "IFoA Model Practice Note (MPN) section 4 (documentation and communication)",
+          "SOA ASOP 41 (actuarial communications - clarity for the intended user)",
+          "SOA ASOP 56 sections 3.1.3, 3.4, 3.6 (model risk, reliance, documentation)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T13:13:52.124557+00:00",
+            "actor": "Phase32Task1UIConsolidationDesign",
+            "status": "PEER_REVIEW",
+            "comments": "Design note: gate PASS incl. live repo cross-checks; tests added."
+          },
+          {
+            "timestamp": "2026-06-11T13:13:52.124575+00:00",
+            "actor": "Phase32Task1UIConsolidationDesign",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review: consolidation scope and gap priority (G1 owner pack surface first). No model or contract change until Task 2."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "63b701f440eb4cfb9c83f7c34ce9f009",
+        "title": "Phase 32 Task 2 - browsable owner-decision-pack surface (gap G1) in the zero-install offline UI",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-11T14:22:09.134020+00:00",
+        "author": "AutomatedModelDev_Phase32",
+        "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+          "IFoA Modelling Practice Note s4 (documentation & independent review)",
+          "Solvency II Art. 234 (dependence justification - candidates DISCLOSED, not adopted; owner decision pending)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T14:22:09.134066+00:00",
+            "actor": "AutomatedModelDev_Phase32",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by the contract checks (pack carried bit-for-bit, neutrality pinned: registry order / NO default / decision record BLANK) + jsdom self-tests (0 network / 0 JS errors across ui_app, offline viewer and combined GUI); display-layer change only; no model parameter changes."
+          },
+          {
+            "timestamp": "2026-06-11T14:22:09.134079+00:00",
+            "actor": "AutomatedModelDev_Phase32",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Gap G1 of the Phase 32 design note is closed: the owner decision pack is now browsable offline. The Phase 31 decision itself remains PENDING and entirely with the model owner (workflow step 4); nothing in this change steers or defaults that decision."
+          }
+        ],
+        "store_synced": true
+      },
+      {
+        "record_id": "fcdac39175ea472f8edadd9dd8aa3249",
+        "title": "Phase 32 Task 3 - user-input run-result surface (gap G2) in the zero-install offline UI",
+        "status": "OWNER_REVIEW",
+        "change_type": "code_change",
+        "created_at": "2026-06-11T15:23:02.444760+00:00",
+        "author": "AutomatedModelDev_Phase32",
+        "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+        "peer_reviewer": "APS_X2_Independent_Reviewer",
+        "standard_references": [
+          "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+          "SOA ASOP 56 s3.5 (model output validation & presentation)",
+          "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+          "IFoA Modelling Practice Note s4 (documentation & independent review)",
+          "SOA ASOP 23 s3 (data quality - input provenance disclosed end-to-end)"
+        ],
+        "sign_off_history": [
+          {
+            "timestamp": "2026-06-11T15:23:02.444809+00:00",
+            "actor": "AutomatedModelDev_Phase32",
+            "status": "PEER_REVIEW",
+            "comments": "UI propagation verified by the contract checks (run summary + evidence-report blocks carried bit-for-bit; display provenance bit-identical to the stamped meta block; additive diff clean) + jsdom self-tests (0 network / 0 JS errors across ui_app, the dedicated user-run fallback test, offline viewer and combined GUI); display-layer change only; no model parameter changes."
+          },
+          {
+            "timestamp": "2026-06-11T15:23:02.444823+00:00",
+            "actor": "AutomatedModelDev_Phase32",
+            "status": "OWNER_REVIEW",
+            "comments": "Owner review requested. Gap G2 of the Phase 32 design note is closed: the user-input run results are now browsable offline with full input provenance (model_inputs.json -> par_model_v2.user_inputs loader -> run_model) and the stamped currency/output_label disclosure. The governed capital read-outs are unchanged."
+          }
+        ],
+        "store_synced": true
+      }
+    ],
+    "store_sync": {
+      "source": ".claude-dev/GOVERNANCE_STORE.json",
+      "swept_by": "Phase 32 Task 4 (gap G3) governed read-out completeness sweep",
+      "change_records_store_total": 82,
+      "change_records_embedded": 54,
+      "change_records_supplemented": 28,
+      "change_record_status_counts": {
+        "APPROVED": 8,
+        "IMPLEMENTED": 2,
+        "OWNER_REVIEW": 70,
+        "SUPERSEDED": 1,
+        "DRAFT": 1
+      },
+      "audit_trail_store_entries": 110,
+      "audit_entries_embedded": 81,
+      "risk_register_store_total": 17,
+      "risk_register_embedded": 17,
+      "sweep_report": "docs/validation/PHASE32_TASK4_GOVERNANCE_SWEEP_REPORT.json"
+    }
   },
   "verdicts": [
     {

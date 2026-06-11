@@ -2475,6 +2475,30 @@
       "phase": "Phase 32: Zero-Install Offline UI Consolidation",
       "digest": "bf642f8640789ccfc77c4008800f08ee3c39e4acdc7e119993297b64f38f9b51",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "52c81504dd164de895f63f4f07ea86c2",
+      "timestamp": "2026-06-11T16:20:56.696570+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase32",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 32 Task 4 governed read-out completeness sweep (gap G3); contract 1.16.0 additive; 28 ChangeRecords store-synced bit-for-bit",
+      "details": {
+        "record_id": "cc4aa0251c384357a753a40949c6eda0",
+        "ui_contract": "1.16.0",
+        "change_records_supplemented": 28,
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+      "digest": "dc7f4c3f7055dafc5584b32510b6afaba9e2e95dc6d3e18831aa4b0fe975b695",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -7660,6 +7684,76 @@
           "actor": "AutomatedModelDev_Phase32",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Gap G2 of the Phase 32 design note is closed: the user-input run results are now browsable offline with full input provenance (model_inputs.json -> par_model_v2.user_inputs loader -> run_model) and the stamped currency/output_label disclosure. The governed capital read-outs are unchanged."
+        }
+      ],
+      "phase": "Phase 32: Zero-Install Offline UI Consolidation"
+    },
+    {
+      "record_id": "cc4aa0251c384357a753a40949c6eda0",
+      "created_at": "2026-06-11T16:20:56.696410+00:00",
+      "title": "Phase 32 Task 4 - governed read-out completeness sweep (gap G3) in the zero-install offline UI",
+      "description": "Phase 32 Task 4 closed gap G3 of the Phase 32 Task 1 design note with an inventory-driven completeness sweep of the governed read-outs. The diff found the embedded governance section carried only a legacy snapshot of the ChangeRecord trail (54 of 82 records; 28 missing) while the risk register (17/17) and the validation-report registry (inventory rebuilt live each build) were complete. build_ui_data.py now syncs the missing ChangeRecords bit-for-bit from .claude-dev/GOVERNANCE_STORE.json into a NEW ADDITIVE governance.change_records_supplement key and discloses the full store totals (ChangeRecords, audit-trail entries, risk register) plus store-wide ChangeRecord status counts via a NEW governance.store_sync key (contract bumped ADDITIVELY 1.15.0 -> 1.16.0; every pre-existing key bit-identical). The Governance tab timeline, status/type distributions and the change-records CSV export now cover all 82 governed records (store-synced ones badged), and a 'Governance-store sync' panel presents the sweep figures. The display layer recomputes nothing.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "IFoA Modelling Practice Note s4 (documentation & independent review)",
+        "Solvency II Art. 44 / ORSA (model governance record completeness)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.15.0 (governance section carried a 54-record legacy snapshot of an 82-record store; no store totals disclosed)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.16.0 (additive)",
+        "store_sync": {
+          "source": ".claude-dev/GOVERNANCE_STORE.json",
+          "swept_by": "Phase 32 Task 4 (gap G3) governed read-out completeness sweep",
+          "change_records_store_total": 82,
+          "change_records_embedded": 54,
+          "change_records_supplemented": 28,
+          "change_record_status_counts": {
+            "APPROVED": 8,
+            "IMPLEMENTED": 2,
+            "OWNER_REVIEW": 70,
+            "SUPERSEDED": 1,
+            "DRAFT": 1
+          },
+          "audit_trail_store_entries": 110,
+          "audit_entries_embedded": 81,
+          "risk_register_store_total": 17,
+          "risk_register_embedded": 17,
+          "sweep_report": "docs/validation/PHASE32_TASK4_GOVERNANCE_SWEEP_REPORT.json"
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 232
+      },
+      "impact_assessment": "Display-layer only: the UI bundler reads the governance store and performs no model calculation, so no model output changes. Additive contract bump keeps existing consumers working; the pre-existing change_records, audit_entries and risk_register keys are bit-identical, so the recomputed audit-integrity badge (a property of the verified snapshot export) is unchanged. Governed capital read-outs are untouched.",
+      "quantitative_impact": "Governed read-out completeness: ChangeRecords visible offline 54 -> 82 (+28 store-synced, surfaced bit-for-bit); store-wide status counts disclosed ({\"APPROVED\": 8, \"IMPLEMENTED\": 2, \"OWNER_REVIEW\": 70, \"SUPERSEDED\": 1, \"DRAFT\": 1}); audit-trail store total 110 disclosed next to the 81-entry verified snapshot; risk register 17/17 and validation registry already complete (0 missing). jsdom self-test ok with 0 network calls and 0 JS errors over 232 checks.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase32",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T16:20:56.696535+00:00",
+          "actor": "AutomatedModelDev_Phase32",
+          "status": "PEER_REVIEW",
+          "comments": "Sweep verified by the documented inventory diff (all 28 missing ChangeRecords supplemented bit-for-bit; no overlap; store totals and status counts asserted equal to the store) + jsdom self-tests (0 network / 0 JS errors across ui_app, user-run fallback, offline viewer and combined GUI); additive diff clean; display-layer change only; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-11T16:20:56.696546+00:00",
+          "actor": "AutomatedModelDev_Phase32",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap G3 of the Phase 32 design note is closed: every governed ChangeRecord is now visible offline with store-wide status counts and full store totals disclosed; the governed capital read-outs are unchanged."
         }
       ],
       "phase": "Phase 32: Zero-Install Offline UI Consolidation"

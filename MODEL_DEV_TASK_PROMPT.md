@@ -39,9 +39,11 @@ force-push `main`. When in doubt, **yield**.
 > LIVE; the `production_run/` story is end-to-end (template → loader →
 > run_model → currency-aware offline GUI). Backward-compatibility gate held:
 > no inputs ⇒ governed read-outs bit-identical, GUI neutral display.
-> **The single in_progress item is now Phase 30 Task 4** (tree-3 vine tail
-> diagnostics + binding STOP-RULE / MR-016/MR-017 decision), resumed from
-> `queued_resume_after_phase_uil` exactly as the parking note directed.
+> **STALE pointer (kept for history):** Phase 30 Task 4 has long since
+> completed. The single in_progress item is ALWAYS the one in
+> `.claude-dev/MODEL_DEV_STATE.json` — as of 2026-06-11 (cycle 33) that is
+> **Phase 32 Task 5** (phase summary + final consolidated re-audit ->
+> PHASE 32 COMPLETE; Tasks 1-4 closed gaps G1/G2/G3, contract now 1.16.0).
 > Remaining currency work (A2 provenance relabel, A3 full re-currency) stays
 > in the implementation plan as future phases.
 

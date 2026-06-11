@@ -187,6 +187,12 @@ setTimeout(() => {
   if (firstCrow) firstCrow.click();
   const govSignoff = document.querySelectorAll("#gov-changes .tl-soh").length;
   const govAuditBadge = document.querySelectorAll("#gov-audit .auditbadge").length;
+  // Phase 32 Task 4 (gap G3): governance-store completeness sweep surface.
+  const govStoreSyncCards = document.querySelectorAll("#gov-audit .storesync .card").length;
+  const govAuditEl = document.getElementById("gov-audit");
+  const govAuditText = (govAuditEl && govAuditEl.textContent) || "";
+  const govChangesText = (document.getElementById("gov-changes") || {}).textContent || "";
+  const govSyncBadges = (govChangesText.match(/store-sync/g) || []).length;
   govBtns.forEach(b => { if (b.getAttribute("data-view") === "gates") b.click(); });
 
   // UI Task 5: export buttons, CSV builders, ARIA roles, print stylesheet.
@@ -211,11 +217,22 @@ setTimeout(() => {
   // Parse the embedded contract to learn the configured currency, then assert
   // the GUI actually renders money with that symbol and shows the badge.
   let uiMeta = {};
+  let uiGov = {};
   try {
     const rawData = (document.getElementById("ui-data").textContent || "")
       .replace("/*__UI_DATA__*/", "").trim();
-    uiMeta = (JSON.parse(rawData) || {}).meta || {};
+    const uiParsed = JSON.parse(rawData) || {};
+    uiMeta = uiParsed.meta || {};
+    uiGov = uiParsed.governance || {};
   } catch (e) { /* leave uiMeta empty; checks below will fail loudly */ }
+  // Phase 32 Task 4 (gap G3): sweep consistency recomputed from embedded data.
+  const g3ss = uiGov.store_sync || {};
+  const g3supp = uiGov.change_records_supplement || [];
+  const g3embedded = uiGov.change_records || [];
+  const g3ids = new Set(g3embedded.map(c => c.record_id));
+  const g3overlap = g3supp.filter(c => g3ids.has(c.record_id)).length;
+  const g3statusTotal = Object.values(g3ss.change_record_status_counts || {})
+    .reduce((a, b) => a + b, 0);
   const curCfg = uiMeta.currency || {};
   const symEsc = curCfg.symbol
     ? curCfg.symbol.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") : null;
@@ -263,6 +280,19 @@ setTimeout(() => {
     govChangeItems,
     govSignoff,
     govAuditBadge,
+    // Phase 32 Task 4 (gap G3): governance-store completeness sweep.
+    govStoreSyncCards,
+    govStoreSyncPanel: /Governance-store sync \(Phase 32 Task 4/.test(govAuditText),
+    govStoreSyncPresent: !!(g3ss && g3ss.source === ".claude-dev/GOVERNANCE_STORE.json"),
+    govSupplementPresent: g3supp.length >= 1,
+    govSupplementNoOverlap: g3overlap === 0,
+    govSweepTotalsConsistent: g3ss.change_records_store_total === (g3embedded.length + g3supp.length)
+      && g3ss.change_records_supplemented === g3supp.length
+      && g3ss.change_records_embedded === g3embedded.length
+      && g3statusTotal === g3ss.change_records_store_total,
+    govTimelineComplete: govChangeItems === (g3embedded.length + g3supp.length),
+    govSyncBadgesRendered: govSyncBadges >= g3supp.length,
+    govChangesCsvComplete: chgCsvRows >= (g3embedded.length + g3supp.length),
     toolbarPresent: !!toolbar,
     exportBtns,
     invCsvHasHeader: /(^|,)sha256(,|$)/.test((invCSV.split("\r\n")[0]||"")),
@@ -436,6 +466,15 @@ setTimeout(() => {
     checks.govChangeItems >= 5 &&
     checks.govSignoff >= 1 &&
     checks.govAuditBadge >= 1 &&
+    checks.govStoreSyncCards >= 5 &&
+    checks.govStoreSyncPanel &&
+    checks.govStoreSyncPresent &&
+    checks.govSupplementPresent &&
+    checks.govSupplementNoOverlap &&
+    checks.govSweepTotalsConsistent &&
+    checks.govTimelineComplete &&
+    checks.govSyncBadgesRendered &&
+    checks.govChangesCsvComplete &&
     checks.toolbarPresent &&
     checks.exportBtns === 5 &&
     checks.invCsvHasHeader &&
