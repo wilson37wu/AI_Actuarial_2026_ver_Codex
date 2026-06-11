@@ -1,0 +1,291 @@
+{
+ "title": "Phase 30 Task 1 - Design Note: Post-Vine Dependence Roadmap Decision",
+ "verdict": "PASS",
+ "classification": "EDUCATIONAL",
+ "selected_option": "A_tree3_vine_deepening",
+ "problem": "Phase 29 closed with the first POSITIVE dependence result: the truncated 2-tree credit-root C-vine narrowed the copula-form residual to 3,637.3 (-65.33% vs grouped-t 10,491.5; -40.52% vs skew-t 6,114.9) and lifted the disclosed component SCR to 42,458.6 (bootstrap mean 41,917.6), but the nested path-wise reference 46,638.9 stayed OUTSIDE the 95% CI [38,654.7, 45,284.3]. MR-016 remains OPEN and MR-017 tracks the residual vine-FORM limitations - by construction, dependence the 2-tree truncation cannot represent. The roadmap decision is which escalation, if any, is justified next.",
+ "headroom_analysis": {
+  "nested_reference": 46638.9,
+  "vine2_ci_hi": 45284.252553628474,
+  "needed_mean_lift_abs": 1354.6474463715276,
+  "needed_mean_lift_rel": 0.03231688647165748,
+  "needed_share_of_point_residual": 0.3724323013528655,
+  "max_addressable_share_of_total_gap": 0.870094811436223,
+  "relief_surface_part_not_addressable": 543.0488030254351
+ },
+ "option_study": {
+  "A_tree3_vine_deepening": {
+   "what": "ONE additional governed C-vine tree (the four pre-registered third-tree conditional pairs), same four pair families, frozen margins/Sigma/df, vine2 AND frozen-t boundary legs reproduced bit-identically before any candidate run.",
+   "expected_residual_closure_abs_max": 3637.298487404965,
+   "synthetic_holdout_closure_share": 0.8573703163288755,
+   "needed_mean_lift_to_enter_ci": 1354.6474463715276,
+   "cost_cycles": 4,
+   "compute": "P29-scale (200x20k bootstrap); proven feasible in this environment",
+   "governance_risk": "LOW: additive, disclosed, frozen-headline preserved",
+   "eligible": true
+  },
+  "B_nested_aware_calibration": {
+   "what": "Calibrate dependence parameters directly against the nested path-wise reference.",
+   "expected_residual_closure_abs_max": 3637.298487404965,
+   "in_sample_closure_by_construction": 1.0,
+   "validation_validity": "INVALID as specified: the nested run 46,638.9 is the ONLY independent benchmark; using it as the calibration target forfeits out-of-sample validation (circularity). A valid variant needs a SECOND independent nested run (fresh seeds) - the most expensive artifact in the repo.",
+   "cost_cycles": 6,
+   "compute": "one full additional nested simulator run + calibration cycles",
+   "governance_risk": "HIGH: circular calibration to the validation benchmark",
+   "eligible": false,
+   "ineligible_reason": "leakage/circularity without a new nested run; deferred as post-stop owner-approved escalation"
+  },
+  "C_owner_adoption_package": {
+   "what": "Decision package: adopt the disclosed vine read-out, or accept residual with MR-016 OPEN.",
+   "expected_residual_closure_abs_max": 0.0,
+   "cost_cycles": 1,
+   "governance_risk": "NONE: no model change",
+   "eligible": false,
+   "ineligible_reason": "zero residual closure; scheduled REGARDLESS as the post-Phase-30 owner package"
+  },
+  "D_stop_rule": {
+   "what": "Stop dependence-form escalation; redirect to credentialled-data priority (human-blocked).",
+   "expected_residual_closure_abs_max": 0.0,
+   "cost_cycles": 0,
+   "governance_risk": "NONE",
+   "eligible": false,
+   "ineligible_reason": "zero closure as a primary action; embedded as the pre-registered conditional stop-rule"
+  }
+ },
+ "decision_rule": [
+  "R1: exclude options with zero expected residual closure as PRIMARY actions (C, D) - they are scheduled/embedded, not lost.",
+  "R2: exclude options that re-use the only independent nested benchmark for calibration (B) unless the owner funds a second nested run.",
+  "R3: the remaining option (A) is selected ONLY if the synthetic pre-study demonstrates boundary recovery, a positive truncation gap, holdout closure share >= 0.5, and tree-3 targeting above holdout drift."
+ ],
+ "stop_rule": "STOP-RULE (pre-registered): if the Phase 30 tree-3 vine still leaves the nested reference 46,638.9 outside its 95% bootstrap CI at Task 4, dependence-FORM escalation under MR-016 ENDS. No further copula-structure candidates may be opened without owner sign-off; Phase 31 becomes the owner decision package (option C), with option B available only as an owner-approved escalation funding a second independent nested run.",
+ "pre_registered_structure": {
+  "max_vine_trees": 3,
+  "third_tree_edges": [
+   [
+    "fx",
+    "rate",
+    [
+     "credit",
+     "liquidity"
+    ]
+   ],
+   [
+    "rate",
+    "lapse",
+    [
+     "credit",
+     "liquidity"
+    ]
+   ],
+   [
+    "lapse",
+    "mortality",
+    [
+     "credit",
+     "liquidity"
+    ]
+   ],
+   [
+    "equity",
+    "liquidity",
+    [
+     "credit",
+     "fx"
+    ]
+   ]
+  ],
+  "third_tree_edges_idx": [
+   [
+    5,
+    0,
+    [
+     2,
+     6
+    ]
+   ],
+   [
+    0,
+    3,
+    [
+     2,
+     6
+    ]
+   ],
+   [
+    3,
+    4,
+    [
+     2,
+     6
+    ]
+   ],
+   [
+    1,
+    6,
+    [
+     2,
+     5
+    ]
+   ]
+  ],
+  "family_candidates": [
+   "gaussian",
+   "student_t",
+   "survival_clayton",
+   "survival_gumbel"
+  ],
+  "envelope_checks": {
+   "max_vine_trees_p30": 3,
+   "third_tree_edge_count": 4,
+   "third_tree_edges_ok": true,
+   "third_tree_edges_unique": true,
+   "first_second_tree_unchanged": true,
+   "pair_families_unchanged": true,
+   "ui_contract": [
+    "1.11.0",
+    "1.12.0"
+   ],
+   "envelope_ok": true
+  }
+ },
+ "pre_study_tree3_truncation": {
+  "config": {
+   "n_scen": 200000,
+   "n_drivers": 7,
+   "rho": 0.42,
+   "df_proxy": 4.0,
+   "tree12_strength": 1.25,
+   "tree3_strength": 1.1,
+   "seed": 30,
+   "confidence": 0.995,
+   "tail_p": 0.95,
+   "third_tree_edges": [
+    [
+     5,
+     0,
+     [
+      2,
+      6
+     ]
+    ],
+    [
+     0,
+     3,
+     [
+      2,
+      6
+     ]
+    ],
+    [
+     3,
+     4,
+     [
+      2,
+      6
+     ]
+    ],
+    [
+     1,
+     6,
+     [
+      2,
+      5
+     ]
+    ]
+   ],
+   "fit_grid": [
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5,
+    1.75,
+    2.0
+   ]
+  },
+  "var995_holdout": {
+   "truth_tree3": 278.5127194090477,
+   "vine2_truncated": 265.68843590536443,
+   "tree3_fitted": 276.6835959096085
+  },
+  "truncation_gap_rel": 0.04826812826829672,
+  "fitted_tree3_strength": 1.0,
+  "holdout_closure_share": 0.8573703163288755,
+  "joint_triple_tail": {
+   "truth": 7.863999999999986,
+   "vine2": 6.9999999999999885,
+   "lift": 0.8639999999999972
+  },
+  "holdout_pair_drift": 0.03716666666666674,
+  "boundary_recovery_max_abs": 0.0,
+  "boundary_recovery_ok": true,
+  "truncation_gap_positive": true,
+  "closure_demonstrated": true,
+  "targeting_ok": true,
+  "mechanism_demonstrated": true,
+  "digest": "5a2abc2ff92ca2c11c497c096845a724ed24a7aa96d8f4e339c67ce6a17ab7de"
+ },
+ "pre_study_disclosure": "The synthetic pre-study is not a calibration. It demonstrates that (i) joint-conditional (tree-3) tail dependence leaves a positive VaR99.5 gap against a 2-tree truncation, (ii) a single governed tree-3 strength fitted leakage-free on a fit half closes a quantified share of that gap on the holdout half, and (iii) zero tree-3 strength recovers the 2-tree leg exactly. Real-data magnitude is reserved for Tasks 2-4.",
+ "task2_acceptance_criteria": [
+  "Dual boundary: reproduce frozen-t component 39,975.654628 AND archived 2-tree vine candidate 42,458.552710 bit-identically before any tree-3 computation; boundary max deviation <= 1e-09.",
+  "Rank invariance: Sigma max|diff| <= 1e-12; homogeneous df remains 2.9451 within 0.0001; standalone margins bit-identical.",
+  "Implement ONLY the four pre-registered third-tree conditional pairs; first/second-tree fits FROZEN from Phase 29 Task 2.",
+  "Pair-family search limited to ['gaussian', 'student_t', 'survival_clayton', 'survival_gumbel']; no new families or rotations.",
+  "Leakage control: tree-3 family/parameter selection on fit rows only; holdout diagnostics disclosed.",
+  "Retain single-df t, grouped-t and 2-tree vine comparison variants on common random numbers.",
+  "code_change ChangeRecord OWNER_REVIEW."
+ ],
+ "task3_acceptance_criteria": [
+  "Tree-3 vine margin bootstrap: >= 200 replicates x 20,000 sims; SE <= 5% of mean.",
+  "HEADLINE: nested 46,638.9 inside the tree-3 vine 95% CI OR the stop-rule TRIGGERS (recorded in the report; no gate-shopping).",
+  "Paired CRN deltas (tree-3 minus 2-tree vine; tree-3 minus frozen-t) with sign and CI.",
+  "Seeds/config/digests recorded; idempotent re-run digest-identical.",
+  "methodology_change ChangeRecord OWNER_REVIEW."
+ ],
+ "task4_acceptance_criteria": [
+  "Per-pair tail diagnostics including the four tree-3 conditional pairs; holdout pairs disclosed with CIs.",
+  "Overfit check: holdout-to-fit max-lift ratio disclosed (P29 reference 0.049); concentration gate as P29 T4.",
+  "MR decision: mitigate MR-016/MR-017 ONLY if nested is inside the CI AND the residual shrinks below 3,637.3; otherwise KEEP OPEN and APPLY THE STOP-RULE.",
+  "MR-010/MR-014 refresh only if the governed headline moves > 1% (it must not: headline stays frozen-t).",
+  "governance_change ChangeRecord OWNER_REVIEW; risk-register update idempotent."
+ ],
+ "task5_plan": "Offline-UI propagation only after Tasks 2-4: additive contract 1.11.0 -> 1.12.0 with tree-3 vs 2-tree vs frozen vs nested SCR, tree-3 pair diagnostics, stop-rule status, and MR-016/MR-017 decisions.",
+ "post_phase30_commitment": "Phase 31 is the owner decision package (option C) REGARDLESS of outcome: adopt-the-disclosed-read-out vs accept-residual vs fund option B with a second independent nested run.",
+ "limitations": [
+  "This cycle is design-only; no capital figure changes.",
+  "The synthetic pre-study demonstrates mechanism and leakage-free closure on synthetic data, not real-data magnitude.",
+  "A tree-3 C-vine may STILL not bring the nested reference inside the CI; the pre-registered stop-rule makes that outcome terminal for dependence-form escalation.",
+  "Production sign-off remains blocked by credentialled data and independent APS X2 review."
+ ],
+ "use_restrictions": {
+  "classification": "EDUCATIONAL",
+  "restrictions": [
+   "Design note only: no capital figure produced in Phase 30 Task 1 is a production SCR or decision basis.",
+   "Task 2 may implement ONLY the pre-registered tree-3 deepening: the four third-tree conditional pairs, the same four pair families, frozen margins/Sigma/df 2.9451.",
+   "Task 2 must reproduce BOTH boundaries bit-identically before any candidate run: frozen-t 39,975.654628 and the archived 2-tree vine candidate 42,458.552710.",
+   "Family/parameter selection on fit rows only; holdout tail diagnostics disclosed with CIs; single-df t, grouped-t and 2-tree vine comparison variants retained on common random numbers.",
+   "The stop-rule is binding: if the nested reference remains outside the tree-3 vine 95% CI, dependence-form escalation ends and Phase 31 is the owner decision package.",
+   "Nested-aware calibration (option B) is PROHIBITED without an owner-approved second independent nested run.",
+   "Credentialled calibration data and independent APS X2 review remain required before production sign-off."
+  ]
+ },
+ "standard_references": [
+  "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+  "Bedford & Cooke (2002), Vines - a new graphical model for dependent random variables",
+  "Solvency II Delegated Regulation Article 234 (aggregation including tail behaviour)",
+  "Solvency II Delegated Regulation Article 124 (validation standards: independence of validation data)",
+  "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+  "SOA ASOP 25 section 3.3",
+  "IA TAS M sections 3.2, 3.6, 3.7",
+  "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7"
+ ],
+ "affected_components": [
+  "par_model_v2/projection/dependence_roadmap.py (NEW, tested helper module)",
+  "tests/test_phase30_task1_dependence_roadmap.py",
+  "scripts/build_phase30_task1_dependence_roadmap.py",
+  "docs/validation/PHASE30_TASK1_DESIGN_NOTE.{json,md}",
+  "docs/DEPENDENCE_ROADMAP_DECISION_CARD.md"
+ ]
+}

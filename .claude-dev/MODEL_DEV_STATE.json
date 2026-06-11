@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-11T00:28:16.083698+00:00",
+ "last_run": "2026-06-11T01:22:16.266453+00:00",
  "last_run_duration_minutes": null,
- "last_run_note": "Phase 29 Task 5 COMPLETE (PASS) in Linux sandbox - offline-UI propagation, contract 1.10.0 -> 1.11.0 ADDITIVE, new Vine Tail (P29) tab, jsdom self-test 150 checks 0 net / 0 JS err, ChangeRecord 242342e615a146c1a1fdedc6381a9fc9 OWNER_REVIEW, records 67, audit 95, P29 regression 63/0 + UI suites 115/0 + P28 24/0. PHASE 29 COMPLETE (Tasks 1-5). Next: Phase 30 Task 1 design-note-first post-vine dependence roadmap decision (MR-016/MR-017). NOTE: this cycle ran in the 00:00Z window (scheduler fired early); lock acquired cleanly at 00:08Z with no Codex activity, per-protocol CAS push.",
+ "last_run_note": "Phase 30 Task 1 COMPLETE (PASS) - design-note-first post-vine dependence roadmap decision. OPTION A SELECTED (tree-3 vine deepening) under a pre-registered 3-rule decision rule; option B (nested-aware calibration) REJECTED for circularity without a second independent nested run; option C scheduled as the post-Phase-30 owner package REGARDLESS; option D embedded as a BINDING conditional stop-rule (if nested 46,638.9 stays outside the tree-3 vine 95% CI at Task 4, dependence-FORM escalation under MR-016 ENDS). Headroom: needed bootstrap-mean lift 1,354.6 (+3.23%) = 37.2% of the remaining point residual 3,637.3; max dependence-addressable share of total gap 87.0% (relief-surface 543.0 not addressable). Synthetic tree-3 truncation pre-study (n=200k, seed 30): truncation gap +4.83% VaR99.5, leakage-free holdout closure 85.7% (fitted s3 on fit half only), joint triple-tail targeting >> holdout drift, 2-tree boundary recovery exact 0.0; digest 5a2abc2ff92c. NEW par_model_v2/projection/dependence_roadmap.py; scripts/build_phase30_task1_dependence_roadmap.py; tests 20/0; docs/validation/PHASE30_TASK1_DESIGN_NOTE.{json,md}; docs/DEPENDENCE_ROADMAP_DECISION_CARD.md. ChangeRecord 94c904819c4c4cb0938d23db922f603b governance_change OWNER_REVIEW; records 67->68; audit 95->96; verify_all True; idempotent. Regression: P29 T1-T5 63/0; P28 24/0 (6 env skips); compileall clean. Next: Phase 30 Task 2 tree-3 implementation.",
  "current_phase": "Phase 30: Post-Vine Dependence Roadmap Decision (in progress)",
- "overall_status": "PHASE29_COMPLETE_NEXT_PHASE30_TASK1_DESIGN_NOTE",
+ "overall_status": "PHASE30_TASK1_COMPLETE_NEXT_TASK2_TREE3_VINE",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -523,9 +523,11 @@
   "Phase 30: Post-Vine Dependence Roadmap Decision": {
    "status": "in_progress",
    "description": "Design-note-first re-assessment of the next dependence sophistication step now that Phase 29 closed with MR-016 KEEP OPEN and MR-017 OPENED. Candidate options to evaluate and pre-register BEFORE any implementation: (a) deeper conditional pair-copula calibration (relax the 2-tree truncation and/or widen the family set with leakage-free selection), (b) nested-aware dependence calibration (fit dependence to nested inner-path joint dynamics rather than standalone margins), (c) owner adoption decision package for the vine candidate as a DISCLOSED alternative read-out, (d) stop-rule assessment (diminishing returns vs credentialled-data calibration priority). EDUCATIONAL; governed headline remains the frozen single-df t.",
-   "completed": [],
-   "in_progress": [
+   "completed": [
     "Task 1: design-note-first option study + pre-registered gates for the post-vine dependence roadmap (MR-016/MR-017 remediation path): quantify expected residual closure per option, cost/benefit, governance criteria (close/mitigate/adopt/stop), and select ONE next step. No implementation before the design note is committed with gates."
+   ],
+   "in_progress": [
+    "Task 2: implement the pre-registered tree-3 vine deepening per PHASE30_TASK1_DESIGN_NOTE: four third-tree conditional pairs (fx-rate|credit,liquidity; rate-lapse|credit,liquidity; lapse-mortality|credit,liquidity; equity-liquidity|credit,fx) over the FROZEN Phase 29 2-tree fit; same four pair families; DUAL boundary recovery bit-identical (frozen-t 39,975.654628199336 AND 2-tree vine 42,458.5527095696) before any candidate run; leakage-free fit/holdout; CRN comparison variants (frozen-t, grouped-t, 2-tree vine); code_change ChangeRecord OWNER_REVIEW."
    ],
    "next": "On Task 1 completion: execute the selected option as Phase 30 Tasks 2-4 (implementation, bootstrap/validation, MR decision), then Task 5 offline-UI propagation per repo convention."
   }

@@ -2139,6 +2139,28 @@
       "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade",
       "digest": "bdc2bac063eba520720cf98f267403e27fd71d4616e479d76d2bef03f699c253",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "3e1d5c3cedf748d5bde95bdb0fbdf9bc",
+      "timestamp": "2026-06-11T01:19:58.800851+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase30Task1RoadmapDecision",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 30 Task 1 post-vine dependence roadmap decision",
+      "details": {
+        "record_id": "94c904819c4c4cb0938d23db922f603b",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/projection/dependence_roadmap.py (NEW, tested helper module)",
+          "tests/test_phase30_task1_dependence_roadmap.py",
+          "scripts/build_phase30_task1_dependence_roadmap.py",
+          "docs/validation/PHASE30_TASK1_DESIGN_NOTE.{json,md}",
+          "docs/DEPENDENCE_ROADMAP_DECISION_CARD.md"
+        ]
+      },
+      "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
+      "digest": "d9ce890b6a1ebbcb4451a93153e12e94b0bec22cb67fb71c9ef91ab3c8b0c555",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -6388,6 +6410,96 @@
         }
       ],
       "phase": "Phase 29: Vine / Pair-Copula Dependence Upgrade"
+    },
+    {
+      "record_id": "94c904819c4c4cb0938d23db922f603b",
+      "created_at": "2026-06-11T01:19:58.800797+00:00",
+      "title": "Phase 30 Task 1 - design note: post-vine dependence roadmap decision (option A tree-3 vine deepening selected; stop-rule pre-registered)",
+      "description": "Design note deciding the post-vine dependence roadmap: option A (tree-3 vine deepening) selected under a pre-registered decision rule; option B rejected for circularity; option C scheduled as the post-Phase-30 owner package; option D embedded as a binding conditional stop-rule. No capital output changed this cycle.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/projection/dependence_roadmap.py (NEW, tested helper module)",
+        "tests/test_phase30_task1_dependence_roadmap.py",
+        "scripts/build_phase30_task1_dependence_roadmap.py",
+        "docs/validation/PHASE30_TASK1_DESIGN_NOTE.{json,md}",
+        "docs/DEPENDENCE_ROADMAP_DECISION_CARD.md"
+      ],
+      "standard_references": [
+        "Aas, Czado, Frigessi & Bakken (2009), Pair-copula constructions of multiple dependence",
+        "Bedford & Cooke (2002), Vines - a new graphical model for dependent random variables",
+        "Solvency II Delegated Regulation Article 234 (aggregation including tail behaviour)",
+        "Solvency II Delegated Regulation Article 124 (validation standards: independence of validation data)",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5",
+        "SOA ASOP 25 section 3.3",
+        "IA TAS M sections 3.2, 3.6, 3.7",
+        "McNeil, Frey & Embrechts (2015), Quantitative Risk Management ch. 7"
+      ],
+      "before_snapshot": {
+        "mr016": "OPEN (narrowing disclosed); MR-017 OPEN (vine-form limitations)",
+        "next_task": "Phase 30 Task 1 roadmap decision"
+      },
+      "after_snapshot": {
+        "selected_option": "A_tree3_vine_deepening",
+        "third_tree_edges": [
+          [
+            5,
+            0,
+            [
+              2,
+              6
+            ]
+          ],
+          [
+            0,
+            3,
+            [
+              2,
+              6
+            ]
+          ],
+          [
+            3,
+            4,
+            [
+              2,
+              6
+            ]
+          ],
+          [
+            1,
+            6,
+            [
+              2,
+              5
+            ]
+          ]
+        ],
+        "stop_rule_registered": true,
+        "holdout_closure_share": 0.8573703163288755,
+        "needed_mean_lift_abs": 1354.6474463715276,
+        "verdict": "PASS"
+      },
+      "impact_assessment": "Design and governance only. Fixes the Phase 30 envelope, dual boundary contract, gates and the binding stop-rule before any implementation; the governed frozen-t headline is unchanged.",
+      "quantitative_impact": "Headroom: needed mean lift 1,354.6 (+3.23%); synthetic holdout closure 85.7%; boundary recovery 0.0e+00. No governed capital figures changed.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase30Task1RoadmapDecision",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T01:19:58.800821+00:00",
+          "actor": "Phase30Task1RoadmapDecision",
+          "status": "PEER_REVIEW",
+          "comments": "Option study + decision rule + stop-rule pre-registered; helper tests added."
+        },
+        {
+          "timestamp": "2026-06-11T01:19:58.800833+00:00",
+          "actor": "Phase30Task1RoadmapDecision",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: educational design only; implementation deferred to Task 2."
+        }
+      ],
+      "phase": "Phase 30: Post-Vine Dependence Roadmap Decision"
     }
   ],
   "risk_register": [
