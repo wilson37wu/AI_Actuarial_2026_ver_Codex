@@ -26,3 +26,6 @@ STATE_BACKUP_pre_*.json
 .phase*_stage/
 # Stray Windows-style paths accidentally created inside the repo by a sandbox
 C:/
+
+# User production-run outputs (regenerate with production_run/run_production_model.py)
+production_run/output/

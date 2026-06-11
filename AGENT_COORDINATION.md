@@ -74,7 +74,7 @@ git push origin HEAD:main
 git fetch origin && git rebase origin/main && git push origin HEAD:main   # retry (up to 3x)
 ```
 
-Because each cycle does **one** task and rebases first, conflicts on code are rare. The shared **state files** (`.claude-dev/MODEL_DEV_STATE.json`, `GOVERNANCE_STORE.json`, `MODEL_DEV_LOG.md`, `MODEL_DEV_TASK_PROMPT.md`) are only ever edited by the **lock holder**, so they never conflict in practice. Per-cycle status files use unique names (`LATEST_CYCLE_STATUS_<date>_<task>.md`) and never collide.
+Because each cycle does **one** task and rebases first, conflicts on code are rare. The shared **state files** (`.claude-dev/MODEL_DEV_STATE.json`, `GOVERNANCE_STORE.json`, `MODEL_DEV_LOG.md`, `MODEL_DEV_TASK_PROMPT.md`) are only ever edited by the **lock holder**, so they never conflict in practice. Per-cycle status files use unique names (`docs/cycle_status/LATEST_CYCLE_STATUS_<date>_<task>.md` - NOTE: they live in `docs/cycle_status/`, NOT the repo root, since the 2026-06-11 restructure) and never collide.
 
 ---
 
@@ -121,7 +121,7 @@ Operate in your checkout directly. Still: fetch-rebase before push, honour the l
 > 1. `git fetch origin && git checkout main && git rebase origin/main`.
 > 2. Run `python scripts/agent_lock.py preflight --owner codex`. If it exits non-zero ("locked by claude"), **stop this run** — do no work, make no commits.
 > 3. Else `python scripts/agent_lock.py acquire --owner codex --task "<the in_progress task>"` (this commits + pushes the lock; if it reports a lost race, stop).
-> 4. Do **one** task (the `in_progress` item in `.claude-dev/MODEL_DEV_STATE.json`). Update state, log, and a uniquely-named `LATEST_CYCLE_STATUS_<date>_<task>.md`.
+> 4. Do **one** task (the `in_progress` item in `.claude-dev/MODEL_DEV_STATE.json`). Update state, log, and a uniquely-named `docs/cycle_status/LATEST_CYCLE_STATUS_<date>_<task>.md` (in `docs/cycle_status/`, not the repo root).
 > 5. `git fetch origin && git rebase origin/main && git push origin HEAD:main` (retry up to 3× on rejection).
 > 6. `python scripts/agent_lock.py release --owner codex` (commits + pushes the release).
 > 7. Run on the **00:00 / 12:00 UTC** schedule (Claude runs 06:00 / 18:00). Never force-push `main`.

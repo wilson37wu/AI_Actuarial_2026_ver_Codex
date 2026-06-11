@@ -338,3 +338,18 @@ Result:            Production-ready actuarial model
 ```
 
 **Start with `00_START_HERE.md`. Everything else follows from there.**
+
+
+---
+
+## production_run/ (added 2026-06-11 - USER-FACING)
+
+| file | purpose |
+|---|---|
+| production_run/README.md | Start here: who-touches-what, quick start. |
+| production_run/run_production_model.py | One-command run: esg / assets / liabilities / interaction / all. |
+| production_run/build_gui.py | Rebuild ui_data.json + ui_app.html from current results. |
+| production_run/MODEL_INPUTS_TEMPLATE.xlsx | Input workbook (moved from repo root). |
+| production_run/USER_MANUAL_run_and_inputs.md | Full run/input manual (moved from repo root). |
+
+Per-cycle agent status logs now live in `docs/cycle_status/` (moved from repo root same date).

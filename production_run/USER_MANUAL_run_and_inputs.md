@@ -1,3 +1,7 @@
+> **NOTE (2026-06-11 restructure):** this manual and the input template now live in
+> `production_run/`, together with the one-command runner `run_production_model.py`
+> and the GUI rebuilder `build_gui.py`. See `production_run/README.md` first.
+
 # Actuarial Stochastic Capital Model — User Manual: Inputs, Execution, and GUI
 
 **Audience:** a non-developer who wants to feed their own inputs into the model and produce the interactive offline GUI (`ui_app.html`).
@@ -36,7 +40,7 @@ It depends on what you want to do right now.
 | **Re-run a specific capital calculation** (current staged data) | the relevant **`scripts/build_phaseXX_taskY_*.py`** | Yes |
 | **Run the model on YOUR inputs** | the **input loader + orchestrator** described in §4 (being added — see the Implementation Plan) | Yes |
 
-**Short answer:** to refresh the GUI from whatever results exist, you start with **`scripts/build_ui_data.py`**. To run the model on *your own* numbers and then refresh the GUI, you start with the **input loader** (§4), which reads `MODEL_INPUTS_TEMPLATE.xlsx`, then `build_ui_data.py`.
+**Short answer:** to refresh the GUI from whatever results exist, you start with **`scripts/build_ui_data.py`**. To run the model on *your own* numbers and then refresh the GUI, you start with the **input loader** (§4), which reads `production_run/MODEL_INPUTS_TEMPLATE.xlsx`, then `build_ui_data.py`.
 
 > **Today vs. target.** Right now the calculation scripts read *synthetic, staged* inputs (e.g. a backing asset value of 100,000 baked into a fixture). The input loader that reads your Excel template is the next implementation step (it is fully specified in `IMPLEMENTATION_PLAN_currency_and_inputs.md`). Until it is wired in, you can already (a) open and explore `ui_app.html`, and (b) rebuild the GUI with `build_ui_data.py`. Once the loader is in, §4 becomes the full user run.
 
@@ -44,7 +48,7 @@ It depends on what you want to do right now.
 
 ## 3. What inputs to provide — the Excel template
 
-Open **`MODEL_INPUTS_TEMPLATE.xlsx`**. Fill the **blue/yellow** cells; leave the **grey/italic** cells alone (they are model-governed). There are six tabs.
+Open **`production_run/MODEL_INPUTS_TEMPLATE.xlsx`**. Fill the **blue/yellow** cells; leave the **grey/italic** cells alone (they are model-governed). There are six tabs.
 
 ### Colour legend
 - **Blue text** — a value you enter.
@@ -91,11 +95,11 @@ Each row is a **group of like policies** (a model point), replacing the syntheti
 
 > These are the steps once the input loader (Implementation Plan) is wired in. They assume Python 3 is available. In this sandbox, scientific libraries live under `/var/tmp/pylibs`, so prefix commands with `PYTHONPATH=/var/tmp/pylibs:.`; on a normal machine, install the packages in `requirements.txt` once (`pip install -r requirements.txt`) and drop the `/var/tmp/pylibs:` prefix.
 
-**Step 1 — fill and save the template.** Complete `MODEL_INPUTS_TEMPLATE.xlsx` (§3) and save it in the model folder.
+**Step 1 — fill and save the template.** Complete `production_run/MODEL_INPUTS_TEMPLATE.xlsx` (§3) and save it in the model folder.
 
 **Step 2 — load your inputs.** Run the loader to validate the workbook and emit a normalised `model_inputs.json`:
 ```
-PYTHONPATH=/var/tmp/pylibs:. python3 scripts/load_user_inputs.py --template MODEL_INPUTS_TEMPLATE.xlsx --out model_inputs.json
+PYTHONPATH=/var/tmp/pylibs:. python3 scripts/load_user_inputs.py --template production_run/MODEL_INPUTS_TEMPLATE.xlsx --out model_inputs.json
 ```
 The loader checks ranges (e.g. shares in 0–1, positive asset values), echoes the currency and totals, and stops with a clear message if anything is missing.
 
@@ -159,4 +163,4 @@ Phase deep-dive tabs surface the dependence-structure track, including **Grouped
 
 ---
 
-*Companion documents: `MODEL_INPUTS_TEMPLATE.xlsx` (the input template) and `IMPLEMENTATION_PLAN_currency_and_inputs.md` (the code changes that wire the template and the generic currency into the engine).*
+*Companion documents: `production_run/MODEL_INPUTS_TEMPLATE.xlsx` (the input template) and `IMPLEMENTATION_PLAN_currency_and_inputs.md` (the code changes that wire the template and the generic currency into the engine).*

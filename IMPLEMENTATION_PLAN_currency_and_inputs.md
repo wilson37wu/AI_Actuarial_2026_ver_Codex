@@ -1,7 +1,7 @@
 # Implementation Plan — Generic Currency + User-Input Loader
 
 **Status:** proposal for your review **before** any model-code change (per your instruction to deliver the manual + template first).
-**Companions:** `MODEL_INPUTS_TEMPLATE.xlsx` (the input contract) and `USER_MANUAL_run_and_inputs.md`.
+**Companions:** `production_run/MODEL_INPUTS_TEMPLATE.xlsx` (the input contract) and `production_run/USER_MANUAL_run_and_inputs.md`.
 **Principle preserved:** no user-specific value is hardcoded; all calibrated/governed parameters keep their existing freeze + governance trail; every change is additive and backward-compatible (current synthetic values become defaults, so nothing breaks if the template is absent).
 
 ---
@@ -56,7 +56,7 @@ Delivered in three layers of increasing depth. Layers A1–A2 are low-risk and s
 ## 2. Workstream B — User-input loader + orchestrator (kill the hardcodes)
 
 ### B1. `scripts/load_user_inputs.py` (new)
-- Reads `MODEL_INPUTS_TEMPLATE.xlsx` (openpyxl) by **tab name + header**, validates ranges (shares ∈ (0,1], positive MV, confidence ∈ (0,1), product types in the allowed set, portfolio rows complete), and writes a normalised, schema-versioned **`model_inputs.json`**.
+- Reads `production_run/MODEL_INPUTS_TEMPLATE.xlsx` (openpyxl) by **tab name + header**, validates ranges (shares ∈ (0,1], positive MV, confidence ∈ (0,1), product types in the allowed set, portfolio rows complete), and writes a normalised, schema-versioned **`model_inputs.json`**.
 - Fails loudly with a precise message (tab, row, field) on any bad/missing cell; echoes currency, total asset MV, total sum assured, and policy count for a sanity check.
 - Pure I/O + validation — no model math, so it is fast and easy to unit-test.
 
@@ -112,4 +112,4 @@ Delivered in three layers of increasing depth. Layers A1–A2 are low-risk and s
 
 1. **Approve** A1 + A2 + B (low/medium-risk, no new data needed) to start next cycle.
 2. For **A3 (full re-currency)**: confirm the **target market** (e.g. USD, EUR) and whether you can supply the five datasets in §1.A3; otherwise A3 stays parked and the model keeps its current calibration while displaying your chosen reporting currency.
-3. Confirm the **template field set** in `MODEL_INPUTS_TEMPLATE.xlsx` matches how you think about your inputs — add/remove asset classes, product types, or assumption fields as needed and I will align the loader schema.
+3. Confirm the **template field set** in `production_run/MODEL_INPUTS_TEMPLATE.xlsx` matches how you think about your inputs — add/remove asset classes, product types, or assumption fields as needed and I will align the loader schema.
