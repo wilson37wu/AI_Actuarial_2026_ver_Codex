@@ -39,3 +39,22 @@ docs/G05_VENV_PROBE_*.txt
 outputs/HK_Insurance_Daily_Briefing_*
 # Agent scratch dirs
 .claude-dev/_tmp/
+# G05 timestamped snapshot logs (latest of each family + cited evidence kept tracked)
+docs/G05_COMPILEALL_*
+docs/G05_GIT_STATUS_*
+docs/G05_PIP_DRY_RUN_*
+docs/G05_PYTEST_FULL_*
+docs/G05_PYTEST_RISK_METRICS_*
+docs/G05_PYTEST_TVOG_*
+docs/G05_RUN_SUMMARY_*
+docs/G05_STATIC_GUARD_REPORT_*
+# cited gate evidence stays tracked
+!docs/G05_ENVIRONMENT_PROBE_2026-05-26T053325Z.json
+!docs/G05_COMPILEALL_2026-05-28T180400Z.txt
+!docs/G05_GIT_STATUS_2026-05-28T180400Z.txt
+!docs/G05_PIP_DRY_RUN_2026-05-28T180400Z.txt
+!docs/G05_PYTEST_FULL_2026-05-28T180400Z.txt
+!docs/G05_PYTEST_RISK_METRICS_2026-05-28T180400Z.txt
+!docs/G05_PYTEST_TVOG_2026-05-28T180400Z.txt
+!docs/G05_RUN_SUMMARY_2026-05-28T180400Z.json
+!docs/G05_STATIC_GUARD_REPORT_2026-05-28T180400Z.json

@@ -1,3 +1,0 @@
-Command: C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe -m compileall -q par_model_v2 tests scripts
-
-ExitCode: 0

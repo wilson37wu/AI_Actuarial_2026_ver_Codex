@@ -9458,3 +9458,5 @@ Tree-3 tail diagnostics + BINDING STOP-RULE decision: PASS 6/6 gates. 6+5+4+3 pa
 ## 2026-06-11 — Interactive repo cleanup (Claude Cowork)
 
 User-requested housekeeping consistent with the 2026-06-11 restructure: 65 tracked probe/junk paths removed (root write-probes, agent scratch, temp self-test, 55 G05 environment/venv probe snapshots, 4 generated daily-briefing artifacts); render_test.cjs moved to scripts/; .gitignore extended to guard re-entry. No model code or state changed; outputs/phase11_reconciliation.json kept (referenced).
+
+Pass 2 (same session): 199 repetitive timestamped G05 monitoring snapshots pruned (latest of each family + all cited evidence kept; DEPLOYMENT_READINESS_CHECKLIST-cited environment probe restored with gitignore exemption).

@@ -1,3 +1,0 @@
-﻿C:\Program Files\PostgreSQL\18\pgAdmin 4\python\python.exe: No module named pytest
-
-Exit code: 1

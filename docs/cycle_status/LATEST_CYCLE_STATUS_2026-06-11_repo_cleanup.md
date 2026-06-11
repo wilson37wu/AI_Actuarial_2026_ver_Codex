@@ -8,3 +8,10 @@
 - KEPT: `outputs/phase11_reconciliation.json` (referenced by `par_model_v2/projection/chunk_processor.py` and `docs/DEPLOYMENT_READINESS_CHECKLIST.md`); all cycle-status files already live in `docs/cycle_status/` (none left in root).
 - Model-dev state untouched: next scheduled task remains Phase 30 Task 5 (offline-UI propagation).
 - NOTE: the mounted working folder forbids deletes, so the purged files may linger as untracked copies on the local folder; they are gitignored and will not re-enter the repo.
+
+## Pass 2 — G05 snapshot-log prune (same session)
+
+- 199 repetitive timestamped G05 monitoring snapshots REMOVED (hourly/3-hourly 2026-05-25..28 loops): COMPILEALL (33), PYTEST_FULL (34), PYTEST_RISK_METRICS (38), PYTEST_TVOG (38), STATIC_GUARD_REPORT (39), PIP_DRY_RUN (11), GIT_STATUS (3), RUN_SUMMARY (3). Git history retains all of them.
+- KEPT tracked: the LATEST snapshot of each family (2026-05-28T180400Z) as representative gate evidence, plus every cited file: `G05_MEASURE_GUARD_EVIDENCE.md` (phase13_ia_tas_m.py), `G05_RUNTIME_EVIDENCE_2026-06-04T103044Z.json` (governance store), `G05_RUNTIME_TEST_EVIDENCE_2026-05-29*` (ESG acceptance), `G05_MEASURE_GUARD_STATIC_REPORT_2026-05-25*`, `G05_RUNTIME_ENFORCEMENT_PHASE14.md`, `G05_CURRENT_RUN_TIMESTAMP.txt`.
+- RESTORED `docs/G05_ENVIRONMENT_PROBE_2026-05-26T053325Z.json` (cited by DEPLOYMENT_READINESS_CHECKLIST.md; it was inside the pass-1 wildcard delete) with a `!` gitignore exemption.
+- `.gitignore` extended with the G05 snapshot families + `!` exemptions for the kept evidence.
