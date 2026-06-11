@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T08:37:35Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-11T09:04Z-1236",
+  "started_at": "2026-06-11T09:04:38Z",
+  "ttl_minutes": 120,
+  "task": "Interactive repo cleanup pass 3: delete redundant root docs (historical + Path-2 onboarding family)",
+  "note": ""
 }
