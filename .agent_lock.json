@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-11T12:07Z-8264",
-  "started_at": "2026-06-11T12:07:48Z",
-  "ttl_minutes": 120,
-  "task": "Phase 31 Task 3 - owner-facing summary of assembled pack",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-11T12:24:35Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
