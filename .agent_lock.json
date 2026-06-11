@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-11T02:07Z-94e4",
-  "started_at": "2026-06-11T02:07:32Z",
-  "ttl_minutes": 120,
-  "task": "Phase 30 Task 2: tree-3 vine deepening",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-11T02:34:51Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
