@@ -93,11 +93,11 @@ Each row is a **group of like policies** (a model point), replacing the syntheti
 
 ## 4. How to run the calculation (target workflow)
 
-> These are the steps once the input loader (Implementation Plan) is wired in. They assume Python 3 is available. In this sandbox, scientific libraries live under `/var/tmp/pylibs`, so prefix commands with `PYTHONPATH=/var/tmp/pylibs:.`; on a normal machine, install the packages in `requirements.txt` once (`pip install -r requirements.txt`) and drop the `/var/tmp/pylibs:` prefix.
+> **Status 2026-06-11: Step 2 (the input loader) is LIVE.** Steps 3-4 below still describe the target workflow until the orchestrator (B3) and GUI wire-through (B4) land. They assume Python 3 is available. In this sandbox, scientific libraries live under `/var/tmp/pylibs`, so prefix commands with `PYTHONPATH=/var/tmp/pylibs:.`; on a normal machine, install the packages in `requirements.txt` once (`pip install -r requirements.txt`) and drop the `/var/tmp/pylibs:` prefix.
 
 **Step 1 — fill and save the template.** Complete `production_run/MODEL_INPUTS_TEMPLATE.xlsx` (§3) and save it in the model folder.
 
-**Step 2 — load your inputs.** Run the loader to validate the workbook and emit a normalised `model_inputs.json`:
+**Step 2 — load your inputs (LIVE).** Run the loader to validate the workbook and emit a normalised, schema-versioned `model_inputs.json` (schema 1.0.0):
 ```
 PYTHONPATH=/var/tmp/pylibs:. python3 scripts/load_user_inputs.py --template production_run/MODEL_INPUTS_TEMPLATE.xlsx --out model_inputs.json
 ```
@@ -117,7 +117,9 @@ Outputs (in the model folder): **`ui_data.json`** and **`ui_app.html`**.
 
 **Step 5 — open the GUI.** Double-click **`ui_app.html`** in any modern browser. No server, internet, or install. You can also drag a different `ui_data.json` onto the page to load another run.
 
-### What you can do today (before the loader is wired in)
+### What you can do today
+- **Validate your inputs (LIVE):** fill the template and run the loader (Step 2). It checks every field (ranges, product types, complete rows), fails with a precise tab/row/field message, and echoes currency, total asset MV, total sum assured and policy count.
+
 - **View:** double-click `ui_app.html`.
 - **Rebuild the GUI** from the current result files:
   ```

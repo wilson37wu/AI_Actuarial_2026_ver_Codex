@@ -2203,6 +2203,26 @@
       "phase": "Phase 30: Post-Vine Dependence Roadmap Decision",
       "digest": "2d6887c213d16535716a6fba0771ba59e5fa1d76b7cb871302f822cf84020175",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "6c0ca538f3dd4e83a714b2e2e363b4b3",
+      "timestamp": "2026-06-11T04:13:56.068716+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_PhaseUIL",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase UIL Task 1 user-input loader (B1)",
+      "details": {
+        "record_id": "dcbc94cdcc474cb9951d762bfeb358b2",
+        "change_type": "code_change",
+        "status": "PEER_REVIEW",
+        "affected_components": [
+          "scripts/load_user_inputs.py",
+          "tests/test_user_inputs.py",
+          "production_run/USER_MANUAL_run_and_inputs.md"
+        ]
+      },
+      "phase": "Phase UIL: User-Input Loader + Run Orchestrator",
+      "digest": "ba223ba4be4ce3c4a42a3a1f2476a76e2b1aaaac451ae5cf00f05f0eb12ab962",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -6686,6 +6706,60 @@
         }
       ],
       "phase": "Phase 30: Post-Vine Dependence Roadmap Decision"
+    },
+    {
+      "record_id": "dcbc94cdcc474cb9951d762bfeb358b2",
+      "created_at": "2026-06-11T04:13:56.068626+00:00",
+      "title": "Phase UIL Task 1 - user-input loader scripts/load_user_inputs.py: template xlsx -> validated schema-versioned model_inputs.json (pure I/O, no model math)",
+      "description": "New standalone loader reading production_run/MODEL_INPUTS_TEMPLATE.xlsx by tab name + header (openpyxl): validates currency block (ISO code, symbol, decimals, scale, separator, market label, valuation date), balance sheet (asset MVs >= 0, positive total, derived illiquid share, forced-sale fraction in (0,1], positive BEL and guarantee index), portfolio model points (allowed product set HKCD_PAR_2026/HKRB_PAR_2026/GMMB_EQ_2026, complete rows, age/term/SA/premium/count/bonus ranges), assumptions (confidence in (0,1); relief sigma > 0; alpha, benefit share in (0,1]), and run settings (positive integer n_sim/replicates/horizon, integer seed, non-empty label). Writes schema-versioned (1.0.0) model_inputs.json, re-parses it before exit, echoes currency/total MV/total SA/policy count. Fails loudly listing every issue as tab/row/field. Frozen copula parameters are read back for provenance only and are NOT user-settable. Pure I/O + validation; zero impact on any governed capital figure.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/load_user_inputs.py",
+        "tests/test_user_inputs.py",
+        "production_run/USER_MANUAL_run_and_inputs.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 section 3.2 (model inputs) and 3.5 (reliance on data supplied by others)",
+        "ASOP 23 Data Quality (review and validation of data used in the model)",
+        "IA TAS M sections 3.2 (data) and 3.7 (change control)",
+        "IMPLEMENTATION_PLAN_currency_and_inputs.md workstream B1 (owner-approved design note)"
+      ],
+      "before_snapshot": {
+        "loader": "absent - user inputs hardcoded in fixtures/synthetic generator",
+        "user_manual_section_4": "documented as 'once the loader is wired in' (not live)"
+      },
+      "after_snapshot": {
+        "loader": "scripts/load_user_inputs.py LIVE (schema_version 1.0.0)",
+        "tests": "tests/test_user_inputs.py 19 passed (happy path + 15 fail-loud cases)",
+        "template_echo_check": {
+          "currency": "USD",
+          "backing_asset_mv": 100000.0,
+          "total_sum_assured": 290000000.0,
+          "policy_count": 2500
+        },
+        "governed_frozen_user_settable": false
+      },
+      "impact_assessment": "Additive tooling only: no model code path consumes model_inputs.json yet (that is Task 2/B2 with governed fallbacks). The governed frozen-t headline and all calibrated parameters are unchanged and remain frozen.",
+      "quantitative_impact": "None - pure I/O + validation; no capital figure touched.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_PhaseUIL",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T04:13:56.068665+00:00",
+          "actor": "AutomatedModelDev_PhaseUIL",
+          "status": "PEER_REVIEW",
+          "comments": "Loader + 19 unit tests green; manual section 4 marked LIVE; owner review requested per plan B1."
+        },
+        {
+          "timestamp": "2026-06-11T04:14:13.835939+00:00",
+          "actor": "AutomatedModelDev_PhaseUIL",
+          "status": "OWNER_REVIEW",
+          "comments": "Self-review (automated dev): pure I/O tooling, no capital impact; owner sign-off requested per plan B1."
+        }
+      ],
+      "phase": "Phase UIL: User-Input Loader + Run Orchestrator"
     }
   ],
   "risk_register": [

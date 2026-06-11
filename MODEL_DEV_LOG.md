@@ -9395,3 +9395,14 @@ Pre-registered tree-3 margin bootstrap per PHASE30_TASK1_DESIGN_NOTE task3_accep
 - Phase 30 Task 4 (tree-3 tail diagnostics + binding stop-rule / MR decision) PARKED in phases['Phase 30']['queued_resume_after_phase_uil'] - NOT cancelled; it is the first task after Phase UIL completes.
 - Hard gate carried into every UIL task: additive/backward-compatible; frozen copula/df stay governed read-only; with no user inputs the governed read-outs (frozen-t 39,975.654628199336 et al.) must reproduce bit-identically.
 - MODEL_DEV_TASK_PROMPT.md carries a priority-override banner so both agents see it regardless of which file they read first.
+
+---
+
+## 2026-06-11 — Claude Cowork — Phase UIL Task 1 (B1): user-input loader — COMPLETE
+
+- **Shipped:** `scripts/load_user_inputs.py` (LIVE): `production_run/MODEL_INPUTS_TEMPLATE.xlsx` → validated, schema-versioned `model_inputs.json` (1.0.0). Tab name + header parsing (openpyxl); full range/set/completeness validation; fail-loud `Tab/row/field` messages listing every issue; echoes currency, total asset MV (100,000), total SA (290,000,000), policy count (2,500) on the shipped template; output re-parsed before exit. Frozen copula params provenance-echo only, never user-settable.
+- **Tests:** `tests/test_user_inputs.py` — **19 passed** (happy path + 15 fail-loud cases).
+- **Docs:** manual §4 loader marked LIVE; cycle status `docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-11_uil_t1.md`.
+- **Governance:** ChangeRecord `dcbc94cdcc474cb9951d762bfeb358b2` code_change **OWNER_REVIEW** (`scripts/build_phase_uil_task1_governance.py`, idempotent); audit 98→99; changes 70→71; `verify_all` True.
+- **Capital impact:** none (pure I/O; nothing consumes `model_inputs.json` until B2).
+- **State:** Phase UIL Task 1 → completed; **in_progress → Task 2 (B2) de-hardcode fixtures additively**.

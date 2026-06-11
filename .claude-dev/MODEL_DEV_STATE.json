@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-11T03:45:13.571269+00:00",
+ "last_run": "2026-06-11T04:14:38.073005+00:00",
  "last_run_duration_minutes": null,
- "last_run_note": "OWNER DIRECTIVE (interactive): state pointer moved to Phase UIL Task 1 (scripts/load_user_inputs.py). Phase 30 Task 4 parked in queued_resume_after_phase_uil and resumes immediately after Phase UIL.",
+ "last_run_note": "Phase UIL Task 1 (B1) COMPLETE: scripts/load_user_inputs.py LIVE (schema 1.0.0; template xlsx -> validated model_inputs.json; fail-loud tab/row/field; echo currency/MV/SA/count). tests/test_user_inputs.py 19 passed. Manual section 4 marked LIVE. Next: Phase UIL Task 2 (B2) de-hardcode fixtures additively.",
  "current_phase": "Phase UIL: User-Input Loader + Run Orchestrator (owner-prioritised 2026-06-11)",
- "overall_status": "PHASE30_TASK1_COMPLETE_NEXT_TASK2_TREE3_VINE",
+ "overall_status": "PHASE_UIL_TASK1_COMPLETE_NEXT_TASK2_B2_DEHARDCODE",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -538,12 +538,13 @@
   "Phase UIL: User-Input Loader + Run Orchestrator (owner-prioritised 2026-06-11)": {
    "status": "in_progress",
    "description": "OWNER-PRIORITISED (KCW, interactive 2026-06-11): implement workstream B of IMPLEMENTATION_PLAN_currency_and_inputs.md so a user can run the model on their own numbers from production_run/MODEL_INPUTS_TEMPLATE.xlsx with no developer involvement. Design note = the implementation plan; follow it, additive and backward-compatible (every fixture fallback unchanged; frozen copula/df values stay governed read-only; the governed frozen-t headline must reproduce bit-identically when no user inputs are supplied).",
-   "completed": [],
+   "completed": [
+    "Task 1 (B1): scripts/load_user_inputs.py - read production_run/MODEL_INPUTS_TEMPLATE.xlsx (openpyxl) by tab name + header; validate ranges (shares in (0,1], positive MV, confidence in (0,1), product types in allowed set, complete portfolio rows); write schema-versioned model_inputs.json; fail loudly with tab/row/field in the message; echo currency, total asset MV, total SA, policy count. Pure I/O + validation, no model math. New tests tests/test_user_inputs.py; ChangeRecord code_change OWNER_REVIEW; update production_run/USER_MANUAL_run_and_inputs.md section 4 to mark the loader LIVE. [DONE 2026-06-11: loader LIVE; 19/19 tests; ChangeRecord dcbc94cdcc474cb9951d762bfeb358b2 code_change OWNER_REVIEW; audit 98->99, changes 70->71, verify_all True]"
+   ],
    "in_progress": [
-    "Task 1 (B1): scripts/load_user_inputs.py - read production_run/MODEL_INPUTS_TEMPLATE.xlsx (openpyxl) by tab name + header; validate ranges (shares in (0,1], positive MV, confidence in (0,1), product types in allowed set, complete portfolio rows); write schema-versioned model_inputs.json; fail loudly with tab/row/field in the message; echo currency, total asset MV, total SA, policy count. Pure I/O + validation, no model math. New tests tests/test_user_inputs.py; ChangeRecord code_change OWNER_REVIEW; update production_run/USER_MANUAL_run_and_inputs.md section 4 to mark the loader LIVE."
+    "Task 2 (B2): de-hardcode fixtures additively - phase22_liquidity_exposure_calibration.py (balance-sheet inputs from model_inputs.json w/ fixture fallback 100,000/0.55/0.40), portfolio_generator.py (user model points w/ synthetic fallback), capital path confidence/sigma/alpha/benefit_share from inputs (governed defaults 0.995/0.225/0.7567/0.8450). Frozen copula/df NEVER user-settable. Regression: governed read-outs bit-identical with no inputs present."
    ],
    "next": [
-    "Task 2 (B2): de-hardcode fixtures additively - phase22_liquidity_exposure_calibration.py (balance-sheet inputs from model_inputs.json w/ fixture fallback 100,000/0.55/0.40), portfolio_generator.py (user model points w/ synthetic fallback), capital path confidence/sigma/alpha/benefit_share from inputs (governed defaults 0.995/0.225/0.7567/0.8450). Frozen copula/df NEVER user-settable. Regression: governed read-outs bit-identical with no inputs present.",
     "Task 3 (B3): scripts/run_model.py orchestrator - single entry point --inputs model_inputs.json; threads inputs through the existing P22T4 aggregator -> standalone losses -> copula aggregation -> bootstrap -> tail diagnostics; writes the same docs/validation/*.json shape the GUI consumes; honours n_sim, seed, bootstrap_replicates, horizon, output_label. Wire production_run/run_production_model.py to call it when model_inputs.json exists.",
     "Task 4 (B4+A1): build_ui_data.py stamps currency + output_label into meta; ui_app.html money formatting routed through fmtMoney; production_run/README + user manual updated end-to-end; offline GUI contract bump ADDITIVE.",
     "THEN: resume Phase 30 Task 4 (tree-3 tail diagnostics + binding stop-rule / MR-016/MR-017 decision) - see phases['Phase 30']['queued_resume_after_phase_uil']."
@@ -867,7 +868,7 @@
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
   "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
  },
- "last_updated": "2026-06-11T03:45:13.571269+00:00",
+ "last_updated": "2026-06-11T04:14:38.073005+00:00",
  "cycle_2026_06_08_phase26_task2": {
   "verdict": "PASS",
   "gates": "6/6 pre-registered",
@@ -1088,5 +1089,33 @@
   "bootstrap_digest": "7b2a0cbcbb35",
   "change_record_id": "736029a064514f8681fd0af592ddab97",
   "next": "Phase 30 Task 4: tail diagnostics + binding stop-rule / MR-016/MR-017 decision"
+ },
+ "cycle_2026_06_11_phase_uil_task1": {
+  "date": "2026-06-11",
+  "agent": "claude-cowork",
+  "window": "unscheduled (04:06 UTC start; lock acquired cleanly)",
+  "task": "Phase UIL Task 1 (B1): scripts/load_user_inputs.py",
+  "deliverables": [
+   "scripts/load_user_inputs.py",
+   "tests/test_user_inputs.py (19 passed)",
+   "scripts/build_phase_uil_task1_governance.py",
+   "production_run/USER_MANUAL_run_and_inputs.md section 4 LIVE",
+   "docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-11_uil_t1.md"
+  ],
+  "governance": {
+   "record_id": "dcbc94cdcc474cb9951d762bfeb358b2",
+   "change_type": "code_change",
+   "status": "OWNER_REVIEW",
+   "audit_entries": 99,
+   "change_records": 71,
+   "audit_integrity_ok": true
+  },
+  "echo_check": {
+   "currency": "USD",
+   "backing_asset_mv": 100000.0,
+   "total_sum_assured": 290000000.0,
+   "policy_count": 2500
+  },
+  "capital_impact": "none - pure I/O + validation; no model code path consumes model_inputs.json yet (B2 next)"
  }
 }

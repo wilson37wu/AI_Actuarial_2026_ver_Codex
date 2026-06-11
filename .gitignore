@@ -29,3 +29,4 @@ C:/
 
 # User production-run outputs (regenerate with production_run/run_production_model.py)
 production_run/output/
+model_inputs.json
