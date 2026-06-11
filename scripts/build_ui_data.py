@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.13.0"
+CONTRACT_VERSION = "1.14.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -2114,6 +2114,45 @@ def _build_phase29() -> Dict[str, Any]:
     return out
 
 
+def _build_owner_decision_p31() -> Dict[str, Any]:
+    """Phase 32 Task 2 / gap G1 (contract 1.14.0, additive): browsable
+    owner-decision-pack surface. Copies the Phase 31 Task 2 owner decision
+    pack VERBATIM (bit-for-bit; nothing recomputed, nothing re-derived) so
+    the offline UI can render the evidence pack, the three owner options in
+    registry order (NO default), the sign-off workflow position and the
+    decision record - which stays BLANK until the model owner decides at
+    workflow step 4. Display-layer only - no model calculation."""
+    out: Dict[str, Any] = {}
+    doc = _load(os.path.join(VAL, "PHASE31_TASK2_OWNER_DECISION_PACK.json"))
+    if not isinstance(doc, dict) or not isinstance(doc.get("pack"), dict):
+        return out
+    pack = doc["pack"]
+    for key in ("metadata", "purpose", "how_to_read", "evidence_pack",
+                "figure_provenance", "owner_options", "owner_option_order",
+                "escalation_option_id", "signoff_workflow",
+                "decision_record_template", "glossary", "limitations",
+                "standard_references"):
+        if key in pack:
+            out[key] = pack[key]
+    gate = doc.get("assembly_gate") or {}
+    out["assembly_gate"] = {"ok": gate.get("ok"),
+                            "n_checks": gate.get("n_checks")}
+    out["source"] = "docs/validation/PHASE31_TASK2_OWNER_DECISION_PACK.json"
+    out["one_page_summary_source"] = (
+        "docs/validation/PHASE31_TASK3_OWNER_SUMMARY.{json,md}")
+    out["narrative"] = (
+        "The Phase 31 owner decision pack is surfaced VERBATIM for "
+        "browsing: every figure is carried bit-for-bit from the assembled "
+        "pack (itself gated bit-for-bit against the frozen archived "
+        "references); the three options appear in registry order with NO "
+        "default and no steering language; the decision record stays BLANK "
+        "until the model owner completes workflow step 4. The display "
+        "layer performs no calculation and the governed headline (frozen "
+        "single-df t component basis) is unchanged."
+    )
+    return out
+
+
 def _build_phase30() -> Dict[str, Any]:
     """Phase 30 (contract 1.13.0, additive): post-vine dependence roadmap
     decision - tree-3 vine deepening + BINDING stop-rule. Normalises the
@@ -2516,6 +2555,8 @@ def build_ui_data() -> Dict[str, Any]:
         capital["tree3_vine_scr_component_point"] = (
             _p30_bt.get("task2_tree3_candidate_component_point"))
 
+    owner_decision_p31 = _build_owner_decision_p31()
+
     governance = dict(base.get("governance", {}))
     _base_risks = list(governance.get("risk_register", []) or [])
     _have = {str(x.get("risk_id")) for x in _base_risks}
@@ -2564,6 +2605,7 @@ def build_ui_data() -> Dict[str, Any]:
         "phase28": phase28,
         "phase29": phase29,
         "phase30": phase30,
+        "owner_decision_p31": owner_decision_p31,
         "governance": governance,
         "verdicts": _build_verdicts(base.get("verdicts", [])),
     }
@@ -2723,6 +2765,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="phase28" class="panel" data-title="Grouped-t Tail (P28)"></div>
   <div id="phase29" class="panel" data-title="Vine Tail (P29)"></div>
   <div id="phase30" class="panel" data-title="Stop-Rule (P30)"></div>
+  <div id="ownerdecision" class="panel" data-title="Owner Decision (P31)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
 </div>
 
@@ -2776,6 +2819,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["phase28","Grouped-t Tail (P28)"],
     ["phase29","Vine Tail (P29)"],
     ["phase30","Stop-Rule (P30)"],
+    ["ownerdecision","Owner Decision (P31)"],
     ["governance","Governance"]
   ];
 
@@ -4052,6 +4096,134 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  function renderOwnerDecision(){
+    var el=document.getElementById("ownerdecision"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var od=DATA.owner_decision_p31||{};
+    var ev=od.evidence_pack||{};
+    if(!Object.keys(ev).length){
+      el.innerHTML='<p class="muted">No Phase 31 owner-decision-pack data in this snapshot (requires contract v1.14.0+).</p>';
+      return;
+    }
+    var gh=ev.governed_headline||{};
+    var dc=ev.disclosed_candidates||{}; var v2=dc.vine2||{}; var t3=dc.tree3||{};
+    var nr=ev.nested_reference||{};
+    var rl=ev.residual_ladder||[];
+    var gd=ev.gap_decomposition||{};
+    var rr=ev.risk_register_status||{}; var srr=rr.stop_rule_record||{};
+    var hist=ev.escalation_history||[];
+    var opts=od.owner_options||{}; var order=od.owner_option_order||[];
+    var wf=od.signoff_workflow||[];
+    var drt=od.decision_record_template||{};
+    var prov=od.figure_provenance||{};
+    var lim=od.limitations||[];
+    var stds=od.standard_references||[];
+    function ci2(a){ return (a&&a.length===2)?"["+fmtMoney(a[0])+", "+fmtMoney(a[1])+"]":"--"; }
+    var html='<p class="note"><b>Phase 31 owner decision package - browsable surface (read-only).</b> '+
+      esc(od.purpose||"")+'</p>';
+    html+='<div class="cards">';
+    [
+      ["Governed component SCR headline (frozen single-df t)",fmtMoney(gh.value)],
+      ["Headline status",esc(String(gh.status||"--"))],
+      ["Headline move through P27-P30",gh.move_pct_through_p27_p30!=null?(100*gh.move_pct_through_p27_p30).toFixed(4)+"%":"--"],
+      ["2-tree vine (P29) - point / bootstrap mean",fmtMoney(v2.component_scr_point)+" / "+fmtMoney(v2.bootstrap_mean)],
+      ["2-tree vine 95% CI",ci2(v2.bootstrap_ci95)],
+      ["Tree-3 vine (P30) - point / bootstrap mean",fmtMoney(t3.component_scr_point)+" / "+fmtMoney(t3.bootstrap_mean)],
+      ["Tree-3 95% CI",ci2(t3.bootstrap_ci95)],
+      ["Nested path-wise reference (single run)",fmtMoney(nr.value)],
+      ["Nested inside vine2 / tree3 95% CI?",(nr.inside_vine2_ci95?"yes":"no")+" / "+(nr.inside_tree3_ci95?"yes":"no")],
+      ["Copula-form part of gap",fmtMoney(gd.copula_form_part)+" of "+fmtMoney(gd.total_gap_point)],
+      ["MR-016 / MR-017",esc(String(rr["MR-016"]||"--").split(" - ")[0])+" / "+esc(String(rr["MR-017"]||"--").split(" - ")[0])],
+      ["Stop-rule applied?",srr.applied?"YES - dependence-FORM escalation ENDS":"no"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+esc(c[0])+
+      '</div><div class="v">'+c[1]+'</div></div>'; });
+    html+='</div>';
+    var D=[];
+    [["Single-df t (GOVERNED)",gh.value,"#2b5d99"],
+     ["2-tree vine point (P29)",v2.component_scr_point,"#9a7bff"],
+     ["2-tree vine bootstrap mean",v2.bootstrap_mean,"#4f9cff"],
+     ["Tree-3 bootstrap mean (P30)",t3.bootstrap_mean,"#2fd0a8"],
+     ["Nested PATH-WISE ref",nr.value,"#ffb454"]
+    ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y component SCR: "+fmtMoney(b[1])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>Evidence pack - component SCR read-outs (every figure bit-for-bit from the assembled pack)</h4>'+
+        '<p class="cap">Governed headline '+fmtMoney(gh.value)+' (unchanged through P27-P30); disclosed candidates NOT adopted; nested reference '+fmtMoney(nr.value)+' is a SINGLE run.</p>'+
+        barChart(D,{w:760,h:300,mB:84})+'</div>';
+    }
+    if(rl.length){
+      html+='<div class="subh">Copula-form residual ladder (absolute residual vs the nested reference)</div>'+
+        '<table class="ptable odladder"><thead><tr><th>Dependence form</th><th>Copula-form residual (abs)</th></tr></thead><tbody>';
+      rl.forEach(function(r){ html+='<tr><td>'+esc(r.form)+'</td><td>'+fmtMoney(r.copula_form_residual_abs)+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    if(hist.length){
+      html+='<div class="subh">Dependence-form escalation history (P26-P30)</div>'+
+        '<table class="ptable odhist"><thead><tr><th>Phase</th><th>Form</th><th>Residual (abs)</th><th>Outcome</th></tr></thead><tbody>';
+      hist.forEach(function(h){ html+='<tr><td>'+esc(h.phase)+'</td><td>'+esc(h.form)+'</td><td>'+fmtMoney(h.copula_form_residual_abs)+'</td><td>'+esc(h.outcome)+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    if(Object.keys(srr).length){
+      html+='<div class="subh">Binding stop-rule record (applied at Phase 30 Task 4)</div>'+
+        '<table class="ptable"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>'+
+        '<tr><td>Trigger</td><td>'+esc(srr.trigger||"--")+'</td></tr>'+
+        '<tr><td>Trigger met / applied</td><td>'+(srr.trigger_met?"MET":"not met")+' / '+(srr.applied?"APPLIED":"not applied")+'</td></tr>'+
+        '<tr><td>Effect</td><td>'+esc(srr.effect||"--")+'</td></tr>'+
+        '<tr><td>MR-016 disposition</td><td>'+esc(srr.mr016_disposition||"--")+'</td></tr>'+
+        '<tr><td>MR-017 disposition</td><td>'+esc(srr.mr017_disposition||"--")+'</td></tr>'+
+        '<tr><td>Governed headline move</td><td>'+(srr.governed_headline_move_pct!=null?(100*srr.governed_headline_move_pct).toFixed(4)+"%":"--")+'</td></tr>'+
+        '</tbody></table>';
+    }
+    html+='<div class="subh">Owner options - registry order, NO default, decision rests with the model owner</div>';
+    order.forEach(function(oid,i){
+      var o=opts[oid]||{};
+      html+='<div class="card odoption" style="display:block;margin:10px 0">'+
+        '<div class="k">Option '+(i+1)+' &mdash; '+esc(oid)+(oid===od.escalation_option_id?' (escalation path)':'')+'</div>'+
+        '<div class="v" style="font-size:13.5px;font-weight:400">'+esc(o.what||"")+'</div>'+
+        '<p class="note">Capital effect (abs vs governed headline): <b>'+fmtMoney(o.capital_effect_abs)+'</b>'+
+        ' &middot; escalation path open: '+(o.escalation_path_open?"yes":"no")+
+        ' &middot; governance risk: '+esc(o.governance_risk||"--")+'</p>';
+      var ac=o.acceptance_criteria||[];
+      if(ac.length){
+        html+='<p class="cap">Pre-registered acceptance criteria:</p><ul class="cap">';
+        ac.forEach(function(a){ html+='<li>'+esc(a)+'</li>'; });
+        html+='</ul>';
+      }
+      html+='</div>';
+    });
+    if(wf.length){
+      html+='<div class="subh">Sign-off workflow (decision sits at step 4 - the model owner)</div>'+
+        '<table class="ptable odwf"><thead><tr><th>Step</th><th>Actor</th><th>Action</th><th>Standards</th></tr></thead><tbody>';
+      wf.forEach(function(s){ html+='<tr><td>'+esc(s.step)+'</td><td>'+esc(s.actor)+'</td><td>'+esc(s.action)+'</td><td>'+esc((s.standards||[]).join("; "))+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    html+='<div class="subh">Decision record - BLANK until the owner decides</div>'+
+      '<table class="ptable oddr"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>';
+    ["decision_option_id","rationale","decided_by","decided_at","peer_reviewer","follow_up_change_record_id"].forEach(function(f){
+      var v=drt[f];
+      html+='<tr><td class="mono">'+esc(f)+'</td><td>'+(String(v==null?"":v).trim()? esc(v) : '<span class="chip warn">BLANK - awaiting owner decision</span>')+'</td></tr>';
+    });
+    html+='</tbody></table>'+
+      '<p class="cap">'+esc(drt.instructions||"")+'</p>';
+    if(Object.keys(prov).length){
+      html+='<div class="subh">Figure provenance (frozen archived references; nothing recomputed)</div>'+
+        '<table class="ptable odprov"><thead><tr><th>Figure</th><th>Frozen source</th></tr></thead><tbody>';
+      Object.keys(prov).forEach(function(k){ html+='<tr><td class="mono">'+esc(k)+'</td><td class="mono">'+esc(prov[k])+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    if(lim.length){
+      html+='<div class="subh">Limitations</div><ul class="cap">';
+      lim.forEach(function(l){ html+='<li>'+esc(l)+'</li>'; });
+      html+='</ul>';
+    }
+    html+='<p class="note">'+esc(od.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(od.source||"")+' &middot; '+esc(od.one_page_summary_source||"")+
+      ' &middot; assembly gate ok='+esc(String((od.assembly_gate||{}).ok))+' ('+esc(String((od.assembly_gate||{}).n_checks))+' checks)'+
+      (stds.length?' &middot; Standards: '+esc(stds.join(" | ")):'')+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
   function renderPhase29(){
     var el=document.getElementById("phase29"); if(!el) return;
     if(!DATA){ el.innerHTML=dz(); return; }
@@ -4409,6 +4581,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       "  calibrations : [{driver, gate_id, market, params, gate_status, gate_evidence,",
       "                   is_placeholder, source, lineage_id,",
       "                   diagnostics:{method,n_obs,fit_r2,converged,criteria[],fit_bars}}]",
+      "  owner_decision_p31 : {evidence_pack, owner_options, owner_option_order,",
+      "                  signoff_workflow, decision_record_template, ...}  // v1.14.0+",
       "  governance   : {audit_entries, audit_integrity_ok, change_records,",
       "                  deployment_gates, risk_register}",
       "  verdicts     : [{name, verdict}]",
@@ -4540,7 +4714,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderOwnerDecision(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

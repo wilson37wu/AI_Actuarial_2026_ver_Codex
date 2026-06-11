@@ -131,6 +131,27 @@ setTimeout(() => {
   const p30El = document.getElementById("phase30");
   const p30Text = (p30El && p30El.textContent) || "";
 
+  // Phase 32 Task 2 (gap G1): open the Owner Decision (P31) panel and count
+  // its elements - evidence cards, option cards (registry order), workflow,
+  // BLANK decision record, provenance, residual ladder, history, bar chart.
+  const odTab = tabs.find(t => t.getAttribute("data-target") === "ownerdecision");
+  if (odTab) odTab.click();
+  const odCards = document.querySelectorAll("#ownerdecision .card").length;
+  const odOptionCards = document.querySelectorAll("#ownerdecision .card.odoption").length;
+  const odLadderRows = document.querySelectorAll("#ownerdecision table.odladder tbody tr").length;
+  const odHistRows = document.querySelectorAll("#ownerdecision table.odhist tbody tr").length;
+  const odWfRows = document.querySelectorAll("#ownerdecision table.odwf tbody tr").length;
+  const odDrRows = document.querySelectorAll("#ownerdecision table.oddr tbody tr").length;
+  const odProvRows = document.querySelectorAll("#ownerdecision table.odprov tbody tr").length;
+  const odBarRects = document.querySelectorAll("#ownerdecision svg.chart rect.bar").length;
+  const odBlankChips = [...document.querySelectorAll("#ownerdecision table.oddr .chip")]
+    .filter(c => /BLANK/.test(c.textContent)).length;
+  const odEl = document.getElementById("ownerdecision");
+  const odText = (odEl && odEl.textContent) || "";
+  const odO1 = odText.indexOf("O1_adopt_disclosed_vine_readout");
+  const odO2 = odText.indexOf("O2_accept_residual_with_monitoring");
+  const odO3 = odText.indexOf("O3_fund_second_independent_nested_run");
+
   // UI Task 4: open the Governance & assumptions view and click through every sub-view.
   const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
   if (govTab) govTab.click();
@@ -311,6 +332,24 @@ setTimeout(() => {
     p30Phase31Present: /Phase 31/.test(p30Text) && /OWNER DECISION PACKAGE/i.test(p30Text),
     p30GovernedHeadlinePresent: /39,976/.test(p30Text) && /0\.0000%/.test(p30Text),
     p30OverfitRatioPresent: /0\.049/.test(p30Text),
+    ownerDecisionTabPresent: !!odTab,
+    odCards, odOptionCards, odLadderRows, odHistRows, odWfRows, odDrRows,
+    odProvRows, odBarRects,
+    odTabTextPresent: /Owner Decision \(P31\)/.test(bodyText),
+    odGovernedHeadlinePresent: /39,976/.test(odText),
+    odVine2PointPresent: /42,459/.test(odText) && /41,918/.test(odText),
+    odTree3MeanPresent: /41,752/.test(odText),
+    odVine2CiPresent: /38,655/.test(odText) && /45,284/.test(odText),
+    odTree3CiPresent: /38,594/.test(odText) && /44,556/.test(odText),
+    odNestedPresent: /46,639/.test(odText),
+    odResidualPresent: /3,637/.test(odText),
+    odCapitalEffectPresent: /2,483/.test(odText),
+    odOptionsRegistryOrder: odO1 >= 0 && odO2 > odO1 && odO3 > odO2,
+    odNoDefaultPresent: /NO default/.test(odText),
+    odDecisionBlankCount: odBlankChips,
+    odStopRulePresent: /escalation ENDS/.test(odText),
+    odMrOpenPresent: /MR-016/.test(odText) && /MR-017/.test(odText),
+    odSingleRunCaveatPresent: /SINGLE run/.test(odText),
     currencyMetaStamped: !!(uiMeta.currency && ("currency_source" in uiMeta) && ("output_label" in uiMeta)),
     fmtMoneyDefined: /function fmtMoney\(/.test(html),
     moneySymbolRendered: moneyRe ? moneyRe.test(bodyText) : true,
@@ -484,6 +523,30 @@ setTimeout(() => {
     checks.p30Phase31Present &&
     checks.p30GovernedHeadlinePresent &&
     checks.p30OverfitRatioPresent &&
+    checks.ownerDecisionTabPresent &&
+    checks.odCards >= 12 &&
+    checks.odOptionCards === 3 &&
+    checks.odLadderRows === 4 &&
+    checks.odHistRows === 5 &&
+    checks.odWfRows === 6 &&
+    checks.odDrRows === 6 &&
+    checks.odProvRows >= 7 &&
+    checks.odBarRects >= 5 &&
+    checks.odTabTextPresent &&
+    checks.odGovernedHeadlinePresent &&
+    checks.odVine2PointPresent &&
+    checks.odTree3MeanPresent &&
+    checks.odVine2CiPresent &&
+    checks.odTree3CiPresent &&
+    checks.odNestedPresent &&
+    checks.odResidualPresent &&
+    checks.odCapitalEffectPresent &&
+    checks.odOptionsRegistryOrder &&
+    checks.odNoDefaultPresent &&
+    checks.odDecisionBlankCount === 6 &&
+    checks.odStopRulePresent &&
+    checks.odMrOpenPresent &&
+    checks.odSingleRunCaveatPresent &&
     checks.currencyMetaStamped &&
     checks.fmtMoneyDefined &&
     checks.moneySymbolRendered &&

@@ -2427,6 +2427,29 @@
       "phase": "Phase 32: Zero-Install Offline UI Consolidation",
       "digest": "b147b13cc49353b56a2998e895967f351fc198156aef33838f433690589698c8",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "cbf958ac8bc244a0a4e38ce38c922883",
+      "timestamp": "2026-06-11T14:22:09.134100+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase32",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 32 Task 2 owner-decision-pack surface (gap G1); contract 1.14.0 additive; decision record BLANK",
+      "details": {
+        "record_id": "63b701f440eb4cfb9c83f7c34ce9f009",
+        "ui_contract": "1.14.0",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+      "digest": "9bb9443fd050266e8ee3f9a1f0853a5e79db2d469174f1da26f533a13f9a4f1e",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -7485,6 +7508,69 @@
           "actor": "Phase32Task1UIConsolidationDesign",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: consolidation scope and gap priority (G1 owner pack surface first). No model or contract change until Task 2."
+        }
+      ],
+      "phase": "Phase 32: Zero-Install Offline UI Consolidation"
+    },
+    {
+      "record_id": "63b701f440eb4cfb9c83f7c34ce9f009",
+      "created_at": "2026-06-11T14:22:09.134020+00:00",
+      "title": "Phase 32 Task 2 - browsable owner-decision-pack surface (gap G1) in the zero-install offline UI",
+      "description": "Phase 32 Task 2 closed gap G1 of the Phase 32 Task 1 design note: the Phase 31 owner decision pack is now a browsable first-class 'Owner Decision (P31)' tab in the zero-install offline UI (ui_data contract bumped ADDITIVELY 1.13.0 -> 1.14.0). The new owner_decision_p31 section copies the assembled pack VERBATIM (bit-for-bit; nothing recomputed): evidence pack (governed headline 39,975.7 unchanged through P27-P30; disclosed vine candidates 42,458.6 point / 41,751.9 tree-3 bootstrap mean with 95% CIs; nested single-run reference 46,638.9 outside both CIs; residual ladder; gap decomposition; MR-016/MR-017 OPEN; binding stop-rule record), the three owner options in REGISTRY ORDER with NO default and no steering language, the 6-step sign-off workflow (decision sits at step 4 - the model owner), the decision record rendered BLANK until the owner decides, figure provenance, limitations and standards. 25 new jsdom self-test checks added (suite 196 checks, ok:true, 0 network / 0 JS errors); offline viewer and combined GUI self-tests remain green; 0 external references; every pre-existing ui_data key bit-identical (sha256-stable inventory). The UI performs no calculation; NO model parameter changes.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "IFoA Modelling Practice Note s4 (documentation & independent review)",
+        "Solvency II Art. 234 (dependence justification - candidates DISCLOSED, not adopted; owner decision pending)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.13.0 (stop-rule panel; owner decision pack governance-docs only, not browsable)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.14.0 (additive)",
+        "headline_readouts": {
+          "governed_headline": 39975.654628199336,
+          "vine2_point": 42458.5527095696,
+          "tree3_bootstrap_mean": 41751.92733111887,
+          "nested_reference": 46638.9,
+          "option_order": [
+            "O1_adopt_disclosed_vine_readout",
+            "O2_accept_residual_with_monitoring",
+            "O3_fund_second_independent_nested_run"
+          ],
+          "escalation_option": "O3_fund_second_independent_nested_run"
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 196
+      },
+      "impact_assessment": "Display-layer only: the UI bundler reads the assembled Phase 31 pack JSON and performs no model calculation, so no model output changes. Additive contract bump keeps existing consumers working. Neutrality of the owner decision is preserved verbatim: options in registry order, NO default, decision record BLANK until the owner decides at workflow step 4. The governed headline remains the frozen single-df t component basis.",
+      "quantitative_impact": "UI now displays (bit-for-bit from the pack): governed headline 39975.7; 2-tree vine point 42458.6; tree-3 bootstrap mean 41751.9; nested reference 46638.9 (outside both 95% CIs); options O1_adopt_disclosed_vine_readout/O2_accept_residual_with_monitoring/O3_fund_second_independent_nested_run; escalation path O3_fund_second_independent_nested_run. jsdom self-test ok with 0 network calls and 0 JS errors over 196 checks.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase32",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-11T14:22:09.134066+00:00",
+          "actor": "AutomatedModelDev_Phase32",
+          "status": "PEER_REVIEW",
+          "comments": "UI propagation verified by the contract checks (pack carried bit-for-bit, neutrality pinned: registry order / NO default / decision record BLANK) + jsdom self-tests (0 network / 0 JS errors across ui_app, offline viewer and combined GUI); display-layer change only; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-11T14:22:09.134079+00:00",
+          "actor": "AutomatedModelDev_Phase32",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap G1 of the Phase 32 design note is closed: the owner decision pack is now browsable offline. The Phase 31 decision itself remains PENDING and entirely with the model owner (workflow step 4); nothing in this change steers or defaults that decision."
         }
       ],
       "phase": "Phase 32: Zero-Install Offline UI Consolidation"
