@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-11T01:10Z-1831",
-  "started_at": "2026-06-11T01:10:45Z",
-  "ttl_minutes": 120,
-  "task": "Phase 30 Task 1: post-vine dependence roadmap design note",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-11T01:23:34Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
