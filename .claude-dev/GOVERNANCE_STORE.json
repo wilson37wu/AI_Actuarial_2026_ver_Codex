@@ -2543,6 +2543,28 @@
       "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
       "digest": "d6196564f97a7958e48eb80bb265fbc0a73c57f4ef37c1ead4adeb17a5e3ffc5",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "5a8b73cf70da497a9f7f889089466819",
+      "timestamp": "2026-06-12T11:03:34.308222+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase33",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 33 Task 2 interactive cross-phase SCR comparator (gap G1); contract 1.16.0 UNCHANGED; governed frozen-t default baseline preserved",
+      "details": {
+        "record_id": "a87fd9f8aaaa47b1bd9b57f82c5f380b",
+        "ui_contract": "1.16.0 (unchanged)",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
+      "digest": "c85ff3fb9caf5c6784e5752ded456ba9758282c98f26ec6782ab0921357f2d2c",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -7911,6 +7933,72 @@
           "actor": "Phase33Task1InteractiveAnalyticsDesign",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: interactivity scope and gap priority (G1 SCR comparator first). No model or contract change until Task 2."
+        }
+      ],
+      "phase": "Phase 33: Offline UI Interactive Analytics & Usability"
+    },
+    {
+      "record_id": "a87fd9f8aaaa47b1bd9b57f82c5f380b",
+      "created_at": "2026-06-12T11:03:34.307365+00:00",
+      "title": "Phase 33 Task 2 - interactive cross-phase SCR comparator (gap G1) in the zero-install offline UI",
+      "description": "Phase 33 Task 2 closed gap G1 of the Phase 33 Task 1 design note: the zero-install offline UI now carries an interactive 'SCR Comparator (P33)' tab - a pure display layer over ui_data contract 1.16.0 with NO contract change (ui_data.json and the embedded snapshot are byte-identical to the previous commit). The comparator renders, in registry order (frozen-t / grouped-t / skew-t / vine 2-tree / vine 3-tree / nested reference), the component-SCR points and 95% bootstrap CIs ALREADY embedded by the P26-P30 bootstrap blocks; offers a user-selectable baseline (default = governed frozen-t headline 39,975.7, never re-labelled); shows a signed delta table explicitly labelled display arithmetic (NOT new model output); overlays the CIs in one chart; and discloses per-figure provenance keys. 16 new jsdom self-test checks (suite 248 checks, ok:true, 0 network / 0 JS errors) cover registry order, exact governed headline, default baseline, delta signs, baseline switching/restoration, CI overlay rendering, neutrality and provenance. Offline viewer, combined GUI and user-run fallback self-tests remain green; 0 external references. The UI performs no calculation beyond the labelled display subtraction; NO model parameter changes.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "IFoA Modelling Practice Note s4 (documentation & independent review)",
+        "Solvency II Art. 234 (dependence justification - structures COMPARED neutrally, none adopted; owner decision pending)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.16.0 (dependence-structure SCRs presented phase-by-phase only)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.16.0 (UNCHANGED - display layer only)",
+        "headline_readouts": {
+          "governed_headline_frozen_t": 39975.654628199336,
+          "grouped_t_point": 35604.39894619743,
+          "skew_t_point": 39980.95565911311,
+          "vine2_point": 42458.5527095696,
+          "tree3_point": 42458.5527095696,
+          "nested_reference": 46638.9,
+          "registry_order": [
+            "frozen_t",
+            "grouped_t",
+            "skew_t",
+            "vine2",
+            "tree3",
+            "nested"
+          ]
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 248
+      },
+      "impact_assessment": "Display-layer only: the comparator reads figures already embedded in the snapshot and performs no model calculation; the only arithmetic is the signed display subtraction, labelled as such. No contract change, no model output changes, no consumer impact. Neutrality preserved: registry order, no default switch of the governed basis, no steering language; the MR-016/MR-017 dependence decision remains entirely with the owner.",
+      "quantitative_impact": "Comparator renders (bit-for-bit from embedded keys): governed frozen-t headline 39975.7 (default baseline); grouped-t 35604.4; skew-t 39981.0; vine 2-tree 42458.6; vine 3-tree 42458.6; nested reference 46638.9. jsdom self-test ok with 0 network calls and 0 JS errors over 248 checks.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase33",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-12T11:03:34.308148+00:00",
+          "actor": "AutomatedModelDev_Phase33",
+          "status": "PEER_REVIEW",
+          "comments": "UI comparator verified by the contract checks (NO contract change - ui_data.json and embedded snapshot byte-identical to HEAD; every figure traces to an already-embedded key; governed headline exact and default; neutrality pinned: registry order / no steering language / deltas labelled display arithmetic) + jsdom self-tests (0 network / 0 JS errors across ui_app 248 checks, offline viewer, combined GUI and user-run fallback); display-layer change only; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-12T11:03:34.308166+00:00",
+          "actor": "AutomatedModelDev_Phase33",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap G1 of the Phase 33 design note is closed: dependence-structure SCRs are now comparable interactively in one neutral view. The MR-016/MR-017 dependence decision remains PENDING and entirely with the model owner; nothing in this change steers or defaults that decision."
         }
       ],
       "phase": "Phase 33: Offline UI Interactive Analytics & Usability"

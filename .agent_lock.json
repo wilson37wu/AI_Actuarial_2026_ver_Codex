@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-11T18:17:39Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-12T10:52Z-8e23",
+  "started_at": "2026-06-12T10:52:54Z",
+  "ttl_minutes": 120,
+  "task": "Phase 33 Task 2: interactive cross-phase SCR comparator (G1)",
+  "note": ""
 }

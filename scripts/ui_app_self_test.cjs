@@ -237,7 +237,51 @@ setTimeout(() => {
   const symEsc = curCfg.symbol
     ? curCfg.symbol.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") : null;
   const moneyRe = symEsc ? new RegExp(symEsc + "[0-9][0-9,]*") : null;
+
+  // Phase 33 Task 2 (gap G1): interactive cross-phase SCR comparator.
+  const cmpTab = tabs.find(t => t.getAttribute("data-target") === "comparator");
+  if (cmpTab) cmpTab.click();
+  const cmpEl = document.getElementById("comparator");
+  const cmpText0 = (cmpEl && cmpEl.textContent) || "";
+  const readCmpRows = () => [...document.querySelectorAll("#comparator table.cmptable tbody tr")];
+  const readCmpDeltas = () => { const m = {}; readCmpRows().forEach(r => {
+    const td = r.querySelector("td.cmpdelta");
+    if (td) m[r.getAttribute("data-cmp-id")] = td.getAttribute("data-cmp-delta"); }); return m; };
+  const cmpRows0 = readCmpRows();
+  const cmpIds0 = cmpRows0.map(r => r.getAttribute("data-cmp-id"));
+  const cmpPoints0 = {}; cmpRows0.forEach(r => { cmpPoints0[r.getAttribute("data-cmp-id")] = r.getAttribute("data-cmp-point"); });
+  const cmpDelta0 = readCmpDeltas();
+  const cmpCiSvg0 = document.querySelectorAll("#comparator svg.chart").length;
+  const cmpCiCircles0 = document.querySelectorAll("#comparator svg.chart circle").length;
+  const cmpVineBtn = [...document.querySelectorAll("#cmpnav .segbtn")].find(b => b.getAttribute("data-base") === "vine2");
+  if (cmpVineBtn) cmpVineBtn.click();
+  const cmpDelta1 = readCmpDeltas();
+  const cmpText1 = (cmpEl && cmpEl.textContent) || "";
+  const cmpCiSvg1 = document.querySelectorAll("#comparator svg.chart").length;
+  const cmpFrozenBtn = [...document.querySelectorAll("#cmpnav .segbtn")].find(b => b.getAttribute("data-base") === "frozen_t");
+  if (cmpFrozenBtn) cmpFrozenBtn.click();
+  const cmpText2 = (cmpEl && cmpEl.textContent) || "";
+  const cmpDelta2 = readCmpDeltas();
+  const cmpProvRows = document.querySelectorAll("#comparator table.cmpprov tbody tr").length;
+
   const checks = {
+    cmpTabPresent: !!cmpTab,
+    cmpTabTextPresent: /SCR Comparator \(P33\)/.test(bodyText),
+    cmpRegistryOrder: cmpIds0.join(",") === "frozen_t,grouped_t,skew_t,vine2,tree3,nested",
+    cmpGovernedHeadlineExactKey: cmpPoints0.frozen_t === "39975.654628199336",
+    cmpDefaultBaselineFrozenT: cmpDelta0.frozen_t === "zero" && /Frozen single-df t/.test((cmpRows0[0]||{textContent:""}).textContent) && /BASELINE/.test((cmpRows0[0]||{textContent:""}).textContent),
+    cmpDeltaSignsDefault: cmpDelta0.grouped_t === "neg" && cmpDelta0.skew_t === "pos" && cmpDelta0.vine2 === "pos" && cmpDelta0.tree3 === "pos" && cmpDelta0.nested === "pos",
+    cmpCiOverlayRendered: cmpCiSvg0 === 1 && cmpCiCircles0 >= 6,
+    cmpBaselineSwitchWorks: cmpDelta1.vine2 === "zero" && cmpDelta1.frozen_t === "neg" && cmpDelta1.grouped_t === "neg" && cmpDelta1.nested === "pos" && cmpCiSvg1 === 1,
+    cmpGovernedPersistsNonDefaultBaseline: /GOVERNED HEADLINE/.test(cmpText1) && /governed headline basis remains the frozen single-df t/.test(cmpText1),
+    cmpBaselineRestoreWorks: cmpDelta2.frozen_t === "zero" && cmpDelta2.vine2 === "pos",
+    cmpDisplayArithmeticLabelled: /display arithmetic/.test(cmpText0) && /NOT new model output/.test(cmpText0),
+    cmpNothingRecomputedStated: /nothing is recomputed/.test(cmpText0),
+    cmpNeutralityStated: /registry order/.test(cmpText0) && /neutral/.test(cmpText0) && /rests with the owner/.test(cmpText0),
+    cmpNoSteeringLanguage: !/recommended structure|should adopt|we recommend|best structure/i.test(cmpText0),
+    cmpProvenanceRows: cmpProvRows === 6,
+    cmpNestedPointOnly: /no bootstrap CI embedded/.test(cmpText0),
+
     embeddedParsed: /contract v\d/.test(bodyText),
     tabCount: tabs.length,
     inventoryRows: document.querySelectorAll("#invtable tbody tr").length,
@@ -654,6 +698,22 @@ setTimeout(() => {
     checks.fmtMoneyDefined &&
     checks.moneySymbolRendered &&
     checks.currencyBadgePresent &&
+    checks.cmpTabPresent &&
+    checks.cmpTabTextPresent &&
+    checks.cmpRegistryOrder &&
+    checks.cmpGovernedHeadlineExactKey &&
+    checks.cmpDefaultBaselineFrozenT &&
+    checks.cmpDeltaSignsDefault &&
+    checks.cmpCiOverlayRendered &&
+    checks.cmpBaselineSwitchWorks &&
+    checks.cmpGovernedPersistsNonDefaultBaseline &&
+    checks.cmpBaselineRestoreWorks &&
+    checks.cmpDisplayArithmeticLabelled &&
+    checks.cmpNothingRecomputedStated &&
+    checks.cmpNeutralityStated &&
+    checks.cmpNoSteeringLanguage &&
+    checks.cmpProvenanceRows &&
+    checks.cmpNestedPointOnly &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

@@ -148,6 +148,7 @@
   <div id="phase28" class="panel" data-title="Grouped-t Tail (P28)"></div>
   <div id="phase29" class="panel" data-title="Vine Tail (P29)"></div>
   <div id="phase30" class="panel" data-title="Stop-Rule (P30)"></div>
+  <div id="comparator" class="panel" data-title="SCR Comparator (P33)"></div>
   <div id="ownerdecision" class="panel" data-title="Owner Decision (P31)"></div>
   <div id="userrun" class="panel" data-title="User Run (UIL)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
@@ -203,6 +204,7 @@
     ["phase28","Grouped-t Tail (P28)"],
     ["phase29","Vine Tail (P29)"],
     ["phase30","Stop-Rule (P30)"],
+    ["comparator","SCR Comparator (P33)"],
     ["ownerdecision","Owner Decision (P31)"],
     ["userrun","User Run (UIL)"],
     ["governance","Governance"]
@@ -2237,9 +2239,101 @@
       if((e.key==="Enter"||e.key===" "||e.key==="Spacebar")&&(t.classList.contains("rrow")||t.classList.contains("crow"))){ e.preventDefault(); t.click(); }
     });
   }
+
+  // ---- Phase 33 Task 2 (gap G1): interactive cross-phase SCR comparator ----
+  // DISPLAY LAYER ONLY over the embedded ui_data snapshot: every point and CI
+  // figure below is read bit-for-bit from keys ALREADY embedded by earlier
+  // phases (P26-P30 bootstrap blocks); nothing is recomputed. The ONLY
+  // arithmetic performed here is the signed subtraction in the delta column,
+  // which is display arithmetic - NOT new model output. The comparator is
+  // neutral: structures appear in registry order and nothing is recommended;
+  // the MR-016/MR-017 dependence decision rests entirely with the owner.
+  var CMP_BASELINE_DEFAULT = "frozen_t";
+  var CMP_BASELINE = CMP_BASELINE_DEFAULT;
+  function cmpRegistry(){
+    if(!DATA) return [];
+    var p27=(DATA.phase27||{}).bootstrap||{}, p28=(DATA.phase28||{}).bootstrap||{},
+        p29=(DATA.phase29||{}).bootstrap||{}, p30=(DATA.phase30||{}).bootstrap||{};
+    var R=[
+      {id:"frozen_t", short:"frozen-t", label:"Frozen single-df t", phase:"P26 (frozen)", governed:true, color:"#4f9cff",
+       point:p29.task2_frozen_t_component_point, ci:p29.frozen_t_component_scr_ci,
+       srcPoint:"phase29.bootstrap.task2_frozen_t_component_point",
+       srcCi:"phase29.bootstrap.frozen_t_component_scr_ci"},
+      {id:"grouped_t", short:"grouped-t", label:"Grouped-t", phase:"P28", color:"#39d98a",
+       point:p28.task2_grouped_t_component_point, ci:p28.grouped_t_component_scr_ci,
+       srcPoint:"phase28.bootstrap.task2_grouped_t_component_point",
+       srcCi:"phase28.bootstrap.grouped_t_component_scr_ci"},
+      {id:"skew_t", short:"skew-t", label:"Skew-t", phase:"P27", color:"#ffb454",
+       point:p27.task2_skewt_component_point, ci:p27.skewt_component_scr_ci,
+       srcPoint:"phase27.bootstrap.task2_skewt_component_point",
+       srcCi:"phase27.bootstrap.skewt_component_scr_ci"},
+      {id:"vine2", short:"vine 2-tree", label:"Vine copula (2-tree)", phase:"P29", color:"#b98cff",
+       point:p29.task2_vine_candidate_component_point, ci:p29.vine_component_scr_ci,
+       srcPoint:"phase29.bootstrap.task2_vine_candidate_component_point",
+       srcCi:"phase29.bootstrap.vine_component_scr_ci"},
+      {id:"tree3", short:"vine 3-tree", label:"Vine copula (3-tree)", phase:"P30", color:"#ff6b6b",
+       point:p30.task2_tree3_candidate_component_point, ci:p30.tree3_component_scr_ci,
+       srcPoint:"phase30.bootstrap.task2_tree3_candidate_component_point",
+       srcCi:"phase30.bootstrap.tree3_component_scr_ci"},
+      {id:"nested", short:"nested ref", label:"Nested path-wise reference", phase:"P24 (reference)", color:"#5ad7e0",
+       point:p29.nested_pathwise_reference, ci:null,
+       srcPoint:"phase29.bootstrap.nested_pathwise_reference",
+       srcCi:"(single reference run; no bootstrap CI embedded)"}
+    ];
+    return R.filter(function(r){ return r.point!=null; });
+  }
+  function renderComparator(){
+    var el=document.getElementById("comparator"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var rows=cmpRegistry();
+    if(!rows.length){ el.innerHTML='<p class="muted">No dependence-structure SCR figures in this snapshot.</p>'; return; }
+    if(!rows.some(function(r){return r.id===CMP_BASELINE;})) CMP_BASELINE=rows[0].id;
+    var base=rows.filter(function(r){return r.id===CMP_BASELINE;})[0];
+    var gov=rows.filter(function(r){return r.governed;})[0];
+    var html='<h3 style="margin:8px 0 6px">Cross-phase SCR comparator (display layer)</h3>'+
+      '<p class="note">Component 99.5% SCR per dependence structure, rendered bit-for-bit from figures already embedded in this snapshot (contract v'+esc(DATA.contract_version||"?")+'); nothing is recomputed. '+
+      'The signed &Delta; column is <b>display arithmetic</b> (subtraction vs the selected baseline, for display only) and is NOT new model output. '+
+      'Structures are listed in registry order; the comparator is neutral and recommends nothing - the MR-016/MR-017 dependence decision rests with the owner. '+
+      (gov?('The governed headline basis remains the frozen single-df t at '+fmtMoney(gov.point)+' regardless of the baseline selected here.'):'')+'</p>';
+    html+='<div class="subnav" id="cmpnav" role="group" aria-label="Comparator baseline structure">'+
+      rows.map(function(r){ return '<button type="button" class="segbtn'+(r.id===CMP_BASELINE?" active":"")+
+        '" data-base="'+r.id+'">baseline: '+esc(r.short)+'</button>'; }).join("")+'</div>';
+    html+='<table class="ptable cmptable"><thead><tr><th>Structure (registry order)</th><th>Phase</th>'+
+      '<th>Component SCR point</th><th>95% CI low</th><th>95% CI high</th><th>Bootstrap mean (n)</th>'+
+      '<th>&Delta; vs baseline (display arithmetic)</th></tr></thead><tbody>';
+    rows.forEach(function(r){
+      var d=r.point-base.point;
+      var ds=(d===0)?"0 (baseline)":((d>0?"+":"")+num(d,2));
+      html+='<tr data-cmp-id="'+r.id+'" data-cmp-point="'+ta(String(r.point))+'">'+
+        '<td>'+esc(r.label)+(r.governed?' '+chip("GOVERNED HEADLINE"):'')+(r.id===CMP_BASELINE?' '+chip("BASELINE"):'')+'</td>'+
+        '<td>'+esc(r.phase)+'</td>'+
+        '<td><span data-tip="'+ta("embedded value (full precision): "+String(r.point)+"<br>source: "+r.srcPoint)+'">'+num(r.point,2)+'</span></td>'+
+        '<td>'+(r.ci?num(r.ci.ci_lo,2):"--")+'</td><td>'+(r.ci?num(r.ci.ci_hi,2):"--")+'</td>'+
+        '<td>'+(r.ci?(num(r.ci.mean,2)+' ('+num(r.ci.n)+')'):"--")+'</td>'+
+        '<td class="cmpdelta" data-cmp-delta="'+(d>0?"pos":(d<0?"neg":"zero"))+'">'+ds+'</td></tr>';
+    });
+    html+='</tbody></table>';
+    var crows=rows.map(function(r){
+      return {label:r.short+(r.id===CMP_BASELINE?" *":""), lo:r.ci?r.ci.ci_lo:r.point, hi:r.ci?r.ci.ci_hi:r.point,
+        point:r.point, color:r.color,
+        tip:"<b>"+r.label+"</b><br>point = "+num(r.point,2)+(r.ci?("<br>95% CI ["+num(r.ci.ci_lo,2)+", "+num(r.ci.ci_hi,2)+"]<br>bootstrap mean = "+num(r.ci.mean,2)+" (n="+num(r.ci.n)+")"):"<br>single reference run - no bootstrap CI embedded")};
+    });
+    html+='<div class="chartwrap" id="cmpchart"><h4>95% bootstrap CI overlay by dependence structure</h4>'+
+      '<p class="cap">Whiskers = embedded 95% bootstrap CI; dot = embedded component-SCR point; * marks the selected baseline. The nested reference is a point-only single run (no CI embedded).</p>'+
+      ciChart(crows)+'</div>';
+    html+='<details><summary>Figure provenance (embedded ui_data keys)</summary><table class="ptable cmpprov"><thead><tr><th>Structure</th><th>Point key</th><th>CI key</th></tr></thead><tbody>'+
+      rows.map(function(r){ return '<tr><td>'+esc(r.label)+'</td><td>'+esc(r.srcPoint)+'</td><td>'+esc(r.srcCi)+'</td></tr>'; }).join("")+
+      '</tbody></table></details>';
+    el.innerHTML=html;
+    [].forEach.call(el.querySelectorAll("#cmpnav .segbtn"),function(b){
+      b.onclick=function(){ CMP_BASELINE=b.getAttribute("data-base"); renderComparator(); };
+    });
+    wireTips(el);
+  }
+
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderOwnerDecision(); renderUserRun(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderOwnerDecision(); renderUserRun(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 
