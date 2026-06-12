@@ -1,0 +1,129 @@
+{
+  "task": "Phase 33 Task 3 - embedded-distribution drill-down with precomputed grids (gap G2)",
+  "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
+  "generated_utc": "2026-06-12T20:24:32.478626+00:00",
+  "verdict": "PASS",
+  "gap_closed": "G2",
+  "contract": "1.16.0 -> 1.17.0 (ADDITIVE: distribution_explorer)",
+  "next": "Task 4 (gap G3): printable owner sign-off / report pack",
+  "ui_contract_checks": {
+    "contract_version": "1.17.0",
+    "contract_bumped_1_17_0": true,
+    "grids_present": true,
+    "provenance_stamped": true,
+    "cdf_grid_reproduced_exactly": true,
+    "quantile_grid_reproduced_exactly": true,
+    "cdf_monotone_0_to_1": true,
+    "quantile_grid_monotone": true,
+    "p50_within_one_bin_of_archived": true,
+    "archived_sections_bit_for_bit": true,
+    "per_seed_grids_embedded": true,
+    "changed_top_keys_expected_only": true,
+    "meta_change_is_build_stamp_only": true,
+    "summary_change_is_artifact_count_only": true,
+    "preexisting_inventory_bit_identical": true,
+    "inventory_growth_append_only": true,
+    "governance_change_is_store_sync_refresh_only": true,
+    "embedded_snapshot_equals_ui_data_json": true,
+    "panel_div_in_html": true,
+    "tab_title_in_html": true,
+    "renderer_in_html": true,
+    "fallback_message_in_html": true,
+    "display_interpolation_labelled": true,
+    "build_time_labelled": true,
+    "zero_external_refs": true,
+    "single_file_bytes": 606037,
+    "all_passed": true,
+    "headline_readouts": {
+      "source_artifact": "docs/validation/PHASE16_LOSS_DISTRIBUTION.json",
+      "source_sha256": "863fd04d40b4684ce6be5a5bdc98be8afbea06f577c61aafb651e542eb73fb95",
+      "n_outer": 5000,
+      "n_bins": 40,
+      "cdf_grid_points": 41,
+      "quantile_grid_points": 13,
+      "seeds_embedded": 4,
+      "archived_var995": 148903.2745,
+      "archived_es995": 155728.1367,
+      "archived_scr995": 41039.8211,
+      "archived_p50": 107159.2854,
+      "grid_p50_build_time": 107121.23111666668,
+      "bin_width": 2470.7275299999997,
+      "inventory_entries": "94->98",
+      "inventory_new_entries": [
+        "docs/validation/PHASE32_TASK4_GOVERNANCE_SWEEP_REPORT.json",
+        "docs/validation/PHASE32_TASK5_PHASE_SUMMARY_REPORT.json",
+        "docs/validation/PHASE33_TASK1_DESIGN_NOTE.json",
+        "docs/validation/PHASE33_TASK2_SCR_COMPARATOR_REPORT.json"
+      ]
+    }
+  },
+  "self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 266,
+    "failed_checks": [],
+    "dx_checks": {
+      "dxTabPresent": true,
+      "dxTabTextPresent": true,
+      "dxGridEmbedded": true,
+      "dxCdfMonotoneEnds": true,
+      "dxProvenanceEmbedded": true,
+      "dxCdfSvgRendered": true,
+      "dxCdfGridPointCount": true,
+      "dxSeedOverlayRendered": true,
+      "dxQuantileRows": true,
+      "dxArchivedPercentileRows": true,
+      "dxP50ExactArchivedKey": true,
+      "dxSweepRows": true,
+      "dxSliderReadoutWorks": true,
+      "dxZoomWorks": true,
+      "dxBuildTimeStated": true,
+      "dxInterpolationLabelled": true,
+      "dxArchivedBitForBitStated": true,
+      "dxNoFallbackInFullPayload": true
+    }
+  },
+  "distribution_fallback_self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 9,
+    "failed_checks": [],
+    "dx_checks": {
+      "dxTabPresent": true
+    }
+  },
+  "offline_viewer_self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 11,
+    "failed_checks": [],
+    "dx_checks": {}
+  },
+  "combined_gui_self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 27,
+    "failed_checks": [],
+    "dx_checks": {}
+  },
+  "userrun_fallback_self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 9,
+    "failed_checks": [],
+    "dx_checks": {}
+  },
+  "governance": {
+    "added_change_record": true,
+    "change_record_id": "b01e374511f7480fa3a24f5d239f2d17",
+    "change_record_status": "OWNER_REVIEW",
+    "audit_entries": "114->115",
+    "change_records": "86->87",
+    "audit_integrity_verify_all": true
+  }
+}

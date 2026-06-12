@@ -41,9 +41,10 @@ force-push `main`. When in doubt, **yield**.
 > no inputs ⇒ governed read-outs bit-identical, GUI neutral display.
 > **STALE pointer (kept for history):** Phase 30 Task 4 has long since
 > completed. The single in_progress item is ALWAYS the one in
-> `.claude-dev/MODEL_DEV_STATE.json` — as of 2026-06-11 (cycle 33) that is
-> **Phase 32 Task 5** (phase summary + final consolidated re-audit ->
-> PHASE 32 COMPLETE; Tasks 1-4 closed gaps G1/G2/G3, contract now 1.16.0).
+> `.claude-dev/MODEL_DEV_STATE.json` — as of 2026-06-13 that is
+> **Phase 33 Task 4 = gap G3** (printable owner sign-off / report pack;
+> Phase 33 Tasks 1-3 done: design note + SCR comparator (G1) +
+> distribution explorer (G2), contract now 1.17.0 additive).
 > Remaining currency work (A2 provenance relabel, A3 full re-currency) stays
 > in the implementation plan as future phases.
 

@@ -1,9 +1,9 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-12T11:10:00Z",
+  "last_run": "2026-06-12T20:25:04Z",
   "last_run_duration_minutes": 25,
-  "last_run_note": "Phase 33 Task 2 COMPLETE (PASS): G1 SCR comparator shipped; next: Task 3 = G2 distribution drill-down",
+  "last_run_note": "Phase 33 Task 3 (gap G2) complete: Distribution Explorer tab over precomputed grids; contract 1.17.0 additive; all self-tests green; ChangeRecord OWNER_REVIEW.",
   "current_phase": "Phase 33: Offline UI Interactive Analytics & Usability",
   "overall_status": "PHASE32_COMPLETE_NEXT_PHASE33_TASK1_DESIGN_NOTE",
   "phases": {
@@ -576,12 +576,13 @@
       "description": "Extend the zero-install offline UI's interactivity/usability per the standing directive (calculation chain complete; UI consumes ONLY model-output JSON). Constraints: binding Phase 30 stop-rule (NO new copula-structure candidates) and the pending MR-016/MR-017 owner decision (Phase 31 pack). Design-note-first; ONE gap per cycle; every change ADDITIVE; zero-install invariants gated (0 external refs, 0 network, 0 JS errors).",
       "completed": [
         "Task 1: design note PHASE33_TASK1_DESIGN_NOTE (gate PASS 23 checks) - measured baseline frozen (self-tests 232/11/27/9 ok:true 0/0, 0 external refs, contract 1.16.0, 15 tabs, governance 84/112/17) + 4 gaps pre-registered with acceptance criteria: G1 interactive cross-phase SCR comparator, G2 embedded-distribution drill-down (precomputed grids), G3 printable owner sign-off/report pack, G4 accessibility & usability pass",
-        "Task 2: gap G1 CLOSED - interactive cross-phase SCR comparator tab 'SCR Comparator (P33)' (gate PASS; display layer ONLY; contract 1.16.0 UNCHANGED - ui_data.json + embedded snapshot byte-identical to previous commit; governed frozen-t headline 39,975.654628199336 default baseline, never re-labelled; registry order frozen-t/grouped-t/skew-t/vine2/tree3/nested; signed deltas labelled display arithmetic; CI overlay chart; provenance keys disclosed; ui_app self-test 248 checks ok:true 0/0 (16 new comparator checks); viewer/combined/userrun green; 0 external refs; ChangeRecord a87fd9f8aaaa47b1bd9b57f82c5f380b OWNER_REVIEW)"
+        "Task 2: gap G1 CLOSED - interactive cross-phase SCR comparator tab 'SCR Comparator (P33)' (gate PASS; display layer ONLY; contract 1.16.0 UNCHANGED - ui_data.json + embedded snapshot byte-identical to previous commit; governed frozen-t headline 39,975.654628199336 default baseline, never re-labelled; registry order frozen-t/grouped-t/skew-t/vine2/tree3/nested; signed deltas labelled display arithmetic; CI overlay chart; provenance keys disclosed; ui_app self-test 248 checks ok:true 0/0 (16 new comparator checks); viewer/combined/userrun green; 0 external refs; ChangeRecord a87fd9f8aaaa47b1bd9b57f82c5f380b OWNER_REVIEW)",
+        "Task 3: gap G2 CLOSED - embedded-distribution drill-down 'Distribution Explorer (P33)' tab (gate PASS 26 substantive checks; contract 1.16.0 -> 1.17.0 ADDITIVE: new distribution_explorer key ONLY - grids PRECOMPUTED at build time by build_ui_data.py from archived docs/validation/PHASE16_LOSS_DISTRIBUTION.json (sha256-pinned provenance); 41-point empirical CDF grid + 13-point build-time quantile grid reproduced EXACTLY by independent recomputation; archived percentiles/sweep/histogram/headline carried bit-for-bit; 4 per-seed CDF overlays; hover/slider/tail-zoom display layer recomputes nothing beyond labelled display interpolation; neutral fallback for pre-1.17.0 payloads via NEW dedicated jsdom test scripts/ui_app_distribution_fallback_test.cjs; ui_app self-test 266 checks ok:true 0/0 (18 new); pre-existing inventory entries bit-identical; governance delta = existing P32T4 store-sync sweep refresh only; ChangeRecord b01e374511f7480fa3a24f5d239f2d17 OWNER_REVIEW)"
       ],
       "in_progress": [
-        "Task 3: gap G2 - embedded-distribution drill-down (PRECOMPUTED quantile/CDF grids computed ONLY at build time by build_ui_data.py from archived model output, provenance stamped; ADDITIVE contract bump 1.16.0 -> 1.17.0; display layer renders interactive distribution explorer over the embedded grids and recomputes NOTHING beyond labelled display interpolation; graceful neutral fallback for older payloads; new self-test checks for grid presence/readout/fallback; suite ok:true 0/0; zero-install preserved; NO model parameter changes). Acceptance criteria PRE-REGISTERED in docs/validation/PHASE33_TASK1_DESIGN_NOTE.md (G2)."
+        "Task 4: gap G3 - printable owner sign-off / report pack (per PHASE33_TASK1_DESIGN_NOTE G3 pre-registered acceptance criteria: print-stylesheet/report view assembled ONLY from embedded snapshot figures; owner decision section stays NEUTRAL-BLANK (decision not preempted); zero-install invariants gated; ADDITIVE only; new self-test checks; suite ok:true 0/0)."
       ],
-      "next": "Task 3 = G2 (distribution drill-down, ADDITIVE bump), Task 4 = G3 (printable sign-off pack), Task 5 = G4 (accessibility), Task 6 = phase summary + final re-audit (PHASE 33 COMPLETE)"
+      "next": "Task 4 = G3 (printable sign-off pack), Task 5 = G4 (accessibility), Task 6 = phase summary + final re-audit (PHASE 33 COMPLETE)"
     }
   },
   "repository_info": {
@@ -901,7 +902,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-12T11:10:00Z",
+  "last_updated": "2026-06-12T20:25:04Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -1361,5 +1362,36 @@
       "verify_all": true
     },
     "next": "Phase 33 Task 3 = gap G2 (embedded-distribution drill-down, additive 1.17.0)"
+  },
+  "cycle_2026_06_13_phase33_task3": {
+    "completed_at": "2026-06-12T20:25:04Z",
+    "agent": "claude",
+    "task": "Phase 33 Task 3 - embedded-distribution drill-down with precomputed grids (gap G2)",
+    "verdict": "PASS",
+    "gap_closed": "G2",
+    "contract": "1.16.0 -> 1.17.0 (ADDITIVE: distribution_explorer; pre-existing inventory entries bit-identical; governance delta = P32T4 store-sync refresh only; meta.generated_utc build stamp)",
+    "artifacts": [
+      "scripts/build_ui_data.py (LOSS_DIST_PATH + _build_distribution_explorer + Distribution Explorer tab/renderer)",
+      "ui_data.json + ui_app.html (regenerated; embedded snapshot == ui_data.json)",
+      "scripts/ui_app_self_test.cjs (18 new dx checks; suite 266)",
+      "scripts/ui_app_distribution_fallback_test.cjs (NEW dedicated fallback test)",
+      "scripts/build_phase33_task3_distribution_explorer.py (gate + governance)",
+      "docs/validation/PHASE33_TASK3_DISTRIBUTION_EXPLORER_REPORT.{json,md}"
+    ],
+    "self_tests": {
+      "ui_app": "266 ok 0net/0err",
+      "distribution_fallback": "9 ok 0net/0err",
+      "offline_viewer": "ok",
+      "combined_gui": "ok",
+      "userrun_fallback": "ok"
+    },
+    "reproducibility": "CDF + quantile grids reproduced EXACTLY from archived PHASE16_LOSS_DISTRIBUTION.json (sha256-pinned); archived sections bit-for-bit; build-time p50 within one bin width of archived p50",
+    "change_record": "b01e374511f7480fa3a24f5d239f2d17 (code_change, OWNER_REVIEW)",
+    "governance_counts": {
+      "change_records": 87,
+      "audit_entries": 115,
+      "verify_all": true
+    },
+    "next_task": "Phase 33 Task 4 (gap G3): printable owner sign-off / report pack"
   }
 }

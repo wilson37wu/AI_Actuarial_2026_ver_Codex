@@ -264,7 +264,74 @@ setTimeout(() => {
   const cmpDelta2 = readCmpDeltas();
   const cmpProvRows = document.querySelectorAll("#comparator table.cmpprov tbody tr").length;
 
+  // Phase 33 Task 3 (gap G2): embedded-distribution drill-down explorer.
+  let dxData = null;
+  try {
+    const rawDx = (document.getElementById("ui-data").textContent || "")
+      .replace("/*__UI_DATA__*/", "").trim();
+    dxData = (JSON.parse(rawDx) || {}).distribution_explorer || null;
+  } catch (e) { /* dxData stays null; checks fail loudly */ }
+  const dxTab = tabs.find(t => t.getAttribute("data-target") === "distexplorer");
+  if (dxTab) dxTab.click();
+  const dxEl = document.getElementById("distexplorer");
+  const dxText0 = (dxEl && dxEl.textContent) || "";
+  const dxSvg0 = document.querySelectorAll("#dxcdf svg.chart").length;
+  const dxPts0 = document.querySelectorAll("#dxcdf svg.chart circle.dxpt").length;
+  const dxSeedPaths0 = document.querySelectorAll("#dxcdf svg.chart path.dxseed").length;
+  const dxQRows = [...document.querySelectorAll("#distexplorer table.dxqtable tbody tr")];
+  const dxPRows = [...document.querySelectorAll("#distexplorer table.dxptable tbody tr")];
+  const dxSRows = document.querySelectorAll("#distexplorer table.dxstable tbody tr").length;
+  const dxP50Row = dxPRows.find(r => r.getAttribute("data-dx-p") === "0.5");
+  const dxSlider = document.getElementById("dxslider");
+  const dxReadout = document.getElementById("dx-readout");
+  let dxReadoutLast = "", dxReadoutFirst = "";
+  if (dxSlider && dxReadout) {
+    dxSlider.value = String(dxSlider.max);
+    dxSlider.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+    dxReadoutLast = dxReadout.textContent || "";
+    dxSlider.value = "0";
+    dxSlider.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+    dxReadoutFirst = dxReadout.textContent || "";
+  }
+  const dxTailBtn = [...document.querySelectorAll("#dxnav .segbtn")].find(b => b.getAttribute("data-zoom") === "tail");
+  if (dxTailBtn) dxTailBtn.click();
+  const dxSvgTail = document.querySelectorAll("#dxcdf svg.chart").length;
+  const dxPtsTail = document.querySelectorAll("#dxcdf svg.chart circle.dxpt").length;
+  const dxFullBtn = [...document.querySelectorAll("#dxnav .segbtn")].find(b => b.getAttribute("data-zoom") === "full");
+  if (dxFullBtn) dxFullBtn.click();
+  const dxPtsBack = document.querySelectorAll("#dxcdf svg.chart circle.dxpt").length;
+  const dxCdfP = ((dxData || {}).cdf_grid || {}).p || [];
+  const dxCdfX = ((dxData || {}).cdf_grid || {}).x || [];
+  const dxQGrid = (dxData || {}).quantile_grid || {};
+  const dxArchP = (dxData || {}).archived_percentiles || [];
+  const dxProv = (dxData || {}).provenance || {};
+
   const checks = {
+    dxTabPresent: !!dxTab,
+    dxTabTextPresent: /Distribution Explorer \(P33\)/.test(bodyText),
+    dxGridEmbedded: !!dxData && dxCdfX.length === 41 && dxCdfP.length === 41,
+    dxCdfMonotoneEnds: dxCdfP.length > 1 && dxCdfP[0] === 0 && dxCdfP[dxCdfP.length - 1] === 1 &&
+      dxCdfP.every((v, i) => i === 0 || v >= dxCdfP[i - 1]),
+    dxProvenanceEmbedded: typeof dxProv.source_sha256 === "string" && dxProv.source_sha256.length === 64 &&
+      /PHASE16_LOSS_DISTRIBUTION\.json$/.test(String(dxProv.source || "")) &&
+      /BUILD TIME ONLY/.test(String(dxProv.computed_by || "")),
+    dxCdfSvgRendered: dxSvg0 === 1,
+    dxCdfGridPointCount: dxPts0 === 41,
+    dxSeedOverlayRendered: dxSeedPaths0 === 4,
+    dxQuantileRows: dxQRows.length === 13 &&
+      dxQRows.every((r, i) => r.getAttribute("data-dx-q-loss") === String((dxQGrid.loss || [])[i])),
+    dxArchivedPercentileRows: dxPRows.length === 8 &&
+      dxPRows.every((r, i) => r.getAttribute("data-dx-loss") === String((dxArchP[i] || {}).loss)),
+    dxP50ExactArchivedKey: !!dxP50Row && dxP50Row.getAttribute("data-dx-loss") === "107159.2854",
+    dxSweepRows: dxSRows === 5,
+    dxSliderReadoutWorks: /grid point 40 of 40/.test(dxReadoutLast) && /F\(loss\) = 1\.0000/.test(dxReadoutLast) &&
+      dxReadoutLast.indexOf(String(dxCdfX[dxCdfX.length - 1])) !== -1 &&
+      /grid point 0 of 40/.test(dxReadoutFirst) && /F\(loss\) = 0\.0000/.test(dxReadoutFirst),
+    dxZoomWorks: dxSvgTail === 1 && dxPtsTail > 0 && dxPtsTail < 41 && dxPtsBack === 41,
+    dxBuildTimeStated: /computed at build time/.test(dxText0) && /recomputes nothing/.test(dxText0),
+    dxInterpolationLabelled: /display interpolation/.test(dxText0) && /NOT new model output/.test(dxText0),
+    dxArchivedBitForBitStated: /carried bit-for-bit/.test(dxText0),
+    dxNoFallbackInFullPayload: !/grids are not embedded in this snapshot/.test(dxText0),
     cmpTabPresent: !!cmpTab,
     cmpTabTextPresent: /SCR Comparator \(P33\)/.test(bodyText),
     cmpRegistryOrder: cmpIds0.join(",") === "frozen_t,grouped_t,skew_t,vine2,tree3,nested",
@@ -714,6 +781,24 @@ setTimeout(() => {
     checks.cmpNoSteeringLanguage &&
     checks.cmpProvenanceRows &&
     checks.cmpNestedPointOnly &&
+    checks.dxTabPresent &&
+    checks.dxTabTextPresent &&
+    checks.dxGridEmbedded &&
+    checks.dxCdfMonotoneEnds &&
+    checks.dxProvenanceEmbedded &&
+    checks.dxCdfSvgRendered &&
+    checks.dxCdfGridPointCount &&
+    checks.dxSeedOverlayRendered &&
+    checks.dxQuantileRows &&
+    checks.dxArchivedPercentileRows &&
+    checks.dxP50ExactArchivedKey &&
+    checks.dxSweepRows &&
+    checks.dxSliderReadoutWorks &&
+    checks.dxZoomWorks &&
+    checks.dxBuildTimeStated &&
+    checks.dxInterpolationLabelled &&
+    checks.dxArchivedBitForBitStated &&
+    checks.dxNoFallbackInFullPayload &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.16.0"
+CONTRACT_VERSION = "1.17.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -44,6 +44,9 @@ OUT_JSON = os.path.join(REPO, "ui_data.json")
 OUT_HTML = os.path.join(REPO, "ui_app.html")
 RUN_SUMMARY_PATH = os.path.join(VAL, "RUN_MODEL_SUMMARY.json")
 AGG_REPORT_PATH = os.path.join(VAL, "RUN_MODEL_AGGREGATION_REPORT.json")
+# Phase 33 Task 3 (gap G2): archived loss-distribution artifact -- the ONLY
+# source for the precomputed distribution-explorer grids (build time only).
+LOSS_DIST_PATH = os.path.join(VAL, "PHASE16_LOSS_DISTRIBUTION.json")
 
 # Neutral display default (Phase UIL Task 4 / plan A1): with no user inputs
 # and no run_model evidence, money renders exactly as before -- bare numbers,
@@ -2426,6 +2429,138 @@ def _build_phase30() -> Dict[str, Any]:
     return out
 
 
+
+# --------------------------------------------------------------------------- #
+# Phase 33 Task 3 (gap G2): embedded-distribution drill-down grids.
+# Grids are PRECOMPUTED here, at BUILD TIME ONLY, from the archived
+# loss-distribution model output (docs/validation/PHASE16_LOSS_DISTRIBUTION
+# .json, Phase 16 Task 2). The display layer renders the grids and recomputes
+# NOTHING beyond labelled display interpolation. Archived percentiles, the
+# confidence sweep, the histogram and headline figures are carried
+# bit-for-bit. ADDITIVE contract key (1.16.0 -> 1.17.0); NO model parameter
+# changes.
+# --------------------------------------------------------------------------- #
+DX_PROB_GRID = [0.005, 0.01, 0.025, 0.05, 0.10, 0.25, 0.50,
+                0.75, 0.90, 0.95, 0.975, 0.99, 0.995]
+
+
+def _dx_cdf_from_hist(counts: List[Any], n_outer: float) -> List[float]:
+    """Empirical CDF of the archived outer-loss histogram, evaluated at the
+    archived bin edges (0 at the first edge, 1 at the last)."""
+    cum = 0.0
+    p = [0.0]
+    for c in counts:
+        cum += float(c)
+        p.append(cum / float(n_outer))
+    return p
+
+
+def _dx_quantiles_from_hist(edges: List[Any], cdf_p: List[float],
+                            probs: List[float]) -> List[float]:
+    """Inverse of the empirical histogram CDF on a FIXED probability grid.
+    Linear within a bin -- i.e. build-time interpolation at the archived
+    histogram's resolution. Clamped to [first_edge, last_edge]."""
+    out: List[float] = []
+    for pr in probs:
+        if pr <= cdf_p[0]:
+            out.append(float(edges[0]))
+            continue
+        if pr >= cdf_p[-1]:
+            out.append(float(edges[-1]))
+            continue
+        j = 1
+        while j < len(cdf_p) and cdf_p[j] < pr:
+            j += 1
+        j = min(j, len(cdf_p) - 1)
+        p0, p1 = cdf_p[j - 1], cdf_p[j]
+        x0, x1 = float(edges[j - 1]), float(edges[j])
+        out.append(x0 if p1 <= p0 else x0 + (pr - p0) / (p1 - p0) * (x1 - x0))
+    return out
+
+
+def _build_distribution_explorer() -> Dict[str, Any]:
+    src = _load(LOSS_DIST_PATH)
+    if not src:
+        return {}
+    hist = src.get("histogram") or {}
+    edges = list(hist.get("bin_edges") or [])
+    counts = list(hist.get("counts") or [])
+    meta = src.get("meta") or {}
+    n_outer = hist.get("n_outer") or meta.get("n_outer")
+    if not edges or not counts or len(edges) != len(counts) + 1 \
+            or not n_outer:
+        return {}
+    cdf_p = _dx_cdf_from_hist(counts, n_outer)
+    q_loss = _dx_quantiles_from_hist(edges, cdf_p, DX_PROB_GRID)
+    seeds: List[Dict[str, Any]] = []
+    for s in (src.get("seeds") or []):
+        sh = s.get("histogram") or {}
+        se = list(sh.get("bin_edges") or [])
+        sc = list(sh.get("counts") or [])
+        sn = sh.get("n_outer") or n_outer
+        if se and sc and len(se) == len(sc) + 1 and sn:
+            seeds.append({
+                "seed": s.get("seed"),
+                "var995": s.get("var995"),
+                "es995": s.get("es995"),
+                "scr995": s.get("scr995"),
+                "mean_liability": s.get("mean_liability"),
+                "cdf_grid": {"x": se, "p": _dx_cdf_from_hist(sc, sn)},
+            })
+    return {
+        "title": "Loss-distribution drill-down (precomputed grids)",
+        "provenance": {
+            "source": os.path.relpath(LOSS_DIST_PATH, REPO).replace(
+                os.sep, "/"),
+            "source_sha256": _sha256_file(LOSS_DIST_PATH),
+            "source_generated_utc": meta.get("generated_utc"),
+            "source_module": meta.get("module"),
+            "reproducibility_digest": meta.get("reproducibility_digest"),
+            "n_outer": n_outer,
+            "n_bins": hist.get("n_bins"),
+            "seed_base": meta.get("seed_base"),
+            "measure": meta.get("measure"),
+            "confidence_level": meta.get("confidence_level"),
+            "horizon_months": meta.get("horizon_months"),
+            "computed_by": ("scripts/build_ui_data.py at BUILD TIME ONLY "
+                            "(Phase 33 Task 3 / gap G2); the display layer "
+                            "recomputes nothing"),
+            "method": ("cdf_grid = empirical CDF of the archived outer-loss "
+                       "histogram at its archived bin edges; quantile_grid = "
+                       "inverse of that CDF on a fixed probability grid, "
+                       "linear within a bin (build-time interpolation at "
+                       "histogram resolution); archived percentiles, "
+                       "confidence sweep, histogram and headline figures "
+                       "carried bit-for-bit"),
+        },
+        "cdf_grid": {
+            "x": edges,
+            "p": cdf_p,
+            "n_points": len(edges),
+            "note": ("empirical CDF of the archived outer-loss histogram; "
+                     "grid points are exact, the connecting curve is "
+                     "display interpolation"),
+        },
+        "quantile_grid": {
+            "prob": list(DX_PROB_GRID),
+            "loss": q_loss,
+            "method": ("build-time inverse of the archived histogram CDF "
+                       "(linear within a bin; histogram resolution)"),
+        },
+        "archived_percentiles": src.get("percentiles"),
+        "archived_confidence_sweep": src.get("confidence_sweep"),
+        "archived_headline": {
+            "mean_liability": src.get("mean_liability"),
+            "var995": src.get("var995"),
+            "es995": src.get("es995"),
+            "scr995": src.get("scr995"),
+        },
+        "histogram": {"bin_edges": edges, "counts": counts,
+                      "n_outer": n_outer},
+        "seeds": seeds,
+    }
+
+
 def _resolve_currency_meta() -> Dict[str, Any]:
     """Phase UIL Task 4 (B4+A1): resolve the reporting-currency block and the
     user-run ``output_label`` for ``meta`` -- single source of truth for every
@@ -2617,6 +2752,9 @@ def build_ui_data() -> Dict[str, Any]:
 
     owner_decision_p31 = _build_owner_decision_p31()
     user_run = _build_user_run(meta)
+    # Phase 33 Task 3 (gap G2): ADDITIVE key only -- precomputed at
+    # build time from the archived artifact; nothing else changes.
+    distribution_explorer = _build_distribution_explorer()
 
     governance = dict(base.get("governance", {}))
     _base_risks = list(governance.get("risk_register", []) or [])
@@ -2720,6 +2858,7 @@ def build_ui_data() -> Dict[str, Any]:
         "phase28": phase28,
         "phase29": phase29,
         "phase30": phase30,
+        "distribution_explorer": distribution_explorer,
         "owner_decision_p31": owner_decision_p31,
         "user_run": user_run,
         "governance": governance,
@@ -2882,6 +3021,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="phase29" class="panel" data-title="Vine Tail (P29)"></div>
   <div id="phase30" class="panel" data-title="Stop-Rule (P30)"></div>
   <div id="comparator" class="panel" data-title="SCR Comparator (P33)"></div>
+  <div id="distexplorer" class="panel" data-title="Distribution Explorer (P33)"></div>
   <div id="ownerdecision" class="panel" data-title="Owner Decision (P31)"></div>
   <div id="userrun" class="panel" data-title="User Run (UIL)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
@@ -2938,6 +3078,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["phase29","Vine Tail (P29)"],
     ["phase30","Stop-Rule (P30)"],
     ["comparator","SCR Comparator (P33)"],
+    ["distexplorer","Distribution Explorer (P33)"],
     ["ownerdecision","Owner Decision (P31)"],
     ["userrun","User Run (UIL)"],
     ["governance","Governance"]
@@ -4841,6 +4982,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       "  user_run     : {run_timestamp, output_label, currency, inputs, headline,",
       "                  bootstrap_ci, verdict, run_plan, inputs_provenance,",
       "                  display_provenance, use_restrictions, ...}        // v1.15.0+",
+      "  distribution_explorer : {provenance, cdf_grid, quantile_grid,",
+      "                  archived_percentiles, archived_confidence_sweep,",
+      "                  archived_headline, histogram, seeds}    // v1.17.0+",
       "  governance   : {audit_entries, audit_integrity_ok, change_records,",
       "                  change_records_supplement, store_sync,   // v1.16.0+",
       "                  deployment_gates, risk_register}",
@@ -5064,9 +5208,135 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  // ---- Phase 33 Task 3 (gap G2): embedded-distribution drill-down ----
+  // DISPLAY LAYER ONLY over grids PRECOMPUTED at build time by
+  // scripts/build_ui_data.py from the archived loss-distribution model
+  // output (provenance disclosed below). The explorer recomputes NOTHING:
+  // every readout is an embedded grid point rendered bit-for-bit; the
+  // connecting CDF curve and any positioning between grid points is
+  // labelled display interpolation. Older payloads without the grids get a
+  // neutral fallback (no JS errors, no blank panel). NO model parameter
+  // changes; nothing here is new model output.
+  var DX_ZOOM="full";
+  function dxCdfChart(dx){
+    var g=dx.cdf_grid||{}, xs=g.x||[], ps=g.p||[];
+    if(xs.length<2||ps.length!==xs.length) return "";
+    var lo=0, hi=xs.length-1;
+    if(DX_ZOOM==="tail"){ for(var z=0;z<ps.length;z++){ if(ps[z]>=0.9){ lo=Math.max(0,z-1); break; } } }
+    var W=680,H=320,mL=64,mR=20,mT=18,mB=40,iw=W-mL-mR,ih=H-mT-mB;
+    var xmin=xs[lo],xmax=xs[hi],pmin=ps[lo],pmax=ps[hi];
+    if(xmax===xmin||pmax===pmin) return "";
+    var X=function(v){ return mL+(v-xmin)/(xmax-xmin)*iw; };
+    var Y=function(v){ return mT+ih-(v-pmin)/(pmax-pmin)*ih; };
+    var s=svgOpen(W,H);
+    for(var gI=0;gI<=4;gI++){ var gv=pmin+(pmax-pmin)*gI/4, gy=Y(gv);
+      s+='<line class="grid" x1="'+mL+'" y1="'+gy+'" x2="'+(W-mR)+'" y2="'+gy+'"/>';
+      s+='<text x="'+(mL-6)+'" y="'+(gy+3)+'" text-anchor="end">'+gv.toFixed(3)+'</text>'; }
+    s+='<line class="axis" x1="'+mL+'" y1="'+(mT+ih)+'" x2="'+(W-mR)+'" y2="'+(mT+ih)+'"/>';
+    for(var tI=0;tI<=4;tI++){ var tv=xmin+(xmax-xmin)*tI/4;
+      s+='<text x="'+X(tv)+'" y="'+(mT+ih+16)+'" text-anchor="middle">'+fmtK(tv)+'</text>'; }
+    (dx.seeds||[]).forEach(function(sd,si){
+      var sg=sd.cdf_grid||{}, sx=sg.x||[], sp=sg.p||[];
+      if(sx.length<2||sp.length!==sx.length) return;
+      var d="",first=true;
+      for(var i=0;i<sx.length;i++){ if(sx[i]<xmin||sx[i]>xmax) continue;
+        d+=(first?"M":"L")+X(sx[i])+" "+Y(Math.max(pmin,Math.min(pmax,sp[i])))+" "; first=false; }
+      if(d) s+='<path class="dxseed" d="'+d+'" fill="none" stroke="#5ad7e0" stroke-width="1" opacity="0.45" data-tip="'+
+        ta("<b>seed "+sd.seed+"</b> embedded CDF grid (display overlay)")+'"/>';
+    });
+    var d2="";
+    for(var j=lo;j<=hi;j++){ d2+=(j===lo?"M":"L")+X(xs[j])+" "+Y(ps[j])+" "; }
+    s+='<path d="'+d2+'" fill="none" stroke="var(--accent)" stroke-width="2.2"/>';
+    for(var k=lo;k<=hi;k++){
+      s+='<circle class="dxpt" cx="'+X(xs[k])+'" cy="'+Y(ps[k])+'" r="3.6" fill="var(--accent)" data-dx-i="'+k+'" data-tip="'+
+        ta("<b>embedded grid point "+k+"</b><br>loss = "+String(xs[k])+"<br>F(loss) = "+String(ps[k])+"<br>(exact embedded values; curve between points is display interpolation)")+'"/>';
+    }
+    return s+'</svg>';
+  }
+  function dxReadoutAt(dx,i){
+    var g=dx.cdf_grid||{}, xs=g.x||[], ps=g.p||[];
+    if(!xs.length) return "";
+    i=Math.max(0,Math.min(xs.length-1,i|0));
+    return 'Embedded grid point '+i+' of '+(xs.length-1)+': loss = <b>'+fmtMoney(xs[i])+
+      '</b> (full precision '+esc(String(xs[i]))+'), F(loss) = <b>'+Number(ps[i]).toFixed(4)+
+      '</b> (full precision '+esc(String(ps[i]))+'). Exact embedded values; nothing recomputed.';
+  }
+  function renderDistExplorer(){
+    var el=document.getElementById("distexplorer"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var dx=DATA.distribution_explorer;
+    if(!dx||!dx.cdf_grid||!(dx.cdf_grid.x||[]).length){
+      el.innerHTML='<h3 style="margin:8px 0 6px">Distribution drill-down</h3>'+
+        '<p class="muted" id="dx-fallback">Distribution drill-down grids are not embedded in this snapshot '+
+        '(pre-1.17.0 ui_data payload). This view needs the precomputed <span class="mono">distribution_explorer</span> grids '+
+        'written at build time by <span class="mono">scripts/build_ui_data.py</span>; nothing is recomputed in the browser, '+
+        'so no figures can be shown here. The governed read-outs in the other tabs are unaffected.</p>';
+      return;
+    }
+    var hl=dx.archived_headline||{}, prov=dx.provenance||{};
+    var html='<h3 style="margin:8px 0 6px">'+esc(dx.title||"Loss-distribution drill-down")+'</h3>'+
+      '<p class="note">All grids on this tab were <b>computed at build time</b> by <span class="mono">scripts/build_ui_data.py</span> from the archived '+
+      'loss-distribution model output '+esc(prov.source||"")+' and embedded in this snapshot; the display layer '+
+      'recomputes nothing and renders embedded values bit-for-bit. The CDF curve between embedded grid points and the hover positioning are '+
+      '<b>display interpolation</b> only - NOT new model output. NO model parameter changes.</p>';
+    html+='<div class="cards">'+
+      '<div class="card"><div class="k">Mean liability (archived)</div><div class="v"><span data-tip="'+ta("full precision: "+String(hl.mean_liability))+'">'+fmtMoney(hl.mean_liability)+'</span></div></div>'+
+      '<div class="card"><div class="k">99.5% VaR (archived)</div><div class="v"><span data-tip="'+ta("full precision: "+String(hl.var995))+'">'+fmtMoney(hl.var995)+'</span></div></div>'+
+      '<div class="card"><div class="k">99.5% ES (archived)</div><div class="v"><span data-tip="'+ta("full precision: "+String(hl.es995))+'">'+fmtMoney(hl.es995)+'</span></div></div>'+
+      '<div class="card"><div class="k">99.5% SCR (archived)</div><div class="v"><span data-tip="'+ta("full precision: "+String(hl.scr995))+'">'+fmtMoney(hl.scr995)+'</span></div></div>'+
+      '<div class="card"><div class="k">Outer sims / bins</div><div class="v">'+num(prov.n_outer)+' / '+num(prov.n_bins)+'</div></div></div>';
+    html+='<div class="subnav" id="dxnav" role="group" aria-label="Distribution explorer zoom">'+
+      '<button type="button" class="segbtn'+(DX_ZOOM==="full"?" active":"")+'" data-zoom="full">full distribution</button>'+
+      '<button type="button" class="segbtn'+(DX_ZOOM==="tail"?" active":"")+'" data-zoom="tail">tail zoom (F &ge; 0.90)</button></div>';
+    html+='<div class="chartwrap" id="dxcdf"><h4>Empirical CDF of the archived outer-loss distribution (precomputed grid)</h4>'+
+      '<p class="cap">Dots = exact embedded grid points (hover for full-precision readout); the connecting curve is display interpolation. '+
+      'Thin overlays = per-seed embedded CDF grids ('+num((dx.seeds||[]).length)+' archived seeds).</p>'+
+      dxCdfChart(dx)+'</div>';
+    var xs=(dx.cdf_grid.x||[]);
+    html+='<div class="chartwrap"><h4>Grid-point readout</h4>'+
+      '<p class="cap">Slide to read any embedded CDF grid point (exact values; nothing recomputed).</p>'+
+      '<input type="range" id="dxslider" min="0" max="'+(xs.length-1)+'" value="'+Math.floor((xs.length-1)/2)+'" style="width:100%"/>'+
+      '<p id="dx-readout" class="note" aria-live="polite">'+dxReadoutAt(dx,Math.floor((xs.length-1)/2))+'</p></div>';
+    var qg=dx.quantile_grid||{}, qp=qg.prob||[], ql=qg.loss||[];
+    html+='<div class="subh">Quantile grid (build-time; '+esc(qg.method||"")+')</div>'+
+      '<table class="ptable dxqtable"><thead><tr><th>Probability</th><th>Loss quantile (build-time grid)</th></tr></thead><tbody>'+
+      qp.map(function(p,i){ return '<tr data-dx-q-p="'+ta(String(p))+'" data-dx-q-loss="'+ta(String(ql[i]))+'"><td>'+Number(p).toFixed(3)+'</td>'+
+        '<td><span data-tip="'+ta("full precision: "+String(ql[i]))+'">'+fmtMoney(ql[i])+'</span></td></tr>'; }).join("")+
+      '</tbody></table>';
+    var ap=dx.archived_percentiles||[];
+    html+='<div class="subh">Archived percentiles (model output, carried bit-for-bit)</div>'+
+      '<table class="ptable dxptable"><thead><tr><th>Percentile p</th><th>Loss (archived)</th></tr></thead><tbody>'+
+      ap.map(function(r){ return '<tr data-dx-p="'+ta(String(r.p))+'" data-dx-loss="'+ta(String(r.loss))+'"><td>'+Number(r.p).toFixed(3)+'</td>'+
+        '<td><span data-tip="'+ta("archived full precision: "+String(r.loss))+'">'+fmtMoney(r.loss)+'</span></td></tr>'; }).join("")+
+      '</tbody></table>';
+    var sw=dx.archived_confidence_sweep||[];
+    html+='<div class="subh">Archived confidence sweep (model output, carried bit-for-bit)</div>'+
+      '<table class="ptable dxstable"><thead><tr><th>Confidence level</th><th>VaR</th><th>ES</th><th>SCR</th></tr></thead><tbody>'+
+      sw.map(function(r){ return '<tr><td>'+Number(r.cl).toFixed(3)+'</td><td>'+fmtMoney(r.var)+'</td><td>'+fmtMoney(r.es)+'</td><td>'+fmtMoney(r.scr)+'</td></tr>'; }).join("")+
+      '</tbody></table>';
+    html+='<details><summary>Grid provenance (build-time computation; archived source)</summary>'+
+      '<table class="ptable dxprov"><tbody>'+
+      '<tr><td>Source artifact</td><td class="mono">'+esc(prov.source||"--")+'</td></tr>'+
+      '<tr><td>Source sha256</td><td class="mono">'+esc(prov.source_sha256||"--")+'</td></tr>'+
+      '<tr><td>Source generated (UTC)</td><td class="mono">'+esc(prov.source_generated_utc||"--")+'</td></tr>'+
+      '<tr><td>Reproducibility digest</td><td class="mono">'+esc(prov.reproducibility_digest||"--")+'</td></tr>'+
+      '<tr><td>Computed by</td><td>'+esc(prov.computed_by||"--")+'</td></tr>'+
+      '<tr><td>Method</td><td>'+esc(prov.method||"--")+'</td></tr>'+
+      '<tr><td>n_outer / n_bins / seed_base</td><td>'+num(prov.n_outer)+' / '+num(prov.n_bins)+' / '+num(prov.seed_base)+'</td></tr>'+
+      '<tr><td>Measure / CL / horizon</td><td>'+esc(prov.measure||"--")+' / '+num(prov.confidence_level,3)+' / '+num(prov.horizon_months)+'m</td></tr>'+
+      '</tbody></table></details>';
+    el.innerHTML=html;
+    var slider=el.querySelector("#dxslider"), ro=el.querySelector("#dx-readout");
+    if(slider&&ro){ slider.addEventListener("input",function(){ ro.innerHTML=dxReadoutAt(dx,Number(slider.value)); }); }
+    [].forEach.call(el.querySelectorAll("#dxnav .segbtn"),function(b){
+      b.onclick=function(){ DX_ZOOM=b.getAttribute("data-zoom"); renderDistExplorer(); };
+    });
+    wireTips(el);
+  }
+
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderOwnerDecision(); renderUserRun(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderDistExplorer(); renderOwnerDecision(); renderUserRun(); renderGovernance(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

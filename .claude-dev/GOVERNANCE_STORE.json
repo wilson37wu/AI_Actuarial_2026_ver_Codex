@@ -2565,6 +2565,32 @@
       "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
       "digest": "c85ff3fb9caf5c6784e5752ded456ba9758282c98f26ec6782ab0921357f2d2c",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "9ea6ceba7afe4918b04e73100a5b63f5",
+      "timestamp": "2026-06-12T20:24:32.448546+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase33",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 33 Task 3 embedded-distribution drill-down with precomputed grids (gap G2); contract 1.16.0 -> 1.17.0 ADDITIVE; grids reproduced exactly from the archived artifact",
+      "details": {
+        "record_id": "b01e374511f7480fa3a24f5d239f2d17",
+        "ui_contract": "1.17.0 (additive)",
+        "source_artifact": "docs/validation/PHASE16_LOSS_DISTRIBUTION.json",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "fallback_test_ok": true,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "scripts/ui_app_distribution_fallback_test.cjs",
+          "ui_app.html",
+          "ui_data.json"
+        ]
+      },
+      "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
+      "digest": "78f0fbce2c1de876fa809fba26ebfc7cd8b1abff05f08b91c4a149e2a2527448",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -7999,6 +8025,80 @@
           "actor": "AutomatedModelDev_Phase33",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Gap G1 of the Phase 33 design note is closed: dependence-structure SCRs are now comparable interactively in one neutral view. The MR-016/MR-017 dependence decision remains PENDING and entirely with the model owner; nothing in this change steers or defaults that decision."
+        }
+      ],
+      "phase": "Phase 33: Offline UI Interactive Analytics & Usability"
+    },
+    {
+      "record_id": "b01e374511f7480fa3a24f5d239f2d17",
+      "created_at": "2026-06-12T20:24:32.448388+00:00",
+      "title": "Phase 33 Task 3 - embedded-distribution drill-down with precomputed grids (gap G2) in the zero-install offline UI",
+      "description": "Phase 33 Task 3 closed gap G2 of the Phase 33 Task 1 design note: the zero-install offline UI now carries a 'Distribution Explorer (P33)' tab over PRECOMPUTED distribution grids embedded at build time by scripts/build_ui_data.py from the ARCHIVED Phase 16 loss-distribution model output (docs/validation/PHASE16_LOSS_DISTRIBUTION.json, sha256 stamped in the embedded provenance). New ADDITIVE contract key distribution_explorer (1.16.0 -> 1.17.0): empirical CDF grid at the 41 archived bin edges, a 13-point build-time quantile grid (inverse histogram CDF, linear within a bin, labelled at histogram resolution), archived percentiles / confidence sweep / histogram / headline figures carried bit-for-bit, and per-seed CDF grids for the 4 archived seeds. The display layer renders an interactive explorer (hover full-precision readouts, grid-point slider, tail zoom, seed overlay) and recomputes NOTHING beyond labelled display interpolation. Older payloads without the grids render a neutral fallback (dedicated jsdom fallback test). 18 new self-test checks (suite 266 checks ok:true, 0 network / 0 JS errors); independent recomputation here reproduces every grid value EXACTLY from the archived artifact. Every pre-existing inventory entry is bit-identical; governance section changes are limited to the existing P32T4 store-sync sweep refresh. NO model parameter changes.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "scripts/ui_app_distribution_fallback_test.cjs",
+        "ui_app.html",
+        "ui_data.json"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "IFoA Modelling Practice Note s4 (documentation & independent review)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.16.0 (headline quantiles only; no distribution-level drill-down)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.17.0 (ADDITIVE: distribution_explorer)",
+        "headline_readouts": {
+          "source_artifact": "docs/validation/PHASE16_LOSS_DISTRIBUTION.json",
+          "source_sha256": "863fd04d40b4684ce6be5a5bdc98be8afbea06f577c61aafb651e542eb73fb95",
+          "n_outer": 5000,
+          "n_bins": 40,
+          "cdf_grid_points": 41,
+          "quantile_grid_points": 13,
+          "seeds_embedded": 4,
+          "archived_var995": 148903.2745,
+          "archived_es995": 155728.1367,
+          "archived_scr995": 41039.8211,
+          "archived_p50": 107159.2854,
+          "grid_p50_build_time": 107121.23111666668,
+          "bin_width": 2470.7275299999997,
+          "inventory_entries": "94->98",
+          "inventory_new_entries": [
+            "docs/validation/PHASE32_TASK4_GOVERNANCE_SWEEP_REPORT.json",
+            "docs/validation/PHASE32_TASK5_PHASE_SUMMARY_REPORT.json",
+            "docs/validation/PHASE33_TASK1_DESIGN_NOTE.json",
+            "docs/validation/PHASE33_TASK2_SCR_COMPARATOR_REPORT.json"
+          ]
+        },
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 266,
+        "fallback_test_ok": true
+      },
+      "impact_assessment": "Additive display-layer feature: grids are computed once at build time from an archived, sha256-pinned model output and embedded; the browser recomputes nothing beyond labelled display interpolation. Every pre-existing ui_data key is preserved (inventory entries bit-identical; governance limited to the existing store-sync sweep refresh), so no consumer breaks. Graceful neutral fallback protects older payloads. No model output or parameter changes.",
+      "quantitative_impact": "Embedded grids (build time, from archived artifact sha256 863fd04d...): CDF grid 41 points (0.0 -> 1.0, monotone); quantile grid 13 points; build-time p50 107121.2 vs archived p50 107159.3 (within one bin width 2470.7); archived 99.5% VaR 148903.3 / ES 155728.1 / SCR 41039.8 carried bit-for-bit; 4 per-seed grids. jsdom self-test ok with 0 network calls and 0 JS errors over 266 checks; dedicated fallback test ok.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase33",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-12T20:24:32.448502+00:00",
+          "actor": "AutomatedModelDev_Phase33",
+          "status": "PEER_REVIEW",
+          "comments": "Verified by the contract checks (ADDITIVE 1.16.0 -> 1.17.0; every grid value reproduced EXACTLY by independent recomputation from the archived sha256-pinned artifact; archived sections bit-for-bit; pre-existing inventory entries bit-identical; embedded snapshot equals ui_data.json) + jsdom self-tests (ui_app 266 checks incl. 18 new explorer checks, dedicated distribution fallback test, user-run fallback, offline viewer, combined GUI - all ok:true, 0 network / 0 JS errors); display layer recomputes nothing beyond labelled display interpolation; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-12T20:24:32.448516+00:00",
+          "actor": "AutomatedModelDev_Phase33",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap G2 of the Phase 33 design note is closed: the archived loss distribution is now explorable interactively offline over precomputed, provenance-stamped grids. Nothing is recomputed in the browser; the governed read-outs are unchanged. The MR-016/MR-017 dependence decision remains PENDING and entirely with the model owner."
         }
       ],
       "phase": "Phase 33: Offline UI Interactive Analytics & Usability"

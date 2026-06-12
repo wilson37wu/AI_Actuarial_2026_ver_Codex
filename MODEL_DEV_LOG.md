@@ -9590,3 +9590,20 @@ Pass 3 (same session, owner-approved): 11 redundant root docs deleted (GITHUB_PU
 - ChangeRecord `a87fd9f8aaaa47b1bd9b57f82c5f380b` (code_change) **OWNER_REVIEW**; records **86**; audit **114**; verify_all **True**. NO model parameter changes; Phase 30 stop-rule honoured.
 
 **NEXT (single in_progress): Phase 33 Task 3 = gap G2 — embedded-distribution drill-down** (PRECOMPUTED quantile/CDF grids embedded at build time by `build_ui_data.py` from archived model output, provenance stamped; ADDITIVE contract bump 1.16.0 → 1.17.0; display layer recomputes nothing; graceful fallback for older payloads; pre-registered criteria in PHASE33_TASK1_DESIGN_NOTE.md G2).
+
+---
+
+## 2026-06-13 (Claude Cowork cycle) — Phase 33 Task 3 COMPLETE (PASS)
+
+**Phase 33 Task 3 — gap G2: embedded-distribution drill-down with PRECOMPUTED grids — COMPLETE (gate PASS).**
+
+- New first-class **'Distribution Explorer (P33)' tab** in the zero-install offline UI, rendered ENTIRELY from grids **precomputed at build time** by `scripts/build_ui_data.py` from the archived Phase 16 loss-distribution model output `docs/validation/PHASE16_LOSS_DISTRIBUTION.json` (sha256-pinned provenance panel: source path, sha256, generation UTC, reproducibility digest, method).
+- **ADDITIVE contract bump 1.16.0 → 1.17.0** — single NEW key `distribution_explorer`: 41-point empirical **CDF grid** at the archived bin edges (0.0 → 1.0, monotone), 13-point build-time **quantile grid** (inverse histogram CDF, linear within a bin, labelled at histogram resolution; p50 within one bin width of archived p50), archived **percentiles / confidence sweep / histogram / headline VaR-ES-SCR carried bit-for-bit**, and **4 per-seed CDF grids**. Gate verifies the additive envelope precisely: every pre-existing inventory entry **bit-identical** (mtimes restored from the HEAD snapshot before rebuild), governance delta limited to the EXISTING P32T4 store-sync sweep refresh (+4 supplement records P32T4..P33T2, counts 86/114), `meta.generated_utc` build stamp only, embedded snapshot == `ui_data.json`.
+- **Reproducibility gate:** independent recomputation in `scripts/build_phase33_task3_distribution_explorer.py` reproduces every CDF and quantile grid value **EXACTLY** from the archived artifact; provenance sha256 re-derived and matched.
+- **Display layer recomputes nothing** beyond labelled *display interpolation* (CDF connecting curve, hover positioning): hover full-precision readouts on all 41 grid points, grid-point **slider readout** (aria-live), **tail zoom** (F ≥ 0.90) with restore, per-seed overlays, quantile/percentile/sweep tables with full-precision tooltips.
+- **Graceful neutral fallback** for pre-1.17.0 payloads via NEW dedicated jsdom test `scripts/ui_app_distribution_fallback_test.cjs` (strips the key, asserts neutral message, no leaked figures, other tabs render, 0 network / 0 JS errors).
+- **Self-tests:** ui_app **266 checks ok:true 0 network / 0 JS errors** (**18 new** dx checks: tab, embedded grid shape, monotone ends, provenance sha, svg + 41 grid-point circles, 4 seed overlays, quantile/percentile row exactness vs embedded values, archived-p50 exact key 107159.2854, sweep rows, slider readout at both ends, zoom + restore, build-time/interpolation/bit-for-bit wording, no fallback leak); distribution fallback 9 ok; offline viewer ok; combined GUI ok; user-run fallback ok; **0 external references** (single file).
+- Gate/governance builder `scripts/build_phase33_task3_distribution_explorer.py` (idempotent); report `docs/validation/PHASE33_TASK3_DISTRIBUTION_EXPLORER_REPORT.{json,md}`.
+- ChangeRecord `b01e374511f7480fa3a24f5d239f2d17` (code_change) **OWNER_REVIEW**; records **87**; audit **115**; verify_all **True**. NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 owner decision NOT pre-empted.
+
+**NEXT (single in_progress): Phase 33 Task 4 = gap G3 — printable owner sign-off / report pack** (print CSS + report view assembled ONLY from embedded snapshot figures; owner decision section stays NEUTRAL-BLANK; ADDITIVE only; pre-registered criteria in PHASE33_TASK1_DESIGN_NOTE.md G3).
