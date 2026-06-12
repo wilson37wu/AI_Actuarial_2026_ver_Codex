@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-12T20:12Z-e89e",
-  "started_at": "2026-06-12T20:12:23Z",
-  "ttl_minutes": 120,
-  "task": "Phase 33 Task 3: gap G2 - embedded-distribution drill-down (precomputed grids, additive 1.17.0)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-12T20:26:18Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
