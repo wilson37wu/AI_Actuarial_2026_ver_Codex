@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-13T22:23:56Z",
-  "last_run_duration_minutes": 25,
-  "last_run_note": "Phase 33 Task 6 COMPLETE (PASS 6/6 gates): final consolidated re-audit of the zero-install offline UI - 5 self-tests ok:true 0/0, 0 external refs (3 gated artifacts), contract 1.17.0, governance 90/118/17; gaps G1-G4 all closed. PHASE 33 COMPLETE. ChangeRecord ed05170f1ff1400e9b4ecbb3b945b24b OWNER_REVIEW. Next: Phase 34 Task 1 design note. Lock held this cycle (owner=claude).",
+  "last_run": "2026-06-13T23:18:35Z",
+  "last_run_duration_minutes": 20,
+  "last_run_note": "Phase 34 Task 1 COMPLETE (gate PASS 26/26 checks + 23 unit tests pass): offline-UI usability-hardening design note. Measured baseline re-confirmed and frozen (5 self-tests ok:true 0/0: 297/11/27/9/9; 0 external refs; contract 1.17.0; 17 tabs; governance 90/118/17). 4 gaps pre-registered with acceptance criteria (H1 contract guard+integrity panel ADDITIVE, H2 global search+deep-links, H3 full evidence bundle export+print-all, H4 responsive+high-contrast). ChangeRecord 20fc25cecdfd46e3a7d5399908b2734e OWNER_REVIEW (records->91, audit->119, verify_all True). Next: Phase 34 Task 2 (gap H1). Lock held this cycle (owner=claude).",
   "current_phase": "Phase 34: Offline UI Usability Hardening (cont.)",
-  "overall_status": "PHASE33_COMPLETE_NEXT_PHASE34_TASK1_DESIGN_NOTE",
+  "overall_status": "PHASE34_TASK1_COMPLETE_NEXT_TASK2_H1_CONTRACT_GUARD",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -588,9 +588,12 @@
       "status": "in_progress",
       "description": "Standing directive continues: the zero-install offline UI is built and consolidated (Phases 32-33); calculation chain is complete and the UI consumes ONLY model-output JSON. Continue offline-UI usability/robustness hardening. Constraints unchanged: binding Phase 30 stop-rule (NO new copula-structure candidates), pending MR-016/MR-017 owner decision (Phase 31 pack). Design-note-first; ONE gap per cycle; every change ADDITIVE; zero-install invariants gated (0 external refs, 0 network, 0 JS errors). NOTE for next agent: legacy par_projection_gui.html still carries 1 Chart.js CDN <script> and is OUT of the gated offline-UI suite (ui_app/model_result_viewer/combined_model_app) - a candidate G-gap is to inline/vendor that dependency or formally retire the file so the whole repo is CDN-free.",
       "in_progress": [
-        "Task 1: design note (measured baseline re-confirm + prioritised gap list + acceptance criteria) for the next offline-UI usability/robustness increment"
+        "Task 2: gap H1 - self-describing data-contract guard + in-UI schema/integrity panel (ADDITIVE build-time contract_manifest key embedded by build_ui_data.py; load-time validator + neutral degraded-mode banner; display layer recomputes nothing; per acceptance criteria in PHASE34_TASK1_DESIGN_NOTE)"
       ],
-      "next": "Tasks 2..N close the design-note gaps one per cycle (ADDITIVE), then a phase summary + re-audit"
+      "next": "Tasks 3..5 close H2 (global search + deep-links), H3 (full evidence bundle export + print-all), H4 (responsive + high-contrast) one per cycle; Task 6 phase summary + re-audit -> PHASE 34 COMPLETE",
+      "completed": [
+        "Task 1: design note PHASE34_TASK1_DESIGN_NOTE (gate PASS 26 checks incl. live repo cross-checks; 23 unit tests pass) - measured baseline frozen (5 self-tests ok:true 0/0: ui_app 297 / offline_viewer 11 / combined_gui 27 / userrun-fallback 9 / distribution-fallback 9; 0 external refs across 3 HTML artifacts; contract 1.17.0, 17 tabs; governance 90/118/17) + 4 gaps pre-registered with acceptance criteria: H1 self-describing data-contract guard + in-UI integrity/schema panel (ADDITIVE manifest), H2 global cross-tab search + deep-linkable read-outs, H3 one-click full evidence bundle export + print-all pack, H4 responsive/small-screen + high-contrast usability pass. Module par_model_v2/viewer/ui_usability_hardening.py; builder scripts/build_phase34_task1_design_note.py; ChangeRecord 20fc25cecdfd46e3a7d5399908b2734e OWNER_REVIEW (records 90->91, audit 118->119, verify_all True)."
+      ]
     }
   },
   "repository_info": {

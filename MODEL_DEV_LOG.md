@@ -9662,3 +9662,47 @@ scripts/_phase33_task6_selftests.json;
 docs/validation/PHASE33_TASK6_PHASE_SUMMARY_REPORT.{json,md};
 docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-13_p33t6.md. ChangeRecord
 ed05170f1ff1400e9b4ecbb3b945b24b OWNER_REVIEW. Next: Phase 34 Task 1 design note.
+
+## 2026-06-13T23:07Z - Phase 34 Task 1 - offline UI usability hardening design note (PHASE 34 TASK 1 COMPLETE) [Claude Cowork]
+
+**Phase 34 Task 1 COMPLETE (gate PASS 26/26 checks incl. live repo cross-checks; 23/23 unit
+tests pass).** Pure `governance_change`; contract UNCHANGED 1.17.0; no artifact/model change.
+
+Design note `docs/validation/PHASE34_TASK1_DESIGN_NOTE.{json,md}` + card
+`docs/UI_USABILITY_HARDENING_DESIGN_CARD.md` pre-register the "Offline UI Usability Hardening"
+pass per the standing directive (calculation chain complete; the zero-install UI consumes ONLY
+model-output JSON):
+
+(a) Baseline measured + frozen: FIVE offline self-tests green (ui_app 297 / offline_viewer 11
+/ combined_gui 27 / userrun-fallback 9 / distribution-fallback 9), 0 network / 0 JS errors;
+0 external references across the 3 gated HTML artifacts; embedded contract 1.17.0 (22 top-level
+keys); 17 tabs; governance store 90/118/17.
+
+(b) Four gaps in priority order, ONE per cycle — H1 self-describing data-contract guard +
+in-UI schema/integrity panel (ADDITIVE 1.17.0->1.18.0 contract_manifest; load-time validator +
+neutral degraded-mode banner instead of a silent partial render); H2 global cross-tab search +
+deep-linkable read-outs (display layer over already-rendered text; URL-hash deep links; no
+storage APIs); H3 one-click full evidence bundle export + print-all pack (every value
+bit-for-bit from the embedded snapshot; provenance-stamped; decision record BLANK); H4
+responsive / small-screen + high-contrast usability pass (CSS/behaviour only; URL-hash
+persistence; no storage APIs; scheduled last so it also covers H1-H3 surfaces).
+
+(c) Acceptance criteria pre-registered per gap + common criteria (self-tests green 0/0,
+additive-only, zero-install, no model parameter changes, display layer never recomputes).
+
+Module `par_model_v2/viewer/ui_usability_hardening.py`; builder
+`scripts/build_phase34_task1_design_note.py`; tests `tests/test_phase34_task1_design_note.py`
+(23 passed). ChangeRecord `20fc25cecdfd46e3a7d5399908b2734e` (governance_change) OWNER_REVIEW;
+records 90->91; audit 118->119; verify_all True.
+
+Constraints: NO model parameter changes; Phase 30 binding stop-rule stands; MR-016/MR-017 owner
+decision not pre-empted (decision record stays BLANK); governed frozen-t headline
+39,975.654628199336 untouched.
+
+Known item carried forward: legacy par_projection_gui.html (NOT in the gated 3-artifact
+offline-UI suite) still carries 1 Chart.js CDN <script>; the three gated artifacts are CDN-free.
+Tracked as a repo-hygiene cleanup candidate, outside the four prioritised usability gaps.
+
+Artifacts: docs/validation/PHASE34_TASK1_DESIGN_NOTE.{json,md};
+docs/UI_USABILITY_HARDENING_DESIGN_CARD.md;
+docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-13_p34t1.md. Next: Phase 34 Task 2 (gap H1).

@@ -2660,6 +2660,28 @@
       "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
       "digest": "22183015e0ce89b5eff0ce83a760ca9e794294c40970136908fb8f7dd2fa8be4",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "c939b8ec27be4bad9fc1f78506847358",
+      "timestamp": "2026-06-13T23:18:13.902421+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase34Task1UsabilityHardeningDesign",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 34 Task 1 usability-hardening design note",
+      "details": {
+        "record_id": "20fc25cecdfd46e3a7d5399908b2734e",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/viewer/ui_usability_hardening.py",
+          "tests/test_phase34_task1_design_note.py",
+          "scripts/build_phase34_task1_design_note.py",
+          "docs/validation/PHASE34_TASK1_DESIGN_NOTE.{json,md}",
+          "docs/UI_USABILITY_HARDENING_DESIGN_CARD.md"
+        ]
+      },
+      "phase": "Phase 34: Offline UI Usability Hardening",
+      "digest": "6180d4f1f302df7b812246a85729ad65286dbaf502b7b1977a0921bb60bb742d",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -8325,6 +8347,67 @@
         }
       ],
       "phase": "Phase 33: Offline UI Interactive Analytics & Usability"
+    },
+    {
+      "record_id": "20fc25cecdfd46e3a7d5399908b2734e",
+      "created_at": "2026-06-13T23:18:13.902332+00:00",
+      "title": "Phase 34 Task 1 - offline UI usability-hardening design note; baseline audit green (5 self-tests 297/11/27/9/9 checks, 0 network / 0 JS errors, 0 external refs, contract 1.17.0, 17 tabs); 4 gaps pre-registered (H1 contract guard + integrity panel, H2 global search + deep-links, H3 full evidence bundle export, H4 responsive + high-contrast pass)",
+      "description": "Pre-registered the Phase 34 offline-UI usability-hardening pass per the standing scheduled-task directive. (a) Baseline audit measured and frozen: ui_app (297 checks) / offline_viewer (11) / combined_gui (27) / userrun-fallback (9) / distribution-fallback (9) self-tests all ok:true with 0 network calls and 0 JS errors; 0 external references across the three HTML artifacts; embedded contract 1.17.0 (22 top-level keys); 17 tabs; governance store 90/118/17. (b) Four gaps pre-registered in priority order, one per cycle: H1 self-describing data-contract guard + in-UI schema/integrity panel (ADDITIVE build-time manifest; neutral degraded-mode banner instead of a silent partial render); H2 global cross-tab search + deep-linkable read-outs (display layer over already-rendered text; URL-hash deep links; no storage APIs); H3 one-click full evidence bundle export + print-all pack (every value bit-for-bit from the embedded snapshot; provenance-stamped; decision record BLANK); H4 responsive / small-screen + high-contrast usability pass (CSS/behaviour only; URL-hash persistence; no storage APIs). (c) Acceptance criteria pre-registered per gap + common criteria (self-tests green, additive-only, zero-install, no recomputation in display layer). Gate PASS with LIVE repo cross-checks. NO model parameter changes; binding stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/viewer/ui_usability_hardening.py",
+        "tests/test_phase34_task1_design_note.py",
+        "scripts/build_phase34_task1_design_note.py",
+        "docs/validation/PHASE34_TASK1_DESIGN_NOTE.{json,md}",
+        "docs/UI_USABILITY_HARDENING_DESIGN_CARD.md"
+      ],
+      "standard_references": [
+        "IFoA Model Practice Note (MPN) section 4 (documentation and communication)",
+        "SOA ASOP 41 (actuarial communications - clarity for the intended user)",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.6 (model risk, reliance, documentation)",
+        "WCAG 2.1 AA (responsive reflow 1.4.10, contrast 1.4.3/1.4.11, reduced motion 2.3.3 - H4 reference standard)"
+      ],
+      "before_snapshot": {
+        "design_note_exists": false,
+        "ui_contract": "1.17.0",
+        "phase33": "COMPLETE (G1-G4 closed; contract 1.17.0; 17 tabs)"
+      },
+      "after_snapshot": {
+        "design_note_exists": true,
+        "doc_id": "PHASE34_TASK1_DESIGN_NOTE",
+        "doc_version": "1.0.0",
+        "gate_ok": true,
+        "gate_checks": 26,
+        "gaps_preregistered": [
+          "H1",
+          "H2",
+          "H3",
+          "H4"
+        ],
+        "ui_contract": "1.17.0",
+        "ui_contract_bump": false
+      },
+      "impact_assessment": "Governance only. No artifact, contract, or model change this cycle; the note binds Tasks 2-5 to additive-only, zero-install, display-only changes with pre-registered acceptance criteria. The governed frozen-t headline is untouched.",
+      "quantitative_impact": "None (design note). Baseline frozen: contract 1.17.0; 17 tabs; self-test checks 297/11/27/9/9; external refs 0. No governed capital figure changed.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase34Task1UsabilityHardeningDesign",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-13T23:18:13.902378+00:00",
+          "actor": "Phase34Task1UsabilityHardeningDesign",
+          "status": "PEER_REVIEW",
+          "comments": "Design note: gate PASS incl. live repo cross-checks; tests added."
+        },
+        {
+          "timestamp": "2026-06-13T23:18:13.902392+00:00",
+          "actor": "Phase34Task1UsabilityHardeningDesign",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: usability-hardening scope and gap priority (H1 contract guard first). No model or contract change until Task 2."
+        }
+      ],
+      "phase": "Phase 34: Offline UI Usability Hardening"
     }
   ],
   "risk_register": [
