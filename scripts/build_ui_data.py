@@ -2980,6 +2980,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .tbtn:hover{border-color:var(--accent);color:var(--accent)}
   .tab,.segbtn{font-family:inherit}
   .tab:focus-visible,.tbtn:focus-visible,.segbtn:focus-visible,.rrow:focus-visible,.crow:focus-visible,.panel:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .signoffcover{display:none}
   @media print{
     :root{--bg:#fff;--panel:#fff;--panel2:#fff;--ink:#111;--muted:#444;--line:#bbb;--chip:#eee;--accent:#15489c}
     body{background:#fff;color:#111}
@@ -2991,6 +2992,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     svg.chart text{fill:#111} svg.chart text.val{fill:#000}
     .card,.gate,.chartwrap{border-color:#bbb}
     a{color:#111}
+    .signoffcover{display:block !important;page-break-after:always;margin:0 0 18px}
+    .signoffcover h2{font-size:20px;margin:0 0 6px;color:#111;border-bottom:2px solid #111;padding-bottom:4px}
+    .signoffcover .sigmeta{font-size:12.5px;color:#222;margin:2px 0}
+    .signoffcover .signeutral{margin:10px 0;padding:8px;border:1px solid #888;font-size:12px;color:#111}
+    .signoffcover .sigrow{display:flex;gap:24px;margin-top:14px}
+    .signoffcover .sigbox{flex:1;border-top:1px solid #111;padding-top:4px;font-size:12px;color:#111}
   }
 </style>
 </head>
@@ -3003,10 +3010,13 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     <button type="button" class="tbtn" id="btnCsvInv">CSV: Inventory</button>
     <button type="button" class="tbtn" id="btnCsvRisk">CSV: Risk register</button>
     <button type="button" class="tbtn" id="btnCsvChg">CSV: Change records</button>
+    <button type="button" class="tbtn" id="btnCsvGates" title="Export the deployment-gates table as CSV">CSV: Deployment gates</button>
+    <button type="button" class="tbtn" id="btnCsvSignoff" title="Export the full owner sign-off pack (all governed read-out tables) as CSV">CSV: Owner sign-off pack</button>
     <button type="button" class="tbtn" id="btnPrint" title="Open the browser print dialog (Save as PDF)">Print / Save PDF</button>
   </div>
 </div></header>
 <div class="wrap">
+  <div id="signoffcover" class="signoffcover" aria-hidden="true"></div>
   <div class="tabs" id="tabs"></div>
   <div id="overview" class="panel" data-title="Overview"></div>
   <div id="inventory" class="panel" data-title="Inventory &amp; Contract"></div>
@@ -5030,7 +5040,73 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var cr=(gg.change_records||[]).concat(gg.change_records_supplement||[]);
     return rowsToCSV(["record_id","title","status","change_type","phase","author","peer_reviewer","created_at","standard_references","signoff_steps"],
       cr.map(function(c){ return [c.record_id,c.title,c.status,c.change_type,c.phase,c.author,c.peer_reviewer,c.created_at,(c.standard_references||[]).join("; "),(c.sign_off_history||[]).length]; })); }
-  window.__uiExport={ inventoryCSV:buildInventoryCSV, riskCSV:buildRiskCSV, changesCSV:buildChangesCSV };
+  // ---- Phase 33 Task 4 (gap G3): CSV export coverage for every governed
+  // owner-decision / governance read-out table. Each builder reads the SAME
+  // embedded snapshot keys the on-screen tables render, so exported values are
+  // bit-for-bit equal to the rendered figures. NOTHING is recomputed; the
+  // decision record stays BLANK and options stay in registry order (neutral).
+  function buildDeploymentGatesCSV(){ var g=(DATA&&DATA.governance)||{}; var gates=g.deployment_gates||[];
+    return rowsToCSV(["gate_id","description","status","level","blocking","cleared"],
+      gates.map(function(x){ return [x.gate_id,x.description,x.status,x.level,x.blocking,x.cleared]; })); }
+  function buildOwnerOptionsCSV(){ var od=(DATA&&DATA.owner_decision_p31)||{}; var opts=od.owner_options||{}; var order=od.owner_option_order||[];
+    return rowsToCSV(["order","option_id","is_escalation_path","what","capital_effect_abs","escalation_path_open","governance_risk","acceptance_criteria"],
+      order.map(function(oid,i){ var o=opts[oid]||{}; return [i+1,oid,(oid===od.escalation_option_id),o.what,o.capital_effect_abs,o.escalation_path_open,o.governance_risk,(o.acceptance_criteria||[]).join(" | ")]; })); }
+  function buildEvidenceCSV(){ var ev=((DATA&&DATA.owner_decision_p31)||{}).evidence_pack||{};
+    var gh=ev.governed_headline||{}, dc=ev.disclosed_candidates||{}, v2=dc.vine2||{}, t3=dc.tree3||{}, nr=ev.nested_reference||{};
+    function ci(a){ return (a&&a.length===2)?(a[0]+" .. "+a[1]):""; }
+    var rows=[
+      ["governed_headline_frozen_single_df_t", gh.value, "", String(gh.status||"")],
+      ["vine2_point_P29", v2.component_scr_point, "", ""],
+      ["vine2_bootstrap_mean_P29", v2.bootstrap_mean, ci(v2.bootstrap_ci95), ""],
+      ["tree3_point_P30", t3.component_scr_point, "", ""],
+      ["tree3_bootstrap_mean_P30", t3.bootstrap_mean, ci(t3.bootstrap_ci95), ""],
+      ["nested_pathwise_reference_single_run", nr.value, "", "inside vine2 CI="+(nr.inside_vine2_ci95?"yes":"no")+"; inside tree3 CI="+(nr.inside_tree3_ci95?"yes":"no")]
+    ];
+    return rowsToCSV(["read_out","value","ci95","note"], rows); }
+  function buildResidualLadderCSV(){ var ev=((DATA&&DATA.owner_decision_p31)||{}).evidence_pack||{}; var rl=ev.residual_ladder||[];
+    return rowsToCSV(["dependence_form","copula_form_residual_abs"], rl.map(function(r){ return [r.form,r.copula_form_residual_abs]; })); }
+  function buildEscalationHistoryCSV(){ var ev=((DATA&&DATA.owner_decision_p31)||{}).evidence_pack||{}; var h=ev.escalation_history||[];
+    return rowsToCSV(["phase","form","copula_form_residual_abs","outcome"], h.map(function(x){ return [x.phase,x.form,x.copula_form_residual_abs,x.outcome]; })); }
+  function buildStopRuleCSV(){ var ev=((DATA&&DATA.owner_decision_p31)||{}).evidence_pack||{}; var sr=(ev.risk_register_status||{}).stop_rule_record||{};
+    var rows=[["trigger",sr.trigger],["trigger_met",sr.trigger_met],["applied",sr.applied],["effect",sr.effect],["mr016_disposition",sr.mr016_disposition],["mr017_disposition",sr.mr017_disposition],["governed_headline_move_pct",sr.governed_headline_move_pct]];
+    return rowsToCSV(["field","value"], rows); }
+  function buildSignoffWorkflowCSV(){ var wf=((DATA&&DATA.owner_decision_p31)||{}).signoff_workflow||[];
+    return rowsToCSV(["step","actor","action","standards"], wf.map(function(sw){ return [sw.step,sw.actor,sw.action,(sw.standards||[]).join("; ")]; })); }
+  function buildDecisionRecordCSV(){ var drt=((DATA&&DATA.owner_decision_p31)||{}).decision_record_template||{};
+    return rowsToCSV(["field","value"], ["decision_option_id","rationale","decided_by","decided_at","peer_reviewer","follow_up_change_record_id"].map(function(fld){ var v=drt[fld]; return [fld, (String(v==null?"":v).trim()? v : "BLANK - awaiting owner decision")]; })); }
+  function buildComparatorCSV(){ var rows=(typeof cmpRegistry==="function")?cmpRegistry():[];
+    return rowsToCSV(["id","label","phase","governed","component_scr_point","ci95_low","ci95_high","src_point","src_ci"],
+      rows.map(function(r){ var c=r.ci||[]; return [r.id,r.label,r.phase,!!r.governed,r.point,(c[0]==null?"":c[0]),(c[1]==null?"":c[1]),r.srcPoint,r.srcCi]; })); }
+  function buildDistGridCSV(){ var dx=(DATA&&DATA.distribution_explorer)||{}; var cg=dx.cdf_grid||{}; var x=cg.x||[], p=cg.p||[];
+    return rowsToCSV(["grid_index","loss","cdf"], x.map(function(xv,i){ return [i,xv,p[i]]; })); }
+  function buildSignoffPackCSV(){ var nl="\r\n";
+    return [
+      "# OWNER SIGN-OFF PACK -- governed read-outs (bit-for-bit from the embedded snapshot)",
+      "# Options are in registry order with NO default; nothing is recommended.",
+      "# The decision record is BLANK until the model owner decides (MR-016 / MR-017).",
+      "",
+      "## Evidence pack -- component SCR read-outs",
+      buildEvidenceCSV(), "",
+      "## Owner options (registry order)",
+      buildOwnerOptionsCSV(), "",
+      "## Copula-form residual ladder",
+      buildResidualLadderCSV(), "",
+      "## Dependence-form escalation history",
+      buildEscalationHistoryCSV(), "",
+      "## Binding stop-rule record",
+      buildStopRuleCSV(), "",
+      "## Sign-off workflow",
+      buildSignoffWorkflowCSV(), "",
+      "## Decision record (BLANK until the owner decides)",
+      buildDecisionRecordCSV(), "",
+      "## Deployment gates",
+      buildDeploymentGatesCSV()
+    ].join(nl); }
+  window.__uiExport={ inventoryCSV:buildInventoryCSV, riskCSV:buildRiskCSV, changesCSV:buildChangesCSV,
+    deploymentGatesCSV:buildDeploymentGatesCSV, ownerOptionsCSV:buildOwnerOptionsCSV, evidenceCSV:buildEvidenceCSV,
+    residualLadderCSV:buildResidualLadderCSV, escalationHistoryCSV:buildEscalationHistoryCSV, stopRuleCSV:buildStopRuleCSV,
+    signoffWorkflowCSV:buildSignoffWorkflowCSV, decisionRecordCSV:buildDecisionRecordCSV, comparatorCSV:buildComparatorCSV,
+    distGridCSV:buildDistGridCSV, signoffPackCSV:buildSignoffPackCSV };
   function isVisible(el){ return !!(el&&(el.offsetWidth||el.offsetHeight||(el.getClientRects&&el.getClientRects().length))); }
   function dataURLtoBlob(du){ var p=du.split(","),b=atob(p[1]),n=b.length,u=new Uint8Array(n); while(n--) u[n]=b.charCodeAt(n); return new Blob([u],{type:"image/png"}); }
   function svgToPng(svg,filename){
@@ -5070,6 +5146,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       ["btnCsvInv",function(){ downloadText("inventory.csv",buildInventoryCSV(),"text/csv"); }],
       ["btnCsvRisk",function(){ downloadText("risk_register.csv",buildRiskCSV(),"text/csv"); }],
       ["btnCsvChg",function(){ downloadText("change_records.csv",buildChangesCSV(),"text/csv"); }],
+      ["btnCsvGates",function(){ downloadText("deployment_gates.csv",buildDeploymentGatesCSV(),"text/csv"); }],
+      ["btnCsvSignoff",function(){ downloadText("owner_signoff_pack.csv",buildSignoffPackCSV(),"text/csv"); }],
       ["btnPrint",function(){ try{ window.print(); }catch(e){} }]
     ];
     map.forEach(function(m){ var b=document.getElementById(m[0]); if(b) b.onclick=m[1]; });
@@ -5334,9 +5412,36 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     wireTips(el);
   }
 
+  // ---- Phase 33 Task 4 (gap G3): print-only owner sign-off cover. Screen-hidden
+  // (.signoffcover{display:none}); shown only in @media print. Figures are read
+  // bit-for-bit from the embedded snapshot; the decision stays NEUTRAL/BLANK. ----
+  function renderSignoffCover(){
+    var el=document.getElementById("signoffcover"); if(!el) return;
+    if(!DATA){ el.innerHTML=""; return; }
+    var m=DATA.meta||{};
+    var ev=((DATA.owner_decision_p31)||{}).evidence_pack||{};
+    var gh=ev.governed_headline||{};
+    var gen=String(m.generated_utc||"").slice(0,19);
+    el.innerHTML=''
+      +'<h2>Owner sign-off pack &mdash; '+esc(m.model_name||"Actuarial Stochastic Model")+'</h2>'
+      +'<div class="sigmeta">Model version: '+esc(m.model_version||"--")+' &middot; Contract v'+esc(DATA.contract_version||"?")+' &middot; Generated '+esc(gen)+'Z</div>'
+      +'<div class="sigmeta">Classification: '+esc(m.classification||"--")+'</div>'
+      +'<div class="sigmeta">Governed component SCR headline (frozen single-df t): <b>'+fmtMoney(gh.value)+'</b>'+(gh.status?(' &middot; '+esc(gh.status)):'')+'</div>'
+      +'<div class="signeutral">This pack is presented for owner review only. Dependence-structure options appear in registry order with NO default and NO recommendation; the MR-016 / MR-017 decision rests entirely with the model owner. The decision record in this pack is intentionally BLANK until the owner decides.</div>'
+      +'<div class="sigrow">'
+      +'<div class="sigbox">Owner decision (option id): _______________________</div>'
+      +'<div class="sigbox">Signature: _______________________</div>'
+      +'<div class="sigbox">Date: ________________</div>'
+      +'</div>'
+      +'<div class="sigrow">'
+      +'<div class="sigbox">Peer reviewer: _______________________</div>'
+      +'<div class="sigbox">Signature: _______________________</div>'
+      +'<div class="sigbox">Date: ________________</div>'
+      +'</div>';
+  }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderDistExplorer(); renderOwnerDecision(); renderUserRun(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderDistExplorer(); renderOwnerDecision(); renderUserRun(); renderGovernance(); renderSignoffCover(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

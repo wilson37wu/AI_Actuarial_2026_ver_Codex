@@ -306,6 +306,50 @@ setTimeout(() => {
   const dxArchP = (dxData || {}).archived_percentiles || [];
   const dxProv = (dxData || {}).provenance || {};
 
+  // Phase 33 Task 4 (gap G3): printable owner sign-off pack + complete CSV
+  // export coverage for governed read-out tables. Parse the embedded snapshot
+  // owner-decision + governance keys and assert the CSV builders reproduce them
+  // bit-for-bit, plus the print-only sign-off cover is present and neutral.
+  let g3od = {}, g3gov = {}, g3dx = {};
+  try {
+    const rawG3 = (document.getElementById("ui-data").textContent || "")
+      .replace("/*__UI_DATA__*/", "").trim();
+    const pj = JSON.parse(rawG3) || {};
+    g3od = pj.owner_decision_p31 || {};
+    g3gov = pj.governance || {};
+    g3dx = pj.distribution_explorer || {};
+  } catch (e) { /* leave empty; checks fail loudly */ }
+  const uxG3 = dom.window.__uiExport || {};
+  const call = (fn) => (typeof uxG3[fn] === "function" ? uxG3[fn]() : "");
+  const rowsOf = (csv) => (csv ? csv.split("\r\n") : []);
+  const gatesCSV = call("deploymentGatesCSV");
+  const optsCSV = call("ownerOptionsCSV");
+  const evidCSV = call("evidenceCSV");
+  const ladderCSV = call("residualLadderCSV");
+  const histCSV = call("escalationHistoryCSV");
+  const stopCSV = call("stopRuleCSV");
+  const wfCSV = call("signoffWorkflowCSV");
+  const drCSV = call("decisionRecordCSV");
+  const cmpCSV = call("comparatorCSV");
+  const distCSV = call("distGridCSV");
+  const packCSV = call("signoffPackCSV");
+  const g3gates = g3gov.deployment_gates || [];
+  const g3order = g3od.owner_option_order || [];
+  const g3drt = g3od.decision_record_template || {};
+  const optsRows = rowsOf(optsCSV);
+  const drRows = rowsOf(drCSV);
+  const gatesRows = rowsOf(gatesCSV);
+  // first data row of options CSV: order=1, option_id=first registry id
+  const optsFirstId = optsRows.length > 1 ? optsRows[1].split(",")[1] : "";
+  // decision record CSV: every field BLANK preserved (none pre-filled in template)
+  const drBlankAll = drRows.slice(1).every(r => /BLANK - awaiting owner decision/.test(r));
+  const drFieldCount = drRows.length - 1;
+  const signoffCoverEl = document.getElementById("signoffcover");
+  const signoffCoverText = (signoffCoverEl && signoffCoverEl.textContent) || "";
+  const printCoverCssPresent = /\.signoffcover\{display:block !important/.test(html)
+    && /\.signoffcover\{display:none\}/.test(html);
+  const dxCdfXn = ((g3dx.cdf_grid || {}).x || []).length;
+
   const checks = {
     dxTabPresent: !!dxTab,
     dxTabTextPresent: /Distribution Explorer \(P33\)/.test(bodyText),
@@ -332,6 +376,24 @@ setTimeout(() => {
     dxInterpolationLabelled: /display interpolation/.test(dxText0) && /NOT new model output/.test(dxText0),
     dxArchivedBitForBitStated: /carried bit-for-bit/.test(dxText0),
     dxNoFallbackInFullPayload: !/grids are not embedded in this snapshot/.test(dxText0),
+    // Phase 33 Task 4 (gap G3): sign-off pack + CSV export coverage
+    g3SignoffCoverPresent: !!signoffCoverEl,
+    g3SignoffCoverNeutralBlank: /Owner sign-off pack/.test(signoffCoverText) && /intentionally BLANK/.test(signoffCoverText) && /NO default and NO recommendation/.test(signoffCoverText),
+    g3SignoffCoverHeadline: /39,976/.test(signoffCoverText) && /frozen single-df t/.test(signoffCoverText),
+    g3PrintCoverCssPresent: printCoverCssPresent,
+    g3ExportButtonsPresent: !!document.getElementById('btnCsvGates') && !!document.getElementById('btnCsvSignoff'),
+    g3GatesCsvComplete: gatesRows.length === g3gates.length + 1 && /(^|,)gate_id(,|$)/.test(gatesRows[0] || ''),
+    g3GatesCsvBitForBit: g3gates.length > 0 && gatesRows[1].split(',')[0] === String(g3gates[0].gate_id),
+    g3OwnerOptionsCsvOrder: optsRows.length === g3order.length + 1 && optsFirstId === String(g3order[0] || '') && optsFirstId === 'O1_adopt_disclosed_vine_readout',
+    g3EvidenceCsvHeadlineKey: /39975\.654628199336|39,?975/.test(evidCSV) && rowsOf(evidCSV).length === 7,
+    g3ResidualLadderCsv: rowsOf(ladderCSV).length >= 2,
+    g3EscalationHistoryCsv: rowsOf(histCSV).length >= 2,
+    g3StopRuleCsv: /(^|,)trigger(,|$)/.test((rowsOf(stopCSV)[1] || '')) || rowsOf(stopCSV).length >= 2,
+    g3SignoffWorkflowCsv: rowsOf(wfCSV).length >= 2,
+    g3DecisionRecordBlankPreserved: drFieldCount === 6 && drBlankAll,
+    g3ComparatorCsvComplete: rowsOf(cmpCSV).length === 7 && /39975\.654628199336/.test(cmpCSV),
+    g3DistGridCsvComplete: rowsOf(distCSV).length === dxCdfXn + 1 && dxCdfXn === 41,
+    g3SignoffPackComplete: /OWNER SIGN-OFF PACK/.test(packCSV) && /## Owner options/.test(packCSV) && /## Decision record/.test(packCSV) && /## Deployment gates/.test(packCSV) && /BLANK - awaiting owner decision/.test(packCSV),
     cmpTabPresent: !!cmpTab,
     cmpTabTextPresent: /SCR Comparator \(P33\)/.test(bodyText),
     cmpRegistryOrder: cmpIds0.join(",") === "frozen_t,grouped_t,skew_t,vine2,tree3,nested",
@@ -799,6 +861,23 @@ setTimeout(() => {
     checks.dxInterpolationLabelled &&
     checks.dxArchivedBitForBitStated &&
     checks.dxNoFallbackInFullPayload &&
+    checks.g3SignoffCoverPresent &&
+    checks.g3SignoffCoverNeutralBlank &&
+    checks.g3SignoffCoverHeadline &&
+    checks.g3PrintCoverCssPresent &&
+    checks.g3ExportButtonsPresent &&
+    checks.g3GatesCsvComplete &&
+    checks.g3GatesCsvBitForBit &&
+    checks.g3OwnerOptionsCsvOrder &&
+    checks.g3EvidenceCsvHeadlineKey &&
+    checks.g3ResidualLadderCsv &&
+    checks.g3EscalationHistoryCsv &&
+    checks.g3StopRuleCsv &&
+    checks.g3SignoffWorkflowCsv &&
+    checks.g3DecisionRecordBlankPreserved &&
+    checks.g3ComparatorCsvComplete &&
+    checks.g3DistGridCsvComplete &&
+    checks.g3SignoffPackComplete &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

@@ -2591,6 +2591,30 @@
       "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
       "digest": "78f0fbce2c1de876fa809fba26ebfc7cd8b1abff05f08b91c4a149e2a2527448",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "3eed310217b542a19d8031cc8a594f0f",
+      "timestamp": "2026-06-13T20:35:07.104231+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "AutomatedModelDev_Phase33",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 33 Task 4 printable owner sign-off pack + complete CSV export coverage (gap G3); contract UNCHANGED 1.17.0 (presentation-only); governed figures bit-identical",
+      "details": {
+        "record_id": "d7932f58d9794b09b40121ae9ae4ee1c",
+        "ui_contract": "1.17.0 (unchanged)",
+        "csv_builders": 11,
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_app.html",
+          "ui_data.json"
+        ]
+      },
+      "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
+      "digest": "ff93dbef4393eadbfb18ca4f46ff489413b56381cd1399343249823351f928e4",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -8099,6 +8123,57 @@
           "actor": "AutomatedModelDev_Phase33",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Gap G2 of the Phase 33 design note is closed: the archived loss distribution is now explorable interactively offline over precomputed, provenance-stamped grids. Nothing is recomputed in the browser; the governed read-outs are unchanged. The MR-016/MR-017 dependence decision remains PENDING and entirely with the model owner."
+        }
+      ],
+      "phase": "Phase 33: Offline UI Interactive Analytics & Usability"
+    },
+    {
+      "record_id": "d7932f58d9794b09b40121ae9ae4ee1c",
+      "created_at": "2026-06-13T20:35:07.102821+00:00",
+      "title": "Phase 33 Task 4 - printable owner sign-off / report pack + complete CSV export coverage (gap G3) in the zero-install offline UI",
+      "description": "Phase 33 Task 4 closed gap G3 of the Phase 33 Task 1 design note: the zero-install offline UI now produces a printable owner sign-off / report pack and carries CSV export coverage for EVERY governed read-out table. A print-only sign-off cover (screen-hidden; shown only in @media print) states the model name/version/contract, the generated build stamp and the governed component-SCR headline, plus neutral owner/peer-reviewer signature lines; the existing print CSS renders the Owner Decision and Governance surfaces to a sign-off-ready pack. The printed pack stays NEUTRAL - options in registry order with NO default and the decision record BLANK until the owner decides. New CSV builders cover deployment gates, owner options (registry order), the component-SCR evidence read-outs, the copula-form residual ladder, the dependence-form escalation history, the binding stop-rule record, the sign-off workflow, the BLANK decision record, the SCR comparator and the distribution grid, plus a consolidated owner sign-off-pack CSV; every value is read from the SAME embedded snapshot keys the on-screen tables render (bit-for-bit, nothing recomputed). PRESENTATION-ONLY: the ui_data contract is UNCHANGED at 1.17.0 with NO new top-level key; distribution_explorer and the governed model figures are bit-identical; the only ui_data churn is the existing per-cycle governance store-sync + inventory/build-stamp refresh. 17 new self-test checks (ui_app suite 283 checks ok:true, 0 network / 0 JS errors). Zero-install preserved (0 external references, single HTML file). NO model parameter changes.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_app.html",
+        "ui_data.json"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (communication of actuarial findings)",
+        "SOA ASOP 56 s3.5 (model output validation & presentation)",
+        "IA TAS M s3.6 (reproducibility and disclosure of model results)",
+        "IFoA Modelling Practice Note s4 (documentation & independent review)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.17.0 (browsable owner pack; partial CSV coverage; no print sign-off cover)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.17.0 (UNCHANGED; presentation-only G3)",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 283,
+        "csv_builders": 11
+      },
+      "impact_assessment": "Additive display-layer feature: print-only sign-off cover and CSV export builders read figures already embedded in the snapshot; the browser recomputes nothing. The ui_data contract is unchanged (1.17.0, no new key) and the governed model figures are bit-identical, so no consumer breaks and the MR-016/MR-017 decision is not preempted (decision record stays BLANK; options in registry order). No model output or parameter changes.",
+      "quantitative_impact": "Presentation-only G3: contract UNCHANGED 1.17.0 (no new top-level key; distribution_explorer + governed headline bit-identical). 11 governed read-out CSV builders + consolidated sign-off-pack CSV; print-only sign-off cover with neutral BLANK decision and signature lines; single file 616602 bytes, 0 external refs. jsdom ui_app self-test ok with 0 network / 0 JS errors over 283 checks (17 new G3 checks); distribution + user-run fallback, offline viewer, combined GUI all ok.",
+      "status": "OWNER_REVIEW",
+      "author": "AutomatedModelDev_Phase33",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-13T20:35:07.104142+00:00",
+          "actor": "AutomatedModelDev_Phase33",
+          "status": "PEER_REVIEW",
+          "comments": "Verified by the contract/surface checks (contract UNCHANGED 1.17.0; no new top-level ui_data key; distribution_explorer and governed model figures bit-identical; only governance store-sync + inventory/build-stamp churn; embedded snapshot equals ui_data.json; print-only sign-off cover + print CSS present; decision record BLANK; every required CSV builder present; export buttons present; 0 external refs) + jsdom self-tests (ui_app 283 checks incl. 17 new G3 checks, distribution + user-run fallback, offline viewer, combined GUI - all ok:true, 0 network / 0 JS errors); display layer recomputes nothing; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-13T20:35:07.104166+00:00",
+          "actor": "AutomatedModelDev_Phase33",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap G3 of the Phase 33 design note is closed: the offline UI now prints a neutral owner sign-off pack and exports every governed read-out table to CSV (bit-for-bit from the embedded snapshot). The decision record stays BLANK and options stay in registry order; the MR-016/MR-017 dependence decision remains PENDING and entirely with the model owner."
         }
       ],
       "phase": "Phase 33: Offline UI Interactive Analytics & Usability"

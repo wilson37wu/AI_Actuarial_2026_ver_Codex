@@ -9607,3 +9607,18 @@ Pass 3 (same session, owner-approved): 11 redundant root docs deleted (GITHUB_PU
 - ChangeRecord `b01e374511f7480fa3a24f5d239f2d17` (code_change) **OWNER_REVIEW**; records **87**; audit **115**; verify_all **True**. NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 owner decision NOT pre-empted.
 
 **NEXT (single in_progress): Phase 33 Task 4 = gap G3 — printable owner sign-off / report pack** (print CSS + report view assembled ONLY from embedded snapshot figures; owner decision section stays NEUTRAL-BLANK; ADDITIVE only; pre-registered criteria in PHASE33_TASK1_DESIGN_NOTE.md G3).
+
+---
+
+## 2026-06-13T20:36:30Z — Phase 33 Task 4 (gap G3): printable owner sign-off pack + complete CSV export coverage — PASS
+
+**Agent:** Claude Cowork (06:00/18:00 UTC window). **Lock:** acquired/released cleanly (cycle 2026-06-13T20:10Z-26ab).
+
+Closed gap G3 of the Phase 33 Task 1 design note. PRESENTATION-ONLY change to `scripts/build_ui_data.py`: contract **1.17.0 UNCHANGED**, no new top-level ui_data key, `distribution_explorer` and governed model figures bit-identical (governed headline 39,975.654628199336). Only ui_data churn = existing per-cycle governance store-sync + inventory/build-stamp refresh; embedded snapshot == ui_data.json.
+
+- **Print-only sign-off cover** (`#signoffcover`, screen-hidden, `@media print` only): model name/version/contract + build stamp + governed component-SCR headline + NEUTRAL owner/peer signature lines. Owner Decision + Governance surfaces print to a sign-off-ready pack; decision record BLANK; options in registry order (decision not preempted).
+- **CSV export coverage** for every governed read-out table (deployment gates, owner options, evidence read-outs, residual ladder, escalation history, stop-rule record, sign-off workflow, BLANK decision record, SCR comparator, distribution grid) + consolidated owner sign-off-pack CSV; bit-for-bit from the embedded snapshot; new toolbar buttons (CSV: Deployment gates / Owner sign-off pack); `window.__uiExport` expanded with 11 builders.
+- **Self-tests:** ui_app 283 ok 0net/0err (17 new G3 checks); distribution fallback 9 ok; user-run fallback 9 ok; offline viewer 11 ok; combined GUI 27 ok; 0 external references.
+- **Governance:** ChangeRecord `d7932f58d9794b09b40121ae9ae4ee1c` (code_change, OWNER_REVIEW); change_records 88; audit_entries 116; verify_all True.
+- **Artifacts:** scripts/build_ui_data.py, scripts/ui_app_self_test.cjs, ui_app.html, ui_data.json, scripts/build_phase33_task4_signoff_pack.py, docs/validation/PHASE33_TASK4_SIGNOFF_PACK_REPORT.{json,md}, docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-13_p33t4.md.
+- **Next:** Phase 33 Task 5 = gap G4 (accessibility & usability pass).

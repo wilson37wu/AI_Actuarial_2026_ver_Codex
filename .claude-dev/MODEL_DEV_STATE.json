@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-12T20:25:04Z",
-  "last_run_duration_minutes": 25,
-  "last_run_note": "Phase 33 Task 3 (gap G2) complete: Distribution Explorer tab over precomputed grids; contract 1.17.0 additive; all self-tests green; ChangeRecord OWNER_REVIEW.",
+  "last_run": "2026-06-13T20:35:47Z",
+  "last_run_duration_minutes": 30,
+  "last_run_note": "Phase 33 Task 4 (gap G3) complete: printable owner sign-off pack + complete CSV export coverage; PRESENTATION-ONLY (contract 1.17.0 UNCHANGED, no new key, governed figures bit-identical); all self-tests green; ChangeRecord d7932f58 OWNER_REVIEW. Next: Task 5 gap G4 accessibility.",
   "current_phase": "Phase 33: Offline UI Interactive Analytics & Usability",
-  "overall_status": "PHASE32_COMPLETE_NEXT_PHASE33_TASK1_DESIGN_NOTE",
+  "overall_status": "PHASE33_TASK4_COMPLETE_NEXT_TASK5_G4_ACCESSIBILITY",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -577,12 +577,13 @@
       "completed": [
         "Task 1: design note PHASE33_TASK1_DESIGN_NOTE (gate PASS 23 checks) - measured baseline frozen (self-tests 232/11/27/9 ok:true 0/0, 0 external refs, contract 1.16.0, 15 tabs, governance 84/112/17) + 4 gaps pre-registered with acceptance criteria: G1 interactive cross-phase SCR comparator, G2 embedded-distribution drill-down (precomputed grids), G3 printable owner sign-off/report pack, G4 accessibility & usability pass",
         "Task 2: gap G1 CLOSED - interactive cross-phase SCR comparator tab 'SCR Comparator (P33)' (gate PASS; display layer ONLY; contract 1.16.0 UNCHANGED - ui_data.json + embedded snapshot byte-identical to previous commit; governed frozen-t headline 39,975.654628199336 default baseline, never re-labelled; registry order frozen-t/grouped-t/skew-t/vine2/tree3/nested; signed deltas labelled display arithmetic; CI overlay chart; provenance keys disclosed; ui_app self-test 248 checks ok:true 0/0 (16 new comparator checks); viewer/combined/userrun green; 0 external refs; ChangeRecord a87fd9f8aaaa47b1bd9b57f82c5f380b OWNER_REVIEW)",
-        "Task 3: gap G2 CLOSED - embedded-distribution drill-down 'Distribution Explorer (P33)' tab (gate PASS 26 substantive checks; contract 1.16.0 -> 1.17.0 ADDITIVE: new distribution_explorer key ONLY - grids PRECOMPUTED at build time by build_ui_data.py from archived docs/validation/PHASE16_LOSS_DISTRIBUTION.json (sha256-pinned provenance); 41-point empirical CDF grid + 13-point build-time quantile grid reproduced EXACTLY by independent recomputation; archived percentiles/sweep/histogram/headline carried bit-for-bit; 4 per-seed CDF overlays; hover/slider/tail-zoom display layer recomputes nothing beyond labelled display interpolation; neutral fallback for pre-1.17.0 payloads via NEW dedicated jsdom test scripts/ui_app_distribution_fallback_test.cjs; ui_app self-test 266 checks ok:true 0/0 (18 new); pre-existing inventory entries bit-identical; governance delta = existing P32T4 store-sync sweep refresh only; ChangeRecord b01e374511f7480fa3a24f5d239f2d17 OWNER_REVIEW)"
+        "Task 3: gap G2 CLOSED - embedded-distribution drill-down 'Distribution Explorer (P33)' tab (gate PASS 26 substantive checks; contract 1.16.0 -> 1.17.0 ADDITIVE: new distribution_explorer key ONLY - grids PRECOMPUTED at build time by build_ui_data.py from archived docs/validation/PHASE16_LOSS_DISTRIBUTION.json (sha256-pinned provenance); 41-point empirical CDF grid + 13-point build-time quantile grid reproduced EXACTLY by independent recomputation; archived percentiles/sweep/histogram/headline carried bit-for-bit; 4 per-seed CDF overlays; hover/slider/tail-zoom display layer recomputes nothing beyond labelled display interpolation; neutral fallback for pre-1.17.0 payloads via NEW dedicated jsdom test scripts/ui_app_distribution_fallback_test.cjs; ui_app self-test 266 checks ok:true 0/0 (18 new); pre-existing inventory entries bit-identical; governance delta = existing P32T4 store-sync sweep refresh only; ChangeRecord b01e374511f7480fa3a24f5d239f2d17 OWNER_REVIEW)",
+        "Task 4: gap G3 CLOSED - printable owner sign-off / report pack + complete CSV export coverage (gate PASS; PRESENTATION-ONLY so contract 1.17.0 UNCHANGED - NO new top-level ui_data key, distribution_explorer + governed headline 39,975.654628199336 bit-identical, only per-cycle governance store-sync + inventory/build-stamp churn; embedded snapshot == ui_data.json). Print-only sign-off cover (screen-hidden; @media print only) with model/version/contract/build-stamp + governed headline + NEUTRAL BLANK owner/peer signature lines; Owner Decision + Governance surfaces print to a sign-off-ready pack with decision record BLANK and options in registry order (decision NOT preempted). CSV export coverage for EVERY governed read-out table (deployment gates, owner options, evidence read-outs, residual ladder, escalation history, stop-rule record, sign-off workflow, BLANK decision record, SCR comparator, distribution grid) + consolidated owner sign-off-pack CSV; values bit-for-bit from the embedded snapshot. ui_app self-test 283 checks ok:true 0/0 (17 new G3 checks); distribution/user-run fallback, offline viewer, combined GUI all green; 0 external refs. ChangeRecord d7932f58d9794b09b40121ae9ae4ee1c OWNER_REVIEW)"
       ],
       "in_progress": [
-        "Task 4: gap G3 - printable owner sign-off / report pack (per PHASE33_TASK1_DESIGN_NOTE G3 pre-registered acceptance criteria: print-stylesheet/report view assembled ONLY from embedded snapshot figures; owner decision section stays NEUTRAL-BLANK (decision not preempted); zero-install invariants gated; ADDITIVE only; new self-test checks; suite ok:true 0/0)."
+        "Task 5: gap G4 - accessibility & usability pass (per PHASE33_TASK1_DESIGN_NOTE G4 pre-registered acceptance criteria: keyboard navigation arrow/home/end + enter/space on the tab strip with ARIA tablist/tab/tabpanel roles and aria-selected; selected tab survives reload via URL hash only (NO localStorage/sessionStorage; file:// safe); table captions / focus-visible; no regression in rendered figures; new self-test checks; suite ok:true 0/0; ADDITIVE-only; zero-install invariants gated). Scheduled last so the pass also covers G1-G3 surfaces."
       ],
-      "next": "Task 4 = G3 (printable sign-off pack), Task 5 = G4 (accessibility), Task 6 = phase summary + final re-audit (PHASE 33 COMPLETE)"
+      "next": "Task 5 = G4 (accessibility), Task 6 = phase summary + final consolidated re-audit (PHASE 33 COMPLETE)"
     }
   },
   "repository_info": {
@@ -902,7 +903,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-12T20:25:04Z",
+  "last_updated": "2026-06-13T20:35:47Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -1393,5 +1394,34 @@
       "verify_all": true
     },
     "next_task": "Phase 33 Task 4 (gap G3): printable owner sign-off / report pack"
+  },
+  "cycle_2026_06_13_phase33_task4": {
+    "completed_at": "2026-06-13T20:35:47Z",
+    "agent": "claude",
+    "task": "Phase 33 Task 4 - printable owner sign-off pack + complete CSV export coverage (gap G3)",
+    "verdict": "PASS",
+    "gap_closed": "G3",
+    "contract": "1.17.0 (UNCHANGED; presentation-only - no new top-level key; distribution_explorer + governed headline bit-identical; only governance store-sync + inventory/build-stamp refresh)",
+    "artifacts": [
+      "scripts/build_ui_data.py (print-only #signoffcover + renderSignoffCover; print CSS; 11 CSV builders + 2 toolbar buttons; window.__uiExport expanded)",
+      "ui_data.json + ui_app.html (regenerated; embedded snapshot == ui_data.json)",
+      "scripts/ui_app_self_test.cjs (17 new G3 checks; suite 283)",
+      "scripts/build_phase33_task4_signoff_pack.py (gate + governance)",
+      "docs/validation/PHASE33_TASK4_SIGNOFF_PACK_REPORT.{json,md}"
+    ],
+    "self_tests": {
+      "ui_app": "283 ok 0net/0err",
+      "distribution_fallback": "9 ok",
+      "userrun_fallback": "9 ok",
+      "offline_viewer": "11 ok",
+      "combined_gui": "27 ok"
+    },
+    "change_record": "d7932f58d9794b09b40121ae9ae4ee1c (code_change, OWNER_REVIEW)",
+    "governance_counts": {
+      "change_records": 88,
+      "audit_entries": 116,
+      "verify_all": true
+    },
+    "next_task": "Phase 33 Task 5 (gap G4): accessibility & usability pass"
   }
 }
