@@ -1,0 +1,74 @@
+{
+  "task": "Phase 33 Task 5 - accessibility & usability pass (gap G4)",
+  "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
+  "generated_utc": "2026-06-13T21:24:00.822115+00:00",
+  "verdict": "PASS",
+  "gap_closed": "G4",
+  "contract": "1.17.0 (UNCHANGED; presentation-only; ui_data.json byte-identical to HEAD)",
+  "next": "Task 6 - phase summary + final consolidated re-audit (PHASE 33 COMPLETE)",
+  "surface_checks": {
+    "contract_version": "1.17.0",
+    "contract_unchanged_1_17_0": true,
+    "ui_data_byte_identical_to_head": true,
+    "zero_external_refs": true,
+    "single_file_bytes": 619761,
+    "sr_only_caption_css_present": true,
+    "tablist_role_present": true,
+    "tabpanel_role_present": true,
+    "aria_selected_present": true,
+    "enter_space_activation_present": true,
+    "arrow_home_end_present": true,
+    "hash_persistence_present": true,
+    "caption_pass_present": true,
+    "no_storage_apis": true,
+    "focus_visible_css_present": true,
+    "all_passed": true
+  },
+  "self_tests": {
+    "ui_app": {
+      "ok": true,
+      "n_checks": 297,
+      "network_calls": 0,
+      "js_errors": 0,
+      "failed_checks": []
+    },
+    "distribution_fallback": {
+      "ok": true,
+      "n_checks": 9,
+      "network_calls": 0,
+      "js_errors": 0,
+      "failed_checks": []
+    },
+    "userrun_fallback": {
+      "ok": true,
+      "n_checks": 9,
+      "network_calls": 0,
+      "js_errors": 0,
+      "failed_checks": []
+    },
+    "offline_viewer": {
+      "ok": true,
+      "n_checks": 11,
+      "network_calls": 0,
+      "js_errors": 0,
+      "failed_checks": []
+    },
+    "combined_gui": {
+      "ok": true,
+      "n_checks": 27,
+      "network_calls": 0,
+      "js_errors": 0,
+      "failed_checks": []
+    }
+  },
+  "governance": {
+    "added_change_record": true,
+    "change_record_id": "a147cb9df5f14af6ab01988d348dc997",
+    "change_record_status": "OWNER_REVIEW",
+    "audit_entries_before": 116,
+    "audit_entries_after": 117,
+    "change_records_before": 88,
+    "change_records_after": 89,
+    "audit_integrity_ok": true
+  }
+}

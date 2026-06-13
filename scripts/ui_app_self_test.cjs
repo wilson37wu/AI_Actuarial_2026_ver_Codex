@@ -350,7 +350,86 @@ setTimeout(() => {
     && /\.signoffcover\{display:none\}/.test(html);
   const dxCdfXn = ((g3dx.cdf_grid || {}).x || []).length;
 
+  // Phase 33 Task 5 (gap G4): accessibility & usability pass on the main tab
+  // strip and data tables. Drive keyboard activation, URL-hash persistence, and
+  // verify visually-hidden table captions. No model figures are touched.
+  const KeyboardEvent = dom.window.KeyboardEvent;
+  const Event = dom.window.Event;
+  const mainTabs = [...document.querySelectorAll("#tabs .tab")];
+  const tabById = (id) => mainTabs.find(t => t.getAttribute("data-target") === id);
+  // sr-only caption CSS present in the single-file build
+  const g4SrOnlyCssPresent = /\.sr-only\{position:absolute/.test(html);
+  // tabpanel roles wired for every tab
+  const g4TabpanelRoles = document.querySelectorAll('.panel[role="tabpanel"]').length;
+  const g4TabsAriaControls = document.querySelectorAll('#tabs [role="tab"][aria-controls]').length;
+  // Enter activates a focused (non-active) tab
+  const govTabK = tabById("governance");
+  let g4EnterActivates = false, g4SpaceActivates = false, g4ArrowMoves = false;
+  if (govTabK) {
+    govTabK.focus();
+    govTabK.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    g4EnterActivates = govTabK.getAttribute("aria-selected") === "true" &&
+      document.getElementById("governance").classList.contains("active");
+  }
+  const ovTabK = tabById("overview");
+  if (ovTabK) {
+    ovTabK.focus();
+    ovTabK.dispatchEvent(new KeyboardEvent("keydown", { key: " ", bubbles: true }));
+    g4SpaceActivates = ovTabK.getAttribute("aria-selected") === "true" &&
+      document.getElementById("overview").classList.contains("active");
+    // ArrowRight moves selection to the next tab (roving tabindex)
+    ovTabK.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+    const nextSel = document.querySelector('#tabs [aria-selected="true"]');
+    g4ArrowMoves = !!nextSel && nextSel.getAttribute("data-target") !== "overview";
+  }
+  // URL hash is written when a tab is activated
+  let g4HashWritten = false, g4HashRestores = false, g4ExactlyOneSelectedAfterHash = false;
+  if (govTabK) {
+    govTabK.click();
+    g4HashWritten = (dom.window.location.hash || "") === "#governance";
+  }
+  // Hash drives selection: point hash at a different tab and fire hashchange
+  if (tabById("inventory")) {
+    dom.window.location.hash = "#inventory";
+    dom.window.dispatchEvent(new Event("hashchange"));
+    const invTabK = tabById("inventory");
+    g4HashRestores = invTabK.getAttribute("aria-selected") === "true" &&
+      document.getElementById("inventory").classList.contains("active");
+    g4ExactlyOneSelectedAfterHash =
+      document.querySelectorAll('#tabs [aria-selected="true"]').length === 1;
+  }
+  // No browser storage APIs anywhere in the single-file build (file:// safe)
+  const g4NoStorageApis = !/\blocalStorage\b/.test(html) && !/\bsessionStorage\b/.test(html);
+  // Every table carries exactly one visually-hidden caption (accessible name)
+  const allTables = [...document.querySelectorAll("table")];
+  const g4TablesTotal = allTables.length;
+  const g4TablesWithCaption = allTables.filter(t => {
+    const c = t.querySelector("caption");
+    return c && (c.className || "").indexOf("sr-only") !== -1 &&
+      (c.textContent || "").trim().length > 0;
+  }).length;
+  const g4TablesWithoutCaption = g4TablesTotal - g4TablesWithCaption;
+  const g4NoDuplicateCaptions =
+    allTables.every(t => t.querySelectorAll("caption").length <= 1);
+  // restore overview selection so downstream state is neutral
+  if (ovTabK) ovTabK.click();
+
   const checks = {
+    // Phase 33 Task 5 (gap G4): accessibility & usability pass
+    g4SrOnlyCssPresent,
+    g4TabpanelRoles,
+    g4TabsAriaControls,
+    g4EnterActivates,
+    g4SpaceActivates,
+    g4ArrowMoves,
+    g4HashWritten,
+    g4HashRestores,
+    g4ExactlyOneSelectedAfterHash,
+    g4NoStorageApis,
+    g4TablesTotal,
+    g4TablesWithCaption,
+    g4TablesWithoutCaption,
+    g4NoDuplicateCaptions,
     dxTabPresent: !!dxTab,
     dxTabTextPresent: /Distribution Explorer \(P33\)/.test(bodyText),
     dxGridEmbedded: !!dxData && dxCdfX.length === 41 && dxCdfP.length === 41,
@@ -878,6 +957,19 @@ setTimeout(() => {
     checks.g3ComparatorCsvComplete &&
     checks.g3DistGridCsvComplete &&
     checks.g3SignoffPackComplete &&
+    checks.g4SrOnlyCssPresent &&
+    checks.g4TabpanelRoles >= 5 &&
+    checks.g4TabsAriaControls >= 5 &&
+    checks.g4EnterActivates &&
+    checks.g4SpaceActivates &&
+    checks.g4ArrowMoves &&
+    checks.g4HashWritten &&
+    checks.g4HashRestores &&
+    checks.g4ExactlyOneSelectedAfterHash &&
+    checks.g4NoStorageApis &&
+    checks.g4TablesTotal >= 20 &&
+    checks.g4TablesWithoutCaption === 0 &&
+    checks.g4NoDuplicateCaptions &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

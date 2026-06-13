@@ -2615,6 +2615,28 @@
       "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
       "digest": "ff93dbef4393eadbfb18ca4f46ff489413b56381cd1399343249823351f928e4",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "415ff399cbd045f99f2429c0c65aaee4",
+      "timestamp": "2026-06-13T21:24:00.787882+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 33 Task 5 accessibility & usability pass (gap G4); contract UNCHANGED 1.17.0 (presentation-only); ui_data.json byte-identical to HEAD; governed figures bit-identical",
+      "details": {
+        "record_id": "a147cb9df5f14af6ab01988d348dc997",
+        "ui_contract": "1.17.0 (unchanged)",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "affected_components": [
+          "scripts/build_ui_data.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
+      "digest": "3eaba86e1eee73b978b231ee70fb87245eb4445d649a4250a9ab65c5a2e94482",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -8174,6 +8196,56 @@
           "actor": "AutomatedModelDev_Phase33",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Gap G3 of the Phase 33 design note is closed: the offline UI now prints a neutral owner sign-off pack and exports every governed read-out table to CSV (bit-for-bit from the embedded snapshot). The decision record stays BLANK and options stay in registry order; the MR-016/MR-017 dependence decision remains PENDING and entirely with the model owner."
+        }
+      ],
+      "phase": "Phase 33: Offline UI Interactive Analytics & Usability"
+    },
+    {
+      "record_id": "a147cb9df5f14af6ab01988d348dc997",
+      "created_at": "2026-06-13T21:24:00.787669+00:00",
+      "title": "Phase 33 Task 5 - accessibility & usability pass (gap G4) in the zero-install offline UI",
+      "description": "Phase 33 Task 5 closed gap G4 of the Phase 33 Task 1 design note: an accessibility & usability pass on the zero-install offline UI. The main tab strip is fully keyboard-operable - Arrow/Home/End move the roving-tabindex focus and Enter/Space activate the focused tab - with correct ARIA tablist/tab/tabpanel roles, aria-controls and a single aria-selected tab. The selected tab now SURVIVES A RELOAD via the URL hash ONLY (history.replaceState fallback to location.hash); NO localStorage/sessionStorage is used, so the behaviour is file:// safe for the offline build. Every data table is given an accessible name through a visually-hidden <caption> (.sr-only) derived from the owning panel title or nearest heading, re-applied after sub-view re-renders; focus-visible outlines were already present and are retained. PRESENTATION-ONLY: the ui_data contract is UNCHANGED at 1.17.0 with NO new key, ui_data.json is byte-identical to HEAD, and every governed model figure is bit-identical - the display layer recomputes nothing. 14 new self-test checks (ui_app suite 297 checks ok:true, 0 network / 0 JS errors); distribution + user-run fallback, offline viewer and combined GUI all remain ok:true 0/0. Zero-install preserved (0 external references, single HTML file). NO model parameter changes.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "WCAG 2.1 AA 2.1.1 (keyboard operable) / 4.1.2 (name, role, value)",
+        "WAI-ARIA Authoring Practices 1.2 - Tabs pattern (tablist/tab/tabpanel)",
+        "WCAG 2.1 AA 1.3.1 (info & relationships - table captions)",
+        "SOA ASOP 41 s3.2 (clear communication of actuarial findings)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.17.0 (no tab-state persistence; tables without captions; no Enter/Space on tabs)"
+      },
+      "after_snapshot": {
+        "ui_contract": "1.17.0 (UNCHANGED; presentation-only G4)",
+        "self_test_ok": true,
+        "network_calls": 0,
+        "js_errors": 0,
+        "n_checks": 297,
+        "tables_captioned": "all (57/57 in default snapshot)"
+      },
+      "impact_assessment": "Additive display-layer accessibility pass: keyboard activation, ARIA semantics, URL-hash tab persistence and visually-hidden table captions. No ui_data key is added or changed (ui_data.json byte-identical to HEAD) and governed figures are bit-identical, so no consumer breaks and the MR-016/MR-017 owner decision is not preempted. No model output or parameter changes.",
+      "quantitative_impact": "Presentation-only G4: contract UNCHANGED 1.17.0 (ui_data.json byte-identical to HEAD). Tab strip keyboard-operable (Arrow/Home/End + Enter/Space) with ARIA tablist/tab/tabpanel + single aria-selected; tab selection persisted via URL hash (NO web-storage; file:// safe); all data tables given visually-hidden captions. Single file 619761 bytes, 0 external refs. jsdom ui_app self-test ok with 0 network / 0 JS errors over 297 checks (14 new G4 checks); distribution + user-run fallback, offline viewer, combined GUI all ok.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-13T21:24:00.787830+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified by surface checks (contract UNCHANGED 1.17.0; ui_data.json byte-identical to HEAD; 0 external refs; ARIA tablist/tab/tabpanel + aria-selected; Enter/Space + Arrow/Home/End handlers present; URL-hash persistence present with NO localStorage/sessionStorage; sr-only caption pass present; focus-visible retained) + jsdom self-tests (ui_app 297 checks incl. 14 new G4 checks; distribution + user-run fallback, offline viewer, combined GUI - all ok:true, 0 network / 0 JS errors); display layer recomputes nothing; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-13T21:24:00.787846+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap G4 of the Phase 33 design note is closed: the offline UI is now keyboard-operable with full ARIA tab semantics, persists the selected tab across reloads via the URL hash (no web-storage; file:// safe), and gives every table an accessible caption. PRESENTATION-ONLY - the MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
         }
       ],
       "phase": "Phase 33: Offline UI Interactive Analytics & Usability"

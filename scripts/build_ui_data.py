@@ -2980,6 +2980,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .tbtn:hover{border-color:var(--accent);color:var(--accent)}
   .tab,.segbtn{font-family:inherit}
   .tab:focus-visible,.tbtn:focus-visible,.segbtn:focus-visible,.rrow:focus-visible,.crow:focus-visible,.panel:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  /* Phase 33 Task 5 (gap G4): visually-hidden table captions for screen readers
+     (kept off-screen; no layout or rendered-figure impact). */
+  .sr-only{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   .signoffcover{display:none}
   @media print{
     :root{--bg:#fff;--panel:#fff;--panel2:#fff;--ink:#111;--muted:#444;--line:#bbb;--chip:#eee;--accent:#15489c}
@@ -3112,6 +3115,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       b.setAttribute("tabindex", i===0?"0":"-1");
       b.onclick = function(){ activateTab(p[0]); };
       b.addEventListener("keydown", function(e){
+        // Phase 33 Task 5 (gap G4): Enter/Space activate the focused tab
+        // (explicit handling so keyboard activation is robust across engines).
+        if(e.key==="Enter"||e.key===" "||e.key==="Spacebar"){
+          e.preventDefault(); activateTab(p[0]); b.focus(); return;
+        }
         if(e.key==="ArrowRight"||e.key==="ArrowLeft"||e.key==="Home"||e.key==="End"){
           e.preventDefault();
           var els=[].slice.call(document.querySelectorAll("#tabs .tab"));
@@ -3128,7 +3136,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     });
     document.getElementById("overview").classList.add("active");
   }
-  function activateTab(target){
+  var _hashApplying=false;
+  function activateTab(target, fromHash){
     [].forEach.call(document.querySelectorAll("#tabs .tab"),function(x){
       var on=x.getAttribute("data-target")===target;
       x.classList.toggle("active",on);
@@ -3137,6 +3146,48 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     });
     [].forEach.call(document.querySelectorAll(".panel"),function(x){ x.classList.remove("active"); });
     var pl=document.getElementById(target); if(pl) pl.classList.add("active");
+    // Phase 33 Task 5 (gap G4): persist the selected tab in the URL hash so it
+    // survives a reload. Uses the URL hash ONLY (no browser web-storage),
+    // which is file:// safe for the offline zero-install build. The _hashApplying
+    // guard avoids a hashchange feedback loop when we are reacting to one.
+    if(!fromHash){
+      _hashApplying=true;
+      try{
+        if(window.history&&typeof history.replaceState==="function"){
+          history.replaceState(null,"","#"+target);
+        } else { location.hash=target; }
+      }catch(_e){ try{ location.hash=target; }catch(_e2){} }
+      _hashApplying=false;
+    }
+  }
+  // Phase 33 Task 5 (gap G4): on load / hashchange, restore the tab named in the
+  // URL hash if it is a real tab. No storage APIs; safe under file://.
+  function tabFromHash(){
+    if(_hashApplying) return;
+    var h=(location.hash||"").replace(/^#/,"");
+    if(h && document.getElementById("tab-"+h) && document.getElementById(h)){
+      activateTab(h, true);
+    }
+  }
+  // Phase 33 Task 5 (gap G4): give every data table an accessible name via a
+  // visually-hidden <caption>, derived from the owning panel's data-title or the
+  // nearest preceding heading. Idempotent; adds NO visible content and changes
+  // no rendered figure (tbody rows untouched).
+  function captionTables(root){
+    var scope=root||document;
+    [].forEach.call(scope.querySelectorAll("table"),function(tb){
+      if(tb.querySelector("caption")) return;
+      var lbl="";
+      var panel=tb.closest?tb.closest(".panel"):null;
+      if(panel&&panel.getAttribute("data-title")) lbl=panel.getAttribute("data-title")+" table";
+      if(!lbl){ var h=tb.previousElementSibling;
+        while(h&&!/^H[1-6]$/.test(h.tagName)) h=h.previousElementSibling;
+        if(h) lbl=(h.textContent||"").trim(); }
+      if(!lbl) lbl="Data table";
+      var cap=document.createElement("caption");
+      cap.className="sr-only"; cap.textContent=lbl;
+      tb.insertBefore(cap, tb.firstChild);
+    });
   }
 
   function renderHeader(){
@@ -5174,6 +5225,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     Object.keys(lbl).forEach(function(id){ var el=document.getElementById(id); if(el&&!el.getAttribute("aria-label")) el.setAttribute("aria-label",lbl[id]); });
     [].forEach.call(document.querySelectorAll(".filter input,.filter select"),function(el){ if(!el.getAttribute("aria-label")) el.setAttribute("aria-label", el.id||"filter control"); });
     [].forEach.call(document.querySelectorAll(".rrow,.crow"),function(el){ if(!el.hasAttribute("tabindex")){ el.setAttribute("tabindex","0"); el.setAttribute("role","button"); } });
+    captionTables();
   }
   var _a11yWired=false;
   function wireGlobalA11y(){
@@ -5187,8 +5239,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           b.setAttribute("aria-selected", on?"true":"false");
           b.setAttribute("tabindex", on?"0":"-1");
         }); }
+        // Phase 33 Task 5 (gap G4): sub-views re-render their tables on click;
+        // re-apply captions so re-rendered tables keep their accessible name.
+        captionTables();
       }
     });
+    // Phase 33 Task 5 (gap G4): restore the tab named in the URL hash on
+    // back/forward navigation or manual hash edits.
+    window.addEventListener("hashchange", tabFromHash);
     document.addEventListener("keydown",function(e){
       var t=e.target; if(!t||!t.classList) return;
       if((e.key==="Enter"||e.key===" "||e.key==="Spacebar")&&(t.classList.contains("rrow")||t.classList.contains("crow"))){ e.preventDefault(); t.click(); }
@@ -5447,6 +5505,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   renderTabs();
   renderAll();
+  // Phase 33 Task 5 (gap G4): if the URL carries a tab hash (e.g. after a
+  // reload), restore that selection now that all panels exist.
+  tabFromHash();
 })();
 </script>
 </body>

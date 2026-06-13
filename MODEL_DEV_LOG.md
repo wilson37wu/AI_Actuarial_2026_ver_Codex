@@ -9622,3 +9622,13 @@ Closed gap G3 of the Phase 33 Task 1 design note. PRESENTATION-ONLY change to `s
 - **Governance:** ChangeRecord `d7932f58d9794b09b40121ae9ae4ee1c` (code_change, OWNER_REVIEW); change_records 88; audit_entries 116; verify_all True.
 - **Artifacts:** scripts/build_ui_data.py, scripts/ui_app_self_test.cjs, ui_app.html, ui_data.json, scripts/build_phase33_task4_signoff_pack.py, docs/validation/PHASE33_TASK4_SIGNOFF_PACK_REPORT.{json,md}, docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-13_p33t4.md.
 - **Next:** Phase 33 Task 5 = gap G4 (accessibility & usability pass).
+
+
+---
+
+## 2026-06-13T21:30Z - Phase 33 Task 5 (gap G4) COMPLETE [Claude Cowork]
+
+- Accessibility & usability pass on the offline UI: keyboard-operable tab strip (Arrow/Home/End + Enter/Space), ARIA tablist/tab/tabpanel + aria-selected, URL-hash tab persistence (NO localStorage/sessionStorage; file:// safe), visually-hidden table captions (.sr-only), focus-visible retained.
+- PRESENTATION-ONLY: contract 1.17.0 UNCHANGED; ui_data.json byte-identical to HEAD; governed figures bit-identical.
+- Self-tests all ok:true 0/0 - ui_app 297 (+14 G4), distribution_fallback 9, userrun_fallback 9, offline_viewer 11, combined_gui 27. 0 external refs.
+- ChangeRecord a147cb9df5f14af6ab01988d348dc997 OWNER_REVIEW. Next: Task 6 phase summary + consolidated re-audit (PHASE 33 COMPLETE).
