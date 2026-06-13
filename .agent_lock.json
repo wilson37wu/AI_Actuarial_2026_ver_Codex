@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-13T20:39Z-b791",
-  "started_at": "2026-06-13T20:39:37Z",
-  "ttl_minutes": 120,
-  "task": "Phase 33 Task 4 (gap G3): printable owner sign-off / report pack",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-13T20:39:40Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
