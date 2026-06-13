@@ -9632,3 +9632,33 @@ Closed gap G3 of the Phase 33 Task 1 design note. PRESENTATION-ONLY change to `s
 - PRESENTATION-ONLY: contract 1.17.0 UNCHANGED; ui_data.json byte-identical to HEAD; governed figures bit-identical.
 - Self-tests all ok:true 0/0 - ui_app 297 (+14 G4), distribution_fallback 9, userrun_fallback 9, offline_viewer 11, combined_gui 27. 0 external refs.
 - ChangeRecord a147cb9df5f14af6ab01988d348dc997 OWNER_REVIEW. Next: Task 6 phase summary + consolidated re-audit (PHASE 33 COMPLETE).
+
+---
+
+## 2026-06-13 - Phase 33 Task 6 - phase summary + final consolidated re-audit (PHASE 33 COMPLETE)
+
+**Agent:** Claude Cowork (18:00 UTC window). **Verdict:** PASS (6/6 gates). Audit +
+documentation only - no artifact, contract, or model parameter changed.
+
+Final consolidated re-audit: all 5 jsdom self-tests ok:true with 0 network calls /
+0 JS errors (ui_app 297, distribution_fallback 9, userrun_fallback 9,
+offline_viewer 11, combined_gui 27). 0 external references across the three gated
+zero-install artifacts (ui_app.html, model_result_viewer.html,
+combined_model_app.html). Embedded ui_data contract 1.17.0 (20 top-level keys;
+distribution_explorer present). Governance store 90 ChangeRecords / 118 audit
+entries / 17 risk items; verify_all True.
+
+Phase 33 closed all four design-note gaps: G1 SCR comparator (display-only, 1.16.0
+UNCHANGED), G2 distribution explorer (1.16.0->1.17.0 ADDITIVE, distribution_explorer
+key), G3 printable sign-off pack (presentation-only), G4 accessibility & usability
+(presentation-only). ui_app self-test coverage grew 232 -> 297 over the phase.
+
+Known item carried to Phase 34: legacy par_projection_gui.html (NOT in the gated
+offline-UI suite) still carries 1 Chart.js CDN <script>; logged as a candidate gap
+(inline/vendor or retire so the whole repo is CDN-free).
+
+Artifacts: scripts/build_phase33_task6_phase_summary.py;
+scripts/_phase33_task6_selftests.json;
+docs/validation/PHASE33_TASK6_PHASE_SUMMARY_REPORT.{json,md};
+docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-13_p33t6.md. ChangeRecord
+ed05170f1ff1400e9b4ecbb3b945b24b OWNER_REVIEW. Next: Phase 34 Task 1 design note.

@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-13T21:30:00Z",
+  "last_run": "2026-06-13T22:23:56Z",
   "last_run_duration_minutes": 25,
-  "last_run_note": "Phase 33 Task 5 (gap G4) COMPLETE: accessibility & usability pass on the offline UI - keyboard-operable tab strip (Arrow/Home/End + Enter/Space), full ARIA tab semantics, URL-hash tab persistence (no web-storage; file:// safe), visually-hidden table captions. PRESENTATION-ONLY (contract 1.17.0 UNCHANGED, ui_data.json byte-identical to HEAD, governed figures bit-identical). ui_app 297 checks ok:true 0/0 (+14 G4); all 5 self-tests green; ChangeRecord a147cb9df5f14af6ab01988d348dc997 OWNER_REVIEW. Next: Task 6 phase summary + consolidated re-audit (PHASE 33 COMPLETE).",
-  "current_phase": "Phase 33: Offline UI Interactive Analytics & Usability",
-  "overall_status": "PHASE33_TASK5_COMPLETE_NEXT_TASK6_SUMMARY_AND_REAUDIT",
+  "last_run_note": "Phase 33 Task 6 COMPLETE (PASS 6/6 gates): final consolidated re-audit of the zero-install offline UI - 5 self-tests ok:true 0/0, 0 external refs (3 gated artifacts), contract 1.17.0, governance 90/118/17; gaps G1-G4 all closed. PHASE 33 COMPLETE. ChangeRecord ed05170f1ff1400e9b4ecbb3b945b24b OWNER_REVIEW. Next: Phase 34 Task 1 design note. Lock held this cycle (owner=claude).",
+  "current_phase": "Phase 34: Offline UI Usability Hardening (cont.)",
+  "overall_status": "PHASE33_COMPLETE_NEXT_PHASE34_TASK1_DESIGN_NOTE",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -572,19 +572,25 @@
       "next": null
     },
     "Phase 33: Offline UI Interactive Analytics & Usability": {
-      "status": "in_progress",
+      "status": "completed",
       "description": "Extend the zero-install offline UI's interactivity/usability per the standing directive (calculation chain complete; UI consumes ONLY model-output JSON). Constraints: binding Phase 30 stop-rule (NO new copula-structure candidates) and the pending MR-016/MR-017 owner decision (Phase 31 pack). Design-note-first; ONE gap per cycle; every change ADDITIVE; zero-install invariants gated (0 external refs, 0 network, 0 JS errors).",
       "completed": [
         "Task 1: design note PHASE33_TASK1_DESIGN_NOTE (gate PASS 23 checks) - measured baseline frozen (self-tests 232/11/27/9 ok:true 0/0, 0 external refs, contract 1.16.0, 15 tabs, governance 84/112/17) + 4 gaps pre-registered with acceptance criteria: G1 interactive cross-phase SCR comparator, G2 embedded-distribution drill-down (precomputed grids), G3 printable owner sign-off/report pack, G4 accessibility & usability pass",
         "Task 2: gap G1 CLOSED - interactive cross-phase SCR comparator tab 'SCR Comparator (P33)' (gate PASS; display layer ONLY; contract 1.16.0 UNCHANGED - ui_data.json + embedded snapshot byte-identical to previous commit; governed frozen-t headline 39,975.654628199336 default baseline, never re-labelled; registry order frozen-t/grouped-t/skew-t/vine2/tree3/nested; signed deltas labelled display arithmetic; CI overlay chart; provenance keys disclosed; ui_app self-test 248 checks ok:true 0/0 (16 new comparator checks); viewer/combined/userrun green; 0 external refs; ChangeRecord a87fd9f8aaaa47b1bd9b57f82c5f380b OWNER_REVIEW)",
         "Task 3: gap G2 CLOSED - embedded-distribution drill-down 'Distribution Explorer (P33)' tab (gate PASS 26 substantive checks; contract 1.16.0 -> 1.17.0 ADDITIVE: new distribution_explorer key ONLY - grids PRECOMPUTED at build time by build_ui_data.py from archived docs/validation/PHASE16_LOSS_DISTRIBUTION.json (sha256-pinned provenance); 41-point empirical CDF grid + 13-point build-time quantile grid reproduced EXACTLY by independent recomputation; archived percentiles/sweep/histogram/headline carried bit-for-bit; 4 per-seed CDF overlays; hover/slider/tail-zoom display layer recomputes nothing beyond labelled display interpolation; neutral fallback for pre-1.17.0 payloads via NEW dedicated jsdom test scripts/ui_app_distribution_fallback_test.cjs; ui_app self-test 266 checks ok:true 0/0 (18 new); pre-existing inventory entries bit-identical; governance delta = existing P32T4 store-sync sweep refresh only; ChangeRecord b01e374511f7480fa3a24f5d239f2d17 OWNER_REVIEW)",
         "Task 4: gap G3 CLOSED - printable owner sign-off / report pack + complete CSV export coverage (gate PASS; PRESENTATION-ONLY so contract 1.17.0 UNCHANGED - NO new top-level ui_data key, distribution_explorer + governed headline 39,975.654628199336 bit-identical, only per-cycle governance store-sync + inventory/build-stamp churn; embedded snapshot == ui_data.json). Print-only sign-off cover (screen-hidden; @media print only) with model/version/contract/build-stamp + governed headline + NEUTRAL BLANK owner/peer signature lines; Owner Decision + Governance surfaces print to a sign-off-ready pack with decision record BLANK and options in registry order (decision NOT preempted). CSV export coverage for EVERY governed read-out table (deployment gates, owner options, evidence read-outs, residual ladder, escalation history, stop-rule record, sign-off workflow, BLANK decision record, SCR comparator, distribution grid) + consolidated owner sign-off-pack CSV; values bit-for-bit from the embedded snapshot. ui_app self-test 283 checks ok:true 0/0 (17 new G3 checks); distribution/user-run fallback, offline viewer, combined GUI all green; 0 external refs. ChangeRecord d7932f58d9794b09b40121ae9ae4ee1c OWNER_REVIEW)",
-        "Task 5: gap G4 CLOSED - accessibility & usability pass (gate PASS; PRESENTATION-ONLY; contract 1.17.0 UNCHANGED - ui_data.json byte-identical to HEAD, governed model figures bit-identical). Main tab strip keyboard-operable: Arrow/Home/End roving-tabindex focus + Enter/Space activation; ARIA tablist/tab/tabpanel + aria-controls + single aria-selected. Selected tab survives reload via URL hash ONLY (history.replaceState -> location.hash; NO localStorage/sessionStorage; file:// safe). Every data table given a visually-hidden <caption> (.sr-only) accessible name, re-applied after sub-view re-renders; :focus-visible retained. ui_app self-test 297 checks ok:true 0/0 (14 new G4 checks); distribution + user-run fallback, offline viewer, combined GUI all ok:true 0/0; 0 external refs; ChangeRecord a147cb9df5f14af6ab01988d348dc997 OWNER_REVIEW)"
-      ],
-      "in_progress": [
-        "Task 6: phase summary + final consolidated re-audit (self-tests across ui_app/fallbacks/offline_viewer/combined_gui, external-ref scan, contract inventory G1-G4) and PHASE 33 COMPLETE documentation"
+        "Task 5: gap G4 CLOSED - accessibility & usability pass (gate PASS; PRESENTATION-ONLY; contract 1.17.0 UNCHANGED - ui_data.json byte-identical to HEAD, governed model figures bit-identical). Main tab strip keyboard-operable: Arrow/Home/End roving-tabindex focus + Enter/Space activation; ARIA tablist/tab/tabpanel + aria-controls + single aria-selected. Selected tab survives reload via URL hash ONLY (history.replaceState -> location.hash; NO localStorage/sessionStorage; file:// safe). Every data table given a visually-hidden <caption> (.sr-only) accessible name, re-applied after sub-view re-renders; :focus-visible retained. ui_app self-test 297 checks ok:true 0/0 (14 new G4 checks); distribution + user-run fallback, offline viewer, combined GUI all ok:true 0/0; 0 external refs; ChangeRecord a147cb9df5f14af6ab01988d348dc997 OWNER_REVIEW)",
+        "Task 6: phase summary + final consolidated re-audit COMPLETE (gate PASS 6/6) - all 5 jsdom self-tests ok:true 0 network / 0 JS errors (ui_app 297, distribution_fallback 9, userrun_fallback 9, offline_viewer 11, combined_gui 27); 0 external refs across the 3 gated zero-install HTML artifacts; embedded ui_data contract 1.17.0 (20 top-level keys incl. distribution_explorer); governance store 90 ChangeRecords / 118 audit / 17 risk; gaps G1-G4 all closed (G1 comparator display-only 1.16.0 UNCHANGED; G2 distribution explorer 1.16.0->1.17.0 ADDITIVE; G3 sign-off pack + G4 a11y presentation-only); builder scripts/build_phase33_task6_phase_summary.py; report docs/validation/PHASE33_TASK6_PHASE_SUMMARY_REPORT.{json,md}; ChangeRecord ed05170f1ff1400e9b4ecbb3b945b24b OWNER_REVIEW; audit verify_all True. PHASE 33 COMPLETE."
       ],
       "next": "Phase 34 kickoff (candidates per standing directive: continue offline-UI usability hardening, or begin the standalone offline UI build using ONLY model-output JSON)"
+    },
+    "Phase 34: Offline UI Usability Hardening (cont.)": {
+      "status": "in_progress",
+      "description": "Standing directive continues: the zero-install offline UI is built and consolidated (Phases 32-33); calculation chain is complete and the UI consumes ONLY model-output JSON. Continue offline-UI usability/robustness hardening. Constraints unchanged: binding Phase 30 stop-rule (NO new copula-structure candidates), pending MR-016/MR-017 owner decision (Phase 31 pack). Design-note-first; ONE gap per cycle; every change ADDITIVE; zero-install invariants gated (0 external refs, 0 network, 0 JS errors). NOTE for next agent: legacy par_projection_gui.html still carries 1 Chart.js CDN <script> and is OUT of the gated offline-UI suite (ui_app/model_result_viewer/combined_model_app) - a candidate G-gap is to inline/vendor that dependency or formally retire the file so the whole repo is CDN-free.",
+      "in_progress": [
+        "Task 1: design note (measured baseline re-confirm + prioritised gap list + acceptance criteria) for the next offline-UI usability/robustness increment"
+      ],
+      "next": "Tasks 2..N close the design-note gaps one per cycle (ADDITIVE), then a phase summary + re-audit"
     }
   },
   "repository_info": {
@@ -904,7 +910,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-13T20:35:47Z",
+  "last_updated": "2026-06-13T22:23:56Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -1424,5 +1430,38 @@
       "verify_all": true
     },
     "next_task": "Phase 33 Task 5 (gap G4): accessibility & usability pass"
+  },
+  "cycle_2026_06_13_phase33_task6": {
+    "completed_at": "2026-06-13T22:23:56Z",
+    "agent": "claude",
+    "task": "Phase 33 Task 6 - phase summary + final consolidated re-audit; PHASE 33 COMPLETE",
+    "verdict": "PASS",
+    "gates": "6/6 PASS",
+    "self_tests": {
+      "ui_app": 297,
+      "distribution_fallback": 9,
+      "userrun_fallback": 9,
+      "offline_viewer": 11,
+      "combined_gui": 27,
+      "all_ok": true,
+      "network": 0,
+      "js_errors": 0
+    },
+    "external_refs_gated_artifacts": 0,
+    "contract": "1.17.0 (UNCHANGED this task; audit + documentation only - no artifact modified)",
+    "governance": {
+      "change_record_id": "ed05170f1ff1400e9b4ecbb3b945b24b",
+      "status": "OWNER_REVIEW",
+      "store": "90 CR / 118 audit / 17 risk",
+      "audit_integrity": true
+    },
+    "artifacts": [
+      "scripts/build_phase33_task6_phase_summary.py",
+      "scripts/_phase33_task6_selftests.json",
+      "docs/validation/PHASE33_TASK6_PHASE_SUMMARY_REPORT.json",
+      "docs/validation/PHASE33_TASK6_PHASE_SUMMARY_REPORT.md",
+      "docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-13_p33t6.md"
+    ],
+    "note": "par_projection_gui.html (legacy, NOT in gated offline-UI suite) still carries 1 Chart.js CDN ref - logged as a Phase 34 candidate gap."
   }
 }
