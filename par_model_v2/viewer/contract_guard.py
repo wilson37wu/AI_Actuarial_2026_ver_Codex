@@ -30,16 +30,17 @@ from typing import Any, Dict, List
 DOC_ID = "PHASE34_TASK2_H1_CONTRACT_GUARD"
 DOC_VERSION = "1.0.0"
 
-# Phase 35 Task 5 re-audit refresh: the live contract advanced additively
-# 1.18.0 -> 1.19.0 (A1, a11y_audit) -> 1.20.0 (A2, section digests). This
-# live-tracking gate's expected constants are refreshed to the current state
-# so it stays green against the live repo (its documented purpose); gap H1
-# itself remains the historical 1.17.0 -> 1.18.0 additive change.
-EXPECTED_CONTRACT = "1.20.0"
-PRIOR_CONTRACT = "1.19.0"
+# Phase 36 Task 3 re-audit refresh: the live contract advanced additively
+# 1.18.0 -> 1.19.0 (A1, a11y_audit) -> 1.20.0 (A2, section digests) ->
+# 1.21.0 (E2, explainer global glossary). This live-tracking gate's expected
+# constants are refreshed to the current state so it stays green against the
+# live repo (its documented purpose); gap H1 itself remains the historical
+# 1.17.0 -> 1.18.0 additive change.
+EXPECTED_CONTRACT = "1.21.0"
+PRIOR_CONTRACT = "1.20.0"
 GOVERNED_HEADLINE = "39975.654628199336"
 
-# The 23 substantive top-level sections the manifest must guard (22 from the
+# The 24 substantive top-level sections the manifest must guard (22 from the
 # 1.17.0 contract plus a11y_audit added additively at 1.19.0 / Phase 35 A1;
 # the manifest itself is additive on top and is NOT in this list).
 EXPECTED_REQUIRED_KEYS = [
@@ -47,7 +48,7 @@ EXPECTED_REQUIRED_KEYS = [
     "proxy", "loss", "calibrations", "management_actions", "phase24",
     "phase25", "phase26", "phase27", "phase28", "phase29", "phase30",
     "distribution_explorer", "owner_decision_p31", "user_run", "governance",
-    "verdicts", "a11y_audit",
+    "verdicts", "a11y_audit", "explainer",
 ]
 
 
@@ -77,7 +78,7 @@ def validate_h1(repo_root: str = ".") -> Dict[str, Any]:
     man = (data or {}).get("contract_manifest") if isinstance(data, dict) else None
 
     checks["ui_data_parsed"] = isinstance(data, dict)
-    checks["contract_is_1_20_0"] = bool(data) and data.get("contract_version") == EXPECTED_CONTRACT
+    checks["contract_is_expected"] = bool(data) and data.get("contract_version") == EXPECTED_CONTRACT
     checks["manifest_present"] = isinstance(man, dict)
     checks["manifest_expected_version_matches"] = bool(man) and man.get("expected_contract_version") == EXPECTED_CONTRACT
     req = (man or {}).get("required_top_level_keys") if man else None
@@ -98,7 +99,7 @@ def validate_h1(repo_root: str = ".") -> Dict[str, Any]:
     checks["validator_fn_present"] = "function validateContract(" in html
     checks["integrity_render_present"] = "function renderIntegrity(" in html
     checks["banner_render_present"] = "function renderIntegrityBanner(" in html
-    checks["html_embeds_contract_1_20_0"] = '"contract_version": "1.20.0"' in html
+    checks["html_embeds_contract_expected"] = '"contract_version": "1.21.0"' in html
     checks["display_only_no_recompute_stated"] = "recomputes no model figure" in html
     checks["neutral_degraded_banner_text"] = "Data-contract notice" in html and "No figures are recomputed" in html
     checks["zero_external_refs"] = _external_ref_count(html) == 0

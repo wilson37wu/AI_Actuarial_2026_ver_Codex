@@ -30,7 +30,7 @@ def test_layer_chain_is_contiguous():
     """base -> a1 -> a2 version constants form a gap-free chain."""
     chain = pipe.validate_chain()  # raises on any gap
     tos = [s["to"] for s in chain["steps"]]
-    assert tos == [pipe.BASE_CONTRACT, "1.19.0", pipe.PUBLISHED_CONTRACT]
+    assert tos == [pipe.BASE_CONTRACT, "1.19.0", "1.20.0", pipe.PUBLISHED_CONTRACT]
 
 
 def test_base_contract_is_starting_point():

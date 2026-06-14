@@ -1,0 +1,37 @@
+{
+  "doc_id": "PHASE36_TASK3_E2_REPORT",
+  "doc_version": "1.0.0",
+  "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility",
+  "task": "Phase 36 Task 3 (gap E2) - consolidated global glossary & methodology explainer surface",
+  "classification": "educational",
+  "result": "PASS",
+  "model_parameter_changes": "NONE",
+  "contract": "1.20.0 -> 1.21.0 (ADDITIVE; +1 top-level key 'explainer')",
+  "governance_change_record": "514e5c203ac24d2181dc7170452587ff",
+  "governance_status": "OWNER_REVIEW",
+  "governance_counts": {"change_records": "97 -> 98", "audit_entries": "125 -> 126", "risk_register": 17, "audit_integrity_ok": true},
+  "explainer": {"terms": 23, "base_terms_verbatim": 9, "authored_terms": 14, "tab_coverage": 18},
+  "artifacts": {"ui_app_bytes": 709036, "ui_data_bytes": 477021, "external_refs": 0, "root_digest": "85a4f7c2f6bb8a8827770e77d87b0476eacc6254ebb0ade439bcfcff7ebac724"},
+  "self_tests": {
+    "ui_app_self_test": {"ok": true, "checks": 393, "delta": "+15"},
+    "offline_viewer_self_test": {"ok": true, "checks": 11},
+    "combined_gui_self_test": {"ok": true, "checks": 27},
+    "ui_app_userrun_fallback_test": {"ok": true, "checks": 9},
+    "ui_app_distribution_fallback_test": {"ok": true, "checks": 9},
+    "ui_app_integrity_fallback_test": {"ok": true, "checks": 10},
+    "ui_app_search_deeplink_test": {"ok": true, "checks": 18},
+    "ui_app_bundle_printall_test": {"ok": true, "checks": 21},
+    "total": {"suites_ok": "8/8", "checks": 498, "delta": "+15", "network_calls": 0, "js_errors": 0}
+  },
+  "pytests_updated": ["tests/test_phase34_task2_h1_contract_guard.py", "tests/test_phase35_task3_a2_digests.py", "tests/test_ui_contract_pipeline_reconcile.py"],
+  "pytests_result": "21 passed",
+  "acceptance_criteria": {
+    "every_governed_term_and_tab_readout_has_entry": "met (23 terms; 18-tab coverage map; governed headline term present)",
+    "limitation_text_carried_verbatim": "met (explainer.limitations + provenance.limitations_verbatim == owner_decision_p31.limitations; base defs == owner_decision_p31.glossary; copied programmatically)",
+    "panel_display_only_no_recompute": "met (display_only=true; explainer contains no model figure; governed figures bit-identical)",
+    "additive_only_contract_change": "met (1.20.0 -> 1.21.0; only new key 'explainer'; pre-existing keys bit-identical; A2 digests recompute & verify)",
+    "self_test_coverage_added": "met (+15 checks: presence, per-tab coverage, provenance carry-through; suite ok:true 0/0)",
+    "zero_install_file_safe": "met (0 external refs, single self-contained file:// HTML, no storage API)",
+    "no_model_parameter_changes_stop_rule_owner_decision": "met (stop-rule honoured; MR-016/MR-017 not pre-empted)"
+  }
+}

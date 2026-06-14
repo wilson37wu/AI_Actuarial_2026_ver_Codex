@@ -2807,6 +2807,33 @@
       "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility",
       "digest": "16aff11aeef94eb4cdadf25e06896daa2cef47d8598f47d9b109c6df4c600641",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "b96db75b9b7443489fbb9502ebaa73ba",
+      "timestamp": "2026-06-14T20:31:16.805751+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 36 Task 3 consolidated global glossary & methodology explainer (gap E2); ADDITIVE contract 1.20.0 -> 1.21.0 (+explainer key); governed figures bit-identical; owner decision not pre-empted",
+      "details": {
+        "record_id": "514e5c203ac24d2181dc7170452587ff",
+        "contract": "1.20.0 -> 1.21.0",
+        "new_top_level_key": "explainer",
+        "glossary_terms": 23,
+        "tab_coverage": 18,
+        "ui_app_self_test_checks": 393,
+        "offline_self_test_total_checks": 498,
+        "affected_components": [
+          "scripts/build_phase36_task3_e2_glossary.py",
+          "scripts/build_ui_pipeline.py",
+          "scripts/ui_app_self_test.cjs",
+          "par_model_v2/viewer/contract_guard.py",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility",
+      "digest": "940e83ba24b4b504e51e5afa9b8d5a83f96e846cf927a31a8c0d9e99401063ac",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -8890,6 +8917,73 @@
           "actor": "ClaudeCowork_AutoDev",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Gap E1 of the Phase 36 design note is closed: the offline UI now announces dynamic state changes (tab, search-result count, distribution slider read-out, integrity verify result) through one polite sr-only live region, completing WCAG 2.1 AA SC 4.1.3. PRESENTATION / ARIA ONLY - the MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
+        }
+      ],
+      "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility"
+    },
+    {
+      "record_id": "514e5c203ac24d2181dc7170452587ff",
+      "created_at": "2026-06-14T20:31:16.805655+00:00",
+      "title": "Phase 36 Task 3 (gap E2) - consolidated global glossary & methodology explainer surface on the zero-install offline UI",
+      "description": "Closed gap E2 of the Phase 36 design note: promoted the sign-off-pack-scoped glossary (owner_decision_p31.glossary) to a GLOBAL, build-time-assembled glossary / data dictionary covering every governed read-out across the 18 result tabs, surfaced as a new read-only 'Methodology & Glossary' tab/panel. (1) ui_data.json gained ONE new top-level key 'explainer' (additive contract bump 1.20.0 -> 1.21.0): 23 terms (the 9 base terms carried VERBATIM plus 14 authored plain-language methodology terms), each with definition + method/assumption basis + limitation provenance; an 18-tab coverage map; and verbatim-carried roots (glossary, limitations, standard_references, figure_provenance, how_to_read copied bit-for-bit from owner_decision_p31). (2) The nine base definitions and ALL limitation text are copied programmatically from the embedded payload, so they are carried bit-for-bit; nothing is re-derived or re-labelled. (3) The panel is DISPLAY-ONLY: it contains NO model figure and recomputes no model quantity; every pre-existing ui_data key renders bit-identically and the governed headline 39,975.654628199336 is unchanged. (4) The Phase 35 Task 3 (gap A2) per-section SHA-256 digests were recomputed with the EXACT embedded JS (new 'explainer' section digested; root digest recomputed) so the in-browser verifier still agrees byte-for-byte; the H1 contract guard + build pipeline were advanced additively to 1.21.0 (explainer appended to the required-keys list; key_count 23 -> 24). (5) Tests: +15 ui_app self-test checks (378 -> 393, ok:true, 0 network / 0 JS errors) covering global-glossary presence, the new tab/panel render, 18-tab coverage, base-definition + limitation + glossary provenance verbatim carry-through, display-only/no-figure, the explainer section digest, and contract 1.21.0; all eight offline self-tests remain ok:true (483 -> 498 total checks). Zero-install preserved (0 external refs, single self-contained file:// HTML, no storage API). NO model parameter changes; binding stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_phase36_task3_e2_glossary.py",
+        "scripts/build_ui_pipeline.py",
+        "scripts/ui_app_self_test.cjs",
+        "par_model_v2/viewer/contract_guard.py",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 (Actuarial Communications) - reviewer-facing data dictionary so the read-outs can be understood without the model repository",
+        "IFoA Model Practice Note section 4 (documentation, communication)",
+        "SOA ASOP 56 sections 3.4-3.6 (documentation of model methodology, reliance, limitations)",
+        "WAI-ARIA 1.2 - accessible read-only tabular disclosure surface"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.20.0",
+        "glossary_scope": "sign-off-pack-scoped (owner_decision_p31.glossary, 9 terms)",
+        "global_glossary_surface": false,
+        "top_level_keys": 24,
+        "ui_app_self_test_checks": 378,
+        "offline_self_tests": 8,
+        "offline_self_test_total_checks": 483
+      },
+      "after_snapshot": {
+        "ui_contract": "1.21.0 (additive: +1 top-level key 'explainer')",
+        "glossary_scope": "GLOBAL build-time data dictionary (23 terms, 18-tab coverage)",
+        "global_glossary_surface": true,
+        "top_level_keys": 25,
+        "base_definitions_carried_verbatim": true,
+        "limitations_carried_verbatim": true,
+        "explainer_contains_model_figure": false,
+        "headline_carried_bit_for_bit": "39975.654628199336",
+        "preexisting_keys_bit_identical": true,
+        "a2_digests_recompute_and_verify": true,
+        "network_or_storage_used": false,
+        "ui_app_self_test_checks": 393,
+        "offline_self_tests": 8,
+        "offline_self_test_total_checks": 498
+      },
+      "impact_assessment": "Display layer + additive data-contract only. The new 'explainer' key is the sole addition; every pre-existing key (and the A2 content digests for them) is bit-identical, and the explainer carries no model figure and recomputes nothing, so the MR-016/MR-017 dependence decision is not pre-empted. Zero-install invariants preserved (0 external refs, single self-contained HTML, no storage API, file:// safe).",
+      "quantitative_impact": "No governed capital figure changed. Contract 1.20.0 -> 1.21.0 (additive; +1 top-level key). ui_app self-test 378 -> 393 checks ok:true 0/0; all 8 offline self-tests green (483 -> 498 total checks). External refs remain 0.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-14T20:31:16.805710+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: ADDITIVE contract bump 1.20.0 -> 1.21.0 adding ONLY the 'explainer' key; every pre-existing ui_data key bit-identical (A2 per-section SHA-256 digests recompute and still verify in-browser; new explainer section digested, root recomputed). The 9 base definitions and all limitation text are copied verbatim from owner_decision_p31; the panel is display-only and contains no model figure; governed headline 39,975.654628199336 carried exactly. ui_app self-test 393 checks ok:true 0/0 plus 7 other offline suites green (498 total); 0 external refs; no network / no storage API; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-14T20:31:16.805724+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap E2 of the Phase 36 design note is closed: the offline UI now carries a read-only global 'Methodology & Glossary' data dictionary (23 terms, 18-tab coverage) assembled at build time, with base definitions and limitations carried verbatim. DISPLAY-ONLY, ADDITIVE - the MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
         }
       ],
       "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility"

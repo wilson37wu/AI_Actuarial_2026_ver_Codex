@@ -53,8 +53,8 @@ class Phase35Task3A2Digests(unittest.TestCase):
         cls.man = cls.data["contract_manifest"]
 
     def test_contract_bumped_to_120(self):
-        self.assertEqual(self.data["contract_version"], "1.20.0")
-        self.assertEqual(self.man["expected_contract_version"], "1.20.0")
+        self.assertEqual(self.data["contract_version"], "1.21.0")
+        self.assertEqual(self.man["expected_contract_version"], "1.21.0")
 
     def test_manifest_digest_fields_present(self):
         self.assertEqual(self.man["digest_algo"], "sha256")
@@ -89,7 +89,7 @@ class Phase35Task3A2Digests(unittest.TestCase):
         i = html.find(tok) + len(tok)
         j = html.find("</script>", i)
         emb = json.loads(html[i:j])
-        self.assertEqual(emb["contract_version"], "1.20.0")
+        self.assertEqual(emb["contract_version"], "1.21.0")
         self.assertEqual(emb["contract_manifest"]["root_digest"],
                          self.man["root_digest"])
         self.assertEqual(emb["contract_manifest"]["section_digests"],

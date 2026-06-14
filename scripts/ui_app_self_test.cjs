@@ -667,6 +667,57 @@ setTimeout(() => {
     document.getElementById("dx-readout").getAttribute("aria-live"));
   if (ovTabK) ovTabK.click();
 
+  // ===== Phase 36 Task 3 (gap E2): consolidated global glossary & methodology explainer =====
+  const e2Explainer = uiDataObj && uiDataObj.explainer;
+  const e2Od = uiDataObj && uiDataObj.owner_decision_p31;
+  const e2GlossTab = tabs.find(t => t.getAttribute("data-target") === "glossary");
+  if (e2GlossTab) e2GlossTab.click();
+  const e2Panel = document.getElementById("glossary");
+  const e2PanelText = (e2Panel && e2Panel.textContent) || "";
+  const e2GlossTermRows = document.querySelectorAll('#glossary table.glossterms tbody tr').length;
+  const e2GlossCovRows = document.querySelectorAll('#glossary table.glosscov tbody tr').length;
+  const e2KeyPresent = !!e2Explainer && typeof e2Explainer === "object" &&
+    Array.isArray(e2Explainer.terms) && Array.isArray(e2Explainer.tab_coverage);
+  const e2TabPresent = !!e2GlossTab && /Methodology & Glossary/.test(e2GlossTab.textContent || "");
+  const e2PanelRenders = /Methodology & Glossary/.test(e2PanelText) &&
+    /Global glossary/.test(e2PanelText) &&
+    e2GlossTermRows === (e2KeyPresent ? e2Explainer.terms.length : -1) && e2GlossTermRows > 0;
+  const e2TabCoverageComplete = e2KeyPresent &&
+    JSON.stringify(e2Explainer.tab_coverage.map(t => t.tab_id)) ===
+      JSON.stringify(["overview","inventory","calibrations","capital","actions","phase24","phase25","phase26","phase27","phase28","phase29","phase30","comparator","distexplorer","ownerdecision","userrun","governance","integrity"]) &&
+    e2GlossCovRows === 18;
+  const e2BaseDefinitionsVerbatim = e2KeyPresent && !!e2Od && (function(){
+    const g = e2Od.glossary || {};
+    return e2Explainer.terms.filter(t => (t.definition_source||"").indexOf("verbatim") >= 0)
+      .every(t => g[t.term] !== undefined && t.definition === g[t.term]);
+  })();
+  const e2BaseTermsAllCarried = e2KeyPresent && !!e2Od && (function(){
+    const g = e2Od.glossary || {};
+    return Object.keys(g).every(k => e2Explainer.terms.some(t => t.term === k && t.definition === g[k]));
+  })();
+  const e2LimitationsVerbatim = e2KeyPresent && !!e2Od &&
+    JSON.stringify(e2Explainer.limitations) === JSON.stringify(e2Od.limitations) &&
+    JSON.stringify(e2Explainer.provenance.limitations_verbatim) === JSON.stringify(e2Od.limitations);
+  const e2GlossaryProvenanceCarried = e2KeyPresent && !!e2Od &&
+    JSON.stringify(e2Explainer.provenance.glossary_verbatim) === JSON.stringify(e2Od.glossary);
+  const e2LimitationProvenancePerTerm = e2KeyPresent && e2Explainer.terms.every(t =>
+    t.limitation_provenance && Array.isArray(t.limitation_provenance.text));
+  const e2GovernedHeadlineTermPresent = e2KeyPresent && !!e2Od && e2Explainer.terms.some(t =>
+    t.term === "governed headline" && t.definition === e2Od.glossary["governed headline"]);
+  const e2DisplayOnly = e2KeyPresent && e2Explainer.display_only === true &&
+    /no model figure/.test(e2PanelText);
+  const e2ExplainerDigested = !!(uiDataObj && uiDataObj.contract_manifest &&
+    uiDataObj.contract_manifest.section_digests &&
+    /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.section_digests.explainer || ""));
+  const e2ContractIs121 = !!uiDataObj && uiDataObj.contract_version === "1.21.0";
+  const e2HeadlineBitForBit = /39975\.654628199336/.test(html);
+  const e2NoAuthoredFigures = e2KeyPresent && (function(){
+    const authored = e2Explainer.terms.map(t => (t.definition_source||"").indexOf("verbatim")>=0
+        ? (t.method_basis||"") : ((t.definition||"")+(t.method_basis||""))).join(" ") + " " +
+      e2Explainer.tab_coverage.map(t => (t.primary_readout||"")+(t.tab_label||"")).join(" ");
+    return !/39,975|46,638|46638\.9|3,637|39975\.654628199336/.test(authored);
+  })();
+
   const checks = {
     // Phase 33 Task 5 (gap G4): accessibility & usability pass
     g4SrOnlyCssPresent,
@@ -939,7 +990,7 @@ setTimeout(() => {
     // Phase 34 Task 2 (gap H1): self-describing data-contract guard.
     h1IntegrityTabPresent: !!intTab,
     h1IntegrityTabText: /Data-contract integrity/.test(intText),
-    h1ContractIs120: !!uiDataObj && uiDataObj.contract_version === "1.20.0",
+    h1ContractIs121: !!uiDataObj && uiDataObj.contract_version === "1.21.0",
     // Phase 35 Task 4 (gap A3): one-page printable model-card cover
     a3ModelCardPresent: !!modelCardEl,
     a3ModelCardIdentity: /Model card/.test(modelCardText) &&
@@ -957,7 +1008,7 @@ setTimeout(() => {
     a3ModelCardDecisionBlank: /intentionally BLANK/.test(modelCardText) &&
       /Owner decision \(option id\): _{6,}/.test(modelCardText),
     a3ModelCardProvenance: /Provenance:/.test(modelCardText) &&
-      /contract v1\.20\.0/.test(modelCardText) && /build stamp/.test(modelCardText),
+      /contract v1\.21\.0/.test(modelCardText) && /build stamp/.test(modelCardText),
     a3PrintCssPresent: a3PrintCssPresent,
     // Phase 35 Task 3 (gap A2): content-integrity digests + in-browser verifier
     a2DigestsPresent,
@@ -1022,6 +1073,22 @@ setTimeout(() => {
     e1IntegrityAnnounces,
     e1HeadlineBitForBit,
     e1DxReadoutNotLive,
+    // Phase 36 Task 3 (gap E2): consolidated global glossary & methodology explainer
+    e2KeyPresent,
+    e2TabPresent,
+    e2PanelRenders,
+    e2TabCoverageComplete,
+    e2BaseDefinitionsVerbatim,
+    e2BaseTermsAllCarried,
+    e2LimitationsVerbatim,
+    e2GlossaryProvenanceCarried,
+    e2LimitationProvenancePerTerm,
+    e2GovernedHeadlineTermPresent,
+    e2DisplayOnly,
+    e2ExplainerDigested,
+    e2ContractIs121,
+    e2HeadlineBitForBit,
+    e2NoAuthoredFigures,
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -1321,7 +1388,7 @@ setTimeout(() => {
     checks.g4NoDuplicateCaptions &&
     checks.h1IntegrityTabPresent &&
     checks.h1IntegrityTabText &&
-    checks.h1ContractIs120 &&
+    checks.h1ContractIs121 &&
     checks.a3ModelCardPresent &&
     checks.a3ModelCardIdentity &&
     checks.a3ModelCardScope &&
@@ -1400,6 +1467,21 @@ setTimeout(() => {
     checks.e1IntegrityAnnounces &&
     checks.e1HeadlineBitForBit &&
     checks.e1DxReadoutNotLive &&
+    checks.e2KeyPresent &&
+    checks.e2TabPresent &&
+    checks.e2PanelRenders &&
+    checks.e2TabCoverageComplete &&
+    checks.e2BaseDefinitionsVerbatim &&
+    checks.e2BaseTermsAllCarried &&
+    checks.e2LimitationsVerbatim &&
+    checks.e2GlossaryProvenanceCarried &&
+    checks.e2LimitationProvenancePerTerm &&
+    checks.e2GovernedHeadlineTermPresent &&
+    checks.e2DisplayOnly &&
+    checks.e2ExplainerDigested &&
+    checks.e2ContractIs121 &&
+    checks.e2HeadlineBitForBit &&
+    checks.e2NoAuthoredFigures &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

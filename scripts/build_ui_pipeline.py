@@ -11,6 +11,8 @@ because two ADDITIVE patch layers are applied on top of the base build:
     build_phase35_task2_a1_wcag    -> contract 1.19.0  (+ a11y_audit, WCAG focus)
     build_phase35_task3_a2_digests -> contract 1.20.0  (+ per-section SHA-256
                                                          section_digests)
+    build_phase36_task3_e2_glossary-> contract 1.21.0  (+ explainer global
+                                                         methodology & glossary)
 
 Historically this meant a "clean rebuild" (running only ``build_ui_data.py``)
 would silently REGRESS the published contract from 1.20.0 back to 1.18.0 --
@@ -54,15 +56,17 @@ sys.path.insert(0, SCRIPTS)
 import build_ui_data as _base  # noqa: E402
 import build_phase35_task2_a1_wcag as _a1  # noqa: E402
 import build_phase35_task3_a2_digests as _a2  # noqa: E402
+import build_phase36_task3_e2_glossary as _e2  # noqa: E402
 
 BASE_CONTRACT = _base.CONTRACT_VERSION            # "1.18.0"
-PUBLISHED_CONTRACT = _a2.NEW_CONTRACT             # "1.20.0"
+PUBLISHED_CONTRACT = _e2.NEW_CONTRACT             # "1.21.0"
 
 # Ordered (script, expected-prior, expected-new) chain. Priors/news come from
 # the patch modules themselves so this list cannot silently disagree with them.
 LAYERS = [
     ("build_phase35_task2_a1_wcag.py", _a1.PRIOR_CONTRACT, _a1.NEW_CONTRACT),
     ("build_phase35_task3_a2_digests.py", _a2.PRIOR_CONTRACT, _a2.NEW_CONTRACT),
+    ("build_phase36_task3_e2_glossary.py", _e2.PRIOR_CONTRACT, _e2.NEW_CONTRACT),
 ]
 
 

@@ -10128,3 +10128,29 @@ ARIA/JS/presentation only — **NO contract change** (stays 1.20.0; the embedded
 **Environment note:** the mounted-FS write corruption recurred — the Edit/Write file tools truncated files at a fixed byte boundary (AGENT_COORDINATION §5 hazard). Worked around by writing all sources off-mount to `/tmp`, validating, then `cp`-ing onto the mount; all git in a fresh `/tmp` clone of origin/main.
 
 **Next:** Phase 36 Task 3 (gap E2) — consolidated glossary & methodology explainer surface (ADDITIVE `explainer` key; contract 1.20.0 -> next minor).
+
+---
+
+## Cycle 2026-06-14T20:04Z-27a4 — Phase 36 Task 3 (gap E2) COMPLETE — consolidated global glossary & methodology explainer
+
+**Agent:** Claude Cowork (18:00 UTC window). **Lock:** FREE → PROCEED → acquired clean (cycle `2026-06-14T20:04Z-27a4`), released at end. **All git + build done in a FRESH `/tmp` clone of `origin/main` (HEAD `cf2f1d8`)** to avoid the recurring mounted-FS write corruption.
+
+**Task (single `in_progress`):** Phase 36 Task 3 = E2 — promote the sign-off-pack-scoped glossary to a GLOBAL, build-time-assembled glossary / data dictionary covering every governed read-out across the 18 result tabs; surface as a read-only "Methodology & Glossary" panel; ADDITIVE contract bump adding only an `explainer` key.
+
+**What shipped:**
+- `ui_data.json` gained one new top-level key **`explainer`** (ADDITIVE contract **1.20.0 → 1.21.0**): 23 terms (9 base carried **verbatim** from `owner_decision_p31.glossary` + 14 authored plain-language methodology terms), each with definition + method/assumption basis + limitation provenance; an 18-tab coverage map; and verbatim-carried roots (`glossary`, `limitations`, `standard_references`, `figure_provenance`, `how_to_read`) copied bit-for-bit from `owner_decision_p31`.
+- New read-only tab/panel: `TABS += ["glossary","Methodology & Glossary"]`, `#glossary` panel, `renderGlossary()` (coverage table + global term table + verbatim limitation/standard-ref roots).
+- A2 per-section SHA-256 digests recomputed with the EXACT embedded JS (new `explainer` section digested; root `85a4f7c2…ac724`) → in-browser verifier agrees byte-for-byte. H1 `contract_guard.py` + `build_ui_pipeline.py` advanced additively to 1.21.0 (explainer appended to required-keys; key_count 23→24; pipeline layer chain base→1.19→1.20→1.21).
+- **Build script:** `scripts/build_phase36_task3_e2_glossary.py` (`--check`/apply, idempotent, parametric REPO via `E2_REPO`). **Governance:** `scripts/build_phase36_task3_e2_governance.py`.
+
+**Invariants:** Display-only — explainer contains **no model figure** (authored text figure-scrubbed at build; verbatim quotes of already-governed text exempt); governed headline `39975.654628199336` and every pre-existing key bit-identical; **0 external refs**, single self-contained `file://` HTML, no storage API. **NO model parameter changes**; Phase 30 stop-rule honoured; MR-016/MR-017 owner decision not pre-empted.
+
+**Tests:** ui_app self-test **378 → 393 (+15)** ok:true 0/0; all **8 offline self-tests green (483 → 498 total checks)**, 0 network / 0 JS errors. Affected version-pinned pytests updated & green: `test_phase34_task2_h1_contract_guard.py`, `test_phase35_task3_a2_digests.py`, `test_ui_contract_pipeline_reconcile.py` (**21 passed**).
+
+**Governance:** ChangeRecord `514e5c203ac24d2181dc7170452587ff` opened, **OWNER_REVIEW** (records 97→98, audit 125→126, risk 17, audit integrity True).
+
+**Evidence:** `docs/validation/PHASE36_TASK3_E2_REPORT.{json,md}`.
+
+**Env note:** sandbox `/sessions` tmpfs was 100% full → redirected `TMPDIR=/tmp` for tempdir-using pytests (the mount itself has ample space; not a logic issue).
+
+**Next (single `in_progress`):** Phase 36 Task 4 = E3 — single reproducibility evidence-pack export (byte-identical, digest-verifiable, `file://` safe).
