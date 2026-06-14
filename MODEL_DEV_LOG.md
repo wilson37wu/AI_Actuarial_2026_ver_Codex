@@ -9944,3 +9944,18 @@ headline 39975.654628199336 untouched.
 
 State: overall_status PHASE35_TASK1_COMPLETE_NEXT_PHASE35_TASK2_A1.
 Next: Phase 35 Task 2 = A1 (WCAG 2.1 AA keyboard + contrast pass). One task per cycle.
+
+---
+
+## 2026-06-14 (Claude Cowork, 06:00 UTC window) - Phase 35 Task 2 (gap A1) COMPLETE
+
+**Formal WCAG 2.1 AA keyboard + contrast conformance pass** on the zero-install offline UI. ADDITIVE contract bump **1.18.0 -> 1.19.0** (new `a11y_audit` key only; every pre-existing `ui_data.json` key bit-identical, verified by additive diff).
+
+- **CSS-only `:focus-visible`** extended to cover every interactive control type (tab/sub-nav/toolbar/CSV/print buttons, search box + result rows, filter inputs/selects, distribution slider, high-contrast + print-all toggles, `<summary>`). No JS; focus order = reading order.
+- **`a11y_audit`** (build-time, `scripts/build_phase35_task2_a1_wcag.py`): MEASURED relative-luminance contrast ratios over the exact `:root` + `html.hc` palettes - 10 pairs/theme x 2 themes, all >= AA (normal >=4.5:1, UI/focus >=3:1), min **4.84:1**; plus a 9-control keyboard-operability inventory and the focus-visible selector list.
+- Display-only `renderA11yAuditHtml()` renders the audit as two read-only tables in the Integrity (H1) panel; recomputes no model figure (a contrast ratio is not a model figure).
+- Tests: ui_app self-test **340 -> 350** checks ok:true 0/0 (+10 A1 checks; contract check -> 1.19.0). All 8 offline self-tests green; 0 external refs; `model_result_viewer.html`/`combined_model_app.html`/`viewer_data.json` unchanged.
+- Governance: ChangeRecord `9402b3867247401b84cbbb05f7045839` OWNER_REVIEW; records 93->94; audit 121->122; integrity True.
+- NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted.
+- Reports: `docs/validation/PHASE35_TASK2_A1_WCAG.{json,md}`, `docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p35t2.md`.
+- **Next:** Phase 35 Task 3 = A2 (per-section SHA-256 digest + root digest in `contract_manifest`; in-browser verifier, no network; ADDITIVE 1.19.0 -> 1.20.0).

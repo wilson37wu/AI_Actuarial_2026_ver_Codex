@@ -534,6 +534,44 @@ setTimeout(() => {
   }
   const h4NoStorageApis = g4NoStorageApis;
 
+  // Phase 35 Task 2 (gap A1): formal WCAG 2.1 AA keyboard + contrast pass.
+  // CSS-only :focus-visible must cover EVERY interactive control type; the
+  // embedded a11y_audit must be a real, fully-passing AA record measured at
+  // build time; and the Integrity panel must render it read-only.
+  const a1Css = h4Css; // the single-file <style> block extracted above
+  const a1FocusVisibleComprehensive = [
+    "button:focus-visible", "input:focus-visible", "select:focus-visible",
+    "textarea:focus-visible", "summary:focus-visible", ".hctoggle:focus-visible",
+    "[tabindex]:focus-visible",
+  ].every(sel => a1Css.indexOf(sel) >= 0);
+  const a1Audit = uiDataObj && uiDataObj.a11y_audit;
+  const a1AuditEmbedded = !!a1Audit && a1Audit.standard === "WCAG 2.1 AA" &&
+    !!a1Audit.themes && !!a1Audit.themes.default && !!a1Audit.themes.high_contrast;
+  const a1PairsBothThemes = a1AuditEmbedded &&
+    Array.isArray(a1Audit.themes.default.pairs) &&
+    a1Audit.themes.default.pairs.length >= 8 &&
+    Array.isArray(a1Audit.themes.high_contrast.pairs) &&
+    a1Audit.themes.high_contrast.pairs.length === a1Audit.themes.default.pairs.length;
+  const a1AllPairsPassAA = a1PairsBothThemes &&
+    ["default", "high_contrast"].every(t =>
+      a1Audit.themes[t].pairs.every(p =>
+        p.pass === true && Number(p.ratio) >= Number(p.required))) &&
+    a1Audit.summary && a1Audit.summary.all_pass === true;
+  const a1KeyboardInventory = !!a1Audit && !!a1Audit.keyboard &&
+    Array.isArray(a1Audit.keyboard.controls) && a1Audit.keyboard.controls.length >= 8 &&
+    a1Audit.keyboard.controls.every(c => c.operable === true);
+  const a1FocusVisibleSelectorsListed = !!a1Audit && !!a1Audit.focus_visible &&
+    a1Audit.focus_visible.css_only === true &&
+    ["button", "summary", ".hctoggle", "[tabindex]"].every(
+      s => (a1Audit.focus_visible.selectors || []).indexOf(s) >= 0);
+  const a1ContrastTableRendered = /WCAG 2\.1 AA conformance/.test(intText) &&
+    /Default theme/.test(intText) && /High-contrast theme/.test(intText);
+  const a1KeyboardTableRendered = /Keyboard operability/.test(intText) &&
+    /High-contrast toggle/.test(intText);
+  const a1DisplayOnlyStated = /recomputes no model figure/.test(intText) &&
+    /contrast ratio is not a model figure/.test(intText);
+  const a1A11yTables = document.querySelectorAll('#integrity table.a11ytbl').length;
+
   const checks = {
     // Phase 33 Task 5 (gap G4): accessibility & usability pass
     g4SrOnlyCssPresent,
@@ -806,7 +844,7 @@ setTimeout(() => {
     // Phase 34 Task 2 (gap H1): self-describing data-contract guard.
     h1IntegrityTabPresent: !!intTab,
     h1IntegrityTabText: /Data-contract integrity/.test(intText),
-    h1ContractIs118: !!uiDataObj && uiDataObj.contract_version === "1.18.0",
+    h1ContractIs119: !!uiDataObj && uiDataObj.contract_version === "1.19.0",
     h1ManifestEmbedded: !!intManifest && intManifest.expected_contract_version === uiDataObj.contract_version &&
       Array.isArray(intManifest.required_top_level_keys) && intManifest.required_top_level_keys.length >= 20,
     h1ManifestExcludesItself: !!intManifest && intManifest.required_top_level_keys.indexOf("contract_manifest") === -1,
@@ -839,6 +877,17 @@ setTimeout(() => {
     h4RestoreFromHash,
     h4FlagDoesNotBreakTabRouting,
     h4NoStorageApis,
+    // Phase 35 Task 2 (gap A1): WCAG 2.1 AA keyboard + contrast pass
+    a1FocusVisibleComprehensive,
+    a1AuditEmbedded,
+    a1PairsBothThemes,
+    a1AllPairsPassAA,
+    a1KeyboardInventory,
+    a1FocusVisibleSelectorsListed,
+    a1ContrastTableRendered,
+    a1KeyboardTableRendered,
+    a1DisplayOnlyStated,
+    a1A11yTables,
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -1138,7 +1187,17 @@ setTimeout(() => {
     checks.g4NoDuplicateCaptions &&
     checks.h1IntegrityTabPresent &&
     checks.h1IntegrityTabText &&
-    checks.h1ContractIs118 &&
+    checks.h1ContractIs119 &&
+    checks.a1FocusVisibleComprehensive &&
+    checks.a1AuditEmbedded &&
+    checks.a1PairsBothThemes &&
+    checks.a1AllPairsPassAA &&
+    checks.a1KeyboardInventory &&
+    checks.a1FocusVisibleSelectorsListed &&
+    checks.a1ContrastTableRendered &&
+    checks.a1KeyboardTableRendered &&
+    checks.a1DisplayOnlyStated &&
+    checks.a1A11yTables === 2 &&
     checks.h1ManifestEmbedded &&
     checks.h1ManifestExcludesItself &&
     checks.h1ManifestKeysAllPresent &&

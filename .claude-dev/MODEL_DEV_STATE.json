@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-14T05:20:00Z",
- "last_run_duration_minutes": 15,
- "last_run_note": "Phase 35 Task 1 COMPLETE (offline UI accessibility & evidence-integrity design note + measured baseline). Pure governance_change; no source/data/contract change (contract stays 1.18.0; ui_app.html + ui_data.json byte-identical to origin/main). Baseline frozen: 8 offline self-tests ok:true 340/11/27/9/9/10/18/21 = 445 checks, 0 network / 0 JS errors; 0 external refs across 3 HTML artifacts; 18 tabs; governance 92->93 ChangeRecords / 120->121 audit / 17 risk (audit_integrity_ok). 3 gaps pre-registered one-per-cycle: A1 WCAG 2.1 AA keyboard+contrast pass (ADDITIVE a11y_audit), A2 per-section SHA-256 digest in H1 panel (ADDITIVE manifest section_digests; in-browser verify, no network), A3 one-page printable model-card cover (presentation only, bit-for-bit, blank decision). Gate PASS (29 checks); new unittest 25/25 green. ChangeRecord 8fad9377 left in OWNER_REVIEW. Reports: docs/validation/PHASE35_TASK1_DESIGN_NOTE.{json,md}, docs/UI_ACCESSIBILITY_INTEGRITY_DESIGN_CARD.md, docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p35t1.md. Next: Phase 35 Task 2 = A1 (WCAG 2.1 AA keyboard+contrast pass).",
- "current_phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening (Task 2 = A1 next)",
- "overall_status": "PHASE35_TASK1_COMPLETE_NEXT_PHASE35_TASK2_A1",
+ "last_run": "2026-06-14T06:29:27Z",
+ "last_run_duration_minutes": 30,
+ "last_run_note": "Phase 35 Task 2 (gap A1) COMPLETE: formal WCAG 2.1 AA keyboard + contrast pass. ADDITIVE contract 1.18.0->1.19.0 (a11y_audit only; pre-existing keys bit-identical). CSS-only :focus-visible on every interactive control type; build-time MEASURED contrast 10 pairs x 2 themes all AA (min 4.84:1) + 9-control keyboard inventory, rendered read-only in Integrity panel. ui_app self-test 340->350 ok:true 0/0; all 8 offline self-tests green; 0 external refs across 3 HTML; other 2 HTML + viewer_data.json unchanged. Governance 93->94 records / 121->122 audit (audit_integrity_ok); ChangeRecord 9402b386 OWNER_REVIEW. NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted. Reports: docs/validation/PHASE35_TASK2_A1_WCAG.{json,md}, docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p35t2.md. Next: Phase 35 Task 3 = A2 (per-section SHA-256 digest).",
+ "current_phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening (Task 3 = A2 next)",
+ "overall_status": "PHASE35_TASK2_A1_COMPLETE_NEXT_PHASE35_TASK3_A2",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -602,12 +602,13 @@
    "status": "in_progress",
    "description": "Deepen the zero-install offline UI: formal WCAG keyboard + AA-contrast pass; per-section cryptographic digest surfaced in the H1 integrity panel so a reviewer can verify the embedded snapshot was not altered offline; one-page printable model-card cover. Pure display/additive layer; preserve no-storage-API + file:// + governance-neutrality invariants.",
    "completed": [
-    "Task 1: design note + measured accessibility/integrity baseline; pre-register gaps (A1 WCAG keyboard+AA contrast audit, A2 per-section integrity digest in H1 panel, A3 printable model-card cover) with acceptance criteria; freeze baseline (self-test counts, contract 1.18.0, external-ref=0)"
+    "Task 1: design note + measured accessibility/integrity baseline; pre-register gaps (A1 WCAG keyboard+AA contrast audit, A2 per-section integrity digest in H1 panel, A3 printable model-card cover) with acceptance criteria; freeze baseline (self-test counts, contract 1.18.0, external-ref=0)",
+    "Task 2 = A1: formal WCAG 2.1 AA keyboard + contrast conformance pass (ADDITIVE a11y_audit; contract 1.18.0->1.19.0). CSS-only :focus-visible on every interactive control type; build-time MEASURED contrast (10 pairs x 2 themes, all AA, min 4.84:1) + keyboard inventory rendered read-only in the Integrity panel. ui_app self-test 350 ok:true 0/0; all 8 offline suites green; 0 external refs; governed figures bit-identical. ChangeRecord 9402b386 OWNER_REVIEW (94 records / 122 audit). COMPLETE."
    ],
    "in_progress": [
-    "Task 2 = A1: formal WCAG 2.1 AA keyboard + contrast conformance pass (ADDITIVE a11y_audit key: CSS-only :focus-visible on every interactive control + build-time measured contrast table for default & high-contrast themes; keyboard operability of previously-uncovered controls). Per pre-registered A1 acceptance criteria in docs/validation/PHASE35_TASK1_DESIGN_NOTE.md"
+    "Task 3 = A2: per-section SHA-256 digest + root digest in contract_manifest (written at build time) with an in-browser load-time verifier (NO network, no storage API; file:// safe) surfacing per-section verified/altered + an overall tamper-evident badge in the H1 panel. ADDITIVE contract 1.19.0 -> 1.20.0. Per pre-registered A2 acceptance criteria in docs/validation/PHASE35_TASK1_DESIGN_NOTE.md"
    ],
-   "next": "Task 3 = A2 (per-section SHA-256 digest in H1 panel); Task 4 = A3 (one-page model-card cover); Task 5 = phase summary + re-audit + PHASE 35 COMPLETE"
+   "next": "Task 4 = A3 (one-page printable model-card cover); Task 5 = phase summary + re-audit + PHASE 35 COMPLETE"
   }
  },
  "repository_info": {

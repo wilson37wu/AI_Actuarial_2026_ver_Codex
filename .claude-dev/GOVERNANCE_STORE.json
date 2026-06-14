@@ -2720,6 +2720,27 @@
       "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening",
       "digest": "68b609081698fdcbfff2070e8a8ab4649cd18f1a15c78583f6c4705807d67294",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "befc18938af44023b6c24d3d10f81047",
+      "timestamp": "2026-06-14T06:28:20.816778+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 35 Task 2 WCAG 2.1 AA keyboard + contrast pass (gap A1); additive contract 1.18.0 -> 1.19.0 (a11y_audit only); governed figures bit-identical",
+      "details": {
+        "record_id": "9402b3867247401b84cbbb05f7045839",
+        "contract": "1.18.0->1.19.0",
+        "ui_app_self_test_checks": 350,
+        "affected_components": [
+          "scripts/build_phase35_task2_a1_wcag.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening",
+      "digest": "ac6f03479890c3fa74f7c7b69db4c6da27e2121bc8d0fc06fb52ee5c18c0a607",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -8565,6 +8586,64 @@
           "actor": "Phase35Task1AccessibilityIntegrityDesign",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: accessibility / evidence-integrity scope and gap priority (A1 WCAG AA pass first). No model or contract change until Task 2."
+        }
+      ],
+      "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening"
+    },
+    {
+      "record_id": "9402b3867247401b84cbbb05f7045839",
+      "created_at": "2026-06-14T06:28:20.816693+00:00",
+      "title": "Phase 35 Task 2 (gap A1) - formal WCAG 2.1 AA keyboard + contrast conformance pass on the zero-install offline UI",
+      "description": "Closed gap A1 of the Phase 35 design note: a formal WCAG 2.1 AA keyboard + contrast conformance pass on the zero-install offline UI. (1) A comprehensive CSS-only :focus-visible rule now draws a 2px accent outline on EVERY interactive control type (tab/sub-nav/toolbar/CSV/print buttons, search box + result rows, filter inputs/selects, the distribution slider, the high-contrast and print-all toggles, expandable disclosures) - no JavaScript and no model figure involved; focus order follows reading order. (2) scripts/build_phase35_task2_a1_wcag.py embeds an ADDITIVE build-time a11y_audit key carrying MEASURED contrast ratios for the default and high-contrast themes (relative-luminance contrast per WCAG 2.x over the exact :root and html.hc palettes; 10 pairs per theme, all >=AA: body text >=4.5:1, UI/focus >=3:1) plus a keyboard-operability inventory; the contract bumps 1.18.0 -> 1.19.0 (a11y_audit is the ONLY new top-level key; every pre-existing ui_data key renders bit-identically - verified by an additive diff). (3) ui_app.html gained a display-only renderA11yAuditHtml() that renders the embedded audit as two read-only tables in the Integrity (H1) panel and recomputes NO model figure (a contrast ratio is not a model figure). (4) Tests: 10 new ui_app self-test checks (340 -> 350 checks, ok:true, 0 network / 0 JS errors) covering focus-visible coverage, the embedded all-pass audit, the keyboard inventory, and the rendered tables; all eight offline self-tests remain ok:true 0/0 (ui_app/offline_viewer/combined_gui/userrun/distribution/integrity/search-deeplink/bundle-printall). Zero-install preserved (0 external refs, single self-contained HTML). NO model parameter changes; binding stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_phase35_task2_a1_wcag.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "WCAG 2.1 AA 1.4.3 (contrast minimum - normal text >=4.5:1)",
+        "WCAG 2.1 AA 1.4.11 (non-text contrast - UI components / focus >=3:1)",
+        "WCAG 2.1 AA 2.1.1 (keyboard) / 2.4.7 (focus visible) / 4.1.2 (name, role, value)",
+        "SOA ASOP 41 s3.2 (clear communication of actuarial findings)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.18.0",
+        "a11y_audit": false,
+        "focus_visible_scope": "tab/segbtn/tbtn/rrow/crow/panel only",
+        "ui_app_self_test_checks": 340,
+        "offline_self_tests": 8
+      },
+      "after_snapshot": {
+        "ui_contract": "1.19.0",
+        "a11y_audit": true,
+        "focus_visible_scope": "every interactive control type (CSS-only)",
+        "contrast_pairs_per_theme": 10,
+        "themes_measured": 2,
+        "min_contrast_ratio": 4.84,
+        "all_pass_AA": true,
+        "ui_app_self_test_checks": 350,
+        "offline_self_tests": 8
+      },
+      "impact_assessment": "Display-layer accessibility pass only. ADDITIVE contract change (a11y_audit); the display layer recomputes no model figure and the governed frozen-t headline and every other governed read-out are bit-identical. The MR-016/MR-017 dependence decision is not pre-empted. Zero-install invariants preserved (0 external refs, single self-contained HTML).",
+      "quantitative_impact": "No governed capital figure changed. Contract 1.18.0 -> 1.19.0 (additive a11y_audit). Measured AA contrast: 10 pairs per theme x 2 themes, all pass (min ratio 4.84:1). ui_app self-test 340 -> 350 checks ok:true 0/0; all 8 offline self-tests green. External refs remain 0.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-14T06:28:20.816742+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: additive contract 1.18.0 -> 1.19.0 (a11y_audit only; pre-existing keys bit-identical via additive diff); MEASURED AA contrast all-pass in both themes; CSS-only :focus-visible on every interactive control type; ui_app self-test 350 checks ok:true 0/0 plus 7 other offline suites green; 0 external refs; display layer recomputes nothing; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-14T06:28:20.816755+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap A1 of the Phase 35 design note is closed: the offline UI now carries a formal, build-time-MEASURED WCAG 2.1 AA contrast record (default + high-contrast themes) and CSS-only :focus-visible on every interactive control, rendered read-only in the Integrity panel. PRESENTATION/ROBUSTNESS ONLY - the MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
         }
       ],
       "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening"

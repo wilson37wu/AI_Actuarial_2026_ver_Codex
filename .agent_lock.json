@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-14T05:24:03Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-14T06:08Z-1667",
+  "started_at": "2026-06-14T06:08:37Z",
+  "ttl_minutes": 120,
+  "task": "Phase 35 Task 2 = A1 WCAG 2.1 AA keyboard+contrast pass",
+  "note": ""
 }
