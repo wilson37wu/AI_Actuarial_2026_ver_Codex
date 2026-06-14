@@ -10045,3 +10045,20 @@ tests unchanged/green; n_checks unchanged. Result: 89/89 design-note task1 tests
 Remaining for owner: (2) build_ui_data.py CONTRACT_VERSION=1.18.0 vs live 1.20.0 (builder/patch
 reconcile — next task); (3) test_phase30_task5_ui_propagation hard-asserts old contract 1.13.0 (RED);
 (4) test_phase26_task4_delta_matrix KeyError 'distance_to_nested' (RED). Lock cycle 2026-06-14T10:07Z-62de.
+
+## 2026-06-14T18:00Z — Post-Phase-35 Finding (2): builder/patch contract reconciliation (Claude)
+
+**Task (single in_progress):** Reconcile `scripts/build_ui_data.py` (hard-codes `CONTRACT_VERSION="1.18.0"`) with the additive A1/A2 patch layers that lift the published offline-UI artifacts to contract **1.20.0**, so a clean rebuild no longer silently regresses the contract.
+
+**Root cause.** The published `ui_data.json` / `ui_app.html` are built in three layers — `build_ui_data.py` (base **1.18.0**) → `build_phase35_task2_a1_wcag.py` (**1.19.0**, adds `a11y_audit` + WCAG focus markup) → `build_phase35_task3_a2_digests.py` (**1.20.0**, adds per-section SHA-256 `section_digests`). Running only the base bundler reproduced 1.18.0, regressing the published 1.20.0.
+
+**Fix (reproduces TRUE 1.20.0 content, not just a version string):**
+- **NEW `scripts/build_ui_pipeline.py`** — canonical clean-rebuild orchestrator. Runs the base bundler then re-applies the additive layers in order, asserting the contract progresses 1.18.0 → 1.19.0 → 1.20.0 and terminates at the published contract. The chain is derived from the patch modules' own `PRIOR_CONTRACT`/`NEW_CONTRACT` constants (single source of truth — cannot drift). `--check` validates the on-disk artifact without rebuilding. The one-time `*_governance` ledger scripts are deliberately NOT re-run (would double-count ChangeRecords).
+- **`scripts/build_ui_data.py`** — comment-only: self-documents that `1.18.0` is the BASE contract and the published artifact comes from `build_ui_pipeline.py`. `CONTRACT_VERSION` value unchanged, so the existing `test_ui_currency_meta` base-output assertion still holds.
+- **NEW `tests/test_ui_contract_pipeline_reconcile.py`** (5 tests) — guards: chain contiguous, `base == first-layer prior`, `published == live ui_data.json contract`, `--check` passes on the live tree.
+
+**Proof.** A full clean rebuild in a scratch tree (`build_ui_data → a1_wcag → a2_digests`) reproduced contract **1.20.0** with `a11y_audit` + `section_digests`; static sections (capital/tail/section_digests) byte-identical to the committed live artifact. The only differing leaves were governance/summary counts (+4 change-records / +4 audit-entries / +4 artifacts) — the live snapshot predates the most recent governance records, not a builder defect.
+
+**Tests.** 14/14 green (5 new reconcile + 9 `test_ui_currency_meta`). `build_ui_data` change is comment-only; new files additive. (Sandbox lacks numpy/scipy → ~29 unrelated copula/risk tests fail *collection* — pre-existing environment limitation, not introduced here.) Governance 96/124/17 unchanged.
+
+**Remaining findings (carried for owner / next cycles):** (3) `test_phase30_task5_ui_propagation` hard-asserts old exact contract 1.13.0 vs live 1.20.0 → RED (same frozen-exact-vs-moving-repo anti-pattern → monotonic guard or re-freeze); (4) `test_phase26_task4_delta_matrix` `KeyError 'distance_to_nested'` (published report dropped the key → refresh expectation vs restore key). **Next in_progress:** Finding (3).

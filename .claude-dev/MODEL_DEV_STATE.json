@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-14T10:20:00Z",
-  "last_run_duration_minutes": 13,
-  "last_run_note": "POST-PHASE-35 cycle (Claude 06:00-window, ran 10:07Z). Single task = FINDING (1) fix: frozen design-note gates must not exact-live-match a moving repo. Root cause: validate_design_note() in the four viewer modules (ui_consolidation/Ph32, ui_interactive_analytics/Ph33, ui_usability_hardening/Ph34, ui_accessibility_integrity/Ph35) asserted live ui_app.html contained the EXACT frozen contract_version string AND matched the frozen byte size; after the repo advanced to contract 1.20.0 these reded out (Ph32/33/34 were RED, Ph35 latently broken-on-next-additive-phase). FIX: converted live_contract_version_match and live_single_file_size_match to MONOTONIC grow-only regression guards (live_ver>=base_ver via parsed version tuples; live_size>=base_size), mirroring the existing grow-only logic of live_tab_inventory_match and live_governance_counts_match. Negative-path gate tests (wrong doc_id / param-change / dropped-gap / non-additive) still pass; n_checks unchanged. RESULT: 89/89 across the 4 design-note task1 tests now GREEN; change isolated (only those 4 tests import these modules); ~1600 other tests run showed no NEW regressions. Gov 96/124/17. REMAINING FINDINGS for owner / next tasks: (2) [carried] scripts/build_ui_data.py still hard-codes CONTRACT_VERSION='1.18.0' while live ui_data/ui_app are 1.20.0 (produced by layered A1/A2 patch scripts) - a clean rebuild from the builder would REGRESS the contract; needs the patch-script deltas folded into build_ui_data.py (non-trivial, deferred - NOT half-fixed to avoid a builder that claims 1.20.0 without producing 1.20.0 content). (3) [NEW, pre-existing, separate class] tests/test_phase30_task5_ui_propagation.py ::test_contract_version_1_13_0 and ::test_embedded_snapshot_contract hard-assert the OLD exact contract 1.13.0 against live ui_app.html -> RED. Same 'frozen exact-match vs moving repo' anti-pattern but in a ui_propagation test, not a design-note gate; recommend same monotonic treatment or re-freeze. (4) [NEW, pre-existing, separate class] tests/test_phase26_task4_delta_matrix.py ::test_nested_reference_outside_task3_ci_disclosed -> KeyError 'distance_to_nested': the live published delta-matrix report no longer emits that key the frozen test expects; owner to decide refresh-expectation vs restore-key. NEXT (single in_progress): Finding (2) builder/patch contract reconciliation.",
-  "current_phase": "Post-Phase-35 cleanup: Finding(1) design-note-gate monotonic fix DONE; next=Finding(2) build_ui_data/patch contract reconcile; then findings(3)(4) stale-exact-match tests; then research",
-  "overall_status": "POST_PHASE35_FINDING1_FIXED_NEXT_FINDING2_BUILDER_RECONCILE",
+  "last_run": "2026-06-14T18:00:00Z",
+  "last_run_duration_minutes": 30,
+  "last_run_note": "POST-PHASE-35 cycle (Claude 18:00-window). Single task = FINDING (2): builder/patch contract reconciliation. ROOT CAUSE: scripts/build_ui_data.py hard-codes CONTRACT_VERSION='1.18.0' (the BASE bundle), but the PUBLISHED ui_data.json/ui_app.html are contract 1.20.0, produced by two ADDITIVE patch layers run on top (build_phase35_task2_a1_wcag 1.18.0->1.19.0 adds a11y_audit+WCAG focus; build_phase35_task3_a2_digests 1.19.0->1.20.0 adds per-section SHA-256 section_digests). A 'clean rebuild' from build_ui_data.py alone therefore silently REGRESSED 1.20.0->1.18.0. FIX (no half-measure; reproduces TRUE 1.20.0 content, not just a version string): (a) NEW scripts/build_ui_pipeline.py - the canonical rebuild orchestrator that runs base bundler then re-applies the additive layers in order, asserting the contract progresses 1.18.0->1.19.0->1.20.0 and terminates at the published contract; derives the chain from the patch modules' own PRIOR/NEW constants (single source of truth, cannot drift); supports --check (validate on-disk artifact, no rebuild). (b) build_ui_data.py now self-documents that 1.18.0 is the BASE and the published artifact comes from build_ui_pipeline.py (CONTRACT_VERSION value UNCHANGED so the existing test_ui_currency_meta base-output assertion still holds). (c) NEW tests/test_ui_contract_pipeline_reconcile.py (5 tests) guards the chain is contiguous, base==first-layer-prior, published==live ui_data.json contract, and --check passes. PROOF: a full clean rebuild in a scratch tree (build_ui_data -> a1_wcag -> a2_digests) reproduced contract 1.20.0 WITH a11y_audit + section_digests; static sections (capital/tail/section_digests) byte-identical to live; only governance/summary leaves differed (+4 change-records / +4 audit-entries / +4 artifacts) = live snapshot predates the most recent governance records, NOT a builder defect. TESTS: 14/14 green (5 new reconcile + 9 test_ui_currency_meta); build_ui_data change is comment-only so behavior is unchanged; new files additive. Sandbox lacks numpy/scipy so ~29 unrelated copula/risk tests fail COLLECTION (pre-existing env limitation, not introduced here). REMAINING FINDINGS for owner / next tasks: (3) tests/test_phase30_task5_ui_propagation.py ::test_contract_version_1_13_0 + ::test_embedded_snapshot_contract hard-assert OLD exact contract 1.13.0 vs live 1.20.0 -> RED; same frozen-exact-vs-moving-repo anti-pattern -> apply monotonic guard or re-freeze. (4) tests/test_phase26_task4_delta_matrix.py ::test_nested_reference_outside_task3_ci_disclosed -> KeyError 'distance_to_nested' (published delta-matrix report dropped that key) -> owner: refresh expectation vs restore key. NEXT (single in_progress): Finding (3).",
+  "current_phase": "Post-Phase-35 cleanup: Finding(2) builder/patch contract reconciliation DONE (canonical build_ui_pipeline.py reproduces published 1.20.0 from clean); next=Finding(3) test_phase30_task5 exact-contract-1.13.0 monotonic fix; then Finding(4); then research",
+  "overall_status": "POST_PHASE35_FINDING2_DONE_NEXT_FINDING3_THEN_FINDING4_THEN_RESEARCH",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -1625,5 +1625,22 @@
       "(3) test_phase30_task5_ui_propagation exact contract 1.13.0 asserts RED",
       "(4) test_phase26_task4_delta_matrix KeyError distance_to_nested RED"
     ]
+  },
+  "cycle_2026_06_14_post35_finding2": {
+    "when": "2026-06-14T18:00Z",
+    "owner": "claude",
+    "task": "Finding(2): builder/patch contract reconciliation (build_ui_pipeline.py canonical rebuild)",
+    "files_changed": [
+      "scripts/build_ui_pipeline.py (NEW - canonical clean-rebuild orchestrator)",
+      "scripts/build_ui_data.py (comment-only: self-document BASE vs published contract)",
+      "tests/test_ui_contract_pipeline_reconcile.py (NEW - 5 chain/drift-guard tests)"
+    ],
+    "tests_green": "14/14 (5 new reconcile + 9 test_ui_currency_meta); full scratch rebuild reproduced contract 1.20.0 with a11y_audit+section_digests",
+    "governance": "96/124/17 (unchanged; no governed capital figure changed; no new ChangeRecord)",
+    "remaining_findings": [
+      "(3) test_phase30_task5_ui_propagation exact contract 1.13.0 asserts RED",
+      "(4) test_phase26_task4_delta_matrix KeyError distance_to_nested RED"
+    ],
+    "next": "Finding (3) - test_phase30_task5_ui_propagation monotonic/re-freeze fix"
   }
 }

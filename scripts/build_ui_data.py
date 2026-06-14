@@ -32,7 +32,13 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.18.0"
+# BASE contract version: what THIS bundler emits when run alone. The PUBLISHED
+# repo artifacts are at a higher contract produced by additive patch layers
+# applied on top of this base build (a11y_audit -> 1.19.0, section_digests ->
+# 1.20.0). To rebuild the PUBLISHED artifacts from clean, run the canonical
+# orchestrator scripts/build_ui_pipeline.py (NOT this file alone, which would
+# regress the published contract). See build_ui_pipeline.py for the full chain.
+CONTRACT_VERSION = "1.18.0"  # base contract; published = build_ui_pipeline.py
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
