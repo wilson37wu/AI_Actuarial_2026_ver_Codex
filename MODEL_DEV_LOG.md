@@ -10003,3 +10003,17 @@ addition only; NO new top-level key; every pre-existing `ui_data.json` key bit-i
 - **Next:** Phase 35 Task 4 = A3 (one-page printable ASOP-41 model-card cover;
   presentation only, bit-for-bit from the snapshot, owner-decision BLANK). Then
   Task 5 = phase summary + consolidated re-audit + PHASE 35 COMPLETE.
+
+---
+
+## 2026-06-14 (06:00 UTC window) — Phase 35 Task 4 (gap A3) — COMPLETE
+
+**One-page printable model-card cover** added to the zero-install offline UI (`ui_app.html`). Print-only `.modelcardcover` + `renderModelCardCover()` assembles, BIT-FOR-BIT from the embedded snapshot (no recompute): model identity (PAR Fund Stochastic ALM & TVOG v0.2.0, EDUCATIONAL ONLY), scope, governed headline `39975.654628199336` carried exactly and never re-labelled, top-3 limitations, Phase 30 binding stop-rule status (applied; MR-016/MR-017 KEEP_OPEN), BLANK owner-decision field, provenance stamp (contract version + build stamp). Compact one-page `@media print` block; revealed by the `html.printall` toggle; hidden on screen.
+
+- **Contract:** unchanged at 1.20.0 (presentation/print only). `ui_data.json` + embedded payload byte-identical → Phase 35 Task 3 (A2) per-section SHA-256 digests still verify by construction.
+- **Tests:** `ui_app_self_test.cjs` ok:true, 358 → 368 checks, 0 network / 0 JS errors (10 new A3 checks). All 8 offline self-tests green. 0 external references; single self-contained HTML.
+- **Governance:** ChangeRecord `9f23daa9` OWNER_REVIEW; 95 → 96 records / 123 → 124 audit; verify_all True.
+- **New files:** `scripts/build_phase35_task4_a3_modelcard.py`, `scripts/build_phase35_task4_a3_governance.py`.
+- **Pre-existing issue flagged (not from A3):** 4 stale tests expect contract 1.18.0 and fail vs live 1.20.0 (test_phase34_task2_h1_contract_guard.py ×3, test_phase35_task1_design_note.py gate); confirmed on baseline; queued for Task 5 re-audit.
+- **Invariants:** NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted.
+- **Next:** Phase 35 Task 5 (phase summary + re-audit + PHASE 35 COMPLETE).

@@ -115,6 +115,7 @@
   .integritybanner{margin:10px 0 14px;padding:10px 14px;border:1px solid var(--warn);border-radius:8px;background:rgba(94,74,31,0.12);color:var(--ink);font-size:13px;line-height:1.5}
   .integritybanner .ibannerlabel{font-weight:700;color:var(--warn);margin-right:6px;text-transform:uppercase;letter-spacing:.03em;font-size:11.5px}
   .signoffcover{display:none}
+  .modelcardcover{display:none}
   /* Phase 34 Task 3 (gap H2): global cross-tab search + deep-linkable read-outs.
      DISPLAY LAYER ONLY -- the search index is built from text ALREADY rendered in
      the artifact (tab titles, table captions, headline labels). A match scrolls to
@@ -148,10 +149,23 @@
     .signoffcover .signeutral{margin:10px 0;padding:8px;border:1px solid #888;font-size:12px;color:#111}
     .signoffcover .sigrow{display:flex;gap:24px;margin-top:14px}
     .signoffcover .sigbox{flex:1;border-top:1px solid #111;padding-top:4px;font-size:12px;color:#111}
+    /* Phase 35 Task 4 (gap A3): one-page printable model-card cover */
+    .modelcardcover{display:block !important;page-break-after:always;page-break-inside:avoid;margin:0;font-size:11px;line-height:1.32;color:#111}
+    .modelcardcover h2{font-size:17px;margin:0 0 6px;color:#111;border-bottom:2px solid #111;padding-bottom:3px}
+    .modelcardcover .mcmeta{font-size:11px;color:#111;margin:3px 0}
+    .modelcardcover .mchead{font-size:12px;margin:6px 0;color:#111}
+    .modelcardcover .mcval{font-weight:700}
+    .modelcardcover ol.mclims{margin:3px 0 6px 18px;padding:0;font-size:10.5px}
+    .modelcardcover ol.mclims li{margin:1px 0}
+    .modelcardcover .mcneutral{margin:8px 0;padding:6px;border:1px solid #888;font-size:10px;color:#111}
+    .modelcardcover .mcrow{display:flex;gap:18px;margin-top:10px}
+    .modelcardcover .mcbox{flex:1;border-top:1px solid #111;padding-top:3px;font-size:10px;color:#111}
+    .modelcardcover .mcprov{margin-top:10px;font-size:9.5px;color:#333;border-top:1px solid #bbb;padding-top:4px}
     /* H3 print-all: reveal every governed surface (all tab panels + collapsed sub-views) for one sign-off print */
     html.printall .panel{display:block !important}
     html.printall .calibpanel,html.printall .capview,html.printall .govview{display:block !important}
     html.printall .signoffcover{display:block !important}
+    html.printall .modelcardcover{display:block !important}
   }
   /* ===== Phase 34 Task 5 (gap H4): responsive + high-contrast usability pass =====
      Markup/CSS/behaviour only. No model figure changes; no storage APIs; the
@@ -202,6 +216,7 @@
 </div></header>
 <div class="wrap">
   <div id="signoffcover" class="signoffcover" aria-hidden="true"></div>
+  <div id="modelcardcover" class="modelcardcover" aria-hidden="true"></div>
   <div id="integritybanner" class="integritybanner" role="status" aria-live="polite" aria-hidden="true" style="display:none"></div>
   <div class="gsearch" id="gsearch" role="search">
     <input type="text" id="gsearchInput" class="gsearch-input" placeholder="Search read-outs, tables and sections across all tabs..." aria-label="Search read-outs, tables and sections across all tabs" aria-controls="gsearchResults" aria-expanded="false" autocomplete="off" spellcheck="false"/>
@@ -2830,6 +2845,59 @@
   // ---- Phase 33 Task 4 (gap G3): print-only owner sign-off cover. Screen-hidden
   // (.signoffcover{display:none}); shown only in @media print. Figures are read
   // bit-for-bit from the embedded snapshot; the decision stays NEUTRAL/BLANK. ----
+  // Phase 35 Task 4 (gap A3): one-page printable model-card cover. Assembled
+  // BIT-FOR-BIT from the embedded snapshot (no recompute). ASOP-41 style: model
+  // identity, scope, governed headline (carried exactly + never re-labelled),
+  // top limitations, Phase 30 stop-rule status, a BLANK owner-decision field
+  // (MR-016/MR-017 not pre-empted) and a provenance stamp. Print-only surface.
+  function renderModelCardCover(){
+    var el=document.getElementById("modelcardcover"); if(!el) return;
+    if(!DATA){ el.innerHTML=""; return; }
+    var m=DATA.meta||{};
+    var od=DATA.owner_decision_p31||{};
+    var ev=od.evidence_pack||{};
+    var gh=ev.governed_headline||{};
+    var sr=((DATA.phase30||{}).stop_rule)||{};
+    var gen=String(m.generated_utc||"").slice(0,19);
+    // exact, bit-for-bit headline carried from the embedded snapshot (NOT money-
+    // formatted; never re-labelled - the governed label is carried verbatim).
+    var ghExact=(gh.value!=null)?String(gh.value):"--";
+    var lims=(od.limitations||[]).slice(0,3);
+    var limHtml=lims.map(function(s){return '<li>'+esc(s)+'</li>';}).join("");
+    var srLine;
+    if(sr.stop_rule_applied===true){
+      srLine='Phase 30 binding stop-rule APPLIED (pre-registered trigger met: '
+        +(sr.stop_rule_trigger_met===true?'yes':'no')
+        +') &mdash; dependence-FORM escalation under MR-016 has ENDED; '
+        +'MR-016='+esc(String(sr.mr016_decision||'--'))
+        +', MR-017='+esc(String(sr.mr017_decision||'--'))+'.';
+    } else {
+      srLine='Phase 30 stop-rule status not present in this snapshot.';
+    }
+    el.innerHTML=''
+      +'<h2>Model card &mdash; '+esc(m.model_name||"Actuarial Stochastic Model")+'</h2>'
+      +'<div class="mcmeta"><b>Model identity:</b> '+esc(m.model_name||"--")
+        +' v'+esc(String(m.model_version||"--"))+' &middot; '+esc(m.classification||"--")+'</div>'
+      +'<div class="mcmeta"><b>Scope:</b> '+esc(od.purpose||"--")+'</div>'
+      +'<div class="mchead"><b>'+esc(gh.label||"governed component SCR headline (frozen single-df t)")
+        +':</b> <span class="mcval" data-headline-exact="'+esc(ghExact)+'">'+esc(ghExact)+'</span>'
+        +(gh.status?(' &middot; '+esc(gh.status)):'')+'</div>'
+      +'<div class="mcmeta"><b>Top limitations:</b></div>'
+      +'<ol class="mclims">'+limHtml+'</ol>'
+      +'<div class="mcmeta"><b>Phase 30 stop-rule status:</b> '+srLine+'</div>'
+      +'<div class="mcneutral">This one-page model card is assembled bit-for-bit '
+        +'from the embedded snapshot; nothing is recomputed. The MR-016 / MR-017 '
+        +'owner decision is NOT pre-empted: the decision field below is '
+        +'intentionally BLANK until the model owner decides.</div>'
+      +'<div class="mcrow">'
+      +'<div class="mcbox">Owner decision (option id): _______________________</div>'
+      +'<div class="mcbox">Signature: _______________________</div>'
+      +'<div class="mcbox">Date: ________________</div>'
+      +'</div>'
+      +'<div class="mcprov">Provenance: contract v'+esc(String(DATA.contract_version||"?"))
+        +' &middot; build stamp '+esc(gen)+'Z &middot; '+esc(m.model_name||"")+'</div>';
+  }
+
   function renderSignoffCover(){
     var el=document.getElementById("signoffcover"); if(!el) return;
     if(!DATA){ el.innerHTML=""; return; }
@@ -3135,7 +3203,7 @@
 
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderDistExplorer(); renderOwnerDecision(); renderUserRun(); renderGovernance(); renderIntegrity(); renderIntegrityBanner(); renderSignoffCover(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderDistExplorer(); renderOwnerDecision(); renderUserRun(); renderGovernance(); renderIntegrity(); renderIntegrityBanner(); renderSignoffCover(); renderModelCardCover(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
     // Phase 34 Task 3 (gap H2): (re)build the search index from the just-rendered
     // DOM, then wire the search box (idempotent). Pure display layer.

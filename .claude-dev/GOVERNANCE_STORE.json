@@ -2764,6 +2764,27 @@
       "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening",
       "digest": "8d861db534867d8f576c8f71f7b96ccaa85bf81d5dfa45bc6d7eb936f8b8cd30",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "38f23c54a4fd4405b7f59b1d0405bdb8",
+      "timestamp": "2026-06-14T08:31:58.199487+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 35 Task 4 one-page printable model-card cover (gap A3); NO contract change (payload byte-identical); governed figures bit-identical; owner decision not pre-empted",
+      "details": {
+        "record_id": "9f23daa97a65478aa690ae24e4f8f799",
+        "contract": "1.20.0 (unchanged)",
+        "one_page_model_card_cover": true,
+        "ui_app_self_test_checks": 368,
+        "affected_components": [
+          "scripts/build_phase35_task4_a3_modelcard.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening",
+      "digest": "cc006437444d73ef3b2e563a2c4d0d55280dce0a78864a2fd8f77307b456ef4f",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -8726,6 +8747,63 @@
           "actor": "ClaudeCowork_AutoDev",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Gap A2 of the Phase 35 design note is closed: the offline UI now carries a build-time SHA-256 digest of every data section and recomputes those digests IN THE BROWSER (no network, no storage) to prove the embedded content is unaltered, rendered as a verified/altered table + badge in the Integrity panel. EVIDENCE-INTEGRITY / PRESENTATION ONLY - the MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
+        }
+      ],
+      "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening"
+    },
+    {
+      "record_id": "9f23daa97a65478aa690ae24e4f8f799",
+      "created_at": "2026-06-14T08:31:58.199404+00:00",
+      "title": "Phase 35 Task 4 (gap A3) - one-page printable model-card cover on the zero-install offline UI",
+      "description": "Closed gap A3 of the Phase 35 design note: a one-page, ASOP-41-style printable MODEL CARD cover for the zero-install offline UI. Phase 33 G3 added a sign-off print cover and Phase 34 H3 a print-all pack, but there was no SINGLE-PAGE model card for a reviewer who wants one page. (1) ui_app.html gained a print-only .modelcardcover surface + renderModelCardCover() that assembles, BIT-FOR-BIT from the embedded snapshot, the model identity (PAR Fund Stochastic ALM & TVOG v0.2.0, EDUCATIONAL ONLY classification), scope, the governed component SCR headline carried EXACTLY (39,975.654628199336) and never re-labelled (the governed label is carried verbatim), the top limitations, the Phase 30 binding stop-rule status (applied; dependence-FORM escalation ended; MR-016/MR-017 KEEP_OPEN), a BLANK owner-decision field, and a provenance stamp (contract version + build stamp). Nothing is recomputed. (2) A compact one-page @media print block + the existing html.printall toggle reveal the cover for printing; it is hidden on screen. (3) NO contract change: ui_data.json and the embedded payload are byte-identical, so the Phase 35 Task 3 (gap A2) per-section SHA-256 digests still verify in the browser by construction. (4) Tests: 10 new ui_app self-test checks (358 -> 368, ok:true, 0 network / 0 JS errors) covering cover presence, model identity, scope, the bit-for-bit headline (exact string + never-relabelled governed label), the three limitations, the Phase 30 stop-rule line, the BLANK owner-decision field, the provenance stamp, and the one-page print CSS. All eight offline self-tests remain ok:true 0/0. Zero-install preserved (0 external refs, single self-contained HTML). NO model parameter changes; binding stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_phase35_task4_a3_modelcard.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 (Actuarial Communications) - concise model identity / scope / limitations disclosure on a single reviewer-facing page",
+        "SOA ASOP 56 s3.5 / s4 (model limitations and intended-use disclosure)",
+        "Model risk governance - reproducible, provenance-stamped reporting surface"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.20.0",
+        "one_page_model_card_cover": false,
+        "reviewer_print_surfaces": "G3 sign-off cover + H3 print-all pack",
+        "ui_app_self_test_checks": 358,
+        "offline_self_tests": 8
+      },
+      "after_snapshot": {
+        "ui_contract": "1.20.0 (unchanged - presentation/print only)",
+        "one_page_model_card_cover": true,
+        "headline_carried_bit_for_bit": "39975.654628199336",
+        "owner_decision_field": "BLANK (MR-016/MR-017 not pre-empted)",
+        "provenance_stamped": true,
+        "payload_byte_identical": true,
+        "a2_digests_still_verify": true,
+        "network_or_storage_used": false,
+        "ui_app_self_test_checks": 368,
+        "offline_self_tests": 8
+      },
+      "impact_assessment": "Display / print-layer pass only. NO contract change; the embedded payload is byte-identical so every governed read-out (and the Phase 35 Task 3 content digests) is bit-identical. The model card recomputes nothing - it carries the governed frozen-t headline verbatim - and renders the owner-decision field BLANK, so the MR-016/MR-017 decision is not pre-empted. Zero-install invariants preserved (0 external refs, single self-contained HTML, no storage API).",
+      "quantitative_impact": "No governed capital figure changed. Contract unchanged at 1.20.0 (presentation/print only; payload byte-identical). ui_app self-test 358 -> 368 checks ok:true 0/0; all 8 offline self-tests green. External refs remain 0.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-14T08:31:58.199450+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: presentation/print only, NO contract change (ui_data.json + embedded payload byte-identical; A2 per-section SHA-256 digests still verify); the model card is assembled bit-for-bit from the embedded snapshot and recomputes nothing; governed headline 39,975.654628199336 carried exactly and never re-labelled; owner-decision field BLANK; ui_app self-test 368 checks ok:true 0/0 plus 7 other offline suites green; 0 external refs; no network / no storage API; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-14T08:31:58.199463+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap A3 of the Phase 35 design note is closed: the offline UI now prints a single-page ASOP-41-style model card (identity, scope, governed headline, top limitations, Phase 30 stop-rule status, provenance stamp) with the owner-decision field BLANK. PRESENTATION / PRINT ONLY - the MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
         }
       ],
       "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening"

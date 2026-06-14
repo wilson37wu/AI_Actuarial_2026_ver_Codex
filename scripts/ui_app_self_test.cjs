@@ -371,6 +371,18 @@ setTimeout(() => {
   const signoffCoverText = (signoffCoverEl && signoffCoverEl.textContent) || "";
   const printCoverCssPresent = /\.signoffcover\{display:block !important/.test(html)
     && /\.signoffcover\{display:none\}/.test(html);
+  // Phase 35 Task 4 (gap A3): one-page printable model-card cover.
+  const modelCardEl = document.getElementById("modelcardcover");
+  const modelCardText = (modelCardEl && modelCardEl.textContent) || "";
+  const modelCardLimItems = modelCardEl ? modelCardEl.querySelectorAll("ol.mclims li").length : 0;
+  const modelCardHeadlineExact = (function(){
+    try { return String(uiDataObj.owner_decision_p31.evidence_pack.governed_headline.value); }
+    catch(e){ return null; }
+  })();
+  const a3PrintCssPresent =
+    /\.modelcardcover\{display:block !important;page-break-after:always/.test(html)
+    && /\.modelcardcover\{display:none\}/.test(html)
+    && /html\.printall \.modelcardcover\{display:block !important\}/.test(html);
   const dxCdfXn = ((g3dx.cdf_grid || {}).x || []).length;
 
   // Phase 33 Task 5 (gap G4): accessibility & usability pass on the main tab
@@ -880,6 +892,25 @@ setTimeout(() => {
     h1IntegrityTabPresent: !!intTab,
     h1IntegrityTabText: /Data-contract integrity/.test(intText),
     h1ContractIs120: !!uiDataObj && uiDataObj.contract_version === "1.20.0",
+    // Phase 35 Task 4 (gap A3): one-page printable model-card cover
+    a3ModelCardPresent: !!modelCardEl,
+    a3ModelCardIdentity: /Model card/.test(modelCardText) &&
+      (uiDataObj ? modelCardText.indexOf(uiDataObj.meta.model_name) >= 0 : false) &&
+      /v0\.2\.0/.test(modelCardText) && /EDUCATIONAL ONLY/.test(modelCardText),
+    a3ModelCardScope: /Scope:/.test(modelCardText) && modelCardText.length > 200,
+    a3ModelCardHeadlineBitForBit: !!modelCardHeadlineExact &&
+      modelCardText.indexOf(modelCardHeadlineExact) >= 0 &&
+      /39975\.654628199336/.test(modelCardText),
+    a3ModelCardHeadlineNotRelabelled:
+      /governed component SCR headline \(frozen single-df t\)/.test(modelCardText),
+    a3ModelCardLimitations: modelCardLimItems === 3,
+    a3ModelCardStopRule: /Phase 30/.test(modelCardText) &&
+      /stop-rule/i.test(modelCardText) && /MR-016/.test(modelCardText),
+    a3ModelCardDecisionBlank: /intentionally BLANK/.test(modelCardText) &&
+      /Owner decision \(option id\): _{6,}/.test(modelCardText),
+    a3ModelCardProvenance: /Provenance:/.test(modelCardText) &&
+      /contract v1\.20\.0/.test(modelCardText) && /build stamp/.test(modelCardText),
+    a3PrintCssPresent: a3PrintCssPresent,
     // Phase 35 Task 3 (gap A2): content-integrity digests + in-browser verifier
     a2DigestsPresent,
     a2DigestsHex,
@@ -1232,6 +1263,16 @@ setTimeout(() => {
     checks.h1IntegrityTabPresent &&
     checks.h1IntegrityTabText &&
     checks.h1ContractIs120 &&
+    checks.a3ModelCardPresent &&
+    checks.a3ModelCardIdentity &&
+    checks.a3ModelCardScope &&
+    checks.a3ModelCardHeadlineBitForBit &&
+    checks.a3ModelCardHeadlineNotRelabelled &&
+    checks.a3ModelCardLimitations &&
+    checks.a3ModelCardStopRule &&
+    checks.a3ModelCardDecisionBlank &&
+    checks.a3ModelCardProvenance &&
+    checks.a3PrintCssPresent &&
     checks.a2DigestsPresent &&
     checks.a2DigestsHex &&
     checks.a2DigestsCoverAllSections &&
