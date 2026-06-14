@@ -10190,3 +10190,26 @@ ARIA/JS/presentation only — **NO contract change** (stays 1.20.0; the embedded
 **Tests:** new Task 5 test green (31 passed + 1 skipped with Task 4 / Phase 32 summary suites); 116 regression passed (governance / design-note / contract-pipeline reconcile).
 
 **Next:** PHASE 36 COMPLETE → single `in_progress` item is now **Phase IGUI Task 1 (design note)**, owner-directed EXCLUSIVE priority. Results UI stays zero-install/unchanged; no-pre-install relaxed for the input+run front end only. Do NOT start GUI coding before the design note + pre-registered acceptance criteria.
+
+---
+
+## 2026-06-14T23:25Z — Phase IGUI Task 1 (design note) COMPLETE — cycle 2026-06-14T23:09Z-d45b (Claude)
+
+Owner-directed Phase IGUI (Actuarial Input & Run GUI) launched design-note-first. **Architecture decision:**
+chose **L2 stdlib-only local runner** (reuses the existing loader + `run_model.py`; ZERO new third-party
+runtime dependency beyond the numpy/pandas/scipy the model already requires; binds 127.0.0.1, no network)
+over **L1** pure-browser writer (rejected — cannot run the model end-to-end) and **L3** frozen binary
+(deferred — non-reproducible per-OS build infra). Owner relaxed zero-install for the input+run front end
+ONLY; the offline RESULTS UI (`ui_app.html`) stays zero-install and byte-unchanged. **Coverage map:** six
+input domains (run controls / model points / assumptions / ESG / validation+gating / integration), each
+mapped current-vs-gap to one staged task (Task 2–7; one domain per cycle; Task 7 = end-to-end run +
+results handoff = Phase IGUI MVP). **Pre-registered acceptance criteria** per task + a **Task-1 gate**
+(`validate_design_note`, 35 checks: structural + live repo cross-checks — 9 self-tests/522 green, 0 external
+refs, contract floor 1.21.0, tab/governance floors, loader+orchestrator present). Artifacts:
+`par_model_v2/viewer/igui_input_run_gui.py`, `scripts/build_phase_igui_task1_design_note.py`,
+`scripts/build_phase_igui_task1_governance.py`, `tests/test_phase_igui_task1_design_note.py`,
+`docs/validation/PHASE_IGUI_TASK1_DESIGN_NOTE.{json,md}`. 24 unittest cases green; ChangeRecord
+`d6fa881fb6d44d4ab9f4f949cd71f136` OWNER_REVIEW (records 100→101, audit 128→129). NO contract change, NO
+model parameter changes, stop-rule honoured, owner decision not pre-empted. **Blocker:** `/sessions` 100%
+full → full numpy-dependent pytest regression not run this cycle (design-note-only ⇒ zero regression
+surface). Next = Phase IGUI Task 2 (run controls + runner scaffolding).
