@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-14T08:34:13Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-14T09:07Z-52b5",
+  "started_at": "2026-06-14T09:07:47Z",
+  "ttl_minutes": 120,
+  "task": "Phase 35 Task 5: phase summary + baseline re-audit",
+  "note": ""
 }
