@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-14T12:17:26Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-14T13:08Z-16e4",
+  "started_at": "2026-06-14T13:08:23Z",
+  "ttl_minutes": 120,
+  "task": "Post-Phase35 Finding(4): test_phase26_task4_delta_matrix KeyError distance_to_nested",
+  "note": ""
 }
