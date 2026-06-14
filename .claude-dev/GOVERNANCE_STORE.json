@@ -2834,6 +2834,30 @@
       "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility",
       "digest": "940e83ba24b4b504e51e5afa9b8d5a83f96e846cf927a31a8c0d9e99401063ac",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "9316a9c1362c4333a55f3c3bb7054b8c",
+      "timestamp": "2026-06-14T21:30:47.047398+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 36 Task 4 reproducibility evidence-pack export (gap E3); NO contract change (payload byte-identical); exported bytes byte-identical & digest-verifiable; owner decision not pre-empted",
+      "details": {
+        "record_id": "d9cab0e655c246c0b696361ec901ecc6",
+        "contract": "1.21.0 (unchanged)",
+        "export_action": "btnEvidencePack",
+        "ui_app_self_test_checks": 405,
+        "offline_self_test_total_checks": 522,
+        "affected_components": [
+          "scripts/build_phase36_task4_e3_evidence_pack.py",
+          "scripts/ui_app_self_test.cjs",
+          "scripts/ui_app_evidence_pack_fallback_test.cjs",
+          "tests/test_phase36_task4_e3_evidence_pack.py",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility",
+      "digest": "0fc8da9680dc17fb4875cb8bf3ff642e039e00d5b4171033cbc7766dc23694ca",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -8984,6 +9008,68 @@
           "actor": "ClaudeCowork_AutoDev",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Gap E2 of the Phase 36 design note is closed: the offline UI now carries a read-only global 'Methodology & Glossary' data dictionary (23 terms, 18-tab coverage) assembled at build time, with base definitions and limitations carried verbatim. DISPLAY-ONLY, ADDITIVE - the MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
+        }
+      ],
+      "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility"
+    },
+    {
+      "record_id": "d9cab0e655c246c0b696361ec901ecc6",
+      "created_at": "2026-06-14T21:30:47.047285+00:00",
+      "title": "Phase 36 Task 4 (gap E3) - single reproducibility evidence-pack export on the zero-install offline UI",
+      "description": "Closed gap E3 of the Phase 36 design note: added ONE in-browser action (\"Reproducibility evidence pack\" toolbar button) that serialises the EXACT embedded ui_data payload bytes to a single downloaded file via the existing downloadText/downloadBlob Blob plumbing. The exported bytes are BYTE-IDENTICAL to the embedded payload (which already carries contract_manifest.section_digests + root_digest and the build/provenance stamp meta.generated_utc / source_files / contract_manifest.generated_by), so a reviewer receives independently digest-verifiable evidence of exactly what the UI displayed: they can recompute the per-section SHA-256 digests and match the manifest, or re-load the file in this same UI for the existing in-browser verifier to confirm INTEGRITY VERIFIED. The download filename carries the contract version + first 8 hex of the root digest as a human-visible provenance stamp. A note on the Integrity tab points reviewers to the action. DISPLAY LAYER ONLY: the export reuses the embedded snapshot and existing manifest and recomputes NO model figure (governed headline 39,975.654628199336 and every governed read-out render bit-for-bit). NO contract change (no new ui_data key; payload byte-identical so the Phase 35 Task 3 per-section SHA-256 digests still verify by construction). The export performs NO network call and uses NO storage API; it works under file://. Tests: 12 new ui_app self-test checks (393 -> 405, ok:true, 0 network / 0 JS errors) plus a NEW dedicated jsdom fallback test (ui_app_evidence_pack_fallback_test.cjs) that captures the exported bytes and proves byte-identity, the provenance-stamped filename, no-storage / no-network, and digest-verifiability through the EXISTING in-browser verifier (re-embed -> INTEGRITY VERIFIED, root match, 0 altered rows), and a version-pinned pytest (14 cases). All nine offline self-tests remain ok:true (522 total checks). Zero-install preserved (0 external refs, single self-contained file:// HTML). NO model parameter changes; binding stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_phase36_task4_e3_evidence_pack.py",
+        "scripts/ui_app_self_test.cjs",
+        "scripts/ui_app_evidence_pack_fallback_test.cjs",
+        "tests/test_phase36_task4_e3_evidence_pack.py",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 (Actuarial Communications) - reproducible, self-describing reviewer-facing evidence of exactly what was displayed",
+        "ASOP 56 (Modeling) section 3.6 / IA TAS M - model reproducibility and auditability of reported results",
+        "FIPS 180-4 SHA-256 - per-section + root content digests carried in contract_manifest, independently recomputable offline"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.21.0",
+        "evidence_exports": "per-section CSV + chart PNG + CSV/JSON read-out bundles",
+        "byte_identical_payload_export": false,
+        "ui_app_self_test_checks": 393,
+        "offline_self_tests": 8,
+        "offline_self_test_total_checks": 498
+      },
+      "after_snapshot": {
+        "ui_contract": "1.21.0 (unchanged - display/JS only, payload byte-identical)",
+        "evidence_pack_action": "btnEvidencePack -> exportEvidencePack() -> exact embedded ui_data bytes",
+        "export_filename": "reproducibility_evidence_pack_v<contract>_<root8>.json",
+        "byte_identical_to_embedded": true,
+        "digest_verifiable_by_existing_verifier": true,
+        "headline_carried_bit_for_bit": "39975.654628199336",
+        "payload_byte_identical": true,
+        "a2_digests_still_verify": true,
+        "network_or_storage_used": false,
+        "ui_app_self_test_checks": 405,
+        "offline_self_tests": 9,
+        "offline_self_test_total_checks": 522
+      },
+      "impact_assessment": "Display / JS layer only. NO contract change; the embedded payload is byte-identical so every governed read-out (and the Phase 35 Task 3 content digests) is bit-identical. The export serialises the embedded snapshot verbatim and recomputes nothing, so the MR-016/MR-017 decision is not pre-empted. A hash is not a model figure. Zero-install invariants preserved (0 external refs, single self-contained HTML, no storage API, file:// safe).",
+      "quantitative_impact": "No governed capital figure changed. Contract unchanged at 1.21.0 (display/JS only; payload byte-identical). ui_app self-test 393 -> 405 checks ok:true 0/0; all 9 offline self-tests green (498 -> 522 total checks). External refs remain 0.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-14T21:30:47.047348+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: display/JS only, NO contract change (no new ui_data key; embedded payload byte-identical; A2 per-section SHA-256 digests still verify in-browser). The export hands the EXACT embedded ui_data bytes to the existing Blob plumbing; the dedicated jsdom fallback test captures the download and proves byte-identity to the embedded payload, the provenance-stamped filename, no network / no storage, and digest verifiability through the EXISTING in-browser verifier (re-embed -> INTEGRITY VERIFIED, root match, 0 altered rows). Governed headline 39,975.654628199336 carried exactly; ui_app self-test 405 checks ok:true 0/0 plus 8 other offline suites green (522 total); 0 external refs; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-14T21:30:47.047364+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap E3 of the Phase 36 design note is closed: a single 'Reproducibility evidence pack' export now lets a reviewer download the exact, byte-identical, digest-verifiable ui_data payload the UI displayed, offline and file:// safe. DISPLAY / JS ONLY - the MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
         }
       ],
       "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility"

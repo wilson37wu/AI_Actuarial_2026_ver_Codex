@@ -212,6 +212,7 @@
     <button type="button" class="tbtn" id="btnBundleCsv" title="Export EVERY governed read-out as one provenance-stamped CSV bundle">Bundle: all read-outs (CSV)</button>
     <button type="button" class="tbtn" id="btnBundleJson" title="Export EVERY governed read-out as one provenance-stamped JSON bundle">Bundle: all read-outs (JSON)</button>
     <button type="button" class="tbtn" id="btnPrintAll" title="Print every governed surface (all tabs + sub-views) as a single sign-off pack">Print all (sign-off pack)</button>
+    <button type="button" class="tbtn" id="btnEvidencePack" title="Export the EXACT embedded ui_data payload (byte-identical; carries contract_manifest per-section + root SHA-256 digests and the build/provenance stamp) as one reproducibility evidence pack for independent offline verification">Reproducibility evidence pack</button>
   </div>
 </div></header>
 <div class="wrap">
@@ -2420,6 +2421,34 @@
     }catch(e){}
   }
   function downloadText(name,text,mime){ downloadBlob(name,new Blob([text],{type:(mime||"text/plain")+";charset=utf-8"})); }
+  // ===== Phase 36 Task 4 (gap E3): reproducibility evidence-pack export =====
+  // Serialises the EXACT embedded ui_data payload bytes (which already contain
+  // contract_manifest.section_digests + root_digest and the build/provenance
+  // stamp) to ONE downloaded file via the existing Blob plumbing. The exported
+  // bytes are byte-identical to the embedded payload, so a reviewer can
+  // independently recompute the per-section SHA-256 digests and match the
+  // manifest (or re-load the file here for the in-browser verifier to confirm
+  // INTEGRITY VERIFIED). No network, no storage API; file:// safe. DISPLAY
+  // LAYER ONLY: it recomputes NO model figure.
+  function getEmbeddedRaw(){
+    var el=document.getElementById("ui-data");
+    if(!el) return null;
+    var raw=el.textContent||"";
+    return raw.replace("/*__UI_DATA__*/","").trim();
+  }
+  function exportEvidencePack(){
+    try{
+      var raw=getEmbeddedRaw();
+      if(!raw||raw==="null"){ try{ alert("No embedded data to export."); }catch(_e){} return; }
+      var ver="unknown", root="";
+      try{ var d=JSON.parse(raw); ver=(d&&d.contract_version)||"unknown";
+        root=(d&&d.contract_manifest&&d.contract_manifest.root_digest)||""; }catch(_e){}
+      var tag=root?("_"+String(root).slice(0,8)):"";
+      var name="reproducibility_evidence_pack_v"+ver+tag+".json";
+      downloadText(name, raw, "application/json");
+      try{ if(typeof announce==="function") announce("Reproducibility evidence pack exported: "+name); }catch(_e){}
+    }catch(_e){}
+  }
   function csvCell(v){ v=(v==null?"":String(v)).replace(/\r?\n/g," "); if(/[",]/.test(v)) v='"'+v.replace(/"/g,'""')+'"'; return v; }
   function rowsToCSV(headers,rows){ var out=[headers.map(csvCell).join(",")]; rows.forEach(function(r){ out.push(r.map(csvCell).join(",")); }); return out.join("\r\n"); }
   function buildInventoryCSV(){ var inv=(DATA&&DATA.inventory)||[];
@@ -2589,7 +2618,8 @@
       ["btnPrint",function(){ try{ window.print(); }catch(e){} }],
       ["btnBundleCsv",function(){ downloadText("evidence_bundle_all.csv",buildEvidenceBundleCSV(),"text/csv"); }],
       ["btnBundleJson",function(){ downloadText("evidence_bundle_all.json",buildEvidenceBundleJSON(),"application/json"); }],
-      ["btnPrintAll",function(){ var de=document.documentElement; if(de) de.classList.add("printall"); try{ window.print(); }catch(e){} if(de) de.classList.remove("printall"); }]
+      ["btnPrintAll",function(){ var de=document.documentElement; if(de) de.classList.add("printall"); try{ window.print(); }catch(e){} if(de) de.classList.remove("printall"); }],
+      ["btnEvidencePack",function(){ exportEvidencePack(); }]
     ];
     map.forEach(function(m){ var b=document.getElementById(m[0]); if(b) b.onclick=m[1]; });
   }
@@ -3217,7 +3247,8 @@
       '<th>Status</th></tr></thead><tbody>'+rows+'</tbody></table>'+
       '<p class="muted">Root digest (build): <span class="mono" title="'+esc(storedRoot)+'">'+esc(storedRoot.slice(0,24))+'&hellip;</span> '+
       '&middot; recomputed: <span class="mono" title="'+esc(rec.root_digest)+'">'+esc(rec.root_digest.slice(0,24))+'&hellip;</span> '+
-      '&middot; '+all.length+' sections digested; verifier runs entirely offline in the browser.</p>';
+      '&middot; '+all.length+' sections digested; verifier runs entirely offline in the browser.</p>'+
+      '<p class="muted" data-e3-note="1">Reproducibility evidence pack: use the <b>Reproducibility evidence pack</b> toolbar button to download the exact embedded <span class="mono">ui_data</span> payload (byte-identical; it carries these per-section and root SHA-256 digests plus the build/provenance stamp) for independent, offline re-verification. The export recomputes no model figure.</p>';
     return html;
   }
 

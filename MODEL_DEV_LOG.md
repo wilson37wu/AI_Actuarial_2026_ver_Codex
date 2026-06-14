@@ -10154,3 +10154,19 @@ ARIA/JS/presentation only — **NO contract change** (stays 1.20.0; the embedded
 **Env note:** sandbox `/sessions` tmpfs was 100% full → redirected `TMPDIR=/tmp` for tempdir-using pytests (the mount itself has ample space; not a logic issue).
 
 **Next (single `in_progress`):** Phase 36 Task 4 = E3 — single reproducibility evidence-pack export (byte-identical, digest-verifiable, `file://` safe).
+
+---
+
+## 2026-06-14 — Phase 36 Task 4 (gap E3) COMPLETE — reproducibility evidence-pack export (Claude Cowork)
+
+**Result PASS · contract 1.21.0 UNCHANGED · NO model parameter changes.** Closed gap E3 of the Phase 36 design note. Added ONE in-browser action — the "Reproducibility evidence pack" toolbar button (`btnEvidencePack` → `exportEvidencePack()`) — that serialises the EXACT embedded `ui_data` payload bytes (via `getEmbeddedRaw()`: strip `/*__UI_DATA__*/` + trim) to a single downloaded file `reproducibility_evidence_pack_v<contract>_<root8>.json` through the existing `downloadText`/`downloadBlob` Blob plumbing. The exported bytes are byte-identical to the embedded payload AND to `ui_data.json`; that payload already carries `contract_manifest.section_digests` (24) + `root_digest` and the build/provenance stamp (`meta.generated_utc` / `source_files` / `contract_manifest.generated_by`), so a reviewer receives independently digest-verifiable evidence of exactly what the UI displayed. The download filename is stamped with the contract version + first 8 hex of the root digest; a read-only note (`data-e3-note`) on the Integrity tab points reviewers to the action. DISPLAY/JS ONLY — NO contract change (no new `ui_data` key; payload byte-identical, so the Phase 35 Task 3 per-section SHA-256 digests still verify in-browser by construction); governed headline `39975.654628199336` and every read-out render bit-for-bit; NO network call, NO storage API, `file://` safe.
+
+**Verification.** `ui_app_self_test.cjs` ok=true, 405 checks (+12 E3), 0 net / 0 JS err. NEW dedicated jsdom fallback test `ui_app_evidence_pack_fallback_test.cjs` (ok=true) captures the bytes the button hands to the download plumbing and proves: byte-identity to the embedded payload; provenance-stamped filename; no storage / no network; and digest-verifiability through the EXISTING in-browser content-integrity verifier (re-embed the exported bytes → INTEGRITY VERIFIED, root digest match, 0 altered rows). All 9 offline self-tests green (498 → 522 checks); 0 external refs. New version-pinned pytest `tests/test_phase36_task4_e3_evidence_pack.py` (14 passed); regression `test_phase34_task2_h1` + `test_phase35_task3_a2_digests` + `test_ui_contract_pipeline_reconcile` (21 passed).
+
+**Governance.** ChangeRecord `d9cab0e655c246c0b696361ec901ecc6` (`code_change`, OWNER_REVIEW); records 98→99, audit 126→127, risk 17 (MR-016/MR-017 OPEN, owner decision not pre-empted); verify_all True.
+
+**Build note.** Like E1, E3 is a standalone idempotent anchor-asserted post-build HTML patch (`scripts/build_phase36_task4_e3_evidence_pack.py`); it is NOT a `ui_data` contract layer, so it stays out of `build_ui_pipeline.LAYERS` (which governs only the `ui_data.json` contract reconcile). Re-running the patch is a no-op.
+
+**Env note.** Sandbox `/sessions` tmpfs was 100% full → pytest installed to `/tmp/pylibs` with `TMPDIR=/tmp`; node jsdom resolved via `NODE_PATH=<mount>/node_modules`. All git + build performed in a fresh `/tmp` clone of `origin/main` (HEAD 5efee9d).
+
+**Next:** Phase 36 Task 5 (phase summary + consolidated re-audit → PHASE 36 COMPLETE), then owner-directed Phase IGUI (design-note-first).

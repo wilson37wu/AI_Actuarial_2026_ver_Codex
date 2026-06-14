@@ -1,0 +1,51 @@
+{
+  "doc_id": "PHASE36_TASK4_E3_REPORT",
+  "doc_version": "1.0.0",
+  "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility",
+  "task": "Task 4 (gap E3) - single reproducibility evidence-pack export",
+  "classification": "educational",
+  "result": "PASS",
+  "model_parameter_changes": "NONE",
+  "contract": "1.21.0 (UNCHANGED - display/JS only; embedded payload byte-identical)",
+  "governance_change_record": "d9cab0e655c246c0b696361ec901ecc6 (code_change, OWNER_REVIEW)",
+  "governance_status": "OWNER_REVIEW",
+  "governance_counts": {"change_records": "98 -> 99", "audit_entries": "126 -> 127", "risk_register": 17, "audit_integrity_ok": true},
+  "export": {
+    "action": "btnEvidencePack (toolbar) -> exportEvidencePack()",
+    "payload": "exact embedded ui_data bytes (getEmbeddedRaw: strip /*__UI_DATA__*/ + trim)",
+    "byte_identical_to_embedded_and_ui_data_json": true,
+    "filename": "reproducibility_evidence_pack_v<contract>_<root8>.json",
+    "carries": ["contract_manifest.section_digests (24)", "contract_manifest.root_digest", "meta.generated_utc", "source_files", "contract_manifest.generated_by"],
+    "no_network": true, "no_storage_api": true, "file_protocol_safe": true,
+    "recomputes_model_figure": false
+  },
+  "artifacts": [
+    "scripts/build_phase36_task4_e3_evidence_pack.py",
+    "scripts/build_phase36_task4_e3_governance.py",
+    "scripts/ui_app_evidence_pack_fallback_test.cjs",
+    "tests/test_phase36_task4_e3_evidence_pack.py",
+    "ui_app.html (patched)"
+  ],
+  "self_tests": {
+    "ui_app_self_test": {"ok": true, "checks": 405, "delta": "+12"},
+    "ui_app_evidence_pack_fallback_test": {"ok": true, "checks": 12, "new": true},
+    "ui_app_integrity_fallback_test": {"ok": true, "checks": 10},
+    "ui_app_distribution_fallback_test": {"ok": true, "checks": 9},
+    "ui_app_userrun_fallback_test": {"ok": true, "checks": 9},
+    "ui_app_search_deeplink_test": {"ok": true, "checks": 18},
+    "ui_app_bundle_printall_test": {"ok": true, "checks": 21},
+    "offline_viewer_self_test": {"ok": true, "checks": 11},
+    "combined_gui_self_test": {"ok": true, "checks": 27},
+    "total": {"suites": "9/9 ok", "checks": 522, "network": 0, "js_errors": 0, "external_refs": 0}
+  },
+  "pytests_updated": ["tests/test_phase36_task4_e3_evidence_pack.py (14 cases)"],
+  "pytests_result": "14 passed (13 Python-level + 1 jsdom fallback gate); contract/digest/pipeline regression 21 passed",
+  "acceptance_criteria": {
+    "exported_bytes_equal_embedded": "met",
+    "digests_recompute_and_match_via_existing_verifier_and_fallback_test": "met",
+    "no_network_no_storage_file_safe": "met",
+    "hash_is_not_a_model_figure_governed_readouts_bit_identical": "met",
+    "self_test_checks_added_suite_ok_0_0": "met (+12; new fallback test)",
+    "no_model_parameter_changes_stoprule_owner_decision": "met"
+  }
+}

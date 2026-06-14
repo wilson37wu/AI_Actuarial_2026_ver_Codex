@@ -718,6 +718,31 @@ setTimeout(() => {
     return !/39,975|46,638|46638\.9|3,637|39975\.654628199336/.test(authored);
   })();
 
+  // ===== Phase 36 Task 4 (gap E3): reproducibility evidence-pack export =====
+  const e3Btn = document.getElementById("btnEvidencePack");
+  const e3ButtonPresent = !!e3Btn;
+  const e3ButtonLabelled = !!e3Btn &&
+    /evidence pack/i.test(((e3Btn.textContent || "") + " " + (e3Btn.getAttribute("title") || "")));
+  const e3ExportFnPresent = /function exportEvidencePack\(/.test(html);
+  const e3GetRawFnPresent = /function getEmbeddedRaw\(/.test(html);
+  const e3WiredInToolbar = /\["btnEvidencePack",function\(\)\{ exportEvidencePack\(\); \}\]/.test(html);
+  const e3ExportUsesEmbeddedRaw = /getEmbeddedRaw\(\)/.test(html) &&
+    /downloadText\(name, raw, "application\/json"\)/.test(html);
+  const e3Seg = (function(){
+    const i = html.indexOf("(gap E3): reproducibility evidence-pack export");
+    const j = html.indexOf("function csvCell(");
+    return (i >= 0 && j > i) ? html.slice(i, j) : "";
+  })();
+  const e3NoStorageInExport = e3Seg.length > 100 && !/localStorage|sessionStorage|indexedDB/.test(e3Seg);
+  const e3DisplayOnlyStated = /recomputes NO model figure/.test(e3Seg);
+  const e3VerifierNotePresent = document.querySelectorAll('#integrity p[data-e3-note="1"]').length >= 1;
+  const e3PayloadDigestVerifiable = !!(uiDataObj && uiDataObj.contract_manifest &&
+    /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.root_digest || "") &&
+    uiDataObj.contract_manifest.section_digests &&
+    Object.keys(uiDataObj.contract_manifest.section_digests).length >= 20);
+  const e3FilenameStamped = /reproducibility_evidence_pack_v"\+ver\+tag\+"\.json/.test(html);
+  const e3HeadlineBitForBit = /39975\.654628199336/.test(html);
+
   const checks = {
     // Phase 33 Task 5 (gap G4): accessibility & usability pass
     g4SrOnlyCssPresent,
@@ -1089,6 +1114,19 @@ setTimeout(() => {
     e2ContractIs121,
     e2HeadlineBitForBit,
     e2NoAuthoredFigures,
+    // Phase 36 Task 4 (gap E3): reproducibility evidence-pack export
+    e3ButtonPresent,
+    e3ButtonLabelled,
+    e3ExportFnPresent,
+    e3GetRawFnPresent,
+    e3WiredInToolbar,
+    e3ExportUsesEmbeddedRaw,
+    e3NoStorageInExport,
+    e3DisplayOnlyStated,
+    e3VerifierNotePresent,
+    e3PayloadDigestVerifiable,
+    e3FilenameStamped,
+    e3HeadlineBitForBit,
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -1482,6 +1520,18 @@ setTimeout(() => {
     checks.e2ContractIs121 &&
     checks.e2HeadlineBitForBit &&
     checks.e2NoAuthoredFigures &&
+    checks.e3ButtonPresent &&
+    checks.e3ButtonLabelled &&
+    checks.e3ExportFnPresent &&
+    checks.e3GetRawFnPresent &&
+    checks.e3WiredInToolbar &&
+    checks.e3ExportUsesEmbeddedRaw &&
+    checks.e3NoStorageInExport &&
+    checks.e3DisplayOnlyStated &&
+    checks.e3VerifierNotePresent &&
+    checks.e3PayloadDigestVerifiable &&
+    checks.e3FilenameStamped &&
+    checks.e3HeadlineBitForBit &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);
