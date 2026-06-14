@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-14T08:08Z-fa5b",
-  "started_at": "2026-06-14T08:08:44Z",
-  "ttl_minutes": 120,
-  "task": "Phase 35 Task 4 (A3)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-14T08:34:13Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
