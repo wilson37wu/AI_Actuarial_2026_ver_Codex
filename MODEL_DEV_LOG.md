@@ -9763,3 +9763,36 @@ governed frozen-t headline 39,975.654628199336 untouched.
 Artifacts: docs/validation/PHASE34_TASK2_H1_CONTRACT_GUARD.{json,md};
 docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p34t2.md. Next: Phase 34 Task 3
 (gap H2: global cross-tab search + deep-linkable read-outs).
+
+
+## 2026-06-14 06:00 UTC window - Phase 34 Task 3 (gap H2) COMPLETE [Claude Cowork]
+
+**Global cross-tab search + deep-linkable read-outs.** Pure display layer over the
+embedded ui_data snapshot - contract stays 1.18.0, `ui_data.json` byte-identical,
+`build_ui_data.py` unchanged.
+
+- `ui_app.html`: added a search box that indexes ONLY already-rendered text (tab
+  titles + headline labels: headings/sub-headings/chart+table captions + card
+  labels), assigning stable `dl-*` anchors (346-365 read-outs) without mutating any
+  text. Selecting a result activates the owning tab and writes a `#tab~section` URL
+  hash; `tabFromHash()` extended to restore tab + in-tab section (the `~` separator
+  never occurs in a tab id, so plain `#tab` keeps exact Phase 33 G4 behaviour). A
+  match scrolls to + flashes a transient CSS class only.
+- Governed frozen-t headline `39975.654628199336` is FINDABLE via search yet NEVER
+  re-labelled (comparator `data-cmp-point` values byte-for-byte unchanged after a
+  jump; matched element text unchanged, no `<mark>` injected). NO storage APIs; 0
+  external refs; single self-contained file.
+- Tests: `ui_app_self_test` 308 -> 317 (+9 H2 checks); NEW
+  `scripts/ui_app_search_deeplink_test.cjs` (16 checks: search hit/jump/restore,
+  deep-link tab+section, plain-tab back-compat, headline-never-relabelled,
+  no-storage, no-external-ref, neutral no-match). 7 suites GREEN (ui_app 317 /
+  search-deeplink 16 / integrity-fallback 10 / userrun-fallback 9 /
+  distribution-fallback 9 / offline_viewer 11 / combined_gui 27), all 0 net / 0 JS err.
+- INCIDENT: the in-place editor truncated the 638 KB `ui_app.html` mid-write (the
+  documented virtiofs hazard). Recovered by restoring pristine `origin/main` and
+  re-applying all six edits via a deterministic Python patcher (per-edit uniqueness
+  assertions + post-write structure checks; `node --check` OK).
+
+State: overall_status `PHASE34_TASK3_COMPLETE_NEXT_TASK4_H3_EVIDENCE_BUNDLE_PRINT_ALL`.
+Cycle status: docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p34t3.md.
+Next: Phase 34 Task 4 (gap H3: full evidence bundle export + print-all).

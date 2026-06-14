@@ -114,11 +114,27 @@
   .integritybanner{margin:10px 0 14px;padding:10px 14px;border:1px solid var(--warn);border-radius:8px;background:rgba(94,74,31,0.12);color:var(--ink);font-size:13px;line-height:1.5}
   .integritybanner .ibannerlabel{font-weight:700;color:var(--warn);margin-right:6px;text-transform:uppercase;letter-spacing:.03em;font-size:11.5px}
   .signoffcover{display:none}
+  /* Phase 34 Task 3 (gap H2): global cross-tab search + deep-linkable read-outs.
+     DISPLAY LAYER ONLY -- the search index is built from text ALREADY rendered in
+     the artifact (tab titles, table captions, headline labels). A match scrolls to
+     and flashes its element WITHOUT mutating the element's text, so the governed
+     headline is never re-labelled. No storage APIs; file:// safe. */
+  .gsearch{position:relative;margin:14px 0 0;max-width:560px}
+  .gsearch-input{width:100%;box-sizing:border-box;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit}
+  .gsearch-input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .gsearch-results{position:absolute;z-index:60;left:0;right:0;margin-top:4px;background:var(--panel);border:1px solid var(--line);border-radius:8px;max-height:340px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+  .gsearch-item{padding:8px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:12.5px;color:var(--ink)}
+  .gsearch-item:last-child{border-bottom:none}
+  .gsearch-item.active,.gsearch-item:hover{background:var(--panel2)}
+  .gsearch-item .gs-where{display:block;color:var(--muted);font-size:11px;margin-top:2px;text-transform:uppercase;letter-spacing:.03em}
+  .gsearch-empty{padding:8px 12px;color:var(--muted);font-size:12.5px}
+  .dl-flash{animation:dlflash 1.6s ease-out 1;border-radius:8px}
+  @keyframes dlflash{0%{box-shadow:0 0 0 3px var(--accent);background:rgba(79,156,255,.18)}100%{box-shadow:0 0 0 0 rgba(79,156,255,0);background:transparent}}
   @media print{
     :root{--bg:#fff;--panel:#fff;--panel2:#fff;--ink:#111;--muted:#444;--line:#bbb;--chip:#eee;--accent:#15489c}
     body{background:#fff;color:#111}
     header{background:#fff;border-color:#bbb}
-    .toolbar,.tabs,.dz,.filter,#__tip,details>summary{display:none !important}
+    .toolbar,.tabs,.dz,.filter,.gsearch,#__tip,details>summary{display:none !important}
     .panel{display:block !important;border:none;border-radius:0;padding:0;margin:0 0 22px;background:#fff}
     .panel::before{display:block;content:attr(data-title);font-size:16px;font-weight:700;margin:0 0 10px;color:#111;border-bottom:2px solid #111;padding-bottom:4px}
     .chartwrap,.gate,.card,table,.tl-item{page-break-inside:avoid}
@@ -151,6 +167,10 @@
 <div class="wrap">
   <div id="signoffcover" class="signoffcover" aria-hidden="true"></div>
   <div id="integritybanner" class="integritybanner" role="status" aria-live="polite" aria-hidden="true" style="display:none"></div>
+  <div class="gsearch" id="gsearch" role="search">
+    <input type="text" id="gsearchInput" class="gsearch-input" placeholder="Search read-outs, tables and sections across all tabs..." aria-label="Search read-outs, tables and sections across all tabs" aria-controls="gsearchResults" aria-expanded="false" autocomplete="off" spellcheck="false"/>
+    <div id="gsearchResults" class="gsearch-results" role="listbox" aria-label="Search results" hidden></div>
+  </div>
   <div class="tabs" id="tabs"></div>
   <div id="overview" class="panel" data-title="Overview"></div>
   <div id="inventory" class="panel" data-title="Inventory &amp; Contract"></div>
@@ -295,11 +315,17 @@
   }
   // Phase 33 Task 5 (gap G4): on load / hashchange, restore the tab named in the
   // URL hash if it is a real tab. No storage APIs; safe under file://.
+  // Phase 34 Task 3 (gap H2): the hash may additionally carry an in-tab section as
+  // "tab~section" (deep-linkable read-out). The "~" separator never occurs in a
+  // tab id, so a plain "#tab" hash keeps the exact Phase 33 G4 behaviour.
   function tabFromHash(){
     if(_hashApplying) return;
     var h=(location.hash||"").replace(/^#/,"");
-    if(h && document.getElementById("tab-"+h) && document.getElementById(h)){
-      activateTab(h, true);
+    if(!h) return;
+    var parts=h.split("~"), tab=parts[0], sec=parts.length>1?parts.slice(1).join("~"):"";
+    if(tab && document.getElementById("tab-"+tab) && document.getElementById(tab)){
+      activateTab(tab, true);
+      if(sec){ var el=document.getElementById(sec); if(el) revealReadout(el); }
     }
   }
   // Phase 33 Task 5 (gap G4): give every data table an accessible name via a
@@ -320,6 +346,119 @@
       var cap=document.createElement("caption");
       cap.className="sr-only"; cap.textContent=lbl;
       tb.insertBefore(cap, tb.firstChild);
+    });
+  }
+
+  // ===== Phase 34 Task 3 (gap H2): global cross-tab search + deep-link read-outs =====
+  // DISPLAY LAYER ONLY. The index is built from text ALREADY rendered in the
+  // artifact (tab titles, headline labels: headings/sub-headings/chart+table
+  // captions, and card labels). Nothing is fetched and no model figure is
+  // recomputed. A match scrolls to its element and flashes a CSS outline; the
+  // element's TEXT is NEVER mutated, so the governed frozen-t headline is findable
+  // yet never re-labelled. Deep links use the URL hash ONLY (no storage; file://).
+  var SEARCH_INDEX=[];
+  function readoutSlug(s){
+    return String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,48);
+  }
+  function buildSearchIndex(){
+    SEARCH_INDEX=[];
+    var seen={};
+    TABS.forEach(function(p){
+      var tab=p[0], title=p[1];
+      var panel=document.getElementById(tab);
+      if(!panel) return;
+      // (a) the tab itself -> jumps to the panel top
+      SEARCH_INDEX.push({tab:tab, anchor:tab, label:title, where:title, kind:"tab"});
+      // (b) in-panel headline labels + captions, then card read-outs
+      var entries=[];
+      [].forEach.call(panel.querySelectorAll("h1,h2,h3,h4,.subh,.chartwrap .cap,caption"),function(el){
+        entries.push([el,(el.textContent||"")]);
+      });
+      [].forEach.call(panel.querySelectorAll(".card"),function(card){
+        var k=card.querySelector(".k");
+        entries.push([card, k?(k.textContent||""):(card.textContent||"")]);
+      });
+      var n=0;
+      entries.forEach(function(pair){
+        var el=pair[0], txt=(pair[1]||"").replace(/\s+/g," ").trim();
+        if(!txt || txt.length<2) return;
+        if(seen["L:"+tab+":"+txt]) return; // dedupe identical labels within a tab
+        var anchor=el.id;
+        if(!anchor){ anchor="dl-"+tab+"-"+(readoutSlug(txt)||"x"); while(seen["A:"+anchor]){ anchor="dl-"+tab+"-"+(readoutSlug(txt)||"x")+"-"+(n++); } el.id=anchor; }
+        seen["L:"+tab+":"+txt]=1; seen["A:"+anchor]=1;
+        SEARCH_INDEX.push({tab:tab, anchor:anchor, label:txt, where:title, kind:"readout"});
+      });
+    });
+    return SEARCH_INDEX;
+  }
+  // Scroll to + briefly flash a read-out WITHOUT changing its text (the governed
+  // headline is never re-labelled). The flash is a transient CSS class only.
+  function revealReadout(el){
+    if(!el) return;
+    try{ if(el.scrollIntoView) el.scrollIntoView({block:"center"}); }catch(_e){ try{ el.scrollIntoView(); }catch(_e2){} }
+    el.classList.remove("dl-flash");
+    void el.offsetWidth; // reflow so a repeat jump re-triggers the animation
+    el.classList.add("dl-flash");
+    try{
+      if(!el.hasAttribute("tabindex")){ el.setAttribute("tabindex","-1"); }
+      if(typeof el.focus==="function") el.focus({preventScroll:true});
+    }catch(_e3){}
+    setTimeout(function(){ try{ el.classList.remove("dl-flash"); }catch(_e4){} }, 1700);
+  }
+  // Activate the owning tab, write the deep-link hash (URL only), then reveal.
+  function goToReadout(tab, anchor){
+    if(document.getElementById("tab-"+tab) && document.getElementById(tab)){ activateTab(tab); }
+    var newHash="#"+tab+((anchor && anchor!==tab)?("~"+anchor):"");
+    _hashApplying=true;
+    try{
+      if(window.history && typeof history.replaceState==="function"){ history.replaceState(null,"",newHash); }
+      else { location.hash=newHash.slice(1); }
+    }catch(_e){ try{ location.hash=newHash.slice(1); }catch(_e2){} }
+    _hashApplying=false;
+    var el=document.getElementById(anchor);
+    if(el) revealReadout(el);
+  }
+  var _gsWired=false;
+  function wireGlobalSearch(){
+    var input=document.getElementById("gsearchInput");
+    var box=document.getElementById("gsearchResults");
+    if(!input||!box) return;
+    if(_gsWired) return; // listeners attach once; index is rebuilt every render
+    _gsWired=true;
+    var cur=-1, results=[];
+    function close(){ box.hidden=true; box.innerHTML=""; cur=-1; input.setAttribute("aria-expanded","false"); }
+    function render(){
+      if(!results.length){ box.innerHTML='<div class="gsearch-empty">No matches</div>'; box.hidden=false; input.setAttribute("aria-expanded","true"); return; }
+      box.innerHTML=results.map(function(r,i){
+        return '<div class="gsearch-item'+(i===cur?" active":"")+'" role="option" data-i="'+i+'" id="gsres-'+i+'" aria-selected="'+(i===cur?"true":"false")+'">'+
+          esc(r.label)+'<span class="gs-where">'+esc(r.where)+(r.kind==="tab"?" &middot; tab":"")+'</span></div>';
+      }).join("");
+      box.hidden=false; input.setAttribute("aria-expanded","true");
+    }
+    function query(q){
+      q=(q||"").toLowerCase().trim();
+      if(!q){ results=[]; close(); return; }
+      var out=[];
+      for(var i=0;i<SEARCH_INDEX.length && out.length<20;i++){
+        if(SEARCH_INDEX[i].label.toLowerCase().indexOf(q)!==-1) out.push(SEARCH_INDEX[i]);
+      }
+      results=out; cur=results.length?0:-1; render();
+    }
+    function go(i){ var r=results[i]; if(!r) return; close(); goToReadout(r.tab, r.anchor); }
+    input.addEventListener("input",function(){ query(input.value); });
+    input.addEventListener("focus",function(){ if(input.value) query(input.value); });
+    input.addEventListener("keydown",function(e){
+      if(e.key==="ArrowDown"){ e.preventDefault(); if(results.length){ cur=(cur+1)%results.length; render(); } }
+      else if(e.key==="ArrowUp"){ e.preventDefault(); if(results.length){ cur=(cur-1+results.length)%results.length; render(); } }
+      else if(e.key==="Enter"){ e.preventDefault(); if(cur>=0) go(cur); }
+      else if(e.key==="Escape"){ e.preventDefault(); close(); }
+    });
+    box.addEventListener("click",function(e){
+      var it=(e.target&&e.target.closest)?e.target.closest(".gsearch-item"):null;
+      if(it) go(parseInt(it.getAttribute("data-i"),10));
+    });
+    document.addEventListener("click",function(e){
+      if(!input.contains(e.target) && !box.contains(e.target)) close();
     });
   }
 
@@ -2731,6 +2870,9 @@
     renderHeader(); renderOverview(); renderInventory();
     renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderDistExplorer(); renderOwnerDecision(); renderUserRun(); renderGovernance(); renderIntegrity(); renderIntegrityBanner(); renderSignoffCover(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
+    // Phase 34 Task 3 (gap H2): (re)build the search index from the just-rendered
+    // DOM, then wire the search box (idempotent). Pure display layer.
+    buildSearchIndex(); wireGlobalSearch();
   }
 
   renderTabs();

@@ -431,6 +431,59 @@ setTimeout(() => {
   // restore overview selection so downstream state is neutral
   if (ovTabK) ovTabK.click();
 
+  // ===== Phase 34 Task 3 (gap H2): global search + deep-linkable read-outs =====
+  // All assertions exercise ONLY already-rendered text; nothing is fetched and no
+  // model figure is recomputed. The governed headline must be findable yet never
+  // re-labelled, and deep links must restore tab + in-tab section via URL hash.
+  const h2Input = document.getElementById("gsearchInput");
+  const h2Box = document.getElementById("gsearchResults");
+  const h2SearchBoxPresent = !!h2Input && !!h2Box;
+  const h2DlIdsAssigned = document.querySelectorAll('[id^="dl-"]').length;
+  let h2HitForGovernedHeadline = false, h2JumpActivatesTab = false,
+      h2HeadlineNeverRelabelled = false, h2HashCarriesSection = false;
+  if (h2Input && h2Box) {
+    const cmpBefore = [...document.querySelectorAll('[data-cmp-point]')]
+      .map(e => e.getAttribute('data-cmp-point'));
+    h2Input.value = "governed component scr headline";
+    h2Input.dispatchEvent(new Event("input", { bubbles: true }));
+    const items = [...h2Box.querySelectorAll(".gsearch-item")];
+    h2HitForGovernedHeadline = items.length >= 1 &&
+      /Governed component SCR headline/.test(items[0].textContent);
+    if (items.length) {
+      items[0].click();
+      const sel = document.querySelector('#tabs [aria-selected="true"]');
+      h2JumpActivatesTab = !!sel &&
+        document.getElementById(sel.getAttribute("data-target")).classList.contains("active");
+      h2HashCarriesSection = /~dl-/.test(dom.window.location.hash || "");
+      const cmpAfter = [...document.querySelectorAll('[data-cmp-point]')]
+        .map(e => e.getAttribute('data-cmp-point'));
+      h2HeadlineNeverRelabelled =
+        JSON.stringify(cmpBefore) === JSON.stringify(cmpAfter) &&
+        cmpBefore.indexOf("39975.654628199336") !== -1;
+    }
+  }
+  // deep link restores BOTH the tab and the in-tab section via the URL hash only
+  let h2DeepLinkTabSection = false, h2DeepLinkPlainTabStillWorks = false;
+  const h2CapAnchorEl = document.querySelector('#capital [id^="dl-"]');
+  if (h2CapAnchorEl) {
+    dom.window.location.hash = "#capital~" + h2CapAnchorEl.id;
+    dom.window.dispatchEvent(new Event("hashchange"));
+    const sel = document.querySelector('#tabs [aria-selected="true"]');
+    h2DeepLinkTabSection = !!sel && sel.getAttribute("data-target") === "capital" &&
+      h2CapAnchorEl.classList.contains("dl-flash");
+  }
+  // a plain "#tab" hash (no section) still restores just the tab (G4 back-compat)
+  dom.window.location.hash = "#governance";
+  dom.window.dispatchEvent(new Event("hashchange"));
+  {
+    const sel = document.querySelector('#tabs [aria-selected="true"]');
+    h2DeepLinkPlainTabStillWorks = !!sel && sel.getAttribute("data-target") === "governance" &&
+      document.getElementById("governance").classList.contains("active");
+  }
+  // the search/deep-link layer introduces no storage APIs (file:// safe)
+  const h2NoStorageApis = g4NoStorageApis;
+  if (ovTabK) ovTabK.click();
+
   const checks = {
     // Phase 33 Task 5 (gap G4): accessibility & usability pass
     g4SrOnlyCssPresent,
@@ -704,6 +757,15 @@ setTimeout(() => {
     h1VersionMatchShown: !!uiDataObj && intText.indexOf(uiDataObj.contract_version) >= 0,
     h1BannerHiddenOnFullPayload: !intBannerVisible,
     h1DisplayOnlyStated: /recomputes no model figure/.test(intText) && /[Nn]othing is recomputed in the browser/.test(intText),
+    h2SearchBoxPresent,
+    h2DlIdsAssigned,
+    h2HitForGovernedHeadline,
+    h2JumpActivatesTab,
+    h2HashCarriesSection,
+    h2HeadlineNeverRelabelled,
+    h2DeepLinkTabSection,
+    h2DeepLinkPlainTabStillWorks,
+    h2NoStorageApis,
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -1012,6 +1074,15 @@ setTimeout(() => {
     checks.h1VersionMatchShown &&
     checks.h1BannerHiddenOnFullPayload &&
     checks.h1DisplayOnlyStated &&
+    checks.h2SearchBoxPresent &&
+    checks.h2DlIdsAssigned >= 50 &&
+    checks.h2HitForGovernedHeadline &&
+    checks.h2JumpActivatesTab &&
+    checks.h2HashCarriesSection &&
+    checks.h2HeadlineNeverRelabelled &&
+    checks.h2DeepLinkTabSection &&
+    checks.h2DeepLinkPlainTabStillWorks &&
+    checks.h2NoStorageApis &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);
