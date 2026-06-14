@@ -2698,6 +2698,28 @@
       "phase": "Phase 34: Offline UI Usability Hardening",
       "digest": "f23b8e6c074788187d92b8962ce785ad82ba853ca1f7b77084b119997f44c6f0",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "8575022907304e7fb157eb0207b7bab8",
+      "timestamp": "2026-06-14T05:20:22.985519+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase35Task1AccessibilityIntegrityDesign",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 35 Task 1 accessibility/integrity design note",
+      "details": {
+        "record_id": "8fad9377a9e34b4db0e824b4e6d223e4",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "affected_components": [
+          "par_model_v2/viewer/ui_accessibility_integrity.py",
+          "tests/test_phase35_task1_design_note.py",
+          "scripts/build_phase35_task1_design_note.py",
+          "docs/validation/PHASE35_TASK1_DESIGN_NOTE.{json,md}",
+          "docs/UI_ACCESSIBILITY_INTEGRITY_DESIGN_CARD.md"
+        ]
+      },
+      "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening",
+      "digest": "68b609081698fdcbfff2070e8a8ab4649cd18f1a15c78583f6c4705807d67294",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -8485,6 +8507,67 @@
         }
       ],
       "phase": "Phase 34: Offline UI Usability Hardening"
+    },
+    {
+      "record_id": "8fad9377a9e34b4db0e824b4e6d223e4",
+      "created_at": "2026-06-14T05:20:22.985403+00:00",
+      "title": "Phase 35 Task 1 - offline UI accessibility & evidence-integrity design note; baseline audit green (8 self-tests 340/11/27/9/9/10/18/21 = 445 checks, 0 network / 0 JS errors, 0 external refs, contract 1.18.0, 18 tabs); 3 gaps pre-registered (A1 WCAG AA keyboard+contrast pass, A2 per-section cryptographic digest in H1 panel, A3 one-page printable model-card cover)",
+      "description": "Pre-registered the Phase 35 offline-UI accessibility & evidence-integrity deepening pass per the standing scheduled-task directive. (a) Baseline audit measured and frozen: ui_app (340 checks) / offline_viewer (11) / combined_gui (27) / userrun-fallback (9) / distribution-fallback (9) / integrity-fallback (10) / search-deeplink (18) / bundle-printall (21) self-tests all ok:true with 0 network calls and 0 JS errors (445 checks total); 0 external references across the three HTML artifacts; embedded contract 1.18.0 (23 top-level keys); 18 tabs; governance store 92/120/17. (b) Three gaps pre-registered in priority order, one per cycle: A1 formal WCAG 2.1 AA keyboard + contrast conformance pass (ADDITIVE a11y_audit key; CSS-only :focus-visible on every control + build-time measured contrast table for both themes); A2 per-section cryptographic digest in the H1 integrity panel (ADDITIVE manifest section_digests + root_digest; in-browser SHA-256 recompute with no network / no storage API; tamper-evident per-section table); A3 one-page printable model-card cover (presentation only; bit-for-bit from the embedded snapshot; decision field BLANK; provenance-stamped). (c) Acceptance criteria pre-registered per gap + common criteria (eight self-tests green, additive-only, zero-install, no recomputation in display layer - a hash over the embedded bytes is not a model figure). Gate PASS with LIVE repo cross-checks. NO model parameter changes; binding stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/viewer/ui_accessibility_integrity.py",
+        "tests/test_phase35_task1_design_note.py",
+        "scripts/build_phase35_task1_design_note.py",
+        "docs/validation/PHASE35_TASK1_DESIGN_NOTE.{json,md}",
+        "docs/UI_ACCESSIBILITY_INTEGRITY_DESIGN_CARD.md"
+      ],
+      "standard_references": [
+        "WCAG 2.1 AA: 1.4.3 contrast (minimum), 1.4.11 non-text contrast, 2.1.1 keyboard, 2.4.3 focus order, 2.4.7 focus visible (A1 reference)",
+        "SOA ASOP 41 (actuarial communications - clarity for the intended user; model-card cover, A3 reference)",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.6 (model risk, reliance, documentation; evidence integrity, A2 reference)",
+        "IFoA Model Practice Note (MPN) section 4 (documentation and communication)",
+        "NIST FIPS 180-4 SHA-256 (per-section digest algorithm, A2 reference)"
+      ],
+      "before_snapshot": {
+        "design_note_exists": false,
+        "ui_contract": "1.18.0",
+        "phase34": "COMPLETE (H1-H4 closed; contract 1.18.0; 18 tabs)"
+      },
+      "after_snapshot": {
+        "design_note_exists": true,
+        "doc_id": "PHASE35_TASK1_DESIGN_NOTE",
+        "doc_version": "1.0.0",
+        "gate_ok": true,
+        "gate_checks": 29,
+        "gaps_preregistered": [
+          "A1",
+          "A2",
+          "A3"
+        ],
+        "ui_contract": "1.18.0",
+        "ui_contract_bump": false
+      },
+      "impact_assessment": "Governance only. No artifact, contract, or model change this cycle; the note binds Tasks 2-5 to additive-only, zero-install, display-only changes with pre-registered acceptance criteria. The governed frozen-t headline is untouched.",
+      "quantitative_impact": "None (design note). Baseline frozen: contract 1.18.0; 18 tabs; self-test checks 340/11/27/9/9/10/18/21 = 445; external refs 0. No governed capital figure changed.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase35Task1AccessibilityIntegrityDesign",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-14T05:20:22.985467+00:00",
+          "actor": "Phase35Task1AccessibilityIntegrityDesign",
+          "status": "PEER_REVIEW",
+          "comments": "Design note: gate PASS incl. live repo cross-checks; tests added."
+        },
+        {
+          "timestamp": "2026-06-14T05:20:22.985491+00:00",
+          "actor": "Phase35Task1AccessibilityIntegrityDesign",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: accessibility / evidence-integrity scope and gap priority (A1 WCAG AA pass first). No model or contract change until Task 2."
+        }
+      ],
+      "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening"
     }
   ],
   "risk_register": [

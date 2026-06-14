@@ -9887,3 +9887,60 @@ State: overall_status `PHASE34_COMPLETE_NEXT_PHASE35_TASK1_DESIGN_NOTE`.
 Next: Phase 35 (scoped, NOT started this cycle) - offline UI accessibility & evidence-integrity
 deepening (A1 WCAG keyboard+AA contrast, A2 per-section integrity digest in H1 panel, A3
 printable model-card cover). One task per cycle per AGENT_COORDINATION.md.
+
+================================================================================
+## 2026-06-14 06:00 UTC window - Phase 35 Task 1 (design note + baseline) - Claude Cowork
+
+Phase 35 (Offline UI Accessibility & Evidence-Integrity Deepening) opened. Task 1
+is the pre-registered design note: it MEASURES and freezes the current offline-UI
+baseline as cross-check targets, then pre-registers three gaps (one per cycle)
+with acceptance criteria. Pure governance_change - NO source / data / contract
+change this cycle (contract stays 1.18.0; ui_app.html and ui_data.json
+byte-identical to origin/main).
+
+Baseline (measured this cycle on origin/main, frozen): 8 offline self-test suites
+all ok:true with 0 network / 0 JS errors - ui_app 340, offline_viewer 11,
+combined_gui 27, userrun-fallback 9, distribution-fallback 9, integrity-fallback 10,
+search-deeplink 18, bundle-printall 21 = 445 checks. 0 external http(s) refs across
+the 3 HTML artifacts; embedded contract 1.18.0 (23 top-level keys incl.
+contract_manifest); 18 tabs; governance 92 ChangeRecords / 120 audit / 17 risk;
+ui_app.html 655,866 bytes.
+
+Three gaps pre-registered, one per cycle:
+- A1 (Task 2) formal WCAG 2.1 AA keyboard + contrast conformance pass - ADDITIVE
+  a11y_audit key (1.18.0 -> 1.19.0): CSS-only :focus-visible on every interactive
+  control; keyboard operability of the controls not yet exercised; build-time
+  measured contrast table (>=4.5:1 body, >=3:1 large/UI) for BOTH default and
+  high-contrast themes, embedded read-only.
+- A2 (Task 3) per-section cryptographic digest in the H1 integrity panel - ADDITIVE
+  manifest section_digests + root_digest + digest_algo (1.19.0 -> 1.20.0):
+  per-section SHA-256 at build time; in-browser recompute from the embedded
+  payload with NO network / no storage API; tamper-evident verified/altered table
+  + overall badge. Closes the content-integrity gap Phase 34 H1 left (keys PRESENT
+  vs CONTENT unaltered).
+- A3 (Task 4) one-page printable model-card cover (ASOP-41 style) - presentation
+  only; bit-for-bit from the embedded snapshot; owner-decision field BLANK;
+  provenance-stamped.
+Task 5 = phase summary + consolidated re-audit + PHASE 35 COMPLETE.
+
+Verification: Task 1 gate validate_design_note PASS 29/29 (structural + LIVE repo
+cross-checks: external-ref scan, contract version, 18-tab inventory, artifact size,
+governance-store floor). New unittest tests/test_phase35_task1_design_note.py:
+25 passed. The 8 baseline self-tests were re-run on origin/main; all green (nothing
+rebuilt).
+
+Files: par_model_v2/viewer/ui_accessibility_integrity.py (design note + gate);
+scripts/build_phase35_task1_design_note.py (builder + governance);
+tests/test_phase35_task1_design_note.py; docs/validation/PHASE35_TASK1_DESIGN_NOTE.{json,md};
+docs/UI_ACCESSIBILITY_INTEGRITY_DESIGN_CARD.md;
+docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p35t1.md.
+
+Governance: ChangeRecord 8fad9377a9e34b4db0e824b4e6d223e4 (governance_change),
+OWNER_REVIEW; records 92 -> 93, audit 120 -> 121, verify_all True; risks 17.
+
+Constraints honoured: NO model parameter changes; Phase 30 binding stop-rule stands;
+MR-016/MR-017 owner decision not pre-empted (decision record BLANK); governed frozen-t
+headline 39975.654628199336 untouched.
+
+State: overall_status PHASE35_TASK1_COMPLETE_NEXT_PHASE35_TASK2_A1.
+Next: Phase 35 Task 2 = A1 (WCAG 2.1 AA keyboard + contrast pass). One task per cycle.
