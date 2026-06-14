@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-14T00:07Z-555c",
-  "started_at": "2026-06-14T00:07:49Z",
-  "ttl_minutes": 120,
-  "task": "Phase 34 Task 2 (gap H1: contract guard + integrity panel)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-14T00:32:37Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
