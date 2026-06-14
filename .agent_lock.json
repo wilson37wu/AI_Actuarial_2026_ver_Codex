@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-14T02:08Z-67a5",
-  "started_at": "2026-06-14T02:08:00Z",
-  "ttl_minutes": 120,
-  "task": "Phase 34 Task 4 (gap H3 evidence bundle + print-all)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-14T02:25:43Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
