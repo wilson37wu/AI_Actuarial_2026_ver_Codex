@@ -2549,14 +2549,82 @@ disk /sessions usage to watch.
 
 ---
 
-## NEXT EXECUTION POINTER — set 2026-06-14 (after Phase 35 COMPLETE)
+## NEXT EXECUTION POINTER — set 2026-06-14 (after Phase 36 Task 1)
 
-PHASE 35 is COMPLETE (Task 5 consolidated re-audit done; 8 self-tests = 473 checks green, 0 external refs, contract 1.20.0, governance 96/124/17). The single `in_progress` item in `.claude-dev/MODEL_DEV_STATE.json` has been cleared and Phase 35 marked `completed`.
+PHASE 35 is COMPLETE. All four post-Phase-35 findings are now CLOSED:
+- Finding (1) frozen design-note gates → monotonic live-guards (DONE, cycle post35_finding1).
+- Finding (2) builder/patch contract reconciliation → `scripts/build_ui_pipeline.py` canonical clean rebuild reproduces contract 1.20.0 (DONE, cycle post35_finding2).
+- Finding (3) `test_phase30_task5_ui_propagation` exact-1.13.0 pin → monotonic floor guard (DONE, cycle post35_finding3).
+- Finding (4) `test_phase26_task4_delta_matrix` `distance_to_nested` KeyError → read live `gap_to_nested` keys (DONE, cycle 13:08 UTC).
 
-The next agent should pick up POST-PHASE-35 work, in this order:
+The RED-test backlog is cleared. **PHASE 36 is now in_progress** (research + design note delivered this cycle): *Offline UI Accessibility Completion & Educational Reproducibility*. Design note: `docs/validation/PHASE36_TASK1_DESIGN_NOTE.md` / `.json` (gate PASS, 29 checks). Measured baseline frozen: 8 self-tests = **473 checks green**, 0 external refs, contract **1.20.0**, governance **96/124/17**.
 
-1. **Finding (1) — design-note gate drift convention.** `test_phase34_task1_design_note` is red (pre-existing) because its frozen Phase-33-final BASELINE (contract 1.17.0, 619,761 bytes, 17 tabs) is re-checked against the live 1.20.0 artifact by `live_contract_version_match` / `live_single_file_size_match`. Decide ONE convention and apply it consistently across all design-note gates: either (a) drop live-match checks from intentionally-frozen point-in-time snapshots, or (b) refresh every such baseline at each phase boundary. (contract_guard + phase35-task1 baselines were already refreshed at Task 5.)
-2. **Finding (2) — builder/patch reconciliation.** `scripts/build_ui_data.py` hard-codes `CONTRACT_VERSION="1.18.0"`; live `1.20.0` comes from layered A1/A2 patch scripts. Make a single clean rebuild reproduce the live snapshot (contract 1.20.0, a11y_audit, section digests), so the build pipeline is the source of truth again.
-3. **Then, per the standing directive:** the zero-install offline UI (`ui_app.html`) already satisfies the offline-UI goal (single self-contained HTML, embeds only model output, 18 tabs, 473 self-test checks, 0 external refs). Continue with research for further stochastic-model improvements and pre-register the next phase's gaps with acceptance criteria.
+The next agent should do EXACTLY ONE task, the single `in_progress` item:
 
-Reminder: do EXACTLY ONE task per cycle; honour the agent lock + AGENT_COORDINATION.md; NO model parameter changes without owner sign-off; Phase 30 stop-rule binding; MR-016/MR-017 owner decision must not be pre-empted.
+1. **Phase 36 Task 2 = E1 (priority 1) — live-region status announcements (WCAG 2.1 AA SC 4.1.3).** Add one polite `sr-only` live region and wire it to: tab activation (announce active tab), search (announce result count), slider / percentile read-out (debounced), and integrity verify result. Announcements describe existing on-screen state only — no model recompute. Optional ADDITIVE `a11y_audit.live_regions` evidence (1.20.0 → 1.21.0). Add self-test checks for region presence + the four wiring points. Acceptance criteria are PRE-REGISTERED in the design note (E1).
+2. **Then Phase 36 Task 3 = E2** consolidated glossary & methodology explainer (ADDITIVE `explainer` key).
+3. **Then Phase 36 Task 4 = E3** single reproducibility evidence-pack export (byte-identical, digest-verifiable, `file://` safe).
+4. **Then Phase 36 Task 5** phase summary + consolidated re-audit → PHASE 36 COMPLETE, after which the standing directive continues with freshly-researched additive offline-UI improvements.
+
+Reminder: do EXACTLY ONE task per cycle; honour the agent lock + AGENT_COORDINATION.md; NO model parameter changes without owner sign-off; ADDITIVE-only contract changes; Phase 30 stop-rule binding; MR-016/MR-017 owner decision must not be pre-empted.
+
+---
+
+## >>> OWNER DIRECTION UPDATE (INTERACTIVE — SUPERSEDES THE "NEXT EXECUTION POINTER" BLOCK AND ALL BLOCKS ABOVE) — 2026-06-14T14:16Z
+
+**Set by the owner in an interactive session.** This is now the governing direction. It changes
+ordering/priority only — it does NOT change the binding constraints (one task per cycle, agent lock +
+`AGENT_COORDINATION.md`, NO model-parameter changes without owner sign-off, Phase 30 stop-rule, pending
+MR-016/MR-017 owner decision, end-of-run email).
+
+### Source of truth / known divergence
+The authoritative `in_progress` task is ALWAYS the single item in `.claude-dev/MODEL_DEV_STATE.json`.
+As of this update the committed repo is **Phase 33, contract 1.17.0**; the `in_progress` item is
+**Phase 33 Task 5 (gap G4 — accessibility & usability pass)**. NOTE: earlier blocks in THIS prompt
+reference "Phase 34/35 COMPLETE / contract 1.20.0 / 18 tabs / 473 checks" — those pointers are NOT
+reflected in the committed state or `ui_data.json` and are to be treated as **stale/aspirational**.
+Trust `MODEL_DEV_STATE.json`; reconcile prompt drift only insofar as it serves the GUI track below.
+
+### New exclusive priority (owner-directed)
+1. **First, finish the REMAINING Phase 33 work** and nothing else from the old roadmap:
+   - Phase 33 **Task 5 = gap G4** (accessibility & usability pass), then
+   - Phase 33 **Task 6** (phase summary + final consolidated re-audit) ⇒ **PHASE 33 COMPLETE**.
+2. **Then the EXCLUSIVE top priority becomes a new owner-directed workstream:**
+   **Phase IGUI — Actuarial Input & Run GUI.**
+
+### Phase IGUI — Actuarial Input & Run GUI (goal)
+A GUI for the user to **enter all actuarial and data inputs typical of an actuarial valuation process
+AND run the stochastic model end-to-end** (collect → validate → execute → hand the results to the
+existing offline results UI `ui_app.html`). The end-to-end flow is: **GUI inputs → model_inputs.json →
+`scripts/run_model.py` / the Phase-UIL loader → model output → offline results UI.**
+
+**Execution model (owner decision, 2026-06-14T14:16Z): the GUI RUNS THE MODEL END-TO-END.** This **relaxes the
+strict zero-install / no-pre-install constraint for THIS input+run GUI only** — a local runner / bundled
+Python launcher (or equivalent packaged local app) is acceptable so the user can press one button to
+both supply inputs and compute. The existing **offline RESULTS UI (`ui_app.html`) stays zero-install and
+unchanged**; only the new input+run front end may carry a local runtime.
+
+**Scope — "everything typical in an actuarial valuation process" (to be staged, one task per cycle):**
+- **Run controls:** valuation date, currency, projection horizon & step, # outer / inner scenarios,
+  seeds & reproducibility, output labels.
+- **Policy / model-point data:** ingest or edit model points (existing PAR + GMMB rows), in-force file
+  upload, portfolio scaling / booking.
+- **Assumptions:** mortality (base + improvement), lapse/surrender incl. **dynamic policyholder
+  behaviour**, expenses (per-policy / %-premium / inflation), premiums/contributions, discount rate /
+  **yield curve**, bonus/crediting & **bonus-declaration strategy**, **management-action rules**,
+  reinsurance.
+- **Economic scenarios / ESG inputs & calibration:** rate model (G2++/HW), equity, FX, correlations,
+  credit spread, liquidity; calibration targets & market data.
+- **Validation & governance:** input completeness/consistency/range checks and governance gating
+  BEFORE a run is allowed; reproducibility digest on every run.
+- **Integration:** write the existing `model_inputs.json` schema and drive `run_model.py` + UIL loader;
+  surface results through the existing offline UI.
+
+**Method:** design-note-first (Task 1 = design note: choose & justify the local-runner/bundling
+architecture against the no-pre-install trade-off, define the input schema coverage map, pre-register
+acceptance criteria); then ONE input domain / capability per cycle; every cycle carries its own
+governance ChangeRecord (OWNER_REVIEW) and self-tests/validation; no model-parameter changes without
+owner sign-off.
+
+### Everything else is LOWER priority and order (resume only after a usable Phase IGUI MVP, or when IGUI is blocked awaiting owner input)
+- Further d

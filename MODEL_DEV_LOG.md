@@ -10076,3 +10076,28 @@ Sync: fresh clone of `origin/main` already in sync with mount (1308/1311 tracked
 Verification (pytest/numpy unavailable, disk full): `py_compile` OK; standalone replication of both new asserts vs live artifacts PASS; old pin confirmed RED; frozen Phase-30 asserts hold. No source/data/governance changes.
 
 Next: Finding (4) `test_phase26_task4_delta_matrix` KeyError `distance_to_nested`.
+
+---
+
+## 2026-06-14T14:16:58Z — OWNER DIRECTION UPDATE (interactive): exclusive priority = Actuarial Input & Run GUI after Phase 33
+
+Owner set a new governing direction in an interactive session. After the remaining Phase 33 work (Task 5 gap G4 accessibility, Task 6 phase summary/re-audit) completes, the **exclusive** top priority becomes **Phase IGUI — Actuarial Input & Run GUI**: a GUI to enter all actuarial + data inputs typical of an actuarial valuation process AND run the stochastic model end-to-end (inputs -> model_inputs.json -> run_model.py/UIL loader -> model output -> existing offline results UI). **Execution model (owner choice): GUI runs the model end-to-end** — this relaxes the strict no-pre-install rule for this input+run GUI only (local runner / bundled Python acceptable); the offline results UI (ui_app.html) stays zero-install. All other initiatives (dependence-model sophistication [Phase 30 stop-rule], further model uplift, currency A2/A3, stale Phase 34/35 reconciliation findings, further results-UI polish) drop to lower priority/order, resumed only after a usable IGUI MVP or when IGUI is blocked on owner input. Encoded in MODEL_DEV_TASK_PROMPT.md (authoritative OWNER DIRECTION UPDATE block at end) and MODEL_DEV_STATE.json (owner_direction + phases["Phase IGUI..."] + next_major_initiative). Binding constraints unchanged (one task/cycle, agent lock, no model-parameter changes without owner sign-off, Phase 30 stop-rule, MR-016/MR-017 pending, end-of-run email). Source of truth remains MODEL_DEV_STATE.json (committed state is Phase 33 / contract 1.17.0; prompt's "Phase 34/35" pointers are stale).
+
+---
+
+## 2026-06-14 (18:00 UTC window) — Phase 36 Task 1 — research + design note [claude]
+
+**Lock:** cycle `2026-06-14T14:07Z-2a94`; preflight PROCEED (lock free); acquired clean (lock commit `e9b7be6` pushed after setting git identity in the fresh `/tmp` clone of `origin/main` HEAD `2e49f80`). All git in throwaway clone per AGENT_COORDINATION.md.
+
+**Context:** Phase 35 COMPLETE; all four post-Phase-35 findings (1 design-note gate drift; 2 builder/patch reconciliation; 3 contract-1.13.0 pin → floor guard; 4 `distance_to_nested` KeyError) confirmed CLOSED; RED-test backlog cleared. Model development complete → standing directive advances the offline-UI track.
+
+**Task (ONE):** authored the **Phase 36 design note** (`docs/validation/PHASE36_TASK1_DESIGN_NOTE.md` + `.json`; gate PASS, 29 checks) — *Offline UI Accessibility Completion & Educational Reproducibility*.
+- Froze measured baseline: 8 self-tests = **473 checks** all ok:true, 0 network, 0 JS errors; 0 external refs; contract **1.20.0**; 18 tabs; `ui_app.html` 678,921 B; governance 96/124/17; headline `39975.654628199336`.
+- Existing-feature audit: aria-live only on integrity banner; glossary sign-off-pack-scoped; per-section CSV exports but no reproducibility pack.
+- Pre-registered three ADDITIVE gaps with acceptance criteria: **E1** live-region SC 4.1.3 announcements (P1), **E2** consolidated glossary/explainer (P2), **E3** reproducibility evidence-pack export (P3).
+
+**Verification:** re-ran all 8 offline self-tests (green); `MODEL_DEV_STATE.json` re-parsed after write (OK); refreshed NEXT EXECUTION POINTER (findings 1–4 closed → Phase 36 Task 2).
+
+**Invariants:** NO model parameter changes; contract unchanged (1.20.0, design-note only); governance unchanged 96/124/17 (no new ChangeRecord); Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted; zero-install/file:// preserved.
+
+**Next:** Phase 36 Task 2 = E1 (live-region status announcements).
