@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-14T10:21:53Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-14T11:16Z-7a28",
+  "started_at": "2026-06-14T11:16:23Z",
+  "ttl_minutes": 120,
+  "task": "Post-Phase-35 Finding(2): builder/patch contract reconciliation",
+  "note": ""
 }
