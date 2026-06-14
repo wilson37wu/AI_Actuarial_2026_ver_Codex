@@ -345,6 +345,17 @@ setTimeout(() => {
   const cmpCSV = call("comparatorCSV");
   const distCSV = call("distGridCSV");
   const packCSV = call("signoffPackCSV");
+  // Phase 34 Task 4 (gap H3): full evidence bundle + print-all
+  const bundleCSV = call("evidenceBundleCSV");
+  const bundleJSON = call("evidenceBundleJSON");
+  const h3Headers = ["## Inventory","## Risk register","## Change records","## Deployment gates",
+    "## Owner options","## Evidence pack","## Copula-form residual ladder","## Dependence-form escalation history",
+    "## Binding stop-rule record","## Sign-off workflow","## SCR comparator","## Distribution grid","## Decision record"];
+  const h3AllSections = h3Headers.every(h => bundleCSV.indexOf(h) !== -1);
+  let h3JsonObj = null; try { h3JsonObj = JSON.parse(bundleJSON); } catch (e) {}
+  const h3JsonHeadlineNumber = !!h3JsonObj && h3JsonObj.provenance && h3JsonObj.provenance.governed_headline
+    && h3JsonObj.provenance.governed_headline.value === 39975.654628199336;
+  const h3DecRowsBundle = bundleCSV.split("\r\n").filter(r => /BLANK - awaiting owner decision/.test(r));
   const g3gates = g3gov.deployment_gates || [];
   const g3order = g3od.owner_option_order || [];
   const g3drt = g3od.decision_record_template || {};
@@ -543,6 +554,16 @@ setTimeout(() => {
     g3ComparatorCsvComplete: rowsOf(cmpCSV).length === 7 && /39975\.654628199336/.test(cmpCSV),
     g3DistGridCsvComplete: rowsOf(distCSV).length === dxCdfXn + 1 && dxCdfXn === 41,
     g3SignoffPackComplete: /OWNER SIGN-OFF PACK/.test(packCSV) && /## Owner options/.test(packCSV) && /## Decision record/.test(packCSV) && /## Deployment gates/.test(packCSV) && /BLANK - awaiting owner decision/.test(packCSV),
+    h3BundleButtonsPresent: !!document.getElementById("btnBundleCsv") && !!document.getElementById("btnBundleJson") && !!document.getElementById("btnPrintAll"),
+    h3BundleCoversAllSections: h3AllSections,
+    h3BundleHeadlineBitForBit: /39975\.654628199336/.test(bundleCSV) && /39975\.654628199336/.test(bundleJSON),
+    h3BundleProvenanceStamped: /# Provenance: contract v/.test(bundleCSV) && /build\/generated/.test(bundleCSV) && /Governed component SCR headline/.test(bundleCSV),
+    h3BundleDecisionBlank: /## Decision record \(BLANK until the owner decides\)/.test(bundleCSV) && h3DecRowsBundle.length >= 1,
+    h3BundleJsonValid: !!h3JsonObj && h3JsonObj.bundle === "full_evidence_bundle" && Array.isArray(h3JsonObj.section_order) && h3JsonObj.section_order.length === 13,
+    h3BundleJsonHeadlineNumberExact: h3JsonHeadlineNumber,
+    h3BundleJsonDecisionBlank: !!h3JsonObj && /BLANK - awaiting owner decision/.test(h3JsonObj.sections_csv.decision_record),
+    h3PrintAllCssPresent: /html\.printall \.panel\{display:block !important\}/.test(html) && /H3 print-all/.test(html),
+    h3PrintAllButtonNoThrow: (function(){ try { var w=document.defaultView; var orig=w.print; w.print=function(){}; var b=document.getElementById("btnPrintAll"); if(b) b.click(); var clean=!document.documentElement.classList.contains("printall"); w.print=orig; return clean; } catch(e){ return false; } })(),
     cmpTabPresent: !!cmpTab,
     cmpTabTextPresent: /SCR Comparator \(P33\)/.test(bodyText),
     cmpRegistryOrder: cmpIds0.join(",") === "frozen_t,grouped_t,skew_t,vine2,tree3,nested",
@@ -1083,6 +1104,16 @@ setTimeout(() => {
     checks.h2DeepLinkTabSection &&
     checks.h2DeepLinkPlainTabStillWorks &&
     checks.h2NoStorageApis &&
+    checks.h3BundleButtonsPresent &&
+    checks.h3BundleCoversAllSections &&
+    checks.h3BundleHeadlineBitForBit &&
+    checks.h3BundleProvenanceStamped &&
+    checks.h3BundleDecisionBlank &&
+    checks.h3BundleJsonValid &&
+    checks.h3BundleJsonHeadlineNumberExact &&
+    checks.h3BundleJsonDecisionBlank &&
+    checks.h3PrintAllCssPresent &&
+    checks.h3PrintAllButtonNoThrow &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

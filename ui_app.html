@@ -147,6 +147,10 @@
     .signoffcover .signeutral{margin:10px 0;padding:8px;border:1px solid #888;font-size:12px;color:#111}
     .signoffcover .sigrow{display:flex;gap:24px;margin-top:14px}
     .signoffcover .sigbox{flex:1;border-top:1px solid #111;padding-top:4px;font-size:12px;color:#111}
+    /* H3 print-all: reveal every governed surface (all tab panels + collapsed sub-views) for one sign-off print */
+    html.printall .panel{display:block !important}
+    html.printall .calibpanel,html.printall .capview,html.printall .govview{display:block !important}
+    html.printall .signoffcover{display:block !important}
   }
 </style>
 </head>
@@ -162,6 +166,9 @@
     <button type="button" class="tbtn" id="btnCsvGates" title="Export the deployment-gates table as CSV">CSV: Deployment gates</button>
     <button type="button" class="tbtn" id="btnCsvSignoff" title="Export the full owner sign-off pack (all governed read-out tables) as CSV">CSV: Owner sign-off pack</button>
     <button type="button" class="tbtn" id="btnPrint" title="Open the browser print dialog (Save as PDF)">Print / Save PDF</button>
+    <button type="button" class="tbtn" id="btnBundleCsv" title="Export EVERY governed read-out as one provenance-stamped CSV bundle">Bundle: all read-outs (CSV)</button>
+    <button type="button" class="tbtn" id="btnBundleJson" title="Export EVERY governed read-out as one provenance-stamped JSON bundle">Bundle: all read-outs (JSON)</button>
+    <button type="button" class="tbtn" id="btnPrintAll" title="Print every governed surface (all tabs + sub-views) as a single sign-off pack">Print all (sign-off pack)</button>
   </div>
 </div></header>
 <div class="wrap">
@@ -2425,11 +2432,57 @@
       "## Deployment gates",
       buildDeploymentGatesCSV()
     ].join(nl); }
+  // ---- Phase 34 Task 4 (gap H3): one-click full evidence bundle. Assembles EVERY
+  // governed read-out (the Phase 33 G3 CSV builders) into a single provenance-stamped
+  // bundle (CSV multi-section + JSON). Values are carried bit-for-bit from the embedded
+  // snapshot; nothing is recomputed. Owner options stay in registry order with NO default;
+  // the decision record is exported BLANK (owner decision not pre-empted). ----
+  function buildEvidenceBundleCSV(){ var nl="\r\n";
+    var m=(DATA&&DATA.meta)||{}; var ev=((DATA&&DATA.owner_decision_p31)||{}).evidence_pack||{};
+    var gh=ev.governed_headline||{}; var hv=(gh.value!=null)?String(gh.value):"";
+    return [
+      "# FULL EVIDENCE BUNDLE -- every governed read-out (bit-for-bit from the embedded snapshot)",
+      "# Provenance: contract v"+String((DATA&&DATA.contract_version)||"?")+" | build/generated "+String(m.generated_utc||"?")+" | model "+String(m.model_name||"--")+" "+String(m.model_version||"--")+" | classification "+String(m.classification||"--"),
+      "# Governed component SCR headline (frozen single-df t): "+hv+(gh.status?(" ("+gh.status+")"):""),
+      "# Owner options appear in registry order with NO default and NO recommendation; the decision record is BLANK until the owner decides (MR-016/MR-017).",
+      "# Nothing in this bundle is recomputed; values are carried bit-for-bit from the embedded snapshot.",
+      "",
+      "## Inventory", buildInventoryCSV(), "",
+      "## Risk register", buildRiskCSV(), "",
+      "## Change records", buildChangesCSV(), "",
+      "## Deployment gates", buildDeploymentGatesCSV(), "",
+      "## Owner options (registry order)", buildOwnerOptionsCSV(), "",
+      "## Evidence pack -- component SCR read-outs", buildEvidenceCSV(), "",
+      "## Copula-form residual ladder", buildResidualLadderCSV(), "",
+      "## Dependence-form escalation history", buildEscalationHistoryCSV(), "",
+      "## Binding stop-rule record", buildStopRuleCSV(), "",
+      "## Sign-off workflow", buildSignoffWorkflowCSV(), "",
+      "## SCR comparator (registry order)", buildComparatorCSV(), "",
+      "## Distribution grid", buildDistGridCSV(), "",
+      "## Decision record (BLANK until the owner decides)", buildDecisionRecordCSV()
+    ].join(nl); }
+  function buildEvidenceBundleJSON(){
+    var m=(DATA&&DATA.meta)||{}; var ev=((DATA&&DATA.owner_decision_p31)||{}).evidence_pack||{};
+    var gh=ev.governed_headline||{};
+    var order=["inventory","risk_register","change_records","deployment_gates","owner_options","evidence_pack","residual_ladder","escalation_history","stop_rule","signoff_workflow","comparator","distribution_grid","decision_record"];
+    var sections_csv={ inventory:buildInventoryCSV(), risk_register:buildRiskCSV(), change_records:buildChangesCSV(),
+      deployment_gates:buildDeploymentGatesCSV(), owner_options:buildOwnerOptionsCSV(), evidence_pack:buildEvidenceCSV(),
+      residual_ladder:buildResidualLadderCSV(), escalation_history:buildEscalationHistoryCSV(), stop_rule:buildStopRuleCSV(),
+      signoff_workflow:buildSignoffWorkflowCSV(), comparator:buildComparatorCSV(), distribution_grid:buildDistGridCSV(),
+      decision_record:buildDecisionRecordCSV() };
+    return JSON.stringify({ bundle:"full_evidence_bundle",
+      provenance:{ contract_version:((DATA&&DATA.contract_version)!=null?DATA.contract_version:null),
+        build_stamp:(m.generated_utc!=null?m.generated_utc:null), model_name:(m.model_name!=null?m.model_name:null),
+        model_version:(m.model_version!=null?m.model_version:null), classification:(m.classification!=null?m.classification:null),
+        governed_headline:{ value:(gh.value!=null?gh.value:null), status:(gh.status!=null?gh.status:null), basis:"frozen single-df t" },
+        note:"Bit-for-bit from the embedded snapshot; nothing recomputed. Owner options in registry order, NO default; decision record BLANK until the owner decides." },
+      section_order:order, sections_csv:sections_csv }, null, 2); }
   window.__uiExport={ inventoryCSV:buildInventoryCSV, riskCSV:buildRiskCSV, changesCSV:buildChangesCSV,
     deploymentGatesCSV:buildDeploymentGatesCSV, ownerOptionsCSV:buildOwnerOptionsCSV, evidenceCSV:buildEvidenceCSV,
     residualLadderCSV:buildResidualLadderCSV, escalationHistoryCSV:buildEscalationHistoryCSV, stopRuleCSV:buildStopRuleCSV,
     signoffWorkflowCSV:buildSignoffWorkflowCSV, decisionRecordCSV:buildDecisionRecordCSV, comparatorCSV:buildComparatorCSV,
-    distGridCSV:buildDistGridCSV, signoffPackCSV:buildSignoffPackCSV };
+    distGridCSV:buildDistGridCSV, signoffPackCSV:buildSignoffPackCSV,
+    evidenceBundleCSV:buildEvidenceBundleCSV, evidenceBundleJSON:buildEvidenceBundleJSON };
   function isVisible(el){ return !!(el&&(el.offsetWidth||el.offsetHeight||(el.getClientRects&&el.getClientRects().length))); }
   function dataURLtoBlob(du){ var p=du.split(","),b=atob(p[1]),n=b.length,u=new Uint8Array(n); while(n--) u[n]=b.charCodeAt(n); return new Blob([u],{type:"image/png"}); }
   function svgToPng(svg,filename){
@@ -2471,7 +2524,10 @@
       ["btnCsvChg",function(){ downloadText("change_records.csv",buildChangesCSV(),"text/csv"); }],
       ["btnCsvGates",function(){ downloadText("deployment_gates.csv",buildDeploymentGatesCSV(),"text/csv"); }],
       ["btnCsvSignoff",function(){ downloadText("owner_signoff_pack.csv",buildSignoffPackCSV(),"text/csv"); }],
-      ["btnPrint",function(){ try{ window.print(); }catch(e){} }]
+      ["btnPrint",function(){ try{ window.print(); }catch(e){} }],
+      ["btnBundleCsv",function(){ downloadText("evidence_bundle_all.csv",buildEvidenceBundleCSV(),"text/csv"); }],
+      ["btnBundleJson",function(){ downloadText("evidence_bundle_all.json",buildEvidenceBundleJSON(),"application/json"); }],
+      ["btnPrintAll",function(){ var de=document.documentElement; if(de) de.classList.add("printall"); try{ window.print(); }catch(e){} if(de) de.classList.remove("printall"); }]
     ];
     map.forEach(function(m){ var b=document.getElementById(m[0]); if(b) b.onclick=m[1]; });
   }

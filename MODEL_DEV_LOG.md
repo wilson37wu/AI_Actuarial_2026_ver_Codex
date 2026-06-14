@@ -9796,3 +9796,42 @@ embedded ui_data snapshot - contract stays 1.18.0, `ui_data.json` byte-identical
 State: overall_status `PHASE34_TASK3_COMPLETE_NEXT_TASK4_H3_EVIDENCE_BUNDLE_PRINT_ALL`.
 Cycle status: docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p34t3.md.
 Next: Phase 34 Task 4 (gap H3: full evidence bundle export + print-all).
+
+---
+
+## 2026-06-14 - Phase 34 Task 4 (gap H3): full evidence bundle export + print-all pack
+
+**Agent:** Claude Cowork (lock held, owner=claude). Pure display/export layer; contract
+unchanged at 1.18.0; `ui_data.json` byte-identical; `build_ui_data.py` untouched.
+
+- `ui_app.html`: two new builders `buildEvidenceBundleCSV()` / `buildEvidenceBundleJSON()`
+  (exposed on `window.__uiExport`) assemble EVERY governed read-out into ONE
+  provenance-stamped bundle - 13 sections (inventory, risk register, change records,
+  deployment gates, owner options [registry order], evidence pack, residual ladder,
+  escalation history, stop-rule, sign-off workflow, SCR comparator, distribution grid,
+  decision record). Values carried bit-for-bit from the embedded snapshot; nothing
+  recomputed. Provenance = contract version + build/generated stamp + governed headline
+  + model id/version/classification.
+- Governed frozen-t headline `39975.654628199336` carried exactly (full-precision string
+  in CSV, exact `Number` in JSON) and never re-labelled; owner options stay in registry
+  order with NO default; decision record exported BLANK (owner decision not pre-empted).
+- Three toolbar buttons (Bundle CSV / Bundle JSON / Print all sign-off pack) + a print-all
+  CSS mode (`html.printall`) that reveals all tab panels + collapsed sub-views
+  (`.calibpanel`/`.capview`/`.govview`) + the sign-off cover for a single sign-off print;
+  the Print-all button toggles the class ON during `window.print()` and clears it AFTER.
+  NO storage APIs; 0 external refs; single self-contained file.
+- Tests: `ui_app_self_test` 317 -> 327 (+10 H3 checks); NEW
+  `scripts/ui_app_bundle_printall_test.cjs` (21 checks: bundle button/registry presence,
+  all-13-sections coverage, provenance stamp CSV+JSON, headline bit-for-bit CSV+JSON exact
+  Number, headline-never-relabelled, decision-record-BLANK CSV+JSON, owner-options registry
+  order, no-recompute statement, print-all CSS presence, print-all class toggled-on-during-
+  print + cleared-after + no-throw, no-storage, no-external-ref). 8 suites GREEN (ui_app 327
+  / bundle-printall 21 / search-deeplink 18 / integrity-fallback 10 / userrun-fallback 9 /
+  distribution-fallback 9 / offline_viewer 11 / combined_gui 27), all 0 net / 0 JS err.
+- `ui_app.html` applied via a deterministic single-occurrence-guarded Python patcher (5
+  anchored edits + post-write structure checks) to avoid the documented virtiofs mid-write
+  truncation hazard; final file ends `</body></html>`, IIFE close present, 0 external https refs.
+
+State: overall_status `PHASE34_TASK4_COMPLETE_NEXT_TASK5_H4_RESPONSIVE_HIGH_CONTRAST`.
+Cycle status: docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p34t4.md.
+Next: Phase 34 Task 5 (gap H4: responsive/small-screen + high-contrast usability pass).
