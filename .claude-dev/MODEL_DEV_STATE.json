@@ -680,6 +680,61 @@
         "Task 4 = E3: single reproducibility evidence-pack export (byte-identical, digest-verifiable, file:// safe)",
         "Task 5: phase summary + consolidated baseline re-audit -> PHASE 36 COMPLETE"
       ]
+    },
+    "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)": {
+      "status": "planned",
+      "priority": "TOP - EXCLUSIVE after the current in-flight UI phase (owner-directed 2026-06-14)",
+      "description": "GUI for the user to enter all actuarial + data inputs typical of an actuarial valuation process AND run the stochastic model end-to-end. Flow: GUI inputs -> model_inputs.json -> scripts/run_model.py / Phase-UIL loader -> model output -> existing offline results UI. Execution model: GUI runs the model end-to-end (local runner / bundled Python acceptable; relaxes no-pre-install for this input+run GUI only; offline results UI stays zero-install). Design-note-first; ONE input domain/capability per cycle; governance ChangeRecord + validation each cycle; NO model-parameter changes without owner sign-off.",
+      "scope_inputs": {
+        "run_controls": [
+          "valuation_date",
+          "currency",
+          "projection_horizon_and_step",
+          "n_outer",
+          "n_inner",
+          "seeds_reproducibility",
+          "output_labels"
+        ],
+        "policy_model_point_data": [
+          "ingest/edit model points (PAR + GMMB)",
+          "in-force upload",
+          "portfolio scaling/booking"
+        ],
+        "assumptions": [
+          "mortality base+improvement",
+          "lapse/surrender incl dynamic PH behaviour",
+          "expenses (per-policy/%-premium/inflation)",
+          "premiums/contributions",
+          "discount rate / yield curve",
+          "bonus/crediting & bonus-declaration strategy",
+          "management-action rules",
+          "reinsurance"
+        ],
+        "economic_scenarios_esg": [
+          "rate model G2++/HW",
+          "equity",
+          "FX",
+          "correlations",
+          "credit spread",
+          "liquidity",
+          "calibration targets & market data"
+        ],
+        "validation_governance": [
+          "completeness/consistency/range checks",
+          "governance gating before run",
+          "reproducibility digest per run"
+        ],
+        "integration": [
+          "write existing model_inputs.json schema",
+          "drive run_model.py + UIL loader",
+          "surface results via existing offline UI"
+        ]
+      },
+      "planned_tasks": [
+        "Task 1: design note - choose/justify local-runner/bundling architecture vs no-pre-install trade-off; input schema coverage map; pre-registered acceptance criteria",
+        "Task 2+: ONE input domain / capability per cycle (run controls -> model points -> assumptions -> ESG -> validation/gating -> end-to-end run + results handoff)"
+      ],
+      "next": "Begins after the current in-flight offline-UI phase completes (queued; not yet in_progress)."
     }
   },
   "repository_info": {
@@ -999,7 +1054,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-14T14:16:42Z",
+  "last_updated": "2026-06-14T14:22:44Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -1728,21 +1783,21 @@
     "next": "Finding (4) - test_phase26_task4_delta_matrix restore/refresh distance_to_nested expectation"
   },
   "owner_direction": {
-    "set_at": "2026-06-14T14:16:42Z",
+    "set_at": "2026-06-14T14:22:44Z",
     "set_by": "owner (interactive session)",
-    "directive": "EXCLUSIVE top priority after Phase 33 completes (Task 5 G4 + Task 6 summary/re-audit): build Phase IGUI - an Actuarial Input & Run GUI that lets the user enter ALL actuarial and data inputs typical of an actuarial valuation process AND run the stochastic model END-TO-END (inputs -> model_inputs.json -> run_model.py/UIL loader -> model output -> existing offline results UI).",
-    "execution_model": "GUI runs the model end-to-end. RELAXES the strict zero-install/no-pre-install constraint for THIS input+run GUI only (local runner / bundled Python launcher acceptable). The existing offline RESULTS UI (ui_app.html) stays zero-install and unchanged.",
-    "sequencing": "Right after Phase 33; finish Phase 33 Tasks 5-6 first, then Phase IGUI exclusively.",
+    "directive": "After the CURRENT in-flight offline-UI phase completes, the EXCLUSIVE top priority is Phase IGUI - an Actuarial Input & Run GUI that lets the user enter ALL actuarial + data inputs typical of an actuarial valuation process AND run the stochastic model END-TO-END (inputs -> model_inputs.json -> run_model.py/UIL loader -> model output -> existing offline results UI).",
+    "execution_model": "GUI runs the model end-to-end. RELAXES the strict zero-install/no-pre-install constraint for THIS input+run GUI only (local runner / bundled Python launcher acceptable). The existing offline RESULTS UI stays zero-install and unchanged.",
+    "sequencing": "Do NOT interrupt the current in-flight phase; finish its planned tasks, THEN start Phase IGUI exclusively (design-note first). Owner's original phrasing referenced Phase 33 (stale); intent generalises to the current in-flight UI phase.",
     "deprioritized": [
+      "Further offline RESULTS-UI polish beyond the current in-flight phase",
+      "Research for further model improvement / additional drivers / model uplift / market-consistency",
       "Dependence-model/copula sophistication (bound by Phase 30 stop-rule)",
-      "Additional risk drivers / model uplift / market-consistency extensions",
       "Currency workstream A2 (provenance relabel) / A3 (full re-currency)",
-      "Stale Phase 34/35 design-note gate-drift & builder/patch reconciliation findings",
-      "Further results-UI polish beyond Phase 33 Tasks 5-6"
+      "Remaining post-Phase-35 test-gate-drift / builder reconciliation beyond current-phase needs"
     ],
-    "note": "Resume deprioritized items only after a usable Phase IGUI MVP, or when IGUI is blocked awaiting owner input. .claude-dev/MODEL_DEV_STATE.json remains the authoritative in_progress pointer. Prompt references to 'Phase 34/35 complete / contract 1.20.0' are stale vs the committed Phase 33 / contract 1.17.0 state."
+    "note": "Resume deprioritized items only after a usable Phase IGUI MVP, or when IGUI is blocked awaiting owner input. .claude-dev/MODEL_DEV_STATE.json remains the authoritative in_progress pointer; Phase IGUI is QUEUED (status 'planned'), not yet in_progress, so the current phase finishes first."
   },
-  "next_major_initiative": "Phase IGUI: Actuarial Input & Run GUI (owner-directed; exclusive after Phase 33)",
+  "next_major_initiative": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14; EXCLUSIVE after current in-flight UI phase)",
   "cycle_2026_06_14_phase36_task1": {
     "when": "2026-06-14T14:07Z-14:25Z",
     "owner": "claude",

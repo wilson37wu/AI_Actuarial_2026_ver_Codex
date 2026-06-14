@@ -10101,3 +10101,9 @@ Owner set a new governing direction in an interactive session. After the remaini
 **Invariants:** NO model parameter changes; contract unchanged (1.20.0, design-note only); governance unchanged 96/124/17 (no new ChangeRecord); Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted; zero-install/file:// preserved.
 
 **Next:** Phase 36 Task 2 = E1 (live-region status announcements).
+
+---
+
+## 2026-06-14T14:22:59Z — OWNER DIRECTION UPDATE (interactive): exclusive next initiative = Actuarial Input & Run GUI
+
+Owner set a new governing direction interactively. After the CURRENT in-flight offline-UI phase completes, the **exclusive** top priority becomes **Phase IGUI — Actuarial Input & Run GUI**: a GUI to enter all actuarial + data inputs typical of an actuarial valuation process AND run the stochastic model end-to-end (inputs -> model_inputs.json -> run_model.py/UIL loader -> model output -> existing offline results UI). **Execution model (owner choice): GUI runs the model end-to-end** — relaxes the strict no-pre-install rule for this input+run GUI only (local runner / bundled Python acceptable); the offline RESULTS UI stays zero-install. Phase IGUI is QUEUED (status 'planned', NOT in_progress) so the current phase finishes first; do NOT interrupt it. All other initiatives (further results-UI polish, research/model uplift, dependence-model sophistication [Phase 30 stop-rule], currency A2/A3, post-Phase-35 cleanup beyond current-phase needs) drop to lower priority/order. Encoded in MODEL_DEV_TASK_PROMPT.md (authoritative OWNER DIRECTION UPDATE block at end) + MODEL_DEV_STATE.json (owner_direction + phases["Phase IGUI..."] + next_major_initiative). Binding constraints unchanged. (Owner read a Phase-33-era snapshot; intent generalised to the current in-flight UI phase since the repo has since advanced to Phase 36.)

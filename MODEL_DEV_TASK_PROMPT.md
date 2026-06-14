@@ -2628,3 +2628,63 @@ owner sign-off.
 
 ### Everything else is LOWER priority and order (resume only after a usable Phase IGUI MVP, or when IGUI is blocked awaiting owner input)
 - Further d
+---
+
+## >>> OWNER DIRECTION UPDATE (INTERACTIVE — SUPERSEDES ALL PRIOR "NEXT" / ROADMAP POINTERS ABOVE) — 2026-06-14T14:22Z
+
+**Set by the owner in an interactive session.** Governs ordering/priority only. Binding constraints
+unchanged (one task per cycle, agent lock + `AGENT_COORDINATION.md`, NO model-parameter changes without
+owner sign-off, Phase 30 stop-rule, pending MR-016/MR-017 owner decision, end-of-run email). The single
+authoritative `in_progress` task remains the one in `.claude-dev/MODEL_DEV_STATE.json`.
+
+**Context at time of update:** core model development is complete; the repo is in the offline-UI track
+(current in-flight phase = Phase 36 Task 1 COMPLETE (offline-UI accessibility completio...). The owner read an earlier (Phase-33-era) snapshot; the intent
+below generalises to "the current in-flight UI phase".
+
+### New EXCLUSIVE priority (owner-directed)
+1. **Finish the remaining work in the CURRENT in-flight UI phase** (as of this update that is the active
+   offline-UI accessibility/reproducibility phase) — complete its already-planned tasks, nothing new
+   from the old roadmap.
+2. **Then the EXCLUSIVE top priority becomes a NEW owner-directed workstream:**
+   **Phase IGUI — Actuarial Input & Run GUI.** Start it design-note-first; do NOT interrupt the current
+   phase to start it (it is queued, not yet `in_progress`).
+
+### Phase IGUI — Actuarial Input & Run GUI (goal)
+A GUI for the user to **enter all actuarial and data inputs typical of an actuarial valuation process
+AND run the stochastic model END-TO-END.** Flow: **GUI inputs → `model_inputs.json` →
+`scripts/run_model.py` / the Phase-UIL loader → model output → existing offline RESULTS UI.**
+
+**Execution model (owner decision, 2026-06-14T14:22Z): the GUI RUNS THE MODEL END-TO-END.** This **relaxes the
+strict zero-install / no-pre-install constraint for THIS input+run GUI only** — a local runner / bundled
+Python launcher (or equivalent packaged local app) is acceptable so the user can press one button to
+supply inputs and compute. The existing **offline RESULTS UI stays zero-install and unchanged**; only
+the new input+run front end may carry a local runtime.
+
+**Scope — "everything typical in an actuarial valuation process" (staged, one task per cycle):**
+- **Run controls:** valuation date, currency, projection horizon & step, # outer/inner scenarios, seeds
+  & reproducibility, output labels.
+- **Policy / model-point data:** ingest or edit model points (PAR + GMMB), in-force upload, portfolio
+  scaling / booking.
+- **Assumptions:** mortality (base + improvement), lapse/surrender incl. dynamic policyholder behaviour,
+  expenses (per-policy / %-premium / inflation), premiums/contributions, discount rate / yield curve,
+  bonus/crediting & bonus-declaration strategy, management-action rules, reinsurance.
+- **Economic scenarios / ESG inputs & calibration:** rate model (G2++/HW), equity, FX, correlations,
+  credit spread, liquidity; calibration targets & market data.
+- **Validation & governance:** completeness/consistency/range checks + governance gating BEFORE a run;
+  reproducibility digest per run.
+- **Integration:** write the existing `model_inputs.json` schema and drive `run_model.py` + UIL loader;
+  surface results through the existing offline UI.
+
+**Method:** design-note-first (Task 1 = choose & justify the local-runner/bundling architecture vs the
+no-pre-install trade-off, define the input-schema coverage map, pre-register acceptance criteria); then
+ONE input domain / capability per cycle; each cycle carries its own governance ChangeRecord (OWNER_REVIEW)
++ self-tests/validation.
+
+### Everything else is LOWER priority and order (resume only after a usable Phase IGUI MVP, or when IGUI is blocked awaiting owner input)
+- Further offline RESULTS-UI polish beyond the current in-flight phase.
+- "Research for further model improvement", additional drivers / model uplift, market-consistency extensions.
+- Dependence-model / copula sophistication (bound by the Phase 30 stop-rule).
+- Currency workstream A2 (provenance relabel) / A3 (full re-currency).
+- Any remaining post-Phase-35 test-gate-drift / builder reconciliation cleanup beyond what the current phase needs.
+
+**One task per cycle. Honour the agent lock. Email the owner at the end of every run.**
