@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-14T14:20:28Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-14T14:21Z-e253",
+  "started_at": "2026-06-14T14:21:33Z",
+  "ttl_minutes": 120,
+  "task": "Owner-directed: set EXCLUSIVE next priority = Phase IGUI Actuarial Input & Run GUI",
+  "note": ""
 }
