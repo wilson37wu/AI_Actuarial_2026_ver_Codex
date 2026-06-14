@@ -10062,3 +10062,17 @@ reconcile — next task); (3) test_phase30_task5_ui_propagation hard-asserts old
 **Tests.** 14/14 green (5 new reconcile + 9 `test_ui_currency_meta`). `build_ui_data` change is comment-only; new files additive. (Sandbox lacks numpy/scipy → ~29 unrelated copula/risk tests fail *collection* — pre-existing environment limitation, not introduced here.) Governance 96/124/17 unchanged.
 
 **Remaining findings (carried for owner / next cycles):** (3) `test_phase30_task5_ui_propagation` hard-asserts old exact contract 1.13.0 vs live 1.20.0 → RED (same frozen-exact-vs-moving-repo anti-pattern → monotonic guard or re-freeze); (4) `test_phase26_task4_delta_matrix` `KeyError 'distance_to_nested'` (published report dropped the key → refresh expectation vs restore key). **Next in_progress:** Finding (3).
+
+---
+
+## 2026-06-14T12:10Z — Post-Phase-35 Finding (3) [claude]
+
+**Task:** monotonic contract guard in `tests/test_phase30_task5_ui_propagation.py`.
+
+Two assertions hard-pinned `contract_version == "1.13.0"` while the live contract is `1.20.0` (frozen-exact-vs-moving-repo anti-pattern). Fixed test-only: added `_ver()` tuple parser; data test → `>= (1,13,0)` floor; embedded-html test → regex minor-floor `>= 13`. Matches existing `test_phase26_task5` / `test_phase29_task5` guards.
+
+Sync: fresh clone of `origin/main` already in sync with mount (1308/1311 tracked files identical; only `.agent_lock.json`, generated `SOURCES.txt`, and Codex's tangential `build_hk_insurance_briefing.mjs` differ — last left untouched).
+
+Verification (pytest/numpy unavailable, disk full): `py_compile` OK; standalone replication of both new asserts vs live artifacts PASS; old pin confirmed RED; frozen Phase-30 asserts hold. No source/data/governance changes.
+
+Next: Finding (4) `test_phase26_task4_delta_matrix` KeyError `distance_to_nested`.

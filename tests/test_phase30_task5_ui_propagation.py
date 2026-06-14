@@ -23,6 +23,11 @@ from pathlib import Path
 
 import pytest
 
+def _ver(s):
+    """Parse a dotted version string into an int tuple for monotonic compare."""
+    return tuple(int(x) for x in str(s).split("."))
+
+
 REPO = Path(__file__).resolve().parents[1]
 UI_DATA = REPO / "ui_data.json"
 UI_APP = REPO / "ui_app.html"
@@ -52,8 +57,13 @@ def html():
 
 
 class TestContract:
-    def test_contract_version_1_13_0(self, data):
-        assert data["contract_version"] == "1.13.0"
+    def test_contract_version_floor(self, data):
+        # Finding (3): monotonic floor guard instead of an exact pin. The
+        # Phase 30 section was introduced at contract 1.13.0; later ADDITIVE
+        # layers move the published contract forward (live 1.20.0), so any
+        # version >= 1.13.0 is valid. Avoids the frozen-exact-vs-moving-repo
+        # anti-pattern (consistent with phase26/phase29 sibling guards).
+        assert _ver(data["contract_version"]) >= (1, 13, 0)
 
     def test_phase30_section_present(self, p30):
         assert isinstance(p30, dict) and p30
@@ -228,8 +238,10 @@ class TestHtmlShell:
         # the loader strips the token prefix; the snapshot must follow it
         m = re.search(r'/\*__UI_DATA__\*/\s*\{', html)
         assert m is not None
-        assert '"contract_version": "1.13.0"' in html \
-            or '"contract_version":"1.13.0"' in html
+        # Finding (3): accept any 1.x with minor >= 13 so future ADDITIVE
+        # contract bumps in the embedded snapshot do not regress this guard.
+        mver = re.search(r'"contract_version"\s*:\s*"1\.(\d+)', html)
+        assert mver is not None and int(mver.group(1)) >= 13
 
     def test_no_external_references(self, html):
         for pat in ("http://", "https://cdn", "src=\"http",
