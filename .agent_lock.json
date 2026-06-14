@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-14T00:32:37Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-14T01:37Z-9721",
+  "started_at": "2026-06-14T01:37:09Z",
+  "ttl_minutes": 120,
+  "task": "Phase 34 Task 3: gap H2 global cross-tab search + deep-linkable read-outs",
+  "note": ""
 }
