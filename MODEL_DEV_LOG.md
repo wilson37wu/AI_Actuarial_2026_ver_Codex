@@ -10107,3 +10107,24 @@ Owner set a new governing direction in an interactive session. After the remaini
 ## 2026-06-14T14:22:59Z — OWNER DIRECTION UPDATE (interactive): exclusive next initiative = Actuarial Input & Run GUI
 
 Owner set a new governing direction interactively. After the CURRENT in-flight offline-UI phase completes, the **exclusive** top priority becomes **Phase IGUI — Actuarial Input & Run GUI**: a GUI to enter all actuarial + data inputs typical of an actuarial valuation process AND run the stochastic model end-to-end (inputs -> model_inputs.json -> run_model.py/UIL loader -> model output -> existing offline results UI). **Execution model (owner choice): GUI runs the model end-to-end** — relaxes the strict no-pre-install rule for this input+run GUI only (local runner / bundled Python acceptable); the offline RESULTS UI stays zero-install. Phase IGUI is QUEUED (status 'planned', NOT in_progress) so the current phase finishes first; do NOT interrupt it. All other initiatives (further results-UI polish, research/model uplift, dependence-model sophistication [Phase 30 stop-rule], currency A2/A3, post-Phase-35 cleanup beyond current-phase needs) drop to lower priority/order. Encoded in MODEL_DEV_TASK_PROMPT.md (authoritative OWNER DIRECTION UPDATE block at end) + MODEL_DEV_STATE.json (owner_direction + phases["Phase IGUI..."] + next_major_initiative). Binding constraints unchanged. (Owner read a Phase-33-era snapshot; intent generalised to the current in-flight UI phase since the repo has since advanced to Phase 36.)
+
+
+---
+
+## 2026-06-14 (Claude 18:00 UTC window) — Phase 36 Task 2 (gap E1) COMPLETE — live-region status announcements (WCAG 2.1 AA SC 4.1.3)
+
+**Cycle** 2026-06-14T19:36Z-c259 · lock FREE -> acquired -> released · **Result PASS**.
+
+Implemented the dynamic half of WCAG 2.1 AA on the zero-install offline UI (`ui_app.html`): added ONE visually-hidden polite live region `<div id="srlive" class="sr-only" role="status" aria-live="polite" aria-atomic="true">` and an `announce()` helper, wired to four dynamic surfaces — (i) tab activation (active tab name; on the Integrity tab it appends the verify outcome), (ii) global search (result count "N results for ..."), (iii) Distribution Explorer slider (its percentile/F(loss) read-out), (iv) the content-integrity verifier (verified / content-altered). The inline `#dx-readout` lost its own `aria-live` so `#srlive` is the single dedicated announcer (no double-speak); the separate visible contract-mismatch banner is unchanged.
+
+ARIA/JS/presentation only — **NO contract change** (stays 1.20.0; the embedded `ui_data` payload is byte-identical, SHA-256 verified, so the Phase 35 A2 per-section digests still verify in-browser by construction). Announcements describe already-on-screen state and recompute no model figure: governed headline **39975.654628199336** and all governed read-outs render bit-for-bit. Polite, never `assertive` (no interruption); focus never stolen; `sr-only`/never visible; 0 external refs; `file://` safe; no storage API.
+
+**Verification:** `ui_app_self_test.cjs` ok:true **378 checks** (+10: e1LiveRegionPresent / e1ExactlyOneLiveRegion / e1NoAssertiveAnywhere / e1AnnounceFnPresent / e1TabAnnounces / e1SearchAnnounces / e1SliderAnnounces / e1IntegrityAnnounces / e1HeadlineBitForBit / e1DxReadoutNotLive), 0 network, 0 JS errors. All eight offline self-tests ok:true — **483 total checks** (was 473): 378/11/27/9/9/10/18/21. Builder idempotent (applied=8 then skipped=8). `ui_app.html` 678,921 -> 680,314 bytes.
+
+**Governance:** ChangeRecord `b274a0e0c43d4cd5affd5affbce45ec9` (code_change) OWNER_REVIEW; change records 96 -> 97; audit entries 124 -> 125; risk register 17; audit integrity True. MR-016/MR-017 owner decision NOT pre-empted; Phase 30 binding stop-rule honoured; NO model parameter changes.
+
+**Artifacts:** `scripts/build_phase36_task2_e1_live_regions.py` (idempotent), `scripts/build_phase36_task2_e1_governance.py`, `scripts/ui_app_self_test.cjs`, `ui_app.html`, `docs/validation/PHASE36_TASK2_E1_REPORT.{json,md}`, `docs/LIVE_REGION_ANNOUNCEMENTS_CARD.md`, `docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_phase36_task2.md`.
+
+**Environment note:** the mounted-FS write corruption recurred — the Edit/Write file tools truncated files at a fixed byte boundary (AGENT_COORDINATION §5 hazard). Worked around by writing all sources off-mount to `/tmp`, validating, then `cp`-ing onto the mount; all git in a fresh `/tmp` clone of origin/main.
+
+**Next:** Phase 36 Task 3 (gap E2) — consolidated glossary & methodology explainer surface (ADDITIVE `explainer` key; contract 1.20.0 -> next minor).

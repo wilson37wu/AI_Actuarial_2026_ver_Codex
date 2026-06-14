@@ -218,6 +218,7 @@
   <div id="signoffcover" class="signoffcover" aria-hidden="true"></div>
   <div id="modelcardcover" class="modelcardcover" aria-hidden="true"></div>
   <div id="integritybanner" class="integritybanner" role="status" aria-live="polite" aria-hidden="true" style="display:none"></div>
+  <div id="srlive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
   <div class="gsearch" id="gsearch" role="search">
     <input type="text" id="gsearchInput" class="gsearch-input" placeholder="Search read-outs, tables and sections across all tabs..." aria-label="Search read-outs, tables and sections across all tabs" aria-controls="gsearchResults" aria-expanded="false" autocomplete="off" spellcheck="false"/>
     <div id="gsearchResults" class="gsearch-results" role="listbox" aria-label="Search results" hidden></div>
@@ -341,6 +342,19 @@
     document.getElementById("overview").classList.add("active");
   }
   var _hashApplying=false;
+  // ===== Phase 36 Task 2 (gap E1): single polite live region announcer =====
+  // DISPLAY LAYER ONLY (WCAG 2.1 AA SC 4.1.3 Status Messages). Routes dynamic
+  // state changes to ONE visually-hidden polite sr-only region. Announcements
+  // DESCRIBE already-on-screen state only; the path recomputes NO model figure.
+  // Polite (never assertive, no interruption); focus never stolen; file:// safe.
+  var _lastIntegrityVerified=null;
+  function announce(msg){
+    try{
+      var el=document.getElementById("srlive");
+      if(!el) return;
+      el.textContent=String(msg==null?"":msg);
+    }catch(_e){}
+  }
   function activateTab(target, fromHash){
     [].forEach.call(document.querySelectorAll("#tabs .tab"),function(x){
       var on=x.getAttribute("data-target")===target;
@@ -350,6 +364,7 @@
     });
     [].forEach.call(document.querySelectorAll(".panel"),function(x){ x.classList.remove("active"); });
     var pl=document.getElementById(target); if(pl) pl.classList.add("active");
+    try{ var _at=document.querySelector("#tabs .tab.active"); var _msg="Showing tab: "+(((_at&&_at.textContent)||target||"").trim()); if(target==="integrity" && _lastIntegrityVerified!==null){ _msg+=". Content integrity "+(_lastIntegrityVerified?"verified":"check: content altered"); } announce(_msg); }catch(_e){}
     // Phase 33 Task 5 (gap G4): persist the selected tab in the URL hash so it
     // survives a reload. Uses the URL hash ONLY (no browser web-storage),
     // which is file:// safe for the offline zero-install build. The _hashApplying
@@ -494,6 +509,7 @@
         if(SEARCH_INDEX[i].label.toLowerCase().indexOf(q)!==-1) out.push(SEARCH_INDEX[i]);
       }
       results=out; cur=results.length?0:-1; render();
+      announce(results.length+(results.length===1?" result":" results")+" for "+(q||""));
     }
     function go(i){ var r=results[i]; if(!r) return; close(); goToReadout(r.tab, r.anchor); }
     input.addEventListener("input",function(){ query(input.value); });
@@ -2804,7 +2820,7 @@
     html+='<div class="chartwrap"><h4>Grid-point readout</h4>'+
       '<p class="cap">Slide to read any embedded CDF grid point (exact values; nothing recomputed).</p>'+
       '<input type="range" id="dxslider" min="0" max="'+(xs.length-1)+'" value="'+Math.floor((xs.length-1)/2)+'" style="width:100%"/>'+
-      '<p id="dx-readout" class="note" aria-live="polite">'+dxReadoutAt(dx,Math.floor((xs.length-1)/2))+'</p></div>';
+      '<p id="dx-readout" class="note">'+dxReadoutAt(dx,Math.floor((xs.length-1)/2))+'</p></div>';
     var qg=dx.quantile_grid||{}, qp=qg.prob||[], ql=qg.loss||[];
     html+='<div class="subh">Quantile grid (build-time; '+esc(qg.method||"")+')</div>'+
       '<table class="ptable dxqtable"><thead><tr><th>Probability</th><th>Loss quantile (build-time grid)</th></tr></thead><tbody>'+
@@ -2835,7 +2851,7 @@
       '</tbody></table></details>';
     el.innerHTML=html;
     var slider=el.querySelector("#dxslider"), ro=el.querySelector("#dx-readout");
-    if(slider&&ro){ slider.addEventListener("input",function(){ ro.innerHTML=dxReadoutAt(dx,Number(slider.value)); }); }
+    if(slider&&ro){ slider.addEventListener("input",function(){ var _dt=dxReadoutAt(dx,Number(slider.value)); ro.innerHTML=_dt; announce("Distribution read-out: "+String(_dt).replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim()); }); }
     [].forEach.call(el.querySelectorAll("#dxnav .segbtn"),function(b){
       b.onclick=function(){ DX_ZOOM=b.getAttribute("data-zoom"); renderDistExplorer(); };
     });
@@ -3020,6 +3036,7 @@
     html += renderA11yAuditHtml();
     html += renderIntegrityVerifierHtml();
     el.innerHTML=html;
+    try{ announce(_lastIntegrityVerified===null ? "Integrity panel updated" : ("Content integrity "+(_lastIntegrityVerified ? "verified" : "check: content altered"))); }catch(_e){}
   }
   // Phase 35 Task 2 (gap A1): render the build-time WCAG 2.1 AA evidence
   // (measured contrast + keyboard/focus inventory) read-only. Display only;
@@ -3175,6 +3192,7 @@
     }
     var rootMatch=(rec.root_digest===storedRoot);
     var allOk=(nAlt===0 && nMiss===0 && nExtra===0 && rootMatch);
+    _lastIntegrityVerified=allOk;
     var badge=allOk
       ? '<span class="chip pass">INTEGRITY VERIFIED</span>'
       : '<span class="chip fail">CONTENT ALTERED</span>';

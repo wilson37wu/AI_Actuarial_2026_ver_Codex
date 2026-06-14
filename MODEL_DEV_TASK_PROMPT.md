@@ -2549,7 +2549,7 @@ disk /sessions usage to watch.
 
 ---
 
-## NEXT EXECUTION POINTER — set 2026-06-14 (after Phase 36 Task 1)
+## NEXT EXECUTION POINTER — set 2026-06-14 (after Phase 36 Task 2 / gap E1)
 
 PHASE 35 is COMPLETE. All four post-Phase-35 findings are now CLOSED:
 - Finding (1) frozen design-note gates → monotonic live-guards (DONE, cycle post35_finding1).
@@ -2557,14 +2557,15 @@ PHASE 35 is COMPLETE. All four post-Phase-35 findings are now CLOSED:
 - Finding (3) `test_phase30_task5_ui_propagation` exact-1.13.0 pin → monotonic floor guard (DONE, cycle post35_finding3).
 - Finding (4) `test_phase26_task4_delta_matrix` `distance_to_nested` KeyError → read live `gap_to_nested` keys (DONE, cycle 13:08 UTC).
 
-The RED-test backlog is cleared. **PHASE 36 is now in_progress** (research + design note delivered this cycle): *Offline UI Accessibility Completion & Educational Reproducibility*. Design note: `docs/validation/PHASE36_TASK1_DESIGN_NOTE.md` / `.json` (gate PASS, 29 checks). Measured baseline frozen: 8 self-tests = **473 checks green**, 0 external refs, contract **1.20.0**, governance **96/124/17**.
+The RED-test backlog is cleared. **PHASE 36 is in_progress.** *Offline UI Accessibility Completion & Educational Reproducibility*. Task 1 (design note, gate PASS 29) and **Task 2 / gap E1 (live-region status announcements, WCAG 2.1 AA SC 4.1.3) are COMPLETE** this cycle — one polite `sr-only` `#srlive` region + `announce()` wired to tab/search/slider/integrity; ARIA/JS only, NO contract change (1.20.0; payload byte-identical, A2 digests verify); +10 self-test checks (368→378); all 8 offline self-tests ok (**473→483** checks, 0 net/0 JS err); 0 external refs; governed headline bit-for-bit; ChangeRecord `b274a0e0c43d4cd5affd5affbce45ec9` OWNER_REVIEW (governance **97/125/17**). Evidence: `docs/validation/PHASE36_TASK2_E1_REPORT.{json,md}`; card `docs/LIVE_REGION_ANNOUNCEMENTS_CARD.md`. Design note baseline (frozen): `docs/validation/PHASE36_TASK1_DESIGN_NOTE.md`.
 
 The next agent should do EXACTLY ONE task, the single `in_progress` item:
 
-1. **Phase 36 Task 2 = E1 (priority 1) — live-region status announcements (WCAG 2.1 AA SC 4.1.3).** Add one polite `sr-only` live region and wire it to: tab activation (announce active tab), search (announce result count), slider / percentile read-out (debounced), and integrity verify result. Announcements describe existing on-screen state only — no model recompute. Optional ADDITIVE `a11y_audit.live_regions` evidence (1.20.0 → 1.21.0). Add self-test checks for region presence + the four wiring points. Acceptance criteria are PRE-REGISTERED in the design note (E1).
-2. **Then Phase 36 Task 3 = E2** consolidated glossary & methodology explainer (ADDITIVE `explainer` key).
-3. **Then Phase 36 Task 4 = E3** single reproducibility evidence-pack export (byte-identical, digest-verifiable, `file://` safe).
-4. **Then Phase 36 Task 5** phase summary + consolidated re-audit → PHASE 36 COMPLETE, after which the standing directive continues with freshly-researched additive offline-UI improvements.
+1. **Phase 36 Task 3 = E2 (NEXT — the single `in_progress` item) — consolidated glossary & methodology explainer surface.** Promote the sign-off-pack-scoped `glossary` to a GLOBAL, build-time-assembled glossary / data-dictionary covering every governed read-out across the 18 tabs: each entry = term + plain-language definition + method/assumption basis + limitation provenance (carried VERBATIM from `owner_decision_p31.limitations` and the archived design notes — nothing re-derived). Surface as a read-only "Methodology & Glossary" panel; display-only, no recompute. ADDITIVE contract bump (1.20.0 → next minor) adding an `explainer` (or `glossary_global`) key ONLY; every pre-existing key renders bit-identically. Add self-test checks (global glossary presence, per-tab coverage, provenance carry-through). Acceptance criteria PRE-REGISTERED in the design note (E2).
+2. **Then Phase 36 Task 4 = E3** single reproducibility evidence-pack export (byte-identical, digest-verifiable, `file://` safe).
+3. **Then Phase 36 Task 5** phase summary + consolidated re-audit → PHASE 36 COMPLETE, after which the standing directive continues with freshly-researched additive offline-UI improvements.
+
+DONE this cycle (do NOT redo): Phase 36 Task 2 / gap E1 (live-region status announcements) — see the PHASE 36 paragraph above and `PHASE36_TASK2_E1_REPORT.md`.
 
 Reminder: do EXACTLY ONE task per cycle; honour the agent lock + AGENT_COORDINATION.md; NO model parameter changes without owner sign-off; ADDITIVE-only contract changes; Phase 30 stop-rule binding; MR-016/MR-017 owner decision must not be pre-empted.
 

@@ -619,6 +619,54 @@ setTimeout(() => {
   const a2NoNetworkStated = /no network/.test(intText) &&
     /recomputes a content digest/.test(intText);
 
+  // ===== Phase 36 Task 2 (gap E1): live-region status announcements (SC 4.1.3) =====
+  // One polite sr-only #srlive region carries dynamic state changes to assistive
+  // tech. All assertions exercise ALREADY-rendered state; nothing is fetched and
+  // no model figure is recomputed (the governed headline stays bit-for-bit).
+  const e1Live = document.getElementById("srlive");
+  const e1LiveRegionPresent = !!e1Live &&
+    (e1Live.className || "").indexOf("sr-only") !== -1 &&
+    e1Live.getAttribute("role") === "status" &&
+    e1Live.getAttribute("aria-live") === "polite";
+  const e1ExactlyOneLiveRegion =
+    document.querySelectorAll('#srlive[aria-live="polite"]').length === 1;
+  const e1NoAssertiveAnywhere = !/aria-live="assertive"/.test(html);
+  const e1AnnounceFnPresent = /function announce\(/.test(html);
+  let e1TabAnnounces = false;
+  const e1GovTab = tabs.find(t => t.getAttribute("data-target") === "governance");
+  if (e1GovTab && e1Live) {
+    e1GovTab.click();
+    e1TabAnnounces = /Showing tab:/.test(e1Live.textContent || "") &&
+      /Governance/.test(e1Live.textContent || "");
+  }
+  let e1SearchAnnounces = false;
+  const e1Search = document.getElementById("gsearchInput");
+  if (e1Search && e1Live) {
+    e1Search.value = "governed";
+    e1Search.dispatchEvent(new Event("input", { bubbles: true }));
+    e1SearchAnnounces = /results? for /.test(e1Live.textContent || "");
+  }
+  let e1SliderAnnounces = false;
+  const e1DxTab = tabs.find(t => t.getAttribute("data-target") === "distexplorer");
+  if (e1DxTab) e1DxTab.click();
+  const e1Slider = document.getElementById("dxslider");
+  if (e1Slider && e1Live) {
+    e1Slider.value = "0";
+    e1Slider.dispatchEvent(new Event("input", { bubbles: true }));
+    e1SliderAnnounces = /Distribution read-out:/.test(e1Live.textContent || "") &&
+      /grid point/.test(e1Live.textContent || "");
+  }
+  let e1IntegrityAnnounces = false;
+  const e1IntTab = tabs.find(t => t.getAttribute("data-target") === "integrity");
+  if (e1IntTab && e1Live) {
+    e1IntTab.click();
+    e1IntegrityAnnounces = /Content integrity verified/.test(e1Live.textContent || "");
+  }
+  const e1HeadlineBitForBit = /39975\.654628199336/.test(html);
+  const e1DxReadoutNotLive = !(document.getElementById("dx-readout") &&
+    document.getElementById("dx-readout").getAttribute("aria-live"));
+  if (ovTabK) ovTabK.click();
+
   const checks = {
     // Phase 33 Task 5 (gap G4): accessibility & usability pass
     g4SrOnlyCssPresent,
@@ -963,6 +1011,17 @@ setTimeout(() => {
     a1KeyboardTableRendered,
     a1DisplayOnlyStated,
     a1A11yTables,
+    // Phase 36 Task 2 (gap E1): live-region status announcements
+    e1LiveRegionPresent,
+    e1ExactlyOneLiveRegion,
+    e1NoAssertiveAnywhere,
+    e1AnnounceFnPresent,
+    e1TabAnnounces,
+    e1SearchAnnounces,
+    e1SliderAnnounces,
+    e1IntegrityAnnounces,
+    e1HeadlineBitForBit,
+    e1DxReadoutNotLive,
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -1331,6 +1390,16 @@ setTimeout(() => {
     checks.h4RestoreFromHash &&
     checks.h4FlagDoesNotBreakTabRouting &&
     checks.h4NoStorageApis &&
+    checks.e1LiveRegionPresent &&
+    checks.e1ExactlyOneLiveRegion &&
+    checks.e1NoAssertiveAnywhere &&
+    checks.e1AnnounceFnPresent &&
+    checks.e1TabAnnounces &&
+    checks.e1SearchAnnounces &&
+    checks.e1SliderAnnounces &&
+    checks.e1IntegrityAnnounces &&
+    checks.e1HeadlineBitForBit &&
+    checks.e1DxReadoutNotLive &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);
