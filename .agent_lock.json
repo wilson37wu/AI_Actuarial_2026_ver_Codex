@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-14T21:08Z-a88a",
-  "started_at": "2026-06-14T21:08:13Z",
-  "ttl_minutes": 120,
-  "task": "Phase 36 Task 4 (E3 reproducibility evidence-pack export)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-14T21:34:21Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
