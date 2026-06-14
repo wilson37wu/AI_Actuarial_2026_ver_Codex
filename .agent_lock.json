@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-14T03:07Z-0647",
-  "started_at": "2026-06-14T03:07:58Z",
-  "ttl_minutes": 120,
-  "task": "Phase 34 Task 5: gap H4 responsive + high-contrast",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-14T03:23:01Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
