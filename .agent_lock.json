@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-14T11:16:33Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-14T12:10Z-c3ae",
+  "started_at": "2026-06-14T12:10:27Z",
+  "ttl_minutes": 120,
+  "task": "Sync mount Phase34/35+findings to remote; then Finding(3) monotonic contract guard",
+  "note": ""
 }
