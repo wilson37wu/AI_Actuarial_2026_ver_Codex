@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-14T23:09Z-d45b",
-  "started_at": "2026-06-14T23:09:48Z",
-  "ttl_minutes": 120,
-  "task": "Phase IGUI Task 1 design note",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-14T23:20:32Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
