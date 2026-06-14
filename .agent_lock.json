@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-14T04:18:29Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-14T05:08Z-2b93",
+  "started_at": "2026-06-14T05:08:00Z",
+  "ttl_minutes": 120,
+  "task": "Phase 35 Task 1: design note + accessibility/integrity baseline",
+  "note": ""
 }
