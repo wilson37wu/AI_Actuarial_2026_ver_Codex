@@ -10170,3 +10170,23 @@ ARIA/JS/presentation only — **NO contract change** (stays 1.20.0; the embedded
 **Env note.** Sandbox `/sessions` tmpfs was 100% full → pytest installed to `/tmp/pylibs` with `TMPDIR=/tmp`; node jsdom resolved via `NODE_PATH=<mount>/node_modules`. All git + build performed in a fresh `/tmp` clone of `origin/main` (HEAD 5efee9d).
 
 **Next:** Phase 36 Task 5 (phase summary + consolidated re-audit → PHASE 36 COMPLETE), then owner-directed Phase IGUI (design-note-first).
+
+---
+
+## 2026-06-14T22:08Z — Phase 36 Task 5 — phase summary + final consolidated re-audit (PHASE 36 COMPLETE)
+
+**Cycle:** `2026-06-14T22:08Z-708c` (Claude, 18:00 UTC window, late). **Result:** COMPLETE. **Model parameter changes:** NONE (documentation/governance only).
+
+**Preflight:** fresh `/tmp` clone of `origin/main` (HEAD `91bd2f2`); `agent_lock.py preflight` → PROCEED (lock free); lock acquired. Mount in sync with origin (key files SHA-identical); reused mount `node_modules` via `NODE_PATH` for jsdom.
+
+**Re-audit:** ran the full 9-suite zero-install offline self-test battery — all `ok:true`, **522 checks** total (ui_app 405 / evidence-pack 12 / integrity 10 / distribution 9 / user-run 9 / search-deeplink 18 / bundle-printall 21 / offline-viewer 11 / combined-gui 27), 0 network / 0 JS errors. External-ref scan: 0 across `ui_app.html`, `model_result_viewer.html`, `combined_model_app.html`. Contract inventory: **1.21.0**, 25 top-level keys, E2 `explainer` present. Governance store 100/128/17, audit-chain verified. All 6 re-audit gates PASS.
+
+**Phase summary:** gaps E1 (live-region, contract unchanged), E2 (global glossary/explainer, 1.20.0→1.21.0 ADDITIVE), E3 (reproducibility evidence-pack, contract unchanged) all closed; every task verdict PASS from committed evidence. Coverage grew 473→522 checks / 8→9 suites; zero-install invariants held throughout.
+
+**New files:** `scripts/build_phase36_task5_phase_summary.py`, `tests/test_phase36_task5_phase_summary.py`, `scripts/_phase36_task5_selftests.json`, `docs/validation/PHASE36_TASK5_PHASE_SUMMARY_REPORT.{json,md}`, `docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_phase36_task5.md`.
+
+**Governance:** ChangeRecord `bf0ed11e769247709c8961ae9d857357` OWNER_REVIEW (99→100 records, 127→128 audit entries).
+
+**Tests:** new Task 5 test green (31 passed + 1 skipped with Task 4 / Phase 32 summary suites); 116 regression passed (governance / design-note / contract-pipeline reconcile).
+
+**Next:** PHASE 36 COMPLETE → single `in_progress` item is now **Phase IGUI Task 1 (design note)**, owner-directed EXCLUSIVE priority. Results UI stays zero-install/unchanged; no-pre-install relaxed for the input+run front end only. Do NOT start GUI coding before the design note + pre-registered acceptance criteria.
