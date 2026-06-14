@@ -495,6 +495,45 @@ setTimeout(() => {
   const h2NoStorageApis = g4NoStorageApis;
   if (ovTabK) ovTabK.click();
 
+  // ===== Phase 34 Task 5 (gap H4): responsive + high-contrast usability pass =====
+  // jsdom does not compute layout, so the narrow-viewport guarantee is asserted
+  // structurally (responsive @media + table overflow-scroll present) plus
+  // behaviourally for the CSS-only high-contrast toggle and the reduced-motion
+  // media query. Nothing is fetched; no model figure is recomputed.
+  const h4Css = (function(){ const m = html.match(/<style[\s\S]*?<\/style>/i); return m ? m[0] : ""; })();
+  const h4ResponsiveMediaPresent = /@media[^\{]*max-width:\s*768px/i.test(h4Css);
+  const h4ResponsiveTableScroll = /@media[^\{]*max-width:\s*768px[\s\S]*?overflow-x:\s*auto/i.test(h4Css);
+  const h4ReducedMotionPresent = /@media[^\{]*prefers-reduced-motion[^\{]*reduce/i.test(h4Css);
+  const h4HighContrastThemePresent = /html\.hc\b/.test(h4Css);
+  const h4Btn = document.getElementById("hcToggle");
+  const h4ToggleButtonPresent = !!h4Btn && h4Btn.tagName === "BUTTON";
+  let h4ToggleAppliesClass=false, h4ToggleWritesHash=false, h4ToggleAriaPressed=false,
+      h4ToggleRemovesClass=false, h4ToggleClearsHash=false, h4RestoreFromHash=false,
+      h4FlagDoesNotBreakTabRouting=false;
+  const hcRaw = () => (dom.window.location.hash||"").replace(/^#/,"");
+  const hcHasFlag = () => hcRaw().split("&").indexOf("hc=1") > -1;
+  if (h4Btn) {
+    dom.window.location.hash = "#overview";
+    dom.window.dispatchEvent(new Event("hashchange"));
+    h4Btn.click(); // ON
+    h4ToggleAppliesClass = document.documentElement.classList.contains("hc");
+    h4ToggleWritesHash = hcHasFlag();
+    h4ToggleAriaPressed = h4Btn.getAttribute("aria-pressed") === "true";
+    h4Btn.click(); // OFF
+    h4ToggleRemovesClass = !document.documentElement.classList.contains("hc");
+    h4ToggleClearsHash = !hcHasFlag();
+    dom.window.location.hash = "#governance&hc=1";
+    dom.window.dispatchEvent(new Event("hashchange"));
+    h4RestoreFromHash = document.documentElement.classList.contains("hc");
+    const selH4 = document.querySelector('#tabs [aria-selected="true"]');
+    h4FlagDoesNotBreakTabRouting = !!selH4 && selH4.getAttribute("data-target") === "governance" &&
+      document.getElementById("governance").classList.contains("active");
+    dom.window.location.hash = "#overview";
+    dom.window.dispatchEvent(new Event("hashchange"));
+    if (document.documentElement.classList.contains("hc")) h4Btn.click();
+  }
+  const h4NoStorageApis = g4NoStorageApis;
+
   const checks = {
     // Phase 33 Task 5 (gap G4): accessibility & usability pass
     g4SrOnlyCssPresent,
@@ -787,6 +826,19 @@ setTimeout(() => {
     h2DeepLinkTabSection,
     h2DeepLinkPlainTabStillWorks,
     h2NoStorageApis,
+    h4ResponsiveMediaPresent,
+    h4ResponsiveTableScroll,
+    h4ReducedMotionPresent,
+    h4HighContrastThemePresent,
+    h4ToggleButtonPresent,
+    h4ToggleAppliesClass,
+    h4ToggleWritesHash,
+    h4ToggleAriaPressed,
+    h4ToggleRemovesClass,
+    h4ToggleClearsHash,
+    h4RestoreFromHash,
+    h4FlagDoesNotBreakTabRouting,
+    h4NoStorageApis,
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -1114,6 +1166,19 @@ setTimeout(() => {
     checks.h3BundleJsonDecisionBlank &&
     checks.h3PrintAllCssPresent &&
     checks.h3PrintAllButtonNoThrow &&
+    checks.h4ResponsiveMediaPresent &&
+    checks.h4ResponsiveTableScroll &&
+    checks.h4ReducedMotionPresent &&
+    checks.h4HighContrastThemePresent &&
+    checks.h4ToggleButtonPresent &&
+    checks.h4ToggleAppliesClass &&
+    checks.h4ToggleWritesHash &&
+    checks.h4ToggleAriaPressed &&
+    checks.h4ToggleRemovesClass &&
+    checks.h4ToggleClearsHash &&
+    checks.h4RestoreFromHash &&
+    checks.h4FlagDoesNotBreakTabRouting &&
+    checks.h4NoStorageApis &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

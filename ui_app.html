@@ -152,6 +152,34 @@
     html.printall .calibpanel,html.printall .capview,html.printall .govview{display:block !important}
     html.printall .signoffcover{display:block !important}
   }
+  /* ===== Phase 34 Task 5 (gap H4): responsive + high-contrast usability pass =====
+     Markup/CSS/behaviour only. No model figure changes; no storage APIs; the
+     high-contrast toggle persists via the URL hash only. ADDITIVE: the default
+     wide-desktop layout and dark scheme are unchanged when no hc flag is set and
+     the viewport is wide. Scheduled last so it also covers H1-H3 surfaces. */
+  @media (max-width:768px){
+    .wrap{padding:0 12px}
+    header{padding:14px 14px}
+    .cards{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+    .panel{overflow-x:auto}
+    table{display:block;overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+    img,svg,canvas{max-width:100%}
+    pre{max-width:100%;overflow-x:auto}
+    .tabs{gap:3px}
+    .tab{padding:7px 10px;font-size:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  }
+  html.hc{--bg:#000;--panel:#000;--panel2:#000;--ink:#fff;--muted:#e6e6e6;--line:#fff;--accent:#5cf;--pass:#5f5;--warn:#ff0;--fail:#f66;--chip:#000}
+  html.hc .tab{border-color:#fff}
+  html.hc .tab.active{outline:2px solid #fff}
+  html.hc .panel{border-color:#fff}
+  html.hc a{color:#9cf}
+  html.hc :focus{outline:3px solid #ff0;outline-offset:2px}
+  .hctoggle{margin-top:8px;background:var(--chip);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer}
+  .hctoggle:hover{border-color:var(--accent)}
+  html.hc .hctoggle{border-color:#fff;background:#000;color:#fff}
 </style>
 </head>
 <body>
@@ -314,9 +342,9 @@
       _hashApplying=true;
       try{
         if(window.history&&typeof history.replaceState==="function"){
-          history.replaceState(null,"","#"+target);
-        } else { location.hash=target; }
-      }catch(_e){ try{ location.hash=target; }catch(_e2){} }
+          history.replaceState(null,"","#"+target+(document.documentElement.classList.contains("hc")?"&hc=1":""));
+        } else { location.hash=target+(document.documentElement.classList.contains("hc")?"&hc=1":""); }
+      }catch(_e){ try{ location.hash=target+(document.documentElement.classList.contains("hc")?"&hc=1":""); }catch(_e2){} }
       _hashApplying=false;
     }
   }
@@ -327,7 +355,7 @@
   // tab id, so a plain "#tab" hash keeps the exact Phase 33 G4 behaviour.
   function tabFromHash(){
     if(_hashApplying) return;
-    var h=(location.hash||"").replace(/^#/,"");
+    var h=(location.hash||"").replace(/^#/,""); h=h.split("&")[0];
     if(!h) return;
     var parts=h.split("~"), tab=parts[0], sec=parts.length>1?parts.slice(1).join("~"):"";
     if(tab && document.getElementById("tab-"+tab) && document.getElementById(tab)){
@@ -415,7 +443,7 @@
   // Activate the owning tab, write the deep-link hash (URL only), then reveal.
   function goToReadout(tab, anchor){
     if(document.getElementById("tab-"+tab) && document.getElementById(tab)){ activateTab(tab); }
-    var newHash="#"+tab+((anchor && anchor!==tab)?("~"+anchor):"");
+    var newHash="#"+tab+((anchor && anchor!==tab)?("~"+anchor):"")+(document.documentElement.classList.contains("hc")?"&hc=1":"");
     _hashApplying=true;
     try{
       if(window.history && typeof history.replaceState==="function"){ history.replaceState(null,"",newHash); }
@@ -2936,6 +2964,46 @@
   // Phase 33 Task 5 (gap G4): if the URL carries a tab hash (e.g. after a
   // reload), restore that selection now that all panels exist.
   tabFromHash();
+})();
+</script>
+<script>
+/* Phase 34 Task 5 (gap H4): CSS-only high-contrast toggle, persisted via the URL
+   hash ONLY (no browser web-storage; file:// safe). The flag rides as a
+   "&hc=1" suffix on the existing tab/section hash, so G4 tab routing and the H2
+   deep-link "tab~section" hash are unaffected (tabFromHash strips "&..."). */
+(function(){
+  function hashRaw(){ return (location.hash||"").replace(/^#/,""); }
+  function hcOnInHash(){ return hashRaw().split("&").indexOf("hc=1")>-1; }
+  var btn=null;
+  function writeHcFlag(on){
+    var segs=hashRaw().split("&");
+    var base=segs.shift()||"";
+    var flags=segs.filter(function(f){return f && f!=="hc=1";});
+    if(on) flags.unshift("hc=1");
+    var out=[base].concat(flags).filter(function(s){return s!=="";}).join("&");
+    try{
+      if(window.history&&typeof history.replaceState==="function"){ history.replaceState(null,"","#"+out); }
+      else { location.hash=out; }
+    }catch(_e){ try{ location.hash=out; }catch(_e2){} }
+  }
+  function applyHc(on){
+    document.documentElement.classList.toggle("hc", !!on);
+    if(btn){ btn.setAttribute("aria-pressed", on?"true":"false");
+      btn.textContent = on? "High contrast: on" : "High contrast: off"; }
+  }
+  btn=document.createElement("button");
+  btn.id="hcToggle"; btn.type="button"; btn.className="hctoggle";
+  btn.setAttribute("aria-pressed","false");
+  btn.setAttribute("title","Toggle high-contrast mode (persists in the URL)");
+  btn.textContent="High contrast: off";
+  btn.addEventListener("click", function(){
+    var on=!document.documentElement.classList.contains("hc");
+    applyHc(on); writeHcFlag(on);
+  });
+  var host=document.querySelector("header .wrap")||document.querySelector("header")||document.body;
+  host.appendChild(btn);
+  applyHc(hcOnInHash());
+  window.addEventListener("hashchange", function(){ applyHc(hcOnInHash()); });
 })();
 </script>
 </body>
