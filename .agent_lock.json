@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-14T04:07Z-b20b",
-  "started_at": "2026-06-14T04:07:34Z",
-  "ttl_minutes": 120,
-  "task": "Phase 34 Task 6 phase summary + final re-audit",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-14T04:18:29Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
