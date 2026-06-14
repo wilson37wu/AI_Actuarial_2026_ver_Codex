@@ -2546,3 +2546,17 @@ disk /sessions usage to watch.
 **Key archived references (cross-check targets):** unchanged from the Phase 32 COMPLETE section, PLUS: design-note baseline frozen at contract **1.16.0** / 15 tabs / self-tests 232/11/27/9 / external refs 0; ChangeRecords **85**; audit **113**; risk register 17 (MR-016 OPEN, MR-017 OPEN); new module `par_model_v2/viewer/ui_interactive_analytics.py`.
 
 **Standing blockers (human action):** owner decision O1/O2/O3 on the dependence residual (pack browsable in the offline UI; decision record BLANK awaiting owner); keep the Cowork scheduler 06:00/18:00 UTC single-fire; production sign-off withheld pending credentialled data + independent APS X2 review (educational, by design); /sessions disk pressure; mount large-file edits: single-pass anchor-asserted patches ONLY (parallel/in-place multi-edits truncate).
+
+---
+
+## NEXT EXECUTION POINTER — set 2026-06-14 (after Phase 35 COMPLETE)
+
+PHASE 35 is COMPLETE (Task 5 consolidated re-audit done; 8 self-tests = 473 checks green, 0 external refs, contract 1.20.0, governance 96/124/17). The single `in_progress` item in `.claude-dev/MODEL_DEV_STATE.json` has been cleared and Phase 35 marked `completed`.
+
+The next agent should pick up POST-PHASE-35 work, in this order:
+
+1. **Finding (1) — design-note gate drift convention.** `test_phase34_task1_design_note` is red (pre-existing) because its frozen Phase-33-final BASELINE (contract 1.17.0, 619,761 bytes, 17 tabs) is re-checked against the live 1.20.0 artifact by `live_contract_version_match` / `live_single_file_size_match`. Decide ONE convention and apply it consistently across all design-note gates: either (a) drop live-match checks from intentionally-frozen point-in-time snapshots, or (b) refresh every such baseline at each phase boundary. (contract_guard + phase35-task1 baselines were already refreshed at Task 5.)
+2. **Finding (2) — builder/patch reconciliation.** `scripts/build_ui_data.py` hard-codes `CONTRACT_VERSION="1.18.0"`; live `1.20.0` comes from layered A1/A2 patch scripts. Make a single clean rebuild reproduce the live snapshot (contract 1.20.0, a11y_audit, section digests), so the build pipeline is the source of truth again.
+3. **Then, per the standing directive:** the zero-install offline UI (`ui_app.html`) already satisfies the offline-UI goal (single self-contained HTML, embeds only model output, 18 tabs, 473 self-test checks, 0 external refs). Continue with research for further stochastic-model improvements and pre-register the next phase's gaps with acceptance criteria.
+
+Reminder: do EXACTLY ONE task per cycle; honour the agent lock + AGENT_COORDINATION.md; NO model parameter changes without owner sign-off; Phase 30 stop-rule binding; MR-016/MR-017 owner decision must not be pre-empted.

@@ -10017,3 +10017,15 @@ addition only; NO new top-level key; every pre-existing `ui_data.json` key bit-i
 - **Pre-existing issue flagged (not from A3):** 4 stale tests expect contract 1.18.0 and fail vs live 1.20.0 (test_phase34_task2_h1_contract_guard.py ×3, test_phase35_task1_design_note.py gate); confirmed on baseline; queued for Task 5 re-audit.
 - **Invariants:** NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted.
 - **Next:** Phase 35 Task 5 (phase summary + re-audit + PHASE 35 COMPLETE).
+
+---
+
+## 2026-06-14 — Phase 35 Task 5 (PHASE 35 COMPLETE) — Claude Cowork
+
+Final consolidated baseline re-audit. Re-measured all 8 offline self-tests: ui_app 368 / offline_viewer 11 / combined_gui 27 / userrun 9 / distribution 9 / integrity 10 / search-deeplink 18 / bundle-printall 21 = **473 checks**, all ok:true, 0 JS errors, 0 network calls. External-ref scan = 0 across all 3 HTML artifacts. Contract = 1.20.0 (24 top-level keys = 23 required incl. a11y_audit + contract_manifest; manifest key_count 23). Governance 96 ChangeRecords / 124 audit / 17 risk. ui_app.html 678,921 bytes; 18 tabs; governed headline 39975.654628199336 intact.
+
+Refreshed the two live-tracking baselines that drifted after A1/A2 bumped the contract 1.18.0→1.20.0: `contract_guard.py` (EXPECTED_CONTRACT→1.20.0, PRIOR→1.19.0, +a11y_audit in EXPECTED_REQUIRED_KEYS, renamed contract_is_1_20_0 / html_embeds_contract_1_20_0) and `ui_accessibility_integrity.BASELINE` (contract, ui_app bytes/embedded, n_checks 340→368, total 445→473, governance 92/120→96/124); updated the two coupled test files. The 4 explicitly-scoped pre-existing stale tests (test_phase34_task2 x3 + test_phase35_task1 gate) now PASS; full suite collects 3348 tests with 0 import errors. NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted.
+
+FINDINGS (out of single-task scope, for owner): (1) test_phase34_task1_design_note gate is a SEPARATE pre-existing red of the same class — an intentional frozen Phase-33-final snapshot (1.17.0 / 619,761 bytes / 17 tabs) whose live-match checks necessarily drift; left intact, owner to decide the convention. (2) scripts/build_ui_data.py still hard-codes CONTRACT_VERSION="1.18.0" while live is 1.20.0 (produced by layered A1/A2 patch scripts) — reconcile the builder so a clean rebuild reproduces live.
+
+PHASE 35 COMPLETE. Next per standing directive: offline UI already delivered (ui_app.html); next cycle = address findings then research further stochastic-model improvements.

@@ -76,7 +76,7 @@ class TestDesignNoteStructure(unittest.TestCase):
             "ui_app_integrity_fallback_test", "ui_app_search_deeplink_test",
             "ui_app_bundle_printall_test"))
         self.assertEqual(total, base["self_test_checks_total"])
-        self.assertEqual(total, 445)
+        self.assertEqual(total, 473)
 
     def test_baseline_tab_inventory_consistent(self):
         base = self.note["baseline_audit"]
@@ -84,8 +84,10 @@ class TestDesignNoteStructure(unittest.TestCase):
         self.assertEqual(len(set(base["tabs"])), base["tab_count"])
         self.assertEqual(base["tab_count"], 18)
 
-    def test_baseline_contract_is_phase34_final(self):
-        self.assertEqual(self.note["baseline_audit"]["contract_version"], "1.18.0")
+    def test_baseline_contract_is_phase35_final(self):
+        # Refreshed at Phase 35 Task 5: A1 (1.19.0) + A2 (1.20.0) advanced the
+        # live contract additively; the baseline cross-check tracks the final state.
+        self.assertEqual(self.note["baseline_audit"]["contract_version"], "1.20.0")
 
     def test_note_is_json_serialisable(self):
         json.dumps(self.note)

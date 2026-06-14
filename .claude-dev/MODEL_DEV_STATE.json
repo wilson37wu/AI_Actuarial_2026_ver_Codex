@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-14T08:30:00Z",
+  "last_run": "2026-06-14T09:30:00Z",
   "last_run_duration_minutes": 30,
-  "last_run_note": "Phase 35 Task 4 (gap A3) COMPLETE: one-page printable model-card cover. Print-only .modelcardcover + renderModelCardCover() assembled BIT-FOR-BIT from the embedded snapshot (model identity, scope, governed headline 39,975.654628199336 carried exactly + never re-labelled, top-3 limitations, Phase 30 stop-rule status, BLANK owner-decision field, provenance stamp). NO contract change (1.20.0; ui_data.json + embedded payload byte-identical -> A2 per-section SHA-256 digests still verify by construction). ui_app self-test 358 -> 368 checks ok:true 0/0 (10 new A3 checks); all 8 offline self-tests green; 0 external refs; single self-contained HTML. Governance ChangeRecord 9f23daa9 OWNER_REVIEW (95 -> 96 records / 123 -> 124 audit, verify_all True). NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted. KNOWN PRE-EXISTING (not from A3): 4 stale tests expect contract 1.18.0 and now fail vs live 1.20.0 (confirmed on baseline); flagged for Task 5 re-audit.",
-  "current_phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening (Task 5 = phase summary/re-audit next)",
-  "overall_status": "PHASE35_TASK4_A3_COMPLETE_NEXT_PHASE35_TASK5_SUMMARY",
+  "last_run_note": "Phase 35 Task 5 COMPLETE -> PHASE 35 COMPLETE. Consolidated baseline re-audit (8 self-tests=473 checks all green, 0 external refs, contract 1.20.0, gov 96/124/17). Refreshed drifted live-tracking baselines (contract_guard + design-note BASELINE) 1.18.0->1.20.0; the 4 explicitly-scoped stale tests now PASS. FINDINGS for owner: (1) test_phase34_task1_design_note gate is a SEPARATE pre-existing red of the same class (frozen Phase-33-final snapshot: contract 1.17.0 / 619761 bytes / 17 tabs vs live 1.20.0) - NOT refreshed because it is an intentional historical point-in-time record; owner to decide whether historical design-note gates should keep performing live-match checks (recommend: drop live-match from frozen snapshots, or refresh at each phase boundary). (2) scripts/build_ui_data.py still hard-codes CONTRACT_VERSION='1.18.0'; live 1.20.0 was produced by layered A1/A2 patch scripts, so a clean rebuild from build_ui_data.py would REGRESS the contract - reconcile the builder with the patch scripts. Next per standing directive: the zero-install offline UI (ui_app.html) already satisfies the offline-UI goal; next cycle = address findings (1)/(2) then research further stochastic-model improvements.",
+  "current_phase": "Phase 35 COMPLETE; next = post-Phase-35 (offline-UI consolidation + findings cleanup, then research)",
+  "overall_status": "PHASE35_COMPLETE_NEXT_POST_PHASE35_FINDINGS_THEN_RESEARCH",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -599,18 +599,17 @@
       ]
     },
     "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening": {
-      "status": "in_progress",
+      "status": "completed",
       "description": "Deepen the zero-install offline UI: formal WCAG keyboard + AA-contrast pass; per-section cryptographic digest surfaced in the H1 integrity panel so a reviewer can verify the embedded snapshot was not altered offline; one-page printable model-card cover. Pure display/additive layer; preserve no-storage-API + file:// + governance-neutrality invariants.",
       "completed": [
         "Task 1: design note + measured accessibility/integrity baseline; pre-register gaps (A1 WCAG keyboard+AA contrast audit, A2 per-section integrity digest in H1 panel, A3 printable model-card cover) with acceptance criteria; freeze baseline (self-test counts, contract 1.18.0, external-ref=0)",
         "Task 2 = A1: formal WCAG 2.1 AA keyboard + contrast conformance pass (ADDITIVE a11y_audit; contract 1.18.0->1.19.0). CSS-only :focus-visible on every interactive control type; build-time MEASURED contrast (10 pairs x 2 themes, all AA, min 4.84:1) + keyboard inventory rendered read-only in the Integrity panel. ui_app self-test 350 ok:true 0/0; all 8 offline suites green; 0 external refs; governed figures bit-identical. ChangeRecord 9402b386 OWNER_REVIEW (94 records / 122 audit). COMPLETE.",
         "Task 3 = A2: per-section SHA-256 digest + root_digest in contract_manifest + in-browser tamper-evident verifier (H1 panel). ADDITIVE contract 1.19.0 -> 1.20.0. COMPLETE (ui_app self-test 358 ok:true 0/0).",
-        "Task 4 = A3: one-page printable model-card cover (ASOP-41 style) on the zero-install offline UI. Print-only .modelcardcover + renderModelCardCover() assembled BIT-FOR-BIT from the embedded snapshot: model identity (PAR Fund Stochastic ALM & TVOG v0.2.0, EDUCATIONAL ONLY), scope, governed headline 39,975.654628199336 carried exactly and never re-labelled, top-3 limitations, Phase 30 binding stop-rule status (applied; MR-016/MR-017 KEEP_OPEN), BLANK owner-decision field, provenance stamp (contract v + build stamp). NO contract change (1.20.0; payload byte-identical so A2 digests still verify). 10 new ui_app self-test checks (358 -> 368 ok:true 0/0); all 8 offline self-tests green; 0 external refs. Governance ChangeRecord OWNER_REVIEW (95 -> 96 records / 123 -> 124 audit, verify_all True). COMPLETE."
+        "Task 4 = A3: one-page printable model-card cover (ASOP-41 style) on the zero-install offline UI. Print-only .modelcardcover + renderModelCardCover() assembled BIT-FOR-BIT from the embedded snapshot: model identity (PAR Fund Stochastic ALM & TVOG v0.2.0, EDUCATIONAL ONLY), scope, governed headline 39,975.654628199336 carried exactly and never re-labelled, top-3 limitations, Phase 30 binding stop-rule status (applied; MR-016/MR-017 KEEP_OPEN), BLANK owner-decision field, provenance stamp (contract v + build stamp). NO contract change (1.20.0; payload byte-identical so A2 digests still verify). 10 new ui_app self-test checks (358 -> 368 ok:true 0/0); all 8 offline self-tests green; 0 external refs. Governance ChangeRecord OWNER_REVIEW (95 -> 96 records / 123 -> 124 audit, verify_all True). COMPLETE.",
+        "Task 5 = Phase 35 phase summary + final consolidated baseline re-audit: re-measured all 8 offline self-tests (ui_app 368 / offline_viewer 11 / combined_gui 27 / userrun 9 / distribution 9 / integrity 10 / search-deeplink 18 / bundle-printall 21 = 473 total; all ok:true, 0 JS errors, 0 network calls); external-ref scan = 0 across all 3 HTML artifacts; contract inventory = 1.20.0 (24 top-level keys = 23 required incl. a11y_audit + contract_manifest; manifest key_count 23); governance 96 ChangeRecords / 124 audit / 17 risk; ui_app.html 678921 bytes; 18 tabs; governed headline 39975.654628199336 intact. REFRESHED the live-tracking baselines that had drifted after A1/A2 bumped the contract 1.18.0->1.20.0: contract_guard.EXPECTED_CONTRACT 1.18.0->1.20.0 / PRIOR 1.17.0->1.19.0 / +a11y_audit in EXPECTED_REQUIRED_KEYS (+renamed checks contract_is_1_20_0 / html_embeds_contract_1_20_0) and ui_accessibility_integrity.BASELINE (contract, ui_app bytes/embedded, ui_app n_checks 340->368, total 445->473, governance 92/120->96/124); updated the 2 coupled test files. The 4 pre-existing stale tests (test_phase34_task2 x3 + test_phase35_task1 gate) now PASS; targeted regression (governance/offline_viewer/measure_enforcement/phase34/phase35) green; full suite collects 3348 tests with 0 import errors. NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted. PHASE 35 COMPLETE."
       ],
-      "in_progress": [
-        "Task 5: Phase 35 phase summary + final consolidated baseline re-audit (self-test counts, external-ref scan, contract inventory) and PHASE 35 COMPLETE documentation. NOTE for next run: 4 PRE-EXISTING stale tests assert contract 1.18.0 (test_phase34_task2_h1_contract_guard.py x3, test_phase35_task1_design_note.py gate) and now fail because phases A1/A2 bumped the live contract to 1.20.0; not introduced by A3 (confirmed on baseline). Recommend refreshing these expected-contract constants as part of Task 5 re-audit."
-      ],
-      "next": "Phase 35 Task 5 (phase summary + re-audit + PHASE 35 COMPLETE); then post-Phase-35 = begin offline UI build per standing directive once all documented tasks complete"
+      "in_progress": [],
+      "next": null
     }
   },
   "repository_info": {
@@ -1559,5 +1558,54 @@
     ],
     "constraints": "Phase 30 stop-rule honoured; MR-016/MR-017 owner decision not pre-empted; governed frozen-t headline 39975.654628199336 untouched",
     "next": "Phase 35 Task 4 = gap A3 (one-page printable ASOP-41 model-card cover)"
+  },
+  "cycle_2026_06_14_phase35_task5": {
+    "date": "2026-06-14",
+    "owner": "claude",
+    "task": "Phase 35 Task 5 - phase summary + consolidated baseline re-audit",
+    "result": "COMPLETE; PHASE 35 COMPLETE",
+    "reaudit": {
+      "self_tests": {
+        "ui_app": 368,
+        "offline_viewer": 11,
+        "combined_gui": 27,
+        "userrun_fallback": 9,
+        "distribution_fallback": 9,
+        "integrity_fallback": 10,
+        "search_deeplink": 18,
+        "bundle_printall": 21,
+        "total": 473,
+        "all_ok": true,
+        "js_errors": 0,
+        "network_calls": 0
+      },
+      "external_refs": 0,
+      "contract_version": "1.20.0",
+      "top_level_keys": 24,
+      "manifest_key_count": 23,
+      "governance": {
+        "change_records": 96,
+        "audit_entries": 124,
+        "risk_register": 17
+      },
+      "ui_app_bytes": 678921,
+      "tabs": 18,
+      "governed_headline": "39975.654628199336"
+    },
+    "tests_fixed": [
+      "test_phase34_task2_h1_contract_guard.py (x3)",
+      "test_phase35_task1_design_note.py gate"
+    ],
+    "files_changed": [
+      "par_model_v2/viewer/contract_guard.py",
+      "par_model_v2/viewer/ui_accessibility_integrity.py",
+      "tests/test_phase34_task2_h1_contract_guard.py",
+      "tests/test_phase35_task1_design_note.py"
+    ],
+    "findings": [
+      "test_phase34_task1_design_note gate: separate pre-existing red (frozen 1.17.0 snapshot drift) - left intact, owner decision needed",
+      "scripts/build_ui_data.py CONTRACT_VERSION still 1.18.0 vs live 1.20.0 - reconcile builder with A1/A2 patch scripts"
+    ],
+    "invariants": "NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted"
   }
 }

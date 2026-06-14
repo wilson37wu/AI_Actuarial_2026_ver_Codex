@@ -10,16 +10,16 @@ bundle + print-all, responsive + high-contrast pass), consolidating the
 artifact at contract 1.18.0 with 18 tabs.  Phase 35 DEEPENS the
 accessibility and the evidence-integrity assurance of that surface.
 
-(a) BASELINE AUDIT (measured 2026-06-14, frozen here as cross-check
-    targets): EIGHT offline self-tests all ok:true with zero network calls
-    and zero JS errors - ui_app (340 checks), offline_viewer (11),
-    combined_gui (27), ui_app_userrun_fallback (9),
-    ui_app_distribution_fallback (9), ui_app_integrity_fallback (10),
-    ui_app_search_deeplink (18), and ui_app_bundle_printall (21); 445
-    checks total; zero external references in any of the three HTML
-    artifacts; embedded ui_data contract 1.18.0 (23 top-level keys incl.
-    contract_manifest); 18 tabs; governance store 92 ChangeRecords / 120
-    audit entries / 17 risk items.
+(a) BASELINE AUDIT (re-measured 2026-06-14 at Phase 35 completion / Task 5,
+    refreshed here as cross-check targets after gaps A1/A2/A3 landed): EIGHT
+    offline self-tests all ok:true with zero network calls and zero JS
+    errors - ui_app (368 checks), offline_viewer (11), combined_gui (27),
+    ui_app_userrun_fallback (9), ui_app_distribution_fallback (9),
+    ui_app_integrity_fallback (10), ui_app_search_deeplink (18), and
+    ui_app_bundle_printall (21); 473 checks total; zero external references
+    in any of the three HTML artifacts; embedded ui_data contract 1.20.0
+    (24 top-level keys incl. a11y_audit + contract_manifest); 18 tabs;
+    governance store 96 ChangeRecords / 124 audit entries / 17 risk items.
 
 (b) GAP LIST vs the directive, in priority order (ONE gap per cycle):
     A1 formal WCAG 2.1 AA keyboard + contrast conformance pass
@@ -83,8 +83,8 @@ GOVERNED_HEADLINE = "39,975.654628199336"
 
 #: Frozen baseline measurements (2026-06-14 cycle, lock 2026-06-14T05:08Z).
 BASELINE = {
-    "measured_at_utc": "2026-06-14T05:10:00Z",
-    "ui_app_self_test": {"ok": True, "n_checks": 340, "js_errors": 0, "network_calls": 0},
+    "measured_at_utc": "2026-06-14T09:10:00Z",
+    "ui_app_self_test": {"ok": True, "n_checks": 368, "js_errors": 0, "network_calls": 0},
     "offline_viewer_self_test": {"ok": True, "n_checks": 11, "js_errors": 0, "network_calls": 0},
     "combined_gui_self_test": {"ok": True, "n_checks": 27, "js_errors": 0, "network_calls": 0},
     "ui_app_userrun_fallback_test": {"ok": True, "n_checks": 9, "js_errors": 0, "network_calls": 0},
@@ -92,14 +92,14 @@ BASELINE = {
     "ui_app_integrity_fallback_test": {"ok": True, "n_checks": 10, "js_errors": 0, "network_calls": 0},
     "ui_app_search_deeplink_test": {"ok": True, "n_checks": 18, "js_errors": 0, "network_calls": 0},
     "ui_app_bundle_printall_test": {"ok": True, "n_checks": 21, "js_errors": 0, "network_calls": 0},
-    "self_test_checks_total": 445,
+    "self_test_checks_total": 473,
     "external_refs_total": 0,
     "artifacts": {
-        "ui_app.html": {"bytes": 655866, "embedded_contract": "1.18.0"},
+        "ui_app.html": {"bytes": 678921, "embedded_contract": "1.20.0"},
         "model_result_viewer.html": {"bytes": 142620},
         "combined_model_app.html": {"bytes": 456204},
     },
-    "contract_version": "1.18.0",
+    "contract_version": "1.20.0",
     "tab_count": 18,
     "tabs": [
         "Overview", "Inventory & Contract", "Calibrations", "Capital & Tail",
@@ -109,7 +109,7 @@ BASELINE = {
         "Distribution Explorer (P33)", "Owner Decision (P31)",
         "User Run (UIL)", "Governance", "Integrity (H1)",
     ],
-    "governance_store": {"change_records": 92, "audit_entries": 120, "risk_register": 17},
+    "governance_store": {"change_records": 96, "audit_entries": 124, "risk_register": 17},
 }
 
 HTML_ARTIFACTS = ["ui_app.html", "model_result_viewer.html", "combined_model_app.html"]
