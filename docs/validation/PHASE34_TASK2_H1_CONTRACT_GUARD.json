@@ -1,0 +1,36 @@
+{
+ "task2_gate": {
+  "ok": true,
+  "n_checks": 24,
+  "checks": {
+   "ui_data_parsed": true,
+   "contract_is_1_18_0": true,
+   "manifest_present": true,
+   "manifest_expected_version_matches": true,
+   "manifest_required_keys_is_list": true,
+   "manifest_required_keys_match": true,
+   "manifest_excludes_itself": true,
+   "manifest_key_count_consistent": true,
+   "all_required_keys_present": true,
+   "manifest_build_time_provenance": true,
+   "additive_single_new_key": true,
+   "integrity_panel_present": true,
+   "integrity_banner_present": true,
+   "validator_fn_present": true,
+   "integrity_render_present": true,
+   "banner_render_present": true,
+   "html_embeds_contract_1_18_0": true,
+   "display_only_no_recompute_stated": true,
+   "neutral_degraded_banner_text": true,
+   "zero_external_refs": true,
+   "governed_headline_intact": true,
+   "no_model_parameter_changes": true,
+   "stop_rule_honoured": true,
+   "owner_decision_not_preempted": true
+  },
+  "doc_id": "PHASE34_TASK2_H1_CONTRACT_GUARD",
+  "doc_version": "1.0.0",
+  "contract_before": "1.17.0",
+  "contract_after": "1.18.0"
+ }
+}

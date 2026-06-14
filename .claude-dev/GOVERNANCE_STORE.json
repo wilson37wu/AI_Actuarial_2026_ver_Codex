@@ -2682,6 +2682,22 @@
       "phase": "Phase 34: Offline UI Usability Hardening",
       "digest": "6180d4f1f302df7b812246a85729ad65286dbaf502b7b1977a0921bb60bb742d",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "4c210e021ff14cb6a32225f9c9fe58ba",
+      "timestamp": "2026-06-14T00:27:57.720393+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "Phase34Task2ContractGuard",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 34 Task 2 H1 data-contract guard",
+      "details": {
+        "record_id": "01e63ffdb2bc4a8aa8943bbbc36e26ff",
+        "change_type": "code_change",
+        "status": "OWNER_REVIEW",
+        "contract": "1.17.0->1.18.0"
+      },
+      "phase": "Phase 34: Offline UI Usability Hardening",
+      "digest": "f23b8e6c074788187d92b8962ce785ad82ba853ca1f7b77084b119997f44c6f0",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -8405,6 +8421,67 @@
           "actor": "Phase34Task1UsabilityHardeningDesign",
           "status": "OWNER_REVIEW",
           "comments": "Owner review: usability-hardening scope and gap priority (H1 contract guard first). No model or contract change until Task 2."
+        }
+      ],
+      "phase": "Phase 34: Offline UI Usability Hardening"
+    },
+    {
+      "record_id": "01e63ffdb2bc4a8aa8943bbbc36e26ff",
+      "created_at": "2026-06-14T00:27:57.720310+00:00",
+      "title": "Phase 34 Task 2 (gap H1) - self-describing data-contract guard + in-UI schema/integrity panel; ADDITIVE contract 1.17.0 -> 1.18.0 (contract_manifest key only); load-time validator + neutral degraded-mode banner; 6 offline self-tests green (ui_app 308 / offline_viewer 11 / combined_gui 27 / userrun-fallback 9 / distribution-fallback 9 / integrity-fallback 10), 0 network / 0 JS errors, 0 external refs",
+      "description": "Closed gap H1 from the Phase 34 design note: a self-describing data-contract guard for the zero-install offline UI. (1) scripts/build_ui_data.py now embeds an ADDITIVE build-time contract_manifest (expected_contract_version, the 22 required top-level sections, key_count, build-time provenance) and bumps the contract 1.17.0 -> 1.18.0 (the manifest is the ONLY new top-level key; every pre-existing key renders bit-identically - verified by an isolated same-source rebuild diff: only generated_utc, a wall-clock stamp, differs). (2) ui_app.html gained a load-time validateContract() that inspects ONLY the embedded payload and recomputes nothing, a new Integrity (H1) tab (version match + per-section present/absent table + PASS/DEGRADED badge), and a top-level NEUTRAL degraded-mode banner shown only on a missing section / unexpected contract version (no blank panel, no steering language). (3) Tests: 11 new ui_app self-test checks (manifest embedded/excludes-itself/all-present, validator PASS, banner hidden on full payload, display-only language) keep ui_app self-test ok:true (297 -> 308 checks); a NEW dedicated jsdom fallback test (ui_app_integrity_fallback_test.cjs, 10 checks) deletes a required section and asserts the neutral banner names the missing section, the Integrity tab marks it absent, every other tab still renders, 0 network / 0 JS errors. The pre-existing g4 no-storage-API scan was scoped to the executable code (it had begun matching the literal token inside an embedded governance sign-off comment after the store grew - a latent false positive independent of this change). All 6 offline self-tests green (308/11/27/9/9/10), 0 external refs, single self-contained file. NO model parameter changes; binding stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_ui_data.py",
+        "par_model_v2/viewer/contract_guard.py",
+        "tests/test_phase34_task2_h1_contract_guard.py",
+        "scripts/ui_app_self_test.cjs",
+        "scripts/ui_app_integrity_fallback_test.cjs",
+        "ui_data.json",
+        "ui_app.html",
+        "docs/validation/PHASE34_TASK2_H1_CONTRACT_GUARD.{json,md}"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.6 (model risk, reliance, documentation)",
+        "SOA ASOP 41 (actuarial communications - clarity for the intended user)",
+        "IFoA Model Practice Note (MPN) section 4 (documentation and communication)"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.17.0",
+        "contract_manifest": false,
+        "integrity_tab": false,
+        "degraded_mode_banner": false,
+        "ui_app_self_test_checks": 297,
+        "offline_self_tests": 5
+      },
+      "after_snapshot": {
+        "ui_contract": "1.18.0",
+        "contract_manifest": true,
+        "integrity_tab": true,
+        "degraded_mode_banner": true,
+        "ui_app_self_test_checks": 308,
+        "offline_self_tests": 6,
+        "gate_ok": true,
+        "gate_checks": 24
+      },
+      "impact_assessment": "Robustness/usability only. ADDITIVE contract change; the display layer recomputes no model figure; the governed frozen-t headline and every other governed read-out are untouched. A previously silent partial render now surfaces a neutral, factual integrity notice. Zero-install invariants preserved (0 external refs, single self-contained HTML).",
+      "quantitative_impact": "No governed capital figure changed. Contract 1.17.0 -> 1.18.0 (additive). ui_app self-test 297 -> 308 checks; offline self-test suites 5 -> 6 (new integrity-fallback, 10 checks). External refs remain 0.",
+      "status": "OWNER_REVIEW",
+      "author": "Phase34Task2ContractGuard",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-14T00:27:57.720357+00:00",
+          "actor": "Phase34Task2ContractGuard",
+          "status": "PEER_REVIEW",
+          "comments": "H1 gate PASS (live cross-checks); 6 self-tests green; additive diff verified."
+        },
+        {
+          "timestamp": "2026-06-14T00:27:57.720369+00:00",
+          "actor": "Phase34Task2ContractGuard",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: additive contract guard + neutral integrity panel/banner. No model or governed-figure change."
         }
       ],
       "phase": "Phase 34: Offline UI Usability Hardening"

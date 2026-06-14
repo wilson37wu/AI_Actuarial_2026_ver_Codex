@@ -213,6 +213,18 @@ setTimeout(() => {
   const dataTitlePanels = document.querySelectorAll('.panel[data-title]').length;
   const bodyText = document.body.textContent || "";
 
+  // Phase 34 Task 2 (gap H1): data-contract integrity guard surface.
+  const intTab = tabs.find(t => t.getAttribute("data-target") === "integrity");
+  if (intTab) intTab.click();
+  const intEl = document.getElementById("integrity");
+  const intText = (intEl && intEl.textContent) || "";
+  const intKeyRows = document.querySelectorAll('#integrity table.inttable tbody tr').length;
+  const intAbsentRows = document.querySelectorAll('#integrity table.inttable tbody tr[data-int-present="0"]').length;
+  const intBannerEl = document.getElementById("integritybanner");
+  const intBannerVisible = !!intBannerEl && intBannerEl.style.display !== "none" && intBannerEl.getAttribute("aria-hidden") === "false";
+  const uiDataObj = (function(){ const mm = html.match(/\/\*__UI_DATA__\*\/(.*?)<\/script>/s); try { return JSON.parse(mm[1]); } catch(e){ return null; } })();
+  const intManifest = uiDataObj && uiDataObj.contract_manifest;
+
   // Phase UIL Task 4 (B4+A1): currency wire-through assertions.
   // Parse the embedded contract to learn the configured currency, then assert
   // the GUI actually renders money with that symbol and shows the badge.
@@ -399,7 +411,12 @@ setTimeout(() => {
       document.querySelectorAll('#tabs [aria-selected="true"]').length === 1;
   }
   // No browser storage APIs anywhere in the single-file build (file:// safe)
-  const g4NoStorageApis = !/\blocalStorage\b/.test(html) && !/\bsessionStorage\b/.test(html);
+  // Phase 34 Task 2 (gap H1): scope the storage-API scan to the executable UI
+  // code, EXCLUDING the embedded data island (governance prose can legitimately
+  // *mention* "localStorage"/"sessionStorage" as text; that is data, not a code
+  // call). Any real storage-API use in the script/markup is still caught.
+  const g4CodeOnlyHtml = html.replace(/<script id="ui-data"[^>]*>[\s\S]*?<\/script>/, "");
+  const g4NoStorageApis = !/\blocalStorage\b/.test(g4CodeOnlyHtml) && !/\bsessionStorage\b/.test(g4CodeOnlyHtml);
   // Every table carries exactly one visually-hidden caption (accessible name)
   const allTables = [...document.querySelectorAll("table")];
   const g4TablesTotal = allTables.length;
@@ -673,6 +690,20 @@ setTimeout(() => {
     fmtMoneyDefined: /function fmtMoney\(/.test(html),
     moneySymbolRendered: moneyRe ? moneyRe.test(bodyText) : true,
     currencyBadgePresent: curCfg.code ? (new RegExp("currency " + curCfg.code)).test(bodyText) : true,
+    // Phase 34 Task 2 (gap H1): self-describing data-contract guard.
+    h1IntegrityTabPresent: !!intTab,
+    h1IntegrityTabText: /Data-contract integrity/.test(intText),
+    h1ContractIs118: !!uiDataObj && uiDataObj.contract_version === "1.18.0",
+    h1ManifestEmbedded: !!intManifest && intManifest.expected_contract_version === uiDataObj.contract_version &&
+      Array.isArray(intManifest.required_top_level_keys) && intManifest.required_top_level_keys.length >= 20,
+    h1ManifestExcludesItself: !!intManifest && intManifest.required_top_level_keys.indexOf("contract_manifest") === -1,
+    h1ManifestKeysAllPresent: !!intManifest &&
+      intManifest.required_top_level_keys.every(k => Object.prototype.hasOwnProperty.call(uiDataObj, k)),
+    h1IntegrityKeyRows: !!intManifest && intKeyRows === intManifest.required_top_level_keys.length,
+    h1ValidatorPassOnFullPayload: /PASS/.test(intText) && intAbsentRows === 0,
+    h1VersionMatchShown: !!uiDataObj && intText.indexOf(uiDataObj.contract_version) >= 0,
+    h1BannerHiddenOnFullPayload: !intBannerVisible,
+    h1DisplayOnlyStated: /recomputes no model figure/.test(intText) && /[Nn]othing is recomputed in the browser/.test(intText),
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -970,6 +1001,17 @@ setTimeout(() => {
     checks.g4TablesTotal >= 20 &&
     checks.g4TablesWithoutCaption === 0 &&
     checks.g4NoDuplicateCaptions &&
+    checks.h1IntegrityTabPresent &&
+    checks.h1IntegrityTabText &&
+    checks.h1ContractIs118 &&
+    checks.h1ManifestEmbedded &&
+    checks.h1ManifestExcludesItself &&
+    checks.h1ManifestKeysAllPresent &&
+    checks.h1IntegrityKeyRows &&
+    checks.h1ValidatorPassOnFullPayload &&
+    checks.h1VersionMatchShown &&
+    checks.h1BannerHiddenOnFullPayload &&
+    checks.h1DisplayOnlyStated &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

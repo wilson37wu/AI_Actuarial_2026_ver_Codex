@@ -32,7 +32,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.17.0"
+CONTRACT_VERSION = "1.18.0"
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -2864,6 +2864,25 @@ def build_ui_data() -> Dict[str, Any]:
         "governance": governance,
         "verdicts": _build_verdicts(base.get("verdicts", [])),
     }
+    # Phase 34 Task 2 (gap H1): self-describing data-contract manifest.
+    # ADDITIVE bump 1.17.0 -> 1.18.0 (new contract_manifest key ONLY; every
+    # pre-existing key is unchanged and renders bit-identically). Written ONLY
+    # here at build time. The offline UI reads it to validate the embedded
+    # payload at load time and recomputes NO model figure.
+    _required_keys = list(data.keys())  # substantive sections present at build
+    data["contract_manifest"] = {
+        "expected_contract_version": CONTRACT_VERSION,
+        "required_top_level_keys": _required_keys,
+        "key_count": len(_required_keys),
+        "generated_by": "scripts/build_ui_data.py (Phase 34 Task 2, gap H1)",
+        "note": (
+            "Build-time data-contract guard. The offline UI validates the "
+            "embedded payload against this manifest at load time and shows a "
+            "neutral degraded-mode banner if a required section is missing or "
+            "the contract version is unexpected. The display layer recomputes "
+            "no model figure."
+        ),
+    }
     return data
 
 
@@ -2983,6 +3002,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   /* Phase 33 Task 5 (gap G4): visually-hidden table captions for screen readers
      (kept off-screen; no layout or rendered-figure impact). */
   .sr-only{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .integritybanner{margin:10px 0 14px;padding:10px 14px;border:1px solid var(--warn);border-radius:8px;background:rgba(94,74,31,0.12);color:var(--ink);font-size:13px;line-height:1.5}
+  .integritybanner .ibannerlabel{font-weight:700;color:var(--warn);margin-right:6px;text-transform:uppercase;letter-spacing:.03em;font-size:11.5px}
   .signoffcover{display:none}
   @media print{
     :root{--bg:#fff;--panel:#fff;--panel2:#fff;--ink:#111;--muted:#444;--line:#bbb;--chip:#eee;--accent:#15489c}
@@ -3020,6 +3041,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 </div></header>
 <div class="wrap">
   <div id="signoffcover" class="signoffcover" aria-hidden="true"></div>
+  <div id="integritybanner" class="integritybanner" role="status" aria-live="polite" aria-hidden="true" style="display:none"></div>
   <div class="tabs" id="tabs"></div>
   <div id="overview" class="panel" data-title="Overview"></div>
   <div id="inventory" class="panel" data-title="Inventory &amp; Contract"></div>
@@ -3038,6 +3060,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="ownerdecision" class="panel" data-title="Owner Decision (P31)"></div>
   <div id="userrun" class="panel" data-title="User Run (UIL)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
+  <div id="integrity" class="panel" data-title="Integrity (H1)"></div>
 </div>
 
 <script id="ui-data" type="application/json">/*__UI_DATA__*/null</script>
@@ -3094,7 +3117,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["distexplorer","Distribution Explorer (P33)"],
     ["ownerdecision","Owner Decision (P31)"],
     ["userrun","User Run (UIL)"],
-    ["governance","Governance"]
+    ["governance","Governance"],
+    ["integrity","Integrity (H1)"]
   ];
 
   function renderTabs(){
@@ -5497,9 +5521,106 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       +'<div class="sigbox">Date: ________________</div>'
       +'</div>';
   }
+  // Phase 34 Task 2 (gap H1): self-describing data-contract guard. Reads the
+  // build-time contract_manifest embedded in the payload and validates the
+  // embedded snapshot against it at LOAD time. Inspects ONLY the embedded
+  // payload; recomputes NO model figure. Returns a plain status object.
+  function validateContract(){
+    var res={ dataPresent:!!DATA, manifestPresent:false, expected:null,
+              actual:null, versionMatch:false, keys:[], missing:[],
+              allPresent:false, status:"DEGRADED", reason:"" };
+    if(!DATA){ res.reason="no embedded payload"; return res; }
+    res.actual = (DATA.contract_version!=null)?String(DATA.contract_version):null;
+    var man = DATA.contract_manifest;
+    if(!man || typeof man!=="object"){
+      res.reason="contract_manifest absent (pre-1.18.0 payload)";
+      return res;
+    }
+    res.manifestPresent=true;
+    res.expected = (man.expected_contract_version!=null)?String(man.expected_contract_version):null;
+    res.versionMatch = (res.expected!=null && res.actual!=null && res.expected===res.actual);
+    var req = (man.required_top_level_keys||[]).slice();
+    res.keys = req.map(function(k){
+      return { key:k, present: Object.prototype.hasOwnProperty.call(DATA,k) };
+    });
+    res.missing = res.keys.filter(function(x){return !x.present;})
+                          .map(function(x){return x.key;});
+    res.allPresent = (res.missing.length===0);
+    res.status = (res.versionMatch && res.allPresent) ? "PASS" : "DEGRADED";
+    if(res.status==="PASS") res.reason="contract verified";
+    else if(!res.versionMatch && !res.allPresent) res.reason="version mismatch + missing sections";
+    else if(!res.versionMatch) res.reason="contract version mismatch";
+    else res.reason="missing required sections";
+    return res;
+  }
+  // Phase 34 Task 2 (gap H1): neutral degraded-mode banner. Shown ONLY when the
+  // guard does not PASS. Factual, non-steering language; no blank panel.
+  function renderIntegrityBanner(v){
+    var el=document.getElementById("integritybanner"); if(!el) return;
+    if(!v) v=validateContract();
+    if(v.status==="PASS"){
+      el.style.display="none"; el.setAttribute("aria-hidden","true"); el.innerHTML="";
+      return;
+    }
+    var msg;
+    if(!v.dataPresent){
+      msg="No data payload is embedded in this file, so the result tabs cannot be populated.";
+    } else if(!v.manifestPresent){
+      msg="This snapshot predates the data-contract manifest (pre-1.18.0). The integrity guard cannot verify the payload; the tabs render the embedded values as-is.";
+    } else {
+      var bits=[];
+      if(!v.versionMatch) bits.push("the embedded contract version ("+esc(v.actual||"none")+") differs from the version this build expects ("+esc(v.expected||"none")+")");
+      if(!v.allPresent){
+        var n=v.missing.length;
+        bits.push(n+" required data section"+(n===1?"":"s")+" "+(n===1?"is":"are")+" missing ("+esc(v.missing.join(", "))+")");
+      }
+      msg="Data-contract check reported a mismatch: "+bits.join("; ")+". Affected tabs may be incomplete; open the Integrity (H1) tab for the per-section detail. No figures are recomputed.";
+    }
+    el.style.display="block"; el.setAttribute("aria-hidden","false");
+    el.innerHTML='<span class="ibannerlabel">Data-contract notice</span> '+msg;
+  }
+  // Phase 34 Task 2 (gap H1): in-UI schema/integrity panel. Renders the contract
+  // version match and a per-section present/absent table from the embedded
+  // manifest. Display only; recomputes nothing.
+  function renderIntegrity(){
+    var el=document.getElementById("integrity"); if(!el) return;
+    var v=validateContract();
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var stbadge = (v.status==="PASS")
+      ? '<span class="chip pass">PASS</span>'
+      : '<span class="chip warn">DEGRADED</span>';
+    var html='<h3 style="margin:8px 0 6px">Data-contract integrity</h3>'+
+      '<p class="note">This panel validates the <b>embedded</b> data snapshot against the build-time '+
+      '<span class="mono">contract_manifest</span> written by <span class="mono">scripts/build_ui_data.py</span>. '+
+      'It inspects only the embedded payload and <b>recomputes no model figure</b>: it reports whether the contract '+
+      'version matches the value this build expects and whether every required top-level data section is present. '+
+      'A neutral notice banner appears at the top of the page if either check does not pass.</p>';
+    html+='<div class="cards">'+
+      '<div class="card"><div class="k">Overall</div><div class="v">'+stbadge+'</div></div>'+
+      '<div class="card"><div class="k">Contract version (embedded)</div><div class="v">'+esc(v.actual||"--")+'</div></div>'+
+      '<div class="card"><div class="k">Contract version (expected)</div><div class="v">'+esc(v.expected||"--")+'</div></div>'+
+      '<div class="card"><div class="k">Version match</div><div class="v">'+(v.versionMatch?'<span class="chip pass">yes</span>':'<span class="chip warn">no</span>')+'</div></div>'+
+      '<div class="card"><div class="k">Required sections present</div><div class="v">'+(v.keys.length-v.missing.length)+' / '+v.keys.length+'</div></div>'+
+      '<div class="card"><div class="k">Manifest embedded</div><div class="v">'+(v.manifestPresent?'<span class="chip pass">yes</span>':'<span class="chip warn">no</span>')+'</div></div>'+
+      '</div>';
+    var rows=v.keys.map(function(x){
+      return '<tr data-int-key="'+esc(x.key)+'" data-int-present="'+(x.present?"1":"0")+'">'+
+        '<td class="mono">'+esc(x.key)+'</td><td>'+
+        (x.present?'<span class="chip pass">present</span>':'<span class="chip warn">absent</span>')+
+        '</td></tr>';
+    }).join("");
+    html+='<table class="ptable inttable"><caption class="sr-only">Per-section presence in the embedded data contract</caption>'+
+      '<thead><tr><th>Required top-level section</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    if(v.status==="PASS"){
+      html+='<p class="muted">All required data sections are present and the contract version matches; the result tabs render the embedded values bit-for-bit. Nothing is recomputed in the browser.</p>';
+    } else {
+      html+='<p class="muted">The notice banner above summarises the mismatch ('+esc(v.reason)+'). Tabs that depend on a missing section already show their own neutral fallback message; nothing is recomputed in the browser.</p>';
+    }
+    el.innerHTML=html;
+  }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderDistExplorer(); renderOwnerDecision(); renderUserRun(); renderGovernance(); renderSignoffCover(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderDistExplorer(); renderOwnerDecision(); renderUserRun(); renderGovernance(); renderIntegrity(); renderIntegrityBanner(); renderSignoffCover(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 

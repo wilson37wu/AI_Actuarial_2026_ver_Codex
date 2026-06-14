@@ -9706,3 +9706,60 @@ Tracked as a repo-hygiene cleanup candidate, outside the four prioritised usabil
 Artifacts: docs/validation/PHASE34_TASK1_DESIGN_NOTE.{json,md};
 docs/UI_USABILITY_HARDENING_DESIGN_CARD.md;
 docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-13_p34t1.md. Next: Phase 34 Task 2 (gap H1).
+
+================================================================================
+## 2026-06-14 06:00 UTC window - Phase 34 Task 2 (gap H1) - Claude Cowork
+================================================================================
+
+COMPLETE: gap H1 - self-describing data-contract guard + in-UI schema/integrity
+panel. Closed the silent-degradation gap: a missing/mismatched ui_data section
+previously rendered a blank/partial panel with no signal.
+
+ADDITIVE contract bump 1.17.0 -> 1.18.0 (the ONLY new top-level key is
+contract_manifest; verified by an isolated same-source rebuild diff - the sole
+pre-existing-key difference was generated_utc, a wall-clock stamp).
+- build_ui_data.py: embeds a build-time contract_manifest
+  {expected_contract_version, required_top_level_keys (the 22 substantive
+  sections; excludes itself), key_count, generated_by provenance, note}.
+- ui_app.html: load-time validateContract() inspects ONLY the embedded payload
+  and recomputes nothing; new Integrity (H1) tab (version match + per-section
+  present/absent table + PASS/DEGRADED badge); top-level NEUTRAL degraded-mode
+  banner shown ONLY on a missing section / unexpected contract (no blank panel,
+  no steering language; states no figures are recomputed).
+
+Tests / gate (all green on the final rebuild):
+- ui_app_self_test.cjs: ok:true, 297 -> 308 checks (+11 H1 checks), 0 net / 0 err.
+- NEW ui_app_integrity_fallback_test.cjs: ok:true, 10 checks - deletes a
+  required section, asserts the neutral banner names it, Integrity tab marks it
+  absent, every other tab still renders, 0 net / 0 err.
+- offline_viewer 11 / combined_gui 27 / userrun-fallback 9 / distribution-
+  fallback 9: all remain ok:true.
+- 0 external references; single self-contained ui_app.html.
+- New module par_model_v2/viewer/contract_guard.py + builder
+  scripts/build_phase34_task2_h1_contract_guard.py + tests
+  tests/test_phase34_task2_h1_contract_guard.py (7 pass). Task 2 live gate
+  PASS 24/24 against the rebuilt artifacts.
+
+Governance: ChangeRecord 01e63ffdb2bc4a8aa8943bbbc36e26ff (code_change),
+OWNER_REVIEW; records 91 -> 92, audit 119 -> 120, verify_all True; risks 17.
+
+Two incidental, documented items:
+1. The pre-existing g4 no-storage-API self-test scan was scoped to the
+   EXECUTABLE code (excluding the embedded data island). It had begun matching
+   the literal "localStorage"/"sessionStorage" tokens inside an embedded
+   governance sign-off COMMENT after the store grew - a latent false positive
+   independent of H1 (HEAD's own self-test fails it on a fresh rebuild too).
+2. The Phase 34 Task 1 design-note BASELINE stays FROZEN at the Phase-33-final
+   state (contract 1.17.0, 17 tabs), pinned by its own unit tests as a
+   historical record. Its test_gate_passes_against_repo live cross-check is
+   therefore SUPERSEDED by this additive advance - the SAME established pattern
+   already in effect for the phase32 and phase33 Task 1 design-note gates (both
+   already red at HEAD). Task 2 carries its OWN live-passing gate.
+
+Constraints: NO model parameter changes; Phase 30 binding stop-rule stands;
+MR-016/MR-017 owner decision not pre-empted (decision record stays BLANK);
+governed frozen-t headline 39,975.654628199336 untouched.
+
+Artifacts: docs/validation/PHASE34_TASK2_H1_CONTRACT_GUARD.{json,md};
+docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p34t2.md. Next: Phase 34 Task 3
+(gap H2: global cross-tab search + deep-linkable read-outs).
