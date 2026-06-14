@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-14T19:36Z-c259",
-  "started_at": "2026-06-14T19:36:48Z",
-  "ttl_minutes": 120,
-  "task": "Phase 36 Task 2 (E1 live-region announcements)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-14T20:01:35Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
