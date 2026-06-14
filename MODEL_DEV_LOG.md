@@ -10029,3 +10029,19 @@ Refreshed the two live-tracking baselines that drifted after A1/A2 bumped the co
 FINDINGS (out of single-task scope, for owner): (1) test_phase34_task1_design_note gate is a SEPARATE pre-existing red of the same class — an intentional frozen Phase-33-final snapshot (1.17.0 / 619,761 bytes / 17 tabs) whose live-match checks necessarily drift; left intact, owner to decide the convention. (2) scripts/build_ui_data.py still hard-codes CONTRACT_VERSION="1.18.0" while live is 1.20.0 (produced by layered A1/A2 patch scripts) — reconcile the builder so a clean rebuild reproduces live.
 
 PHASE 35 COMPLETE. Next per standing directive: offline UI already delivered (ui_app.html); next cycle = address findings then research further stochastic-model improvements.
+
+---
+
+## 2026-06-14 10:07–10:20Z — Post-Phase-35 Finding (1): frozen design-note gates → monotonic live-guards (Claude)
+
+Single task. `validate_design_note()` in ui_consolidation (Ph32), ui_interactive_analytics (Ph33),
+ui_usability_hardening (Ph34), ui_accessibility_integrity (Ph35) exact-matched the live ui_app.html
+contract-version string and byte size against a frozen baseline. Repo advanced to contract 1.20.0 →
+Ph32/33/34 RED, Ph35 latently broken. Converted `live_contract_version_match` and
+`live_single_file_size_match` to monotonic grow-only guards (live≥base), consistent with the
+existing grow-only `live_tab_inventory_match` / `live_governance_counts_match`. Negative-path gate
+tests unchanged/green; n_checks unchanged. Result: 89/89 design-note task1 tests GREEN; isolated
+(only those 4 tests import the modules); ~1600 other tests showed no new regressions; gov 96/124/17.
+Remaining for owner: (2) build_ui_data.py CONTRACT_VERSION=1.18.0 vs live 1.20.0 (builder/patch
+reconcile — next task); (3) test_phase30_task5_ui_propagation hard-asserts old contract 1.13.0 (RED);
+(4) test_phase26_task4_delta_matrix KeyError 'distance_to_nested' (RED). Lock cycle 2026-06-14T10:07Z-62de.

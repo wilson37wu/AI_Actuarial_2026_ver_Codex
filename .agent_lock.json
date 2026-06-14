@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-14T09:31:18Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-14T10:07Z-62de",
+  "started_at": "2026-06-14T10:07:40Z",
+  "ttl_minutes": 120,
+  "task": "post-Phase-35 findings cleanup (build_ui_data contract reconcile + design-note gate)",
+  "note": ""
 }

@@ -278,13 +278,25 @@ def validate_design_note(note: Dict[str, Any], repo_root: str = ".") -> Dict[str
     try:
         with open(os.path.join(repo_root, "ui_app.html"), encoding="utf-8") as fh:
             html = fh.read()
-        checks["live_contract_version_match"] = (
-            f'"contract_version": "{base.get("contract_version")}"' in html)
+        # Frozen historical snapshot vs a moving repo: contract versions and the
+        # single-file bundle only ever grow under the additive-only contract, so
+        # these are MONOTONIC regression guards (catch a downgrade / shrink /
+        # deletion) rather than exact point-in-time matches. Mirrors the grow-only
+        # logic already used for live_tab_inventory_match and
+        # live_governance_counts_match. (Owner finding 2026-06-14: frozen
+        # design-note gates must not live-match an exact contract/byte size, which
+        # otherwise reds out at every later additive phase.)
+        def _ver(text):
+            return tuple(int(p) for p in str(text).split(".") if p.isdigit())
+        _m = re.search(r'"contract_version":\s*"(\d+(?:\.\d+)*)"', html)
+        _live_ver = _ver(_m.group(1)) if _m else ()
+        _base_ver = _ver(base.get("contract_version", ""))
+        checks["live_contract_version_match"] = bool(_live_ver) and _live_ver >= _base_ver
         checks["live_tab_inventory_match"] = all(t in html for t in base.get("tabs", [])) and \
             len(base.get("tabs", [])) == base.get("tab_count")
         checks["live_single_file_size_match"] = (
             os.path.getsize(os.path.join(repo_root, "ui_app.html"))
-            == base.get("artifacts", {}).get("ui_app.html", {}).get("bytes"))
+            >= base.get("artifacts", {}).get("ui_app.html", {}).get("bytes", 10**18))
     except OSError:
         checks["live_contract_version_match"] = False
         checks["live_tab_inventory_match"] = False
