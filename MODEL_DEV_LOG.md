@@ -9959,3 +9959,47 @@ Next: Phase 35 Task 2 = A1 (WCAG 2.1 AA keyboard + contrast pass). One task per 
 - NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted.
 - Reports: `docs/validation/PHASE35_TASK2_A1_WCAG.{json,md}`, `docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p35t2.md`.
 - **Next:** Phase 35 Task 3 = A2 (per-section SHA-256 digest + root digest in `contract_manifest`; in-browser verifier, no network; ADDITIVE 1.19.0 -> 1.20.0).
+
+---
+
+## 2026-06-14 (Claude Cowork, 06:00/18:00 UTC window) - Phase 35 Task 3 (gap A2) COMPLETE
+
+**Per-section SHA-256 content digest + in-browser tamper-evident verifier** on the
+zero-install offline UI. ADDITIVE contract bump **1.19.0 -> 1.20.0** (manifest-schema
+addition only; NO new top-level key; every pre-existing `ui_data.json` key bit-identical).
+
+- **`scripts/build_phase35_task3_a2_digests.py` (new):** SHA-256 over a canonical
+  serialisation of every top-level section (all keys except `contract_manifest`) +
+  a `root_digest` over the canonical sorted section-digest map, written INSIDE
+  `contract_manifest` (`digest_algo`/`section_digests`/`root_digest`/`digest_scope`/
+  `digest_generated_by`). The build digests are produced by EXECUTING THE SAME
+  canonical+SHA-256 JS embedded in the page (run in Node) -> the browser recompute
+  agrees byte-for-byte by construction (no Python/JS float-format divergence).
+- **`ui_app.html`:** self-contained pure-JS SHA-256 + canonical serialiser +
+  `renderIntegrityVerifierHtml()` - the Integrity (H1) panel RECOMPUTES the section
+  digests in the browser (NO network, NO storage API, `file://`-safe) and renders a
+  verified/altered table + an INTEGRITY VERIFIED / CONTENT ALTERED badge. Recomputes
+  a content digest, not a model figure. Closes the content-integrity gap Phase 34 H1
+  left (keys PRESENT vs CONTENT unaltered).
+- **Tests:** pure-JS SHA-256 passes NIST `abc`+empty vectors; build-time Node
+  cross-check (embedded payload recomputes to identical digests, root
+  `2d7b03f982a8980dbd5dc8355709d74bb795a273470b27a1ab9a4cfafb6ac117`); ui_app
+  self-test **350 -> 358** ok:true 0/0 (jsdom executes the SHA-256, proving the
+  in-browser recompute matches; 23 sections verified); tamper test mutating `summary`
+  flips the badge to CONTENT ALTERED; all 8 offline self-tests green; pytest
+  `tests/test_phase35_task3_a2_digests.py` 9/9 (incl. independent pure-Python
+  root_digest re-derivation); 0 external refs; `model_result_viewer.html`/
+  `combined_model_app.html`/`viewer_data.json` unchanged.
+- **Governance:** ChangeRecord `60ee85ae8ebc4d09a09a01f0e75612b8` (code_change,
+  OWNER_REVIEW); records 94->95; audit 122->123; `verify_all` True.
+- NO model parameter changes; Phase 30 binding stop-rule stands; MR-016/MR-017 owner
+  decision not pre-empted; governed frozen-t headline 39975.654628199336 untouched.
+- Reports: `docs/validation/PHASE35_TASK3_A2_DIGESTS.{json,md}`,
+  `docs/cycle_status/LATEST_CYCLE_STATUS_2026-06-14_p35t3.md`.
+- Env note: the in-place file-tool editor truncated `ui_app_self_test.cjs` mid-write
+  (known virtiofs hazard); recovered by restoring pristine from git and re-applying
+  edits off-mount in `/tmp`, then `cp`-ing back. Always verify line counts when the
+  file tool writes a large mounted file.
+- **Next:** Phase 35 Task 4 = A3 (one-page printable ASOP-41 model-card cover;
+  presentation only, bit-for-bit from the snapshot, owner-decision BLANK). Then
+  Task 5 = phase summary + consolidated re-audit + PHASE 35 COMPLETE.

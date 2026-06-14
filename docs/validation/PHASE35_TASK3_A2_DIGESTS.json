@@ -1,0 +1,44 @@
+{
+  "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening",
+  "task": "Task 3 (gap A2) - per-section SHA-256 content digest + in-browser tamper-evident verifier",
+  "date_utc": "2026-06-14T07:00Z window (Claude Cowork)",
+  "verdict": "PASS",
+  "contract": "1.19.0 -> 1.20.0 (ADDITIVE; manifest-schema only)",
+  "digest_algo": "sha256",
+  "sections_digested": 23,
+  "root_digest": "2d7b03f982a8980dbd5dc8355709d74bb795a273470b27a1ab9a4cfafb6ac117",
+  "design": {
+    "scope": "sha256 over canonical(JSON) of every top-level section except contract_manifest; root_digest = sha256 over canonical(section_digests)",
+    "canonical": "recursive JSON, object keys sorted, compact separators, JS-native number formatting (String(Number))",
+    "agreement_guarantee": "build-time digests produced by executing the SAME canonical+SHA-256 JS that is embedded in the page (run in Node) -> browser recompute agrees byte-for-byte by construction; no Python/JS float-format divergence possible",
+    "no_new_top_level_key": true,
+    "fields_added_inside_contract_manifest": ["digest_algo", "section_digests", "root_digest", "digest_scope", "digest_generated_by"]
+  },
+  "in_browser_verifier": {
+    "recompute": "pure-JS SHA-256 + canonical serialiser embedded in ui_app.html",
+    "network": false,
+    "storage_api": false,
+    "file_protocol_safe": true,
+    "renders": "verified/altered per-section table + Overall INTEGRITY VERIFIED / CONTENT ALTERED badge in the Integrity (H1) panel",
+    "recomputes_model_figure": false
+  },
+  "verification": {
+    "pure_js_sha256_nist_vectors": "'abc' + empty-string PASS",
+    "build_time_node_crosscheck": "embedded payload recomputes to identical section_digests + root_digest",
+    "ui_app_self_test_checks": "350 -> 358 (ok:true, 0 network, 0 JS errors)",
+    "jsdom_in_browser_recompute": "all 23 sections verified (22 ok rows shown + version section), badge INTEGRITY VERIFIED",
+    "tamper_test": "mutating the 'summary' section flips badge to CONTENT ALTERED with 1 altered row",
+    "offline_self_tests": "8/8 ok:true (ui_app 358, offline_viewer 11, combined_gui 27, userrun 9, distribution 9, integrity 10, search_deeplink 18, bundle_printall 21)",
+    "pytest": "tests/test_phase35_task3_a2_digests.py 9/9 (incl. independent Python root-digest re-derivation)",
+    "external_refs": 0,
+    "unchanged_artifacts": ["model_result_viewer.html", "combined_model_app.html", "viewer_data.json"]
+  },
+  "governance": {
+    "change_record": "60ee85ae8ebc4d09a09a01f0e75612b8",
+    "status": "OWNER_REVIEW",
+    "records": "94 -> 95",
+    "audit_entries": "122 -> 123",
+    "audit_integrity_ok": true
+  },
+  "constraints": "NO model parameter changes; Phase 30 binding stop-rule honoured; MR-016/MR-017 owner decision not pre-empted; governed frozen-t headline 39975.654628199336 untouched"
+}

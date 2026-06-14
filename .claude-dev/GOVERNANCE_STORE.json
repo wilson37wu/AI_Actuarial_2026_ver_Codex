@@ -2741,6 +2741,29 @@
       "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening",
       "digest": "ac6f03479890c3fa74f7c7b69db4c6da27e2121bc8d0fc06fb52ee5c18c0a607",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "e35ad43342fb43a785d302aca4c3549c",
+      "timestamp": "2026-06-14T07:27:39.878171+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase 35 Task 3 per-section SHA-256 content digest + in-browser tamper-evident verifier (gap A2); additive contract 1.19.0 -> 1.20.0 (manifest digest fields); governed figures bit-identical",
+      "details": {
+        "record_id": "60ee85ae8ebc4d09a09a01f0e75612b8",
+        "contract": "1.19.0->1.20.0",
+        "sections_digested": 23,
+        "root_digest": "2d7b03f982a8980dbd5dc8355709d74bb795a273470b27a1ab9a4cfafb6ac117",
+        "ui_app_self_test_checks": 358,
+        "affected_components": [
+          "scripts/build_phase35_task3_a2_digests.py",
+          "scripts/ui_app_self_test.cjs",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening",
+      "digest": "8d861db534867d8f576c8f71f7b96ccaa85bf81d5dfa45bc6d7eb936f8b8cd30",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -8644,6 +8667,65 @@
           "actor": "ClaudeCowork_AutoDev",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Gap A1 of the Phase 35 design note is closed: the offline UI now carries a formal, build-time-MEASURED WCAG 2.1 AA contrast record (default + high-contrast themes) and CSS-only :focus-visible on every interactive control, rendered read-only in the Integrity panel. PRESENTATION/ROBUSTNESS ONLY - the MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
+        }
+      ],
+      "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening"
+    },
+    {
+      "record_id": "60ee85ae8ebc4d09a09a01f0e75612b8",
+      "created_at": "2026-06-14T07:27:39.878105+00:00",
+      "title": "Phase 35 Task 3 (gap A2) - per-section SHA-256 content digest + in-browser tamper-evident verifier on the zero-install offline UI",
+      "description": "Closed gap A2 of the Phase 35 design note: per-section cryptographic content digests + an in-browser tamper-evident verifier. Phase 34 Task 2 (gap H1) proved required data SECTIONS are PRESENT and the contract version matches, but could not detect whether the CONTENT of a section had been altered; A2 closes that. (1) scripts/build_phase35_task3_a2_digests.py computes, at build time, a SHA-256 over a canonical serialisation of every top-level section (every key except contract_manifest) and a root_digest over the canonical sorted section-digest map, written INSIDE contract_manifest as section_digests + root_digest + digest_algo='sha256' - NO new top-level key; every pre-existing ui_data key renders bit-identically. (2) The contract bumps 1.19.0 -> 1.20.0 (manifest-schema addition). (3) The build-time digests are produced by EXECUTING THE SAME canonical+SHA-256 JS that is embedded in the page (run in Node), so the browser recompute agrees byte-for-byte by construction - no Python/JS float-formatting divergence is possible. (4) ui_app.html gained a self-contained pure-JS SHA-256 + canonical serialiser and renderIntegrityVerifierHtml(): on load the Integrity (H1) panel RECOMPUTES the section digests in the browser from the embedded payload (NO network, NO storage API, works under file://) and renders a verified/altered table + an overall INTEGRITY VERIFIED / CONTENT ALTERED badge. It recomputes a content DIGEST, not a model figure. (5) Tests: 8 new ui_app self-test checks (350 -> 358, ok:true, 0 network / 0 JS errors) covering the embedded digests, full-section coverage, the rendered verifier table, and - because jsdom executes the pure-JS SHA-256 - that the in-browser recompute genuinely matches the embedded digests; a separate tamper test confirms a mutated section flips the badge to CONTENT ALTERED. All eight offline self-tests remain ok:true 0/0. Zero-install preserved (0 external refs). NO model parameter changes; binding stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_phase35_task3_a2_digests.py",
+        "scripts/ui_app_self_test.cjs",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "SOA ASOP 41 s3.2 (clear and complete communication of actuarial findings)",
+        "SOA ASOP 23 (data quality / integrity of model inputs and outputs)",
+        "FIPS 180-4 (SHA-256 secure hash standard)",
+        "Model risk governance - evidence tamper-evidence / reproducibility"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.19.0",
+        "content_digests": false,
+        "integrity_scope": "section PRESENCE + contract version only (H1)",
+        "ui_app_self_test_checks": 350,
+        "offline_self_tests": 8
+      },
+      "after_snapshot": {
+        "ui_contract": "1.20.0",
+        "content_digests": true,
+        "digest_algo": "sha256",
+        "sections_digested": 23,
+        "root_digest": "2d7b03f982a8980dbd5dc8355709d74bb795a273470b27a1ab9a4cfafb6ac117",
+        "integrity_scope": "section PRESENCE + per-section CONTENT tamper-evidence",
+        "in_browser_recompute": true,
+        "network_or_storage_used": false,
+        "ui_app_self_test_checks": 358,
+        "offline_self_tests": 8
+      },
+      "impact_assessment": "Evidence-integrity / display-layer pass only. ADDITIVE contract change (manifest digest fields); the verifier recomputes a content digest, not any model figure, and the governed frozen-t headline and every other governed read-out are bit-identical. The MR-016/MR-017 dependence decision is not pre-empted. Zero-install invariants preserved (0 external refs, single self-contained HTML, no storage API).",
+      "quantitative_impact": "No governed capital figure changed. Contract 1.19.0 -> 1.20.0 (additive contract_manifest.section_digests/root_digest/digest_algo). 23 sections digested (SHA-256); root_digest 2d7b03f982a8980d.... In-browser recompute matches the embedded digests; tamper test flips the badge. ui_app self-test 350 -> 358 checks ok:true 0/0; all 8 offline self-tests green. External refs remain 0.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-14T07:27:39.878143+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: additive contract 1.19.0 -> 1.20.0 (per-section SHA-256 section_digests + root_digest + digest_algo inside contract_manifest; no new top-level key; pre-existing keys bit-identical); build digests produced by the SAME canonical+SHA-256 JS the browser runs (Node), so in-browser recompute matches by construction; pure-JS SHA-256 passes the NIST 'abc' + empty-string vectors; jsdom recompute all-verified and a tamper test flips the badge to CONTENT ALTERED; ui_app self-test 358 checks ok:true 0/0 plus 7 other offline suites green; 0 external refs; no network / no storage API; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-14T07:27:39.878154+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Gap A2 of the Phase 35 design note is closed: the offline UI now carries a build-time SHA-256 digest of every data section and recomputes those digests IN THE BROWSER (no network, no storage) to prove the embedded content is unaltered, rendered as a verified/altered table + badge in the Integrity panel. EVIDENCE-INTEGRITY / PRESENTATION ONLY - the MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
         }
       ],
       "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening"

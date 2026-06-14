@@ -570,7 +570,42 @@ setTimeout(() => {
     /High-contrast toggle/.test(intText);
   const a1DisplayOnlyStated = /recomputes no model figure/.test(intText) &&
     /contrast ratio is not a model figure/.test(intText);
-  const a1A11yTables = document.querySelectorAll('#integrity table.a11ytbl').length;
+  const a1A11yTables = document.querySelectorAll('#integrity table.a11ytbl:not(.intverify)').length;
+
+  // Phase 35 Task 3 (gap A2): per-section SHA-256 content digest + in-browser
+  // tamper-evident verifier. The build embeds a digest of every top-level
+  // section (except contract_manifest); the page RECOMPUTES them in-browser
+  // from the embedded payload and renders a verified/altered table + badge.
+  const a2Manifest = uiDataObj && uiDataObj.contract_manifest;
+  const a2SectionDigests = a2Manifest && a2Manifest.section_digests;
+  const a2TopKeysExclManifest = uiDataObj
+    ? Object.keys(uiDataObj).filter(k => k !== "contract_manifest").sort()
+    : [];
+  const a2DigestsPresent = !!a2SectionDigests && typeof a2SectionDigests === "object" &&
+    typeof a2Manifest.root_digest === "string" && a2Manifest.root_digest.length === 64 &&
+    a2Manifest.digest_algo === "sha256";
+  const a2DigestsHex = a2DigestsPresent &&
+    Object.keys(a2SectionDigests).every(k => /^[0-9a-f]{64}$/.test(a2SectionDigests[k]));
+  const a2DigestsCoverAllSections = a2DigestsPresent &&
+    JSON.stringify(Object.keys(a2SectionDigests).sort()) === JSON.stringify(a2TopKeysExclManifest);
+  const a2VerifierRows = document.querySelectorAll('#integrity table.intverify tbody tr').length;
+  const a2VerifierAltRows = document.querySelectorAll('#integrity table.intverify tbody tr[data-int-verify="alt"]').length;
+  const a2VerifierOkRows = document.querySelectorAll('#integrity table.intverify tbody tr[data-int-verify="ok"]').length;
+  const a2VerifierTableRendered = /Content integrity/.test(intText) &&
+    /per-section SHA-256/.test(intText) && a2VerifierRows === a2TopKeysExclManifest.length &&
+    a2VerifierRows > 0;
+  // The verifier executes the pure-JS SHA-256 under jsdom; if any recomputed
+  // digest diverged from the build digest the badge would read ALTERED. So this
+  // asserts the in-browser recompute genuinely matches the embedded digests.
+  const a2AllSectionsVerified = a2VerifierRows > 0 && a2VerifierAltRows === 0 &&
+    a2VerifierOkRows === a2VerifierRows && /INTEGRITY VERIFIED/.test(intText) &&
+    !/CONTENT ALTERED/.test(intText);
+  const a2RootDigestShown = a2DigestsPresent &&
+    intText.indexOf(a2Manifest.root_digest.slice(0, 24)) >= 0;
+  const a2HelpersEmbedded = /_ciSectionDigests/.test(html) && /_ciSha256/.test(html) &&
+    /renderIntegrityVerifierHtml/.test(html);
+  const a2NoNetworkStated = /no network/.test(intText) &&
+    /recomputes a content digest/.test(intText);
 
   const checks = {
     // Phase 33 Task 5 (gap G4): accessibility & usability pass
@@ -844,7 +879,16 @@ setTimeout(() => {
     // Phase 34 Task 2 (gap H1): self-describing data-contract guard.
     h1IntegrityTabPresent: !!intTab,
     h1IntegrityTabText: /Data-contract integrity/.test(intText),
-    h1ContractIs119: !!uiDataObj && uiDataObj.contract_version === "1.19.0",
+    h1ContractIs120: !!uiDataObj && uiDataObj.contract_version === "1.20.0",
+    // Phase 35 Task 3 (gap A2): content-integrity digests + in-browser verifier
+    a2DigestsPresent,
+    a2DigestsHex,
+    a2DigestsCoverAllSections,
+    a2VerifierTableRendered,
+    a2AllSectionsVerified,
+    a2RootDigestShown,
+    a2HelpersEmbedded,
+    a2NoNetworkStated,
     h1ManifestEmbedded: !!intManifest && intManifest.expected_contract_version === uiDataObj.contract_version &&
       Array.isArray(intManifest.required_top_level_keys) && intManifest.required_top_level_keys.length >= 20,
     h1ManifestExcludesItself: !!intManifest && intManifest.required_top_level_keys.indexOf("contract_manifest") === -1,
@@ -1187,7 +1231,15 @@ setTimeout(() => {
     checks.g4NoDuplicateCaptions &&
     checks.h1IntegrityTabPresent &&
     checks.h1IntegrityTabText &&
-    checks.h1ContractIs119 &&
+    checks.h1ContractIs120 &&
+    checks.a2DigestsPresent &&
+    checks.a2DigestsHex &&
+    checks.a2DigestsCoverAllSections &&
+    checks.a2VerifierTableRendered &&
+    checks.a2AllSectionsVerified &&
+    checks.a2RootDigestShown &&
+    checks.a2HelpersEmbedded &&
+    checks.a2NoNetworkStated &&
     checks.a1FocusVisibleComprehensive &&
     checks.a1AuditEmbedded &&
     checks.a1PairsBothThemes &&
