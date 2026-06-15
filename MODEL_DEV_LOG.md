@@ -10488,3 +10488,33 @@ collection errors are environmental (numpy/scipy absent).
 Stop-rule: Phase 30 compliant (no copula, no model parameter). Efficiency/diagnostic
 pool MR-CAL-1+MR-VR-1+MR-VR-2 EXHAUSTED. NEXT = owner pivot (MR-LONGEV-1 / packaging
 A|B|C / freeze) or resume Phase IGUI.
+
+---
+
+## 2026-06-16 (~18:08 UTC) - Owner-pivot research cycle - no model-form change - PASS
+
+**Agent:** Claude Cowork. **Lock:** 2026-06-15T18:08Z-a6e1. Frontier = owner pivot.
+
+Auto-admissible development frontier remains EXHAUSTED (efficiency/diagnostic pool
+MR-CAL-1 + MR-VR-1 + MR-VR-2 closed under Phase 30 stop-rule; both VR panels live at
+contract 1.23.0). Per the standing instruction to research further improvement and
+update the task prompt for next execution, this cycle produced a **ranked, researched
+owner-decision roadmap** instead of repeating a bare status-only report.
+
+Added (documentation-only, additive): `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260616.md`
+(ranked menu: 1 MR-LONGEV-1 longevity 5th driver Lee-Carter/CBD additive sign-off-required
+RECOMMENDED; 2 LSMC proxy for SCR sign-off; 3 resume Phase IGUI non-model-form auto-runnable
+safest; 4 packaging A/B/C; 5 freeze; grounded in current capital-modelling + 2025 ML-LSMC
+literature); refreshed `MODEL_DEV_TASK_PROMPT.md` NEXT-EXECUTION POINTER; new state key
+`cycle_2026_06_16_owner_pivot_research`; `docs/cycle_status/LATEST_CYCLE_STATUS_20260616_owner_pivot_research.md`.
+
+Verification (off-mount /tmp clone of origin/main): `ui_app_self_test.cjs` **ok:true**,
+0 JS errors / 0 network / 0 external refs (zero-install preserved); `ui_data.json`
+contract **1.23.0**, `postigui_vr2` + `postigui_vr` present, governed headline
+**39,975.654628199336** bit-identical. Python contract suite not re-run (numpy/scipy/
+pytest absent, no network); 59/59 green in originating dev env per prior cycle.
+
+Stop-rule: Phase 30 compliant; no copula/parameter change; in_progress pointer unchanged.
+Pre-existing flags carried (not auto-fixed): contract-inventory test-gate drift (1.21.0
+vs >=1.22.0) auto-fixable <1 cycle if owner approves; MR-016/MR-017 owner-pending; ~29
+environmental pytest collection errors. NEXT = owner pivot decision.

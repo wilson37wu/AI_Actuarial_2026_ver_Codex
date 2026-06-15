@@ -46,6 +46,15 @@ force-push `main`. When in doubt, **yield**.
 > Until the owner chooses, a run should produce a status report and NOT start a
 > model-form change. Authoritative pointer remains `.claude-dev/MODEL_DEV_STATE.json`.
 > Pre-existing (flagged, not auto-fixed): `test_phase36_task5_phase_summary::test_contract_inventory` is RED on origin (frozen report pins 1.21.0 vs test 1.22.0).
+>
+> **2026-06-16 (2nd window, claude) — owner-decision research added.** No model-form
+> task auto-ran (frontier = owner pivot). Produced a ranked improvement roadmap:
+> `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260616.md`. Owner picks ONE:
+> (a) MR-LONGEV-1 longevity 5th driver — Lee-Carter/CBD, additive, **sign-off required**
+> (RECOMMENDED on materiality); (b) LSMC proxy for SCR (sign-off); (c) **resume Phase
+> IGUI** — non-model-form, auto-runnable, safest productive pivot; (d) packaging A/B/C
+> (auto-runnable); (e) freeze. Until the owner chooses, runs produce status/research
+> only and do NOT start a model-form change.
 
 > **OWNER PRIORITY OVERRIDE — SATISFIED (2026-06-11, cycle 28):** Phase UIL
 > (user-input loader + run orchestrator, workstream B of
