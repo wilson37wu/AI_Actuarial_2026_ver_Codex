@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T01:09Z-cdb8",
-  "started_at": "2026-06-15T01:09:03Z",
-  "ttl_minutes": 120,
-  "task": "Phase IGUI Task 3: model points + in-force ingest",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T01:28:17Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
