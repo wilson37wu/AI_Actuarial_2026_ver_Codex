@@ -3176,6 +3176,22 @@
       "phase": "Post-Phase-IGUI: Model-Improvement Candidate Implementation",
       "digest": "80914586b11e6dda061e332abc6ef4cd2912a4fb1a598b2774942a0f36cc69a3",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "ce00cf11713644a58476b5857b8ce4a5",
+      "timestamp": "2026-06-15T11:14:13.347273+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "PostIGUITask3VarianceReductionDesignNote",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Post-Phase-IGUI Task 3 candidate design note",
+      "details": {
+        "record_id": "d992288e6b6549269510a6eb4428419f",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "candidate_id": "MR-VR-1"
+      },
+      "phase": "Post-Phase-IGUI: Model-Improvement Candidate Pre-Registration",
+      "digest": "e016751458f4df27213ff9eed87ebbb4c7f907f0bad421f3f6b4fe35e9668e75",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -10351,6 +10367,70 @@
         }
       ],
       "phase": "Post-Phase-IGUI: Model-Improvement Candidate Implementation"
+    },
+    {
+      "record_id": "d992288e6b6549269510a6eb4428419f",
+      "created_at": "2026-06-15T11:14:13.347165+00:00",
+      "title": "Post-Phase-IGUI Task 3 - design note: pre-register ONE model-improvement candidate (MR-VR-1 inner-path antithetic/CRN variance reduction for the TVOG estimator, Phase 30 stop-rule bound)",
+      "description": "Design note pre-registering exactly ONE stochastic-model improvement candidate (MR-VR-1: inner-path antithetic/CRN variance reduction for the TVOG estimator) with six fixed acceptance gates and a governed-headline invariance requirement. Efficiency study only, no estimator adoption; MR-CAL-1 is COMPLETE (Task 2) and MR-LONGEV-1 (longevity 5th driver) stays deferred. No capital output changed; no new copula-structure candidate (Phase 30 binding stop-rule); MR-016/MR-017 untouched.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/projection/variance_reduction_design.py (NEW, this scaffold)",
+        "tests/test_postigui_task3_design_note.py",
+        "scripts/build_postigui_task3_design_note.py",
+        "docs/validation/POSTIGUI_TASK3_DESIGN_NOTE.{json,md}",
+        "docs/POSTIGUI_VARIANCE_REDUCTION_DESIGN_CARD.md"
+      ],
+      "standard_references": [
+        "Glasserman (2004) Monte Carlo Methods in Financial Engineering, ch. 4 (variance reduction: antithetics, common random numbers)",
+        "L'Ecuyer (1994) Efficiency improvement and variance reduction; RQMC",
+        "Boyle, Broadie & Glasserman (1997) Monte Carlo methods for security pricing",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation)",
+        "IFoA Model Practice Note (MPN) section 4 (documentation, independent review)",
+        "Solvency II Delegated Regulation Article 124 (validation standards)"
+      ],
+      "before_snapshot": {
+        "frontier": "Post-Phase-IGUI Task 2 COMPLETE (MR-CAL-1 implemented)",
+        "mr016": "OPEN (stop-rule applied; dependence-FORM escalation ended)",
+        "mr017": "OPEN (vine-form limitations)",
+        "next_task": "Post-Phase-IGUI Task 3 model-improvement candidate design note"
+      },
+      "after_snapshot": {
+        "candidate_id": "MR-VR-1",
+        "completed_prior": "MR-CAL-1",
+        "next_candidate": "MR-LONGEV-1",
+        "acceptance_gates": [
+          "G1",
+          "G2",
+          "G3",
+          "G4",
+          "G5",
+          "G6"
+        ],
+        "validation_gate_ok": true,
+        "implementation": "DEFERRED to next cycle (gated)"
+      },
+      "impact_assessment": "Governance only. Freezes the candidate identity, scope and acceptance gates before any implementation; the governed frozen-t headline is unchanged and no model parameter moves. Only the Monte Carlo sampling scheme of an existing estimator would change. Stop-rule honoured (no copula structure touched).",
+      "quantitative_impact": "Registered references only: governed headline 39,975.654628; nested 46,638.9; VR ratio precedents (outer basis) {sobol 2.76x-7.1x helpful / antithetic 0.72x-0.78x expected-ineffective at 99.5%}. No governed capital figures changed.",
+      "status": "OWNER_REVIEW",
+      "author": "PostIGUITask3VarianceReductionDesignNote",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T11:14:13.347218+00:00",
+          "actor": "PostIGUITask3VarianceReductionDesignNote",
+          "status": "PEER_REVIEW",
+          "comments": "Candidate pre-registration + six fixed gates + sequencing; scaffold tests added."
+        },
+        {
+          "timestamp": "2026-06-15T11:14:13.347237+00:00",
+          "actor": "PostIGUITask3VarianceReductionDesignNote",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: pure governance pre-registration; implementation deferred to next cycle."
+        }
+      ],
+      "phase": "Post-Phase-IGUI: Model-Improvement Candidate Pre-Registration"
     }
   ],
   "risk_register": [

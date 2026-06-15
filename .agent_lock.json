@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-15T10:19:22Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-15T11:09Z-ca21",
+  "started_at": "2026-06-15T11:09:17Z",
+  "ttl_minutes": 120,
+  "task": "Post-Phase-IGUI Task 3: pre-register MR-VR-1 variance-reduction design note",
+  "note": ""
 }
