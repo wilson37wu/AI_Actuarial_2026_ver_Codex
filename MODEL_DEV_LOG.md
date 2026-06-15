@@ -10418,3 +10418,15 @@ the VR study (model-output-only), OR owner pivot to MR-LONGEV-1 (owner sign-off)
 **ENV/PROCESS NOTE:** the persistent mount working-tree was STALE/behind origin/main (missing the Task-4 outputs) and a mount file-write truncated `ui_app_self_test.cjs` mid-edit (known disk-pressure corruption). All build + verification was done in the FRESH /tmp clone (authoritative origin/main) per AGENT_COORDINATION.md, borrowing the mount `node_modules` (jsdom) via `NODE_PATH`; the truncated file was restored from git and edits re-applied off-mount. Recommend a host-side mount re-sync to origin/main + freeing `/sessions` disk.
 
 **NEXT executable task (the single in_progress item): Post-Phase-IGUI Task 6 — design-note-first.** Diagnostics/efficiency candidate pool under the Phase 30 stop-rule now EXHAUSTED (MR-CAL-1 + MR-VR-1 COMPLETE and surfaced offline). PRE-REGISTER the next admissible numerical-efficiency / calibration-diagnostic candidate (e.g. RQMC/control-variates for the OUTER capital loop; calibration-stability/PIT-drift monitor on the frozen margins) with fixed acceptance gates; OR if confirmed exhausted, author a governed OWNER-DECISION note recommending a pivot to MR-LONGEV-1 (parameter-adding model-FORM change, owner sign-off required) or packaging A/B/C. Design note (OWNER_REVIEW) only; implementation deferred. MR-016/MR-017 owner-pending.
+
+---
+
+## 2026-06-15 — Post-Phase-IGUI Task 6 (MR-VR-2 outer-loop efficiency design note) — claude
+
+**Verdict: PASS.** Design-note-first. Pre-registered ONE admissible numerical-efficiency candidate **MR-VR-2** (RQMC + control-variates variance reduction for the OUTER capital/SCR loop) under six fixed gates G1–G6. Pure governance; NO model parameter change; NO copula-structure candidate (Phase 30 stop-rule); implementation DEFERRED to Task 7. Governed headline 39,975.654628199336 frozen.
+
+Rationale: MR-VR-1 (inner-path) helped the mean-TVOG target hugely (Sobol 2241×/CRN 18.9×/antithetic 1.88×) but recorded antithetic INEFFECTIVE (1.31×) at the 99.5% quantile = the OUTER loop target; RQMC + an unbiased closed-form/proxy control variate are the bias-free tail levers.
+
+Deliverables: `par_model_v2/projection/outer_loop_efficiency_design.py`, `scripts/build_postigui_task6_design_note.py`, `tests/test_postigui_task6_design_note.py` (8 checks), `docs/validation/POSTIGUI_TASK6_DESIGN_NOTE.{json,md}`, `docs/POSTIGUI_OUTER_LOOP_EFFICIENCY_DESIGN_CARD.md`.
+
+Verification: self-consistency 22/22; tests 8/8; governance ChangeRecord `78ae269bdf63466787b030cc59029b43` OWNER_REVIEW (records 115→116, audit 143→144, integrity OK); idempotent. Owner-decision note: efficiency pool not yet exhausted; after MR-VR-2 the next substantive work MR-LONGEV-1 is parameter-adding (owner sign-off). Next = Task 7 implement MR-VR-2 OR owner pivot.

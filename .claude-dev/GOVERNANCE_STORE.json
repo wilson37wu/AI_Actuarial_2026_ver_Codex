@@ -3238,6 +3238,22 @@
       "phase": "Post-Phase-IGUI: Stochastic-model efficiency candidates (MR-VR-1)",
       "digest": "7e1e8dd9c068ec2ac4fc24ce39844bec834b498905d15f3c9afad8a0149b1f8c",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "71d8ccf1d31042bd82a616ccff7d628c",
+      "timestamp": "2026-06-15T14:13:47.081849+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "PostIGUITask6OuterLoopEfficiencyDesignNote",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Post-Phase-IGUI Task 6 candidate design note",
+      "details": {
+        "record_id": "78ae269bdf63466787b030cc59029b43",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "candidate_id": "MR-VR-2"
+      },
+      "phase": "Post-Phase-IGUI: Model-Improvement Candidate Pre-Registration",
+      "digest": "b5ef95fbddad372045fcb0c1e53c292a8497b1685d94ea52350da36afba2fc0d",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -10605,6 +10621,74 @@
         }
       ],
       "phase": "Post-Phase-IGUI: Stochastic-model efficiency candidates (MR-VR-1)"
+    },
+    {
+      "record_id": "78ae269bdf63466787b030cc59029b43",
+      "created_at": "2026-06-15T14:13:47.081615+00:00",
+      "title": "Post-Phase-IGUI Task 6 - design note: pre-register ONE model-improvement candidate (MR-VR-2 RQMC + control-variates variance reduction for the OUTER capital/SCR loop, Phase 30 stop-rule bound)",
+      "description": "Design note pre-registering exactly ONE stochastic-model improvement candidate (MR-VR-2: RQMC + control-variates variance reduction for the OUTER capital/SCR loop) with six fixed acceptance gates and a governed-headline invariance requirement. Efficiency study only, no estimator adoption; MR-CAL-1 and MR-VR-1 are COMPLETE and MR-LONGEV-1 (longevity 5th driver) stays deferred. No capital output changed; no new copula-structure candidate (Phase 30 binding stop-rule); MR-016/MR-017 untouched.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/projection/outer_loop_efficiency_design.py (NEW, this scaffold)",
+        "tests/test_postigui_task6_design_note.py",
+        "scripts/build_postigui_task6_design_note.py",
+        "docs/validation/POSTIGUI_TASK6_DESIGN_NOTE.{json,md}",
+        "docs/POSTIGUI_OUTER_LOOP_EFFICIENCY_DESIGN_CARD.md"
+      ],
+      "standard_references": [
+        "Glasserman (2004) Monte Carlo Methods in Financial Engineering, ch. 4 (control variates) and ch. 5 (quasi-Monte Carlo)",
+        "L'Ecuyer (1994) Efficiency improvement and variance reduction; RQMC",
+        "Owen (1997) Scrambled net variance for integrals of smooth functions",
+        "Bauer, Reuss & Singer (2012) On the calculation of the Solvency Capital Requirement based on nested simulations (outer-loop efficiency)",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation)",
+        "IFoA Model Practice Note (MPN) section 4 (documentation, independent review)",
+        "Solvency II Delegated Regulation Article 124 (validation standards)"
+      ],
+      "before_snapshot": {
+        "frontier": "Post-Phase-IGUI Task 5 COMPLETE (MR-VR-1 offline-UI panel)",
+        "mr016": "OPEN (stop-rule applied; dependence-FORM escalation ended)",
+        "mr017": "OPEN (vine-form limitations)",
+        "next_task": "Post-Phase-IGUI Task 6 model-improvement candidate design note"
+      },
+      "after_snapshot": {
+        "candidate_id": "MR-VR-2",
+        "completed_pool": [
+          "MR-CAL-1",
+          "MR-VR-1"
+        ],
+        "next_candidate": "MR-LONGEV-1",
+        "acceptance_gates": [
+          "G1",
+          "G2",
+          "G3",
+          "G4",
+          "G5",
+          "G6"
+        ],
+        "validation_gate_ok": true,
+        "implementation": "DEFERRED to next cycle (gated)"
+      },
+      "impact_assessment": "Governance only. Freezes the candidate identity, scope and acceptance gates before any implementation; the governed frozen-t headline is unchanged and no model parameter moves. Only the Monte Carlo sampling scheme (RQMC point set) of an existing outer estimator would change, plus an unbiased control variate. Stop-rule honoured (no copula structure touched).",
+      "quantitative_impact": "Registered references only: governed headline 39,975.654628; nested 46,638.9; MR-VR-1 inner-loop results {Sobol 2241x / CRN 18.9x / antithetic 1.88x mean, antithetic 1.31x at 99.5% = ineffective}; outer-basis Sobol precedents 2.76x-7.1x. No governed capital figures changed.",
+      "status": "OWNER_REVIEW",
+      "author": "PostIGUITask6OuterLoopEfficiencyDesignNote",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T14:13:47.081655+00:00",
+          "actor": "PostIGUITask6OuterLoopEfficiencyDesignNote",
+          "status": "PEER_REVIEW",
+          "comments": "Candidate pre-registration + six fixed gates + sequencing; scaffold tests added."
+        },
+        {
+          "timestamp": "2026-06-15T14:13:47.081806+00:00",
+          "actor": "PostIGUITask6OuterLoopEfficiencyDesignNote",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: pure governance pre-registration; implementation deferred to next cycle."
+        }
+      ],
+      "phase": "Post-Phase-IGUI: Model-Improvement Candidate Pre-Registration"
     }
   ],
   "risk_register": [
