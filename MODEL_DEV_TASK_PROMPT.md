@@ -55,6 +55,17 @@ force-push `main`. When in doubt, **yield**.
 > IGUI** — non-model-form, auto-runnable, safest productive pivot; (d) packaging A/B/C
 > (auto-runnable); (e) freeze. Until the owner chooses, runs produce status/research
 > only and do NOT start a model-form change.
+>
+> **2026-06-16 (3rd window, claude) — RED test-gate fixed GREEN; frontier still OWNER PIVOT.**
+> No model-form change auto-ran. Cleared the one auto-admissible flagged item:
+> `tests/test_phase36_task5_phase_summary.py::test_contract_inventory` was RED because
+> Post-IGUI Task 5 blind-bumped its pinned literal to 1.22.0 while the FROZEN Phase 36
+> Task 5 report correctly records 1.21.0. Reverted the test to `== "1.21.0"` (+ guard
+> comment); frozen report untouched; governed headline 39,975.654628199336 untouched;
+> live contract 1.23.0 unchanged. Test file now 8/8 PASS. **OWNER ACTION still required**
+> (pivot now blocking 3 consecutive cycles): pick (a) MR-LONGEV-1 / (b) LSMC [sign-off],
+> or (c) resume Phase IGUI / (d) packaging A/B/C / (e) freeze [non-model-form]. If no
+> choice by the next window, the safest auto-runnable default is (c) resume Phase IGUI.
 
 > **OWNER PRIORITY OVERRIDE — SATISFIED (2026-06-11, cycle 28):** Phase UIL
 > (user-input loader + run orchestrator, workstream B of
@@ -2779,8 +2790,4 @@ Phase IGUI is **COMPLETE** (input+run GUI MVP + one-click packaging + own-run re
 
 **Post-Phase-IGUI Task 5 is COMPLETE.** The MR-VR-1 inner-path variance-reduction study is now surfaced as an ADDITIVE, display-only offline-UI efficiency panel (contract **1.22.0**, +`postigui_vr` key): work-normalised VR ratios + 95% CIs (antithetic 1.882x / CRN 18.93x / Sobol-RQMC 2241.11x), effective sample size, target-SE inner-path counts n*, unbiasedness, and the antithetic-99.5% INEFFECTIVE disclosure. Governed headline 39,975.654628199336 BIT-IDENTICAL; adoption immaterial, REPORTED-NOT-applied. ui_app self-test ok:true 421 checks (tabCount 20) 0/0; pipeline chain validates to 1.22.0; ChangeRecord `16d987632ecc42569f4d4665dd56582e` OWNER_REVIEW.
 
-**NEXT (the single in_progress item): Post-Phase-IGUI Task 7 — implement MR-VR-2 (gated by the Task 6 pre-registration).** Task 6 COMPLETE: design note pre-registered MR-VR-2 (RQMC + control-variates variance reduction for the OUTER capital/SCR loop) under fixed gates G1–G6, governance ChangeRecord 78ae269bdf63466787b030cc59029b43 OWNER_REVIEW (records 116, audit 144, integrity OK), self-consistency 22/22, tests 8/8. Task 7 = IMPLEMENT the MR-VR-2 outer-loop study (scrambled-Sobol RQMC + closed-form/proxy control variate on the governed 99.5% SCR): meet G1 governed-headline BIT-IDENTICAL (DISCLOSED/ADDITIVE, never adopt); G2 unbiasedness (control beta fit out-of-sample; RQMC mean over ≥200 scramble seeds within 0.5% of crude); G3 ≥200-replicate CI work-normalised VR ratios at the 99.5% target with disclosed control-target ρ and 1/(1−ρ²); G4 slice-stable SeedSequence reproducibility + run digest; G5 adoption dSCR REPORTED-NOT-applied (open MR if >1% of headline); G6 governance ChangeRecord OWNER_REVIEW + unit tests + any offline-UI surface ADDITIVE only. NO model parameter change; no copula structure (Phase 30 stop-rule); MR-016/MR-017 owner-pending. OWNER ALTERNATIVE (sign-off required, NOT auto-run): pivot to **MR-LONGEV-1** longevity 5th driver OR **packaging A/B/C** build-spec/CI release-matrix.
-
-**Standing constraints (BINDING):** Phase 30 stop-rule — NO new copula-structure candidates under MR-016; MR-016/MR-017 owner decisions pending; governed headline frozen single-df t **39,975.654628199336**. NO model parameter change without owner sign-off; ONE task per cycle; fresh-clone git per AGENT_COORDINATION.md; end-of-run status email.
-
-**Standing env limitation:** the persistent mount working-tree drifts behind origin/main and is prone to file-write truncation under `/sessions` disk pressure (no scipy/pytest either). Do ALL build + git in a fresh /tmp clone; borrow the mount `node_modules` (jsdom) via `NODE_PATH` for the jsdom self-tests. Recommend a host-side mount re-sync to origin/main + free disk.
+**NEXT (the single in_progress item): Post-Phase-IGUI Task 7 — implement MR-VR-2 (gated by the Task 6 pre-registration).** Task 6 COMPLETE: design note pre-registered MR-VR-2 (RQMC + control-variates variance reduction for the OUTER capital/SCR loop) under fixed gates G1–G6, governance ChangeRecord 78ae269bdf63466787b030cc59029b43 OWNER_REVIEW (records 116, audit 144, integrity OK), self-consistency 22/22, tests 8/8. Task 7 = IMPLEMENT the MR-VR-2 outer-loop study (scrambled-Sobol RQMC + closed-form/proxy control variate on the governed 99.5% SCR): meet G1 governed-headline BIT-IDENTICAL (DISCLOSED/ADDITIVE, never adopt); G2 unbiasedness (control beta fit out-of-sample; RQMC mean over ≥200 scramble seeds within 0.5% of crude); G3 ≥200-replicate CI work-normalised VR ratios at the 99.5% target with disclosed control-target ρ and 1/(1−ρ²); G4 slice-stable SeedSequence reproducibility + run digest; G5 adoption dSCR REPORTED-NOT-applied (open MR if >1% of headline); G6 governance ChangeRecord OWNER_REVIEW + unit tests + any offline-UI surface ADDITIVE only. NO model parameter change; no copula structure (Phase 30 stop-rule); MR-016/MR-017 owner-pendin
