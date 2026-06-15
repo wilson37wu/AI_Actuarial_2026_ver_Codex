@@ -1,0 +1,30 @@
+# Phase IGUI Task 10 - PINNED model-engine requirements (Option-C, decision-neutral)
+# ---------------------------------------------------------------------------------
+# These are the EXACT versions of the out-of-process COMPUTE engine that the
+# /execute step (scripts/run_model.py) imports. Pinning them makes a run-from-source
+# COMPUTE step REPRODUCIBLE: the governed headline SCR 39,975.654628199336 is a
+# property of the model PLUS the numerical stack, so freezing the stack freezes the
+# numbers. The interactive input GUI, the validation/gating chain and the offline
+# RESULTS UI are pure Python standard library and need NONE of these.
+#
+# This file PRE-EMPTS NOTHING. It supports the owner's Option C (run from source,
+# packaging card docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md) without foreclosing
+# Option A (frozen binary) or Option B (vendored wheels): A/B can pin the very same
+# versions into their artifact. requirements.txt keeps its compatible RANGES for
+# day-to-day development; this lock is the reproducibility anchor for a valuation run.
+#
+# Supported interpreters: CPython 3.9 - 3.12 (scipy 1.13.x wheel coverage).
+# Install ONCE, fully offline thereafter:
+#     python -m pip install -r requirements-engine-lock.txt
+# Verify:
+#     python -c "import numpy,pandas,scipy;print(numpy.__version__,pandas.__version__,scipy.__version__)"
+# See docs/PHASE_IGUI_OFFLINE_INSTALL_APPENDIX.md for the full Option-C walkthrough.
+#
+# NO model parameter is set here; these are environment pins only. Hashes are not
+# pinned because the dev sandbox has no outbound network to harvest them; an owner
+# building a release (Option A/B) can regenerate this file with `pip-compile
+# --generate-hashes` in a networked CI environment.
+
+numpy==1.26.4
+pandas==2.2.3
+scipy==1.13.1

@@ -3121,6 +3121,28 @@
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
       "digest": "56e8d22c9e5e07c595de1bb9aa1e73ef761d1c29e51b588d659bb87bd5c87172",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "eaa7120274a54d429df181ecee018367",
+      "timestamp": "2026-06-15T08:14:40.517187+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase IGUI Task 10 Option-C offline-install appendix + pinned engine requirements (numpy==1.26.4, pandas==2.2.3, scipy==1.13.1); launcher+README disclosure wired; ui_app.html byte-unchanged; decision-neutral (A/B open); STDLIB-only; NO model param change; Phase 30 stop-rule honoured",
+      "details": {
+        "record_id": "7500ce9ead6c4c50b46dda4c276ae9c4",
+        "contract": "1.21.0 (unchanged)",
+        "task10_gate_ok": true,
+        "task10_gate_checks": 16,
+        "pinned_engine": {
+          "numpy": "1.26.4",
+          "pandas": "2.2.3",
+          "scipy": "1.13.1"
+        },
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65"
+      },
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
+      "digest": "a6e4b9ed6577179b8a26af77649b25958a0b36c70c3dcffbb384e206366e0c70",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -10106,6 +10128,70 @@
           "actor": "ClaudeCowork_AutoDev",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. PHASE IGUI is functionally COMPLETE: a non-technical user runs one launcher (no install/env setup; localhost-only, offline), supplies every valuation input, clears the validation gate, presses Run, and browses THEIR OWN run in the offline results UI. Two items need YOUR decision: (1) the no-prerequisite COMPUTE packaging path (Option A frozen binary [recommended] / B vendored wheels / C status quo) - see docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md; a build/release environment with tooling + network is required and is not available in the dev sandbox; (2) the standing MR-016/MR-017 dependence decision remains PENDING and entirely with you. The LIVE end-to-end run gate (Task 7) needs a Python with numpy/pandas/scipy; the dev sandbox cannot install it (disk full), so that gate is validated by structure here and will go fully green in any engine-equipped environment."
+        }
+      ],
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"
+    },
+    {
+      "record_id": "7500ce9ead6c4c50b46dda4c276ae9c4",
+      "created_at": "2026-06-15T08:14:40.517121+00:00",
+      "title": "Phase IGUI Task 10 - Option-C offline-install appendix + pinned engine requirements (decision-neutral)",
+      "description": "Phase IGUI Task 10 (decision-neutral) - authored the Option-C offline-install appendix (docs/PHASE_IGUI_OFFLINE_INSTALL_APPENDIX.md) and a PINNED engine requirements file (requirements-engine-lock.txt: numpy==1.26.4, pandas==2.2.3, scipy==1.13.1) so the run-from-source COMPUTE step is reproducible, and wired both into launchers/README.md and the launcher engine-status disclosure (scripts/launch_offline_gui.py). The pinned versions all lie inside the compatible ranges in requirements.txt; the launcher's engine_status() now surfaces the pinned-requirements + appendix pointers while the 'modules' set stays exactly {numpy, scipy}. The committed zero-install RESULTS UI (ui_app.html sha256 6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65) is byte-unchanged. This SUPPORTS the owner's Option C and PRE-EMPTS NOTHING: Option A (frozen binary) and Option B (vendored wheels) remain open and can reuse the same pins. STDLIB-only docs/config; NO model parameter change; Phase 30 stop-rule honoured; MR-016/MR-017 owner decision not pre-empted.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "requirements-engine-lock.txt",
+        "docs/PHASE_IGUI_OFFLINE_INSTALL_APPENDIX.md",
+        "scripts/launch_offline_gui.py",
+        "launchers/README.md",
+        "scripts/build_phase_igui_task10_offline_install.py",
+        "docs/validation/PHASE_IGUI_TASK10_OFFLINE_INSTALL.json",
+        "docs/validation/PHASE_IGUI_TASK10_OFFLINE_INSTALL.md",
+        "tests/test_phase_igui_task10_offline_install.py"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 (Modeling) section 3.6 - model documentation: the environment that produces the governed headline is pinned and documented for reproducibility",
+        "SOA ASOP 41 (Actuarial Communications) - the offline-install appendix is framed as an explicit Option-C support note and pre-empts no owner packaging decision",
+        "SOA ASOP 23 (Data Quality) - pinning the numerical stack removes an environment source of variation in the produced figures"
+      ],
+      "before_snapshot": {
+        "phase_igui": "Task 9 complete (phase summary + consolidated re-audit)",
+        "engine_install_guidance": "ad-hoc 'pip install numpy scipy' (unpinned)",
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+        "governance_change_records_before": 109
+      },
+      "after_snapshot": {
+        "phase_igui": "Task 10 complete (Option-C offline-install appendix + pinned engine)",
+        "pinned_engine": {
+          "numpy": "1.26.4",
+          "pandas": "2.2.3",
+          "scipy": "1.13.1"
+        },
+        "supported_interpreters": "CPython 3.9 - 3.12 (scipy 1.13.x wheel coverage)",
+        "task10_gate_ok": true,
+        "task10_gate_checks": 16,
+        "ui_app_byte_unchanged": true,
+        "decision_neutral": true,
+        "ui_contract": "1.21.0 (unchanged)",
+        "headline_carried": "39975.654628199336"
+      },
+      "impact_assessment": "Documentation + config only (a pinned requirements file, a Markdown appendix, stdlib-only print/dict additions to the launcher disclosure, and README links). No code path, contract, artifact or model parameter changed; the committed zero-install RESULTS UI is byte-identical. Reproducibility of a run-from-source COMPUTE step is strengthened by freezing the numerical stack. The owner's A/B/C packaging decision and MR-016/MR-017 remain entirely open.",
+      "quantitative_impact": "No governed capital figure changed; headline SCR 39975.654628199336 carried bit-for-bit. Contract unchanged at 1.21.0. Task-10 gate ok:True 16/16 checks; committed ui_app.html sha256 unchanged (6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65). Pinned engine: numpy==1.26.4, pandas==2.2.3, scipy==1.13.1.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T08:14:40.517160+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: pinned engine (numpy==1.26.4, pandas==2.2.3, scipy==1.13.1) lies inside the requirements.txt ranges; the Option-C appendix references the pinned file, packaging card, governed headline and committed ui_app.html sha256; the launcher discloses both pointers with modules set unchanged {numpy,scipy}; README links both docs; ui_app.html byte-unchanged. Decision-neutral - Option A/B untouched. STDLIB-only; NO model parameter change; stop-rule honoured."
+        },
+        {
+          "timestamp": "2026-06-15T08:14:40.517169+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Task 10 makes the run-from-source COMPUTE step reproducible by pinning numpy/pandas/scipy (requirements-engine-lock.txt) and documenting a fully offline install path (docs/PHASE_IGUI_OFFLINE_INSTALL_APPENDIX.md), wired into the launcher and README. This is the Option-C support deliverable named in the packaging-options card and pre-empts nothing: your A (frozen binary) / B (vendored wheels) / C (status quo) decision and MR-016/MR-017 remain open. No model parameter changed; the committed RESULTS UI is byte-unchanged."
         }
       ],
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"

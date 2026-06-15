@@ -10323,3 +10323,13 @@ Completed the pre-registered Phase IGUI completion task. Re-inventoried the full
 - **Constraints:** NO model parameter change; committed RESULTS UI byte-unchanged; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted.
 
 **Phase verdict:** PHASE IGUI COMPLETE. Residual = owner decisions (packaging A/B/C; MR-016/MR-017) + the scipy-dependent live run gate (green in any engine-equipped env). **Next:** Task 10 (decision-neutral Option-C offline-install appendix + pinned requirements).
+
+---
+
+## 2026-06-15 (Claude Cowork) - Phase IGUI Task 10: Option-C offline-install appendix + pinned engine requirements (COMPLETE)
+
+Decision-neutral close-out of the owner-directed input+run GUI workstream. Authored a PINNED engine lock (`requirements-engine-lock.txt`: numpy==1.26.4, pandas==2.2.3, scipy==1.13.1; CPython 3.9-3.12) so the run-from-source COMPUTE step is reproducible, and a full Option-C offline-install appendix (`docs/PHASE_IGUI_OFFLINE_INSTALL_APPENDIX.md`: venv / direct / air-gapped install, verification, troubleshooting). Wired both into `launchers/README.md` and the launcher engine-status disclosure (`scripts/launch_offline_gui.py`): `engine_status()` now surfaces `pinned_requirements` / `install_appendix` / `compute_install_hint`, with the `modules` set unchanged at `{numpy, scipy}`. Pins verified inside the `requirements.txt` ranges. Committed zero-install RESULTS UI `ui_app.html` byte-unchanged (sha256 6dca35b3...).
+
+Gates: 16-check Task-10 gate green; 16 new unittests OK; task8 launcher suite still 8 OK. Governance: ChangeRecord 7500ce9ead6c4c50b46dda4c276ae9c4 OWNER_REVIEW; change_records 109->110, audit_trail 137->138, integrity OK; contract 1.21.0 unchanged. NO model parameter change; Phase 30 stop-rule honoured; A/B/C packaging + MR-016/MR-017 left with the owner. PHASE IGUI fully wrapped (Tasks 1-10).
+
+Next single in_progress: Post-Phase-IGUI Task 1 - design-note-first pre-registration of ONE stochastic-model improvement candidate (Phase 30 stop-rule bound), OWNER_REVIEW only; or, if owner selects packaging A/B/C, the corresponding build-spec / CI skeleton.

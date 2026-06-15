@@ -1,0 +1,72 @@
+{
+ "doc_id": "PHASE_IGUI_TASK10_OFFLINE_INSTALL",
+ "doc_version": "1.0.0",
+ "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
+ "task": "Task 10 - Option-C offline-install appendix + pinned engine requirements",
+ "generated_utc": "2026-06-15T08:14:40Z",
+ "classification": "educational / install documentation",
+ "decision_neutral": true,
+ "no_model_parameter_changes": true,
+ "stop_rule_honoured": true,
+ "owner_decision_pending": true,
+ "zero_install_results_ui_preserved": true,
+ "pinned_engine": {
+  "numpy": "1.26.4",
+  "pandas": "2.2.3",
+  "scipy": "1.13.1"
+ },
+ "requirements_ranges": {
+  "numpy": "1.26..3.0",
+  "pandas": "2.2..3.0",
+  "scipy": "1.13..2.0"
+ },
+ "supported_interpreters": "CPython 3.9 - 3.12 (scipy 1.13.x wheel coverage)",
+ "artifacts": {
+  "pinned_requirements": "requirements-engine-lock.txt",
+  "offline_install_appendix": "docs/PHASE_IGUI_OFFLINE_INSTALL_APPENDIX.md",
+  "engine_status_disclosure": "scripts/launch_offline_gui.py",
+  "launcher_readme": "launchers/README.md",
+  "packaging_options_card": "docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md"
+ },
+ "reproducibility_rationale": "The governed headline SCR 39975.654628199336 is a property of the model AND the numerical stack; pinning numpy/pandas/scipy freezes the stack so a run-from-source COMPUTE step is bit-for-bit reproducible. requirements.txt keeps compatible ranges for development; this lock is the reproducibility anchor for a run.",
+ "decision_neutrality_statement": "Supports Option C (run from source). Pre-empts nothing: Option A (frozen binary) and Option B (vendored wheels) remain open and can reuse the same pins. MR-016/MR-017 dependence decision untouched; Phase 30 stop-rule honoured.",
+ "task10_gate": {
+  "ok": true,
+  "n_checks": 16,
+  "checks": {
+   "lock_file_exists": true,
+   "lock_has_three_pins": true,
+   "lock_pins_match_expected": true,
+   "lock_pins_within_requirements_ranges": true,
+   "appendix_exists": true,
+   "appendix_refs_lock_file": true,
+   "appendix_refs_packaging_card": true,
+   "appendix_carries_headline": true,
+   "appendix_refs_committed_ui_sha": true,
+   "appendix_decision_neutral": true,
+   "launcher_discloses_pinned_reqs": true,
+   "launcher_discloses_appendix": true,
+   "launcher_modules_set_unchanged": true,
+   "readme_links_appendix": true,
+   "readme_links_packaging_card": true,
+   "ui_app_byte_unchanged": true
+  }
+ },
+ "consolidated_reaudit": {
+  "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+  "ui_app_sha256_baseline": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+  "ui_app_byte_unchanged": true,
+  "governance_change_records": 109,
+  "governance_audit_entries": 137,
+  "audit_chain_integrity_ok": true,
+  "headline_scr_carried": "39975.654628199336"
+ },
+ "constraints_honoured": [
+  "STDLIB-only docs/config; no third-party dependency added to the GUI/runner",
+  "NO model parameter change",
+  "committed zero-install RESULTS UI (ui_app.html) byte-unchanged",
+  "Phase 30 stop-rule honoured; MR-016/MR-017 owner decision not pre-empted",
+  "decision-neutral: Option A/B remain fully open",
+  "one task this cycle; agent lock held; fresh-clone git per AGENT_COORDINATION.md"
+ ]
+}

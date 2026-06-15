@@ -59,7 +59,17 @@ def engine_status() -> dict:
             have[mod] = True
         except Exception:
             have[mod] = False
-    return {"engine_ready": all(have.values()), "modules": have}
+    # Phase IGUI Task 10: point at the pinned engine + Option-C offline-install
+    # appendix so the disclosure is actionable. These are EXTRA keys; "modules"
+    # stays exactly {numpy, scipy} (the gate/tests assert that set).
+    return {
+        "engine_ready": all(have.values()),
+        "modules": have,
+        "pinned_requirements": "requirements-engine-lock.txt",
+        "install_appendix": "docs/PHASE_IGUI_OFFLINE_INSTALL_APPENDIX.md",
+        "compute_install_hint": (
+            "python -m pip install -r requirements-engine-lock.txt"),
+    }
 
 
 def _free_port(preferred: int) -> int:
@@ -113,11 +123,14 @@ def launch(port: int = 8765, out: str = "model_inputs.json",
     if eng["engine_ready"]:
         print(" Model engine:           READY (numpy + scipy present) -- you can")
         print("                         supply inputs AND compute end-to-end.")
+        print("                         (pinned engine: %s)" % eng["pinned_requirements"])
     else:
         missing = ", ".join(m for m, ok in eng["modules"].items() if not ok)
         print(" Model engine:           input entry + browsing work now; the COMPUTE")
         print("                         step needs: %s" % missing)
-        print("                         (install once: pip install numpy scipy)")
+        print("                         install once (pinned, offline-capable):")
+        print("                           %s" % eng["compute_install_hint"])
+        print("                         see %s" % eng["install_appendix"])
     print(" Localhost only, fully offline. Press Ctrl+C to stop.")
     print("=" * 64)
 

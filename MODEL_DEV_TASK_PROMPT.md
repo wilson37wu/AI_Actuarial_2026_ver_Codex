@@ -2692,6 +2692,20 @@ ONE input domain / capability per cycle; each cycle carries its own governance C
 
 ---
 
+## NEXT EXECUTION POINTER (updated 2026-06-15 after Phase IGUI Task 10 - Option-C offline-install appendix + pinned engine)
+
+Phase IGUI is **COMPLETE through Task 10** (input+run GUI MVP + one-click packaging + own-run results UI + phase summary + Option-C offline-install appendix & pinned engine lock). The single `in_progress` item in `.claude-dev/MODEL_DEV_STATE.json` is authoritative; it is currently:
+
+- **Post-Phase-IGUI Task 1 (design-note-first, NO model parameter change):** research and PRE-REGISTER exactly ONE stochastic-model improvement candidate with acceptance criteria, bounded by the Phase 30 stop-rule (no new copula-structure candidate; MR-016/MR-017 remain owner decisions). Candidate pool: (a) mortality-trend / longevity 5th driver; (b) credentialled-data calibration-residual diagnostics on the frozen margins; (c) inner-path variance-reduction (antithetic/CRN) for TVOG. Output a governed design note (OWNER_REVIEW) only; implementation deferred to the next cycle. If the owner instead selects a packaging option (A/B/C), pivot to the corresponding build-spec / CI release-matrix skeleton (no in-sandbox build).
+
+**Task 10 landed (this cycle):** `requirements-engine-lock.txt` (numpy==1.26.4, pandas==2.2.3, scipy==1.13.1; CPython 3.9-3.12) + `docs/PHASE_IGUI_OFFLINE_INSTALL_APPENDIX.md`, wired into `launchers/README.md` and the launcher engine-status disclosure. 16-check gate + 16 unittests green; ui_app.html byte-unchanged; ChangeRecord 7500ce9e OWNER_REVIEW (records 109->110, audit 137->138); contract 1.21.0 unchanged; decision-neutral.
+
+**Open OWNER decisions (do not pre-empt):** (1) no-prerequisite COMPUTE packaging path - Option A (frozen binary, recommended) / B (vendored wheels) / C (status quo, now fully documented) per `docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md`; (2) the standing MR-016/MR-017 dependence decision.
+
+**Standing env limitation:** the dev sandbox has no scipy (`/sessions` full, `pip` ENOSPC), so the Task-7 LIVE end-to-end run gate cannot execute here; it is validated by structure and goes fully green in any engine-equipped environment.
+
+---
+
 ## NEXT EXECUTION POINTER (updated 2026-06-15 after Phase IGUI Task 9 - PHASE IGUI COMPLETE)
 
 Phase IGUI is **COMPLETE** (input+run GUI MVP + one-click packaging + own-run results UI; Task 9 phase summary + consolidated re-audit landed). The single `in_progress` item in `.claude-dev/MODEL_DEV_STATE.json` is authoritative; it is currently:
