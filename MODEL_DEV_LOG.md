@@ -10307,3 +10307,19 @@ unchanged; no model parameter change; Phase 30 stop-rule honoured. ENV: scipy un
 in sandbox (/sessions full) so Task-7 live-spawn tests can't run here - Task 8 is
 display-layer only and fully green. Next = Task 9 (phase summary + re-audit; frozen-binary/
 vendored-wheel packaging research for owner).
+
+---
+
+## 2026-06-15 (06:00 UTC window) - Phase IGUI Task 9 - phase summary + consolidated re-audit - PHASE IGUI COMPLETE
+
+**Agent:** Claude Cowork (`auto_actuarial_stochastic_model`). Lock acquired (cycle 2026-06-15T07:08Z-acc1), fresh-clone git per AGENT_COORDINATION.md.
+
+Completed the pre-registered Phase IGUI completion task. Re-inventoried the full **inputs -> validation/gating -> end-to-end run -> own-run results UI** chain (Tasks 2..8) and re-ran the deterministic offline gate facts.
+
+- **New artifacts:** `scripts/build_phase_igui_task9_summary.py`; `docs/validation/PHASE_IGUI_TASK9_PHASE_SUMMARY.json` + `.md`; `docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md` (owner-decision options note: A=PyInstaller frozen binary [recommended, CI matrix], B=vendored wheels, C=status quo); `tests/test_phase_igui_task9_summary.py` (12 unittests + 13-check gate).
+- **Gates re-run live:** Task-9 gate ok:true 13/13. IGUI Python gates: Tasks 1-6,8 green (24/21/24/21/24/22/8 OK). Task 7 15/21 green; its 6 LIVE model-spawn tests blocked ONLY by absent scipy (dev sandbox ENOSPC) - documented env limit, not a regression.
+- **Byte-identity:** committed `ui_app.html` sha256 `6dca35b3...` unchanged vs Task-8 baseline -> nine-suite/522+-check offline battery carried; `ui_app_integrity_fallback_test` re-confirmed live (ok:true). 0 network / 0 JS errors / 0 external refs.
+- **Governance:** ChangeRecord `acbca43d14e046f0888cf6f8b29a11b1` OWNER_REVIEW; records 108->109, audit 136->137; integrity OK; contract 1.21.0 unchanged; headline 39,975.654628199336 carried bit-for-bit.
+- **Constraints:** NO model parameter change; committed RESULTS UI byte-unchanged; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted.
+
+**Phase verdict:** PHASE IGUI COMPLETE. Residual = owner decisions (packaging A/B/C; MR-016/MR-017) + the scipy-dependent live run gate (green in any engine-equipped env). **Next:** Task 10 (decision-neutral Option-C offline-install appendix + pinned requirements).

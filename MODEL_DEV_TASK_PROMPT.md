@@ -2689,4 +2689,15 @@ ONE input domain / capability per cycle; each cycle carries its own governance C
 - Any remaining post-Phase-35 test-gate-drift / builder reconciliation cleanup beyond what the current phase needs.
 
 **One task per cycle. Honour the agent lock. Email the owner at the end of every run.**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+---
+
+## NEXT EXECUTION POINTER (updated 2026-06-15 after Phase IGUI Task 9 - PHASE IGUI COMPLETE)
+
+Phase IGUI is **COMPLETE** (input+run GUI MVP + one-click packaging + own-run results UI; Task 9 phase summary + consolidated re-audit landed). The single `in_progress` item in `.claude-dev/MODEL_DEV_STATE.json` is authoritative; it is currently:
+
+- **Task 10 (decision-neutral):** author an Option-C offline-install appendix + a pinned requirements file (numpy/pandas/scipy versions) so the COMPUTE step is reproducible from source WITHOUT pre-empting the owner's A/B/C packaging decision; wire it into `launchers/README` and the run_gui engine-status disclosure. STDLIB-only docs/config; NO model parameter change; stop-rule honoured.
+
+**Open OWNER decisions (do not pre-empt):** (1) no-prerequisite COMPUTE packaging path - Option A (PyInstaller frozen binary, recommended) / B (vendored wheels) / C (status quo) per `docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md`, requiring a build/release environment not available in the dev sandbox; (2) the standing MR-016/MR-017 dependence decision.
+
+**Standing env limitation:** the dev sandbox has no scipy (`/sessions` 100% full, `pip` ENOSPC), so the Task-7 LIVE end-to-end run gate cannot execute here; it is validated by structure and goes fully green in any engine-equipped environment. After Task 10, if the owner has selected a packaging option, prepare the corresponding build spec / CI workflow skeleton (no in-sandbox build); otherwise research and pre-register one stochastic-model improvement candidate.

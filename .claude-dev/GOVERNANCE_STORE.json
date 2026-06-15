@@ -3103,6 +3103,24 @@
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
       "digest": "2a8f3064906cacb0fda04b2c1994ecc3271750332abcb11c064e3fc80c95b711",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "29b8432bc1234415980d29dc2e260ceb",
+      "timestamp": "2026-06-15T07:20:32.232215+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase IGUI Task 9 phase summary + consolidated re-audit; PHASE IGUI COMPLETE; committed ui_app.html byte-unchanged; py gates 1-6/8 green, task7 live-run blocked by absent scipy (documented); nine-suite offline battery carried by byte-identity; packaging owner-decision note written; NO model param change; Phase 30 stop-rule honoured",
+      "details": {
+        "record_id": "acbca43d14e046f0888cf6f8b29a11b1",
+        "contract": "1.21.0 (unchanged)",
+        "task9_gate_ok": true,
+        "task9_gate_checks": 13,
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+        "chain_links": 7
+      },
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
+      "digest": "56e8d22c9e5e07c595de1bb9aa1e73ef761d1c29e51b588d659bb87bd5c87172",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -10030,6 +10048,64 @@
           "actor": "ClaudeCowork_AutoDev",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. The input+run GUI is now one-click and self-serving: a non-technical user runs a single launcher (no install/env setup; localhost-only, offline), supplies inputs, clears the gate, presses Run, and immediately browses THEIR OWN run in the offline results UI at /my-results. The committed zero-install results template is left byte-for-byte unchanged - the user's run is rendered into a separate user_results copy. The compute step still requires the numpy/scipy engine (disclosed by the launcher); a fully self-contained frozen binary / vendored wheels is noted as the next packaging step but needs offline build tooling not available in this dev cycle. The MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
+        }
+      ],
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"
+    },
+    {
+      "record_id": "acbca43d14e046f0888cf6f8b29a11b1",
+      "created_at": "2026-06-15T07:20:32.232100+00:00",
+      "title": "Phase IGUI Task 9 - phase summary + consolidated re-audit; PHASE IGUI COMPLETE; no-prerequisite packaging owner-decision options note",
+      "description": "Phase IGUI Task 9 - the pre-registered completion task of the owner-directed input+run GUI workstream. Re-inventoried the complete inputs -> validation/gating -> end-to-end run -> own-run results UI chain (Tasks 2..8) and re-ran the consolidated gate facts that are deterministic and offline: the committed zero-install RESULTS UI byte-identity (ui_app.html sha256 6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65, unchanged vs the Task-8 certified baseline), the governance store totals (108 change records / 136 audit entries) and audit-chain integrity, and the per-task Python gate verdicts (Tasks 1-6 and 8 fully green live; Task 7 display + handoff-shape + gate-structure green, its six LIVE model-spawn tests blocked ONLY by the absence of scipy in the dev sandbox - a documented environment limitation, not a regression). The nine-suite / 522+-check offline RESULTS-UI battery verdict is carried by byte-identity to the unchanged ui_app.html and re-confirmed live this cycle on ui_app_integrity_fallback_test (ok:true). Emitted the Task-9 evidence report (json+md) and a no-prerequisite packaging owner-decision options note (docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md) scoping a PyInstaller frozen binary (recommended) vs vendored wheels vs status quo, noting build tooling + outbound network are unavailable in the dev sandbox. NO model parameter change; NO artifact modified; Phase 30 stop-rule honoured; MR-016/MR-017 owner decision not pre-empted. PHASE IGUI COMPLETE.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "scripts/build_phase_igui_task9_summary.py",
+        "docs/validation/PHASE_IGUI_TASK9_PHASE_SUMMARY.json",
+        "docs/validation/PHASE_IGUI_TASK9_PHASE_SUMMARY.md",
+        "docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md",
+        "tests/test_phase_igui_task9_summary.py"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 (Modeling) section 3.6 - model documentation: a single phase summary traces the complete inputs -> validation/gating -> run -> results chain and records every per-task gate verdict",
+        "SOA ASOP 41 (Actuarial Communications) - the governed headline 39,975.654628199336 is carried bit-for-bit; the no-prerequisite packaging options note is framed as an explicit owner decision, pre-empting nothing",
+        "SOA ASOP 23 (Data Quality) - the consolidated re-audit reads only committed evidence and the governed store; the committed RESULTS-UI template byte-identity is asserted"
+      ],
+      "before_snapshot": {
+        "phase_igui": "Task 8 complete (one-click packaging + own-run results)",
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+        "governance_change_records_before": 108
+      },
+      "after_snapshot": {
+        "phase_igui": "PHASE IGUI COMPLETE (summary + consolidated re-audit)",
+        "chain_links_documented": 7,
+        "ui_app_byte_unchanged": true,
+        "task9_gate_ok": true,
+        "task9_gate_checks": 13,
+        "py_gates_1to6_8_green": true,
+        "task7_live_run_blocked_by": "scipy absent (dev sandbox ENOSPC)",
+        "offline_battery_carried_by_byte_identity": true,
+        "packaging_options_note": "docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md (owner decision OPEN)",
+        "ui_contract": "1.21.0 (unchanged)",
+        "headline_carried": "39975.654628199336"
+      },
+      "impact_assessment": "Documentation + consolidated re-audit only. No code path, contract, artifact or model parameter changed. The committed zero-install RESULTS UI is byte-identical (sha256 asserted == baseline). The phase summary records the full input->results chain and every gate verdict, with the Task-7 scipy environment limitation disclosed. The packaging note presents an owner decision and pre-empts nothing (MR-016/MR-017 remain with the owner; Phase 30 stop-rule honoured).",
+      "quantitative_impact": "No governed capital figure changed; headline SCR 39975.654628199336 carried bit-for-bit. Contract unchanged at 1.21.0. Task-9 gate ok:True 13/13 checks; committed ui_app.html sha256 unchanged (6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65).",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T07:20:32.232161+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: Task 9 re-inventories the full inputs->validation/gating->run->own-run results chain (Tasks 2..8) and re-runs the deterministic offline gate facts: ui_app.html byte-identity vs the Task-8 baseline, governance totals + audit-chain integrity, and the per-task Python gates (1-6 and 8 green live; Task 7 display/handoff-shape green with its live model-spawn tests blocked only by absent scipy). Nine-suite/522+-check offline battery carried by byte-identity and one suite re-confirmed live. Evidence report + packaging owner-decision note written. NO model parameter change; NO artifact modified; stop-rule honoured."
+        },
+        {
+          "timestamp": "2026-06-15T07:20:32.232174+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. PHASE IGUI is functionally COMPLETE: a non-technical user runs one launcher (no install/env setup; localhost-only, offline), supplies every valuation input, clears the validation gate, presses Run, and browses THEIR OWN run in the offline results UI. Two items need YOUR decision: (1) the no-prerequisite COMPUTE packaging path (Option A frozen binary [recommended] / B vendored wheels / C status quo) - see docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md; a build/release environment with tooling + network is required and is not available in the dev sandbox; (2) the standing MR-016/MR-017 dependence decision remains PENDING and entirely with you. The LIVE end-to-end run gate (Task 7) needs a Python with numpy/pandas/scipy; the dev sandbox cannot install it (disk full), so that gate is validated by structure here and will go fully green in any engine-equipped environment."
         }
       ],
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"
