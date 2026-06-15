@@ -1,0 +1,100 @@
+{
+ "task": "Post-Phase-IGUI Task 5",
+ "title": "Offline-UI MR-VR-1 inner-path variance-reduction efficiency panel (ADDITIVE)",
+ "generated_at": "2026-06-15T13:27:47Z",
+ "verdict": "PASS",
+ "contract_change": "1.21.0 -> 1.22.0 (ADDITIVE; +1 top-level key postigui_vr)",
+ "new_top_level_key": "postigui_vr",
+ "top_level_keys": 25,
+ "manifest_key_count": 25,
+ "root_digest": "eacf046fc3d4175da57203a9303491047947f328d68aca3a57b4daba48b746fe",
+ "display_only": true,
+ "recomputes_model_quantity": false,
+ "source_report": "docs/validation/POSTIGUI_TASK4_VARIANCE_REDUCTION.json",
+ "source_study_digest": "cc0c2fea2bf9b86db75f6239a9ba6e3e0a1577a1e1290e24ce13732eb0c0f0d7",
+ "surfaced_figures": {
+  "vr_ratios": {
+   "antithetic": {
+    "ratio": 1.8820746502840624,
+    "ci95": [
+     1.4560569943202872,
+     2.4027247702624623
+    ],
+    "useful_ge_1p5x": true
+   },
+   "sobol_qmc": {
+    "ratio": 2241.110863062624,
+    "ci95": [
+     1841.0713368694057,
+     2729.704653859232
+    ],
+    "useful_ge_1p5x": true
+   },
+   "crn": {
+    "ratio": 18.928995281417965,
+    "ci95": [
+     14.671436095033126,
+     24.30386378876018
+    ],
+    "useful_ge_1p5x": true
+   }
+  },
+  "effective_sample_size": {
+   "antithetic": 7708.97776756352,
+   "sobol_qmc": 9179590.095104508,
+   "crn": 77533.16467268798
+  },
+  "n_star_for_target_se": {
+   "crude": 19064.16263519518,
+   "antithetic": 10129.333941306642,
+   "sobol_qmc": 8.50656830476595,
+   "crn": 1007.1407569058832
+  },
+  "target_se_rel": 0.01,
+  "unbiasedness_all_within_tol": true,
+  "antithetic_995_work_normalised_ratio": 1.3140298361262144,
+  "antithetic_995_ineffective": true,
+  "governed_headline": 39975.654628199336,
+  "headline_bit_identical": true,
+  "indicated_dscr_rel": -1.380833590586369e-05,
+  "adoption_applied": false
+ },
+ "verification": {
+  "ui_app_self_test": {
+   "ok": true,
+   "checks": 421,
+   "tab_count": 20,
+   "network_calls": 0,
+   "js_errors": 0
+  },
+  "new_vr_checks": 16,
+  "pure_python_test": "tests/test_postigui_task5_vr_panel.py (13 checks) PASS",
+  "offline_viewer_self_test": {
+   "ok": true,
+   "checks": 11
+  },
+  "combined_gui_self_test": {
+   "ok": true,
+   "checks": 27
+  },
+  "pipeline_chain_validates_to": "1.22.0",
+  "embedded_payload_matches_standalone": true,
+  "external_refs": 0,
+  "preexisting_keys_bit_identical": true
+ },
+ "governance": {
+  "change_record": "16d987632ecc42569f4d4665dd56582e",
+  "status": "OWNER_REVIEW",
+  "change_records": "114 -> 115",
+  "audit_entries": "142 -> 143",
+  "risk_items": 17,
+  "audit_integrity_ok": true
+ },
+ "constraints_honoured": {
+  "phase30_stop_rule": "variance reduction is numerical-efficiency, not a copula-structure candidate",
+  "model_parameter_changes": 0,
+  "governed_headline_unchanged": true,
+  "mr016_mr017_not_preempted": true,
+  "zero_install_preserved": true
+ }
+}

@@ -709,7 +709,7 @@ setTimeout(() => {
   const e2ExplainerDigested = !!(uiDataObj && uiDataObj.contract_manifest &&
     uiDataObj.contract_manifest.section_digests &&
     /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.section_digests.explainer || ""));
-  const e2ContractIs121 = !!uiDataObj && uiDataObj.contract_version === "1.21.0";
+  const e2ContractIs121 = !!uiDataObj && uiDataObj.contract_version === "1.22.0";
   const e2HeadlineBitForBit = /39975\.654628199336/.test(html);
   const e2NoAuthoredFigures = e2KeyPresent && (function(){
     const authored = e2Explainer.terms.map(t => (t.definition_source||"").indexOf("verbatim")>=0
@@ -742,6 +742,53 @@ setTimeout(() => {
     Object.keys(uiDataObj.contract_manifest.section_digests).length >= 20);
   const e3FilenameStamped = /reproducibility_evidence_pack_v"\+ver\+tag\+"\.json/.test(html);
   const e3HeadlineBitForBit = /39975\.654628199336/.test(html);
+
+  // ===== Post-Phase-IGUI Task 5 (MR-VR-1): inner-path variance-reduction efficiency panel =====
+  const vr = uiDataObj && uiDataObj.postigui_vr;
+  const vrTab = tabs.find(t => t.getAttribute("data-target") === "vrpanel");
+  if (vrTab) vrTab.click();
+  const vrPanel = document.getElementById("vrpanel");
+  const vrPanelText = (vrPanel && vrPanel.textContent) || "";
+  const vrKeyPresent = !!vr && typeof vr === "object" &&
+    !!vr.variance_reduction_ratios && !!vr.effective_sample_size &&
+    !!vr.n_star_for_target_se && !!vr.tail_study && !!vr.adoption_materiality;
+  const vrTabPresent = !!vrTab && /Variance Reduction/.test(vrTab.textContent || "");
+  const vrRatioRows = document.querySelectorAll('#vrpanel table.vrratios tbody tr').length;
+  const vrEssRows = document.querySelectorAll('#vrpanel table.vress tbody tr').length;
+  const vrPanelRenders = /Inner-Path Variance Reduction/.test(vrPanelText) &&
+    /Work-normalised variance-reduction ratios/.test(vrPanelText) &&
+    vrRatioRows === 3 && vrEssRows === 4;
+  const vrRatiosHaveCi = vrKeyPresent &&
+    ["antithetic","crn","sobol_qmc"].every(k => {
+      const r = vr.variance_reduction_ratios[k] || {};
+      return typeof r.ratio === "number" && typeof r.ci95_lo === "number" &&
+        typeof r.ci95_hi === "number" && r.ci95_lo <= r.ratio && r.ratio <= r.ci95_hi;
+    });
+  const vrEssPresent = vrKeyPresent &&
+    ["antithetic","sobol_qmc","crn"].every(k => typeof vr.effective_sample_size[k] === "number");
+  const vrNstarPresent = vrKeyPresent &&
+    ["crude","antithetic","sobol_qmc","crn"].every(k => typeof vr.n_star_for_target_se[k] === "number") &&
+    typeof vr.target_se_rel === "number";
+  const vrUnbiasedWithinTol = vrKeyPresent && vr.unbiasedness &&
+    vr.unbiasedness.all_within_tol === true && /no model figure recomputed/.test(vrPanelText);
+  const vrAntitheticTailIneffective = vrKeyPresent &&
+    vr.tail_study.antithetic_ineffective_at_995 === true &&
+    (vr.tail_study.antithetic_work_normalised_ratio || {}).useful_ge_threshold === false &&
+    /INEFFECTIVE/.test(vrPanelText);
+  const vrAdoptionReportedNotApplied = vrKeyPresent &&
+    vr.adoption_materiality.is_material === false &&
+    vr.adoption_materiality.applied === false &&
+    /REPORTED, NOT applied/.test(vrPanelText);
+  const vrHeadlineInvariant = vrKeyPresent && vr.headline_invariance &&
+    vr.headline_invariance.bit_identical === true &&
+    vr.headline_invariance.before.frozen_t_component_scr === 39975.654628199336;
+  const vrHeadlineBitForBit = /39975\.654628199336/.test(html);
+  const vrDigested = !!(uiDataObj && uiDataObj.contract_manifest &&
+    uiDataObj.contract_manifest.section_digests &&
+    /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.section_digests.postigui_vr || ""));
+  const vrClassificationEfficiency = vrKeyPresent && vr.classification === "EFFICIENCY" &&
+    Array.isArray(vr.techniques) && vr.techniques.length === 4;
+  const vrContractIs122 = !!uiDataObj && uiDataObj.contract_version === "1.22.0";
 
   const checks = {
     // Phase 33 Task 5 (gap G4): accessibility & usability pass
@@ -1015,7 +1062,7 @@ setTimeout(() => {
     // Phase 34 Task 2 (gap H1): self-describing data-contract guard.
     h1IntegrityTabPresent: !!intTab,
     h1IntegrityTabText: /Data-contract integrity/.test(intText),
-    h1ContractIs121: !!uiDataObj && uiDataObj.contract_version === "1.21.0",
+    h1ContractIs121: !!uiDataObj && uiDataObj.contract_version === "1.22.0",
     // Phase 35 Task 4 (gap A3): one-page printable model-card cover
     a3ModelCardPresent: !!modelCardEl,
     a3ModelCardIdentity: /Model card/.test(modelCardText) &&
@@ -1033,7 +1080,7 @@ setTimeout(() => {
     a3ModelCardDecisionBlank: /intentionally BLANK/.test(modelCardText) &&
       /Owner decision \(option id\): _{6,}/.test(modelCardText),
     a3ModelCardProvenance: /Provenance:/.test(modelCardText) &&
-      /contract v1\.21\.0/.test(modelCardText) && /build stamp/.test(modelCardText),
+      /contract v1\.22\.0/.test(modelCardText) && /build stamp/.test(modelCardText),
     a3PrintCssPresent: a3PrintCssPresent,
     // Phase 35 Task 3 (gap A2): content-integrity digests + in-browser verifier
     a2DigestsPresent,
@@ -1127,6 +1174,22 @@ setTimeout(() => {
     e3PayloadDigestVerifiable,
     e3FilenameStamped,
     e3HeadlineBitForBit,
+    vrKeyPresent,
+    vrTabPresent,
+    vrPanelRenders,
+    vrRatioRows,
+    vrEssRows,
+    vrRatiosHaveCi,
+    vrEssPresent,
+    vrNstarPresent,
+    vrUnbiasedWithinTol,
+    vrAntitheticTailIneffective,
+    vrAdoptionReportedNotApplied,
+    vrHeadlineInvariant,
+    vrHeadlineBitForBit,
+    vrDigested,
+    vrClassificationEfficiency,
+    vrContractIs122,
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -1532,6 +1595,22 @@ setTimeout(() => {
     checks.e3PayloadDigestVerifiable &&
     checks.e3FilenameStamped &&
     checks.e3HeadlineBitForBit &&
+    checks.vrKeyPresent &&
+    checks.vrTabPresent &&
+    checks.vrPanelRenders &&
+    checks.vrRatioRows === 3 &&
+    checks.vrEssRows === 4 &&
+    checks.vrRatiosHaveCi &&
+    checks.vrEssPresent &&
+    checks.vrNstarPresent &&
+    checks.vrUnbiasedWithinTol &&
+    checks.vrAntitheticTailIneffective &&
+    checks.vrAdoptionReportedNotApplied &&
+    checks.vrHeadlineInvariant &&
+    checks.vrHeadlineBitForBit &&
+    checks.vrDigested &&
+    checks.vrClassificationEfficiency &&
+    checks.vrContractIs122 &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

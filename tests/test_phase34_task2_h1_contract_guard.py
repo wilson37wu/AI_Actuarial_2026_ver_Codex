@@ -32,8 +32,8 @@ class TestContractGuardGate(unittest.TestCase):
     def test_identity(self):
         self.assertEqual(DOC_ID, "PHASE34_TASK2_H1_CONTRACT_GUARD")
         self.assertEqual(DOC_VERSION, "1.0.0")
-        self.assertEqual(PRIOR_CONTRACT, "1.20.0")
-        self.assertEqual(EXPECTED_CONTRACT, "1.21.0")
+        self.assertEqual(PRIOR_CONTRACT, "1.21.0")
+        self.assertEqual(EXPECTED_CONTRACT, "1.22.0")
 
     def test_gate_fails_when_manifest_missing(self):
         # Tamper a copy of ui_data.json (in-memory) by re-validating logic:

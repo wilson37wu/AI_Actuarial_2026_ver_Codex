@@ -2746,3 +2746,16 @@ Phase IGUI is **COMPLETE** (input+run GUI MVP + one-click packaging + own-run re
 **Standing constraints (BINDING):** Phase 30 stop-rule - NO new copula-structure candidates under MR-016; MR-016/MR-017 owner decisions pending; governed headline frozen single-df t **39,975.654628199336**. NO model parameter change without owner sign-off; ONE task per cycle; fresh-clone git per AGENT_COORDINATION.md; end-of-run status email.
 
 **Alternative pivots (owner-directed):** if the owner selects packaging option A/B/C, build the corresponding build-spec / CI release-matrix skeleton (no in-sandbox build); or continue offline-UI usability per the standing UI directive.
+
+
+---
+
+## NEXT EXECUTION POINTER (updated 2026-06-15 after Post-Phase-IGUI Task 5 — MR-VR-1 OFFLINE-UI PANEL COMPLETE)
+
+**Post-Phase-IGUI Task 5 is COMPLETE.** The MR-VR-1 inner-path variance-reduction study is now surfaced as an ADDITIVE, display-only offline-UI efficiency panel (contract **1.22.0**, +`postigui_vr` key): work-normalised VR ratios + 95% CIs (antithetic 1.882x / CRN 18.93x / Sobol-RQMC 2241.11x), effective sample size, target-SE inner-path counts n*, unbiasedness, and the antithetic-99.5% INEFFECTIVE disclosure. Governed headline 39,975.654628199336 BIT-IDENTICAL; adoption immaterial, REPORTED-NOT-applied. ui_app self-test ok:true 421 checks (tabCount 20) 0/0; pipeline chain validates to 1.22.0; ChangeRecord `16d987632ecc42569f4d4665dd56582e` OWNER_REVIEW.
+
+**NEXT (the single in_progress item): Post-Phase-IGUI Task 6 — design-note-first.** The diagnostics/efficiency candidate pool under the Phase 30 stop-rule is now EXHAUSTED (MR-CAL-1 + MR-VR-1 both COMPLETE). PRE-REGISTER the next admissible numerical-efficiency / calibration-diagnostic candidate (e.g. RQMC/control-variates for the OUTER capital loop; calibration-stability / PIT-drift monitor on the frozen margins) with fixed acceptance gates, OR — if confirmed exhausted — author a governed OWNER-DECISION note recommending a pivot to **MR-LONGEV-1** (mortality-trend / longevity 5th driver — parameter-adding model-FORM change, owner sign-off required, NOT auto-run) or to **packaging A/B/C** build-spec / CI release-matrix. Design note (OWNER_REVIEW) only; implementation deferred to the following cycle.
+
+**Standing constraints (BINDING):** Phase 30 stop-rule — NO new copula-structure candidates under MR-016; MR-016/MR-017 owner decisions pending; governed headline frozen single-df t **39,975.654628199336**. NO model parameter change without owner sign-off; ONE task per cycle; fresh-clone git per AGENT_COORDINATION.md; end-of-run status email.
+
+**Standing env limitation:** the persistent mount working-tree drifts behind origin/main and is prone to file-write truncation under `/sessions` disk pressure (no scipy/pytest either). Do ALL build + git in a fresh /tmp clone; borrow the mount `node_modules` (jsdom) via `NODE_PATH` for the jsdom self-tests. Recommend a host-side mount re-sync to origin/main + free disk.

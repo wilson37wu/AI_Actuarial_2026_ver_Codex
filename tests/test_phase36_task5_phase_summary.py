@@ -76,7 +76,7 @@ def test_zero_external_refs(report):
 
 def test_contract_inventory(report):
     inv = report["re_audit"]["inventory"]
-    assert inv["contract_version"] == "1.21.0"
+    assert inv["contract_version"] == "1.22.0"
     assert inv["explainer_present"] is True
     assert inv["n_top_level_keys"] >= 25
 

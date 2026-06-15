@@ -24,7 +24,7 @@ UI_DATA = os.path.join(REPO, "ui_data.json")
 PATCH_SCRIPT = os.path.join(REPO, "scripts", "build_phase36_task4_e3_evidence_pack.py")
 FALLBACK = os.path.join(REPO, "scripts", "ui_app_evidence_pack_fallback_test.cjs")
 
-EXPECTED_CONTRACT = "1.21.0"
+EXPECTED_CONTRACT = "1.22.0"
 GOVERNED_HEADLINE = "39975.654628199336"
 
 

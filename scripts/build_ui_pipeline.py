@@ -57,9 +57,10 @@ import build_ui_data as _base  # noqa: E402
 import build_phase35_task2_a1_wcag as _a1  # noqa: E402
 import build_phase35_task3_a2_digests as _a2  # noqa: E402
 import build_phase36_task3_e2_glossary as _e2  # noqa: E402
+import build_postigui_task5_vr_panel as _vr  # noqa: E402
 
 BASE_CONTRACT = _base.CONTRACT_VERSION            # "1.18.0"
-PUBLISHED_CONTRACT = _e2.NEW_CONTRACT             # "1.21.0"
+PUBLISHED_CONTRACT = _vr.NEW_CONTRACT             # "1.22.0"
 
 # Ordered (script, expected-prior, expected-new) chain. Priors/news come from
 # the patch modules themselves so this list cannot silently disagree with them.
@@ -67,6 +68,7 @@ LAYERS = [
     ("build_phase35_task2_a1_wcag.py", _a1.PRIOR_CONTRACT, _a1.NEW_CONTRACT),
     ("build_phase35_task3_a2_digests.py", _a2.PRIOR_CONTRACT, _a2.NEW_CONTRACT),
     ("build_phase36_task3_e2_glossary.py", _e2.PRIOR_CONTRACT, _e2.NEW_CONTRACT),
+    ("build_postigui_task5_vr_panel.py", _vr.PRIOR_CONTRACT, _vr.NEW_CONTRACT),
 ]
 
 

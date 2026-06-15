@@ -3209,6 +3209,35 @@
       "phase": "Post-Phase-IGUI: Model-Improvement Candidate Implementation",
       "digest": "2afcc937088a7779b1a61c6d1f26418e54e3ed273f161a540f75a4d589e41e58",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "77ad47740c154416883c66015c6d3ba7",
+      "timestamp": "2026-06-15T13:27:13.405137+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Post-Phase-IGUI Task 5 MR-VR-1 variance-reduction efficiency panel; ADDITIVE contract 1.21.0 -> 1.22.0 (+postigui_vr key); governed figures bit-identical; variance reduction is efficiency-only; owner decision not pre-empted",
+      "details": {
+        "record_id": "16d987632ecc42569f4d4665dd56582e",
+        "contract": "1.21.0 -> 1.22.0",
+        "new_top_level_key": "postigui_vr",
+        "vr_techniques": 4,
+        "headline_bit_identical": "39975.654628199336",
+        "adoption_applied": false,
+        "ui_app_self_test_checks": 421,
+        "ui_app_tab_count": 20,
+        "affected_components": [
+          "scripts/build_postigui_task5_vr_panel.py",
+          "scripts/build_ui_pipeline.py",
+          "scripts/ui_app_self_test.cjs",
+          "par_model_v2/viewer/contract_guard.py",
+          "tests/test_postigui_task5_vr_panel.py",
+          "ui_data.json",
+          "ui_app.html"
+        ]
+      },
+      "phase": "Post-Phase-IGUI: Stochastic-model efficiency candidates (MR-VR-1)",
+      "digest": "7e1e8dd9c068ec2ac4fc24ce39844bec834b498905d15f3c9afad8a0149b1f8c",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -10510,6 +10539,72 @@
         }
       ],
       "phase": "Post-Phase-IGUI: Model-Improvement Candidate Implementation"
+    },
+    {
+      "record_id": "16d987632ecc42569f4d4665dd56582e",
+      "created_at": "2026-06-15T13:27:13.405047+00:00",
+      "title": "Post-Phase-IGUI Task 5 - inner-path variance-reduction (MR-VR-1) efficiency panel on the zero-install offline UI",
+      "description": "Surfaced the governed MR-VR-1 inner-path variance-reduction study (Post-Phase-IGUI Task 4) as a read-only 'Variance Reduction (MR-VR-1)' tab/panel on the zero-install offline UI. (1) ui_data.json gained ONE new top-level key 'postigui_vr' (additive contract bump 1.21.0 -> 1.22.0): the four techniques (crude / antithetic / CRN / Sobol-RQMC), the work-normalised VR ratios with 95% CIs (antithetic 1.882x, CRN 18.93x, Sobol-RQMC 2241.11x; antithetic and the two useful levers dispositioned vs the 1.5x bar), the effective-sample-size per technique, the inner-path counts n* for target SE_rel=1%, the unbiasedness panel (all estimators within 0.5% of the analytic / crude reference), the antithetic-at-99.5% INEFFECTIVE disclosure (work-normalised ratio 1.314x, 95% CI below the 1.5x bar, the same qualitative finding as the recorded outer-basis precedents 0.72x / 0.78x), the governed-headline invariance, and the adoption-materiality verdict. (2) DISPLAY-ONLY: every figure is copied bit-for-bit from docs/validation/POSTIGUI_TASK4_VARIANCE_REDUCTION.json (study digest cc0c2fea...); nothing is recomputed in the layer or in the browser. (3) The governed headline 39,975.654628199336 is BIT-IDENTICAL before/after and is not relabelled; the indicated adoption dSCR (-1.38e-05 rel) is IMMATERIAL and REPORTED, NOT applied - the production estimator and headline stay frozen. (4) The Phase 35 Task 3 (A2) per-section SHA-256 digests were recomputed with the EXACT embedded JS (new 'postigui_vr' section digested; root digest recomputed) so the in-browser verifier still agrees byte-for-byte; the H1 contract guard + the build pipeline were advanced additively to 1.22.0 (postigui_vr appended to required-keys; key_count 24 -> 25). (5) Tests: +16 ui_app self-test checks (405 -> 421, ok:true, 0 network / 0 JS errors; tabCount 19 -> 20) covering the panel render, the ratio/ESS/n* tables, the bit-for-bit carry-through, the antithetic-99.5% ineffective disclosure, the reported-not-applied adoption verdict, the headline invariance, the section digest and contract 1.22.0; new pure-Python suite tests/test_postigui_task5_vr_panel.py (13 checks); offline_viewer (11) and combined_gui (27) self-tests remain ok:true. Zero-install preserved (0 external refs, single self-contained file:// HTML, no storage API). Variance reduction is a numerical-efficiency change admissible under the Phase 30 stop-rule; NO model parameter changes; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/build_postigui_task5_vr_panel.py",
+        "scripts/build_ui_pipeline.py",
+        "scripts/ui_app_self_test.cjs",
+        "par_model_v2/viewer/contract_guard.py",
+        "tests/test_postigui_task5_vr_panel.py",
+        "ui_data.json",
+        "ui_app.html"
+      ],
+      "standard_references": [
+        "Glasserman, Monte Carlo Methods in Financial Engineering (2004) - antithetic variates, common random numbers, quasi-Monte Carlo variance reduction and work-normalised efficiency",
+        "L'Ecuyer (2018) Randomized Quasi-Monte Carlo - RQMC effective-sample-size and convergence",
+        "SOA ASOP 56 sections 3.4-3.6 (documentation of model methodology, numerical method, reliance and limitations)",
+        "SOA ASOP 41 (Actuarial Communications) - reviewer-facing efficiency read-out so the variance-reduction evidence is auditable without the model repository"
+      ],
+      "before_snapshot": {
+        "ui_contract": "1.21.0",
+        "vr_study_surfaced_offline": false,
+        "top_level_keys": 24,
+        "ui_app_self_test_checks": 405,
+        "ui_app_tab_count": 19
+      },
+      "after_snapshot": {
+        "ui_contract": "1.22.0 (additive: +1 top-level key 'postigui_vr')",
+        "vr_study_surfaced_offline": true,
+        "top_level_keys": 25,
+        "figures_carried_bit_for_bit": true,
+        "vr_study_digest": "cc0c2fea2bf9b86db75f6239a9ba6e3e0a1577a1e1290e24ce13732eb0c0f0d7",
+        "headline_bit_identical": "39975.654628199336",
+        "indicated_dscr_rel": -1.380833590586369e-05,
+        "adoption_applied": false,
+        "antithetic_995_useful": false,
+        "preexisting_keys_bit_identical": true,
+        "a2_digests_recompute_and_verify": true,
+        "network_or_storage_used": false,
+        "ui_app_self_test_checks": 421,
+        "ui_app_tab_count": 20
+      },
+      "impact_assessment": "Display layer + additive data-contract only. The new 'postigui_vr' key is the sole addition; every pre-existing key (and its A2 content digest) is bit-identical, the panel carries no recomputation, the governed headline is unchanged and the variance-reduced estimator is disclosed/not adopted, so the MR-016/MR-017 dependence decision and the production headline are not pre-empted. Zero-install invariants preserved (0 external refs, single self-contained HTML, no storage API, file:// safe). Variance reduction is a numerical-efficiency change, admissible under the binding Phase 30 stop-rule.",
+      "quantitative_impact": "No governed capital figure changed (headline 39,975.654628199336 bit-identical; indicated adoption dSCR -1.38e-05 rel, immaterial, not applied). Contract 1.21.0 -> 1.22.0 (additive; +1 top-level key). ui_app self-test 405 -> 421 checks ok:true 0/0; offline_viewer 11 + combined_gui 27 green. External refs remain 0.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T13:27:13.405099+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: ADDITIVE contract bump 1.21.0 -> 1.22.0 adding ONLY the 'postigui_vr' key; every pre-existing ui_data key bit-identical (A2 per-section SHA-256 digests recompute and still verify in-browser; new postigui_vr section digested, root recomputed). All VR figures carried bit-for-bit from the governed Task-4 report; the panel is display-only and recomputes nothing; governed headline 39,975.654628199336 carried exactly and not relabelled; antithetic-99.5% disclosed ineffective; adoption reported-not-applied. ui_app self-test 421 checks ok:true 0/0 (tabCount 20) plus offline_viewer 11 + combined_gui 27 green; 13 new pure-Python checks; pipeline chain validates to 1.22.0; 0 external refs; no model parameter changes."
+        },
+        {
+          "timestamp": "2026-06-15T13:27:13.405112+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. The offline UI now carries a read-only 'Variance Reduction (MR-VR-1)' efficiency panel (work-normalised VR ratios + CIs, effective sample size, target-SE inner-path counts n*, unbiasedness, and the antithetic-99.5% ineffective disclosure), display-only and additive. Variance reduction is a numerical-efficiency change under the Phase 30 stop-rule; the governed estimator/headline stay FROZEN and the MR-016/MR-017 dependence decision remains entirely with the owner."
+        }
+      ],
+      "phase": "Post-Phase-IGUI: Stochastic-model efficiency candidates (MR-VR-1)"
     }
   ],
   "risk_register": [
