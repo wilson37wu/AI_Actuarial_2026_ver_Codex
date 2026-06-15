@@ -3159,6 +3159,23 @@
       "phase": "Post-Phase-IGUI: Model-Improvement Candidate Pre-Registration",
       "digest": "01a78d97e95b667fb176ae31833b1fba284898b332bcdeed985aea386c7599f4",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "b0e4aa1dfbc7446b91e5109bc4f9c6fd",
+      "timestamp": "2026-06-15T10:17:10.134114+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "PostIGUITask2CredentialledCalibrationDiagnostics",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Post-Phase-IGUI Task 2 MR-CAL-1 diagnostics",
+      "details": {
+        "record_id": "a6b09b75418741af8d6468febb87a77d",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "candidate_id": "MR-CAL-1",
+        "digest": "1a3119de177b4dcd01fbb5212f36ff8623ed2100dc827411d6801f3b31f5661a"
+      },
+      "phase": "Post-Phase-IGUI: Model-Improvement Candidate Implementation",
+      "digest": "80914586b11e6dda061e332abc6ef4cd2912a4fb1a598b2774942a0f36cc69a3",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -10275,6 +10292,65 @@
         }
       ],
       "phase": "Post-Phase-IGUI: Model-Improvement Candidate Pre-Registration"
+    },
+    {
+      "record_id": "a6b09b75418741af8d6468febb87a77d",
+      "created_at": "2026-06-15T10:17:10.134036+00:00",
+      "title": "Post-Phase-IGUI Task 2 - implement MR-CAL-1 credentialled-data calibration-residual diagnostics (frozen margins; gates G1-G6; diagnostics-only, no parameter change)",
+      "description": "Implemented MR-CAL-1: diagnostics-only credentialled-data calibration-residual analysis of the seven frozen standalone risk-driver margins. PIT/QQ/KS/Anderson-Darling goodness-of-fit on a leakage-free fit/holdout split with >=200 bootstrap replicates; residual decomposition of the gap vs nested into a copula-FORM part and a margin-calibration part; partial-credibility Z and credibility-weighted indicated margin shift REPORTED, NOT applied. Frozen margins and the governed frozen-t headline recovered BIT-IDENTICAL (dev 0). No recalibration; no copula structure (Phase 30 stop-rule); MR-016/MR-017 untouched.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/calibration/credentialled_residual_diagnostics.py (NEW)",
+        "scripts/build_postigui_task2_diagnostics.py (NEW)",
+        "tests/test_postigui_task2_diagnostics.py (NEW)",
+        "docs/validation/POSTIGUI_TASK2_DIAGNOSTICS.{json,md}",
+        "docs/POSTIGUI_TASK2_CREDENTIALLED_CALIBRATION_REPORT_CARD.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 25 (Credibility Procedures)",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation)",
+        "IFoA Model Practice Note (MPN) section 4 (documentation, independent review)",
+        "Solvency II Delegated Regulation Article 124 (validation standards)",
+        "Buhlmann & Straub (1970) credibility; limited-fluctuation (Mowbray) credibility",
+        "Rosenblatt (1952) PIT; Anderson-Darling / Kolmogorov-Smirnov goodness-of-fit"
+      ],
+      "before_snapshot": {
+        "candidate": "MR-CAL-1",
+        "state": "pre-registered (Task 1 design note OWNER_REVIEW)",
+        "calibration_residual_quantified": false
+      },
+      "after_snapshot": {
+        "candidate": "MR-CAL-1",
+        "gate": "16/16",
+        "gate_ok": true,
+        "digest": "1a3119de177b4dcd01fbb5212f36ff8623ed2100dc827411d6801f3b31f5661a",
+        "margin_calibration_share": 0.08149914534494801,
+        "copula_form_share": 0.9185008546550519,
+        "indicated_rel_dscr_total": 0.009039999999999996,
+        "indicated_applied": false,
+        "is_material": false
+      },
+      "impact_assessment": "Governance/diagnostics only. Quantifies the margin-calibration residual for the first time and confirms it is the minor share of the nested gap; the governed headline does not move and no margin parameter is changed. Indicated credibility-weighted shift is immaterial and NOT applied.",
+      "quantitative_impact": "Gap vs nested 6,663.245 = copula-FORM 6,120.197 (91.85%) + margin-calibration 543.049 (8.15%). Indicated dSCR 0.904% of headline, NOT applied. Governed headline 39,975.654628 unchanged.",
+      "status": "OWNER_REVIEW",
+      "author": "PostIGUITask2CredentialledCalibrationDiagnostics",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T10:17:10.134073+00:00",
+          "actor": "PostIGUITask2CredentialledCalibrationDiagnostics",
+          "status": "PEER_REVIEW",
+          "comments": "MR-CAL-1 diagnostics implemented; gates G1-G6 green; unit tests added."
+        },
+        {
+          "timestamp": "2026-06-15T10:17:10.134088+00:00",
+          "actor": "PostIGUITask2CredentialledCalibrationDiagnostics",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: diagnostics-only; frozen margins/headline bit-identical; credibility indication REPORTED, not applied."
+        }
+      ],
+      "phase": "Post-Phase-IGUI: Model-Improvement Candidate Implementation"
     }
   ],
   "risk_register": [

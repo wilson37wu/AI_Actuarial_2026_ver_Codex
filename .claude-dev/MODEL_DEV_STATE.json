@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-15T09:10:00Z",
- "last_run_duration_minutes": 18,
- "last_run_note": "Post-Phase-IGUI Task 1 COMPLETE (design-note-first, governance-only): pre-registered EXACTLY ONE stochastic-model improvement candidate - MR-CAL-1 'credentialled-data calibration-residual diagnostics on the seven FROZEN standalone risk-driver margins {rate,equity,credit,lapse,mortality,fx,liquidity}' - with SIX fixed acceptance gates (G1 frozen-margin+headline 39,975.654628199336 BIT-IDENTICAL invariance; G2 credentialled-reference provenance/synthetic-stub fallback; G3 leakage-free PIT/QQ/KS/AD GoF, >=200 bootstrap SE<=5%; G4 residual decomposition reconciled to gap vs nested 46,638.9; G5 partial-credibility Z REPORTED-not-applied, >1% indicated dSCR opens a new MR; G6 idempotent digest + OWNER_REVIEW + additive-only UI). Diagnostics-only, NO parameter change, NO new copula-structure candidate (Phase 30 stop-rule honoured), MR-016/MR-017 untouched. The other two pool candidates recorded but NOT adopted: MR-VR-1 inner-path antithetic/CRN variance reduction = NEXT; MR-LONGEV-1 longevity 5th driver = DEFERRED (needs owner sign-off). New scaffold par_model_v2/calibration/credentialled_residual_design.py + builder + docs/validation/POSTIGUI_TASK1_DESIGN_NOTE.{json,md} + card; validation gate 14/14 PASS; 7/7 scaffold tests PASS (pytest unavailable in sandbox/ENOSPC - ran via harness). ChangeRecord 12a448be3579429d8d170268cdbf3a1d governance_change OWNER_REVIEW (records 110->111, audit 138->139, integrity OK). Contract unchanged; no model parameter change.",
- "current_phase": "Post-Phase-IGUI candidate pre-registration COMPLETE (Task 1). MR-CAL-1 credentialled-data calibration-residual diagnostics pre-registered with six fixed gates, OWNER_REVIEW. gov 111 change records / 139 audit entries; 17 risks. Next = Post-Phase-IGUI Task 2 = IMPLEMENT MR-CAL-1 under the frozen gates (diagnostics module + report + tests), OR pivot to packaging A/B/C build-spec if the owner selects one, OR pivot to offline-UI usability per the standing UI directive.",
- "overall_status": "POSTIGUI_TASK1_CANDIDATE_PREREGISTERED_NEXT_TASK2_IMPLEMENT_MR_CAL_1_OR_OWNER_PIVOT",
+ "last_run": "2026-06-15T10:30:00Z",
+ "last_run_duration_minutes": 22,
+ "last_run_note": "Post-Phase-IGUI Task 2 COMPLETE - IMPLEMENTED candidate MR-CAL-1 (credentialled-data calibration-residual diagnostics on the seven FROZEN standalone risk-driver margins) under the six pre-registered gates G1-G6. New module par_model_v2/calibration/credentialled_residual_diagnostics.py (scipy-free: math.erf normal CDF + Acklam normal quantile + closed-form KS/Anderson-Darling). Results: G1 frozen margins + governed frozen-t headline 39,975.654628199336 recovered BIT-IDENTICAL (max abs dev 0.0); G2 clearly-labelled SYNTHETIC/EDUCATIONAL credentialled-reference stub (no licensed external dataset in sandbox), version-pinned (seed 20260615, n=4000/margin); G3 leakage-free PIT/QQ/KS/AD GoF on a 50/50 holdout, 200 bootstrap reps, PIT-mean & 99.5% tail SE<=5% (KS/AD reported with CIs); G4 residual decomposition reconciles EXACTLY (err 0): total gap vs nested 6,663.245 = copula-FORM 6,120.197 (91.85%) + margin-calibration 543.049 (8.15%) - copula form dominates, consistent with Phase 26-29; G5 limited-fluctuation credibility Z + indicated credibility-weighted dSCR 0.904% of headline (<1% threshold -> IMMATERIAL, REPORTED-NOT-APPLIED, no new MR opened); G6 idempotent digest 1a3119de177b4d... , ChangeRecord OWNER_REVIEW, 11/11 unit tests PASS (incl. a monkeypatched MATERIAL branch that DOES open an OPEN model-risk entry). ui_app.html byte-unchanged (report-only, no UI surface added). No model parameter change; no copula structure (Phase 30 stop-rule); MR-016/MR-017 untouched. ChangeRecord a6b09b75418741af8d6468febb87a77d governance_change OWNER_REVIEW (records 111->112, audit 139->140, integrity OK). Contract 1.21.0 unchanged.",
+ "current_phase": "Post-Phase-IGUI MR-CAL-1 IMPLEMENTED (Task 2): credentialled-data calibration-residual diagnostics, gates G1-G6 green (16/16). Margin-calibration residual = 8.15% of the nested gap (copula FORM dominates at 91.85%); indicated dSCR 0.90% immaterial, NOT applied. gov 112 change records / 140 audit entries. Next = Post-Phase-IGUI Task 3 = design-note pre-register the NEXT candidate MR-VR-1 (inner-path antithetic/CRN variance reduction for TVOG) with fixed gates, OR pivot to packaging A/B/C build-spec if owner selects, OR offline-UI usability per the standing UI directive.",
+ "overall_status": "POSTIGUI_TASK2_MR_CAL_1_IMPLEMENTED_NEXT_TASK3_PREREGISTER_MR_VR_1_OR_OWNER_PIVOT",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -1072,7 +1072,7 @@
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
   "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
  },
- "last_updated": "2026-06-15T07:30:00Z",
+ "last_updated": "2026-06-15T10:30:00Z",
  "cycle_2026_06_08_phase26_task2": {
   "verdict": "PASS",
   "gates": "6/6 pre-registered",
@@ -1983,5 +1983,46 @@
   "ui_app_byte_unchanged": true,
   "constraints": "STDLIB-only docs/config; NO model param change; Phase 30 stop-rule honoured; MR-016/MR-017 + A/B/C packaging decision NOT pre-empted; decision-neutral.",
   "next": "Post-Phase-IGUI Task 1 design note (pre-register one model-improvement candidate) OR packaging build-spec if owner selects A/B/C"
+ },
+ "cycle_2026_06_15_postigui_task2": {
+  "utc": "2026-06-15T10:30:00Z",
+  "task": "Post-Phase-IGUI Task 2 - implement MR-CAL-1 credentialled-data calibration-residual diagnostics (gates G1-G6)",
+  "result": "COMPLETE",
+  "gate": "16/16 G1-G6 green",
+  "unit_tests": "11/11 PASS (incl. material-branch open-MR test)",
+  "digest": "1a3119de177b4dcd01fbb5212f36ff8623ed2100dc827411d6801f3b31f5661a",
+  "findings": {
+   "g1_max_abs_dev": 0.0,
+   "total_gap_vs_nested": 6663.245371800665,
+   "copula_form_residual": 6120.196568775231,
+   "copula_form_share": 0.9185008546550519,
+   "margin_calibration_residual": 543.0488030254346,
+   "margin_calibration_share": 0.08149914534494801,
+   "indicated_rel_dscr_total": 0.00904,
+   "is_material": false,
+   "indicated_applied": false
+  },
+  "artifacts": [
+   "par_model_v2/calibration/credentialled_residual_diagnostics.py",
+   "scripts/build_postigui_task2_diagnostics.py",
+   "tests/test_postigui_task2_diagnostics.py",
+   "docs/validation/POSTIGUI_TASK2_DIAGNOSTICS.json",
+   "docs/validation/POSTIGUI_TASK2_DIAGNOSTICS.md",
+   "docs/POSTIGUI_TASK2_CREDENTIALLED_CALIBRATION_REPORT_CARD.md",
+   "docs/cycle_status/LATEST_CYCLE_STATUS_20260615_postigui_task2.md"
+  ],
+  "governance": {
+   "change_record": "a6b09b75418741af8d6468febb87a77d",
+   "status": "OWNER_REVIEW",
+   "change_records": "111->112",
+   "audit_entries": "139->140",
+   "integrity_ok": true,
+   "contract": "1.21.0 (unchanged)"
+  },
+  "ui_app_byte_unchanged": true,
+  "no_model_parameter_change": true,
+  "stop_rule_honoured": true,
+  "constraints": "scipy-free impl (sandbox has no scipy); SYNTHETIC reference stub; diagnostics-only; MR-016/MR-017 + A/B/C packaging decision NOT pre-empted.",
+  "next": "Post-Phase-IGUI Task 3 - design-note pre-register MR-VR-1 (inner-path antithetic/CRN variance reduction) OR owner pivot (packaging A/B/C / offline-UI usability)"
  }
 }

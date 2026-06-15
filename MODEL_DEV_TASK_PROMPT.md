@@ -2732,3 +2732,17 @@ Phase IGUI is **COMPLETE** (input+run GUI MVP + one-click packaging + own-run re
 **Standing constraints (BINDING):** Phase 30 stop-rule - NO new copula-structure candidates under MR-016; MR-016/MR-017 owner decisions pending; governed headline frozen single-df t **39,975.654628199336**. NO model parameter change without owner sign-off; ONE task per cycle; fresh-clone git per AGENT_COORDINATION.md; end-of-run status email.
 
 **Alternative pivots (owner-directed):** if the owner selects packaging option A/B/C, build the corresponding build-spec / CI release-matrix skeleton (no in-sandbox build); or continue offline-UI usability per the standing UI directive.
+
+---
+
+## NEXT EXECUTABLE TASK POINTER (updated 2026-06-15, Claude Cowork) - Post-Phase-IGUI Task 3
+
+**Post-Phase-IGUI Task 2 is COMPLETE.** Candidate `MR-CAL-1` (credentialled-data calibration-residual diagnostics on the seven frozen standalone risk-driver margins) is IMPLEMENTED under all six pre-registered gates - gate 16/16 green, 11/11 unit tests PASS, idempotent digest `1a3119de177b4dcd01fbb5212f36ff8623ed2100dc827411d6801f3b31f5661a`, ChangeRecord `a6b09b75418741af8d6468febb87a77d` (governance_change, OWNER_REVIEW; records 111->112, audit 139->140). Module `par_model_v2/calibration/credentialled_residual_diagnostics.py` is diagnostics-only and scipy-free (math.erf CDF + Acklam quantile + closed-form KS/Anderson-Darling).
+
+**Key result:** of the 6,663.245 gap to the nested reference (46,638.9), the **copula FORM explains 91.85% (6,120.197)** and the **margin calibration only 8.15% (543.049)**; the credibility-weighted indicated dSCR is **0.904% of the governed headline - IMMATERIAL and NOT applied** (no recalibration; no new MR). Frozen margins + governed headline 39,975.654628199336 recovered BIT-IDENTICAL (dev 0); ui_app.html byte-unchanged.
+
+**NEXT (the single in_progress item): Post-Phase-IGUI Task 3** - following the design-note-first discipline, PRE-REGISTER the recorded NEXT candidate **MR-VR-1** (inner-path antithetic / CRN variance reduction for the TVOG inner loop) with fixed acceptance gates (frozen-headline invariance; unbiasedness vs the governed estimator; demonstrated variance-reduction ratio with CIs; idempotent digest; governance OWNER_REVIEW). Implementation deferred to the following cycle, exactly as MR-CAL-1 was. This is admissible under the Phase 30 stop-rule (variance reduction is a numerical-efficiency change, NOT a copula-structure candidate; no model parameter changes).
+
+**Standing constraints (BINDING):** Phase 30 stop-rule - NO new copula-structure candidates under MR-016; MR-016/MR-017 owner decisions pending; governed headline frozen single-df t **39,975.654628199336**. NO model parameter change without owner sign-off; ONE task per cycle; fresh-clone git per AGENT_COORDINATION.md; end-of-run status email.
+
+**Alternative pivots (owner-directed):** if the owner selects packaging option A/B/C, build the corresponding build-spec / CI release-matrix skeleton (no in-sandbox build); or continue offline-UI usability per the standing UI directive.

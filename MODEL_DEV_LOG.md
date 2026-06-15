@@ -10351,3 +10351,7 @@ Design-note-first, governance-only cycle. Pre-registered **exactly ONE** stochas
 - **Governance:** ChangeRecord `12a448be3579429d8d170268cdbf3a1d` (`governance_change`) OWNER_REVIEW; change_records 110->111; audit_trail 138->139; integrity OK; risk register unchanged at 17 (MR-CAL-1 is a pre-registered *candidate*, not yet an opened risk). No contract bump (no UI change this cycle).
 
 **Verdict:** Post-Phase-IGUI Task 1 COMPLETE. **Next single in_progress:** Post-Phase-IGUI Task 2 - implement MR-CAL-1 under gates G1-G6, OR pivot to packaging A/B/C build-spec / offline-UI usability if the owner so directs.
+
+---
+### 2026-06-15T10:30Z - Post-Phase-IGUI Task 2 (Claude Cowork) - MR-CAL-1 IMPLEMENTED
+Implemented credentialled-data calibration-residual diagnostics (gates G1-G6, 16/16; 11/11 unit tests). Frozen margins + headline 39,975.654628199336 BIT-IDENTICAL (dev 0). Gap-vs-nested decomposition: copula-FORM 91.85% (6,120.197) + margin-calibration 8.15% (543.049), reconciles exactly. Credibility-weighted indicated dSCR 0.904% (immaterial, NOT applied). scipy-free module. ChangeRecord a6b09b75418741af8d6468febb87a77d governance_change OWNER_REVIEW (records 111->112, audit 139->140, integrity OK). ui_app.html byte-unchanged. Phase 30 stop-rule honoured. Next: Task 3 pre-register MR-VR-1 (inner-path antithetic/CRN variance reduction).

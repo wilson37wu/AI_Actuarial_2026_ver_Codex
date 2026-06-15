@@ -1,0 +1,534 @@
+{
+ "candidate_id": "MR-CAL-1",
+ "classification": "EDUCATIONAL",
+ "frozen_margin_invariance": {
+  "bit_identical": true,
+  "max_abs_dev": 0.0,
+  "tol": 1e-09,
+  "before": {
+   "driver_names": [
+    "rate",
+    "equity",
+    "credit",
+    "lapse",
+    "mortality",
+    "fx",
+    "liquidity"
+   ],
+   "margin_sigma": [
+    0.45,
+    0.25,
+    0.25,
+    0.2,
+    0.3,
+    0.15,
+    0.2
+   ],
+   "margin_weight": [
+    0.2,
+    0.18,
+    0.16,
+    0.12,
+    0.14,
+    0.1,
+    0.1
+   ],
+   "frozen_t_component_scr": 39975.654628199336
+  },
+  "after": {
+   "driver_names": [
+    "rate",
+    "equity",
+    "credit",
+    "lapse",
+    "mortality",
+    "fx",
+    "liquidity"
+   ],
+   "margin_sigma": [
+    0.45,
+    0.25,
+    0.25,
+    0.2,
+    0.3,
+    0.15,
+    0.2
+   ],
+   "margin_weight": [
+    0.2,
+    0.18,
+    0.16,
+    0.12,
+    0.14,
+    0.1,
+    0.1
+   ],
+   "frozen_t_component_scr": 39975.654628199336
+  }
+ },
+ "credentialled_reference": {
+  "kind": "SYNTHETIC",
+  "label": "EDUCATIONAL / illustrative credentialled-reference stub",
+  "rationale": "No external credentialled experience dataset (e.g. CMI / SOA / regulatory credit-loss panel) is licensed inside the dev sandbox; per gate G2 a clearly-labelled SYNTHETIC stub with the same interface is used (GBM ESG-stub precedent). Numbers are illustrative of the diagnostic MECHANISM only and may not inform any decision.",
+  "source": "deterministic lognormal draw, par_model_v2.calibration.credentialled_residual_diagnostics",
+  "vintage": "2026-06-15",
+  "n_per_margin": 4000,
+  "seed": 20260615,
+  "credential_basis": "synthetic (no licence required); structurally mirrors a credentialled experience panel",
+  "reference_model": "per-driver lognormal loss factor exp(sigma*Z - 0.5*sigma^2)",
+  "reference_sigma_perturbation_vs_frozen": [
+   0.01,
+   0.008,
+   0.012,
+   0.006,
+   0.009,
+   0.006,
+   0.011
+  ]
+ },
+ "goodness_of_fit": {
+  "split": {
+   "holdout_fraction": 0.5,
+   "leakage_free": true,
+   "note": "frozen margins are not refit; split honoured for discipline"
+  },
+  "bootstrap_replicates": 200,
+  "per_margin": {
+   "rate": {
+    "n": 4000,
+    "n_fit": 2000,
+    "n_holdout": 2000,
+    "sigma_model": 0.45,
+    "point": {
+     "ks": 0.011737645967518806,
+     "ad": 0.2786171967838982,
+     "pit_mean": 0.5005622078991573,
+     "pit_var": 0.08416209008744069,
+     "tail_q995": 0.9970827272403686
+    },
+    "bootstrap": {
+     "replicates": 200,
+     "ks": {
+      "mean": 0.023816393468422917,
+      "se": 0.006099464086704636,
+      "se_rel": 0.25610359917808884,
+      "ci95_lo": 0.014139640030983655,
+      "ci95_hi": 0.036497480513289944
+     },
+     "ad": {
+      "mean": 1.2740583304244115,
+      "se": 0.7302593233562492,
+      "se_rel": 0.5731757376547955,
+      "ci95_lo": 0.41497337237493637,
+      "ci95_hi": 3.129733650805463
+     },
+     "pit_mean": {
+      "mean": 0.49995144189170376,
+      "se": 0.006361252053035926,
+      "se_rel": 0.012723739787540924,
+      "ci95_lo": 0.4875821504532575,
+      "ci95_hi": 0.513869193093461
+     },
+     "tail_q995": {
+      "mean": 0.99648993788917,
+      "se": 0.001317173403604253,
+      "se_rel": 0.0013218130495069279,
+      "ci95_lo": 0.9918055251035293,
+      "ci95_hi": 0.998021025739248
+     }
+    }
+   },
+   "equity": {
+    "n": 4000,
+    "n_fit": 2000,
+    "n_holdout": 2000,
+    "sigma_model": 0.25,
+    "point": {
+     "ks": 0.017184225225094774,
+     "ad": 0.7487211765148913,
+     "pit_mean": 0.493606097977858,
+     "pit_var": 0.08414258175770771,
+     "tail_q995": 0.9947847194723536
+    },
+    "bootstrap": {
+     "replicates": 200,
+     "ks": {
+      "mean": 0.02436849908018785,
+      "se": 0.007770786220210813,
+      "se_rel": 0.318886534400005,
+      "ci95_lo": 0.013584048346409831,
+      "ci95_hi": 0.04410937056539389
+     },
+     "ad": {
+      "mean": 1.7404634889048451,
+      "se": 1.3732146135712997,
+      "se_rel": 0.7889936343538984,
+      "ci95_lo": 0.35832160162032095,
+      "ci95_hi": 5.398111783193382
+     },
+     "pit_mean": {
+      "mean": 0.49398856113288614,
+      "se": 0.006965405245525548,
+      "se_rel": 0.014100337120259366,
+      "ci95_lo": 0.47966194942973384,
+      "ci95_hi": 0.506146529880127
+     },
+     "tail_q995": {
+      "mean": 0.9945221154381,
+      "se": 0.0014148149195276716,
+      "se_rel": 0.001422607800837518,
+      "ci95_lo": 0.9910340293159845,
+      "ci95_hi": 0.9968187077538988
+     }
+    }
+   },
+   "credit": {
+    "n": 4000,
+    "n_fit": 2000,
+    "n_holdout": 2000,
+    "sigma_model": 0.25,
+    "point": {
+     "ks": 0.03487831466331792,
+     "ad": 4.395469702588798,
+     "pit_mean": 0.4852462753544698,
+     "pit_var": 0.08758735620803038,
+     "tail_q995": 0.9964742210835039
+    },
+    "bootstrap": {
+     "replicates": 200,
+     "ks": {
+      "mean": 0.038832112034160676,
+      "se": 0.00926941146841825,
+      "se_rel": 0.23870479824182453,
+      "ci95_lo": 0.02083519847214442,
+      "ci95_hi": 0.057008266714512285
+     },
+     "ad": {
+      "mean": 5.36003259771825,
+      "se": 2.7345153927347194,
+      "se_rel": 0.5101676795582912,
+      "ci95_lo": 1.3834127716092497,
+      "ci95_hi": 11.85781670295448
+     },
+     "pit_mean": {
+      "mean": 0.48573460745472624,
+      "se": 0.006987285119378682,
+      "se_rel": 0.014384985158855381,
+      "ci95_lo": 0.4722902734090178,
+      "ci95_hi": 0.4991284607030485
+     },
+     "tail_q995": {
+      "mean": 0.9964866802143976,
+      "se": 0.0011305632374501988,
+      "se_rel": 0.001134549271854747,
+      "ci95_lo": 0.9943877500911587,
+      "ci95_hi": 0.9984187078376501
+     }
+    }
+   },
+   "lapse": {
+    "n": 4000,
+    "n_fit": 2000,
+    "n_holdout": 2000,
+    "sigma_model": 0.2,
+    "point": {
+     "ks": 0.016811221893217848,
+     "ad": 0.6693835798864711,
+     "pit_mean": 0.5044468383820583,
+     "pit_var": 0.08136764185658119,
+     "tail_q995": 0.9921810722093928
+    },
+    "bootstrap": {
+     "replicates": 200,
+     "ks": {
+      "mean": 0.025181935387036357,
+      "se": 0.0059573550211265295,
+      "se_rel": 0.23657256400528182,
+      "ci95_lo": 0.015771480488403374,
+      "ci95_hi": 0.0392915358568101
+     },
+     "ad": {
+      "mean": 1.6175721564590857,
+      "se": 0.9864803664007726,
+      "se_rel": 0.6098524646716273,
+      "ci95_lo": 0.4712525862343284,
+      "ci95_hi": 4.081682549566928
+     },
+     "pit_mean": {
+      "mean": 0.504639849473054,
+      "se": 0.005990726475861395,
+      "se_rel": 0.011871290945645542,
+      "ci95_lo": 0.49174617629713785,
+      "ci95_hi": 0.5165799344494107
+     },
+     "tail_q995": {
+      "mean": 0.9918422056430507,
+      "se": 0.0014668727849776676,
+      "se_rel": 0.0014789376542276055,
+      "ci95_lo": 0.9889256454830839,
+      "ci95_hi": 0.993376493381095
+     }
+    }
+   },
+   "mortality": {
+    "n": 4000,
+    "n_fit": 2000,
+    "n_holdout": 2000,
+    "sigma_model": 0.3,
+    "point": {
+     "ks": 0.01219436230906179,
+     "ad": 0.5028557891296259,
+     "pit_mean": 0.49740012623834423,
+     "pit_var": 0.08440733932241554,
+     "tail_q995": 0.9921205708496009
+    },
+    "bootstrap": {
+     "replicates": 200,
+     "ks": {
+      "mean": 0.023972131712743233,
+      "se": 0.006429831923892687,
+      "se_rel": 0.26822111612521643,
+      "ci95_lo": 0.014827589898448845,
+      "ci95_hi": 0.03917126178441355
+     },
+     "ad": {
+      "mean": 1.5149101491198484,
+      "se": 0.9539831314260395,
+      "se_rel": 0.6297291835956718,
+      "ci95_lo": 0.4484340501549639,
+      "ci95_hi": 4.239782477808785
+     },
+     "pit_mean": {
+      "mean": 0.4973949187182471,
+      "se": 0.00653549278870667,
+      "se_rel": 0.013139444217782102,
+      "ci95_lo": 0.4847071127010784,
+      "ci95_hi": 0.5099119427096507
+     },
+     "tail_q995": {
+      "mean": 0.9921632287430535,
+      "se": 0.0015625364861653582,
+      "se_rel": 0.0015748784483223554,
+      "ci95_lo": 0.988608908020984,
+      "ci95_hi": 0.9940719322232711
+     }
+    }
+   },
+   "fx": {
+    "n": 4000,
+    "n_fit": 2000,
+    "n_holdout": 2000,
+    "sigma_model": 0.15,
+    "point": {
+     "ks": 0.029322071718874798,
+     "ad": 3.1576779044492014,
+     "pit_mean": 0.48449761251859297,
+     "pit_var": 0.08380425544551777,
+     "tail_q995": 0.9939593312591564
+    },
+    "bootstrap": {
+     "replicates": 200,
+     "ks": {
+      "mean": 0.03657007861537223,
+      "se": 0.009862818721597793,
+      "se_rel": 0.2696964046845652,
+      "ci95_lo": 0.02067773317046889,
+      "ci95_hi": 0.05646539208005402
+     },
+     "ad": {
+      "mean": 4.180948805182858,
+      "se": 2.536644460701139,
+      "se_rel": 0.606715025440307,
+      "ci95_lo": 0.9300305197047066,
+      "ci95_hi": 10.49363433129318
+     },
+     "pit_mean": {
+      "mean": 0.484440699355023,
+      "se": 0.006431465188162025,
+      "se_rel": 0.013276062883908764,
+      "ci95_lo": 0.4714080724197862,
+      "ci95_hi": 0.4969493412954372
+     },
+     "tail_q995": {
+      "mean": 0.9938128901850479,
+      "se": 0.0024489837577280674,
+      "se_rel": 0.002464230220712942,
+      "ci95_lo": 0.9892018704521255,
+      "ci95_hi": 0.9967535132630965
+     }
+    }
+   },
+   "liquidity": {
+    "n": 4000,
+    "n_fit": 2000,
+    "n_holdout": 2000,
+    "sigma_model": 0.2,
+    "point": {
+     "ks": 0.017871833053585695,
+     "ad": 0.7474882508990959,
+     "pit_mean": 0.5063108358845828,
+     "pit_var": 0.08431373143264832,
+     "tail_q995": 0.9947023093020413
+    },
+    "bootstrap": {
+     "replicates": 200,
+     "ks": {
+      "mean": 0.026975504394861273,
+      "se": 0.0070463859861451495,
+      "se_rel": 0.26121424396748105,
+      "ci95_lo": 0.016503889422628034,
+      "ci95_hi": 0.042267451096557856
+     },
+     "ad": {
+      "mean": 1.8629169640673877,
+      "se": 1.372296735007107,
+      "se_rel": 0.7366387023557462,
+      "ci95_lo": 0.49522289923485235,
+      "ci95_hi": 4.842942585337719
+     },
+     "pit_mean": {
+      "mean": 0.5068207752518832,
+      "se": 0.006529389929027811,
+      "se_rel": 0.012883035281619605,
+      "ci95_lo": 0.4943370197710651,
+      "ci95_hi": 0.5179737456620784
+     },
+     "tail_q995": {
+      "mean": 0.9943593075876886,
+      "se": 0.0021587124595264804,
+      "se_rel": 0.0021709581667853114,
+      "ci95_lo": 0.9903868091949442,
+      "ci95_hi": 0.9982880351645709
+     }
+    }
+   }
+  }
+ },
+ "residual_decomposition": {
+  "nested_pathwise_scr": 46638.9,
+  "governed_frozen_t_headline": 39975.654628199336,
+  "total_gap_vs_nested": 6663.245371800665,
+  "copula_form_residual_frozen_t": 6120.196568775231,
+  "margin_calibration_residual_by_difference": 543.0488030254346,
+  "copula_form_share": 0.9185008546550519,
+  "margin_calibration_share": 0.08149914534494801,
+  "reconciliation_error": 0.0,
+  "reconciles_within_tol": true,
+  "reconciliation_abs_tol": 1e-06,
+  "headline_unmoved": true,
+  "disclosure": "The frozen-t copula understates capital relative to the nested path-wise reference by the total gap; the already-quantified copula-FORM residual explains the dominant share and the remainder is the margin-calibration residual. DISCLOSED only; no figure is applied."
+ },
+ "credibility": {
+  "method": "limited-fluctuation (Mowbray) full-credibility standard; Buhlmann-Straub framing (reference=data, model margin=prior)",
+  "full_credibility_p": 0.9,
+  "full_credibility_k": 0.05,
+  "per_margin": {
+   "rate": {
+    "n": 2000,
+    "cv": 0.4737721869442261,
+    "n_full_credibility": 242.91460506601493,
+    "credibility_Z": 1.0,
+    "sigma_model": 0.45,
+    "sigma_reference_implied": 0.4545,
+    "indicated_sigma_shift_credibility_weighted": 0.004500000000000004,
+    "indicated_rel_dscr": 0.0020000000000000018,
+    "indicated_dscr": 79.95130925639874
+   },
+   "equity": {
+    "n": 2000,
+    "cv": 0.2539575927548915,
+    "n_full_credibility": 69.79702430598667,
+    "credibility_Z": 1.0,
+    "sigma_model": 0.25,
+    "sigma_reference_implied": 0.252,
+    "indicated_sigma_shift_credibility_weighted": 0.0020000000000000018,
+    "indicated_rel_dscr": 0.0014400000000000012,
+    "indicated_dscr": 57.56494266460709
+   },
+   "credit": {
+    "n": 2000,
+    "cv": 0.2539575927548915,
+    "n_full_credibility": 69.79702430598667,
+    "credibility_Z": 1.0,
+    "sigma_model": 0.25,
+    "sigma_reference_implied": 0.253,
+    "indicated_sigma_shift_credibility_weighted": 0.0030000000000000027,
+    "indicated_rel_dscr": 0.0019200000000000018,
+    "indicated_dscr": 76.7532568861428
+   },
+   "lapse": {
+    "n": 2000,
+    "cv": 0.20201676710706024,
+    "n_full_credibility": 44.166129091494355,
+    "credibility_Z": 1.0,
+    "sigma_model": 0.2,
+    "sigma_reference_implied": 0.20120000000000002,
+    "indicated_sigma_shift_credibility_weighted": 0.0012000000000000066,
+    "indicated_rel_dscr": 0.000720000000000004,
+    "indicated_dscr": 28.78247133230368
+   },
+   "mortality": {
+    "n": 2000,
+    "cv": 0.3068782880967802,
+    "n_full_credibility": 101.91704650383984,
+    "credibility_Z": 1.0,
+    "sigma_model": 0.3,
+    "sigma_reference_implied": 0.30269999999999997,
+    "indicated_sigma_shift_credibility_weighted": 0.00269999999999998,
+    "indicated_rel_dscr": 0.001259999999999991,
+    "indicated_dscr": 50.369324831530804
+   },
+   "fx": {
+    "n": 2000,
+    "cv": 0.1508477184595313,
+    "n_full_credibility": 24.62589343810425,
+    "credibility_Z": 1.0,
+    "sigma_model": 0.15,
+    "sigma_reference_implied": 0.1509,
+    "indicated_sigma_shift_credibility_weighted": 0.0009000000000000119,
+    "indicated_rel_dscr": 0.0006000000000000081,
+    "indicated_dscr": 23.985392776919923
+   },
+   "liquidity": {
+    "n": 2000,
+    "cv": 0.20201676710706024,
+    "n_full_credibility": 44.166129091494355,
+    "credibility_Z": 1.0,
+    "sigma_model": 0.2,
+    "sigma_reference_implied": 0.2022,
+    "indicated_sigma_shift_credibility_weighted": 0.0021999999999999797,
+    "indicated_rel_dscr": 0.0010999999999999899,
+    "indicated_dscr": 43.97322009101887
+   }
+  },
+  "indicated_dscr_total": 361.37991783892187,
+  "indicated_rel_dscr_total": 0.009039999999999996,
+  "materiality_threshold_rel": 0.01,
+  "is_material": false,
+  "applied": false,
+  "disposition": "REPORTED, NOT applied. Frozen margins unchanged."
+ },
+ "digest": "1a3119de177b4dcd01fbb5212f36ff8623ed2100dc827411d6801f3b31f5661a",
+ "validation_gate": {
+  "ok": true,
+  "n_checks": 16,
+  "checks": {
+   "G1_frozen_margin_bit_identical": true,
+   "G1_headline_unmoved": true,
+   "G2_provenance_documented": true,
+   "G2_synthetic_labelled": true,
+   "G3_seven_margins": true,
+   "G3_leakage_free_split": true,
+   "G3_bootstrap_reps": true,
+   "G3_gof_statistics_present": true,
+   "G3_bootstrap_se_within_5pct": true,
+   "G4_reconciles": true,
+   "G4_headline_unmoved": true,
+   "G4_shares_sum_to_one": true,
+   "G5_reported_not_applied": true,
+   "G5_credibility_Z_per_margin": true,
+   "G5_materiality_branch": true,
+   "G6_digest_present": true
+  }
+ }
+}
