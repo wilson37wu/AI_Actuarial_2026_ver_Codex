@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-15T19:14:16Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-15T20:09Z-c2ec",
+  "started_at": "2026-06-15T20:09:48Z",
+  "ttl_minutes": 120,
+  "task": "Await-owner verification/maintenance cycle (4th owner-pivot-blocked window): execute offline-UI self-tests + scipy-free python gate as fresh evidence",
+  "note": ""
 }
