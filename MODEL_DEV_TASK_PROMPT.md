@@ -2715,3 +2715,20 @@ Phase IGUI is **COMPLETE** (input+run GUI MVP + one-click packaging + own-run re
 **Open OWNER decisions (do not pre-empt):** (1) no-prerequisite COMPUTE packaging path - Option A (PyInstaller frozen binary, recommended) / B (vendored wheels) / C (status quo) per `docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md`, requiring a build/release environment not available in the dev sandbox; (2) the standing MR-016/MR-017 dependence decision.
 
 **Standing env limitation:** the dev sandbox has no scipy (`/sessions` 100% full, `pip` ENOSPC), so the Task-7 LIVE end-to-end run gate cannot execute here; it is validated by structure and goes fully green in any engine-equipped environment. After Task 10, if the owner has selected a packaging option, prepare the corresponding build spec / CI workflow skeleton (no in-sandbox build); otherwise research and pre-register one stochastic-model improvement candidate.
+
+---
+
+## NEXT EXECUTABLE TASK POINTER (updated 2026-06-15, Claude Cowork) - Post-Phase-IGUI Task 2
+
+**Post-Phase-IGUI Task 1 is COMPLETE.** Candidate `MR-CAL-1` (credentialled-data calibration-residual diagnostics on the seven frozen standalone risk-driver margins) is pre-registered with six fixed gates in `docs/validation/POSTIGUI_TASK1_DESIGN_NOTE.md` (ChangeRecord `12a448be3579429d8d170268cdbf3a1d` OWNER_REVIEW).
+
+**NEXT (the single in_progress item): Post-Phase-IGUI Task 2 - implement MR-CAL-1 under the pre-registered gates G1-G6.** Build a diagnostics-only module (suggested `par_model_v2/calibration/credentialled_residual_diagnostics.py`) that:
+1. recovers every frozen marginal calibration parameter AND the governed frozen-t component **39,975.654628199336** BIT-IDENTICAL (dev <= 1e-9) before/after - **G1**;
+2. computes per-margin goodness-of-fit (PIT/Rosenblatt uniformity, QQ, KS, Anderson-Darling) on a documented fit/holdout split against a credentialled reference - with a clearly-labelled SYNTHETIC credentialled-reference stub if no external dataset is available (**G2/G3**; >=200 bootstrap reps, SE <= 5%);
+3. decomposes the remaining gap vs nested **46,638.9** into a margin-calibration part and the already-quantified copula-FORM residual ladder {grouped_t 10,491.5 / frozen_t 6,120.2 / skew_t 6,114.9 / vine2 3,637.3}, reconciled within tolerance, DISCLOSED, headline unmoved - **G4**;
+4. reports partial-credibility Z (Buhlmann-Straub / limited-fluctuation) and the credibility-weighted indicated margin shift as an INFORMATION item, NOT applied; any indicated |dSCR| > 1% of the governed headline OPENS a new model-risk entry (OPEN) rather than triggering recalibration - **G5**;
+5. is idempotent (digest), leaves a `governance_change`/`methodology_change` ChangeRecord OWNER_REVIEW, adds unit tests, and if it adds an offline-UI surface does so as an ADDITIVE contract bump only (self-tests ok:true, 0 network / 0 JS errors, 0 external refs, every pre-existing key bit-identical) - **G6**.
+
+**Standing constraints (BINDING):** Phase 30 stop-rule - NO new copula-structure candidates under MR-016; MR-016/MR-017 owner decisions pending; governed headline frozen single-df t **39,975.654628199336**. NO model parameter change without owner sign-off; ONE task per cycle; fresh-clone git per AGENT_COORDINATION.md; end-of-run status email.
+
+**Alternative pivots (owner-directed):** if the owner selects packaging option A/B/C, build the corresponding build-spec / CI release-matrix skeleton (no in-sandbox build); or continue offline-UI usability per the standing UI directive.

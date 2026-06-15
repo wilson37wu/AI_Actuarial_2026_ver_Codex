@@ -3143,6 +3143,22 @@
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
       "digest": "a6e4b9ed6577179b8a26af77649b25958a0b36c70c3dcffbb384e206366e0c70",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "58115e5c026042e6acded86f2c618266",
+      "timestamp": "2026-06-15T09:14:04.173326+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "PostIGUITask1CredentialledCalibrationDesignNote",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Post-Phase-IGUI Task 1 candidate design note",
+      "details": {
+        "record_id": "12a448be3579429d8d170268cdbf3a1d",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "candidate_id": "MR-CAL-1"
+      },
+      "phase": "Post-Phase-IGUI: Model-Improvement Candidate Pre-Registration",
+      "digest": "01a78d97e95b667fb176ae31833b1fba284898b332bcdeed985aea386c7599f4",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -10195,6 +10211,70 @@
         }
       ],
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"
+    },
+    {
+      "record_id": "12a448be3579429d8d170268cdbf3a1d",
+      "created_at": "2026-06-15T09:14:04.173263+00:00",
+      "title": "Post-Phase-IGUI Task 1 - design note: pre-register ONE model-improvement candidate (MR-CAL-1 credentialled-data calibration-residual diagnostics, frozen margins, Phase 30 stop-rule bound)",
+      "description": "Design note pre-registering exactly ONE stochastic-model improvement candidate (MR-CAL-1: credentialled-data calibration-residual diagnostics on the seven frozen standalone risk-driver margins) with six fixed acceptance gates and a frozen-margin invariance requirement. Diagnostics-only, no recalibration; the other two pool candidates (MR-VR-1 inner-path variance reduction = next; MR-LONGEV-1 longevity 5th driver = deferred) are recorded but not adopted. No capital output changed; no new copula-structure candidate (Phase 30 binding stop-rule); MR-016/MR-017 untouched.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/calibration/credentialled_residual_design.py (NEW, this scaffold)",
+        "tests/test_postigui_task1_design_note.py",
+        "scripts/build_postigui_task1_design_note.py",
+        "docs/validation/POSTIGUI_TASK1_DESIGN_NOTE.{json,md}",
+        "docs/POSTIGUI_CREDENTIALLED_CALIBRATION_DESIGN_CARD.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 25 (Credibility Procedures)",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation)",
+        "IFoA Model Practice Note (MPN) section 4 (documentation, independent review)",
+        "Solvency II Delegated Regulation Article 124 (validation standards)",
+        "Buhlmann & Straub (1970) credibility; limited-fluctuation (Mowbray) credibility",
+        "Rosenblatt (1952) PIT; Anderson-Darling / Kolmogorov-Smirnov goodness-of-fit"
+      ],
+      "before_snapshot": {
+        "frontier": "Phase IGUI COMPLETE (Tasks 1-10)",
+        "mr016": "OPEN (stop-rule applied; dependence-FORM escalation ended)",
+        "mr017": "OPEN (vine-form limitations)",
+        "next_task": "Post-Phase-IGUI Task 1 model-improvement candidate design note"
+      },
+      "after_snapshot": {
+        "candidate_id": "MR-CAL-1",
+        "next_candidate": "MR-VR-1",
+        "deferred_candidate": "MR-LONGEV-1",
+        "acceptance_gates": [
+          "G1",
+          "G2",
+          "G3",
+          "G4",
+          "G5",
+          "G6"
+        ],
+        "validation_gate_ok": true,
+        "implementation": "DEFERRED to next cycle (gated)"
+      },
+      "impact_assessment": "Governance only. Freezes the candidate identity, scope and acceptance gates before any implementation; the governed frozen-t headline is unchanged and no model parameter moves. Stop-rule honoured (no copula structure touched).",
+      "quantitative_impact": "Registered references only: governed headline 39,975.654628; nested 46,638.9; residual ladder {grouped_t 10,491.5 / frozen_t 6,120.2 / skew_t 6,114.9 / vine2 3,637.3}. No governed capital figures changed.",
+      "status": "OWNER_REVIEW",
+      "author": "PostIGUITask1CredentialledCalibrationDesignNote",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T09:14:04.173292+00:00",
+          "actor": "PostIGUITask1CredentialledCalibrationDesignNote",
+          "status": "PEER_REVIEW",
+          "comments": "Candidate pre-registration + six fixed gates + sequencing; scaffold tests added."
+        },
+        {
+          "timestamp": "2026-06-15T09:14:04.173305+00:00",
+          "actor": "PostIGUITask1CredentialledCalibrationDesignNote",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: pure governance pre-registration; implementation deferred to next cycle."
+        }
+      ],
+      "phase": "Post-Phase-IGUI: Model-Improvement Candidate Pre-Registration"
     }
   ],
   "risk_register": [
