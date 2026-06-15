@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T19:11Z-3d2a",
-  "started_at": "2026-06-15T19:11:37Z",
-  "ttl_minutes": 120,
-  "task": "Await-owner maintenance: fix RED test_contract_inventory gate (revert erroneous 1.22.0 literal to frozen 1.21.0)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T19:14:16Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
