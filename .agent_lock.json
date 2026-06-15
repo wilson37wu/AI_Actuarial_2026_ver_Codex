@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-15T22:18:16Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-15T23:07Z-afc5",
+  "started_at": "2026-06-15T23:07:48Z",
+  "ttl_minutes": 120,
+  "task": "resume in_progress task per MODEL_DEV_STATE",
+  "note": ""
 }
