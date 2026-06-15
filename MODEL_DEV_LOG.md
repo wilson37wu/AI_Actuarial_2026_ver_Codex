@@ -10546,3 +10546,18 @@ No auto-admissible model-form or new-feature task remained (model-form options n
 - Invariants: governed headline 39,975.654628199336 bit-identical; live contract 1.23.0 unchanged. No model/UI/source change.
 
 **Owner action (pick one):** (a) MR-LONGEV-1 [sign-off], (b) LSMC [sign-off], (c) resume Phase IGUI [auto-runnable, default], (d) packaging A/B/C, (e) freeze.
+
+---
+
+## 2026-06-15T21:20:04Z - Phase PKG Task 1 (claude) - Option-A frozen-binary build infrastructure
+
+Authored the owner-recommended Option-A packaging recipe (decision-neutral, authoring-only):
+PyInstaller spec (`packaging/actuarial_gui.spec`) wrapping the offline launcher + numpy/pandas/scipy;
+a 3-OS CI release matrix (`.github/workflows/release.yml`) gated to manual dispatch / `v*` tags only
+(no branch-push, auto-publishes nothing); a stdlib structural gate (`scripts/build_phase_pkg_task1_validate.py`, 25 checks)
++ unittest (`tests/test_phase_pkg_task1_build_infra.py`, 9 cases); and packaging docs.
+Verification: gate ok:true 25/25; unittest 9/9; spec parses; workflow manual/tag-only; ui_app.html byte-unchanged
+(sha256 d82c65ec...); governed headline 39,975.654628199336 unchanged; ChangeRecord d7b04588 OWNER_REVIEW
+(records 117->118, audit 145->146, integrity True). No model parameter / UI contract change. Phase 30 stop-rule honoured.
+Builds nothing in-sandbox (no toolchain/network); CI performs the per-OS build. Owner/infra inputs for Task 2:
+code-signing certificate, onedir fallback decision, publish channel.

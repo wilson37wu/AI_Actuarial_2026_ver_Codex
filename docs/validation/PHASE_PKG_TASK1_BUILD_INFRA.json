@@ -1,0 +1,53 @@
+{
+ "doc_id": "PHASE_PKG_TASK1_BUILD_INFRA",
+ "version": "1.0.0",
+ "phase": "Phase PKG: No-prerequisite packaging (owner-decision card Option A)",
+ "task": "Task 1 - author Option-A frozen-binary build infrastructure (PyInstaller spec + CI release matrix + gate + docs)",
+ "generated": "2026-06-15T21:18:05Z",
+ "classification": "build-infrastructure / authoring-only / decision-neutral",
+ "owner_decision_status": "OPEN - this authors the RECOMMENDED Option A recipe without building or publishing; owner A/B/C choice not pre-empted",
+ "trigger_context": "Owner-silence default after 4 consecutive owner-pivot-blocked windows; MODEL_DEV_TASK_PROMPT.md pointer: 'If silent again, default = resume Phase IGUI / packaging (auto-runnable)'. Packaging is the explicit residual named by PHASE_IGUI_TASK9_PHASE_SUMMARY.",
+ "what_was_added": [
+  "packaging/actuarial_gui.spec - PyInstaller onefile spec; entry=scripts/launch_offline_gui.py; bundles numpy/pandas/scipy + ui_app.html + ui_data.json + production_run/ + .claude-dev/GOVERNANCE_STORE.json + requirements-engine-lock.txt; console=True; upx=False",
+  "packaging/release.workflow.yml (template; install to .github/workflows/release.yml with a workflow-scope token) - 3-OS matrix (ubuntu/windows/macos); gated to workflow_dispatch + v* tags (NO branch-push trigger); installs pinned engine + pyinstaller==6.11.1; runs the gate; builds; smoke-tests with --self-test; uploads artifacts; tag build publishes a Release",
+  "scripts/build_phase_pkg_task1_validate.py - stdlib-only structural acceptance gate (also the CI pre-build step)",
+  "tests/test_phase_pkg_task1_build_infra.py - unittest wrapper (pure stdlib)",
+  "packaging/README.md - build/offline/reproducibility/follow-up documentation"
+ ],
+ "acceptance_criteria_preregistered": [
+  "spec parses + targets the offline launcher + bundles only existing data paths",
+  "workflow is manual/tag only (never auto on branch push), 3-OS, runs gate, builds spec, smoke-tests binary with --self-test asserting localhost-only + engine_ready",
+  "ui_app.html byte-unchanged vs pinned baseline sha256 d82c65ec...; ui_data.json governed headline 39975.654628199336 still present",
+  "no model parameter change; no contract change; governance audit-chain integrity preserved"
+ ],
+ "invariants": {
+  "model_parameter_change": false,
+  "ui_contract_change": false,
+  "ui_app_html_sha256": "d82c65ecc7f7130a07b34d55c9500e93e23dd71626d18c3002c4e0777bd1fee6",
+  "ui_app_html_byte_unchanged": true,
+  "governed_headline": "39975.654628199336",
+  "offline_guarantee": "binary binds 127.0.0.1 only, no outbound call - identical to run-from-source",
+  "phase30_stop_rule_honoured": true,
+  "mr_016_017_not_preempted": true
+ },
+ "engine_pin": {
+  "numpy": "1.26.4",
+  "pandas": "2.2.3",
+  "scipy": "1.13.1",
+  "rationale": "frozen numerical stack => governed headline reproducible per release"
+ },
+ "cannot_build_in_sandbox": "No build toolchain + no outbound network + frozen binaries are not cross-built; the CI matrix performs the actual per-OS build. This cycle authors + structurally validates the recipe only.",
+ "residual_owner_infra_decisions": [
+  "code signing / notarization certificate (Windows SmartScreen / macOS Gatekeeper)",
+  "antivirus false-positive handling for unsigned onefile bundles (UPX already disabled)",
+  "onedir fallback if a runner's scipy/BLAS hook needs it",
+  "whether to publish public release assets vs internal distribution"
+ ],
+ "standard_references": [
+  "PyInstaller manual - spec files, collect_all hooks, onefile vs onedir, scipy/numpy hidden imports",
+  "SOA ASOP 56 s.3.4-3.6 - model methodology/implementation documentation and reproducibility",
+  "SOA ASOP 41 - actuarial communications (reviewer-facing build/offline provenance)",
+  "docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md (Option A recommendation)"
+ ],
+ "delivery_note": "The CI workflow is shipped as packaging/release.workflow.yml (a template) because the automated dev token lacks GitHub 'workflow' scope and cannot write under .github/workflows/. Install with: mkdir -p .github/workflows && cp packaging/release.workflow.yml .github/workflows/release.yml (from a checkout whose token has 'workflow' scope), then commit."
+}

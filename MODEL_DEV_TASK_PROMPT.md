@@ -80,6 +80,27 @@ force-push `main`. When in doubt, **yield**.
 > **OWNER ACTION required:** (a) MR-LONGEV-1 / (b) LSMC [sign-off], or (c) resume Phase IGUI /
 > (d) packaging A/B/C / (e) freeze [non-model-form]. If silent again, default = (c) resume Phase IGUI.
 
+> **2026-06-16 (5th window, claude) — PHASE PKG TASK 1: Option-A build infrastructure AUTHORED.**
+> After 4 owner-pivot-blocked windows, took the documented auto-runnable default
+> (packaging). Authored the owner-RECOMMENDED Option-A frozen-binary recipe
+> (decision-neutral, authoring-only): `packaging/actuarial_gui.spec` (PyInstaller
+> onefile wrapping `scripts/launch_offline_gui.py` + numpy/pandas/scipy +
+> verbatim `ui_app.html`/`ui_data.json`/`production_run/`/governance echo);
+> `.github/workflows/release.yml` (ubuntu/windows/macos matrix, **manual-dispatch
+> or `v*`-tag ONLY** — no branch-push, publishes nothing on its own);
+> `scripts/build_phase_pkg_task1_validate.py` (stdlib gate, **25/25 ok:true**) +
+> `tests/test_phase_pkg_task1_build_infra.py` (**9/9**); `packaging/README.md` +
+> `docs/validation/PHASE_PKG_TASK1_BUILD_INFRA.*`. ui_app.html **byte-unchanged**
+> (sha256 d82c65ec…); governed headline **39,975.654628199336 unchanged**; no model
+> parameter / UI contract change; ChangeRecord **d7b04588** OWNER_REVIEW (records
+> 117→118, audit 145→146, integrity True). Builds nothing in-sandbox (no toolchain/
+> network); the CI matrix performs the per-OS build. **OWNER/INFRA inputs for Phase
+> PKG Task 2:** (1) code-signing/notarization certificate; (2) onefile-vs-onedir final
+> call if a runner's scipy/BLAS hook needs onedir; (3) publish channel. Model-form
+> pivots **MR-LONGEV-1 / LSMC** still need sign-off; **freeze** remains an option. To
+> produce binaries now: run the `package-release` workflow (Actions tab) or push a
+> `v*` tag. Authoritative pointer remains `.claude-dev/MODEL_DEV_STATE.json`.
+>
 > **OWNER PRIORITY OVERRIDE — SATISFIED (2026-06-11, cycle 28):** Phase UIL
 > (user-input loader + run orchestrator, workstream B of
 > `IMPLEMENTATION_PLAN_currency_and_inputs.md`) is **COMPLETE**: B1 loader →

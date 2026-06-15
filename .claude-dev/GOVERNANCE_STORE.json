@@ -3271,6 +3271,33 @@
       "phase": "Post-Phase-IGUI: Model-Improvement Candidate Implementation",
       "digest": "a5bc575785211c874a4a30d777f6bd7350f6819c5c73f12b0ab843aeb92f72f8",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "c776304e04314199a70104b337b98420",
+      "timestamp": "2026-06-15T21:18:59.872615+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase PKG Task 1 Option-A frozen-binary build infrastructure; authoring-only/decision-neutral; no model/UI/contract change; governed headline bit-identical",
+      "details": {
+        "record_id": "d7b04588bc254d33bba4ed4a3b060239",
+        "affected_components": [
+          "packaging/actuarial_gui.spec",
+          ".github/workflows/release.yml",
+          "scripts/build_phase_pkg_task1_validate.py",
+          "tests/test_phase_pkg_task1_build_infra.py",
+          "packaging/README.md",
+          "docs/validation/PHASE_PKG_TASK1_BUILD_INFRA.json"
+        ],
+        "ci_trigger": "workflow_dispatch + v* tag only",
+        "structural_gate_checks": 25,
+        "unittest_cases": 9,
+        "ui_app_byte_unchanged": true,
+        "headline_bit_identical": "39975.654628199336",
+        "model_parameter_change": false
+      },
+      "phase": "Phase PKG: No-prerequisite packaging (owner-decision card Option A)",
+      "digest": "6dcf23c4f14d20cfc1d58bd062bec763a413973b3786d005074bb697a780a2de",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -10772,6 +10799,77 @@
         }
       ],
       "phase": "Post-Phase-IGUI: Model-Improvement Candidate Implementation"
+    },
+    {
+      "record_id": "d7b04588bc254d33bba4ed4a3b060239",
+      "created_at": "2026-06-15T21:18:59.872513+00:00",
+      "title": "Phase PKG Task 1 - Option-A frozen-binary build infrastructure (PyInstaller spec + CI release matrix + gate, authoring-only)",
+      "description": "Authored the build recipe that freezes the one-click offline launcher (scripts/launch_offline_gui.py) plus the numpy/pandas/scipy compute engine into a single self-contained per-OS executable, closing the last prerequisite the launcher discloses (the /execute COMPUTE step). (1) packaging/actuarial_gui.spec: PyInstaller onefile spec; bundles the engine + verbatim ui_app.html, ui_data.json, production_run/, the .claude-dev/GOVERNANCE_STORE.json read-only echo and requirements-engine-lock.txt; console=True; upx=False (AV-safety); codesign_identity=None (signing is an owner/infra decision). (2) .github/workflows/release.yml: ubuntu/windows/macos matrix gated to workflow_dispatch + v* tags ONLY (NO branch-push trigger, so adding it changes no day-to-day behaviour and auto-publishes nothing); installs the pinned engine + pyinstaller==6.11.1, runs the structural gate, builds, smoke-tests the binary with --self-test (asserting host 127.0.0.1 and engine_ready), uploads per-OS artifacts and on a tag publishes a GitHub Release. (3) scripts/build_phase_pkg_task1_validate.py stdlib-only structural gate (25 checks, also the CI pre-build step) + tests/test_phase_pkg_task1_build_infra.py unittest wrapper (9 green). (4) packaging/README.md + docs/validation/PHASE_PKG_TASK1_BUILD_INFRA.* documentation. AUTHORING-ONLY: no build runs in the dev sandbox (no toolchain/network); the CI matrix performs the per-OS build. DECISION-NEUTRAL: this implements the card's RECOMMENDED Option A without foreclosing Option B (vendored wheels) or Option C (run from source, which stays fully supported). NO model parameter change; NO UI contract change; committed zero-install RESULTS UI ui_app.html byte-unchanged (sha256 d82c65ec...); governed headline 39,975.654628199336 unchanged; Phase 30 stop-rule honoured; MR-016/MR-017 dependence decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "packaging/actuarial_gui.spec",
+        ".github/workflows/release.yml",
+        "scripts/build_phase_pkg_task1_validate.py",
+        "tests/test_phase_pkg_task1_build_infra.py",
+        "packaging/README.md",
+        "docs/validation/PHASE_PKG_TASK1_BUILD_INFRA.json"
+      ],
+      "standard_references": [
+        "PyInstaller manual - spec files, collect_all hooks, onefile vs onedir, scipy/numpy hidden-import collection",
+        "SOA ASOP 56 s.3.4-3.6 - model implementation documentation and reproducibility (pinning the numerical stack into the release artifact)",
+        "SOA ASOP 41 (Actuarial Communications) - reviewer-facing build/offline provenance",
+        "docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md - Option A recommendation"
+      ],
+      "before_snapshot": {
+        "packaging_build_infra_present": false,
+        "compute_step_needs_preinstall": true,
+        "ui_app_html_sha256": "d82c65ecc7f7130a07b34d55c9500e93e23dd71626d18c3002c4e0777bd1fee6",
+        "governed_headline": "39975.654628199336"
+      },
+      "after_snapshot": {
+        "packaging_build_infra_present": true,
+        "spec_targets_offline_launcher": true,
+        "ci_matrix_os": [
+          "ubuntu-latest",
+          "windows-latest",
+          "macos-latest"
+        ],
+        "ci_trigger": "workflow_dispatch + v* tag only (no branch push)",
+        "structural_gate_checks": 25,
+        "unittest_cases": 9,
+        "engine_pin": {
+          "numpy": "1.26.4",
+          "pandas": "2.2.3",
+          "scipy": "1.13.1"
+        },
+        "build_runs_in_sandbox": false,
+        "ui_app_html_sha256": "d82c65ecc7f7130a07b34d55c9500e93e23dd71626d18c3002c4e0777bd1fee6",
+        "ui_app_html_byte_unchanged": true,
+        "governed_headline": "39975.654628199336",
+        "model_parameter_change": false,
+        "ui_contract_change": false
+      },
+      "impact_assessment": "Build-infrastructure only. No runtime model/UI code is modified; the frozen binary merely wraps the existing launcher and binds 127.0.0.1 with no outbound call, so the offline guarantee is unchanged. The CI workflow cannot run on a normal push (manual/tag gated), so it adds no surprise behaviour and the owner's A/B/C packaging choice is not pre-empted. Pinning the numerical stack into the artifact strengthens the governed-headline reproducibility story.",
+      "quantitative_impact": "No governed figure changed (headline 39,975.654628199336 unchanged; ui_app.html byte-unchanged sha256 d82c65ec...). No contract change. Structural gate 25/25 ok:true; unittest 9/9 green.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T21:18:59.872575+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified authoring-only/decision-neutral: spec parses (ast) and targets scripts/launch_offline_gui.py; CI workflow parses (yaml), is manual/tag gated with NO branch-push trigger, 3-OS matrix, runs the gate, builds the spec and smoke-tests the binary with --self-test (host 127.0.0.1 + engine_ready). ui_app.html byte-unchanged (sha256 d82c65ec...); governed headline 39,975.654628199336 present/unchanged; no model parameter or contract change. Structural gate 25/25; unittest 9/9."
+        },
+        {
+          "timestamp": "2026-06-15T21:18:59.872590+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Authored the RECOMMENDED Option-A frozen-binary build recipe (PyInstaller spec + manual/tag-gated CI release matrix + stdlib gate + docs) so a non-technical user can eventually run inputs AND compute with nothing pre-installed. Nothing is built or published by this change; Options B/C are not foreclosed. To produce binaries: run the 'package-release' workflow from the Actions tab or push a v* tag. Residual owner/infra decisions: code-signing certificate, publish channel."
+        }
+      ],
+      "phase": "Phase PKG: No-prerequisite packaging (owner-decision card Option A)"
     }
   ],
   "risk_register": [
