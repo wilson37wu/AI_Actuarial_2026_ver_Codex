@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-14T23:25:00Z",
-  "last_run_duration_minutes": 16,
-  "last_run_note": "Phase IGUI Task 1 (design note) COMPLETE. Architecture: L2 stdlib-only local runner chosen (zero new third-party dep beyond the numpy/pandas/scipy the model already needs; binds 127.0.0.1, no network) over L1 (browser-writer, rejected - cannot run model) and L3 (frozen binary, deferred - non-reproducible per-OS build). Six-domain input-schema coverage map (run controls / model points / assumptions / ESG / validation+gating / integration), each current-vs-gap with one staged task (Task 2-7). Task-1 gate ok:true 35 checks (structural + live repo cross-checks: 9 self-tests/522 green, 0 external refs, contract floor 1.21.0, tab/governance floors, loader+orchestrator present); 24 unittest cases green. ChangeRecord d6fa881f OWNER_REVIEW (records 100->101, audit 128->129). NO GUI code, NO contract change, NO model parameter changes; stop-rule honoured; owner decision not pre-empted. NOTE: full numpy-dependent pytest regression NOT run this cycle due to /sessions 100% disk pressure (standing blocker) - deliverable is pure-Python and design-note-only (zero model/UI code change => zero regression surface). Next = Phase IGUI Task 2 (run controls + runner scaffolding).",
-  "current_phase": "PHASE IGUI Task 1 COMPLETE (design note: L2 stdlib-local-runner architecture; 6-domain input coverage map; acceptance criteria + 35-check Task-1 gate; 24 unittest green; ChangeRecord OWNER_REVIEW). Next = Phase IGUI Task 2 (run controls + stdlib runner scaffolding).",
-  "overall_status": "PHASE_IGUI_TASK1_DONE_NEXT_TASK2_RUN_CONTROLS",
+  "last_run": "2026-06-15T00:30:00Z",
+  "last_run_duration_minutes": 20,
+  "last_run_note": "Phase IGUI Task 2: run controls + stdlib local runner (scripts/run_gui.py) + loader-side validator; 21 new unittests + gate (21 checks) green; 0 new deps; ui_app.html byte-unchanged.",
+  "current_phase": "Phase IGUI Task 2 COMPLETE (run controls + stdlib local runner; loader-side run-controls validator; 21 unittests + 21-check gate; 0 new third-party deps; ui_app.html byte-unchanged; contract 1.21.0; gov 102/130/17). Next = Phase IGUI Task 3 (model points + in-force ingest).",
+  "overall_status": "PHASE_IGUI_TASK2_COMPLETE_NEXT_TASK3_MODEL_POINTS",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -736,12 +736,13 @@
         "Task 1: design note - choose/justify local-runner/bundling architecture vs no-pre-install trade-off; input schema coverage map; pre-registered acceptance criteria",
         "Task 2+: ONE input domain / capability per cycle (run controls -> model points -> assumptions -> ESG -> validation/gating -> end-to-end run + results handoff)"
       ],
-      "next": "Task 3 (model points + in-force ingest), then Task 4 assumptions, Task 5 ESG, Task 6 validation/gating, Task 7 end-to-end run + results handoff (Phase IGUI MVP). One input domain per cycle.",
+      "next": "Task 4 assumptions (owner-gated) -> Task 5 ESG (stop-rule-bounded) -> Task 6 validation/gating -> Task 7 end-to-end run + results handoff (Phase IGUI MVP)",
       "completed": [
-        "Task 1: design note - architecture decision (L2 stdlib local runner chosen vs L1 browser-writer rejected / L3 frozen-binary deferred); six-domain input-schema coverage map (current Phase-UIL template+loader vs gap); pre-registered acceptance criteria + Task-1 gate (35 checks). Module par_model_v2/viewer/igui_input_run_gui.py; docs/validation/PHASE_IGUI_TASK1_DESIGN_NOTE.{json,md}; 24 unittest cases green; ChangeRecord d6fa881f OWNER_REVIEW (records 100->101, audit 128->129). NO contract change, NO model parameter changes, stop-rule honoured."
+        "Task 1: design note - architecture decision (L2 stdlib local runner chosen vs L1 browser-writer rejected / L3 frozen-binary deferred); six-domain input-schema coverage map (current Phase-UIL template+loader vs gap); pre-registered acceptance criteria + Task-1 gate (35 checks). Module par_model_v2/viewer/igui_input_run_gui.py; docs/validation/PHASE_IGUI_TASK1_DESIGN_NOTE.{json,md}; 24 unittest cases green; ChangeRecord d6fa881f OWNER_REVIEW (records 100->101, audit 128->129). NO contract change, NO model parameter changes, stop-rule honoured.",
+        "Task 2: run controls + stdlib local runner (scripts/run_gui.py) + core par_model_v2/viewer/igui_run_controls.py + additive loader validator load_user_inputs.validate_run_controls_dict; collects valuation date/currency/explicit outer&inner/n_sim/bootstrap/horizon&step/seed/output label -> model_inputs.json {currency,run_settings}; per-run sha256 reproducibility digest; 21 new unittests + Task-2 gate (21 checks); 0 new third-party deps; localhost-only/offline; ui_app.html byte-unchanged; ChangeRecord 0c8ab61a OWNER_REVIEW (CR 101->102, audit 129->130); NO contract change; NO model parameter change; stop-rule honoured."
       ],
       "in_progress": [
-        "Task 2: run controls + stdlib local-runner scaffolding (scripts/run_gui.py) - collect valuation date/currency/horizon&step/outer&inner scenarios/seed/output label, write model_inputs.json schema, round-trip through scripts/load_user_inputs.py; new self-tests; RESULTS UI unchanged"
+        "Task 3: model points + in-force ingest (D2_policy_model_points) - interactive add/edit/delete of PAR + GMMB model-point rows and a CSV/JSON in-force upload path mapping to the Portfolio schema; balance-sheet asset rows + stated-total reconciliation surfaced; portfolio scaling/booking disclosed as run_model reports it; new self-tests for row editing, file ingest, reconciliation; RESULTS UI byte-unchanged"
       ]
     }
   },
@@ -1062,7 +1063,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-14T22:10:00Z",
+  "last_updated": "2026-06-15T00:30:00Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -1882,5 +1883,26 @@
     "governance": "ChangeRecord bf0ed11e769247709c8961ae9d857357 OWNER_REVIEW; 99->100 records, 127->128 audit entries; risk register 17 unchanged; audit-chain verified",
     "pytests": "31 passed +1 skipped (task5/task4/phase32 summary) + 116 passed (governance/design-note/contract-reconcile regression)",
     "next": "Phase IGUI Task 1 = design note (owner-directed EXCLUSIVE). Do NOT start coding the GUI before the design note + pre-registered acceptance criteria."
+  },
+  "cycle_2026_06_15_phase_igui_task2": {
+    "completed_at": "2026-06-15T00:30:00Z",
+    "owner": "claude",
+    "task": "Phase IGUI Task 2 run controls + scaffolding",
+    "change_record": "0c8ab61a1001440cac5f6657942f8616 (OWNER_REVIEW)",
+    "governance": "CR 101->102, audit 129->130, risk 17",
+    "tests": "21 new unittests (tests/test_phase_igui_task2_run_controls.py) + Task-2 gate 21 checks; Task-1 suite still green (24)",
+    "artifacts": [
+      "scripts/run_gui.py",
+      "par_model_v2/viewer/igui_run_controls.py",
+      "scripts/load_user_inputs.py (additive validate_run_controls_dict)",
+      "scripts/build_phase_igui_task2_run_controls.py",
+      "scripts/build_phase_igui_task2_governance.py",
+      "tests/test_phase_igui_task2_run_controls.py",
+      "docs/validation/PHASE_IGUI_TASK2_RUN_CONTROLS.json",
+      "docs/validation/PHASE_IGUI_TASK2_RUN_CONTROLS.md",
+      "scripts/_phase_igui_task2_selftests.json"
+    ],
+    "discipline": "0 new third-party runtime deps; localhost-only/offline; ui_app.html byte-unchanged (sha256 6dca35b3...); NO contract change; NO model parameter change; stop-rule honoured; MR-016/MR-017 not pre-empted",
+    "headline_bit_for_bit": "39,975.654628199336"
   }
 }

@@ -405,6 +405,88 @@ def parse_run_settings(ws, errors: List[str]) -> Dict[str, Any]:
     return out
 
 
+
+# ----------------------------------------------------------------- run-controls (no-Excel) validator
+def validate_run_controls_dict(payload: Dict[str, Any]) -> List[str]:
+    """Validate a GUI-produced run-controls fragment (the ``{currency,
+    run_settings}`` subset of model_inputs.json) WITHOUT an Excel template,
+    using the SAME rules as the template parsers. Returns the full list of
+    issues (empty == valid); the fail-loud message format mirrors the template
+    path. This is the loader-side validator the Phase IGUI input+run GUI
+    round-trips every payload through before a run is permitted (no openpyxl
+    needed). Purely additive: the Excel path above is unchanged.
+    """
+    errors: List[str] = []
+    if not isinstance(payload, dict):
+        return ["run controls payload must be a JSON object"]
+    cur = payload.get("currency") or {}
+    rs = payload.get("run_settings") or {}
+    if not isinstance(cur, dict):
+        errors.append(_err("Currency", "-", "currency", "must be an object"))
+        cur = {}
+    if not isinstance(rs, dict):
+        errors.append(_err("Run Settings", "-", "run_settings", "must be an object"))
+        rs = {}
+
+    # --- currency ---
+    code = _as_str(cur.get("code")).upper()
+    if len(code) != 3 or not code.isalpha():
+        errors.append(_err("Currency", "-", "Reporting currency code",
+                           "must be a 3-letter ISO 4217 code, got %r" % cur.get("code")))
+    if _is_blank(cur.get("symbol")):
+        errors.append(_err("Currency", "-", "Reporting currency symbol", "must not be empty"))
+    scale = _as_str(cur.get("scale"))
+    if scale not in ALLOWED_SCALES:
+        errors.append(_err("Currency", "-", "Amount scale",
+                           "must be one of %s, got %r" % (ALLOWED_SCALES, cur.get("scale"))))
+    thousands = _as_str(cur.get("thousands"))
+    if thousands not in ALLOWED_THOUSANDS:
+        errors.append(_err("Currency", "-", "Thousands separator",
+                           "must be one of %s, got %r" % (ALLOWED_THOUSANDS, cur.get("thousands"))))
+    if _is_blank(cur.get("market_label")):
+        errors.append(_err("Currency", "-", "Calibration market label", "must not be empty"))
+    vd = _as_str(cur.get("valuation_date"))
+    try:
+        _dt.date.fromisoformat(vd)
+    except ValueError:
+        errors.append(_err("Currency", "-", "Valuation date",
+                           "must be YYYY-MM-DD, got %r" % cur.get("valuation_date")))
+
+    # --- run settings ---
+    for key, field_name, mini in (
+        ("n_outer", "Outer scenarios", 1),
+        ("n_inner", "Inner paths", 1),
+        ("n_sim", "Number of simulations", 1),
+        ("bootstrap_replicates", "Bootstrap replicates", 1),
+        ("horizon_months", "Projection horizon", 1),
+        ("step_months", "Projection step", 1),
+    ):
+        v = _to_int(rs.get(key))
+        if v is None or v < mini:
+            errors.append(_err("Run Settings", "-", field_name,
+                               "must be an integer >= %d, got %r" % (mini, rs.get(key))))
+    horizon = _to_int(rs.get("horizon_months"))
+    step = _to_int(rs.get("step_months"))
+    if horizon is not None and step is not None and step >= 1 and horizon >= 1:
+        if step > horizon:
+            errors.append(_err("Run Settings", "-", "Projection step",
+                               "must not exceed the projection horizon (%d > %d)" % (step, horizon)))
+        elif horizon % step != 0:
+            errors.append(_err("Run Settings", "-", "Projection step",
+                               "must divide the projection horizon evenly (%d %% %d != 0)" % (horizon, step)))
+    if _to_int(rs.get("seed")) is None:
+        errors.append(_err("Run Settings", "-", "Random seed",
+                           "must be an integer, got %r" % rs.get("seed")))
+    if _is_blank(rs.get("output_label")):
+        errors.append(_err("Run Settings", "-", "Output label / scenario name", "must not be empty"))
+    digest = rs.get("reproducibility_digest")
+    if digest is not None and not (
+            isinstance(digest, str) and digest.startswith("sha256:") and len(digest) == 71):
+        errors.append(_err("Run Settings", "-", "reproducibility_digest",
+                           "must be 'sha256:<64 hex>' when present"))
+    return errors
+
+
 # ----------------------------------------------------------------- main API
 def load_user_inputs(template_path: str) -> Dict[str, Any]:
     """Parse + validate the template; return the normalised inputs dict.

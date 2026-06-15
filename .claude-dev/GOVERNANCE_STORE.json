@@ -2905,6 +2905,33 @@
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
       "digest": "683ef8116d87dde4c86ea198cc7ff538c9ee62eee85cba31e89e65cdaa297b6c",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "ae276470c78f44e69a17e168484e70c5",
+      "timestamp": "2026-06-15T00:20:58.339528+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase IGUI Task 2 run controls + stdlib local runner (scripts/run_gui.py); additive loader-side validate_run_controls_dict; 0 new third-party deps; localhost-only/offline; ui_app.html byte-unchanged; NO contract change; NO model parameter change",
+      "details": {
+        "record_id": "0c8ab61a1001440cac5f6657942f8616",
+        "contract": "1.21.0 (unchanged)",
+        "task2_gate_checks": 21,
+        "new_unittests": 21,
+        "new_third_party_runtime_deps": 0,
+        "affected_components": [
+          "scripts/run_gui.py",
+          "par_model_v2/viewer/igui_run_controls.py",
+          "scripts/load_user_inputs.py",
+          "scripts/build_phase_igui_task2_run_controls.py",
+          "scripts/build_phase_igui_task2_governance.py",
+          "tests/test_phase_igui_task2_run_controls.py",
+          "docs/validation/PHASE_IGUI_TASK2_RUN_CONTROLS.json",
+          "docs/validation/PHASE_IGUI_TASK2_RUN_CONTROLS.md"
+        ]
+      },
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
+      "digest": "5e0e3d902de109f841112195def669eb7365b2049f16bcadd798f7c5b7570ff1",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -9233,6 +9260,86 @@
           "actor": "ClaudeCowork_AutoDev",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. Phase IGUI is launched design-note-first: the input+run GUI will use a stdlib-only local runner (no new install beyond the Python the model already needs), drive the existing loader/orchestrator, and hand results to the unchanged zero-install RESULTS UI. Next cycle = Task 2 (run controls + runner scaffolding). The MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
+        }
+      ],
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"
+    },
+    {
+      "record_id": "0c8ab61a1001440cac5f6657942f8616",
+      "created_at": "2026-06-15T00:20:58.339435+00:00",
+      "title": "Phase IGUI Task 2 - run controls + stdlib local-runner scaffolding (scripts/run_gui.py; loader-side run-controls validator)",
+      "description": "Implemented Task 2 (the D1_run_controls domain) of the owner-directed Phase IGUI input+run GUI, following the Task-1 design note. (1) STDLIB LOCAL RUNNER scripts/run_gui.py: a standard-library-only http.server (ThreadingHTTPServer) bound to 127.0.0.1 that serves a SELF-CONTAINED run-controls page (zero external references) and exposes GET / , GET /healthz , POST /validate , POST /save. It adds NO third-party runtime dependency (http.server / json / webbrowser - all standard library; the model itself already requires numpy/pandas/scipy) and makes NO outbound network call. (2) RUN-CONTROLS CORE par_model_v2/viewer/igui_run_controls.py: a declarative run-control field spec (valuation date; currency code/symbol/scale/thousands/market label; explicit OUTER and INNER scenarios; n_sim; bootstrap replicates; projection HORIZON and explicit projection STEP; seed; output label), normalisation of a raw form payload, a builder to the model_inputs.json {currency, run_settings} sub-schema, and a deterministic per-run reproducibility digest (sha256 over the canonical run controls) - closing the Task-1 gaps for valuation date, explicit step, explicit outer/inner split, and a surfaced per-run digest. (3) LOADER ROUND-TRIP: added a purely additive scripts/load_user_inputs.validate_run_controls_dict that validates the {currency, run_settings} fragment with the SAME rules as the Excel template parsers (no openpyxl needed); the GUI round-trips EVERY payload through it fail-loud before a write/run is permitted. The Excel template path is unchanged. Tests: 21 new unittest cases green (normalisation, loader round-trip incl. rejection cases, self-contained form, a real localhost GET/POST round-trip, and a Task-2 acceptance gate); the Task-1 suite stays green (24). The Task-2 gate validate_task2_gate ok:true 21 checks (stdlib-only imports, localhost bind, loader-validator presence + enum/schema lock-step, digest determinism, form headline + zero external refs, ui_app.html byte-unchanged via frozen sha256, governance floors). NO contract change; NO model parameter change; offline RESULTS UI byte-unchanged; stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/run_gui.py",
+        "par_model_v2/viewer/igui_run_controls.py",
+        "scripts/load_user_inputs.py",
+        "scripts/build_phase_igui_task2_run_controls.py",
+        "scripts/build_phase_igui_task2_governance.py",
+        "tests/test_phase_igui_task2_run_controls.py",
+        "docs/validation/PHASE_IGUI_TASK2_RUN_CONTROLS.json",
+        "docs/validation/PHASE_IGUI_TASK2_RUN_CONTROLS.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 (Modeling) section 3.2 / 3.5 - model inputs, intended use, and the educational-use restriction pending credentialled data + independent review",
+        "SOA ASOP 23 (Data Quality) - input completeness / consistency / range validation gating before a run is permitted (run-controls fragment validated fail-loud through the loader)",
+        "SOA ASOP 41 (Actuarial Communications) - reproducible, auditable run provenance (per-run reproducibility digest) and a self-describing input contract"
+      ],
+      "before_snapshot": {
+        "phase": "Phase IGUI Task 1 design note complete",
+        "igui_run_gui": false,
+        "loader_run_controls_validator": false,
+        "ui_contract": "1.21.0",
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+        "offline_self_tests": 9,
+        "offline_self_test_total_checks": 522
+      },
+      "after_snapshot": {
+        "igui_run_gui": "scripts/run_gui.py (stdlib http.server, 127.0.0.1, offline)",
+        "igui_new_third_party_runtime_deps": 0,
+        "loader_run_controls_validator": "validate_run_controls_dict (additive, no openpyxl)",
+        "run_controls_collected": [
+          "valuation_date",
+          "currency(code/symbol/scale/thousands/market_label)",
+          "n_outer",
+          "n_inner",
+          "n_sim",
+          "bootstrap_replicates",
+          "horizon_months",
+          "step_months",
+          "seed",
+          "output_label"
+        ],
+        "per_run_reproducibility_digest": true,
+        "task2_gate_ok": true,
+        "task2_gate_checks": 21,
+        "new_unittests": 21,
+        "task1_unittests_still_green": 24,
+        "ui_contract": "1.21.0 (unchanged)",
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65 (byte-unchanged)",
+        "results_ui_zero_install_preserved": true,
+        "headline_carried_bit_for_bit": "39975.654628199336",
+        "offline_self_tests": 9,
+        "offline_self_test_total_checks": 522
+      },
+      "impact_assessment": "Additive GUI scaffolding + an additive loader-side validator. NO contract change, NO model parameter change; the offline RESULTS UI (ui_app.html) is byte-identical (frozen sha256 asserted by the Task-2 gate) and the nine offline self-tests are unaffected. The runner is localhost-bound and offline; it computes no model figure and pre-empts no owner decision (MR-016/MR-017 remains with the owner; Phase 30 stop-rule honoured).",
+      "quantitative_impact": "No governed capital figure changed; the headline SCR 39,975.654628199336 is carried bit-for-bit. Contract unchanged at 1.21.0. Task-2 gate ok:true 21 checks; 21 new unittests green; Task-1 suite still green (24); 0 new third-party runtime dependencies; 0 outbound network calls; 0 external refs.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T00:20:58.339488+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: Task 2 lands the stdlib local runner + run-controls core + an additive loader-side dict validator. ZERO new third-party runtime dependency; the runner binds 127.0.0.1 and makes no outbound network call; every GUI payload round-trips fail-loud through scripts/load_user_inputs.validate_run_controls_dict before a write; per-run reproducibility digest emitted; offline RESULTS UI byte-unchanged (frozen sha256). 21 new unittests + Task-2 gate (21 checks) green; Task-1 suite green (24). Headline 39,975.654628199336 carried bit-for-bit; NO contract change; NO model parameter change; stop-rule honoured."
+        },
+        {
+          "timestamp": "2026-06-15T00:20:58.339502+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. The input+run GUI now collects run controls (valuation date, currency, explicit outer/inner scenarios, projection horizon & step, seed, output label) and writes them into the loader's model_inputs.json schema, validated through the real loader before any run. Next cycle = Task 3 (model points + in-force ingest). The MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
         }
       ],
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"

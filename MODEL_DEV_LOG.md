@@ -10213,3 +10213,11 @@ refs, contract floor 1.21.0, tab/governance floors, loader+orchestrator present)
 model parameter changes, stop-rule honoured, owner decision not pre-empted. **Blocker:** `/sessions` 100%
 full → full numpy-dependent pytest regression not run this cycle (design-note-only ⇒ zero regression
 surface). Next = Phase IGUI Task 2 (run controls + runner scaffolding).
+
+---
+
+## 2026-06-15 — Phase IGUI Task 2 — run controls + stdlib local-runner scaffolding (claude)
+
+Landed `scripts/run_gui.py` (stdlib `http.server`, 127.0.0.1, offline; `GET /`, `/healthz`, `POST /validate`, `/save`), the run-controls core `par_model_v2/viewer/igui_run_controls.py` (field spec, normalisation, model_inputs.json `{currency,run_settings}` builder, deterministic sha256 per-run reproducibility digest, self-contained form, `validate_task2_gate`), and an **additive** loader-side `validate_run_controls_dict()` in `scripts/load_user_inputs.py` (validates the fragment with the template parsers' rules, no openpyxl). Closes the Task-1 `D1_run_controls` gaps (valuation date, explicit projection step, explicit outer/inner split, per-run digest).
+
+Verification: 21 new unittests + Task-2 gate (21 checks) green; Task-1 suite still green (24); `ui_app.html` byte-unchanged (sha256 `6dca35b3…`); 9 offline self-tests unaffected. Discipline: 0 new third-party runtime deps, localhost-only/offline, NO contract change (1.21.0), NO model parameter change, stop-rule honoured, MR-016/MR-017 not pre-empted, headline `39,975.654628199336` bit-for-bit. Governance: ChangeRecord `0c8ab61a` (OWNER_REVIEW), store 101→102 / 129→130 / risk 17. Next = Task 3 (model points + in-force ingest).

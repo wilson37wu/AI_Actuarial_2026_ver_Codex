@@ -1,0 +1,31 @@
+{
+ "task2_gate": {
+  "ok": true,
+  "n_checks": 21,
+  "checks": {
+   "run_gui_present": true,
+   "core_module_present": true,
+   "loader_present": true,
+   "orchestrator_present": true,
+   "run_gui_stdlib_only": true,
+   "core_module_stdlib_only": true,
+   "run_gui_binds_localhost": true,
+   "loader_has_dict_validator": true,
+   "schema_version_lockstep": true,
+   "loader_scale_enum_lockstep": true,
+   "loader_thousands_enum_lockstep": true,
+   "defaults_normalise_clean": true,
+   "digest_deterministic": true,
+   "model_inputs_has_run_settings": true,
+   "form_carries_headline": true,
+   "form_has_all_fields": true,
+   "form_zero_external_refs": true,
+   "ui_app_byte_unchanged": true,
+   "live_zero_external_refs": true,
+   "governance_risk_register_frozen": true,
+   "governance_change_records_floor": true
+  }
+ },
+ "localhost_self_test_ok": true,
+ "loader_validation_errors": []
+}
