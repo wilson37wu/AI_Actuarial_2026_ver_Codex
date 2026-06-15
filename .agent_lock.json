@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-15T07:25:40Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-15T08:08Z-53ca",
+  "started_at": "2026-06-15T08:08:57Z",
+  "ttl_minutes": 120,
+  "task": "Phase IGUI Task 10 (Option-C offline-install appendix + pinned requirements)",
+  "note": ""
 }
