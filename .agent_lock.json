@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T16:08Z-6679",
-  "started_at": "2026-06-15T16:08:37Z",
-  "ttl_minutes": 120,
-  "task": "Post-Phase-IGUI Task 8: additive offline-UI MR-VR-2 panel (model-output-only)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T16:31:21Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
