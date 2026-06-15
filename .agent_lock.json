@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T12:08Z-080c",
-  "started_at": "2026-06-15T12:08:39Z",
-  "ttl_minutes": 120,
-  "task": "Post-Phase-IGUI Task 4: implement MR-VR-1 inner-path antithetic/CRN variance reduction (gates G1-G6)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T12:25:50Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
