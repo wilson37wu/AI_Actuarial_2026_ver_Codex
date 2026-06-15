@@ -10430,3 +10430,21 @@ Rationale: MR-VR-1 (inner-path) helped the mean-TVOG target hugely (Sobol 2241×
 Deliverables: `par_model_v2/projection/outer_loop_efficiency_design.py`, `scripts/build_postigui_task6_design_note.py`, `tests/test_postigui_task6_design_note.py` (8 checks), `docs/validation/POSTIGUI_TASK6_DESIGN_NOTE.{json,md}`, `docs/POSTIGUI_OUTER_LOOP_EFFICIENCY_DESIGN_CARD.md`.
 
 Verification: self-consistency 22/22; tests 8/8; governance ChangeRecord `78ae269bdf63466787b030cc59029b43` OWNER_REVIEW (records 115→116, audit 143→144, integrity OK); idempotent. Owner-decision note: efficiency pool not yet exhausted; after MR-VR-2 the next substantive work MR-LONGEV-1 is parameter-adding (owner sign-off). Next = Task 7 implement MR-VR-2 OR owner pivot.
+
+---
+
+## 2026-06-15 (~15:08-15:30 UTC) - Post-Phase-IGUI Task 7 COMPLETE (Claude Cowork) - MR-VR-2 OUTER-loop variance reduction
+
+**Lock:** acquired cycle_id 2026-06-15T15:08Z-d884 (preflight PROCEED, lock free), released at end. All git in fresh /tmp clone of origin/main (remote was ahead of mount: synced).
+
+**Task (exactly one, the single in_progress item):** Implemented candidate **MR-VR-2** - scrambled-Sobol randomised-QMC + control-variate variance reduction for the OUTER capital / 99.5% SCR estimator - under the six pre-registered gates G1-G6 frozen in the Task 6 design note. Efficiency-only; additive/disclosed; NO model parameter change; NO copula structure (Phase 30 stop-rule honoured).
+
+**Results:** gates 20/20, unit tests 12/12, idempotent digest `84f96dcf...`. Work-normalised OUTER 99.5% SCR VR ratios (>=200-replicate bootstrap CIs): Sobol-RQMC 536x / stratified 558x / RQMC+CV 496x; control-variate-ALONE 0.93x (sub-1.5x) DISCLOSED as the measured-not-assumed quantile-leg finding (CV acts only on the cheap mean leg) - OUTER-loop analogue of MR-VR-1's antithetic-ineffective-at-99.5%. Control rho 0.812, 1/(1-rho^2) 2.93x (measured mean-leg CV ratio 3.02x). Out-of-sample beta on 200k held-out pilot -> UNBIASED (replicate means within 0.5% of crude/analytic). Governed frozen-t headline 39,975.654628199336 BIT-IDENTICAL (dev 0). Indicated adoption dSCR +0.000316% of headline immaterial, REPORTED-NOT-applied.
+
+**Governance:** ChangeRecord `3ebea247...` OWNER_REVIEW (governance_change); store 117 change records / 145 audit entries, integrity OK; re-run idempotent.
+
+**New files:** par_model_v2/projection/outer_loop_variance_reduction.py; scripts/build_postigui_task7_outer_variance_reduction.py; tests/test_postigui_task7_outer_variance_reduction.py; docs/validation/POSTIGUI_TASK7_OUTER_VARIANCE_REDUCTION.{json,md}; docs/POSTIGUI_TASK7_OUTER_VARIANCE_REDUCTION_REPORT_CARD.md; docs/cycle_status/LATEST_CYCLE_STATUS_20260615_postigui_task7.md.
+
+**Regression:** Task 4 11/11, Task 5 14/14, Task 6 import-clean. ui_app.html untouched.
+
+**State / next:** efficiency/diagnostic pool (MR-CAL-1 + MR-VR-1 + MR-VR-2) now EXHAUSTED under the stop-rule. Next = Task 8 ADDITIVE offline-UI MR-VR-2 panel (model-output-only) OR owner pivot to MR-LONGEV-1 (longevity 5th driver, parameter-adding, owner sign-off) / packaging A/B/C / freeze. MR-016/MR-017 owner-pending.

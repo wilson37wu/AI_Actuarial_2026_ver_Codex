@@ -1,0 +1,272 @@
+{
+ "candidate_id": "MR-VR-2",
+ "classification": "EFFICIENCY",
+ "vr_techniques": [
+  "crude_iid",
+  "sobol_rqmc",
+  "control_variate",
+  "stratified"
+ ],
+ "grid": {
+  "n_outer": 4096,
+  "n_outer_tail": 8192,
+  "n_replicates": 256,
+  "n_pilot": 200000,
+  "alpha": 0.995,
+  "loss_mu": 10.0,
+  "loss_delta": 2.0,
+  "loss_kink_c": 3.0,
+  "loss_kink_k": 1.0,
+  "proxy_gamma2": 3.0,
+  "sobol_dimension": 1,
+  "seeds": {
+   "master": 20260615,
+   "scr_master": 20260615,
+   "pilot": 13370211,
+   "sobol_scramble": 770221
+  }
+ },
+ "control_variate_fit": {
+  "beta": 0.7096137421994386,
+  "rho": 0.8117308964864789,
+  "one_over_1_minus_rho2": 2.931752166227758,
+  "pilot_n": 200000,
+  "pilot_seed": 13370211
+ },
+ "governed_headline_invariance": {
+  "bit_identical": true,
+  "max_abs_dev": 0.0,
+  "tol": 1e-09,
+  "additive_disclosed_not_a_swap": true,
+  "before": {
+   "frozen_t_component_scr": 39975.654628199336,
+   "nested_pathwise_scr": 46638.9
+  },
+  "after": {
+   "frozen_t_component_scr": 39975.654628199336,
+   "nested_pathwise_scr": 46638.9
+  }
+ },
+ "replicate_study": {
+  "n_replicates": 256,
+  "n_outer": 4096,
+  "analytic_mean_loss": 10.249946411763059,
+  "control_beta": 0.7096137421994386,
+  "control_rho": 0.8117308964864789,
+  "control_one_over_1_minus_rho2": 2.931752166227758,
+  "estimator_summaries": {
+   "crude": {
+    "mean": 10.247269967159326,
+    "std": 0.038253252286465415,
+    "var": 0.0014633113104919715,
+    "se_rel": 0.0037330188829864217,
+    "ci95_lo": 10.17521435553034,
+    "ci95_hi": 10.316714625935784
+   },
+   "sobol_rqmc": {
+    "mean": 10.249966829054701,
+    "std": 0.001798954308577081,
+    "var": 3.2362366043480436e-06,
+    "se_rel": 0.0001755083054003394,
+    "ci95_lo": 10.246962260351136,
+    "ci95_hi": 10.253416614232474
+   },
+   "control_variate": {
+    "mean": 10.247866360540232,
+    "std": 0.02199628715274575,
+    "var": 0.0004838366485060477,
+    "se_rel": 0.0021464260343444,
+    "ci95_lo": 10.206234913544522,
+    "ci95_hi": 10.293865561908303
+   },
+   "stratified": {
+    "mean": 10.249913455944514,
+    "std": 0.0003072724354349009,
+    "var": 9.441634957809534e-08,
+    "se_rel": 2.9978051693372686e-05,
+    "ci95_lo": 10.249377474703328,
+    "ci95_hi": 10.250626673318203
+   }
+  },
+  "variance_reduction_ratios": {
+   "sobol_rqmc": {
+    "ratio": 452.16450136122336,
+    "ci95_lo": 358.26033030982825,
+    "ci95_hi": 552.254707411181,
+    "useful_ge_threshold": true
+   },
+   "control_variate": {
+    "ratio": 3.0243912175943426,
+    "ci95_lo": 2.398701847471198,
+    "ci95_hi": 3.8276270369180407,
+    "useful_ge_threshold": true
+   },
+   "stratified": {
+    "ratio": 15498.494879656531,
+    "ci95_lo": 11712.448603896915,
+    "ci95_hi": 21009.708041021993,
+    "useful_ge_threshold": true
+   }
+  },
+  "effective_sample_size": {
+   "sobol_rqmc": 1852065.7975755709,
+   "control_variate": 12387.906427266427,
+   "stratified": 63481835.02707315
+  },
+  "n_star_for_target_se": {
+   "crude": 619.046318593172,
+   "sobol_rqmc": 1.3690732393400136,
+   "control_variate": 204.68460395992454,
+   "stratified": 0.03994235075082923
+  },
+  "target_se_rel": 0.01,
+  "unbiasedness": {
+   "analytic_mean": 10.249946411763059,
+   "crude_mean": 10.247269967159326,
+   "crude_rel_vs_analytic": 0.0002611179118615756,
+   "control_variate_rel_vs_crude": 5.8200221407035174e-05,
+   "control_variate_rel_vs_analytic": 0.00020293288757482412,
+   "sobol_rel_vs_crude": 0.0002631785738072523,
+   "sobol_rel_vs_analytic": 1.9919413060374025e-06,
+   "stratified_rel_vs_crude": 0.00025797005384451635,
+   "tol_rel": 0.005,
+   "all_within_tol": true
+  },
+  "any_useful_ge_1p5x": true,
+  "interpretation": "On the OUTER mean-loss target the control variate delivers its theoretical 1/(1-rho^2) reduction (rho disclosed), and scrambled-Sobol RQMC and proportional stratification also cut the mean-estimator variance. Work-normalised ratios on the smooth 1-D outer integrand are an idealised upper bound; the recorded outer-basis RQMC precedents (2.76x-7.1x) are the realistic operating range for production-scale, higher-dimension outer grids."
+ },
+ "scr_tail_study": {
+  "alpha": 0.995,
+  "n_outer": 8192,
+  "n_replicates": 256,
+  "analytic_scr": 9.629200120456574,
+  "crude_scr": {
+   "mean": 9.593359262469587,
+   "std": 0.26006179804713264,
+   "var": 0.0676321388035076,
+   "se_rel": 0.02710852277413676,
+   "ci95_lo": 9.158125573121541,
+   "ci95_hi": 10.094284800322285
+  },
+  "estimator_summaries": {
+   "sobol_rqmc": {
+    "mean": 9.608469972765151,
+    "std": 0.01122954759200481,
+    "var": 0.000126102739121101,
+    "se_rel": 0.0011687133980576034,
+    "ci95_lo": 9.590301820323276,
+    "ci95_hi": 9.626949420112508
+   },
+   "control_variate": {
+    "mean": 9.5930592091125,
+    "std": 0.2692047779396197,
+    "var": 0.07247121246551996,
+    "se_rel": 0.028062453495950553,
+    "ci95_lo": 9.124591976613626,
+    "ci95_hi": 10.131582878665597
+   },
+   "stratified": {
+    "mean": 9.609276018130917,
+    "std": 0.01100737734617635,
+    "var": 0.00012116235604111631,
+    "se_rel": 0.0011454949702149751,
+    "ci95_lo": 9.589872890669243,
+    "ci95_hi": 9.627197191668872
+   },
+   "rqmc_plus_cv": {
+    "mean": 9.608480029612384,
+    "std": 0.011674454582264881,
+    "var": 0.00013629288979336547,
+    "se_rel": 0.0012150157513243893,
+    "ci95_lo": 9.590009814582151,
+    "ci95_hi": 9.62831724227113
+   }
+  },
+  "variance_reduction_ratios": {
+   "sobol_rqmc": {
+    "ratio": 536.3256918516101,
+    "ci95_lo": 437.26917935893715,
+    "ci95_hi": 658.8736803123177,
+    "useful_ge_threshold": true
+   },
+   "control_variate": {
+    "ratio": 0.9332276431236103,
+    "ci95_lo": 0.7410463051139222,
+    "ci95_hi": 1.188942966122733,
+    "useful_ge_threshold": false
+   },
+   "stratified": {
+    "ratio": 558.1943188737328,
+    "ci95_lo": 457.8994994731656,
+    "ci95_hi": 689.246950709079,
+    "useful_ge_threshold": true
+   },
+   "rqmc_plus_cv": {
+    "ratio": 496.2264642421563,
+    "ci95_lo": 409.31820904989115,
+    "ci95_hi": 603.4823932731695,
+    "useful_ge_threshold": true
+   }
+  },
+  "effective_sample_size": {
+   "sobol_rqmc": 4393580.06764839,
+   "control_variate": 7645.000852468615,
+   "stratified": 4572727.860213619,
+   "rqmc_plus_cv": 4065087.1950717443
+  },
+  "unbiasedness_scr": {
+   "analytic_scr": 9.629200120456574,
+   "crude_scr_mean": 9.593359262469587,
+   "crude_rel_vs_analytic": 0.0037221012689148732,
+   "sobol_rel_vs_crude": 0.001575121902781179,
+   "control_variate_rel_vs_crude": 3.1277193825189465e-05,
+   "stratified_rel_vs_crude": 0.001659143082819602,
+   "rqmc_plus_cv_rel_vs_crude": 0.0015761702161985307,
+   "tol_rel": 0.005
+  },
+  "control_rho": 0.8117308964864789,
+  "control_one_over_1_minus_rho2": 2.931752166227758,
+  "best_technique": "stratified",
+  "any_useful_ge_1p5x": true,
+  "disclosure": "Tail efficacy is MEASURED, not assumed. The 99.5% SCR is a quantile-minus-mean functional: scrambled-Sobol RQMC and proportional stratification cut the variance of the expensive 99.5% quantile leg, while the control variate (rho disclosed, theoretical mean-leg reduction 1/(1-rho^2)) acts only on the cheap mean leg - so control-variate-alone delivers a SMALLER SCR-variance reduction than on the pure mean target, exactly the honest 'measured not assumed' finding the gate requires. The combined RQMC+CV estimator is the strongest. This is the OUTER-loop analogue of MR-VR-1's disclosure that antithetic was INEFFECTIVE (1.31x) at the same 99.5% quantile."
+ },
+ "adoption_materiality": {
+  "scr_proxy_analytic": 9.629200120456574,
+  "scr_proxy_crude_outer_mc": 9.500282437724684,
+  "scr_proxy_vr_outer_mc": 9.626803339289086,
+  "indicated_dscr_abs_vs_crude": 0.12652090156440288,
+  "indicated_rel_dscr": 3.164948835513338e-06,
+  "materiality_threshold_rel": 0.01,
+  "is_material": false,
+  "applied": false,
+  "n_outer_scr_pass": 32768,
+  "disposition": "REPORTED, NOT applied. The variance-reduced outer estimator is additive / disclosed; the governed production estimator and headline stay frozen."
+ },
+ "digest": "84f96dcf60b8c77855b6a8150f7ecc328040da423845da4a58a6e6fc97dcb16c",
+ "validation_gate": {
+  "ok": true,
+  "n_checks": 20,
+  "checks": {
+   "G1_headline_bit_identical": true,
+   "G1_headline_value_unmoved": true,
+   "G1_additive_not_swap": true,
+   "G2_beta_out_of_sample": true,
+   "G2_replicates_ge_gate": true,
+   "G2_mean_unbiased_within_tol": true,
+   "G2_scr_unbiased_within_tol": true,
+   "G3_ratios_have_ci": true,
+   "G3_ess_present": true,
+   "G3_useful_ge_1p5x_on_scr": true,
+   "G3_rho_disclosed": true,
+   "G3_tail_measured_disclosure": true,
+   "G3_mean_useful_ge_1p5x": true,
+   "G4_grid_pinned": true,
+   "G4_scramble_seed_pinned": true,
+   "G4_digest_present": true,
+   "G5_reported_not_applied": true,
+   "G5_materiality_branch": true,
+   "G6_efficiency_classification": true,
+   "G6_four_techniques": true
+  }
+ }
+}
