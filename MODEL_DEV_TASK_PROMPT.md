@@ -31,6 +31,22 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **NEXT-EXECUTION POINTER — updated 2026-06-15 (cycle: Post-Phase-IGUI Task 8, claude).**
+> Task 8 COMPLETE: the ADDITIVE, display-only offline-UI **MR-VR-2 outer-loop**
+> variance-reduction panel (`postigui_vr2`) shipped on the zero-install RESULTS UI
+> (contract **1.22.0 -> 1.23.0**, +1 key; governed headline 39,975.654628199336
+> BIT-IDENTICAL; ui_app_self_test + 6 sibling suites green; 59/59 contract-coupled
+> python tests PASS). Both VR studies (MR-VR-1 inner, MR-VR-2 outer) now have
+> offline-UI panels; the efficiency/diagnostic pool **MR-CAL-1 + MR-VR-1 + MR-VR-2 is
+> EXHAUSTED** under the Phase 30 stop-rule. **No further auto-admissible efficiency
+> task remains.** The next single in_progress item is an **OWNER PIVOT** (none auto-run):
+> (a) **MR-LONGEV-1** longevity 5th-driver — a parameter-adding model-FORM change that
+> REQUIRES owner sign-off; (b) packaging A/B/C; (c) declare the auto-development
+> frontier complete and **freeze**; or (d) resume **Phase IGUI** (input + run GUI).
+> Until the owner chooses, a run should produce a status report and NOT start a
+> model-form change. Authoritative pointer remains `.claude-dev/MODEL_DEV_STATE.json`.
+> Pre-existing (flagged, not auto-fixed): `test_phase36_task5_phase_summary::test_contract_inventory` is RED on origin (frozen report pins 1.21.0 vs test 1.22.0).
+
 > **OWNER PRIORITY OVERRIDE — SATISFIED (2026-06-11, cycle 28):** Phase UIL
 > (user-input loader + run orchestrator, workstream B of
 > `IMPLEMENTATION_PLAN_currency_and_inputs.md`) is **COMPLETE**: B1 loader →

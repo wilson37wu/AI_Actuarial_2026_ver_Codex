@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-15T15:30:00Z",
- "last_run_duration_minutes": 22,
- "last_run_note": "Post-Phase-IGUI Task 7 COMPLETE - implemented MR-VR-2 OUTER-loop RQMC + control-variate variance reduction for the governed 99.5% SCR estimator. Gates G1-G6 20/20, unit tests 12/12, sibling VR regression green (task4 11/11, task5 14, task6 design-note import-clean). SCR VR ratios Sobol-RQMC 536x / stratified 558x / RQMC+CV 496x (>=200-replicate CIs); control-variate-alone 0.93x DISCLOSED measured-not-assumed (acts only on the cheap mean leg). Control rho 0.812, 1/(1-rho^2) 2.93x. Out-of-sample beta -> UNBIASED. Governed headline BIT-IDENTICAL; indicated adoption dSCR 0.000316% immaterial REPORTED-NOT-applied. ChangeRecord 3ebea247 OWNER_REVIEW (records 117, audit 145, integrity OK; re-run idempotent). Efficiency/diagnostic pool (MR-CAL-1, MR-VR-1, MR-VR-2) now EXHAUSTED; next = Task 8 offline-UI panel OR owner pivot (MR-LONGEV-1 / packaging / freeze).",
- "current_phase": "Post-Phase-IGUI Task 7 COMPLETE (implementation): MR-VR-2 OUTER-loop scrambled-Sobol RQMC + control-variate variance reduction for the governed 99.5% SCR estimator under six pre-registered gates G1-G6 (validate 20/20, tests 12/12). SCR VR ratios Sobol-RQMC 536x / stratified 558x / RQMC+CV 496x; control-variate-alone 0.93x (disclosed measured-not-assumed, mean-leg only); control rho 0.812, 1/(1-rho^2) 2.93x; out-of-sample beta UNBIASED; governed headline bit-identical; indicated adoption dSCR 0.000316% immaterial, report-not-apply. MR-CAL-1 + MR-VR-1 + MR-VR-2 all COMPLETE -> stop-rule-admissible efficiency/diagnostic pool EXHAUSTED; MR-LONGEV-1 deferred (owner sign-off). gov 117 change records / 145 audit entries (integrity OK). Next = Post-Phase-IGUI Task 8 = ADDITIVE offline-UI MR-VR-2 panel (model-output-only) OR owner pivot to MR-LONGEV-1 / packaging A/B/C / freeze.",
- "overall_status": "POSTIGUI_TASK7_MR_VR_2_IMPLEMENTED_GATES_20_20_TESTS_12_12_EFFICIENCY_POOL_EXHAUSTED_NEXT_TASK8_OFFLINE_UI_VR2_PANEL_OR_OWNER_PIVOT",
+ "last_run": "2026-06-15T16:25:00Z",
+ "last_run_duration_minutes": 20,
+ "last_run_note": "Post-Phase-IGUI Task 8 COMPLETE - ADDITIVE offline-UI MR-VR-2 outer-loop variance-reduction panel (postigui_vr2), display-only / model-output-only, contract 1.22.0->1.23.0. ui_app_self_test ok:true + 6 sibling suites green; 59/59 contract-coupled python tests PASS; governed headline 39975.654628199336 BIT-IDENTICAL. Efficiency/diagnostic pool EXHAUSTED. NEXT = owner pivot (MR-LONGEV-1 longevity 5th-driver / packaging A|B|C / freeze) or continue Phase IGUI.",
+ "current_phase": "Post-Phase-IGUI Task 8 COMPLETE: ADDITIVE offline-UI MR-VR-2 outer-loop variance-reduction efficiency panel (postigui_vr2) shipped on the zero-install offline RESULTS UI; additive contract 1.22.0->1.23.0 (+1 key), display-only, no model figure recomputed, governed headline 39975.654628199336 BIT-IDENTICAL. MR-VR-2 SCR tail VR: Sobol-RQMC 536x / stratified 558x / RQMC+CV 496x; control-variate-alone 0.93x (sub-1.5x, DISCLOSED measured-not-assumed, mean-leg only). Efficiency/diagnostic pool MR-CAL-1+MR-VR-1+MR-VR-2 EXHAUSTED (Phase 30 stop-rule bars copula candidates). Validation: ui_app_self_test ok:true (0 net/0 JS err) + 6 sibling ui_app suites green; 59/59 contract-coupled python tests PASS. NEXT = OWNER PIVOT: MR-LONGEV-1 longevity 5th-driver (parameter-adding, needs sign-off) | packaging A/B/C | declare auto-dev frontier complete and freeze | resume Phase IGUI input+run GUI.",
+ "overall_status": "POSTIGUI_TASK8_MR_VR_2_OFFLINE_UI_PANEL_SHIPPED_CONTRACT_1_23_0_TESTS_GREEN_EFFICIENCY_POOL_EXHAUSTED_NEXT_OWNER_PIVOT_OR_PHASE_IGUI",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -1078,7 +1078,7 @@
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
   "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
  },
- "last_updated": "2026-06-15T10:30:00Z",
+ "last_updated": "2026-06-15T16:25:00Z",
  "cycle_2026_06_08_phase26_task2": {
   "verdict": "PASS",
   "gates": "6/6 pre-registered",
@@ -2052,5 +2052,34 @@
   ],
   "stop_rule": "Phase 30 compliant - no copula structure, no model parameter; headline 39975.654628199336 frozen",
   "implementation": "DEFERRED to Task 7"
+ },
+ "cycle_2026_06_15_postigui_task8": {
+  "timestamp": "2026-06-15T16:25:00Z",
+  "owner": "claude",
+  "verdict": "PASS",
+  "candidate_id": "MR-VR-2 (display layer)",
+  "task": "Post-Phase-IGUI Task 8: ADDITIVE offline-UI MR-VR-2 outer-loop variance-reduction panel (display-only, model-output-only)",
+  "contract": "1.22.0 -> 1.23.0 (additive: +1 top-level key postigui_vr2)",
+  "root_digest": "456f772166a1198363e16c7ccc68f87175ab4e4fa289cc0e798a009f1b257d01",
+  "source_report": "docs/validation/POSTIGUI_TASK7_OUTER_VARIANCE_REDUCTION.json",
+  "source_digest": "84f96dcf60b8c77855b6a8150f7ecc328040da423845da4a58a6e6fc97dcb16c",
+  "self_consistency": "ui_app_self_test.cjs ok:true (0 network, 0 JS errors); 6 sibling ui_app fallback suites ok:true",
+  "python_tests": "59/59 PASS on the contract-coupled + panel suites (task8 13/13, task5 14/14, a2/h1/e3 guards green)",
+  "headline": "governed frozen-t component SCR 39975.654628199336 BIT-IDENTICAL; display-only, no model figure recomputed",
+  "deliverables": [
+   "scripts/build_postigui_task8_vr2_panel.py (NEW builder, idempotent, --check)",
+   "tests/test_postigui_task8_vr2_panel.py (NEW, 13 checks)",
+   "ui_data.json + ui_app.html (postigui_vr2 section + Outer-Loop VR tab/panel; A2 digests recomputed; root 456f7721...)",
+   "scripts/ui_app_self_test.cjs (+15 vr2 jsdom checks; contract pins -> 1.23.0)",
+   "scripts/build_ui_pipeline.py (registered task8 layer; published contract -> 1.23.0)",
+   "par_model_v2/viewer/contract_guard.py (EXPECTED_CONTRACT 1.23.0; required keys += postigui_vr2)",
+   "tests/{test_phase35_task3_a2_digests,test_phase34_task2_h1_contract_guard,test_phase36_task4_e3_evidence_pack,test_postigui_task5_vr_panel}.py (contract pins -> 1.23.0)"
+  ],
+  "stop_rule": "Phase 30 compliant - no copula structure, no model parameter; efficiency pool MR-CAL-1+MR-VR-1+MR-VR-2 EXHAUSTED",
+  "zero_install": "preserved (0 external refs; embedded payload == standalone ui_data.json; no storage API)",
+  "pre_existing_findings": [
+   "test_phase36_task5_phase_summary::test_contract_inventory was ALREADY RED on origin/main (frozen PHASE36_TASK5_PHASE_SUMMARY_REPORT.json pins contract 1.21.0 while the test expects 1.22.0); untouched this cycle - flagged for owner.",
+   "29 pytest collection errors are environmental (numpy/scipy absent in the CI sandbox), not code regressions."
+  ]
  }
 }

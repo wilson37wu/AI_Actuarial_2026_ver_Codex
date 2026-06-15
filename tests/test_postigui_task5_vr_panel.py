@@ -41,8 +41,8 @@ class PostIguiTask5VrPanel(unittest.TestCase):
         cls.man = cls.data["contract_manifest"]
 
     def test_contract_bumped_additively_to_122(self):
-        self.assertEqual(self.data["contract_version"], "1.22.0")
-        self.assertEqual(self.man["expected_contract_version"], "1.22.0")
+        self.assertEqual(self.data["contract_version"], "1.23.0")
+        self.assertEqual(self.man["expected_contract_version"], "1.23.0")
         # additive: pre-existing 1.21.0 keys all still present
         for k in ("explainer", "a11y_audit", "owner_decision_p31", "governance",
                   "capital", "verdicts"):
@@ -130,7 +130,7 @@ class PostIguiTask5VrPanel(unittest.TestCase):
         i = html.find(tok) + len(tok)
         j = html.find("</script>", i)
         emb = json.loads(html[i:j])
-        self.assertEqual(emb["contract_version"], "1.22.0")
+        self.assertEqual(emb["contract_version"], "1.23.0")
         self.assertIn("postigui_vr", emb)
         self.assertEqual(emb["postigui_vr"], self.vr)
         self.assertEqual(emb["contract_manifest"]["root_digest"],

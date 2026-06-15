@@ -36,7 +36,7 @@ DOC_VERSION = "1.0.0"
 # constants are refreshed to the current state so it stays green against the
 # live repo (its documented purpose); gap H1 itself remains the historical
 # 1.17.0 -> 1.18.0 additive change.
-EXPECTED_CONTRACT = "1.22.0"
+EXPECTED_CONTRACT = "1.23.0"
 PRIOR_CONTRACT = "1.21.0"
 GOVERNED_HEADLINE = "39975.654628199336"
 
@@ -48,7 +48,7 @@ EXPECTED_REQUIRED_KEYS = [
     "proxy", "loss", "calibrations", "management_actions", "phase24",
     "phase25", "phase26", "phase27", "phase28", "phase29", "phase30",
     "distribution_explorer", "owner_decision_p31", "user_run", "governance",
-    "verdicts", "a11y_audit", "explainer", "postigui_vr",
+    "verdicts", "a11y_audit", "explainer", "postigui_vr", "postigui_vr2",
 ]
 
 
@@ -99,7 +99,7 @@ def validate_h1(repo_root: str = ".") -> Dict[str, Any]:
     checks["validator_fn_present"] = "function validateContract(" in html
     checks["integrity_render_present"] = "function renderIntegrity(" in html
     checks["banner_render_present"] = "function renderIntegrityBanner(" in html
-    checks["html_embeds_contract_expected"] = '"contract_version": "1.22.0"' in html
+    checks["html_embeds_contract_expected"] = '"contract_version": "1.23.0"' in html
     checks["display_only_no_recompute_stated"] = "recomputes no model figure" in html
     checks["neutral_degraded_banner_text"] = "Data-contract notice" in html and "No figures are recomputed" in html
     checks["zero_external_refs"] = _external_ref_count(html) == 0

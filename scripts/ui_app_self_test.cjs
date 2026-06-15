@@ -709,7 +709,7 @@ setTimeout(() => {
   const e2ExplainerDigested = !!(uiDataObj && uiDataObj.contract_manifest &&
     uiDataObj.contract_manifest.section_digests &&
     /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.section_digests.explainer || ""));
-  const e2ContractIs121 = !!uiDataObj && uiDataObj.contract_version === "1.22.0";
+  const e2ContractIs121 = !!uiDataObj && uiDataObj.contract_version === "1.23.0";
   const e2HeadlineBitForBit = /39975\.654628199336/.test(html);
   const e2NoAuthoredFigures = e2KeyPresent && (function(){
     const authored = e2Explainer.terms.map(t => (t.definition_source||"").indexOf("verbatim")>=0
@@ -788,7 +788,56 @@ setTimeout(() => {
     /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.section_digests.postigui_vr || ""));
   const vrClassificationEfficiency = vrKeyPresent && vr.classification === "EFFICIENCY" &&
     Array.isArray(vr.techniques) && vr.techniques.length === 4;
-  const vrContractIs122 = !!uiDataObj && uiDataObj.contract_version === "1.22.0";
+  const vrContractIs122 = !!uiDataObj && uiDataObj.contract_version === "1.23.0";
+
+  // ===== Post-Phase-IGUI Task 8 (MR-VR-2): outer-loop variance-reduction efficiency panel =====
+  const vr2 = uiDataObj && uiDataObj.postigui_vr2;
+  const vr2Tab = tabs.find(t => t.getAttribute("data-target") === "vr2panel");
+  if (vr2Tab) vr2Tab.click();
+  const vr2Panel = document.getElementById("vr2panel");
+  const vr2PanelText = (vr2Panel && vr2Panel.textContent) || "";
+  const vr2KeyPresent = !!vr2 && typeof vr2 === "object" &&
+    !!vr2.mean_variance_reduction_ratios && !!vr2.scr_tail_study &&
+    !!vr2.control_variate_fit && !!vr2.adoption_materiality;
+  const vr2TabPresent = !!vr2Tab && /Outer-Loop Variance Reduction/.test(vr2Tab.textContent || "");
+  const vr2ScrRows = document.querySelectorAll('#vr2panel table.vr2ratios tbody tr').length;
+  const vr2MeanRows = document.querySelectorAll('#vr2panel table.vr2mean tbody tr').length;
+  const vr2EssRows = document.querySelectorAll('#vr2panel table.vr2ess tbody tr').length;
+  const vr2PanelRenders = /Outer-Loop Variance Reduction/.test(vr2PanelText) &&
+    /99\.5% SCR tail target/.test(vr2PanelText) &&
+    vr2ScrRows === 4 && vr2MeanRows === 3 && vr2EssRows === 5;
+  const vr2ScrRatiosHaveCi = vr2KeyPresent &&
+    ["sobol_rqmc","control_variate","stratified","rqmc_plus_cv"].every(k => {
+      const r = vr2.scr_tail_study.variance_reduction_ratios[k] || {};
+      return typeof r.ratio === "number" && typeof r.ci95_lo === "number" &&
+        typeof r.ci95_hi === "number" && r.ci95_lo <= r.ratio && r.ratio <= r.ci95_hi;
+    });
+  const vr2ControlVariateTailIneffective = vr2KeyPresent &&
+    vr2.scr_tail_study.variance_reduction_ratios.control_variate.useful_ge_threshold === false &&
+    vr2.scr_tail_study.variance_reduction_ratios.control_variate.ratio < 1.5 &&
+    /INEFFECTIVE/.test(vr2PanelText);
+  const vr2TailLeversUseful = vr2KeyPresent &&
+    vr2.scr_tail_study.variance_reduction_ratios.sobol_rqmc.useful_ge_threshold === true &&
+    vr2.scr_tail_study.variance_reduction_ratios.stratified.useful_ge_threshold === true &&
+    vr2.scr_tail_study.variance_reduction_ratios.rqmc_plus_cv.useful_ge_threshold === true &&
+    vr2.best_tail_technique === "stratified";
+  const vr2ControlFitDisclosed = vr2KeyPresent && vr2.control_variate_fit &&
+    typeof vr2.control_variate_fit.rho === "number" &&
+    typeof vr2.control_variate_fit.one_over_1_minus_rho2 === "number";
+  const vr2UnbiasedWithinTol = vr2KeyPresent && vr2.mean_unbiasedness &&
+    vr2.mean_unbiasedness.all_within_tol === true && /no model figure recomputed/.test(vr2PanelText);
+  const vr2AdoptionReportedNotApplied = vr2KeyPresent &&
+    vr2.adoption_materiality.is_material === false &&
+    vr2.adoption_materiality.applied === false &&
+    /REPORTED, NOT applied/.test(vr2PanelText);
+  const vr2HeadlineInvariant = vr2KeyPresent && vr2.headline_invariance &&
+    vr2.headline_invariance.bit_identical === true &&
+    vr2.headline_invariance.before.frozen_t_component_scr === 39975.654628199336;
+  const vr2Digested = !!(uiDataObj && uiDataObj.contract_manifest &&
+    uiDataObj.contract_manifest.section_digests &&
+    /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.section_digests.postigui_vr2 || ""));
+  const vr2ClassificationEfficiency = vr2KeyPresent && vr2.classification === "EFFICIENCY" &&
+    Array.isArray(vr2.techniques) && vr2.techniques.length === 4;
 
   const checks = {
     // Phase 33 Task 5 (gap G4): accessibility & usability pass
@@ -1062,7 +1111,7 @@ setTimeout(() => {
     // Phase 34 Task 2 (gap H1): self-describing data-contract guard.
     h1IntegrityTabPresent: !!intTab,
     h1IntegrityTabText: /Data-contract integrity/.test(intText),
-    h1ContractIs121: !!uiDataObj && uiDataObj.contract_version === "1.22.0",
+    h1ContractIs121: !!uiDataObj && uiDataObj.contract_version === "1.23.0",
     // Phase 35 Task 4 (gap A3): one-page printable model-card cover
     a3ModelCardPresent: !!modelCardEl,
     a3ModelCardIdentity: /Model card/.test(modelCardText) &&
@@ -1080,7 +1129,7 @@ setTimeout(() => {
     a3ModelCardDecisionBlank: /intentionally BLANK/.test(modelCardText) &&
       /Owner decision \(option id\): _{6,}/.test(modelCardText),
     a3ModelCardProvenance: /Provenance:/.test(modelCardText) &&
-      /contract v1\.22\.0/.test(modelCardText) && /build stamp/.test(modelCardText),
+      /contract v1\.23\.0/.test(modelCardText) && /build stamp/.test(modelCardText),
     a3PrintCssPresent: a3PrintCssPresent,
     // Phase 35 Task 3 (gap A2): content-integrity digests + in-browser verifier
     a2DigestsPresent,
@@ -1190,6 +1239,21 @@ setTimeout(() => {
     vrDigested,
     vrClassificationEfficiency,
     vrContractIs122,
+    vr2KeyPresent,
+    vr2TabPresent,
+    vr2PanelRenders,
+    vr2ScrRows,
+    vr2MeanRows,
+    vr2EssRows,
+    vr2ScrRatiosHaveCi,
+    vr2ControlVariateTailIneffective,
+    vr2TailLeversUseful,
+    vr2ControlFitDisclosed,
+    vr2UnbiasedWithinTol,
+    vr2AdoptionReportedNotApplied,
+    vr2HeadlineInvariant,
+    vr2Digested,
+    vr2ClassificationEfficiency,
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -1611,6 +1675,21 @@ setTimeout(() => {
     checks.vrDigested &&
     checks.vrClassificationEfficiency &&
     checks.vrContractIs122 &&
+    checks.vr2KeyPresent &&
+    checks.vr2TabPresent &&
+    checks.vr2PanelRenders &&
+    checks.vr2ScrRows === 4 &&
+    checks.vr2MeanRows === 3 &&
+    checks.vr2EssRows === 5 &&
+    checks.vr2ScrRatiosHaveCi &&
+    checks.vr2ControlVariateTailIneffective &&
+    checks.vr2TailLeversUseful &&
+    checks.vr2ControlFitDisclosed &&
+    checks.vr2UnbiasedWithinTol &&
+    checks.vr2AdoptionReportedNotApplied &&
+    checks.vr2HeadlineInvariant &&
+    checks.vr2Digested &&
+    checks.vr2ClassificationEfficiency &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);
