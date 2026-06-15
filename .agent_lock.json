@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T15:08Z-d884",
-  "started_at": "2026-06-15T15:08:02Z",
-  "ttl_minutes": 120,
-  "task": "Post-Phase-IGUI Task 7: implement MR-VR-2 OUTER-loop RQMC+control-variate efficiency study (gates G1-G6, DISCLOSED, headline bit-identical)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T15:19:15Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
