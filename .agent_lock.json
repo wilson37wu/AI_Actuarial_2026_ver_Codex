@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-15T03:19:59Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-15T04:07Z-dde4",
+  "started_at": "2026-06-15T04:07:28Z",
+  "ttl_minutes": 120,
+  "task": "Phase IGUI Task 6: validation surfacing + governance gating before run (D5_validation_gating)",
+  "note": ""
 }
