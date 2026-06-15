@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T09:08Z-07a0",
-  "started_at": "2026-06-15T09:08:20Z",
-  "ttl_minutes": 120,
-  "task": "Post-Phase-IGUI Task 1: design note pre-register one model-improvement candidate",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T09:16:14Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
