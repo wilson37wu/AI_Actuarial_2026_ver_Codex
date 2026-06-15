@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T14:08Z-3418",
-  "started_at": "2026-06-15T14:08:14Z",
-  "ttl_minutes": 120,
-  "task": "Post-Phase-IGUI Task 6 (design-note-first): pre-register next admissible efficiency/diagnostic candidate within Phase 30 stop-rule (OWNER_REVIEW)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T14:16:14Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
