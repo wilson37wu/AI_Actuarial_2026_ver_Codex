@@ -743,6 +743,133 @@ def validate_assumptions_dict(payload: Dict[str, Any]) -> List[str]:
     return errors
 
 
+# ----------------------------------------------------------------- ESG / economic-scenario (no-Excel) validator
+#: Governed / frozen ESG calibration - READ-ONLY (Phase IGUI Task 5, stop-rule-bounded).
+#: validate_esg_dict REJECTS any payload that tries to override these and REJECTS any
+#: copula-structure other than the frozen one (Phase 30 stop-rule).
+FROZEN_COPULA_STRUCTURE = "single_t_grouped_FROZEN"
+GOVERNED_ESG_FROZEN = {
+    "rate_model": "G2++ two-factor / HW one-factor (educational governed)",
+    "rate.mean_reversion_x": 0.10,
+    "rate.mean_reversion_y": 0.35,
+    "rate.vol_x": 0.010,
+    "rate.vol_y": 0.006,
+    "rate.long_run_rate_p": 0.025,
+    "equity.equity_vol": 0.22,
+    "equity.dividend_yield": 0.025,
+    "equity.equity_risk_premium": 0.045,
+    "equity.rate_equity_correlation": -0.15,
+    "credit.mean_reversion_speed": 0.30,
+    "credit.long_run_spread_p": 0.015,
+    "liquidity.mean_reversion_speed": 0.60,
+    "liquidity.long_run_premium_p": 0.006,
+    "dependence.copula_structure": FROZEN_COPULA_STRUCTURE,
+    "dependence.copula_df_single_t": 2.9451,
+    "dependence.grouped_t_df_nonfin": 37.866,
+    "dependence.grouped_t_df_fin": 8.506,
+}
+
+#: Settable ESG-provenance bounds (the GUI spec mirrors this). dotted-key -> (lo, hi, lo_open, hi_open).
+_ESG_BOUNDS = {
+    "scenario.documented_paths": (1, 1000000, False, False),
+    "calibration.target_10y_rate": (-0.1, 0.5, True, True),
+    "calibration.target_equity_vol": (0.0, 2.0, True, False),
+    "calibration.target_credit_spread": (0.0, 1.0, False, False),
+}
+#: Settable ESG-provenance text fields that must be present + non-empty.
+_ESG_TEXT_REQUIRED = (
+    "market_data.curve_source", "market_data.equity_index",
+    "scenario.set_label", "calibration.basis_note",
+)
+#: Settable ESG-provenance ISO-date fields.
+_ESG_DATE_REQUIRED = ("market_data.valuation_date",)
+import re as _re_esg
+_ESG_DATE_RE = _re_esg.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def validate_esg_dict(payload: Dict[str, Any]) -> List[str]:
+    """Validate a Phase IGUI Task-5 ``{esg}`` fragment WITHOUT openpyxl.
+
+    Purely additive: mirrors the SETTABLE ESG-provenance bounds the GUI surfaces and
+    is the single round-trip gate every GUI payload passes fail-loud before a write
+    or run. STOP-RULE / OWNER-GATING (the binding properties of Task 5):
+      * the governed-frozen ESG calibration echo (rate / equity / credit / liquidity /
+        dependence) is read-only - any value present that does not EXACTLY equal the
+        governed constant is rejected, so no GUI payload can change a governed parameter;
+      * the dependence copula STRUCTURE is pinned to the frozen value - any
+        ``copula_structure`` (in the echo OR as a smuggled top-level esg key) other
+        than the frozen one is rejected (the Phase 30 stop-rule guard), so the GUI can
+        never introduce a new copula-structure candidate.
+    The Excel template path is unchanged."""
+    errors: List[str] = []
+    tab = "ESG"
+    if not isinstance(payload, dict):
+        return [_err(tab, "-", "esg", "payload must be a JSON object")]
+    a = payload.get("esg") if "esg" in payload else payload
+    if not isinstance(a, dict):
+        return [_err(tab, "-", "esg", "missing 'esg' object")]
+
+    for key, (lo, hi, lo_open, hi_open) in _ESG_BOUNDS.items():
+        v, present = _dotted_get(a, key)
+        if not present:
+            errors.append(_err(tab, "-", key, "is required"))
+            continue
+        fv = _to_float(v)
+        ok = fv is not None
+        if ok:
+            ok = (fv > lo if lo_open else fv >= lo) and (fv < hi if hi_open else fv <= hi)
+        if not ok:
+            ival = "%s%s, %s%s" % ("(" if lo_open else "[", lo, hi, ")" if hi_open else "]")
+            errors.append(_err(tab, "-", key, "must be in %s, got %r" % (ival, v)))
+
+    for key in _ESG_TEXT_REQUIRED:
+        v, present = _dotted_get(a, key)
+        if not present or not _as_str(v):
+            errors.append(_err(tab, "-", key, "must be a non-empty string"))
+
+    for key in _ESG_DATE_REQUIRED:
+        v, present = _dotted_get(a, key)
+        if not present or not _ESG_DATE_RE.match(_as_str(v)):
+            errors.append(_err(tab, "-", key, "must be an ISO date YYYY-MM-DD, got %r" % (v,)))
+
+    # STOP-RULE: a smuggled top-level copula-structure key must be the frozen value.
+    smuggled, has_smuggled = _dotted_get(a, "copula_structure")
+    if has_smuggled and _as_str(smuggled) != FROZEN_COPULA_STRUCTURE:
+        errors.append(_err(tab, "-", "copula_structure",
+                           "Phase 30 stop-rule: no new copula-structure candidates; "
+                           "governed structure is frozen at %r (got %r)"
+                           % (FROZEN_COPULA_STRUCTURE, smuggled)))
+
+    # OWNER-GATING + STOP-RULE: governed-frozen echo must EQUAL the governed constants.
+    frozen, has_frozen = _dotted_get(a, "governed_esg_readback")
+    if has_frozen:
+        if not isinstance(frozen, dict):
+            errors.append(_err(tab, "-", "governed_esg_readback", "must be the read-only governed echo"))
+        else:
+            for gk, gv in GOVERNED_ESG_FROZEN.items():
+                if gk in frozen:
+                    if gk == "dependence.copula_structure" or isinstance(gv, str):
+                        if _as_str(frozen[gk]) != _as_str(gv):
+                            extra = (" (Phase 30 stop-rule: no new copula-structure candidates)"
+                                     if gk == "dependence.copula_structure" else "")
+                            errors.append(_err(tab, "-", "governed_esg_readback.%s" % gk,
+                                               "is governed/frozen and read-only (must equal %r, got %r)%s; "
+                                               "GUI inputs may NOT change a governed parameter"
+                                               % (gv, frozen[gk], extra)))
+                    else:
+                        fv = _to_float(frozen[gk])
+                        if fv is None or abs(fv - gv) > 1e-12:
+                            errors.append(_err(tab, "-", "governed_esg_readback.%s" % gk,
+                                               "is governed/frozen and read-only (must equal %r, got %r); "
+                                               "GUI inputs may NOT change a governed parameter"
+                                               % (gv, frozen[gk])))
+            for extra in frozen:
+                if extra not in GOVERNED_ESG_FROZEN:
+                    errors.append(_err(tab, "-", "governed_esg_readback.%s" % extra,
+                                       "unknown governed-frozen key (read-only echo only)"))
+    return errors
+
+
 # ----------------------------------------------------------------- main API
 def load_user_inputs(template_path: str) -> Dict[str, Any]:
     """Parse + validate the template; return the normalised inputs dict.

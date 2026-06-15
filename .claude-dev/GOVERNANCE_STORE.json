@@ -2991,6 +2991,35 @@
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
       "digest": "38bc1157beb49205845be9d3dea20e9e0f78b9d176682a182822d48f2565f4c1",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "e3fe72c2e1314527a0b9d4c57c227079",
+      "timestamp": "2026-06-15T03:18:04.566244+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase IGUI Task 5 ESG / economic scenarios (stop-rule-bounded, owner-gated) (par_model_v2/viewer/igui_esg.py); additive loader-side validate_esg_dict; governed ESG calibration + frozen copula structure read-only (override neutralised + rejected; new-structure candidate rejected); 0 new third-party deps; localhost-only/offline; ui_app.html byte-unchanged; NO contract change; NO model parameter change",
+      "details": {
+        "record_id": "b2b6b4f8f5e04485937a0bdcc66444e8",
+        "contract": "1.21.0 (unchanged)",
+        "task5_gate_checks": 27,
+        "new_unittests": 24,
+        "new_third_party_runtime_deps": 0,
+        "frozen_copula_structure": "single_t_grouped_FROZEN",
+        "governed_esg_readonly_keys": 18,
+        "affected_components": [
+          "par_model_v2/viewer/igui_esg.py",
+          "scripts/run_gui.py",
+          "scripts/load_user_inputs.py",
+          "scripts/build_phase_igui_task5_governance.py",
+          "scripts/build_phase_igui_task5_esg.py",
+          "tests/test_phase_igui_task5_esg.py",
+          "docs/validation/PHASE_IGUI_TASK5_ESG.json",
+          "docs/validation/PHASE_IGUI_TASK5_ESG.md"
+        ]
+      },
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
+      "digest": "3427fccae1630e47d394d0a955a2f6e7e6607c39739b9f67d76784458c9026c5",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -9597,6 +9626,113 @@
           "actor": "ClaudeCowork_AutoDev",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. The input+run GUI now collects the full assumptions domain: the user can enter mortality (base + improvement), lapse/surrender incl. dynamic policyholder behaviour, expenses, premiums, discount rate / yield curve, bonus/crediting & declaration strategy, management-action rules and reinsurance, all validated through the real loader before any run, while the governed/frozen dependence parameters are shown read-only and can never be changed from the GUI. Next cycle = Task 5 (ESG / economic-scenario inputs, stop-rule-bounded). The MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
+        }
+      ],
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"
+    },
+    {
+      "record_id": "b2b6b4f8f5e04485937a0bdcc66444e8",
+      "created_at": "2026-06-15T03:18:04.566112+00:00",
+      "title": "Phase IGUI Task 5 - ESG / economic-scenario input domain (stop-rule-bounded, owner-gated) (par_model_v2/viewer/igui_esg.py; loader-side ESG validator)",
+      "description": "Implemented Task 5 (the D4_esg_economic domain) of the owner-directed Phase IGUI input+run GUI, following Task 1 (design note), Task 2 (run controls), Task 3 (model points) and Task 4 (assumptions). (1) ESG CORE par_model_v2/viewer/igui_esg.py (stdlib only): a declarative, grouped spec of the SETTABLE ESG-provenance inputs - market data (valuation date, yield-curve source, equity-index reference), scenario set (label + documented scenario count) and calibration TARGETS (market 10y rate, equity vol, credit spread, basis note) - with fail-loud normalisation (per-field; incl. an ISO-date validator) and a builder to the model_inputs.json {esg} sub-schema. (2) STOP-RULE / OWNER-GATING: the governed ESG calibration (G2++/HW short-rate mean_reversion_x 0.10 / y 0.35 / vol_x 0.010 / vol_y 0.006 / long_run 0.025, equity vol 0.22 / div 0.025 / ERP 0.045 / rate-equity corr -0.15, credit reversion 0.30 / long_run 0.015, liquidity reversion 0.60 / long_run 0.006) and the FROZEN dependence structure (copula df 2.9451, grouped-t df_nonfin 37.866, df_fin 8.506, structure 'single_t_grouped_FROZEN') are a READ-ONLY provenance echo; esg_to_model_inputs ALWAYS re-attaches the governed values (discarding any user-supplied echo) and the loader REJECTS any override; the copula STRUCTURE is pinned and any other value - in the echo OR smuggled as a top-level esg key - is rejected (the Phase 30 stop-rule guard), so a GUI payload can never change a governed parameter or introduce a new copula-structure candidate. (3) RUNNER scripts/run_gui.py: serves a SELF-CONTAINED ESG page (grouped settable inputs + read-only governed basis + an on-page stop-rule banner; zero external references) at GET /esg and exposes POST /validate_esg, /save_esg; the prior pages/endpoints are unchanged and the model_inputs.json merge preserves the prior {currency, run_settings, portfolio, balance_sheet, assumptions}. (4) LOADER ROUND-TRIP: added a purely additive scripts/load_user_inputs.validate_esg_dict that validates the {esg} fragment (settable bounds, required text, ISO date) and enforces the read-only governed echo + the stop-rule structure pin; the Excel template path is unchanged. Tests: 24 new unittest cases green (spec/group coverage, default + string normalisation, bad-number/bad-date rejection, loader round-trip incl. out-of-bounds / empty-text / direct frozen-override / unknown-frozen-key rejections, the stop-rule guard for a new structure in the echo AND smuggled top-level, owner-gating echo re-attach, self-contained page, ui_app byte-unchanged, and a localhost endpoint round-trip). IGUI Task-1 (24) + Task-2 (21) + Task-3 (24) + Task-4 (21) suites stay green (114 IGUI tests total). Task-5 gate validate_task5_gate ok:true 27 checks. NO contract change; NO model parameter change; offline RESULTS UI byte-unchanged; stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "par_model_v2/viewer/igui_esg.py",
+        "scripts/run_gui.py",
+        "scripts/load_user_inputs.py",
+        "scripts/build_phase_igui_task5_governance.py",
+        "scripts/build_phase_igui_task5_esg.py",
+        "tests/test_phase_igui_task5_esg.py",
+        "docs/validation/PHASE_IGUI_TASK5_ESG.json",
+        "docs/validation/PHASE_IGUI_TASK5_ESG.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 (Modeling) section 3.2 / 3.5 - model inputs vs governed parameters: the economic-scenario calibration and the dependence structure (copula df, grouped-t dfs, Sigma) stay a READ-ONLY governed echo; ESG inputs are additive provenance/metadata and do not alter the frozen stochastic basis (stop-rule-bounded, owner-gated)",
+        "Phase 30 dependence stop-rule - NO new copula-structure candidates: the copula structure is pinned to the frozen single-df-t / grouped-t basis; the loader rejects any payload naming a different structure, so the GUI cannot introduce a new candidate; MR-016/MR-017 remains entirely with the owner",
+        "SOA ASOP 41 (Actuarial Communications) - the governed/frozen ESG basis is disclosed read-only alongside the user-editable market-data & calibration-target provenance; the educational-use restriction (credentialled, market-consistent calibration + independent review) is unchanged"
+      ],
+      "before_snapshot": {
+        "phase": "Phase IGUI Task 4 complete (assumptions, owner-gated)",
+        "igui_esg_module": false,
+        "loader_esg_validator": false,
+        "run_gui_routes": [
+          "/",
+          "/model-points",
+          "/assumptions",
+          "/healthz",
+          "/validate",
+          "/save",
+          "/validate_portfolio",
+          "/save_portfolio",
+          "/reconcile",
+          "/ingest",
+          "/validate_assumptions",
+          "/save_assumptions"
+        ],
+        "ui_contract": "1.21.0",
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65"
+      },
+      "after_snapshot": {
+        "igui_esg_module": "par_model_v2/viewer/igui_esg.py (stdlib only)",
+        "igui_new_third_party_runtime_deps": 0,
+        "loader_esg_validator": "validate_esg_dict (additive, no openpyxl)",
+        "run_gui_routes": [
+          "/",
+          "/model-points",
+          "/assumptions",
+          "/esg",
+          "/healthz",
+          "/validate",
+          "/save",
+          "/validate_portfolio",
+          "/save_portfolio",
+          "/reconcile",
+          "/ingest",
+          "/validate_assumptions",
+          "/save_assumptions",
+          "/validate_esg",
+          "/save_esg"
+        ],
+        "esg_groups": [
+          "Market Data",
+          "Scenario Set",
+          "Calibration Targets"
+        ],
+        "stop_rule_owner_gating": {
+          "frozen_copula_structure": "single_t_grouped_FROZEN",
+          "governed_esg_readonly_keys": 18,
+          "override_neutralised_by_builder": true,
+          "override_rejected_by_loader": true,
+          "new_structure_candidate_rejected": true,
+          "mr_016_017_pre_empted": false
+        },
+        "task5_gate_ok": true,
+        "task5_gate_checks": 27,
+        "new_unittests": 24,
+        "igui_tests_total_green": 114,
+        "ui_contract": "1.21.0 (unchanged)",
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65 (byte-unchanged)",
+        "results_ui_zero_install_preserved": true,
+        "headline_carried_bit_for_bit": "39975.654628199336"
+      },
+      "impact_assessment": "Additive GUI input domain + an additive loader-side validator. NO contract change, NO model parameter change; the offline RESULTS UI (ui_app.html) is byte-identical (frozen sha256 asserted by the Task-5 gate). The runner is localhost-bound and offline. STOP-RULE + OWNER-GATING hold by construction: the governed ESG calibration is a read-only echo the builder always re-attaches and the loader rejects any override of, and the copula structure is pinned so no new dependence-structure candidate can be introduced from the GUI. Pre-empts no owner decision (MR-016/MR-017 remains with the owner; Phase 30 stop-rule honoured).",
+      "quantitative_impact": "No governed capital figure changed; the headline SCR 39,975.654628199336 is carried bit-for-bit. Copula df 2.9451 / grouped-t dfs 37.866 & 8.506 and the marginal-process calibration stay frozen and read-only; copula structure pinned to single_t_grouped_FROZEN. Contract unchanged at 1.21.0. Task-5 gate ok:true 27 checks; 24 new unittests green; IGUI Task-1..4 suites still green (114 total); 0 new third-party runtime dependencies; 0 outbound network calls; 0 external refs.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T03:18:04.566193+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: Task 5 lands the ESG / economic-scenario input domain (market-data & scenario provenance + calibration targets) plus an additive loader-side validate_esg_dict. STOP-RULE + OWNER-GATING hold: the governed ESG calibration and the dependence structure are read-only - the builder re-attaches the governed echo, the loader rejects any override, and the copula structure is pinned so no new candidate can be introduced; the frozen stochastic basis is unchanged. ZERO new third-party runtime dependency; the runner stays 127.0.0.1-bound and offline; every payload round-trips fail-loud through the loader before a write; offline RESULTS UI byte-unchanged (frozen sha256). 24 new unittests + Task-5 gate (27 checks) green; IGUI Task-1..4 suites green (114 total). Headline carried bit-for-bit; NO contract change; NO model parameter change; stop-rule honoured."
+        },
+        {
+          "timestamp": "2026-06-15T03:18:04.566209+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. The input+run GUI now surfaces the ESG / economic-scenario domain: the user sees the governed calibration (rate / equity / credit / liquidity and the frozen dependence structure) read-only and can record the market-data and calibration-target provenance around it, all validated through the real loader before any run, while the governed parameters and copula structure can never be changed from the GUI (Phase 30 stop-rule enforced). Next cycle = Task 6 (validation surfacing + governance gating before run). The MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
         }
       ],
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"

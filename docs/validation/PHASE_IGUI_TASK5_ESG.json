@@ -1,0 +1,129 @@
+{
+ "doc_id": "PHASE_IGUI_TASK5_ESG",
+ "doc_version": "1.0.0",
+ "generated_at": "2026-06-15T03:17:07.799914+00:00",
+ "task": "Phase IGUI Task 5 - ESG / economic scenarios (stop-rule-bounded, owner-gated)",
+ "domain": "D4_esg_economic",
+ "governed_headline": "39,975.654628199336",
+ "schema_version": "1.0.0",
+ "ui_app_sha256_frozen": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+ "frozen_copula_structure": "single_t_grouped_FROZEN",
+ "esg_groups": [
+  "Market Data",
+  "Scenario Set",
+  "Calibration Targets"
+ ],
+ "governed_esg_readback": {
+  "rate_model": "G2++ two-factor / HW one-factor (educational governed)",
+  "rate.mean_reversion_x": 0.1,
+  "rate.mean_reversion_y": 0.35,
+  "rate.vol_x": 0.01,
+  "rate.vol_y": 0.006,
+  "rate.long_run_rate_p": 0.025,
+  "equity.equity_vol": 0.22,
+  "equity.dividend_yield": 0.025,
+  "equity.equity_risk_premium": 0.045,
+  "equity.rate_equity_correlation": -0.15,
+  "credit.mean_reversion_speed": 0.3,
+  "credit.long_run_spread_p": 0.015,
+  "liquidity.mean_reversion_speed": 0.6,
+  "liquidity.long_run_premium_p": 0.006,
+  "dependence.copula_structure": "single_t_grouped_FROZEN",
+  "dependence.copula_df_single_t": 2.9451,
+  "dependence.grouped_t_df_nonfin": 37.866,
+  "dependence.grouped_t_df_fin": 8.506
+ },
+ "capabilities": [
+  "ESG / economic-scenario calibration surfaced as a READ-ONLY provenance echo (G2++/HW short-rate, equity GBM, credit-spread & liquidity-premium processes, and the FROZEN dependence structure: single-df t-copula df 2.9451 + grouped-t block dfs 37.866 / 8.506)",
+  "STOP-RULE GUARD (Phase 30): the dependence copula structure is pinned to 'single_t_grouped_FROZEN'; the loader rejects any payload naming a different structure (in the echo or smuggled as a top-level key), so the GUI can never introduce a new copula-structure candidate; MR-016/MR-017 not pre-empted",
+  "settable inputs are bounded, owner-gated PROVENANCE/metadata only (market-data valuation date & sources, scenario-set label, documented scenario count, and calibration TARGETS: 10y rate / equity vol / credit spread); none feed the frozen engine",
+  "loader-side validate_esg_dict round-trip (additive, no openpyxl)"
+ ],
+ "new_runner_routes": [
+  "GET /esg",
+  "POST /validate_esg",
+  "POST /save_esg"
+ ],
+ "loader_validator": "validate_esg_dict (additive, no openpyxl)",
+ "loader_validation_of_defaults": [],
+ "example_model_inputs_fragment": {
+  "schema_version": "1.0.0",
+  "generated_at": "1970-01-01T00:00:00+00:00",
+  "source": "igui_run_gui (Phase IGUI Task 5 ESG, stop-rule-bounded, owner-gated)",
+  "esg": {
+   "market_data": {
+    "valuation_date": "2026-05-31",
+    "curve_source": "HKMA EFBN / govt curve (educational)",
+    "equity_index": "HSI total-return (educational)"
+   },
+   "scenario": {
+    "set_label": "governed-base-2026",
+    "documented_paths": 20000
+   },
+   "calibration": {
+    "target_10y_rate": 0.033,
+    "target_equity_vol": 0.22,
+    "target_credit_spread": 0.015,
+    "basis_note": "Governed educational calibration; not a credentialled market-consistent basis."
+   },
+   "governed_esg_readback": {
+    "rate_model": "G2++ two-factor / HW one-factor (educational governed)",
+    "rate.mean_reversion_x": 0.1,
+    "rate.mean_reversion_y": 0.35,
+    "rate.vol_x": 0.01,
+    "rate.vol_y": 0.006,
+    "rate.long_run_rate_p": 0.025,
+    "equity.equity_vol": 0.22,
+    "equity.dividend_yield": 0.025,
+    "equity.equity_risk_premium": 0.045,
+    "equity.rate_equity_correlation": -0.15,
+    "credit.mean_reversion_speed": 0.3,
+    "credit.long_run_spread_p": 0.015,
+    "liquidity.mean_reversion_speed": 0.6,
+    "liquidity.long_run_premium_p": 0.006,
+    "dependence.copula_structure": "single_t_grouped_FROZEN",
+    "dependence.copula_df_single_t": 2.9451,
+    "dependence.grouped_t_df_nonfin": 37.866,
+    "dependence.grouped_t_df_fin": 8.506
+   }
+  }
+ },
+ "gate": {
+  "ok": true,
+  "n_checks": 27,
+  "n_pass": 27,
+  "checks": {
+   "esg_module_present": true,
+   "run_gui_present": true,
+   "loader_present": true,
+   "esg_module_stdlib_only": true,
+   "run_gui_serves_esg": true,
+   "run_gui_has_esg_endpoints": true,
+   "run_gui_still_localhost": true,
+   "run_gui_prior_pages_intact": true,
+   "loader_has_esg_validator": true,
+   "schema_version_lockstep": true,
+   "defaults_normalise_clean": true,
+   "fragment_has_esg": true,
+   "fragment_passes_loader_validator": true,
+   "loader_frozen_lockstep": true,
+   "frozen_echo_is_governed": true,
+   "frozen_override_rejected": true,
+   "new_copula_structure_rejected": true,
+   "stop_rule_guard_blocks_smuggled_structure": true,
+   "out_of_bounds_caught": true,
+   "bad_date_rejected": true,
+   "page_self_contained": true,
+   "page_carries_headline": true,
+   "page_shows_frozen_readonly": true,
+   "page_shows_stop_rule": true,
+   "page_groups_present": true,
+   "ui_app_byte_unchanged": true,
+   "no_external_refs_in_results_ui": true
+  },
+  "loader_validation_of_defaults": []
+ },
+ "self_test_ok": true,
+ "new_third_party_runtime_deps": 0,
+ "outbound_network_calls": 0
+}

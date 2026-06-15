@@ -62,6 +62,12 @@ from par_model_v2.viewer.igui_assumptions import (  # noqa: E402  (Task 4)
     assumptions_to_model_inputs,
     render_assumptions_html,
 )
+from par_model_v2.viewer.igui_esg import (  # noqa: E402  (Task 5)
+    default_esg,
+    normalize_esg,
+    esg_to_model_inputs,
+    render_esg_html,
+)
 
 HOST = "127.0.0.1"  # localhost ONLY (never a wildcard bind); no outbound network
 
@@ -240,6 +246,55 @@ def _merge_assumptions_into_model_inputs(out_path, fragment):
     return base
 
 
+def _loader_validate_esg(fragment):
+    """Round-trip an ESG fragment through the REAL loader's dict validator."""
+    import load_user_inputs  # scripts/load_user_inputs.py
+    return load_user_inputs.validate_esg_dict(fragment)
+
+
+def build_esg_response(payload, *, out_path=None, do_write=False):
+    """Pure handler for the Task-5 ESG domain (stop-rule-bounded, owner-gated):
+    payload -> typed provenance -> loader validation (+ optional merge-write) ->
+    result. The governed/frozen ESG calibration echo + pinned copula structure are
+    attached read-only; the loader rejects any override or new-structure candidate."""
+    e_in = payload.get("esg") if isinstance(payload, dict) else None
+    typed, norm_errors = normalize_esg(e_in if e_in is not None else {})
+    if norm_errors:
+        return {"ok": False, "stage": "normalise", "errors": norm_errors}
+    fragment = esg_to_model_inputs(typed)
+    loader_errors = _loader_validate_esg(fragment)
+    if loader_errors:
+        return {"ok": False, "stage": "loader_validation", "errors": loader_errors}
+    result = {"ok": True, "stage": "validated",
+              "model_inputs": {"esg": fragment["esg"]}}
+    if do_write and out_path:
+        merged = _merge_esg_into_model_inputs(out_path, fragment)
+        with open(out_path, "w", encoding="utf-8") as fh:
+            json.dump(merged, fh, indent=1)
+        with open(out_path, "r", encoding="utf-8") as fh:
+            json.load(fh)  # re-parse guard: never hand a corrupt file downstream
+        result["written"] = os.path.abspath(out_path)
+        result["model_inputs"] = merged
+    return result
+
+
+def _merge_esg_into_model_inputs(out_path, fragment):
+    """Merge the esg block into an existing model_inputs.json (preserving currency /
+    run_settings / portfolio / balance_sheet / assumptions a prior task wrote)."""
+    base = {}
+    if os.path.exists(out_path):
+        try:
+            with open(out_path, "r", encoding="utf-8") as fh:
+                base = json.load(fh)
+        except (OSError, json.JSONDecodeError):
+            base = {}
+    base["schema_version"] = fragment["schema_version"]
+    base["generated_at"] = fragment["generated_at"]
+    base.setdefault("source", fragment["source"])
+    base["esg"] = fragment["esg"]
+    return base
+
+
 class _Handler(BaseHTTPRequestHandler):
     server_version = "IGUIRunGui/1.0"
     out_path = "model_inputs.json"
@@ -260,9 +315,11 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(200, render_model_points_html(), "text/html")
         elif self.path in ("/assumptions", "/assumptions.html"):
             self._send(200, render_assumptions_html(), "text/html")
+        elif self.path in ("/esg", "/esg.html"):
+            self._send(200, render_esg_html(), "text/html")
         elif self.path == "/healthz":
             self._send(200, json.dumps({"ok": True, "host": HOST,
-                                        "task": "Phase IGUI Task 4 assumptions"}))
+                                        "task": "Phase IGUI Task 5 ESG"}))
         else:
             self._send(404, json.dumps({"ok": False, "error": "not found"}))
 
@@ -275,7 +332,8 @@ class _Handler(BaseHTTPRequestHandler):
             return None, str(exc)
 
     _POST_ROUTES = ("/validate", "/save", "/validate_portfolio", "/save_portfolio",
-                    "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions")
+                    "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions",
+                    "/validate_esg", "/save_esg")
 
     def do_POST(self):
         if self.path not in self._POST_ROUTES:
@@ -297,6 +355,10 @@ class _Handler(BaseHTTPRequestHandler):
                 res = build_assumptions_response(
                     payload, out_path=self.out_path,
                     do_write=(self.path == "/save_assumptions"))
+            elif self.path in ("/validate_esg", "/save_esg"):
+                res = build_esg_response(
+                    payload, out_path=self.out_path,
+                    do_write=(self.path == "/save_esg"))
             elif self.path == "/reconcile":
                 res = build_reconcile_response(payload)
             else:  # /ingest
@@ -412,6 +474,43 @@ def self_test(out_path=None) -> int:
             saved = json.load(fh)
         ok &= ("assumptions" in saved and "portfolio" in saved
                and "run_settings" in saved)  # merge preserved Task-2 + Task-3
+
+        # --- Task 5: ESG page + endpoints round-trip (stop-rule-bounded, owner-gated) ---
+        with urllib.request.urlopen(base + "/esg", timeout=5) as r:
+            ep = r.read().decode("utf-8")
+            ok &= (r.status == 200 and "ESG" in ep and "39,975.654628199336" in ep
+                   and "copula_df_single_t" in ep and "readonly" in ep
+                   and "single_t_grouped_FROZEN" in ep)
+        from par_model_v2.viewer.igui_esg import default_esg
+        ebody = json.dumps({"esg": default_esg()}).encode("utf-8")
+        req = urllib.request.Request(base + "/validate_esg", data=ebody,
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            ok &= bool(j.get("ok")) and "market_data" in j["model_inputs"]["esg"]
+        # owner-gating: a payload that tries to override a frozen calibration is
+        # NEUTRALISED - the server re-attaches the governed echo + frozen structure.
+        tampered = {"esg": default_esg()}
+        tampered["esg"]["governed_esg_readback"] = {
+            "equity.equity_vol": 9.999,
+            "dependence.copula_structure": "vine_candidate"}
+        treq = urllib.request.Request(base + "/validate_esg",
+                                      data=json.dumps(tampered).encode("utf-8"),
+                                      headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(treq, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            echo = j["model_inputs"]["esg"]["governed_esg_readback"]
+            ok &= (bool(j.get("ok")) and echo.get("equity.equity_vol") == 0.22
+                   and echo.get("dependence.copula_structure") == "single_t_grouped_FROZEN")
+        req = urllib.request.Request(base + "/save_esg", data=ebody,
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            ok &= bool(j.get("ok"))
+        with open(tmp, encoding="utf-8") as fh:
+            saved = json.load(fh)
+        ok &= ("esg" in saved and "assumptions" in saved and "portfolio" in saved
+               and "run_settings" in saved)  # merge preserved Tasks 2-4
     finally:
         srv.shutdown()
         srv.server_close()
@@ -431,10 +530,11 @@ def main(argv=None) -> int:
     srv = make_server(args.port, args.out)
     host, port = srv.server_address
     url = "http://%s:%d/" % (host, port)
-    print("Actuarial Input & Run GUI (Phase IGUI Task 4) serving at %s" % url)
+    print("Actuarial Input & Run GUI (Phase IGUI Task 5) serving at %s" % url)
     print("  - run controls: %s" % url)
     print("  - model points + in-force: %smodel-points" % url)
     print("  - assumptions (owner-gated): %sassumptions" % url)
+    print("  - economic scenarios / ESG (stop-rule-bounded): %sesg" % url)
     print("  - localhost only, offline; writes %s on Save." % os.path.abspath(args.out))
     if not args.no_browser:
         try:

@@ -1,0 +1,202 @@
+{
+ "schema_version": "1.0.0",
+ "generated_at": "2026-06-15T03:17:07.298910+00:00",
+ "source": "igui_run_gui (Phase IGUI Task 2 run controls)",
+ "currency": {
+  "code": "HKD",
+  "symbol": "HK$",
+  "scale": "units",
+  "thousands": "comma",
+  "market_label": "HK_2026_baseline",
+  "valuation_date": "2026-06-30"
+ },
+ "run_settings": {
+  "n_outer": 160,
+  "n_inner": 24,
+  "n_sim": 200000,
+  "bootstrap_replicates": 1000,
+  "horizon_months": 12,
+  "step_months": 1,
+  "seed": 42,
+  "output_label": "igui_run",
+  "reproducibility_digest": "sha256:b4947eed5ac052754f66bc74ad1b1766c8d2c178c039a7b6a56ddefc4d286f7a"
+ },
+ "portfolio": [
+  {
+   "product_type": "HKCD_PAR_2026",
+   "issue_age": 45,
+   "gender": "M",
+   "term_years": 20,
+   "sum_assured": 100000.0,
+   "annual_premium": 5000.0,
+   "policy_count": 1000,
+   "vested_bonus": 0.0,
+   "source_row": 1
+  },
+  {
+   "product_type": "HKRB_PAR_2026",
+   "issue_age": 40,
+   "gender": "F",
+   "term_years": 25,
+   "sum_assured": 250000.0,
+   "annual_premium": 9000.0,
+   "policy_count": 500,
+   "vested_bonus": 1200.0,
+   "source_row": 2
+  },
+  {
+   "product_type": "GMMB_EQ_2026",
+   "issue_age": 50,
+   "gender": "M",
+   "term_years": 15,
+   "sum_assured": 300000.0,
+   "annual_premium": 12000.0,
+   "policy_count": 250,
+   "vested_bonus": 0.0,
+   "source_row": 3
+  }
+ ],
+ "balance_sheet": {
+  "assets": [
+   {
+    "asset_class": "Government bonds",
+    "market_value": 120000000.0,
+    "illiquid": false
+   },
+   {
+    "asset_class": "Corporate bonds",
+    "market_value": 60000000.0,
+    "illiquid": false
+   },
+   {
+    "asset_class": "Private credit",
+    "market_value": 20000000.0,
+    "illiquid": true
+   }
+  ],
+  "backing_asset_mv": 200000000.0,
+  "illiquid_mv": 20000000.0,
+  "illiquid_share": 0.1,
+  "forced_sale_fraction": 0.2,
+  "best_estimate_liability": 150000000.0,
+  "equity_guarantee_initial_index": 100.0,
+  "stated_total_backing_asset_mv": 200000000.0
+ },
+ "totals": {
+  "backing_asset_mv": 200000000.0,
+  "total_sum_assured": 300000000.0,
+  "policy_count": 1750,
+  "model_point_rows": 3
+ },
+ "assumptions": {
+  "mortality": {
+   "base_table": "HK_ASSURED_2021",
+   "base_multiplier": 1.0,
+   "improvement_rate": 0.01,
+   "improvement_floor": 0.0
+  },
+  "lapse": {
+   "base_lapse_rate": 0.05,
+   "base_surrender_rate": 0.03,
+   "dynamic_lapse_beta": 1.5,
+   "dynamic_lapse_itm_threshold": 1.0
+  },
+  "expenses": {
+   "per_policy": 50.0,
+   "pct_premium": 0.05,
+   "inflation_rate": 0.02
+  },
+  "premiums": {
+   "frequency": "annual",
+   "indexation_rate": 0.0
+  },
+  "discount": {
+   "mode": "flat",
+   "flat_rate": 0.03,
+   "curve": [
+    {
+     "tenor": 1.0,
+     "rate": 0.025
+    },
+    {
+     "tenor": 5.0,
+     "rate": 0.03
+    },
+    {
+     "tenor": 10.0,
+     "rate": 0.033
+    },
+    {
+     "tenor": 20.0,
+     "rate": 0.035
+    },
+    {
+     "tenor": 30.0,
+     "rate": 0.036
+    }
+   ]
+  },
+  "bonus": {
+   "declaration_strategy": "asset_share",
+   "reversionary_rate": 0.02,
+   "terminal_rate": 0.1,
+   "smoothing_factor": 0.3
+  },
+  "management_action": {
+   "relief_sigma": 1.0,
+   "relief_alpha": 0.5,
+   "dynamic_rule_enabled": true
+  },
+  "reinsurance": {
+   "type": "none",
+   "quota_share": 0.0,
+   "retention_limit": 0.0
+  },
+  "risk": {
+   "confidence": 0.995,
+   "benefit_share": 0.9
+  },
+  "governed_frozen_readback": {
+   "copula_df_single_t": 2.9451,
+   "grouped_t_df_nonfin": 37.866,
+   "grouped_t_df_fin": 8.506
+  }
+ },
+ "esg": {
+  "market_data": {
+   "valuation_date": "2026-05-31",
+   "curve_source": "HKMA EFBN / govt curve (educational)",
+   "equity_index": "HSI total-return (educational)"
+  },
+  "scenario": {
+   "set_label": "governed-base-2026",
+   "documented_paths": 20000
+  },
+  "calibration": {
+   "target_10y_rate": 0.033,
+   "target_equity_vol": 0.22,
+   "target_credit_spread": 0.015,
+   "basis_note": "Governed educational calibration; not a credentialled market-consistent basis."
+  },
+  "governed_esg_readback": {
+   "rate_model": "G2++ two-factor / HW one-factor (educational governed)",
+   "rate.mean_reversion_x": 0.1,
+   "rate.mean_reversion_y": 0.35,
+   "rate.vol_x": 0.01,
+   "rate.vol_y": 0.006,
+   "rate.long_run_rate_p": 0.025,
+   "equity.equity_vol": 0.22,
+   "equity.dividend_yield": 0.025,
+   "equity.equity_risk_premium": 0.045,
+   "equity.rate_equity_correlation": -0.15,
+   "credit.mean_reversion_speed": 0.3,
+   "credit.long_run_spread_p": 0.015,
+   "liquidity.mean_reversion_speed": 0.6,
+   "liquidity.long_run_premium_p": 0.006,
+   "dependence.copula_structure": "single_t_grouped_FROZEN",
+   "dependence.copula_df_single_t": 2.9451,
+   "dependence.grouped_t_df_nonfin": 37.866,
+   "dependence.grouped_t_df_fin": 8.506
+  }
+ }
+}

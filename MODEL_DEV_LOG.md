@@ -10268,3 +10268,9 @@ network calls. Governance: ChangeRecord opened (OWNER_REVIEW) — change records
 audit entries 131→132, integrity OK. NO contract change (1.21.0); NO model parameter
 change; Phase 30 stop-rule honoured; MR-016/MR-017 owner decision not pre-empted.
 Next = Phase IGUI Task 5 (ESG / economic-scenario inputs, stop-rule-bounded).
+
+---
+
+## 2026-06-15 — Phase IGUI Task 5 (ESG / economic-scenario input domain, stop-rule-bounded, owner-gated) — COMPLETE
+
+New `par_model_v2/viewer/igui_esg.py` (stdlib only) surfaces the SETTABLE ESG-provenance inputs (market data, scenario label/count, calibration targets) while the governed ESG calibration (G2++/HW, equity, credit, liquidity) and the FROZEN dependence structure (copula df 2.9451, grouped-t 37.866/8.506, structure `single_t_grouped_FROZEN`) are a READ-ONLY echo. The loader's additive `validate_esg_dict` enforces the read-only echo and a STOP-RULE guard that rejects any new copula-structure candidate (in the echo or smuggled as a top-level `esg` key). `run_gui.py` serves `/esg`, `/validate_esg`, `/save_esg`. Task-5 gate 27/27; 24 new unittests; 114 IGUI tests green; `ui_app.html` byte-unchanged; contract 1.21.0; ChangeRecord b2b6b4f8 OWNER_REVIEW (gov 105/133). Next = Task 6 (validation surfacing + governance gating before run).
