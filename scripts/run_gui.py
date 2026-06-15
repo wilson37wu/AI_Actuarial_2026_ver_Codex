@@ -73,8 +73,17 @@ from par_model_v2.viewer.igui_validation_gating import (  # noqa: E402  (Task 6)
     aggregate_validation,
     build_run_gate,
 )
+from par_model_v2.viewer.igui_run_execution import (  # noqa: E402  (Task 7)
+    render_run_html,
+    execute_run,
+)
 
 HOST = "127.0.0.1"  # localhost ONLY (never a wildcard bind); no outbound network
+
+#: Where the Task-7 end-to-end run writes its RUN_MODEL_*.json artifacts. A
+#: dedicated dir (NOT docs/validation) so a user run never clobbers governed
+#: evidence; the offline RESULTS UI is refreshed by pointing build_ui_data here.
+RUN_OUTPUT_DIR = "run_output"
 
 
 def _loader_validate(model_inputs_fragment):
@@ -345,6 +354,22 @@ def build_run_gate_response(out_path, *, do_write=False):
     return result
 
 
+def build_execute_response(out_path, *, payload=None, run_output_dir=RUN_OUTPUT_DIR):
+    """The Task-7 END-TO-END RUN: verify the assembled model_inputs.json carries a
+    CLEARED Task-6 run gate, then drive scripts/run_model.py from it, capture the
+    output, carry the run-gate reproducibility digest into the output provenance,
+    and shape the offline RESULTS-UI handoff. A run is REFUSED (nothing spawned)
+    unless the gate permits it. ``smoke`` (default True from the GUI) selects the
+    fast diagnostic config. The zero-install RESULTS UI (ui_app.html) is untouched."""
+    smoke = True
+    if isinstance(payload, dict) and "smoke" in payload:
+        smoke = bool(payload["smoke"])
+    repo_root = _REPO
+    out_dir = (run_output_dir if os.path.isabs(run_output_dir)
+               else os.path.join(repo_root, run_output_dir))
+    return execute_run(out_path, out_dir, smoke=smoke, repo_root=repo_root)
+
+
 class _Handler(BaseHTTPRequestHandler):
     server_version = "IGUIRunGui/1.0"
     out_path = "model_inputs.json"
@@ -369,6 +394,8 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(200, render_esg_html(), "text/html")
         elif self.path in ("/run-gate", "/run-gate.html"):
             self._send(200, render_gate_html(), "text/html")
+        elif self.path in ("/run-execution", "/run-execution.html"):
+            self._send(200, render_run_html(), "text/html")
         elif self.path == "/healthz":
             self._send(200, json.dumps({"ok": True, "host": HOST,
                                         "task": "Phase IGUI Task 6 validation gating"}))
@@ -385,7 +412,7 @@ class _Handler(BaseHTTPRequestHandler):
 
     _POST_ROUTES = ("/validate", "/save", "/validate_portfolio", "/save_portfolio",
                     "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions",
-                    "/validate_esg", "/save_esg", "/preflight", "/run")
+                    "/validate_esg", "/save_esg", "/preflight", "/run", "/execute")
 
     def do_POST(self):
         if self.path not in self._POST_ROUTES:
@@ -415,6 +442,8 @@ class _Handler(BaseHTTPRequestHandler):
                 res = build_preflight_response(self.out_path)
             elif self.path == "/run":
                 res = build_run_gate_response(self.out_path, do_write=True)
+            elif self.path == "/execute":
+                res = build_execute_response(self.out_path, payload=payload)
             elif self.path == "/reconcile":
                 res = build_reconcile_response(payload)
             else:  # /ingest
@@ -591,6 +620,36 @@ def self_test(out_path=None) -> int:
         with open(tmp, encoding="utf-8") as fh:
             saved = json.load(fh)
         ok &= ("run_gate" in saved and saved["run_gate"]["run_permitted"] is True)
+
+        # --- Task 7: end-to-end run page + execute-route guard (no model spawn) ---
+        with urllib.request.urlopen(base + "/run-execution", timeout=5) as r:
+            rp = r.read().decode("utf-8")
+            ok &= (r.status == 200 and "Run the model end-to-end" in rp
+                   and "39,975.654628199336" in rp
+                   and 'id="btn-run" type="button" disabled' in rp)
+        # /execute against an UNGATED input must REFUSE (spawn nothing). Use a
+        # throwaway path with no run_gate so the chain is provably gate-guarded.
+        import tempfile as _tf
+        ungated = os.path.join(_tf.mkdtemp(prefix="igui7_"), "model_inputs.json")
+        with open(ungated, "w", encoding="utf-8") as fh:
+            json.dump({"schema_version": "1.0.0"}, fh)
+        gsrv = make_server(0, ungated)
+        ghost, gport = gsrv.server_address
+        gth = threading.Thread(target=gsrv.serve_forever, daemon=True)
+        gth.start()
+        try:
+            ereq = urllib.request.Request("http://%s:%d/execute" % (ghost, gport),
+                                          data=b'{"smoke": true}',
+                                          headers={"Content-Type": "application/json"})
+            try:
+                with urllib.request.urlopen(ereq, timeout=10) as r:
+                    je = json.loads(r.read().decode("utf-8"))
+            except urllib.error.HTTPError as he:
+                je = json.loads(he.read().decode("utf-8"))
+            ok &= (je.get("ok") is False and je.get("stage") == "run_gate_not_cleared")
+        finally:
+            gsrv.shutdown()
+            gsrv.server_close()
     finally:
         srv.shutdown()
         srv.server_close()

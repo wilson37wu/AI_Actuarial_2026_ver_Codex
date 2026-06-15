@@ -3047,6 +3047,33 @@
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
       "digest": "4062949545232e48cfe368e3cc49c93c7ebbac9580fccec5cc6ce72d052e30d2",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "bbfe6937687b40d694b82ac7a1455a75",
+      "timestamp": "2026-06-15T05:23:12.491546+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase IGUI Task 7 end-to-end run + results handoff (igui_run_execution.py); gate-guarded drive of scripts/run_model.py; reproducibility digest carried into output provenance; offline RESULTS-UI user_run handoff; 0 new GUI-layer third-party deps; localhost-only/offline; ui_app.html byte-unchanged; NO contract change; NO model param change; Phase IGUI MVP complete",
+      "details": {
+        "record_id": "fe3f09c82d604860bdb11222d76f34e9",
+        "contract": "1.21.0 (unchanged)",
+        "task7_gate_checks": 19,
+        "new_unittests": 21,
+        "new_third_party_runtime_deps": 0,
+        "affected_components": [
+          "scripts/run_gui.py",
+          "par_model_v2/viewer/igui_run_execution.py",
+          "scripts/run_model.py",
+          "scripts/build_phase_igui_task7_run_execution.py",
+          "scripts/build_phase_igui_task7_governance.py",
+          "tests/test_phase_igui_task7_run_execution.py",
+          "docs/validation/PHASE_IGUI_TASK7_RUN_EXECUTION.json",
+          "docs/validation/PHASE_IGUI_TASK7_RUN_EXECUTION.md"
+        ]
+      },
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
+      "digest": "6aa97fd8d9514ea64b2fb1346b05988786361c2529a076d5019bec5ed90eae0e",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -9833,6 +9860,75 @@
           "actor": "ClaudeCowork_AutoDev",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. The input+run GUI now BLOCKS the Run action until the assembled model_inputs.json is present and clean across run controls, model points, assumptions and ESG, surfacing every loader issue; on clearing it records a governance run-gate + a reproducibility digest. Next cycle = Task 7 (end-to-end run + results handoff to the offline UI), which is the Phase IGUI MVP. The MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
+        }
+      ],
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"
+    },
+    {
+      "record_id": "fe3f09c82d604860bdb11222d76f34e9",
+      "created_at": "2026-06-15T05:23:12.491429+00:00",
+      "title": "Phase IGUI Task 7 - end-to-end run + results handoff (par_model_v2/viewer/igui_run_execution.py; drives scripts/run_model.py)",
+      "description": "Implemented Task 7 (the D6_run_and_handoff domain) of the owner-directed Phase IGUI input+run GUI - the Phase IGUI MVP, following Tasks 1-6. (1) END-TO-END DRIVER par_model_v2/viewer/igui_run_execution.py (STDLIB ONLY): verify_run_gate REFUSES to spawn the model unless the assembled model_inputs.json carries a Task-6 run_gate with decision CLEARED / run_permitted True, matching schema_version, every domain present+clean, AND a reproducibility digest that re-verifies against the live inputs (a gate lifted off a different/altered input set is rejected); execute_run then drives scripts/run_model.py AS A CHILD PROCESS (so the GUI/runner layer keeps ZERO third-party runtime deps while the numpy/scipy engine runs out of process), captures stdout/stderr as progress, reads back RUN_MODEL_SUMMARY.json + RUN_MODEL_AGGREGATION_REPORT.json, STAMPS a run_gate_provenance block (the Task-6 reproducibility digest + decision + governed headline + read-only frozen copula structure) onto both artifacts so every result is traceable to the gated input set that authorised it, and shapes the offline RESULTS-UI user_run handoff. build_results_handoff produces the SAME user_run contract the offline UI already consumes (scripts/build_ui_data._build_user_run reads those two artifacts VERBATIM). A self-contained run page (GET /run-execution) keeps the Run button DISABLED until the gate clears, surfaces live progress/errors and post-run headline read-outs, and echoes the governed headline + frozen structure read-only. (2) STDLIB LOCAL RUNNER scripts/run_gui.py: GET /run-execution (the run page), POST /execute (gate-guarded end-to-end run, writing RUN_MODEL_*.json into a dedicated run_output/ dir that NEVER clobbers governed docs/validation evidence). A run is BLOCKED until Task-6 clears it. Tests: 21 new unittest cases green (gate verification incl. missing/blocked/tampered, command builder, stdlib-only guard, self-contained page, refusal spawns nothing, a REAL end-to-end smoke run incl. digest-carried-into-provenance + user_run handoff + ui_app.html byte-unchanged after a run); the full Phase IGUI suite stays green (157 total). The Task-7 gate validate_task7_gate ok:true 19/19 checks (stdlib-only imports, localhost bind, prior pages intact, missing/cleared/tampered gate behaviour, live smoke run, digest carried into output, handoff shaped, blocked-gate-runs-nothing, ui_app.html byte-unchanged via frozen sha256). NO contract change; NO model parameter change; offline RESULTS UI byte-unchanged; stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "scripts/run_gui.py",
+        "par_model_v2/viewer/igui_run_execution.py",
+        "scripts/run_model.py",
+        "scripts/build_phase_igui_task7_run_execution.py",
+        "scripts/build_phase_igui_task7_governance.py",
+        "tests/test_phase_igui_task7_run_execution.py",
+        "docs/validation/PHASE_IGUI_TASK7_RUN_EXECUTION.json",
+        "docs/validation/PHASE_IGUI_TASK7_RUN_EXECUTION.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 56 (Modeling) section 3.5 - controls that prevent a model run on an incomplete / unvalidated / un-provenanced input set: a run is REFUSED unless the assembled model_inputs.json carries a CLEARED Task-6 run gate whose reproducibility digest re-verifies against the live inputs",
+        "SOA ASOP 41 (Actuarial Communications) - reproducible, auditable run provenance: the Task-6 run-gate reproducibility digest is carried VERBATIM into the output provenance (run_gate_provenance) stamped on every produced artifact",
+        "SOA ASOP 23 (Data Quality) - the end-to-end driver consumes only the validated, gated model_inputs.json contract; the frozen seven-driver dependence is never user-settable"
+      ],
+      "before_snapshot": {
+        "phase": "Phase IGUI Task 6 (validation gating) complete",
+        "igui_end_to_end_run": false,
+        "results_handoff": false,
+        "ui_contract": "1.21.0",
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+        "igui_unittests": 136
+      },
+      "after_snapshot": {
+        "igui_end_to_end_run": "igui_run_execution.execute_run + run_gui /run-execution /execute",
+        "gate_guarded": "run REFUSED unless Task-6 gate CLEARED + digest re-verifies",
+        "engine_out_of_process": "drives scripts/run_model.py as a child process",
+        "igui_new_third_party_runtime_deps": 0,
+        "digest_carried_into_output_provenance": "run_gate_provenance on both RUN_MODEL artifacts",
+        "results_handoff": "user_run contract (build_ui_data._build_user_run consumes verbatim)",
+        "run_output_dir": "run_output/ (never clobbers governed docs/validation evidence)",
+        "task7_gate_ok": true,
+        "task7_gate_checks": 19,
+        "new_unittests": 21,
+        "igui_unittests_total": 157,
+        "ui_contract": "1.21.0 (unchanged)",
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65 (byte-unchanged)",
+        "results_ui_zero_install_preserved": true,
+        "headline_carried_bit_for_bit": "39975.654628199336",
+        "phase_igui_mvp": "COMPLETE (inputs -> validation/gating -> end-to-end run -> offline RESULTS UI)"
+      },
+      "impact_assessment": "Additive end-to-end driver + two additive localhost runner routes. NO contract change, NO model parameter change; the offline RESULTS UI (ui_app.html) is byte-identical (frozen sha256 asserted by the Task-7 gate and re-asserted AFTER a live run). The GUI/runner layer stays standard-library only (the model engine runs out of process behind scripts/run_model.py); the runner stays localhost-bound and offline. A run can no longer proceed on an unvalidated / un-provenanced / tampered input set (gate-guarded), and every produced result carries the gate's reproducibility digest into its provenance. Pre-empts no owner decision (MR-016/MR-017 remains with the owner; Phase 30 stop-rule honoured - the frozen copula structure is echoed read-only).",
+      "quantitative_impact": "No governed capital figure changed; the headline SCR 39,975.654628199336 is carried bit-for-bit. Contract unchanged at 1.21.0. Task-7 gate ok:true 19/19 checks (incl. a real end-to-end smoke run); 21 new unittests green; full Phase IGUI suite green (157); 0 new third-party runtime dependencies in the GUI/runner layer; 0 outbound network calls; 0 external page refs.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T05:23:12.491496+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: Task 7 lands the D6_run_and_handoff layer - a gate-guarded end-to-end driver (igui_run_execution.execute_run) that REFUSES to run unless the Task-6 gate is CLEARED and its reproducibility digest re-verifies against the live inputs, drives scripts/run_model.py out of process (GUI layer stays stdlib-only), carries the gate digest VERBATIM into the output provenance, and hands the result to the offline RESULTS UI via its existing user_run contract. ZERO new third-party runtime dependency in the GUI/runner layer; localhost-only / offline; offline RESULTS UI byte-unchanged (frozen sha256, re-asserted after a live run). 21 new unittests + Task-7 gate (19 checks, incl. a real smoke run) green; full Phase IGUI suite green (157). Headline 39,975.654628199336 carried bit-for-bit; NO contract change; NO model parameter change; stop-rule honoured."
+        },
+        {
+          "timestamp": "2026-06-15T05:23:12.491513+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. The input+run GUI is now an end-to-end MVP: after the inputs clear the Task-6 gate, the user presses Run and the GUI drives the governed model from the gated model_inputs.json, then hands the result to the existing offline RESULTS UI (byte-unchanged). A run is refused unless the gate permits it, and every result carries the gate's reproducibility digest into its provenance. This completes the Phase IGUI MVP (inputs -> validation/gating -> end-to-end run -> results). The MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
         }
       ],
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"

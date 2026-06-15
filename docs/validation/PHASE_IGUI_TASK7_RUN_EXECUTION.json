@@ -1,0 +1,72 @@
+{
+ "doc_id": "PHASE_IGUI_TASK7_RUN_EXECUTION",
+ "doc_version": "1.0.0",
+ "generated_at": "2026-06-15T05:23:09.163258+00:00",
+ "task": "Phase IGUI Task 7 - end-to-end run + results handoff (Phase IGUI MVP)",
+ "domain": "D6_run_and_handoff",
+ "governed_headline": "39,975.654628199336",
+ "schema_version": "1.0.0",
+ "ui_app_sha256_frozen": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+ "frozen_copula_structure": "single_t_grouped_FROZEN",
+ "end_to_end_flow": "gated model_inputs.json (run_gate CLEARED, Task 6) -> scripts/run_model.py -> docs/validation/RUN_MODEL_AGGREGATION_REPORT.json + RUN_MODEL_SUMMARY.json -> offline RESULTS UI (ui_app.html) user_run contract",
+ "capabilities": [
+  "GATE-GUARDED DRIVE: execute_run REFUSES to spawn the model unless the assembled model_inputs.json carries a Task-6 run_gate with decision CLEARED / run_permitted True AND the gate's reproducibility digest re-verifies against the live inputs (a gate lifted off a different/altered input set is rejected).",
+  "OUT-OF-PROCESS ENGINE: drives scripts/run_model.py as a child process so the GUI/runner layer stays standard-library only (no numpy/scipy import); captures stdout/stderr as progress and surfaces run errors structurally.",
+  "DIGEST CARRIED INTO OUTPUT PROVENANCE: a run_gate_provenance block (Task-6 reproducibility digest + decision + governed headline + frozen structure) is stamped onto both captured RUN_MODEL artifacts, so every result is traceable to the exact gated input set that authorised it.",
+  "RESULTS HANDOFF: build_results_handoff shapes the SAME user_run contract the offline RESULTS UI already consumes (build_ui_data._build_user_run reads RUN_MODEL_SUMMARY.json + RUN_MODEL_AGGREGATION_REPORT.json verbatim); the zero-install ui_app.html is byte-unchanged.",
+  "Self-contained run page (GET /run-execution): Run button DISABLED until the gate clears; live progress/errors from POST /execute; headline read-outs after a run; governed headline + frozen copula structure shown read-only. The MR-016/MR-017 owner decision is not pre-empted; NO model parameter change."
+ ],
+ "new_runner_routes": [
+  "GET /run-execution",
+  "POST /execute"
+ ],
+ "smoke_overrides": {
+  "n_outer": 100,
+  "n_inner": 2,
+  "n_sim": 2000,
+  "bootstrap_replicates": 50,
+  "no_tail": true
+ },
+ "live_smoke_run": {
+  "ok": true,
+  "stage": "run_complete",
+  "nested_scr": 76988.8069665521,
+  "copula_selected": "gaussian",
+  "verdict": "PASS",
+  "reproducibility_digest": "sha256:64682554635eda0561a118a57d8b8600e02fb4c2ca8f67e145ce9c97773efa81",
+  "artifacts": [
+   "RUN_MODEL_SUMMARY.json",
+   "RUN_MODEL_AGGREGATION_REPORT.json"
+  ],
+  "disclosure": "smoke run - fast diagnostic, NOT a governed capital figure"
+ },
+ "gate": {
+  "ok": true,
+  "n_checks": 19,
+  "n_pass": 19,
+  "checks": {
+   "execution_module_present": true,
+   "run_model_present": true,
+   "execution_module_stdlib_only": true,
+   "run_gui_serves_run_execution": true,
+   "run_gui_has_execute_endpoint": true,
+   "run_gui_still_localhost": true,
+   "run_gui_prior_pages_intact": true,
+   "ui_app_byte_unchanged": true,
+   "run_page_self_contained": true,
+   "run_page_carries_headline": true,
+   "run_page_blocks_run_by_default": true,
+   "missing_gate_refused": true,
+   "cleared_gate_accepted": true,
+   "tampered_inputs_refused": true,
+   "live_run_ok": true,
+   "live_run_headline": true,
+   "digest_carried_into_output": true,
+   "handoff_user_run_shaped": true,
+   "blocked_gate_runs_nothing": true
+  }
+ },
+ "self_test_ok": true,
+ "new_third_party_runtime_deps": 0,
+ "outbound_network_calls": 0
+}
