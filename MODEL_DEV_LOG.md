@@ -10287,3 +10287,23 @@ Added an additive loader-side aggregate validator `scripts/load_user_inputs.vali
 ## 2026-06-15 (Claude Cowork) - Phase IGUI Task 7 COMPLETE (end-to-end run + results handoff; Phase IGUI MVP)
 
 Landed the gate-guarded end-to-end driver par_model_v2/viewer/igui_run_execution.py (stdlib only): a run is REFUSED unless the assembled model_inputs.json carries a CLEARED Task-6 run_gate whose reproducibility digest re-verifies against the live inputs; execute_run then drives scripts/run_model.py as a child process (GUI/runner layer keeps 0 third-party runtime deps; numpy/scipy engine out of process), captures progress, stamps the Task-6 reproducibility digest into a run_gate_provenance block on both RUN_MODEL artifacts, and shapes the offline RESULTS-UI user_run handoff. run_gui adds GET /run-execution + POST /execute (writes run_output/, never clobbering governed evidence). 21 new unittests (incl. 2 real end-to-end smoke runs) + 19-check Task-7 gate green; full Phase IGUI suite 157 green; ui_app.html byte-unchanged (re-asserted after a live run); contract 1.21.0 unchanged; headline 39,975.654628199336 bit-for-bit. ChangeRecord fe3f09c8 OWNER_REVIEW (gov 106->107, audit 134->135). NO model parameter change; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted. Also repaired a truncated mount copy of scripts/run_gui.py by rebasing the edits off origin/main. PHASE IGUI MVP COMPLETE. Next = Task 8 (one-click offline packaging + own-run results refresh).
+
+---
+
+## 2026-06-15 06:00 UTC (Claude Cowork) - Phase IGUI Task 8 COMPLETE
+
+One-click offline packaging + own-run results refresh. Added stdlib-only
+`scripts/launch_offline_gui.py` + OS double-click wrappers (`launchers/`); a single
+launcher starts `run_gui` on 127.0.0.1, opens the browser, and discloses numpy/scipy
+engine presence (no auto-install). Added `par_model_v2/viewer/igui_results_refresh.py`
+(display layer): `refresh_user_results` builds a USER copy of the offline RESULTS UI
+(`user_results/ui_app_user.html`) from the user's `run_output/` via `build_ui_data`
+(run carried VERBATIM through `user_run`), restoring all build_ui_data constants and
+leaving the committed `ui_app.html`/`ui_data.json` byte-unchanged (sha256 6dca35b3...).
+Wired `run_gui` `/execute` to refresh the USER copy on success and serve it at
+`/my-results`. 8 new unittests + 13-check Task-8 gate green; run_gui `--self-test` green.
+ChangeRecord `099ff0cb` OWNER_REVIEW (records 107->108, audit 135->136). Contract 1.21.0
+unchanged; no model parameter change; Phase 30 stop-rule honoured. ENV: scipy unavailable
+in sandbox (/sessions full) so Task-7 live-spawn tests can't run here - Task 8 is
+display-layer only and fully green. Next = Task 9 (phase summary + re-audit; frozen-binary/
+vendored-wheel packaging research for owner).

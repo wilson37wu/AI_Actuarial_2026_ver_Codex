@@ -77,6 +77,12 @@ from par_model_v2.viewer.igui_run_execution import (  # noqa: E402  (Task 7)
     render_run_html,
     execute_run,
 )
+from par_model_v2.viewer.igui_results_refresh import (  # noqa: E402  (Task 8)
+    refresh_user_results,
+    DEFAULT_USER_RESULTS_DIR,
+    USER_HTML_NAME,
+    USER_JSON_NAME,
+)
 
 HOST = "127.0.0.1"  # localhost ONLY (never a wildcard bind); no outbound network
 
@@ -84,6 +90,17 @@ HOST = "127.0.0.1"  # localhost ONLY (never a wildcard bind); no outbound networ
 #: dedicated dir (NOT docs/validation) so a user run never clobbers governed
 #: evidence; the offline RESULTS UI is refreshed by pointing build_ui_data here.
 RUN_OUTPUT_DIR = "run_output"
+
+#: Phase IGUI Task 8 - where the own-run refresh writes the USER copy of the
+#: offline RESULTS UI (separate from the committed zero-install ui_app.html).
+USER_RESULTS_DIR = DEFAULT_USER_RESULTS_DIR
+
+_NO_USER_RESULTS_HTML = (
+    "<!DOCTYPE html><html><head><meta charset=\"utf-8\">"
+    "<title>Your results</title></head><body style=\"font-family:sans-serif;max-width:40rem;margin:3rem auto\">"
+    "<h1>No run yet</h1><p>Supply your inputs, clear the run gate, and press "
+    "<b>Run the model end-to-end</b>. Your own results then appear here.</p>"
+    "<p><a href=\"/run-execution\">Go to the run page</a></p></body></html>")
 
 
 def _loader_validate(model_inputs_fragment):
@@ -367,7 +384,30 @@ def build_execute_response(out_path, *, payload=None, run_output_dir=RUN_OUTPUT_
     repo_root = _REPO
     out_dir = (run_output_dir if os.path.isabs(run_output_dir)
                else os.path.join(repo_root, run_output_dir))
-    return execute_run(out_path, out_dir, smoke=smoke, repo_root=repo_root)
+    res = execute_run(out_path, out_dir, smoke=smoke, repo_root=repo_root)
+    # Phase IGUI Task 8: on a successful run, refresh a USER copy of the
+    # offline RESULTS UI from THIS run's run_output so the user sees their
+    # OWN run -- never touching the committed zero-install ui_app.html. The
+    # refresh is best-effort: a refresh hiccup must NEVER fail the run.
+    if isinstance(res, dict) and res.get('ok'):
+        try:
+            ref = refresh_user_results(out_dir,
+                                       os.path.join(repo_root, USER_RESULTS_DIR),
+                                       repo_root=repo_root)
+            res['user_results'] = {
+                'ok': bool(ref.get('ok')),
+                'stage': ref.get('stage'),
+                'view_url': '/my-results' if ref.get('ok') else None,
+                'user_html': ref.get('user_html'),
+                'user_json': ref.get('user_json'),
+                'committed_ui_app_unchanged':
+                    ref.get('committed_ui_app_unchanged'),
+                'contract_version': ref.get('contract_version'),
+            }
+        except Exception as exc:  # never break the run on a refresh issue
+            res['user_results'] = {'ok': False, 'stage': 'refresh_error',
+                                   'error': str(exc)}
+    return res
 
 
 class _Handler(BaseHTTPRequestHandler):
@@ -396,11 +436,35 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(200, render_gate_html(), "text/html")
         elif self.path in ("/run-execution", "/run-execution.html"):
             self._send(200, render_run_html(), "text/html")
+        elif self.path in ("/my-results", "/my-results.html"):
+            self._serve_user_results_html()
+        elif self.path == "/my-results.json":
+            self._serve_user_results_json()
         elif self.path == "/healthz":
             self._send(200, json.dumps({"ok": True, "host": HOST,
                                         "task": "Phase IGUI Task 6 validation gating"}))
         else:
             self._send(404, json.dumps({"ok": False, "error": "not found"}))
+
+    def _user_results_path(self, name):
+        return os.path.join(_REPO, USER_RESULTS_DIR, name)
+
+    def _serve_user_results_html(self):
+        path = self._user_results_path(USER_HTML_NAME)
+        if os.path.isfile(path):
+            with open(path, 'rb') as fh:
+                self._send(200, fh.read(), 'text/html')
+        else:
+            self._send(200, _NO_USER_RESULTS_HTML, 'text/html')
+
+    def _serve_user_results_json(self):
+        path = self._user_results_path(USER_JSON_NAME)
+        if os.path.isfile(path):
+            with open(path, 'rb') as fh:
+                self._send(200, fh.read(), 'application/json')
+        else:
+            self._send(404, json.dumps({'ok': False,
+                'error': 'no user run yet -- supply inputs and press Run'}))
 
     def _read_json(self):
         length = int(self.headers.get("Content-Length") or 0)
@@ -627,6 +691,17 @@ def self_test(out_path=None) -> int:
             ok &= (r.status == 200 and "Run the model end-to-end" in rp
                    and "39,975.654628199336" in rp
                    and 'id="btn-run" type="button" disabled' in rp)
+        # --- Task 8: user-results routes serve a graceful placeholder until
+        # a run exists (full build is covered by the Task-8 unit suite +
+        # validate_task8_gate, which avoid a heavy in-process model spawn). ---
+        with urllib.request.urlopen(base + "/my-results", timeout=5) as r:
+            mr = r.read().decode("utf-8")
+            ok &= (r.status == 200 and "No run yet" in mr)
+        try:
+            with urllib.request.urlopen(base + "/my-results.json", timeout=5) as r:
+                ok &= False  # should have 404'd without a user run
+        except urllib.error.HTTPError as he:
+            ok &= (he.code == 404)
         # /execute against an UNGATED input must REFUSE (spawn nothing). Use a
         # throwaway path with no run_gate so the chain is provably gate-guarded.
         import tempfile as _tf

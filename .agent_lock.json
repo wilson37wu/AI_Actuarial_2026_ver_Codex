@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-15T05:26:08Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-15T06:09Z-b512",
+  "started_at": "2026-06-15T06:09:13Z",
+  "ttl_minutes": 120,
+  "task": "Phase IGUI Task 8 (offline packaging + own-run results refresh)",
+  "note": ""
 }
