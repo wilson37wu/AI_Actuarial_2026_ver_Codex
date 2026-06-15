@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-15T20:16:42Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-15T21:10Z-09ab",
+  "started_at": "2026-06-15T21:10:20Z",
+  "ttl_minutes": 120,
+  "task": "Resume Phase IGUI (owner-silence default): next input-domain increment",
+  "note": ""
 }
