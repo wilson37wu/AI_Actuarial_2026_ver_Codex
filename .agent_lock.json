@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-15T01:28:17Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-15T02:08Z-6e8b",
+  "started_at": "2026-06-15T02:08:32Z",
+  "ttl_minutes": 120,
+  "task": "Phase IGUI Task 4 (assumptions, owner-gated)",
+  "note": ""
 }
