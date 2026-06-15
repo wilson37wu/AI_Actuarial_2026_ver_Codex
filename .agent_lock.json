@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T22:08Z-943d",
-  "started_at": "2026-06-15T22:08:31Z",
-  "ttl_minutes": 120,
-  "task": "Phase IGUI resume (auto-runnable default; owner pivot blocked)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T22:18:16Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
