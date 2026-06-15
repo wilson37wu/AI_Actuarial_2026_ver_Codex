@@ -10532,3 +10532,17 @@ environmental pytest collection errors. NEXT = owner pivot decision.
 **Verification.** pytest before = 1 failed / 8 passed; after = **8 passed** (pytest 9.1.0 installed to /tmp; this file imports only json/pathlib/pytest, no numpy). py_compile OK.
 
 **Flagged for owner (unchanged):** MR-016/MR-017 copula-form residual disclosure (pending); ~29 environmental pytest collection errors (numpy/scipy absent, not regressions); owner pivot now blocking 3 consecutive cycles.
+
+---
+
+## 2026-06-16 (18:00 UTC window, claude) — Verification/maintenance cycle (4th owner-pivot-blocked)
+
+**Lock** `2026-06-15T20:09Z-c2ec`. **Verdict:** VERIFIED GREEN, no model-form change. Frontier still OWNER PIVOT.
+
+No auto-admissible model-form or new-feature task remained (model-form options need owner sign-off; further RESULTS-UI polish owner-deprioritised; Phase IGUI MVP + post-IGUI efficiency pool complete). Ran the executable verification (this sandbox had node+jsdom + numpy, unlike the prior 3 cycles):
+
+- JS offline self-tests: ui_app_self_test ok:true (tabCount 21, **0 JS errors / 0 network / 0 external refs**), ui_app_integrity_fallback 10/0/0, combined_gui 27/0/0, offline_viewer 11/0/0.
+- Python (pytest 9.1.0, numpy 2.2.6, scipy absent): test_phase36_task5_phase_summary 8 passed (formerly-RED test_contract_inventory now PASS == "1.21.0"); postigui_task1..8 85 passed (MR-CAL-1 11/11); 3070 collected / 29 collection errors all environmental (scipy).
+- Invariants: governed headline 39,975.654628199336 bit-identical; live contract 1.23.0 unchanged. No model/UI/source change.
+
+**Owner action (pick one):** (a) MR-LONGEV-1 [sign-off], (b) LSMC [sign-off], (c) resume Phase IGUI [auto-runnable, default], (d) packaging A/B/C, (e) freeze.

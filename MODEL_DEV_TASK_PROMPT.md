@@ -66,6 +66,19 @@ force-push `main`. When in doubt, **yield**.
 > (pivot now blocking 3 consecutive cycles): pick (a) MR-LONGEV-1 / (b) LSMC [sign-off],
 > or (c) resume Phase IGUI / (d) packaging A/B/C / (e) freeze [non-model-form]. If no
 > choice by the next window, the safest auto-runnable default is (c) resume Phase IGUI.
+>
+> **2026-06-16 (4th window, claude) — VERIFICATION GREEN; frontier STILL OWNER PIVOT (4 consecutive windows).**
+> No model-form change auto-ran. This sandbox (unlike the prior three) had node+jsdom **and**
+> numpy, so the suites were ACTUALLY EXECUTED as fresh evidence: 4 JS offline self-tests
+> green (`ui_app` ok:true tabCount 21 **0 JS errors / 0 network / 0 external refs**;
+> integrity-fallback 10; combined-gui 27; offline-viewer 11) — zero-install RESULTS UI
+> intact. Python (pytest 9.1.0, numpy 2.2.6, scipy absent): `test_phase36_task5_phase_summary`
+> **8 passed** (formerly-RED `test_contract_inventory` now PASS == "1.21.0"); `postigui_task1..8`
+> **85 passed** (MR-CAL-1 diagnostics 11/11); 3070 collected / 29 collection errors ALL
+> environmental (scipy absent), not regressions. Governed headline **39,975.654628199336**
+> bit-identical; live contract **1.23.0** unchanged; no model/UI/source file changed.
+> **OWNER ACTION required:** (a) MR-LONGEV-1 / (b) LSMC [sign-off], or (c) resume Phase IGUI /
+> (d) packaging A/B/C / (e) freeze [non-model-form]. If silent again, default = (c) resume Phase IGUI.
 
 > **OWNER PRIORITY OVERRIDE — SATISFIED (2026-06-11, cycle 28):** Phase UIL
 > (user-input loader + run orchestrator, workstream B of
