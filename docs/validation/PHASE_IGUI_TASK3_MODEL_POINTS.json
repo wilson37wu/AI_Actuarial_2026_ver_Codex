@@ -1,0 +1,168 @@
+{
+ "doc_id": "PHASE_IGUI_TASK3_MODEL_POINTS",
+ "doc_version": "1.0.0",
+ "generated_at": "2026-06-15T01:25:32.112906+00:00",
+ "task": "Phase IGUI Task 3 - model points + in-force ingest",
+ "domain": "D2_policy_model_points",
+ "governed_headline": "39,975.654628199336",
+ "schema_version": "1.0.0",
+ "ui_app_sha256_frozen": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+ "model_point_keys": [
+  "product_type",
+  "issue_age",
+  "gender",
+  "term_years",
+  "sum_assured",
+  "annual_premium",
+  "policy_count",
+  "vested_bonus"
+ ],
+ "capabilities": [
+  "interactive add/edit/delete of PAR + GMMB model-point rows",
+  "CSV/JSON in-force upload mapped to the Portfolio schema (flexible headers)",
+  "balance-sheet asset rows + stated-total reconciliation (parser tolerance)",
+  "DISCLOSED non-governed book-scaling preview (echoes run_model.resolve_product)"
+ ],
+ "new_runner_routes": [
+  "GET /model-points",
+  "POST /validate_portfolio",
+  "POST /save_portfolio",
+  "POST /reconcile",
+  "POST /ingest"
+ ],
+ "loader_validator": "validate_portfolio_dict (additive, no openpyxl)",
+ "loader_validation_of_defaults": [],
+ "reconciliation_of_defaults": {
+  "sum_of_asset_rows": 200000000.0,
+  "stated_total_backing_asset_mv": 200000000.0,
+  "illiquid_mv": 20000000.0,
+  "illiquid_share": 0.1,
+  "n_asset_rows": 3,
+  "reconciles": true,
+  "difference": 0.0,
+  "tolerance": 200.0
+ },
+ "book_scaling_disclosure_of_defaults": {
+  "n_model_point_rows": 3,
+  "par_rows": 2,
+  "gmmb_rows_disclosed": 1,
+  "note": "DISCLOSED APPROXIMATION, not a governed result: the engine prices one inforce-weighted representative PAR model point; multiplying per-point capital by linear_scale_factor assumes homogeneous-book linear scaling. GMMB rows are routed by the orchestrator, not the PAR portfolio.",
+  "book_scaling": {
+   "policy_count_total": 1500.0,
+   "sum_assured_total": 225000000.0,
+   "representative_sum_assured": 150000.0,
+   "linear_scale_factor": 1500.0
+  }
+ },
+ "example_model_inputs_fragment": {
+  "schema_version": "1.0.0",
+  "generated_at": "1970-01-01T00:00:00+00:00",
+  "source": "igui_run_gui (Phase IGUI Task 3 model points + in-force ingest)",
+  "portfolio": [
+   {
+    "product_type": "HKCD_PAR_2026",
+    "issue_age": 45,
+    "gender": "M",
+    "term_years": 20,
+    "sum_assured": 100000.0,
+    "annual_premium": 5000.0,
+    "policy_count": 1000,
+    "vested_bonus": 0.0,
+    "source_row": 1
+   },
+   {
+    "product_type": "HKRB_PAR_2026",
+    "issue_age": 40,
+    "gender": "F",
+    "term_years": 25,
+    "sum_assured": 250000.0,
+    "annual_premium": 9000.0,
+    "policy_count": 500,
+    "vested_bonus": 1200.0,
+    "source_row": 2
+   },
+   {
+    "product_type": "GMMB_EQ_2026",
+    "issue_age": 50,
+    "gender": "M",
+    "term_years": 15,
+    "sum_assured": 300000.0,
+    "annual_premium": 12000.0,
+    "policy_count": 250,
+    "vested_bonus": 0.0,
+    "source_row": 3
+   }
+  ],
+  "balance_sheet": {
+   "assets": [
+    {
+     "asset_class": "Government bonds",
+     "market_value": 120000000.0,
+     "illiquid": false
+    },
+    {
+     "asset_class": "Corporate bonds",
+     "market_value": 60000000.0,
+     "illiquid": false
+    },
+    {
+     "asset_class": "Private credit",
+     "market_value": 20000000.0,
+     "illiquid": true
+    }
+   ],
+   "backing_asset_mv": 200000000.0,
+   "illiquid_mv": 20000000.0,
+   "illiquid_share": 0.1,
+   "forced_sale_fraction": 0.2,
+   "best_estimate_liability": 150000000.0,
+   "equity_guarantee_initial_index": 100.0,
+   "stated_total_backing_asset_mv": 200000000.0
+  },
+  "totals": {
+   "backing_asset_mv": 200000000.0,
+   "total_sum_assured": 300000000.0,
+   "policy_count": 1750,
+   "model_point_rows": 3
+  }
+ },
+ "gate": {
+  "ok": true,
+  "n_checks": 30,
+  "checks": {
+   "model_points_module_present": true,
+   "run_gui_present": true,
+   "loader_present": true,
+   "model_points_module_stdlib_only": true,
+   "run_gui_serves_model_points": true,
+   "run_gui_has_portfolio_endpoints": true,
+   "run_gui_still_localhost": true,
+   "loader_has_portfolio_validator": true,
+   "schema_version_lockstep": true,
+   "loader_product_enum_lockstep": true,
+   "loader_gender_enum_lockstep": true,
+   "pg_product_line_map_present": true,
+   "defaults_normalise_clean": true,
+   "defaults_three_rows": true,
+   "fragment_has_portfolio_and_bs": true,
+   "fragment_passes_loader_validator": true,
+   "defaults_reconcile": true,
+   "mismatch_detected": true,
+   "book_scaling_par_only": true,
+   "book_scaling_has_factor": true,
+   "csv_ingest_two_rows": true,
+   "json_ingest_one_row": true,
+   "empty_ingest_fails_loud": true,
+   "page_carries_headline": true,
+   "page_has_endpoints": true,
+   "page_zero_external_refs": true,
+   "ui_app_byte_unchanged": true,
+   "live_zero_external_refs": true,
+   "governance_risk_register_frozen": true,
+   "governance_change_records_floor": true
+  }
+ },
+ "self_test_ok": true,
+ "new_third_party_runtime_deps": 0,
+ "outbound_network_calls": 0
+}

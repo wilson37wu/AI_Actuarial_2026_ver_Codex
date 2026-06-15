@@ -2558,7 +2558,7 @@ disk /sessions usage to watch.
 - Task 4 / E3 reproducibility evidence-pack export (DISPLAY/JS only, contract 1.21.0 unchanged).
 - **Task 5 / phase summary + final consolidated re-audit (this cycle, 2026-06-14 cycle 708c).** 9/9 offline self-test suites green = **522 checks** (ui_app 405; evidence-pack 12; integrity 10; distribution 9; user-run 9; search/deep-link 18; bundle/print-all 21; offline viewer 11; combined GUI 27); **0 external refs / 0 network / 0 JS errors** across all three HTML artifacts; embedded contract **1.21.0** (25 top-level keys, E2 `explainer` present); governance **100 ChangeRecords / 128 audit entries / 17 risk items**, audit-chain verified. All 6 re-audit gates PASS. ChangeRecord `bf0ed11e769247709c8961ae9d857357` OWNER_REVIEW. Evidence: `docs/validation/PHASE36_TASK5_PHASE_SUMMARY_REPORT.{json,md}`; battery snapshot `scripts/_phase36_task5_selftests.json`; pytest `tests/test_phase36_task5_phase_summary.py` (10 checks) green + 116 regression.
 
-**The single next `in_progress` item is now Phase IGUI Task 1** (owner-directed EXCLUSIVE priority — see the OWNER DIRECTION UPDATE blocks below, 2026-06-14T14:16Z and 14:22Z). Confirm against `.claude-dev/MODEL_DEV_STATE.json` (`Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)`, status `in_progress`).
+**The single next `in_progress` item is now Phase IGUI Task 4 (assumptions, owner-gated); Tasks 1-3 are COMPLETE** (owner-directed EXCLUSIVE priority — see the OWNER DIRECTION UPDATE blocks below, 2026-06-14T14:16Z and 14:22Z). Confirm against `.claude-dev/MODEL_DEV_STATE.json` (`Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)`, status `in_progress`).
 
 The next agent should do EXACTLY ONE task, the single `in_progress` item:
 

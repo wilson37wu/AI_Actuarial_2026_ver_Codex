@@ -47,6 +47,15 @@ from par_model_v2.viewer.igui_run_controls import (  # noqa: E402
     render_form_html,
     run_controls_to_model_inputs,
 )
+from par_model_v2.viewer.igui_model_points import (  # noqa: E402  (Task 3)
+    book_scaling_disclosure,
+    ingest_inforce,
+    normalize_balance_sheet,
+    normalize_model_points,
+    portfolio_to_model_inputs,
+    reconcile_balance_sheet,
+    render_model_points_html,
+)
 
 HOST = "127.0.0.1"  # localhost ONLY (never a wildcard bind); no outbound network
 
@@ -97,6 +106,85 @@ def _merge_into_model_inputs(out_path, fragment):
     return base
 
 
+def _loader_validate_portfolio(fragment):
+    """Round-trip a portfolio fragment through the REAL loader's dict validator."""
+    import load_user_inputs  # scripts/load_user_inputs.py
+    return load_user_inputs.validate_portfolio_dict(fragment)
+
+
+def build_portfolio_response(payload, *, out_path=None, do_write=False):
+    """Pure handler for the Task-3 model-points domain: payload -> typed rows +
+    balance sheet -> loader validation (+ optional merge-write) -> result."""
+    rows_in = payload.get("portfolio") if isinstance(payload, dict) else None
+    bs_in = payload.get("balance_sheet") if isinstance(payload, dict) else None
+    typed_rows, row_errs = normalize_model_points(rows_in)
+    typed_bs, bs_errs = normalize_balance_sheet(bs_in if bs_in is not None else {})
+    if row_errs or bs_errs:
+        return {"ok": False, "stage": "normalise", "errors": row_errs + bs_errs}
+    fragment = portfolio_to_model_inputs(typed_rows, typed_bs)
+    loader_errors = _loader_validate_portfolio(fragment)
+    if loader_errors:
+        return {"ok": False, "stage": "loader_validation", "errors": loader_errors}
+    result = {
+        "ok": True, "stage": "validated",
+        "model_inputs": {"portfolio": fragment["portfolio"],
+                         "balance_sheet": fragment["balance_sheet"],
+                         "totals": fragment["totals"]},
+        "reconcile": reconcile_balance_sheet(typed_bs),
+        "book_scaling": book_scaling_disclosure(typed_rows),
+    }
+    if do_write and out_path:
+        merged = _merge_portfolio_into_model_inputs(out_path, fragment)
+        with open(out_path, "w", encoding="utf-8") as fh:
+            json.dump(merged, fh, indent=1)
+        with open(out_path, "r", encoding="utf-8") as fh:
+            json.load(fh)  # re-parse guard: never hand a corrupt file downstream
+        result["written"] = os.path.abspath(out_path)
+        result["model_inputs"] = merged
+    return result
+
+
+def _merge_portfolio_into_model_inputs(out_path, fragment):
+    """Merge portfolio + balance_sheet + totals into an existing
+    model_inputs.json (preserving currency / run_settings a prior task wrote)."""
+    base = {}
+    if os.path.exists(out_path):
+        try:
+            with open(out_path, "r", encoding="utf-8") as fh:
+                base = json.load(fh)
+        except (OSError, json.JSONDecodeError):
+            base = {}
+    base["schema_version"] = fragment["schema_version"]
+    base["generated_at"] = fragment["generated_at"]
+    base.setdefault("source", fragment["source"])
+    base["portfolio"] = fragment["portfolio"]
+    base["balance_sheet"] = fragment["balance_sheet"]
+    base["totals"] = fragment["totals"]
+    return base
+
+
+def build_reconcile_response(payload):
+    """Pure handler for the live reconciliation + book-scaling preview (no write,
+    no hard validation - it is a best-effort echo as the user edits)."""
+    rows_in = payload.get("portfolio") if isinstance(payload, dict) else None
+    bs_in = payload.get("balance_sheet") if isinstance(payload, dict) else None
+    typed_rows, _ = normalize_model_points(rows_in)
+    typed_bs, _ = normalize_balance_sheet(bs_in if bs_in is not None else {})
+    return {"ok": True,
+            "reconcile": reconcile_balance_sheet(typed_bs),
+            "book_scaling": book_scaling_disclosure(typed_rows)}
+
+
+def build_ingest_response(payload):
+    """Pure handler for an uploaded in-force file -> canonical Portfolio rows."""
+    text = payload.get("text") if isinstance(payload, dict) else None
+    fmt = (payload.get("format") if isinstance(payload, dict) else None) or "auto"
+    rows, errs = ingest_inforce(text or "", fmt)
+    if errs:
+        return {"ok": False, "errors": errs, "rows": rows}
+    return {"ok": True, "rows": rows, "n": len(rows)}
+
+
 class _Handler(BaseHTTPRequestHandler):
     server_version = "IGUIRunGui/1.0"
     out_path = "model_inputs.json"
@@ -113,9 +201,11 @@ class _Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path in ("/", "/index.html"):
             self._send(200, render_form_html(), "text/html")
+        elif self.path in ("/model-points", "/model-points.html"):
+            self._send(200, render_model_points_html(), "text/html")
         elif self.path == "/healthz":
             self._send(200, json.dumps({"ok": True, "host": HOST,
-                                        "task": "Phase IGUI Task 2 run controls"}))
+                                        "task": "Phase IGUI Task 3 model points"}))
         else:
             self._send(404, json.dumps({"ok": False, "error": "not found"}))
 
@@ -127,8 +217,11 @@ class _Handler(BaseHTTPRequestHandler):
         except json.JSONDecodeError as exc:
             return None, str(exc)
 
+    _POST_ROUTES = ("/validate", "/save", "/validate_portfolio", "/save_portfolio",
+                    "/reconcile", "/ingest")
+
     def do_POST(self):
-        if self.path not in ("/validate", "/save"):
+        if self.path not in self._POST_ROUTES:
             self._send(404, json.dumps({"ok": False, "error": "not found"}))
             return
         payload, err = self._read_json()
@@ -136,8 +229,17 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(400, json.dumps({"ok": False, "errors": ["bad JSON: " + err]}))
             return
         try:
-            res = build_response(payload, out_path=self.out_path,
-                                 do_write=(self.path == "/save"))
+            if self.path in ("/validate", "/save"):
+                res = build_response(payload, out_path=self.out_path,
+                                     do_write=(self.path == "/save"))
+            elif self.path in ("/validate_portfolio", "/save_portfolio"):
+                res = build_portfolio_response(
+                    payload, out_path=self.out_path,
+                    do_write=(self.path == "/save_portfolio"))
+            elif self.path == "/reconcile":
+                res = build_reconcile_response(payload)
+            else:  # /ingest
+                res = build_ingest_response(payload)
         except Exception as exc:  # never leak a stack trace to the page
             self._send(500, json.dumps({"ok": False, "errors": ["runner error: %s" % exc]}))
             return
@@ -183,6 +285,37 @@ def self_test(out_path=None) -> int:
         with open(tmp, encoding="utf-8") as fh:
             saved = json.load(fh)
         ok &= ("run_settings" in saved and "currency" in saved)
+
+        # --- Task 3: model-points page + portfolio endpoints round-trip ---
+        with urllib.request.urlopen(base + "/model-points", timeout=5) as r:
+            mp = r.read().decode("utf-8")
+            ok &= (r.status == 200 and "Model Points" in mp and "39,975.654628199336" in mp)
+        from par_model_v2.viewer.igui_model_points import (
+            default_balance_sheet, default_model_points)
+        pbody = json.dumps({"portfolio": default_model_points(),
+                            "balance_sheet": default_balance_sheet()}).encode("utf-8")
+        req = urllib.request.Request(base + "/validate_portfolio", data=pbody,
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            ok &= bool(j.get("ok")) and j["reconcile"]["reconciles"] is True
+        req = urllib.request.Request(base + "/save_portfolio", data=pbody,
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            ok &= bool(j.get("ok"))
+        with open(tmp, encoding="utf-8") as fh:
+            saved = json.load(fh)
+        ok &= ("portfolio" in saved and "balance_sheet" in saved
+               and "run_settings" in saved)  # merge preserved Task-2 controls
+        ibody = json.dumps({"text": "Product,Age,Sex,Term,FaceValue,Premium,Count,Bonus\n"
+                                    "HKCD_PAR_2026,45,M,20,100000,5000,1000,0\n",
+                            "format": "auto"}).encode("utf-8")
+        req = urllib.request.Request(base + "/ingest", data=ibody,
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            ok &= bool(j.get("ok")) and j["n"] == 1
     finally:
         srv.shutdown()
         srv.server_close()
@@ -202,7 +335,9 @@ def main(argv=None) -> int:
     srv = make_server(args.port, args.out)
     host, port = srv.server_address
     url = "http://%s:%d/" % (host, port)
-    print("Actuarial Input & Run GUI (Phase IGUI Task 2) serving at %s" % url)
+    print("Actuarial Input & Run GUI (Phase IGUI Task 3) serving at %s" % url)
+    print("  - run controls: %s" % url)
+    print("  - model points + in-force: %smodel-points" % url)
     print("  - localhost only, offline; writes %s on Save." % os.path.abspath(args.out))
     if not args.no_browser:
         try:
@@ -217,4 +352,8 @@ def main(argv=None) -> int:
     finally:
         srv.shutdown()
         srv.server_close()
-    retur
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

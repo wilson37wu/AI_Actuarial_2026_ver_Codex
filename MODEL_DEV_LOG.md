@@ -10221,3 +10221,25 @@ surface). Next = Phase IGUI Task 2 (run controls + runner scaffolding).
 Landed `scripts/run_gui.py` (stdlib `http.server`, 127.0.0.1, offline; `GET /`, `/healthz`, `POST /validate`, `/save`), the run-controls core `par_model_v2/viewer/igui_run_controls.py` (field spec, normalisation, model_inputs.json `{currency,run_settings}` builder, deterministic sha256 per-run reproducibility digest, self-contained form, `validate_task2_gate`), and an **additive** loader-side `validate_run_controls_dict()` in `scripts/load_user_inputs.py` (validates the fragment with the template parsers' rules, no openpyxl). Closes the Task-1 `D1_run_controls` gaps (valuation date, explicit projection step, explicit outer/inner split, per-run digest).
 
 Verification: 21 new unittests + Task-2 gate (21 checks) green; Task-1 suite still green (24); `ui_app.html` byte-unchanged (sha256 `6dca35b3…`); 9 offline self-tests unaffected. Discipline: 0 new third-party runtime deps, localhost-only/offline, NO contract change (1.21.0), NO model parameter change, stop-rule honoured, MR-016/MR-017 not pre-empted, headline `39,975.654628199336` bit-for-bit. Governance: ChangeRecord `0c8ab61a` (OWNER_REVIEW), store 101→102 / 129→130 / risk 17. Next = Task 3 (model points + in-force ingest).
+
+---
+
+## 2026-06-15 - Phase IGUI Task 3: model points + in-force ingest (Claude Cowork)
+
+Landed the D2_policy_model_points input domain of the owner-directed Actuarial Input & Run GUI.
+New stdlib-only core `par_model_v2/viewer/igui_model_points.py`: interactive add/edit/delete of
+PAR + GMMB model-point rows (eight canonical Portfolio columns), CSV/JSON in-force ingest with
+flexible header mapping to the Portfolio schema, balance-sheet asset rows + stated-total
+reconciliation (parser tolerance), and a DISCLOSED non-governed book-scaling preview that echoes
+`scripts/run_model.resolve_product` (inforce-weighted representative PAR point + linear scale
+factor; GMMB disclosed by count). `scripts/run_gui.py` now serves `GET /model-points` and
+`POST /validate_portfolio /save_portfolio /reconcile /ingest`, merging into `model_inputs.json`
+while preserving the Task-2 `{currency, run_settings}`. Added additive loader-side
+`validate_portfolio_dict` (no openpyxl) mirroring the Excel parsers. Repaired a latent truncation
+in `run_gui.py` (`main()` final `return 0` had been corrupted to a bare `retur`).
+
+Verification: Task-3 gate 30/30; localhost self-test ok; 24 new unittests; IGUI Task-1 (24) +
+Task-2 (21) suites still green; 0 new third-party deps; 0 outbound calls; `ui_app.html`
+byte-unchanged; contract 1.21.0 unchanged; headline SCR 39,975.654628199336 carried bit-for-bit.
+Governance ChangeRecord 9a86cb63 OWNER_REVIEW (records 102->103, audit 130->131, risk register
+frozen 17). State: Task 3 complete; next in_progress = Task 4 (assumptions, owner-gated).

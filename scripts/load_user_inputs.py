@@ -487,6 +487,113 @@ def validate_run_controls_dict(payload: Dict[str, Any]) -> List[str]:
     return errors
 
 
+# ------------------------------------------------- portfolio (no-Excel) validator
+def validate_portfolio_dict(payload: Dict[str, Any]) -> List[str]:
+    """Validate a GUI-produced portfolio fragment (the ``{portfolio,
+    balance_sheet}`` subset of model_inputs.json) WITHOUT an Excel template,
+    using the SAME rules as :func:`parse_portfolio` / :func:`parse_balance_sheet`.
+
+    Returns the full list of issues (empty == valid); the fail-loud message
+    format mirrors the template path. This is the loader-side validator the
+    Phase IGUI input+run GUI (Task 3, model points + in-force ingest) round-trips
+    every payload through before a run is permitted (no openpyxl needed). Purely
+    additive: the Excel parsers above are unchanged.
+    """
+    errors: List[str] = []
+    if not isinstance(payload, dict):
+        return ["portfolio payload must be a JSON object"]
+
+    # --- portfolio rows ---
+    rows = payload.get("portfolio")
+    if not isinstance(rows, list):
+        errors.append(_err("Portfolio", "-", "portfolio", "must be a JSON array of model-point rows"))
+        rows = []
+    if isinstance(rows, list) and len(rows) == 0:
+        errors.append(_err("Portfolio", "-", "Product type",
+                           "at least one complete model-point row is required"))
+    n_par = 0
+    for i, row in enumerate(rows, 1):
+        rno = row.get("source_row", i) if isinstance(row, dict) else i
+        if not isinstance(row, dict):
+            errors.append(_err("Portfolio", rno, "row", "must be a JSON object"))
+            continue
+        product = _as_str(row.get("product_type"))
+        if product not in ALLOWED_PRODUCT_TYPES:
+            errors.append(_err("Portfolio", rno, "Product type",
+                               "%r not in allowed set %s" % (product, list(ALLOWED_PRODUCT_TYPES))))
+        age = _to_int(row.get("issue_age"))
+        gender = _as_str(row.get("gender")).upper() or None
+        term = _to_int(row.get("term_years"))
+        sa = _to_float(row.get("sum_assured"))
+        prem = _to_float(row.get("annual_premium"))
+        count = _to_int(row.get("policy_count"))
+        vb = _to_float(row.get("vested_bonus"))
+        if age is None or not (0 <= age <= 120):
+            errors.append(_err("Portfolio", rno, "Issue age", "must be an integer in [0, 120], got %r" % row.get("issue_age")))
+        if gender is None or gender not in ALLOWED_GENDERS:
+            errors.append(_err("Portfolio", rno, "Gender", "must be one of %s, got %r" % (list(ALLOWED_GENDERS), row.get("gender"))))
+        if term is None or term <= 0:
+            errors.append(_err("Portfolio", rno, "Term (yrs)", "must be a positive integer, got %r" % row.get("term_years")))
+        if sa is None or sa <= 0:
+            errors.append(_err("Portfolio", rno, "Sum assured", "must be positive, got %r" % row.get("sum_assured")))
+        if prem is None or prem < 0:
+            errors.append(_err("Portfolio", rno, "Annual premium", "must be >= 0, got %r" % row.get("annual_premium")))
+        if count is None or count <= 0:
+            errors.append(_err("Portfolio", rno, "Policy count", "must be a positive integer, got %r" % row.get("policy_count")))
+        if vb is None or vb < 0:
+            errors.append(_err("Portfolio", rno, "Vested bonus", "must be >= 0, got %r" % row.get("vested_bonus")))
+        if product == "HKCD_PAR_2026" and vb is not None and vb > 0:
+            errors.append(_err("Portfolio", rno, "Vested bonus",
+                               "cash-dividend PAR cannot carry a vested reversionary bonus, got %r" % vb))
+        if product in ("HKCD_PAR_2026", "HKRB_PAR_2026"):
+            n_par += 1
+    if isinstance(rows, list) and len(rows) > 0 and n_par == 0:
+        errors.append(_err("Portfolio", "-", "Product type",
+                           "at least one PAR model point is required (only GMMB rows supplied)"))
+
+    # --- balance sheet (optional block; validated when present) ---
+    bs = payload.get("balance_sheet")
+    if bs is not None:
+        if not isinstance(bs, dict):
+            errors.append(_err("Balance Sheet", "-", "balance_sheet", "must be a JSON object"))
+        else:
+            assets = bs.get("assets")
+            if not isinstance(assets, list) or not assets:
+                errors.append(_err("Balance Sheet", "-", "Asset class", "no asset rows found"))
+                assets = assets if isinstance(assets, list) else []
+            total_mv = 0.0
+            for j, a in enumerate(assets, 1):
+                if not isinstance(a, dict):
+                    errors.append(_err("Balance Sheet", j, "asset row", "must be a JSON object"))
+                    continue
+                mv = _to_float(a.get("market_value"))
+                if mv is None or mv < 0:
+                    errors.append(_err("Balance Sheet", j, "Market value", "must be a number >= 0, got %r" % a.get("market_value")))
+                else:
+                    total_mv += mv
+                if not isinstance(a.get("illiquid"), bool):
+                    errors.append(_err("Balance Sheet", j, "Illiquid?", "must be a boolean, got %r" % a.get("illiquid")))
+            if total_mv <= 0:
+                errors.append(_err("Balance Sheet", "-", "Market value", "total backing asset market value must be positive (got %s)" % total_mv))
+            stated = bs.get("stated_total_backing_asset_mv")
+            if stated is not None:
+                stated_f = _to_float(stated)
+                if stated_f is not None and total_mv > 0 and abs(stated_f - total_mv) > max(1e-6 * total_mv, 1e-9):
+                    errors.append(_err("Balance Sheet", "-", "Total backing asset market value",
+                                       "stated total %s does not match the sum of asset rows %s" % (stated_f, total_mv)))
+            fs = _to_float(bs.get("forced_sale_fraction"))
+            if fs is None or not (0.0 < fs <= 1.0):
+                errors.append(_err("Balance Sheet", "-", "Forced-sale fraction (mass-lapse shock)", "must be in (0, 1], got %r" % bs.get("forced_sale_fraction")))
+            bel = _to_float(bs.get("best_estimate_liability"))
+            if bel is None or bel <= 0:
+                errors.append(_err("Balance Sheet", "-", "Best-estimate liability (reserve)", "must be a positive number, got %r" % bs.get("best_estimate_liability")))
+            idx = _to_float(bs.get("equity_guarantee_initial_index"))
+            if idx is None or idx <= 0:
+                errors.append(_err("Balance Sheet", "-", "Equity-guarantee initial index level", "must be a positive number, got %r" % bs.get("equity_guarantee_initial_index")))
+    return errors
+
+
+
 # ----------------------------------------------------------------- main API
 def load_user_inputs(template_path: str) -> Dict[str, Any]:
     """Parse + validate the template; return the normalised inputs dict.
