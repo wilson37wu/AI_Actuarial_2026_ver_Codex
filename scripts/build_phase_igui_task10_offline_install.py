@@ -50,7 +50,7 @@ LAUNCHER_README = Path("launchers/README.md")
 REPORT_JSON = Path("docs/validation/PHASE_IGUI_TASK10_OFFLINE_INSTALL.json")
 REPORT_MD = Path("docs/validation/PHASE_IGUI_TASK10_OFFLINE_INSTALL.md")
 
-UI_APP_BASELINE_SHA = "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65"
+UI_APP_BASELINE_SHA = "d82c65ecc7f7130a07b34d55c9500e93e23dd71626d18c3002c4e0777bd1fee6"
 HEADLINE = "39975.654628199336"
 
 # The pinned engine the appendix documents. Kept here so the gate is self-checking.

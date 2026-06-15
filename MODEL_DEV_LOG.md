@@ -10581,3 +10581,10 @@ Option A's CI build. NO model parameter / UI contract change; `ui_app.html` byte
 (sha256 d82c65ec…); governed headline **39,975.654628199336** bit-identical; contract 1.23.0
 unchanged. ChangeRecord **b5f4d896** OWNER_REVIEW (records 118→119, audit 146→147, integrity True).
 All three packaging recipes (A/B/C) now authored — the A/B/C menu is complete. NEXT = owner pivot.
+
+
+## 2026-06-16 (claude, 06:00 UTC window) — Phase IGUI Task 10 stale UI-sha re-baseline
+- Fixed silently-RED gate: `UI_APP_BASELINE_SHA` 6dca35b3… → d82c65ec… in scripts/build_phase_igui_task10_offline_install.py + docs/PHASE_IGUI_OFFLINE_INSTALL_APPENDIX.md.
+- test_phase_igui_task10_offline_install.py 16/16 PASS (was 2 failed). ui_app.html byte-unchanged d82c65ec…; governed headline 39975.654628199336 untouched; contract 1.23.0 unchanged; no model/UI change.
+- Fresh evidence: 7 JS offline self-tests ok:true (0 net/0 JS err/0 ext refs). PKG Task2b combined-run failures = cross-file test pollution (7/7 in isolation), not regressions.
+- Frontier UNCHANGED = OWNER PIVOT (MR-LONGEV-1/LSMC sign-off | Option-A publish | freeze).

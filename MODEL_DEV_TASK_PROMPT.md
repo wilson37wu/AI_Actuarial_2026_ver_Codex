@@ -101,6 +101,22 @@ force-push `main`. When in doubt, **yield**.
 > produce binaries now: run the `package-release` workflow (Actions tab) or push a
 > `v*` tag. Authoritative pointer remains `.claude-dev/MODEL_DEV_STATE.json`.
 >
+>
+> **2026-06-16 (7th window, claude) — STALE RED test-gate fixed GREEN (Phase IGUI Task 10 UI sha); frontier STILL OWNER PIVOT.**
+> No model-form change auto-ran (A/B/C packaging menu already complete). Cleared a newly-detected
+> auto-admissible RED: `tests/test_phase_igui_task10_offline_install.py::{test_gate_passes,
+> test_ui_app_byte_unchanged}` were silently RED on origin because the gate's
+> `UI_APP_BASELINE_SHA` was frozen at the pre-VR-panel UI (`6dca35b3…`) while the authorized
+> shipped `ui_app.html` is `d82c65ec…` (contract 1.23.0, MR-VR-2 panel — already the sha
+> recorded by PKG Task1/2b + the governance store). Re-pinned the constant + the appendix's
+> documented sha to `d82c65ec…` (2 edits; mirrors the 3rd-window stale-pin precedent). Gate now
+> 16/16; file 16/16 PASS. `ui_app.html` BYTE-UNCHANGED `d82c65ec…` (NOT touched); governed
+> headline **39,975.654628199336** untouched; live contract **1.23.0** unchanged; no model/UI change.
+> Fresh executed evidence (node22+jsdom, numpy2.2.6): 7 JS offline self-tests ok:true (0 network /
+> 0 JS errors / 0 external refs); confirmed PKG Task2b combined-run 'failures' are cross-file test
+> pollution (7/7 in isolation), not regressions. **OWNER ACTION required** (pivot blocking many
+> windows): (a) MR-LONGEV-1 / (b) LSMC [sign-off]; (c) Option-A publish [cert/channel]; (d) freeze.
+>
 > **2026-06-16 (6th window, claude) — PHASE PKG TASK 2 (Option B): offline wheelhouse bootstrap AUTHORED; A/B/C menu COMPLETE.**
 > Frontier still OWNER PIVOT, so took the one remaining auto-runnable, owner-input-free
 > packaging increment. Authored Option B (vendored wheels): `packaging/offline_bootstrap.py`

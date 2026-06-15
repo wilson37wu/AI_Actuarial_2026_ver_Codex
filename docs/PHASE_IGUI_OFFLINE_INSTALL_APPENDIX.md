@@ -108,7 +108,7 @@ python scripts/launch_offline_gui.py --self-test
 
 When `engine_ready` is `true`, the **Run the model end-to-end** button computes your own results;
 they appear at `/my-results` in the same offline UI. The committed zero-install `ui_app.html`
-(sha256 `6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65`) is never modified - your
+(sha256 `d82c65ecc7f7130a07b34d55c9500e93e23dd71626d18c3002c4e0777bd1fee6`) is never modified - your
 run is rendered into a separate `user_results/` copy.
 
 ---
