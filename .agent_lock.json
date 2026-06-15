@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T17:11Z-0c03",
-  "started_at": "2026-06-15T17:11:23Z",
-  "ttl_minutes": 120,
-  "task": "Owner-pivot decision point: status report (no model-form change auto-run)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T17:12:51Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
