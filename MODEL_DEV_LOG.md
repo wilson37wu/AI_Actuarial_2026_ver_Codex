@@ -10561,3 +10561,23 @@ Verification: gate ok:true 25/25; unittest 9/9; spec parses; workflow manual/tag
 (records 117->118, audit 145->146, integrity True). No model parameter / UI contract change. Phase 30 stop-rule honoured.
 Builds nothing in-sandbox (no toolchain/network); CI performs the per-OS build. Owner/infra inputs for Task 2:
 code-signing certificate, onedir fallback decision, publish channel.
+
+---
+
+## 2026-06-16 — Phase PKG Task 2 (Option B): offline vendored-wheels venv bootstrap (claude)
+
+Decision-neutral / authoring-only. Frontier is OWNER PIVOT (model-form MR-LONGEV-1/LSMC
+need sign-off; Option-A publish needs cert/channel), so this cycle took the one remaining
+auto-runnable, owner-input-free packaging increment: **Option B** of the packaging card.
+
+Landed: `packaging/offline_bootstrap.py` (stdlib venv + `pip install --no-index
+--find-links wheelhouse -r requirements-engine-lock.txt`; `--self-test` ok:true);
+`scripts/vendor_wheels.py` (the single networked `pip download` harvest, owner/CI-run);
+`scripts/build_phase_pkg_task2b_validate.py` (gate **20/20**); `tests/test_phase_pkg_task2b_offline_wheelhouse.py`
+(**7/7**); `packaging/OPTION_B_README.md`; `docs/validation/PHASE_PKG_TASK2B_OFFLINE_WHEELHOUSE.*`.
+
+No wheels vendored in-repo; nothing built/installed in-sandbox (no network), mirroring
+Option A's CI build. NO model parameter / UI contract change; `ui_app.html` byte-unchanged
+(sha256 d82c65ec…); governed headline **39,975.654628199336** bit-identical; contract 1.23.0
+unchanged. ChangeRecord **b5f4d896** OWNER_REVIEW (records 118→119, audit 146→147, integrity True).
+All three packaging recipes (A/B/C) now authored — the A/B/C menu is complete. NEXT = owner pivot.

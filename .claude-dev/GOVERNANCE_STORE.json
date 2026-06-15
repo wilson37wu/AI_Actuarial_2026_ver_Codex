@@ -3298,6 +3298,34 @@
       "phase": "Phase PKG: No-prerequisite packaging (owner-decision card Option A)",
       "digest": "6dcf23c4f14d20cfc1d58bd062bec763a413973b3786d005074bb697a780a2de",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "c3290c81e0ea4aecab02d5224eab94d0",
+      "timestamp": "2026-06-15T22:16:34.675224+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase PKG Task 2 Option-B offline vendored-wheels venv bootstrap; authoring-only/decision-neutral; no model/UI/contract change; governed headline bit-identical",
+      "details": {
+        "record_id": "b5f4d896b2144534bb8499636c53e247",
+        "affected_components": [
+          "packaging/offline_bootstrap.py",
+          "scripts/vendor_wheels.py",
+          "scripts/build_phase_pkg_task2b_validate.py",
+          "tests/test_phase_pkg_task2b_offline_wheelhouse.py",
+          "packaging/OPTION_B_README.md",
+          "docs/validation/PHASE_PKG_TASK2B_OFFLINE_WHEELHOUSE.json"
+        ],
+        "offline_mechanism": "pip --no-index --find-links wheelhouse",
+        "structural_gate_checks": 20,
+        "unittest_cases": 7,
+        "owner_inputs_required": "none",
+        "ui_app_byte_unchanged": true,
+        "headline_bit_identical": "39975.654628199336",
+        "model_parameter_change": false
+      },
+      "phase": "Phase PKG: No-prerequisite packaging (owner-decision card Option B)",
+      "digest": "741fa56bec66bb4be55a3331ff3c5cfa5ff3081e3b0b390a2ab8f164dd4e44a3",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -10870,6 +10898,75 @@
         }
       ],
       "phase": "Phase PKG: No-prerequisite packaging (owner-decision card Option A)"
+    },
+    {
+      "record_id": "b5f4d896b2144534bb8499636c53e247",
+      "created_at": "2026-06-15T22:16:34.675106+00:00",
+      "title": "Phase PKG Task 2 (Option B) - offline vendored-wheels venv bootstrap (pip --no-index --find-links) + networked harvest wrapper, authoring-only",
+      "description": "Authored Option B of the packaging card: a fully-OFFLINE install of the numpy/pandas/scipy COMPUTE engine, removing the network + global-install prerequisite without a frozen binary. (1) packaging/offline_bootstrap.py (stdlib): creates a throw-away venv and installs the pinned engine with 'pip install --no-index --no-build-isolation --find-links wheelhouse -r requirements-engine-lock.txt'; --no-index is the offline guarantee; modes --status/--plan-only/--self-test; never reaches the network and imports no engine module. (2) scripts/vendor_wheels.py (stdlib): the SINGLE networked step - a thin 'pip download --only-binary :all:' wrapper with --platform/--python-version passthrough for a cross-OS CI matrix and a --print-argv no-network mode; run ONCE by an owner/CI, NOT in the dev sandbox. (3) scripts/build_phase_pkg_task2b_validate.py stdlib structural gate (20/20 ok:true; loads the bootstrap module and asserts the planned argv forces --no-index/--find-links/pinned-reqs with no remote URL, runs its --self-test, checks the vendor wrapper + docs, and re-asserts ui_app.html byte-unchanged + governed headline present) + tests/test_phase_pkg_task2b_offline_wheelhouse.py (7 green). (4) packaging/OPTION_B_README.md + docs/validation/PHASE_PKG_TASK2B_OFFLINE_WHEELHOUSE.* documentation. AUTHORING-ONLY: no wheels are vendored in-repo and nothing is installed/built in the sandbox (no network); the harvest is the owner/CI step, mirroring Option A's CI build. DECISION-NEUTRAL: completes the A/B/C menu without foreclosing Option A (frozen binary) or Option C (run from source). Needs NO owner input (no code-signing cert, no publish channel). NO model parameter change; NO UI contract change; committed zero-install RESULTS UI ui_app.html byte-unchanged (sha256 d82c65ec...); governed headline 39,975.654628199336 unchanged; Phase 30 stop-rule honoured; MR-016/MR-017 dependence decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "packaging/offline_bootstrap.py",
+        "scripts/vendor_wheels.py",
+        "scripts/build_phase_pkg_task2b_validate.py",
+        "tests/test_phase_pkg_task2b_offline_wheelhouse.py",
+        "packaging/OPTION_B_README.md",
+        "docs/validation/PHASE_PKG_TASK2B_OFFLINE_WHEELHOUSE.json"
+      ],
+      "standard_references": [
+        "pip user guide - --no-index / --find-links offline installs; pip download for wheelhouse harvesting (--only-binary, --platform, --python-version)",
+        "SOA ASOP 56 s.3.4-3.6 - model implementation reproducibility (pinning the numerical stack into the distributed wheels)",
+        "SOA ASOP 41 (Actuarial Communications) - reviewer-facing build/offline provenance",
+        "docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md - Option B (vendored wheels)"
+      ],
+      "before_snapshot": {
+        "option_b_present": false,
+        "compute_step_needs_network_or_global_install": true,
+        "ui_app_html_sha256": "d82c65ecc7f7130a07b34d55c9500e93e23dd71626d18c3002c4e0777bd1fee6",
+        "governed_headline": "39975.654628199336"
+      },
+      "after_snapshot": {
+        "option_b_present": true,
+        "offline_mechanism": "pip install --no-index --find-links wheelhouse -r requirements-engine-lock.txt",
+        "networked_step": "scripts/vendor_wheels.py (pip download), owner/CI-run only",
+        "wheels_vendored_in_repo": false,
+        "structural_gate_checks": 20,
+        "unittest_cases": 7,
+        "self_test_ok": true,
+        "engine_pin": {
+          "numpy": "1.26.4",
+          "pandas": "2.2.3",
+          "scipy": "1.13.1"
+        },
+        "build_runs_in_sandbox": false,
+        "owner_inputs_required": "none",
+        "ui_app_html_sha256": "d82c65ecc7f7130a07b34d55c9500e93e23dd71626d18c3002c4e0777bd1fee6",
+        "ui_app_html_byte_unchanged": true,
+        "governed_headline": "39975.654628199336",
+        "model_parameter_change": false,
+        "ui_contract_change": false
+      },
+      "impact_assessment": "Build-infrastructure only. No runtime model/UI code is modified. The offline bootstrap forces pip --no-index so it can never consult a remote index; the only networked step (vendor_wheels.py) is an explicit, owner/CI-run harvest. Decision-neutral: completes the owner's A/B/C packaging menu (B needs no cert/publish input) without pre-empting the A/C choice. Pinning the wheels strengthens the governed-headline reproducibility story (numbers reproduce bit-for-bit on a matching interpreter).",
+      "quantitative_impact": "No governed figure changed (headline 39,975.654628199336 unchanged; ui_app.html byte-unchanged sha256 d82c65ec...). No contract change. Offline self-test ok:true; structural gate 20/20 ok:true; unittest 7/7.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T22:16:34.675173+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified authoring-only/decision-neutral: offline_bootstrap.py loads, plans a pip install that forces --no-index + local --find-links against the pinned requirements with no remote URL/index flag, and its --self-test returns ok:true; vendor_wheels.py is a pip-download wrapper (--print-argv no-network); structural gate 20/20; unittest 7/7. ui_app.html byte-unchanged (sha256 d82c65ec...); governed headline 39,975.654628199336 present/unchanged; no model parameter or contract change."
+        },
+        {
+          "timestamp": "2026-06-15T22:16:34.675192+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. Authored Option B (vendored-wheels offline install): the COMPUTE engine installs from a local wheelhouse with pip --no-index - no network, no global install, no frozen binary. Needs NO owner input (unlike Option A's cert/publish). To use: run scripts/vendor_wheels.py ONCE on a networked machine to populate wheelhouse/, ship it alongside, then users run packaging/offline_bootstrap.py fully offline. Options A and C remain open."
+        }
+      ],
+      "phase": "Phase PKG: No-prerequisite packaging (owner-decision card Option B)"
     }
   ],
   "risk_register": [

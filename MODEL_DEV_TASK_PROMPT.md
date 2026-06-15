@@ -101,6 +101,25 @@ force-push `main`. When in doubt, **yield**.
 > produce binaries now: run the `package-release` workflow (Actions tab) or push a
 > `v*` tag. Authoritative pointer remains `.claude-dev/MODEL_DEV_STATE.json`.
 >
+> **2026-06-16 (6th window, claude) — PHASE PKG TASK 2 (Option B): offline wheelhouse bootstrap AUTHORED; A/B/C menu COMPLETE.**
+> Frontier still OWNER PIVOT, so took the one remaining auto-runnable, owner-input-free
+> packaging increment. Authored Option B (vendored wheels): `packaging/offline_bootstrap.py`
+> (stdlib venv + `pip install --no-index --no-build-isolation --find-links wheelhouse -r
+> requirements-engine-lock.txt`; `--self-test` **ok:true**); `scripts/vendor_wheels.py` (the
+> SINGLE networked `pip download` harvest, owner/CI-run, `--print-argv` no-network);
+> `scripts/build_phase_pkg_task2b_validate.py` gate **20/20**; `tests/test_phase_pkg_task2b_offline_wheelhouse.py`
+> **7/7**; `packaging/OPTION_B_README.md` + `docs/validation/PHASE_PKG_TASK2B_OFFLINE_WHEELHOUSE.*`.
+> No wheels vendored in-repo; nothing built/installed in-sandbox (no network). NO model
+> parameter / UI contract change; `ui_app.html` byte-unchanged (sha256 d82c65ec…); governed
+> headline **39,975.654628199336** bit-identical; contract **1.23.0** unchanged. ChangeRecord
+> **b5f4d896** OWNER_REVIEW (records 118→119, audit 146→147, integrity True). **All three
+> packaging recipes (A frozen-binary CI, B offline wheelhouse, C run-from-source) are now
+> authored — the A/B/C menu is COMPLETE and nothing auto-runnable remains.** **OWNER ACTION
+> required:** (a) MR-LONGEV-1 / (b) LSMC [model-form, sign-off]; (c) Option-A publish —
+> code-signing cert + channel [owner/infra]; (d) declare frontier complete & **freeze**.
+> Until the owner chooses, runs should produce a status report + verification only and NOT
+> start a model-form change. Authoritative pointer remains `.claude-dev/MODEL_DEV_STATE.json`.
+>
 > **OWNER PRIORITY OVERRIDE — SATISFIED (2026-06-11, cycle 28):** Phase UIL
 > (user-input loader + run orchestrator, workstream B of
 > `IMPLEMENTATION_PLAN_currency_and_inputs.md`) is **COMPLETE**: B1 loader →

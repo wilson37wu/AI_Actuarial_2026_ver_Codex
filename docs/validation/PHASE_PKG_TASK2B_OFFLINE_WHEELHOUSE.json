@@ -1,0 +1,70 @@
+{
+ "doc_id": "PHASE_PKG_TASK2B_OFFLINE_WHEELHOUSE",
+ "version": "1.0.0",
+ "phase": "Phase PKG: No-prerequisite packaging (owner-decision card Option B)",
+ "task": "Phase PKG Task 2 (Option B) - offline vendored-wheels venv bootstrap",
+ "date": "2026-06-16",
+ "agent": "ClaudeCowork_AutoDev",
+ "classification": "build-infrastructure / authoring-only / decision-neutral",
+ "summary": "Authored Option B of the packaging card: a fully-offline vendored-wheels install of the numpy/pandas/scipy COMPUTE engine. packaging/offline_bootstrap.py (stdlib) creates a venv and installs with pip --no-index --find-links wheelhouse -r requirements-engine-lock.txt (no network, no global install); scripts/vendor_wheels.py is the single networked harvest step (pip download), run once by an owner/CI. No wheels are vendored in-repo. Complements Option A (frozen binary) and Option C (run from source); forecloses neither.",
+ "decision_neutral": true,
+ "model_parameter_change": false,
+ "ui_contract_change": false,
+ "stop_rule_honoured": true,
+ "mr016_mr017_pre_empted": false,
+ "engine_pin": {
+  "numpy": "1.26.4",
+  "pandas": "2.2.3",
+  "scipy": "1.13.1"
+ },
+ "offline_guarantee": {
+  "mechanism": "pip install --no-index --no-build-isolation --find-links wheelhouse -r requirements-engine-lock.txt",
+  "no_index": true,
+  "find_links_local_only": true,
+  "no_remote_url_in_plan": true
+ },
+ "networked_step": "scripts/vendor_wheels.py (pip download --only-binary :all:) - owner/CI run, NOT in dev sandbox",
+ "components": [
+  "packaging/offline_bootstrap.py",
+  "scripts/vendor_wheels.py",
+  "scripts/build_phase_pkg_task2b_validate.py",
+  "tests/test_phase_pkg_task2b_offline_wheelhouse.py",
+  "packaging/OPTION_B_README.md",
+  "docs/validation/PHASE_PKG_TASK2B_OFFLINE_WHEELHOUSE.json"
+ ],
+ "governed_artifacts": {
+  "ui_app_html_sha256": "d82c65ecc7f7130a07b34d55c9500e93e23dd71626d18c3002c4e0777bd1fee6",
+  "ui_app_html_byte_unchanged": true,
+  "governed_headline": "39975.654628199336",
+  "contract_version": "1.23.0 (unchanged)"
+ },
+ "standard_references": [
+  "pip user guide - --no-index / --find-links offline installs; pip download for wheelhouse harvesting",
+  "SOA ASOP 56 s.3.4-3.6 - model implementation reproducibility (pinning the numerical stack)",
+  "SOA ASOP 41 - reviewer-facing build/offline provenance",
+  "docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md - Option B (vendored wheels)"
+ ],
+ "build_runs_in_sandbox": false,
+ "self_test": {
+  "ok": true,
+  "checks": 7,
+  "planned_pip_argv": [
+   "/tmp/cyc_1781561209/.venv_engine/bin/python",
+   "-m",
+   "pip",
+   "install",
+   "--no-index",
+   "--no-build-isolation",
+   "--find-links",
+   "/tmp/cyc_1781561209/wheelhouse",
+   "-r",
+   "/tmp/cyc_1781561209/requirements-engine-lock.txt"
+  ]
+ },
+ "structural_gate": {
+  "ok": true,
+  "passed": 20,
+  "total": 20
+ },
+ "unittest_cases": 7
+}
