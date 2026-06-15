@@ -2959,6 +2959,38 @@
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
       "digest": "35be653d7a8bac55fe97ed549f2910d68b38326c3a9bf9a2c9b67d406737943e",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "7ad117e3900c4c99b7573839f6e36543",
+      "timestamp": "2026-06-15T02:20:13.093277+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "ClaudeCowork_AutoDev",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Phase IGUI Task 4 assumptions (owner-gated) (par_model_v2/viewer/igui_assumptions.py); additive loader-side validate_assumptions_dict; governed/frozen dependence parameters read-only (override neutralised + rejected); 0 new third-party deps; localhost-only/offline; ui_app.html byte-unchanged; NO contract change; NO model parameter change",
+      "details": {
+        "record_id": "d610c79ed6d145a8b89a43a5c4b0b9a3",
+        "contract": "1.21.0 (unchanged)",
+        "task4_gate_checks": 25,
+        "new_unittests": 21,
+        "new_third_party_runtime_deps": 0,
+        "governed_frozen_readonly": {
+          "copula_df_single_t": 2.9451,
+          "grouped_t_df_nonfin": 37.866,
+          "grouped_t_df_fin": 8.506
+        },
+        "affected_components": [
+          "par_model_v2/viewer/igui_assumptions.py",
+          "scripts/run_gui.py",
+          "scripts/load_user_inputs.py",
+          "scripts/build_phase_igui_task4_governance.py",
+          "scripts/build_phase_igui_task4_assumptions.py",
+          "tests/test_phase_igui_task4_assumptions.py",
+          "docs/validation/PHASE_IGUI_TASK4_ASSUMPTIONS.json",
+          "docs/validation/PHASE_IGUI_TASK4_ASSUMPTIONS.md"
+        ]
+      },
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
+      "digest": "38bc1157beb49205845be9d3dea20e9e0f78b9d176682a182822d48f2565f4c1",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -9455,6 +9487,116 @@
           "actor": "ClaudeCowork_AutoDev",
           "status": "OWNER_REVIEW",
           "comments": "Owner review requested. The input+run GUI now collects the policy/model-point data domain: the user can add/edit/delete PAR + GMMB model points, upload an in-force CSV/JSON, see backing-asset reconciliation and a disclosed book-scaling preview, all validated through the real loader before any run. Next cycle = Task 4 (assumptions, owner-gated). The MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
+        }
+      ],
+      "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"
+    },
+    {
+      "record_id": "d610c79ed6d145a8b89a43a5c4b0b9a3",
+      "created_at": "2026-06-15T02:20:13.093169+00:00",
+      "title": "Phase IGUI Task 4 - assumptions input domain (owner-gated) (par_model_v2/viewer/igui_assumptions.py; loader-side assumptions validator)",
+      "description": "Implemented Task 4 (the D3_assumptions domain) of the owner-directed Phase IGUI input+run GUI, following Task 1 (design note), Task 2 (run controls) and Task 3 (model points). (1) ASSUMPTIONS CORE par_model_v2/viewer/igui_assumptions.py (stdlib only): a declarative, grouped spec of every editable valuation assumption - mortality (base table + multiplier + annual improvement + floor), lapse/surrender (base lapse + surrender + dynamic-lapse beta + ITM threshold), expenses (per-policy / %-premium / inflation), premiums (frequency + indexation), discount (flat rate OR tenor/rate yield curve), bonus & crediting (declaration strategy + reversionary + terminal + smoothing), management-action rules (relief sigma / alpha + dynamic-rule toggle), reinsurance (type + quota share + retention) and the SCR confidence / benefit share - with normalisation (fail-loud per field), a discount-curve normaliser, and a builder to the model_inputs.json {assumptions} sub-schema. (2) OWNER-GATING: the governed/frozen dependence parameters (copula df 2.9451, grouped-t df_nonfin 37.866, df_fin 8.506) are a READ-ONLY provenance echo - assumptions_to_model_inputs ALWAYS re-attaches the governed values (discarding any user-supplied echo) and the loader REJECTS any override, so a GUI payload can never change a governed model parameter; Sigma / df / margins stay bit-frozen. (3) RUNNER scripts/run_gui.py: serves a SELF-CONTAINED assumptions page (grouped inputs + read-only governed basis; zero external references) at GET /assumptions and exposes POST /validate_assumptions, /save_assumptions; the run-controls + model-points pages and endpoints are unchanged and the model_inputs.json merge preserves the prior {currency, run_settings, portfolio, balance_sheet}. (4) LOADER ROUND-TRIP: added a purely additive scripts/load_user_inputs.validate_assumptions_dict that validates the {assumptions} fragment (bounds, enums, bool, discount curve) and enforces the read-only governed echo; the Excel template path is unchanged. Tests: 21 new unittest cases green (spec/group coverage, default + string normalisation, bad-number/bad-choice rejection, curve normaliser, loader round-trip incl. out-of-bounds / negative-expense / curve-mode / direct frozen-override / unknown-frozen-key rejections, owner-gating echo re-attach, self-contained page, ui_app byte-unchanged, and a localhost endpoint round-trip). IGUI Task-1 (24) + Task-2 (21) + Task-3 (24) suites stay green. Task-4 gate validate_task4_gate ok:true 25 checks. NO contract change; NO model parameter change; offline RESULTS UI byte-unchanged; stop-rule honoured; owner decision not pre-empted.",
+      "change_type": "code_change",
+      "affected_components": [
+        "par_model_v2/viewer/igui_assumptions.py",
+        "scripts/run_gui.py",
+        "scripts/load_user_inputs.py",
+        "scripts/build_phase_igui_task4_governance.py",
+        "scripts/build_phase_igui_task4_assumptions.py",
+        "tests/test_phase_igui_task4_assumptions.py",
+        "docs/validation/PHASE_IGUI_TASK4_ASSUMPTIONS.json",
+        "docs/validation/PHASE_IGUI_TASK4_ASSUMPTIONS.md"
+      ],
+      "standard_references": [
+        "SOA ASOP 52 / IFRS 17 / HKRBC - economic & demographic assumptions (mortality base + improvement, lapse/surrender incl. dynamic policyholder behaviour, expenses, premiums, discount/yield curve, bonus declaration, management actions, reinsurance) surfaced for user entry and validated fail-loud",
+        "SOA ASOP 56 (Modeling) section 3.2 / 3.5 - model inputs vs governed parameters: the dependence structure (copula df, grouped-t dfs, Sigma) stays a READ-ONLY governed echo; assumption inputs are additive metadata and do not alter the frozen stochastic basis (owner-gated)",
+        "SOA ASOP 41 (Actuarial Communications) - the governed/frozen basis is disclosed read-only alongside the user-editable assumptions; the educational-use restriction (credentialled assumptions + independent review) is unchanged"
+      ],
+      "before_snapshot": {
+        "phase": "Phase IGUI Task 3 complete (model points + in-force ingest)",
+        "igui_assumptions_module": false,
+        "loader_assumptions_validator": false,
+        "run_gui_routes": [
+          "/",
+          "/model-points",
+          "/healthz",
+          "/validate",
+          "/save",
+          "/validate_portfolio",
+          "/save_portfolio",
+          "/reconcile",
+          "/ingest"
+        ],
+        "ui_contract": "1.21.0",
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65"
+      },
+      "after_snapshot": {
+        "igui_assumptions_module": "par_model_v2/viewer/igui_assumptions.py (stdlib only)",
+        "igui_new_third_party_runtime_deps": 0,
+        "loader_assumptions_validator": "validate_assumptions_dict (additive, no openpyxl)",
+        "run_gui_routes": [
+          "/",
+          "/model-points",
+          "/assumptions",
+          "/healthz",
+          "/validate",
+          "/save",
+          "/validate_portfolio",
+          "/save_portfolio",
+          "/reconcile",
+          "/ingest",
+          "/validate_assumptions",
+          "/save_assumptions"
+        ],
+        "assumption_groups": [
+          "Mortality",
+          "Lapse & Surrender",
+          "Expenses",
+          "Premiums",
+          "Discount / Yield",
+          "Bonus & Crediting",
+          "Management Action",
+          "Reinsurance",
+          "Risk"
+        ],
+        "owner_gating": {
+          "governed_frozen_readonly": {
+            "copula_df_single_t": 2.9451,
+            "grouped_t_df_nonfin": 37.866,
+            "grouped_t_df_fin": 8.506
+          },
+          "override_neutralised_by_builder": true,
+          "override_rejected_by_loader": true
+        },
+        "task4_gate_ok": true,
+        "task4_gate_checks": 25,
+        "new_unittests": 21,
+        "igui_task1_unittests_still_green": 24,
+        "igui_task2_unittests_still_green": 21,
+        "igui_task3_unittests_still_green": 24,
+        "ui_contract": "1.21.0 (unchanged)",
+        "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65 (byte-unchanged)",
+        "results_ui_zero_install_preserved": true,
+        "headline_carried_bit_for_bit": "39975.654628199336"
+      },
+      "impact_assessment": "Additive GUI input domain + an additive loader-side validator. NO contract change, NO model parameter change; the offline RESULTS UI (ui_app.html) is byte-identical (frozen sha256 asserted by the Task-4 gate). The runner is localhost-bound and offline. OWNER-GATING holds by construction: the governed dependence parameters are a read-only echo that the builder always re-attaches and the loader rejects any override of, so surfacing assumption inputs cannot change the frozen stochastic basis. Pre-empts no owner decision (MR-016/MR-017 remains with the owner; Phase 30 stop-rule honoured).",
+      "quantitative_impact": "No governed capital figure changed; the headline SCR 39,975.654628199336 is carried bit-for-bit. Copula df 2.9451 / grouped-t dfs 37.866 & 8.506 stay frozen and read-only. Contract unchanged at 1.21.0. Task-4 gate ok:true 25 checks; 21 new unittests green; IGUI Task-1 (24) + Task-2 (21) + Task-3 (24) suites still green; 0 new third-party runtime dependencies; 0 outbound network calls; 0 external refs.",
+      "status": "OWNER_REVIEW",
+      "author": "ClaudeCowork_AutoDev",
+      "peer_reviewer": "APS_X2_Independent_Reviewer",
+      "assumption_owner": "ChiefActuary",
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T02:20:13.093228+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "PEER_REVIEW",
+          "comments": "Verified: Task 4 lands the assumptions input domain (mortality base+improvement, lapse/surrender incl. dynamic behaviour, expenses, premiums, discount/yield curve, bonus declaration, management actions, reinsurance, SCR confidence/benefit share) plus an additive loader-side validate_assumptions_dict. OWNER-GATING holds: the governed dependence parameters (copula df, grouped-t dfs) are read-only - the builder re-attaches the governed echo and the loader rejects any override; the frozen stochastic basis is unchanged. ZERO new third-party runtime dependency; the runner stays 127.0.0.1-bound and offline; every payload round-trips fail-loud through the loader before a write; offline RESULTS UI byte-unchanged (frozen sha256). 21 new unittests + Task-4 gate (25 checks) green; IGUI Task-1 (24) + Task-2 (21) + Task-3 (24) suites green. Headline carried bit-for-bit; NO contract change; NO model parameter change; stop-rule honoured."
+        },
+        {
+          "timestamp": "2026-06-15T02:20:13.093243+00:00",
+          "actor": "ClaudeCowork_AutoDev",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review requested. The input+run GUI now collects the full assumptions domain: the user can enter mortality (base + improvement), lapse/surrender incl. dynamic policyholder behaviour, expenses, premiums, discount rate / yield curve, bonus/crediting & declaration strategy, management-action rules and reinsurance, all validated through the real loader before any run, while the governed/frozen dependence parameters are shown read-only and can never be changed from the GUI. Next cycle = Task 5 (ESG / economic-scenario inputs, stop-rule-bounded). The MR-016/MR-017 dependence decision remains PENDING and entirely with the owner."
         }
       ],
       "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)"

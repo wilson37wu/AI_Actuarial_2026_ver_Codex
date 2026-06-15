@@ -10243,3 +10243,28 @@ Task-2 (21) suites still green; 0 new third-party deps; 0 outbound calls; `ui_ap
 byte-unchanged; contract 1.21.0 unchanged; headline SCR 39,975.654628199336 carried bit-for-bit.
 Governance ChangeRecord 9a86cb63 OWNER_REVIEW (records 102->103, audit 130->131, risk register
 frozen 17). State: Task 3 complete; next in_progress = Task 4 (assumptions, owner-gated).
+
+---
+
+## 2026-06-15 (~02:08–02:30 UTC) — Phase IGUI Task 4 COMPLETE (assumptions, owner-gated) [Claude Cowork]
+
+Landed the D3_assumptions domain of the owner-directed input+run GUI.
+`par_model_v2/viewer/igui_assumptions.py` (stdlib only) surfaces the full valuation
+assumption set — mortality (base+improvement), lapse/surrender incl. dynamic
+policyholder behaviour, expenses (per-policy / %-premium / inflation), premiums,
+discount rate / yield curve, bonus/crediting & declaration strategy, management-action
+rules, reinsurance, SCR confidence / benefit share — grouped, fail-loud normalised, and
+round-tripped through a NEW additive `scripts/load_user_inputs.validate_assumptions_dict`.
+`scripts/run_gui.py` serves `GET /assumptions` + `POST /validate_assumptions`,
+`/save_assumptions`; the merge preserves the prior Task-2/Task-3 blocks; prior pages
+unchanged. **Owner-gating:** the governed/frozen dependence parameters (copula df 2.9451,
+grouped-t df_nonfin 37.866, df_fin 8.506) are a READ-ONLY echo — the builder re-attaches
+them (override neutralised) and the loader rejects any override, so a GUI payload can
+never change a governed parameter; Sigma/df/margins stay bit-frozen. 21 new unittests +
+the 25-check Task-4 gate green; IGUI Task-1 (24)+Task-2 (21)+Task-3 (24) suites green;
+`run_gui --self-test` ok:true; `ui_app.html` byte-unchanged (sha256 6dca35b3…0d7e65);
+headline SCR 39,975.654628199336 carried bit-for-bit. 0 new third-party deps; 0 outbound
+network calls. Governance: ChangeRecord opened (OWNER_REVIEW) — change records 103→104,
+audit entries 131→132, integrity OK. NO contract change (1.21.0); NO model parameter
+change; Phase 30 stop-rule honoured; MR-016/MR-017 owner decision not pre-empted.
+Next = Phase IGUI Task 5 (ESG / economic-scenario inputs, stop-rule-bounded).

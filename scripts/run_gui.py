@@ -56,6 +56,12 @@ from par_model_v2.viewer.igui_model_points import (  # noqa: E402  (Task 3)
     reconcile_balance_sheet,
     render_model_points_html,
 )
+from par_model_v2.viewer.igui_assumptions import (  # noqa: E402  (Task 4)
+    default_assumptions,
+    normalize_assumptions,
+    assumptions_to_model_inputs,
+    render_assumptions_html,
+)
 
 HOST = "127.0.0.1"  # localhost ONLY (never a wildcard bind); no outbound network
 
@@ -185,6 +191,55 @@ def build_ingest_response(payload):
     return {"ok": True, "rows": rows, "n": len(rows)}
 
 
+def _loader_validate_assumptions(fragment):
+    """Round-trip an assumptions fragment through the REAL loader's dict validator."""
+    import load_user_inputs  # scripts/load_user_inputs.py
+    return load_user_inputs.validate_assumptions_dict(fragment)
+
+
+def build_assumptions_response(payload, *, out_path=None, do_write=False):
+    """Pure handler for the Task-4 assumptions domain (owner-gated): payload ->
+    typed assumptions -> loader validation (+ optional merge-write) -> result.
+    The governed/frozen dependence echo is attached read-only and any override
+    is rejected by the loader validator."""
+    a_in = payload.get("assumptions") if isinstance(payload, dict) else None
+    typed, norm_errors = normalize_assumptions(a_in if a_in is not None else {})
+    if norm_errors:
+        return {"ok": False, "stage": "normalise", "errors": norm_errors}
+    fragment = assumptions_to_model_inputs(typed)
+    loader_errors = _loader_validate_assumptions(fragment)
+    if loader_errors:
+        return {"ok": False, "stage": "loader_validation", "errors": loader_errors}
+    result = {"ok": True, "stage": "validated",
+              "model_inputs": {"assumptions": fragment["assumptions"]}}
+    if do_write and out_path:
+        merged = _merge_assumptions_into_model_inputs(out_path, fragment)
+        with open(out_path, "w", encoding="utf-8") as fh:
+            json.dump(merged, fh, indent=1)
+        with open(out_path, "r", encoding="utf-8") as fh:
+            json.load(fh)  # re-parse guard: never hand a corrupt file downstream
+        result["written"] = os.path.abspath(out_path)
+        result["model_inputs"] = merged
+    return result
+
+
+def _merge_assumptions_into_model_inputs(out_path, fragment):
+    """Merge the assumptions block into an existing model_inputs.json (preserving
+    currency / run_settings / portfolio / balance_sheet a prior task wrote)."""
+    base = {}
+    if os.path.exists(out_path):
+        try:
+            with open(out_path, "r", encoding="utf-8") as fh:
+                base = json.load(fh)
+        except (OSError, json.JSONDecodeError):
+            base = {}
+    base["schema_version"] = fragment["schema_version"]
+    base["generated_at"] = fragment["generated_at"]
+    base.setdefault("source", fragment["source"])
+    base["assumptions"] = fragment["assumptions"]
+    return base
+
+
 class _Handler(BaseHTTPRequestHandler):
     server_version = "IGUIRunGui/1.0"
     out_path = "model_inputs.json"
@@ -203,9 +258,11 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(200, render_form_html(), "text/html")
         elif self.path in ("/model-points", "/model-points.html"):
             self._send(200, render_model_points_html(), "text/html")
+        elif self.path in ("/assumptions", "/assumptions.html"):
+            self._send(200, render_assumptions_html(), "text/html")
         elif self.path == "/healthz":
             self._send(200, json.dumps({"ok": True, "host": HOST,
-                                        "task": "Phase IGUI Task 3 model points"}))
+                                        "task": "Phase IGUI Task 4 assumptions"}))
         else:
             self._send(404, json.dumps({"ok": False, "error": "not found"}))
 
@@ -218,7 +275,7 @@ class _Handler(BaseHTTPRequestHandler):
             return None, str(exc)
 
     _POST_ROUTES = ("/validate", "/save", "/validate_portfolio", "/save_portfolio",
-                    "/reconcile", "/ingest")
+                    "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions")
 
     def do_POST(self):
         if self.path not in self._POST_ROUTES:
@@ -236,6 +293,10 @@ class _Handler(BaseHTTPRequestHandler):
                 res = build_portfolio_response(
                     payload, out_path=self.out_path,
                     do_write=(self.path == "/save_portfolio"))
+            elif self.path in ("/validate_assumptions", "/save_assumptions"):
+                res = build_assumptions_response(
+                    payload, out_path=self.out_path,
+                    do_write=(self.path == "/save_assumptions"))
             elif self.path == "/reconcile":
                 res = build_reconcile_response(payload)
             else:  # /ingest
@@ -259,6 +320,7 @@ def self_test(out_path=None) -> int:
     """In-process localhost round-trip: GET / , POST /validate , POST /save."""
     import tempfile
     import urllib.request
+    import urllib.error
     tmp = out_path or os.path.join(tempfile.mkdtemp(prefix="igui_"), "model_inputs.json")
     srv = make_server(0, tmp)
     host, port = srv.server_address
@@ -316,6 +378,40 @@ def self_test(out_path=None) -> int:
         with urllib.request.urlopen(req, timeout=5) as r:
             j = json.loads(r.read().decode("utf-8"))
             ok &= bool(j.get("ok")) and j["n"] == 1
+
+        # --- Task 4: assumptions page + endpoints round-trip (owner-gated) ---
+        with urllib.request.urlopen(base + "/assumptions", timeout=5) as r:
+            ap = r.read().decode("utf-8")
+            ok &= (r.status == 200 and "Assumptions" in ap and "39,975.654628199336" in ap
+                   and "copula_df_single_t" in ap and "readonly" in ap)
+        from par_model_v2.viewer.igui_assumptions import default_assumptions
+        abody = json.dumps({"assumptions": default_assumptions()}).encode("utf-8")
+        req = urllib.request.Request(base + "/validate_assumptions", data=abody,
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            ok &= bool(j.get("ok")) and "mortality" in j["model_inputs"]["assumptions"]
+        # owner-gating: a payload that tries to override a frozen df is NEUTRALISED -
+        # the server re-attaches the governed echo, so the returned/validated value
+        # is always the governed constant (a GUI payload can never change it).
+        tampered = {"assumptions": default_assumptions()}
+        tampered["assumptions"]["governed_frozen_readback"] = {"copula_df_single_t": 9.999}
+        treq = urllib.request.Request(base + "/validate_assumptions",
+                                      data=json.dumps(tampered).encode("utf-8"),
+                                      headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(treq, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            echo = j["model_inputs"]["assumptions"]["governed_frozen_readback"]
+            ok &= (bool(j.get("ok")) and echo.get("copula_df_single_t") == 2.9451)
+        req = urllib.request.Request(base + "/save_assumptions", data=abody,
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            ok &= bool(j.get("ok"))
+        with open(tmp, encoding="utf-8") as fh:
+            saved = json.load(fh)
+        ok &= ("assumptions" in saved and "portfolio" in saved
+               and "run_settings" in saved)  # merge preserved Task-2 + Task-3
     finally:
         srv.shutdown()
         srv.server_close()
@@ -335,9 +431,10 @@ def main(argv=None) -> int:
     srv = make_server(args.port, args.out)
     host, port = srv.server_address
     url = "http://%s:%d/" % (host, port)
-    print("Actuarial Input & Run GUI (Phase IGUI Task 3) serving at %s" % url)
+    print("Actuarial Input & Run GUI (Phase IGUI Task 4) serving at %s" % url)
     print("  - run controls: %s" % url)
     print("  - model points + in-force: %smodel-points" % url)
+    print("  - assumptions (owner-gated): %sassumptions" % url)
     print("  - localhost only, offline; writes %s on Save." % os.path.abspath(args.out))
     if not args.no_browser:
         try:

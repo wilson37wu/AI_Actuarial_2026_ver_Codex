@@ -1,0 +1,153 @@
+{
+ "doc_id": "PHASE_IGUI_TASK4_ASSUMPTIONS",
+ "doc_version": "1.0.0",
+ "generated_at": "2026-06-15T02:20:08.279263+00:00",
+ "task": "Phase IGUI Task 4 - assumptions (owner-gated)",
+ "domain": "D3_assumptions",
+ "governed_headline": "39,975.654628199336",
+ "schema_version": "1.0.0",
+ "ui_app_sha256_frozen": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+ "assumption_groups": [
+  "Mortality",
+  "Lapse & Surrender",
+  "Expenses",
+  "Premiums",
+  "Discount / Yield",
+  "Bonus & Crediting",
+  "Management Action",
+  "Reinsurance",
+  "Risk"
+ ],
+ "governed_frozen_readback": {
+  "copula_df_single_t": 2.9451,
+  "grouped_t_df_nonfin": 37.866,
+  "grouped_t_df_fin": 8.506
+ },
+ "capabilities": [
+  "full valuation assumption set surfaced + grouped (mortality base+improvement; lapse/surrender incl. dynamic policyholder behaviour; expenses per-policy/%-premium/inflation; premiums/contributions; discount rate / yield curve; bonus/crediting & bonus-declaration strategy; management-action rules; reinsurance; SCR confidence / benefit share)",
+  "OWNER-GATED: governed/frozen dependence parameters (copula df, grouped-t dfs) shown READ-ONLY; the builder always re-attaches the governed echo and the loader rejects any override, so a GUI payload can never change a governed parameter",
+  "loader-side validate_assumptions_dict round-trip (additive, no openpyxl)"
+ ],
+ "new_runner_routes": [
+  "GET /assumptions",
+  "POST /validate_assumptions",
+  "POST /save_assumptions"
+ ],
+ "loader_validator": "validate_assumptions_dict (additive, no openpyxl)",
+ "loader_validation_of_defaults": [],
+ "example_model_inputs_fragment": {
+  "schema_version": "1.0.0",
+  "generated_at": "1970-01-01T00:00:00+00:00",
+  "source": "igui_run_gui (Phase IGUI Task 4 assumptions, owner-gated)",
+  "assumptions": {
+   "mortality": {
+    "base_table": "HK_ASSURED_2021",
+    "base_multiplier": 1.0,
+    "improvement_rate": 0.01,
+    "improvement_floor": 0.0
+   },
+   "lapse": {
+    "base_lapse_rate": 0.05,
+    "base_surrender_rate": 0.03,
+    "dynamic_lapse_beta": 1.5,
+    "dynamic_lapse_itm_threshold": 1.0
+   },
+   "expenses": {
+    "per_policy": 50.0,
+    "pct_premium": 0.05,
+    "inflation_rate": 0.02
+   },
+   "premiums": {
+    "frequency": "annual",
+    "indexation_rate": 0.0
+   },
+   "discount": {
+    "mode": "flat",
+    "flat_rate": 0.03,
+    "curve": [
+     {
+      "tenor": 1.0,
+      "rate": 0.025
+     },
+     {
+      "tenor": 5.0,
+      "rate": 0.03
+     },
+     {
+      "tenor": 10.0,
+      "rate": 0.033
+     },
+     {
+      "tenor": 20.0,
+      "rate": 0.035
+     },
+     {
+      "tenor": 30.0,
+      "rate": 0.036
+     }
+    ]
+   },
+   "bonus": {
+    "declaration_strategy": "asset_share",
+    "reversionary_rate": 0.02,
+    "terminal_rate": 0.1,
+    "smoothing_factor": 0.3
+   },
+   "management_action": {
+    "relief_sigma": 1.0,
+    "relief_alpha": 0.5,
+    "dynamic_rule_enabled": true
+   },
+   "reinsurance": {
+    "type": "none",
+    "quota_share": 0.0,
+    "retention_limit": 0.0
+   },
+   "risk": {
+    "confidence": 0.995,
+    "benefit_share": 0.9
+   },
+   "governed_frozen_readback": {
+    "copula_df_single_t": 2.9451,
+    "grouped_t_df_nonfin": 37.866,
+    "grouped_t_df_fin": 8.506
+   }
+  }
+ },
+ "gate": {
+  "ok": true,
+  "n_checks": 25,
+  "n_pass": 25,
+  "checks": {
+   "assumptions_module_present": true,
+   "run_gui_present": true,
+   "loader_present": true,
+   "assumptions_module_stdlib_only": true,
+   "run_gui_serves_assumptions": true,
+   "run_gui_has_assumption_endpoints": true,
+   "run_gui_still_localhost": true,
+   "run_gui_prior_pages_intact": true,
+   "loader_has_assumptions_validator": true,
+   "schema_version_lockstep": true,
+   "defaults_normalise_clean": true,
+   "fragment_has_assumptions": true,
+   "fragment_passes_loader_validator": true,
+   "frozen_echo_is_governed": true,
+   "frozen_override_rejected": true,
+   "out_of_bounds_caught": true,
+   "bad_choice_rejected": true,
+   "bad_curve_tenor_rejected": true,
+   "default_curve_ok": true,
+   "page_self_contained": true,
+   "page_carries_headline": true,
+   "page_shows_frozen_readonly": true,
+   "page_groups_present": true,
+   "ui_app_byte_unchanged": true,
+   "no_external_refs_in_results_ui": true
+  },
+  "loader_validation_of_defaults": []
+ },
+ "self_test_ok": true,
+ "new_third_party_runtime_deps": 0,
+ "outbound_network_calls": 0
+}

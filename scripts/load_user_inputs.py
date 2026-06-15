@@ -594,6 +594,155 @@ def validate_portfolio_dict(payload: Dict[str, Any]) -> List[str]:
 
 
 
+
+# ----------------------------------------------------------------- assumptions (no-Excel) validator
+#: Governed / frozen dependence parameters - READ-ONLY. validate_assumptions_dict
+#: REJECTS any payload that tries to override these (Phase IGUI Task 4 owner-gating).
+GOVERNED_FROZEN_ASSUMPTIONS = {
+    "copula_df_single_t": 2.9451,
+    "grouped_t_df_nonfin": 37.866,
+    "grouped_t_df_fin": 8.506,
+}
+
+#: Authoritative assumption bounds (the GUI spec mirrors this; the Task-4 gate
+#: round-trips defaults through here so drift is caught). Each entry:
+#: dotted-key -> (lo, hi, lo_open, hi_open). 'choice' / 'bool' / 'text' handled separately.
+_ASSUMPTION_BOUNDS = {
+    "mortality.base_multiplier": (0.0, 5.0, True, False),
+    "mortality.improvement_rate": (0.0, 0.1, False, False),
+    "mortality.improvement_floor": (0.0, 1.0, False, False),
+    "lapse.base_lapse_rate": (0.0, 1.0, False, True),
+    "lapse.base_surrender_rate": (0.0, 1.0, False, True),
+    "lapse.dynamic_lapse_beta": (0.0, 10.0, False, False),
+    "lapse.dynamic_lapse_itm_threshold": (0.0, 5.0, True, False),
+    "expenses.per_policy": (0.0, 1e9, False, False),
+    "expenses.pct_premium": (0.0, 1.0, False, False),
+    "expenses.inflation_rate": (-0.1, 0.2, False, False),
+    "premiums.indexation_rate": (-0.1, 0.5, False, False),
+    "discount.flat_rate": (-0.1, 0.5, True, True),
+    "bonus.reversionary_rate": (0.0, 0.5, False, False),
+    "bonus.terminal_rate": (0.0, 2.0, False, False),
+    "bonus.smoothing_factor": (0.0, 1.0, False, False),
+    "management_action.relief_sigma": (0.0, 10.0, True, False),
+    "management_action.relief_alpha": (0.0, 1.0, True, False),
+    "reinsurance.quota_share": (0.0, 1.0, False, False),
+    "reinsurance.retention_limit": (0.0, 1e12, False, False),
+    "risk.confidence": (0.0, 1.0, True, True),
+    "risk.benefit_share": (0.0, 1.0, True, False),
+}
+_ASSUMPTION_CHOICES = {
+    "premiums.frequency": ("annual", "semiannual", "quarterly", "monthly", "single"),
+    "discount.mode": ("flat", "curve"),
+    "bonus.declaration_strategy": ("asset_share", "smoothed_bonus", "contribution_method", "fixed"),
+    "reinsurance.type": ("none", "quota_share", "surplus", "yrt"),
+}
+_ASSUMPTION_BOOLS = ("management_action.dynamic_rule_enabled",)
+
+
+def _dotted_get(d, dotted):
+    cur = d
+    for part in dotted.split("."):
+        if isinstance(cur, dict) and part in cur:
+            cur = cur[part]
+        else:
+            return None, False
+    return cur, True
+
+
+def validate_assumptions_dict(payload: Dict[str, Any]) -> List[str]:
+    """Validate a Phase IGUI Task-4 ``{assumptions}`` fragment WITHOUT openpyxl.
+
+    Purely additive: mirrors the assumption bounds/enums the GUI surfaces and is
+    the single round-trip gate every GUI payload passes fail-loud before a write
+    or run. OWNER-GATING: the governed-frozen dependence echo (copula df,
+    grouped-t dfs) is read-only - any value present that does not EXACTLY equal
+    the governed constant is rejected, so no GUI payload can change a governed
+    parameter. The Excel template path is unchanged."""
+    errors: List[str] = []
+    tab = "Assumptions"
+    if not isinstance(payload, dict):
+        return [_err(tab, "-", "assumptions", "payload must be a JSON object")]
+    a = payload.get("assumptions") if "assumptions" in payload else payload
+    if not isinstance(a, dict):
+        return [_err(tab, "-", "assumptions", "missing 'assumptions' object")]
+
+    for key, (lo, hi, lo_open, hi_open) in _ASSUMPTION_BOUNDS.items():
+        v, present = _dotted_get(a, key)
+        if not present:
+            errors.append(_err(tab, "-", key, "is required"))
+            continue
+        fv = _to_float(v)
+        ok = fv is not None
+        if ok:
+            ok = (fv > lo if lo_open else fv >= lo) and (fv < hi if hi_open else fv <= hi)
+        if not ok:
+            ival = "%s%s, %s%s" % ("(" if lo_open else "[", lo, hi, ")" if hi_open else "]")
+            errors.append(_err(tab, "-", key, "must be in %s, got %r" % (ival, v)))
+
+    for key, choices in _ASSUMPTION_CHOICES.items():
+        v, present = _dotted_get(a, key)
+        if not present:
+            errors.append(_err(tab, "-", key, "is required"))
+        elif _as_str(v) not in choices:
+            errors.append(_err(tab, "-", key, "must be one of %s, got %r" % (list(choices), v)))
+
+    for key in _ASSUMPTION_BOOLS:
+        v, present = _dotted_get(a, key)
+        if not present:
+            errors.append(_err(tab, "-", key, "is required"))
+        elif not isinstance(v, bool):
+            errors.append(_err(tab, "-", key, "must be a boolean, got %r" % (v,)))
+
+    # mortality.base_table: non-empty text
+    bt, present = _dotted_get(a, "mortality.base_table")
+    if not present or not _as_str(bt):
+        errors.append(_err(tab, "-", "mortality.base_table", "must be a non-empty string"))
+
+    # discount curve: when mode == 'curve', require >= 1 valid point; always validate any present
+    mode = _as_str((_dotted_get(a, "discount.mode") or (None, False))[0])
+    curve, has_curve = _dotted_get(a, "discount.curve")
+    if has_curve:
+        if not isinstance(curve, list):
+            errors.append(_err(tab, "-", "discount.curve", "must be a JSON array of {tenor, rate}"))
+        else:
+            for i, pt in enumerate(curve, 1):
+                if not isinstance(pt, dict):
+                    errors.append(_err(tab, "-", "discount.curve[%d]" % i, "must be an object"))
+                    continue
+                t = _to_float(pt.get("tenor"))
+                r = _to_float(pt.get("rate"))
+                if t is None or t <= 0:
+                    errors.append(_err(tab, "-", "discount.curve[%d].tenor" % i,
+                                       "must be a positive number, got %r" % pt.get("tenor")))
+                if r is None or not (-0.1 < r < 0.5):
+                    errors.append(_err(tab, "-", "discount.curve[%d].rate" % i,
+                                       "must be in (-0.1, 0.5), got %r" % pt.get("rate")))
+            if mode == "curve" and len([p for p in curve if isinstance(p, dict)]) == 0:
+                errors.append(_err(tab, "-", "discount.curve", "mode 'curve' requires at least one point"))
+    elif mode == "curve":
+        errors.append(_err(tab, "-", "discount.curve", "mode 'curve' requires a curve"))
+
+    # OWNER-GATING: governed-frozen echo must EQUAL the governed constants (no override).
+    frozen, has_frozen = _dotted_get(a, "governed_frozen_readback")
+    if has_frozen:
+        if not isinstance(frozen, dict):
+            errors.append(_err(tab, "-", "governed_frozen_readback", "must be the read-only governed echo"))
+        else:
+            for gk, gv in GOVERNED_FROZEN_ASSUMPTIONS.items():
+                if gk in frozen:
+                    fv = _to_float(frozen[gk])
+                    if fv is None or abs(fv - gv) > 1e-12:
+                        errors.append(_err(tab, "-", "governed_frozen_readback.%s" % gk,
+                                           "is governed/frozen and read-only (must equal %r, got %r); "
+                                           "GUI inputs may NOT change a governed parameter"
+                                           % (gv, frozen[gk])))
+            for extra in frozen:
+                if extra not in GOVERNED_FROZEN_ASSUMPTIONS:
+                    errors.append(_err(tab, "-", "governed_frozen_readback.%s" % extra,
+                                       "unknown governed-frozen key (read-only echo only)"))
+    return errors
+
+
 # ----------------------------------------------------------------- main API
 def load_user_inputs(template_path: str) -> Dict[str, Any]:
     """Parse + validate the template; return the normalised inputs dict.
