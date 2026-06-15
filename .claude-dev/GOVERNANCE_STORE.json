@@ -3192,6 +3192,23 @@
       "phase": "Post-Phase-IGUI: Model-Improvement Candidate Pre-Registration",
       "digest": "e016751458f4df27213ff9eed87ebbb4c7f907f0bad421f3f6b4fe35e9668e75",
       "corrects_entry_id": null
+    },
+    {
+      "entry_id": "8255951ece3a4e98b721c39cffb03323",
+      "timestamp": "2026-06-15T12:22:10.748973+00:00",
+      "entry_type": "GOVERNANCE",
+      "actor": "PostIGUITask4VarianceReductionStudy",
+      "description": "Governance event: ChangeRecord opened (OWNER_REVIEW) - Post-Phase-IGUI Task 4 MR-VR-1 variance reduction",
+      "details": {
+        "record_id": "f854f53132d0446a9178e4151e4a1b3a",
+        "change_type": "governance_change",
+        "status": "OWNER_REVIEW",
+        "candidate_id": "MR-VR-1",
+        "digest": "cc0c2fea2bf9b86db75f6239a9ba6e3e0a1577a1e1290e24ce13732eb0c0f0d7"
+      },
+      "phase": "Post-Phase-IGUI: Model-Improvement Candidate Implementation",
+      "digest": "2afcc937088a7779b1a61c6d1f26418e54e3ed273f161a540f75a4d589e41e58",
+      "corrects_entry_id": null
     }
   ],
   "change_records": [
@@ -10431,6 +10448,68 @@
         }
       ],
       "phase": "Post-Phase-IGUI: Model-Improvement Candidate Pre-Registration"
+    },
+    {
+      "record_id": "f854f53132d0446a9178e4151e4a1b3a",
+      "created_at": "2026-06-15T12:22:10.748918+00:00",
+      "title": "Post-Phase-IGUI Task 4 - implement MR-VR-1 inner-path antithetic/CRN/RQMC variance reduction for the TVOG estimator (gates G1-G6; efficiency-only, additive/disclosed, no parameter change)",
+      "description": "Implemented MR-VR-1: efficiency-only inner-path variance-reduction study on the TVOG estimator comparing crude i.i.d. Monte Carlo against antithetic pairing, common-random-numbers across the guarantee-on/off legs, and randomised-QMC (scrambled-Sobol) inner sampling, on the same governed outer states. Work-normalised variance-reduction ratios and effective-sample-size reported with >=200-replicate bootstrap CIs; antithetic/CRN/Sobol estimators demonstrated UNBIASED (replicate means within 0.5% of crude); antithetic DISCLOSED ineffective at the extreme 99.5% quantile, consistent with outer-basis precedents. Governed frozen-t headline recovered BIT-IDENTICAL (dev 0); the variance-reduced estimator is ADDITIVE/DISCLOSED. Indicated adoption dSCR REPORTED, NOT applied. Only the Monte-Carlo sampling scheme changes; no copula structure (Phase 30 stop-rule); MR-016/MR-017 untouched.",
+      "change_type": "governance_change",
+      "affected_components": [
+        "par_model_v2/projection/variance_reduction_diagnostics.py (NEW)",
+        "scripts/build_postigui_task4_variance_reduction.py (NEW)",
+        "tests/test_postigui_task4_variance_reduction.py (NEW)",
+        "docs/validation/POSTIGUI_TASK4_VARIANCE_REDUCTION.{json,md}",
+        "docs/POSTIGUI_TASK4_VARIANCE_REDUCTION_REPORT_CARD.md"
+      ],
+      "standard_references": [
+        "Glasserman (2004) Monte Carlo Methods in Financial Engineering, ch. 4 (variance reduction: antithetics, common random numbers)",
+        "L'Ecuyer (1994) Efficiency improvement and variance reduction; RQMC",
+        "Boyle, Broadie & Glasserman (1997) Monte Carlo methods for security pricing",
+        "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation)",
+        "IFoA Model Practice Note (MPN) section 4 (documentation, independent review)",
+        "Solvency II Delegated Regulation Article 124 (validation standards)"
+      ],
+      "before_snapshot": {
+        "candidate": "MR-VR-1",
+        "state": "pre-registered (Task 3 design note OWNER_REVIEW)",
+        "vr_efficacy_quantified": false
+      },
+      "after_snapshot": {
+        "candidate": "MR-VR-1",
+        "gate": "16/16",
+        "gate_ok": true,
+        "digest": "cc0c2fea2bf9b86db75f6239a9ba6e3e0a1577a1e1290e24ce13732eb0c0f0d7",
+        "vr_ratio_sobol_qmc": 2241.110863062624,
+        "vr_ratio_crn": 18.928995281417965,
+        "vr_ratio_antithetic": 1.8820746502840624,
+        "antithetic_tail_ratio_995": 1.3140298361262144,
+        "indicated_rel_dscr": -1.380833590586369e-05,
+        "indicated_applied": false,
+        "is_material": false,
+        "headline_bit_identical": true
+      },
+      "impact_assessment": "Governance/efficiency only. Quantifies, with CIs, how much inner-path Monte-Carlo variance the standard variance-reduction levers cut for the TVOG estimator; the governed headline does not move and no parameter is changed. The variance-reduced estimator is additive/disclosed; the indicated adoption dSCR is immaterial and NOT applied.",
+      "quantitative_impact": "Work-normalised VR ratios: Sobol-RQMC 2241.1x, CRN 18.93x, antithetic 1.88x (mean target); antithetic 1.31x at the 99.5% quantile (ineffective, disclosed). Indicated adoption dSCR -0.0014% of headline, NOT applied. Governed headline 39,975.654628 unchanged.",
+      "status": "OWNER_REVIEW",
+      "author": "PostIGUITask4VarianceReductionStudy",
+      "peer_reviewer": null,
+      "assumption_owner": null,
+      "sign_off_history": [
+        {
+          "timestamp": "2026-06-15T12:22:10.748945+00:00",
+          "actor": "PostIGUITask4VarianceReductionStudy",
+          "status": "PEER_REVIEW",
+          "comments": "MR-VR-1 variance-reduction study implemented; gates G1-G6 green; unit tests added."
+        },
+        {
+          "timestamp": "2026-06-15T12:22:10.748956+00:00",
+          "actor": "PostIGUITask4VarianceReductionStudy",
+          "status": "OWNER_REVIEW",
+          "comments": "Owner review: efficiency-only; governed headline bit-identical; indicated adoption dSCR REPORTED, not applied."
+        }
+      ],
+      "phase": "Post-Phase-IGUI: Model-Improvement Candidate Implementation"
     }
   ],
   "risk_register": [

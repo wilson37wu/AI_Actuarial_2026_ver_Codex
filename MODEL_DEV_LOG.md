@@ -10373,3 +10373,37 @@ Design-note-first, governance-only cycle. Pre-registered **exactly ONE** stochas
 **Verdict:** Post-Phase-IGUI Task 3 COMPLETE. **Next single in_progress:** Post-Phase-IGUI Task 4 - implement MR-VR-1 under gates G1-G6, OR pivot to packaging A/B/C build-spec / offline-UI usability if the owner so directs.
 
 ---
+
+---
+
+## 2026-06-15 - Post-Phase-IGUI Task 4 COMPLETE (MR-VR-1 inner-path variance reduction)
+
+**Verdict:** Post-Phase-IGUI Task 4 COMPLETE. Implemented candidate MR-VR-1 (inner-path
+antithetic/CRN/RQMC variance reduction for the TVOG estimator) under the six pre-registered
+gates G1-G6 frozen by the Task 3 design note. validate 16/16; unit tests 11/11; full postigui
+regression (task1/2/3/4) green.
+
+Work-normalised variance-reduction ratios with >=200-replicate bootstrap CIs (mean-TVOG
+target): Sobol-RQMC 2241x, CRN 18.9x, antithetic 1.88x. At the extreme 99.5% capital
+quantile antithetic is 1.31x (< 1.5x), DISCLOSED ineffective and consistent with the recorded
+outer-basis antithetic precedents (0.72x-0.78x). Antithetic/CRN/Sobol estimators UNBIASED
+(replicate means within 0.5% of crude). Governed frozen-t component headline
+39,975.654628199336 recovered BIT-IDENTICAL (dev 0); the variance-reduced estimator is
+additive/disclosed and never replaces production. Indicated adoption dSCR -0.0014% of headline
+-> immaterial, REPORTED NOT applied (G5 report-not-apply). Slice-stable SeedSequence-spawn
+inner shocks; idempotent digest cc0c2fea2bf9b86db75f6239a9ba6e3e0a1577a1e1290e24ce13732eb0c0f0d7.
+
+NEW: par_model_v2/projection/variance_reduction_diagnostics.py,
+scripts/build_postigui_task4_variance_reduction.py,
+tests/test_postigui_task4_variance_reduction.py, docs/validation/POSTIGUI_TASK4_VARIANCE_REDUCTION.{json,md},
+docs/POSTIGUI_TASK4_VARIANCE_REDUCTION_REPORT_CARD.md. ChangeRecord f854f53132d0446a9178e4151e4a1b3a
+governance_change OWNER_REVIEW (records 113->114, audit 141->142, integrity verify_all True;
+governance re-run idempotent). No model parameter change; no copula structure (Phase 30
+stop-rule); MR-016/MR-017 untouched; ui_app.html byte-unchanged.
+
+Coordination: agent_lock.py false-ACQUIRED when git identity unset (commit no-ops, no-op push
+returns 0) - fixed this cycle by setting user.email/user.name and pushing the real lock
+(origin/main fffac0b); flagged for hardening of _write_commit_push.
+
+**Next single in_progress:** Post-Phase-IGUI Task 5 - ADDITIVE offline-UI efficiency panel for
+the VR study (model-output-only), OR owner pivot to MR-LONGEV-1 (owner sign-off) / packaging A/B/C.
