@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T03:09Z-a94f",
-  "started_at": "2026-06-15T03:09:12Z",
-  "ttl_minutes": 120,
-  "task": "Phase IGUI Task 5 (ESG input domain, stop-rule-bounded)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T03:19:59Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
