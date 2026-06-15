@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-15T09:16:14Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-15T10:09Z-d393",
+  "started_at": "2026-06-15T10:09:13Z",
+  "ttl_minutes": 120,
+  "task": "Post-Phase-IGUI Task 2 - implement MR-CAL-1 calibration-residual diagnostics (G1-G6)",
+  "note": ""
 }
