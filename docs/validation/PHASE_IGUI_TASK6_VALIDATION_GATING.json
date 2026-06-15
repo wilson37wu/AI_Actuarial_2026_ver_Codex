@@ -1,0 +1,171 @@
+{
+ "doc_id": "PHASE_IGUI_TASK6_VALIDATION_GATING",
+ "doc_version": "1.0.0",
+ "generated_at": "2026-06-15T04:17:43.500215+00:00",
+ "task": "Phase IGUI Task 6 - validation surfacing + governance gating before run",
+ "domain": "D5_validation_gating",
+ "governed_headline": "39,975.654628199336",
+ "schema_version": "1.0.0",
+ "ui_app_sha256_frozen": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+ "frozen_copula_structure": "single_t_grouped_FROZEN",
+ "domains_gated": [
+  {
+   "id": "run_controls",
+   "label": "Run controls (Task 2)"
+  },
+  {
+   "id": "model_points",
+   "label": "Model points / in-force (Task 3)"
+  },
+  {
+   "id": "assumptions",
+   "label": "Assumptions (Task 4)"
+  },
+  {
+   "id": "esg",
+   "label": "Economic scenarios / ESG (Task 5)"
+  }
+ ],
+ "capabilities": [
+  "AGGREGATE loader-side validator scripts/load_user_inputs.validate_assembled_inputs: routes the WHOLE assembled model_inputs.json through every per-domain dict validator (run controls, model points, assumptions, ESG) and returns a per-domain {present, ok, errors} summary + overall verdict; a domain that has not been saved is reported missing so an INCOMPLETE set can never clear.",
+  "VALIDATION SURFACING: a self-contained gate page (GET /run-gate) renders per-domain PASS/FAIL with every fail-loud loader issue; it POSTs /preflight (read-only aggregate validation) on load.",
+  "GOVERNANCE GATING: the Run action is BLOCKED until ALL domains are present and clean; POST /run records a governance run-gate (ChangeRecord-style provenance: decision CLEARED/BLOCKED, per-domain summary, blocking issues, governed headline + read-only frozen copula structure) plus a deterministic run-level reproducibility digest into model_inputs.json. A BLOCKED gate writes nothing.",
+  "Records readiness only; model execution + results handoff are Task 7. The Phase 30 stop-rule is honoured (frozen structure echoed read-only); the MR-016/MR-017 owner decision is not pre-empted."
+ ],
+ "new_runner_routes": [
+  "GET /run-gate",
+  "POST /preflight",
+  "POST /run"
+ ],
+ "loader_validator": "validate_assembled_inputs (additive, no openpyxl)",
+ "example_clean_gate": {
+  "record_type": "RUN_GATE",
+  "doc_id": "PHASE_IGUI_TASK6_VALIDATION_GATING",
+  "doc_version": "1.0.0",
+  "generated_at": "1970-01-01T00:00:00+00:00",
+  "decision": "CLEARED",
+  "run_permitted": true,
+  "schema_version": "1.0.0",
+  "reproducibility_digest": "sha256:64682554635eda0561a118a57d8b8600e02fb4c2ca8f67e145ce9c97773efa81",
+  "governed_headline": "39,975.654628199336",
+  "frozen_copula_structure": "single_t_grouped_FROZEN",
+  "domains": {
+   "run_controls": {
+    "label": "Run controls (Task 2)",
+    "present": true,
+    "ok": true,
+    "n_errors": 0
+   },
+   "model_points": {
+    "label": "Model points / in-force (Task 3)",
+    "present": true,
+    "ok": true,
+    "n_errors": 0
+   },
+   "assumptions": {
+    "label": "Assumptions (Task 4)",
+    "present": true,
+    "ok": true,
+    "n_errors": 0
+   },
+   "esg": {
+    "label": "Economic scenarios / ESG (Task 5)",
+    "present": true,
+    "ok": true,
+    "n_errors": 0
+   }
+  },
+  "n_blocking_issues": 0,
+  "blocking_issues": [],
+  "provenance": {
+   "source": "igui_run_gui (Phase IGUI Task 6 validation gating)",
+   "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+   "note": "Run gate records readiness + reproducibility provenance only; model execution and results handoff are Task 7."
+  }
+ },
+ "example_blocked_gate": {
+  "record_type": "RUN_GATE",
+  "doc_id": "PHASE_IGUI_TASK6_VALIDATION_GATING",
+  "doc_version": "1.0.0",
+  "generated_at": "1970-01-01T00:00:00+00:00",
+  "decision": "BLOCKED",
+  "run_permitted": false,
+  "schema_version": "1.0.0",
+  "reproducibility_digest": "sha256:274e8d14d654bb72bf3fe905f269bb39dc2e9b16e6feb7dd96ed804174149e75",
+  "governed_headline": "39,975.654628199336",
+  "frozen_copula_structure": "single_t_grouped_FROZEN",
+  "domains": {
+   "run_controls": {
+    "label": "Run controls (Task 2)",
+    "present": true,
+    "ok": true,
+    "n_errors": 0
+   },
+   "model_points": {
+    "label": "Model points / in-force (Task 3)",
+    "present": true,
+    "ok": true,
+    "n_errors": 0
+   },
+   "assumptions": {
+    "label": "Assumptions (Task 4)",
+    "present": true,
+    "ok": true,
+    "n_errors": 0
+   },
+   "esg": {
+    "label": "Economic scenarios / ESG (Task 5)",
+    "present": false,
+    "ok": false,
+    "n_errors": 1
+   }
+  },
+  "n_blocking_issues": 1,
+  "blocking_issues": [
+   "[esg] Tab 'esg', row -, field '-': domain missing - supply & save it in the GUI before running"
+  ],
+  "provenance": {
+   "source": "igui_run_gui (Phase IGUI Task 6 validation gating)",
+   "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+   "note": "Run gate records readiness + reproducibility provenance only; model execution and results handoff are Task 7."
+  }
+ },
+ "clean_inputs_digest": "sha256:64682554635eda0561a118a57d8b8600e02fb4c2ca8f67e145ce9c97773efa81",
+ "gate": {
+  "ok": true,
+  "n_checks": 27,
+  "n_pass": 27,
+  "checks": {
+   "gating_module_present": true,
+   "run_gui_present": true,
+   "loader_present": true,
+   "gating_module_stdlib_only": true,
+   "run_gui_serves_run_gate": true,
+   "run_gui_has_gate_endpoints": true,
+   "run_gui_still_localhost": true,
+   "run_gui_prior_pages_intact": true,
+   "loader_has_aggregate_validator": true,
+   "schema_version_lockstep": true,
+   "ui_app_byte_unchanged": true,
+   "clean_inputs_clear": true,
+   "clean_gate_decision_cleared": true,
+   "gate_has_digest": true,
+   "gate_echoes_frozen_structure": true,
+   "gate_carries_headline": true,
+   "incomplete_inputs_blocked": true,
+   "incomplete_gate_decision_blocked": true,
+   "invalid_field_blocked": true,
+   "digest_deterministic": true,
+   "digest_sensitive_to_inputs": true,
+   "digest_ignores_timestamp": true,
+   "loader_validate_assembled_present": true,
+   "page_self_contained": true,
+   "page_carries_headline": true,
+   "page_shows_frozen_structure": true,
+   "page_blocks_run_by_default": true
+  }
+ },
+ "self_test_ok": true,
+ "new_third_party_runtime_deps": 0,
+ "outbound_network_calls": 0
+}

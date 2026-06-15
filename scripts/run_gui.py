@@ -68,6 +68,11 @@ from par_model_v2.viewer.igui_esg import (  # noqa: E402  (Task 5)
     esg_to_model_inputs,
     render_esg_html,
 )
+from par_model_v2.viewer.igui_validation_gating import (  # noqa: E402  (Task 6)
+    render_gate_html,
+    aggregate_validation,
+    build_run_gate,
+)
 
 HOST = "127.0.0.1"  # localhost ONLY (never a wildcard bind); no outbound network
 
@@ -295,6 +300,51 @@ def _merge_esg_into_model_inputs(out_path, fragment):
     return base
 
 
+def _read_model_inputs(out_path):
+    """Best-effort read of the assembled model_inputs.json (empty dict if absent
+    or unreadable - the aggregate validator then reports every domain missing)."""
+    if out_path and os.path.exists(out_path):
+        try:
+            with open(out_path, encoding="utf-8") as fh:
+                return json.load(fh)
+        except (OSError, json.JSONDecodeError):
+            return {}
+    return {}
+
+
+def build_preflight_response(out_path):
+    """Read-only aggregate validation of the assembled model_inputs.json across ALL
+    domains (run controls, model points, assumptions, ESG), routed through the REAL
+    loader. No write; surfaces every issue for the gate page."""
+    import load_user_inputs  # scripts/load_user_inputs.py
+    return aggregate_validation(_read_model_inputs(out_path), load_user_inputs)
+
+
+def build_run_gate_response(out_path, *, do_write=False):
+    """The Task-6 RUN GATE: aggregate-validate the assembled inputs; if-and-only-if
+    every domain is present AND clean, record a governance gate (ChangeRecord-style
+    provenance) + a run-level reproducibility digest into model_inputs.json. A
+    BLOCKED gate writes nothing. This records readiness only; it does NOT execute
+    the model (that is Task 7)."""
+    import load_user_inputs  # scripts/load_user_inputs.py
+    mi = _read_model_inputs(out_path)
+    validation = aggregate_validation(mi, load_user_inputs)
+    gate = build_run_gate(mi, validation)
+    if not validation.get("ok"):
+        return {"ok": False, "stage": "run_gate_blocked",
+                "validation": validation, "run_gate": gate}
+    result = {"ok": True, "stage": "run_gate_cleared",
+              "validation": validation, "run_gate": gate}
+    if do_write and out_path and os.path.exists(out_path):
+        mi["run_gate"] = gate
+        with open(out_path, "w", encoding="utf-8") as fh:
+            json.dump(mi, fh, indent=1)
+        with open(out_path, "r", encoding="utf-8") as fh:
+            json.load(fh)  # re-parse guard: never hand a corrupt file downstream
+        result["written"] = os.path.abspath(out_path)
+    return result
+
+
 class _Handler(BaseHTTPRequestHandler):
     server_version = "IGUIRunGui/1.0"
     out_path = "model_inputs.json"
@@ -317,9 +367,11 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(200, render_assumptions_html(), "text/html")
         elif self.path in ("/esg", "/esg.html"):
             self._send(200, render_esg_html(), "text/html")
+        elif self.path in ("/run-gate", "/run-gate.html"):
+            self._send(200, render_gate_html(), "text/html")
         elif self.path == "/healthz":
             self._send(200, json.dumps({"ok": True, "host": HOST,
-                                        "task": "Phase IGUI Task 5 ESG"}))
+                                        "task": "Phase IGUI Task 6 validation gating"}))
         else:
             self._send(404, json.dumps({"ok": False, "error": "not found"}))
 
@@ -333,7 +385,7 @@ class _Handler(BaseHTTPRequestHandler):
 
     _POST_ROUTES = ("/validate", "/save", "/validate_portfolio", "/save_portfolio",
                     "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions",
-                    "/validate_esg", "/save_esg")
+                    "/validate_esg", "/save_esg", "/preflight", "/run")
 
     def do_POST(self):
         if self.path not in self._POST_ROUTES:
@@ -359,6 +411,10 @@ class _Handler(BaseHTTPRequestHandler):
                 res = build_esg_response(
                     payload, out_path=self.out_path,
                     do_write=(self.path == "/save_esg"))
+            elif self.path == "/preflight":
+                res = build_preflight_response(self.out_path)
+            elif self.path == "/run":
+                res = build_run_gate_response(self.out_path, do_write=True)
             elif self.path == "/reconcile":
                 res = build_reconcile_response(payload)
             else:  # /ingest
@@ -511,6 +567,30 @@ def self_test(out_path=None) -> int:
             saved = json.load(fh)
         ok &= ("esg" in saved and "assumptions" in saved and "portfolio" in saved
                and "run_settings" in saved)  # merge preserved Tasks 2-4
+
+        # --- Task 6: validation gating page + preflight/run endpoints ---
+        with urllib.request.urlopen(base + "/run-gate", timeout=5) as r:
+            gp = r.read().decode("utf-8")
+            ok &= (r.status == 200 and "Run Gate" in gp and "39,975.654628199336" in gp
+                   and "single_t_grouped_FROZEN" in gp and 'id="btn-run" disabled' in gp)
+        # the fully-populated tmp (all four domains saved above) must CLEAR
+        preq = urllib.request.Request(base + "/preflight", data=b"{}",
+                                      headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(preq, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            ok &= bool(j.get("ok")) and all(
+                j["domains"][d]["ok"] for d in
+                ("run_controls", "model_points", "assumptions", "esg"))
+        # /run records the gate + digest into model_inputs.json
+        rreq = urllib.request.Request(base + "/run", data=b"{}",
+                                      headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(rreq, timeout=5) as r:
+            j = json.loads(r.read().decode("utf-8"))
+            ok &= (bool(j.get("ok")) and j["run_gate"]["decision"] == "CLEARED"
+                   and j["run_gate"]["reproducibility_digest"].startswith("sha256:"))
+        with open(tmp, encoding="utf-8") as fh:
+            saved = json.load(fh)
+        ok &= ("run_gate" in saved and saved["run_gate"]["run_permitted"] is True)
     finally:
         srv.shutdown()
         srv.server_close()
@@ -530,11 +610,12 @@ def main(argv=None) -> int:
     srv = make_server(args.port, args.out)
     host, port = srv.server_address
     url = "http://%s:%d/" % (host, port)
-    print("Actuarial Input & Run GUI (Phase IGUI Task 5) serving at %s" % url)
+    print("Actuarial Input & Run GUI (Phase IGUI Task 6) serving at %s" % url)
     print("  - run controls: %s" % url)
     print("  - model points + in-force: %smodel-points" % url)
     print("  - assumptions (owner-gated): %sassumptions" % url)
     print("  - economic scenarios / ESG (stop-rule-bounded): %sesg" % url)
+    print("  - validation & run gate: %srun-gate" % url)
     print("  - localhost only, offline; writes %s on Save." % os.path.abspath(args.out))
     if not args.no_browser:
         try:

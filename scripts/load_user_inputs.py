@@ -871,6 +871,67 @@ def validate_esg_dict(payload: Dict[str, Any]) -> List[str]:
 
 
 # ----------------------------------------------------------------- main API
+# ------------------------------------------- aggregate (no-Excel) gating validator
+#: GUI input domains, in collection order; every one must be present AND clean
+#: before the Phase IGUI run gate (Task 6) may clear.
+GUI_INPUT_DOMAINS = ("run_controls", "model_points", "assumptions", "esg")
+
+
+def _gui_domain_present(model_inputs: Dict[str, Any], domain: str) -> bool:
+    """A domain counts as PRESENT once its primary block has been saved by the GUI."""
+    if domain == "run_controls":
+        return bool(model_inputs.get("currency")) and bool(model_inputs.get("run_settings"))
+    if domain == "model_points":
+        return bool(model_inputs.get("portfolio")) and (model_inputs.get("balance_sheet") is not None)
+    if domain == "assumptions":
+        return bool(model_inputs.get("assumptions"))
+    if domain == "esg":
+        return bool(model_inputs.get("esg"))
+    return False
+
+
+def validate_assembled_inputs(model_inputs: Dict[str, Any]) -> Dict[str, Any]:
+    """Aggregate, fail-loud validation of an ASSEMBLED model_inputs dict across ALL
+    GUI input domains (run controls, model points, assumptions, ESG). Each domain
+    is routed through its existing per-domain dict validator (which reads only its
+    own sub-keys), so the result mirrors EXACTLY what the loader would reject.
+
+    Returns::
+
+        {"ok": bool,
+         "domains": {domain: {"present": bool, "ok": bool, "errors": [str, ...]}},
+         "n_errors": int}
+
+    A domain that has not been saved yet is reported ``present=False, ok=False``
+    with a single "domain missing" issue, so an INCOMPLETE input set can never
+    clear the run gate. Purely additive; no openpyxl needed; the Excel path and
+    the per-domain validators above are unchanged. This is the single source of
+    truth the Phase IGUI Task-6 validation-gating layer surfaces and gates on.
+    """
+    if not isinstance(model_inputs, dict):
+        return {"ok": False, "domains": {}, "n_errors": 1,
+                "errors": ["model_inputs must be a JSON object"]}
+    validators = {
+        "run_controls": validate_run_controls_dict,
+        "model_points": validate_portfolio_dict,
+        "assumptions": validate_assumptions_dict,
+        "esg": validate_esg_dict,
+    }
+    domains: Dict[str, Any] = {}
+    total = 0
+    for d in GUI_INPUT_DOMAINS:
+        present = _gui_domain_present(model_inputs, d)
+        if not present:
+            errs = [_err(d, "-", "-",
+                         "domain missing - supply & save it in the GUI before running")]
+        else:
+            errs = validators[d](model_inputs)
+        domains[d] = {"present": present, "ok": (present and not errs), "errors": errs}
+        total += len(errs)
+    overall = all(v["ok"] for v in domains.values())
+    return {"ok": overall, "domains": domains, "n_errors": total}
+
+
 def load_user_inputs(template_path: str) -> Dict[str, Any]:
     """Parse + validate the template; return the normalised inputs dict.
 
