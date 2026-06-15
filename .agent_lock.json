@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-15T13:07Z-100b",
-  "started_at": "2026-06-15T13:07:33Z",
-  "ttl_minutes": 120,
-  "task": "Post-Phase-IGUI Task 5: offline-UI VR efficiency panel (model-output-only)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-15T13:31:24Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
