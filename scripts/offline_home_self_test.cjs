@@ -35,6 +35,12 @@ ok("provenance object set", dom.window.__OFFLINE_HOME__ &&
    dom.window.__OFFLINE_HOME__.headline === 39975.654628199336);
 ok("ZERO network calls", net.length === 0);
 ok("ZERO JS errors", errors.length === 0);
+// snapshot-loader (additive, zero-network) elements present & wired
+ok("loader drop zone", !!doc.getElementById("drop"));
+ok("loader file input", !!doc.getElementById("file"));
+ok("loader reset button", !!doc.getElementById("reset"));
+ok("loader banner region", !!doc.getElementById("lbanner"));
+ok("updatable header ids", !!doc.getElementById("hv") && !!doc.getElementById("hc") && !!doc.getElementById("hs"));
 
 const failed = checks.filter(c => !c.pass);
 const result = { ok: failed.length === 0, checks: checks.length,

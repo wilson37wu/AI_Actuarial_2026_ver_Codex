@@ -10728,3 +10728,27 @@ self-tests not runnable in sandbox (virtiofs `require(jsdom)` >40 s; `/sessions`
 
 Model frontier UNCHANGED = owner pivot (MR-LONGEV-1 / LSMC sign-off; Option-A
 publish cert+channel; or freeze).
+
+---
+
+## 2026-06-16T18:20Z — Window #19 (claude, 18:00 UTC) — Offline-UI snapshot-loader
+
+**Task (one):** NEXT-EXECUTION POINTER option (a) — zero-network snapshot-loader for `offline_home.html`.
+
+A drag/click loader reads a user-chosen `ui_data.json` **locally** (`FileReader`, no upload, no network)
+and re-renders the 8 headline governed figures + header (version/contract/snapshot). In-page JS extraction
+mirrors the Python figure mapping; Reset restores the built-in governed snapshot; graceful error banners on
+parse/shape failure.
+
+**Decision-neutral:** `ui_app.html` `d82c65ec…` BYTE-UNCHANGED; governed headline 39975.654628199336 intact;
+NO `ui_data` contract change (stays 1.23.0); 0 external refs.
+
+**Verification (EXECUTED):** `build_offline_home_validate.py` 19/19 ok:true (+5 loader checks); NEW
+`offline_home_loader_parity.cjs` 10/10 ok:true (JS loader == baked figures, byte-identical from `ui_data.json`);
+`py_compile` clean; build 0 external refs. jsdom self-test (+5 loader checks) shipped for CI, not runnable in
+sandbox (jsdom absent).
+
+**Files:** `offline_home.html`, `scripts/build_offline_home.py`, `scripts/build_offline_home_validate.py`,
+`scripts/offline_home_self_test.cjs`, `scripts/offline_home_loader_parity.cjs` (new).
+
+**Model frontier:** STILL OWNER PIVOT (~12 windows) — no model-form change auto-ran.

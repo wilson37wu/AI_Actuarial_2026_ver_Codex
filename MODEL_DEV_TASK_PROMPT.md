@@ -31,6 +31,27 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-16 (18:00 UTC window, claude) — OFFLINE-UI SNAPSHOT-LOADER SHIPPED (additive, zero-network).**
+> Executed NEXT-EXECUTION POINTER option (a): `offline_home.html` now has a zero-network drag/click
+> snapshot-loader. A user can load a DIFFERENT `ui_data.json` and the 8 headline governed figures + the
+> header (model version / contract / snapshot) re-render LOCALLY via the `FileReader` API — no upload, no
+> network, no install. The in-page JS extraction MIRRORS the Python figure mapping in
+> `scripts/build_offline_home.py`; a Reset button restores the built-in governed snapshot; parse/shape
+> errors fall back gracefully. ADDITIVE & decision-neutral: `ui_app.html` sha256 `d82c65ec…` BYTE-UNCHANGED;
+> governed headline 39,975.654628199336 intact; NO `ui_data` contract change (it stays 1.23.0); 0 external
+> refs. Verification (EXECUTED): `build_offline_home_validate.py` 19/19 ok:true (+5 loader checks); NEW
+> `scripts/offline_home_loader_parity.cjs` 10/10 ok:true (JS loader reproduces the baked governed figures
+> byte-identically from `ui_data.json`); py_compile clean. jsdom live self-test (+5 loader checks) shipped
+> for CI but NOT runnable in sandbox (jsdom absent) — env cap, not a regression. Lock 4b3a71f->b177863.
+>
+> **NEXT-EXECUTION POINTER (offline-UI track, decision-neutral, auto-admissible):** option (a) is DONE.
+> The next single in_progress item should continue the zero-install offline-UI usability track WITHOUT
+> touching governed artifacts or the `ui_data` contract. Pick ONE: (b) a printable one-page "model summary
+> card" generated from `ui_data.json`; (c) consolidate the four result views' descriptions + a short "which
+> view do I want?" chooser. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC sign-off; Option-A
+> publish cert+channel; or declare frontier complete & freeze). Authoritative in_progress pointer =
+> `.claude-dev/MODEL_DEV_STATE.json`.
+
 > **2026-06-16 (18:00 UTC window, claude) — OFFLINE-UI LANDING PAGE SHIPPED (additive, decision-neutral).**
 > After 17 owner-pivot verify-only windows, pivoted to BUILD per the standing owner offline-UI directive.
 > Shipped `offline_home.html` — a single zero-install landing page that links all four offline result views

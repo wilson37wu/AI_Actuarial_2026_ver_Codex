@@ -10,6 +10,13 @@ existing offline views so a non-technical user has one obvious place to start.
 
 It recomputes NOTHING. It alters no governed artifact (ui_app.html untouched) and
 introduces no ui_data contract change (it is a separate file). stdlib only.
+
+Offline snapshot-loader (added 2026-06-16, claude window): an ADDITIVE, zero-network
+drag/click loader lets a user point the page at a DIFFERENT ui_data.json and see the
+headline figures refresh. The file is read locally via the FileReader API (no upload,
+no network); the JS extraction MIRRORS the Python ``figures`` mapping below so the
+loaded snapshot renders by the same rules. The built-in governed snapshot remains the
+default and is restored by a Reset button -- graceful fallback on any parse/shape error.
 """
 from __future__ import annotations
 import json, html, datetime, hashlib, sys
@@ -37,6 +44,160 @@ VIEWS = [
      "only); your run renders into a separate copy and never edits the governed "
      "template.", False),
 ]
+
+# --- Snapshot loader assets (kept OUT of the f-string so JS braces need no escaping) ---
+LOADER_CSS = """
+  .loader { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:15px 16px; margin-top:8px; }
+  .drop { border:1.5px dashed #2f4660; border-radius:9px; padding:16px; text-align:center;
+    color:var(--mut); font-size:13.5px; cursor:pointer;
+    transition:border-color .15s, background .15s; }
+  .drop:hover, .drop.hover { border-color:var(--acc); background:#0c141d; }
+  .drop b { color:var(--ink); }
+  .lbtns { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
+  .btn { background:#0c141d; color:var(--ink); border:1px solid var(--line);
+    border-radius:7px; padding:7px 13px; font-size:13px; cursor:pointer; }
+  .btn:hover { border-color:var(--acc); }
+  .lbanner { margin-top:10px; font-size:12.5px; padding:8px 11px; border-radius:7px;
+    display:none; }
+  .lbanner.ok { display:block; background:#11321f; color:var(--ok);
+    border:1px solid #1c5436; }
+  .lbanner.err { display:block; background:#3a1414; color:#ff8f8f;
+    border:1px solid #5a1f1f; }
+  .fig.changed { outline:1px solid var(--acc); outline-offset:-1px; }"""
+
+LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
+  <div class="loader" id="loader">
+    <div class="drop" id="drop" tabindex="0" role="button"
+      aria-label="Load a different ui_data.json snapshot from this computer">
+      Drag a <b>ui_data.json</b> here, or <b>click to choose a file</b>, to refresh the
+      figures above from a different model-output snapshot.<br/>
+      <span style="font-size:12px">Stays fully offline &mdash; the file is read locally in
+      your browser; nothing leaves this computer.</span>
+      <input type="file" id="file" accept=".json,application/json" style="display:none"/>
+    </div>
+    <div class="lbtns">
+      <button class="btn" id="reset" type="button">Reset to built-in snapshot</button>
+    </div>
+    <div class="lbanner" id="lbanner" role="status" aria-live="polite"></div>
+  </div>
+  <p class="sub" style="margin-top:8px; font-size:12.5px;">Loading a snapshot only
+    re-renders the figures on this page from that file. It changes no governed artifact
+    and uploads nothing; Reset restores the built-in governed snapshot.</p>
+"""
+
+LOADER_JS = """
+<script>
+// Additive offline snapshot-loader. ZERO network: the chosen file is read locally via
+// FileReader. Mirrors the Python figure mapping so a loaded ui_data.json renders by the
+// same rules. Built-in governed snapshot stays the default (Reset restores it).
+(function(){
+  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"" };
+  function fmt(x, dp){
+    if (x === null || x === undefined) return "None";
+    var n = Number(x);
+    if (isFinite(n)) return n.toLocaleString("en-US",
+      { minimumFractionDigits:dp, maximumFractionDigits:dp });
+    return String(x);
+  }
+  function extract(d){
+    var meta = d.meta || {}, cap = d.capital || {}, s = d.summary || {};
+    var cur = ((meta.currency || {}).symbol) || "";
+    var hl = null;
+    try { hl = d.owner_decision_p31.evidence_pack.governed_headline.value; } catch(e){}
+    return {
+      figs: [
+        ["Governed headline SCR component (frozen-t)", cur + fmt(hl, 2)],
+        ["Nested 99.5% SCR", cur + fmt(cap.nested_scr, 0)],
+        ["Var-covar / correlated SCR", cur + fmt(cap.correlated_scr, 0)],
+        ["Standalone sum (pre-diversification)", cur + fmt(cap.standalone_sum, 0)],
+        ["Diversification benefit (nested)", cur + fmt(cap.div_benefit_nested, 0)],
+        ["Risk drivers (calibrated)", fmt(s.calibrated_drivers, 0)],
+        ["Deployment gates cleared", String(s.gates_cleared) + "/" + String(s.gates_total)],
+        ["Tasks complete", String(s.tasks_completed) + "/" + String(s.tasks_total)]
+      ],
+      mv: (meta.model_version != null ? String(meta.model_version) : ""),
+      cv: (d.contract_version != null ? String(d.contract_version) : ""),
+      snap: (meta.generated_utc != null ? String(meta.generated_utc) : "")
+    };
+  }
+  function esc(s){ var e = document.createElement("div"); e.textContent = String(s); return e.innerHTML; }
+  function setText(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; }
+  function render(ex, fromLoad){
+    var figs = document.getElementById("figs");
+    var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
+    figs.innerHTML = ex.figs.map(function(p, i){
+      var changed = fromLoad && prev[i] !== undefined && prev[i] !== p[1];
+      return '<div class="fig' + (changed ? ' changed' : '') + '"><span class="fl">' +
+        esc(p[0]) + '</span><span class="fv">' + esc(p[1]) + '</span></div>';
+    }).join("");
+    setText("hv", ex.mv); setText("hc", ex.cv); setText("hs", ex.snap);
+  }
+  function banner(kind, msg){
+    var b = document.getElementById("lbanner");
+    if (b){ b.className = "lbanner " + kind; b.textContent = msg; }
+  }
+  function looksLikeSnapshot(d){
+    return d && typeof d === "object" &&
+      (d.summary || d.capital || d.owner_decision_p31 || d.contract_version);
+  }
+  function loadText(text, name){
+    var d;
+    try { d = JSON.parse(text); }
+    catch(e){ banner("err", "Could not parse " + name + ": not valid JSON (" + e.message +
+      "). Figures unchanged."); return; }
+    if (!looksLikeSnapshot(d)){ banner("err", name + " does not look like a ui_data.json " +
+      "snapshot (no summary / capital / contract_version). Figures unchanged."); return; }
+    try {
+      render(extract(d), true);
+      var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
+      banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
+        "governed snapshot unchanged \\u2014 click Reset to restore.");
+    } catch(e){ banner("err", "Failed to render " + name + ": " + e.message +
+      ". Figures unchanged."); }
+  }
+  document.addEventListener("DOMContentLoaded", function(){
+    var figs = document.getElementById("figs");
+    if (!figs) return;
+    DEFAULT.figsHTML = figs.innerHTML;
+    DEFAULT.hv = (document.getElementById("hv") || {}).textContent || "";
+    DEFAULT.hc = (document.getElementById("hc") || {}).textContent || "";
+    DEFAULT.hs = (document.getElementById("hs") || {}).textContent || "";
+    var drop = document.getElementById("drop"), file = document.getElementById("file");
+    if (!drop || !file) return;
+    function readFile(f){
+      if (!f) return;
+      var r = new FileReader();
+      r.onload = function(){ loadText(String(r.result), f.name); };
+      r.onerror = function(){ banner("err", "Could not read the file. Figures unchanged."); };
+      r.readAsText(f);
+    }
+    drop.addEventListener("click", function(){ file.click(); });
+    drop.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " "){ e.preventDefault(); file.click(); }
+    });
+    file.addEventListener("change", function(){ readFile(file.files && file.files[0]); });
+    ["dragenter","dragover"].forEach(function(ev){
+      drop.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation();
+        drop.classList.add("hover"); });
+    });
+    ["dragleave","drop"].forEach(function(ev){
+      drop.addEventListener(ev, function(e){ e.preventDefault(); e.stopPropagation();
+        drop.classList.remove("hover"); });
+    });
+    drop.addEventListener("drop", function(e){
+      var dt = e.dataTransfer;
+      if (dt && dt.files && dt.files.length) readFile(dt.files[0]);
+    });
+    var rb = document.getElementById("reset");
+    if (rb) rb.addEventListener("click", function(){
+      figs.innerHTML = DEFAULT.figsHTML;
+      setText("hv", DEFAULT.hv); setText("hc", DEFAULT.hc); setText("hs", DEFAULT.hs);
+      banner("ok", "Restored the built-in governed snapshot.");
+    });
+  });
+})();
+</script>"""
 
 def _fmt(x, dp=0):
     try:
@@ -122,16 +283,16 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}
 </style></head>
 <body><div class="wrap">
   <header>
     <h1>{html.escape(meta.get("model_name","Actuarial Stochastic Model"))}</h1>
     <p class="sub">Offline home &mdash; one place to open every result view. No internet,
       no install, no server required.</p>
-    <p class="sub">Model version <b>{html.escape(str(meta.get("model_version","")))}</b>
-      &middot; data contract <b>{html.escape(str(d.get("contract_version","")))}</b>
-      &middot; snapshot {html.escape(str(meta.get("generated_utc","")))}</p>
+    <p class="sub">Model version <b id="hv">{html.escape(str(meta.get("model_version","")))}</b>
+      &middot; data contract <b id="hc">{html.escape(str(d.get("contract_version","")))}</b>
+      &middot; snapshot <span id="hs">{html.escape(str(meta.get("generated_utc","")))}</span></p>
     <span class="class">{html.escape(meta.get("classification","EDUCATIONAL ONLY"))}</span>
   </header>
 
@@ -142,6 +303,7 @@ def build() -> str:
   <p class="sub" style="margin-top:10px; font-size:12.5px;">Figures are read verbatim
     from the model-output snapshot &mdash; this page computes nothing.</p>
 
+{LOADER_PANEL}
   <h2>Open a view</h2>
   <div class="cards">
 {cardhtml}
@@ -161,7 +323,7 @@ def build() -> str:
     headline: {json.dumps(headline)}, source_sha256: {json.dumps(src_sha)} }};
   window.__OFFLINE_HOME__ = PROVENANCE;
 }})();
-</script>
+</script>{LOADER_JS}
 </body></html>'''
 
 def main():

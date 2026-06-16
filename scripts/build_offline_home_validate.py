@@ -41,6 +41,12 @@ def main() -> int:
     ok("standalone_sum verbatim", f"{d['capital']['standalone_sum']:,.0f}" in html)
     ok("zero external refs", not re.search(r"https?://|//cdn|googleapis|unpkg|jsdelivr", html))
     ok("self-contained (no <link>/<script src)", "<link" not in html and "script src" not in html)
+    # snapshot-loader (additive, zero-network) presence
+    ok("loader drop zone", 'id="drop"' in html)
+    ok("loader file input", 'type="file"' in html and 'id="file"' in html)
+    ok("loader reset button", 'id="reset"' in html)
+    ok("loader reads locally (FileReader)", "FileReader" in html)
+    ok("loader updatable header ids", 'id="hv"' in html and 'id="hc"' in html and 'id="hs"' in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))
