@@ -31,6 +31,29 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-16 (18:00 UTC window, claude) — OFFLINE-UI PRINTABLE SUMMARY CARD SHIPPED (additive, zero-network).**
+> Executed NEXT-EXECUTION POINTER option (b): shipped `model_summary_card.html`, a printable one-page model
+> summary generated from `ui_data.json`. Print-optimised (A4 `@page` + `@media print`; embedded "Print / Save
+> as PDF" button → `window.print()`). Renders VERBATIM (recomputes nothing): the governed headline SCR component
+> (frozen single-df t, df 2.9451), the capital basis (nested / tail-matched t-copula / selected-copula / var-covar
+> / standalone / diversification), the seven standalone driver SCRs, tail & convergence (99.5%/12m, VaR & ES
+> point), and a validation+governance scorecard (gates 12/12, PASS verdict count, tasks 118/118, audit 81/81) +
+> a curated "key validated results" list. Also surfaced on `offline_home.html` as one extra zero-install view
+> card. ADDITIVE & decision-neutral: `ui_app.html` sha256 `d82c65ec…` BYTE-UNCHANGED; governed headline
+> 39,975.654628199336 intact; NO `ui_data` contract change (card is a separate file; stays 1.23.0); 0 external
+> refs. Verification (EXECUTED): NEW `build_model_summary_card_validate.py` 25/25 ok:true; `build_offline_home_
+> validate.py` 19/19 ok:true; `offline_home_loader_parity.cjs` 10/10 ok:true (node); `py_compile` clean. NOTE:
+> the in-place editor corrupted the mount copy of `build_offline_home.py` mid-write (documented virtiofs hazard) —
+> recovered by editing in the `/tmp` clone and copying the clean file back (mount verified byte-identical to clone).
+>
+> **NEXT-EXECUTION POINTER (offline-UI track, decision-neutral, auto-admissible):** options (a) [snapshot-loader]
+> and (b) [summary card] are DONE. The next single in_progress item should continue the zero-install offline-UI
+> usability track WITHOUT touching governed artifacts or the `ui_data` contract: **(c)** consolidate the four
+> result views' descriptions + a short "which view do I want?" chooser on `offline_home.html`. The MODEL frontier
+> remains OWNER PIVOT (MR-LONGEV-1 / LSMC sign-off; Option-A publish cert+channel; or declare frontier complete &
+> freeze). Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
+
 > **2026-06-16 (18:00 UTC window, claude) — OFFLINE-UI SNAPSHOT-LOADER SHIPPED (additive, zero-network).**
 > Executed NEXT-EXECUTION POINTER option (a): `offline_home.html` now has a zero-network drag/click
 > snapshot-loader. A user can load a DIFFERENT `ui_data.json` and the 8 headline governed figures + the

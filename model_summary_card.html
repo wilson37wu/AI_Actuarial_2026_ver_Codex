@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Model Summary Card -- PAR Fund Stochastic ALM &amp; TVOG</title>
+<style>
+  :root { --ink:#10202f; --mut:#5a6b7d; --acc:#1d4e89; --line:#d4dde6;
+    --panel:#f4f7fa; --ok:#1c7a4a; --warn:#9a6a12; --headhl:#eaf1fb; }
+  * { box-sizing:border-box; }
+  html,body { background:#e9edf1; }
+  body { margin:0; color:var(--ink);
+    font:13px/1.45 -apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+  .sheet { max-width:820px; margin:18px auto; background:#fff; color:var(--ink);
+    padding:26px 30px 22px; border-radius:6px; box-shadow:0 1px 8px rgba(0,0,0,.12); }
+  header { border-bottom:2px solid var(--acc); padding-bottom:12px; margin-bottom:6px; }
+  .ttl { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+  h1 { margin:0 0 3px; font-size:20px; color:var(--acc); }
+  .sub { color:var(--mut); font-size:12px; margin:1px 0; }
+  .class { display:inline-block; margin-top:7px; padding:3px 9px; border-radius:5px;
+    background:#fdf3df; color:var(--warn); font-size:11px; font-weight:700;
+    border:1px solid #ecd9a8; }
+  .prod { display:inline-block; margin:7px 0 0 8px; padding:3px 9px; border-radius:5px;
+    background:#fbe9e9; color:#a32020; font-size:11px; font-weight:700;
+    border:1px solid #e6c2c2; }
+  .headline { background:var(--headhl); border:1px solid #cfe0f7; border-radius:8px;
+    padding:13px 16px; margin:14px 0; display:flex; justify-content:space-between;
+    align-items:center; gap:16px; }
+  .headline .lbl { color:var(--mut); font-size:11.5px; text-transform:uppercase;
+    letter-spacing:.05em; }
+  .headline .val { font-size:27px; font-weight:750; color:var(--acc);
+    font-variant-numeric:tabular-nums; }
+  .headline .meta { text-align:right; color:var(--mut); font-size:11.5px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px 22px; }
+  section { break-inside:avoid; }
+  h2 { font-size:11.5px; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--acc); margin:14px 0 6px; border-bottom:1px solid var(--line);
+    padding-bottom:3px; }
+  table { width:100%; border-collapse:collapse; }
+  th, td { text-align:left; padding:3.5px 2px; font-size:12px;
+    border-bottom:1px solid #eef2f6; vertical-align:top; }
+  th { font-weight:500; color:var(--mut); }
+  td { text-align:right; font-weight:650; font-variant-numeric:tabular-nums;
+    white-space:nowrap; }
+  .kr { margin:4px 0 0; padding-left:17px; }
+  .kr li { font-size:11.5px; color:var(--ink); margin-bottom:4px; line-height:1.4; }
+  footer { margin-top:16px; padding-top:9px; border-top:1px solid var(--line);
+    color:var(--mut); font-size:10.5px; line-height:1.45; }
+  code { background:var(--panel); padding:1px 4px; border-radius:3px; }
+  .bar { max-width:820px; margin:0 auto 0; display:flex; justify-content:flex-end;
+    padding:6px 0 0; }
+  .btn { background:var(--acc); color:#fff; border:0; border-radius:6px;
+    padding:8px 16px; font-size:13px; font-weight:600; cursor:pointer; }
+  .btn:hover { background:#163d6c; }
+  @media print {
+    html,body { background:#fff; }
+    .sheet { box-shadow:none; margin:0; max-width:none; border-radius:0;
+      padding:0 6px; }
+    .bar { display:none; }
+    @page { size:A4 portrait; margin:14mm; }
+  }
+</style></head>
+<body>
+<div class="bar"><button class="btn" id="print" type="button">Print / Save as PDF</button></div>
+<div class="sheet">
+  <header>
+    <div class="ttl">
+      <div>
+        <h1>PAR Fund Stochastic ALM &amp; TVOG</h1>
+        <p class="sub">One-page model summary card &mdash; read on screen or print to PDF.
+          Every figure is copied verbatim from the model-output snapshot; this page
+          computes nothing.</p>
+        <p class="sub">Model version <b>0.2.0</b>
+          &middot; data contract <b>1.23.0</b>
+          &middot; snapshot 2026-06-14T00:28:05.652099+00:00</p>
+      </div>
+    </div>
+    <span class="class">EDUCATIONAL ONLY -- NOT a regulatory capital model</span>
+    <span class="prod">NOT CLEARED FOR PRODUCTION</span>
+  </header>
+
+  <div class="headline">
+    <div>
+      <div class="lbl">Governed headline SCR component (frozen single-df t)</div>
+      <div class="val">$39,975.65</div>
+    </div>
+    <div class="meta">rank-invariance df 2.9451<br/>
+      GOVERNED - unchanged by every escalation P27-&gt;P30</div>
+  </div>
+
+  <div class="grid">
+    <section>
+      <h2>Capital basis</h2>
+      <table>
+      <tr><th>Nested 99.5% SCR (capital reference)</th><td>$48,707</td></tr>
+      <tr><th>Tail-matched t-copula SCR (df 2.9451)</th><td>$46,756</td></tr>
+      <tr><th>Selected-copula SCR (gaussian)</th><td>$47,293</td></tr>
+      <tr><th>Var-covar SCR (closed-form)</th><td>$28,991</td></tr>
+      <tr><th>Standalone sum (pre-diversification)</th><td>$62,389</td></tr>
+      <tr><th>Diversification benefit (nested)</th><td>$8,234</td></tr>
+      </table>
+    </section>
+    <section>
+      <h2>Standalone risk-driver SCR (7 drivers)</h2>
+      <table>
+      <tr><th>Interest rate (G2++)</th><td>$14,486</td></tr>
+      <tr><th>Equity</th><td>$15,932</td></tr>
+      <tr><th>Credit spread</th><td>$4,714</td></tr>
+      <tr><th>Lapse</th><td>$22,539</td></tr>
+      <tr><th>Mortality</th><td>$387</td></tr>
+      <tr><th>FX</th><td>$4,286</td></tr>
+      <tr><th>Liquidity (G-LIQX-calibrated)</th><td>$45</td></tr>
+      </table>
+    </section>
+    <section>
+      <h2>Tail &amp; convergence</h2>
+      <table>
+      <tr><th>Confidence level</th><td>99.5%</td></tr>
+      <tr><th>Risk horizon</th><td>12 months</td></tr>
+      <tr><th>VaR (point)</th><td>$232,211</td></tr>
+      <tr><th>Expected Shortfall (point)</th><td>$250,091</td></tr>
+      <tr><th>Tail convergence</th><td>CONVERGED</td></tr>
+      <tr><th>Recommended outer scenarios</th><td>200,000</td></tr>
+      </table>
+    </section>
+    <section>
+      <h2>Validation &amp; governance</h2>
+      <table>
+      <tr><th>Deployment gates cleared</th><td>12/12</td></tr>
+      <tr><th>Validation verdicts PASS</th><td>23/23</td></tr>
+      <tr><th>Tasks complete</th><td>118/118</td></tr>
+      <tr><th>Phases complete</th><td>24</td></tr>
+      <tr><th>Calibrated risk drivers</th><td>11</td></tr>
+      <tr><th>Risks open / mitigated</th><td>1 / 10</td></tr>
+      <tr><th>Audit entries verified</th><td>81/81 (integrity OK)</td></tr>
+      <tr><th>Audit chain failures</th><td>0</td></tr>
+      </table>
+    </section>
+  </div>
+
+  <h2>Key validated results</h2>
+  <ul class="kr">
+      <li><b>Out-of-sample proxy validation.</b> PASS — selected basis (deg 1, max_int 3) validated OOS (R^2=0.9616, VaR rel err=2.03%, leakage-free, overfit gap=0.0031)</li>
+      <li><b>Correlated risk aggregation.</b> PASS - seven-driver copula aggregation (selected: gaussian) with G-LIQX-CALIBRATED liquidity exposure + couplings reconciles to nested capital within 14.6% vs var-covar understatement 40.5%; MR-010 re-confirmed and mitigated</li>
+      <li><b>Tail convergence &amp; stability.</b> PASS - seven-driver 99.5% capital metric (G-LIQX-CALIBRATED liquidity inputs) converges (copula-simulated), is bounded by simulated and honest small-sample nested bootstrap CIs, and benefits from Sobol-RQMC variance reduction</li>
+      <li><b>Tail-matched Student-t copula aggregation (Phase 23 Task 2).</b> df matched 2.9451 from pooled tail-dependence; t-copula SCR 46756 vs nested 48707 (rel err 4.0%) vs gaussian 14.9% and var-covar understatement 40.5%</li>
+  </ul>
+
+  <footer>
+    Built 2026-06-16T19:13:21Z from <code>ui_data.json</code> (sha256 <code>c335c2bf1744a425&hellip;</code>).
+    Self-contained &amp; zero-install: open by double-click from a USB stick or an
+    air-gapped machine; makes no network calls. The governed result template
+    <code>ui_app.html</code> is never modified by this card. Figures are a curated
+    READ-OUT of the snapshot &mdash; for the full interactive surface open
+    <code>ui_app.html</code> (or <code>offline_home.html</code>).
+  </footer>
+</div>
+<script>
+// Offline-only: ZERO network calls. The button triggers the browser's own print/PDF.
+(function(){
+  var PROVENANCE = { contract: "1.23.0",
+    headline: 39975.654628199336, source_sha256: "c335c2bf1744a425f7d9b76e09b43f4c2e945f748e4de8b322b88cbb48534c04" };
+  window.__MODEL_SUMMARY_CARD__ = PROVENANCE;
+  document.addEventListener("DOMContentLoaded", function(){
+    var b = document.getElementById("print");
+    if (b) b.addEventListener("click", function(){ window.print(); });
+  });
+})();
+</script>
+</body></html>

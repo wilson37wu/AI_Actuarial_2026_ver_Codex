@@ -38,6 +38,10 @@ VIEWS = [
      "Combined offline GUI bringing the result surfaces together in one file.", True),
     ("par_projection_gui.html", "PAR Projection GUI",
      "Interactive PAR-endowment projection explorer (deterministic walk-through).", True),
+    ("model_summary_card.html", "Model Summary Card (print)",
+     "A printable one-page summary of the governed headline, capital basis, "
+     "seven driver SCRs, tail metrics and validation scorecard &mdash; read on "
+     "screen or print / save-as-PDF. Computes nothing.", True),
     ("launchers/README.md", "Input &amp; Run GUI",
      "Enter your own actuarial inputs and run the stochastic model end-to-end on "
      "localhost. Needs Python 3.8+ (relaxes zero-install for THIS input+run step "

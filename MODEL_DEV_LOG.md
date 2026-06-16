@@ -10752,3 +10752,36 @@ sandbox (jsdom absent).
 `scripts/offline_home_self_test.cjs`, `scripts/offline_home_loader_parity.cjs` (new).
 
 **Model frontier:** STILL OWNER PIVOT (~12 windows) — no model-form change auto-ran.
+
+---
+
+## 2026-06-16T19:20Z — Window #20 (claude, 18:00 UTC) — Offline-UI printable summary card
+
+**Task (one):** NEXT-EXECUTION POINTER option (b) — printable one-page **model summary card**.
+
+Shipped `model_summary_card.html`, generated from the model-output snapshot `ui_data.json`. Print-optimised
+(A4 `@page` + `@media print`; embedded "Print / Save as PDF" button → `window.print()`). Lays out, all
+**verbatim** from the snapshot (recomputes nothing): governed headline SCR component (frozen single-df t,
+df 2.9451); capital basis (nested / tail-matched t-copula / selected-copula / var-covar / standalone /
+diversification); the seven standalone driver SCRs; tail & convergence (99.5%/12m, VaR & ES point); and a
+validation+governance scorecard (gates 12/12, PASS verdict count, tasks 118/118, audit 81/81) + a curated
+"key validated results" list. Also surfaced on `offline_home.html` as one extra zero-install view card.
+
+**Decision-neutral:** `ui_app.html` `d82c65ec…` BYTE-UNCHANGED; governed headline 39975.654628199336 intact;
+NO `ui_data` contract change (card is a separate file; stays 1.23.0); 0 external refs.
+
+**Verification (EXECUTED):** NEW `build_model_summary_card_validate.py` 25/25 ok:true (headline + capital +
+all 7 drivers + tail + scorecard verbatim; print affordance; print media query; self-contained; 0 external
+refs); `build_offline_home_validate.py` 19/19 ok:true; `offline_home_loader_parity.cjs` 10/10 ok:true (node);
+`py_compile` clean (3 scripts).
+
+**Incident (recovered):** the in-place editor corrupted the mount copy of `build_offline_home.py` mid-write
+(documented virtiofs no-rename hazard). Re-did the edit in the `/tmp` clone and `cp`-ed the clean file back;
+mount verified byte-identical to clone (sha match on all five touched files). No impact on shipped artifacts.
+
+**Files:** `model_summary_card.html`, `scripts/build_model_summary_card.py`,
+`scripts/build_model_summary_card_validate.py`, `docs/cycle_status/LATEST_CYCLE_STATUS_20260616_summary_card.md`
+(new); `scripts/build_offline_home.py`, `offline_home.html` (modified — +1 view card).
+
+**Model frontier:** STILL OWNER PIVOT — no model-form change auto-ran. Next auto-admissible offline-UI task =
+option (c) "which view do I want?" chooser on `offline_home.html`.
