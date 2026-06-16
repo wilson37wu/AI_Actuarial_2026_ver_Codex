@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-15T23:30:00Z",
+  "last_run": "2026-06-16T00:15:00Z",
   "last_run_duration_minutes": 23,
-  "last_run_note": "Maintenance (auto-admissible, non-model-form): re-baselined the STALE Phase IGUI Task 10 offline-install gate UI sha. UI_APP_BASELINE_SHA was frozen at 6dca35b3... (pre-VR-panel UI) while the authorized shipped ui_app.html is d82c65ec... (contract 1.23.0, MR-VR-2 panel) - so test_phase_igui_task10_offline_install::{test_gate_passes,test_ui_app_byte_unchanged} were silently RED on origin (missed by recent verify windows that didn't execute this file). Re-pinned the constant + the appendix doc's documented sha to d82c65ec (mirrors how PKG Task1/2b + governance already record d82c65ec); gate now 16/16, file 16/16 PASS. ui_app.html BYTE-UNCHANGED d82c65ec (NOT touched); governed headline 39975.654628199336 untouched; live contract 1.23.0 unchanged; no model parameter/UI change. Also produced FRESH executed evidence this sandbox (node22+jsdom, numpy2.2.6, scipy absent): 7 JS offline self-tests ok:true (ui_app/combined_gui/offline_viewer + 4 fallback suites; 0 network/0 JS errors/0 external refs); confirmed the PKG Task2b 'failures' seen in a combined run are cross-file test-pollution (7/7 PASS in isolation), NOT regressions. Frontier UNCHANGED = OWNER PIVOT (MR-LONGEV-1/LSMC sign-off | Option-A publish cert/channel | freeze).",
+  "last_run_note": "8th window (claude, fired ~00:12 UTC / Codex slot, lock FREE -> acquire push clean 0db9edd..b3ec885). No auto-runnable task remains -> ran documented gates as fresh evidence: PKG gates 26/26 + 20/20 ok; 40 pytest passed; 3 JS offline self-tests ok (0 JS err/0 network). ui_app.html byte-unchanged d82c65ec; headline 39,975.654628199336; contract 1.23.0. NO model/UI/source change. Frontier STILL OWNER PIVOT (8 consecutive windows): owner must pick (a) MR-LONGEV-1 / (b) LSMC [sign-off]; (c) Option-A publish [cert+channel]; (d) freeze.",
   "current_phase": "Phase PKG Task 1 COMPLETE: Option-A frozen-binary build recipe authored (PyInstaller spec + CI release matrix gated to manual/tag + structural gate + unittest + docs). Closes the launcher's last COMPUTE prerequisite once an owner runs the build. No model/UI/contract change. NEXT = OWNER PIVOT or Phase PKG Task 2 (code-signing cert / onedir fallback / publish-channel decision - owner/infra inputs needed) | MR-LONGEV-1 / LSMC (sign-off) | freeze.",
-  "overall_status": "PHASE_IGUI_TASK10_STALE_UI_SHA_REBASELINED_6dca35b3_TO_d82c65ec_GATE_16_16_GREEN_NO_MODEL_OR_UI_CHANGE_HEADLINE_BIT_IDENTICAL_CONTRACT_1.23.0_FRONTIER_REMAINS_OWNER_PIVOT",
+  "overall_status": "VERIFY8_GREEN_NO_MODEL_OR_UI_CHANGE_HEADLINE_39975.654628199336_CONTRACT_1.23.0_FRONTIER_REMAINS_OWNER_PIVOT_8_WINDOWS",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -1088,7 +1088,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-16T20:15:00Z",
+  "last_updated": "2026-06-16T00:15:00Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -2258,5 +2258,32 @@
     ],
     "discipline": "ONE task; lock held; fresh-clone git per AGENT_COORDINATION.md; Phase 30 stop-rule honoured; MR-016/MR-017 not pre-empted; offline RESULTS UI byte-unchanged.",
     "delivery_note": "CI workflow shipped as packaging/release.workflow.yml (template) - automated dev token lacks GitHub 'workflow' scope so cannot push under .github/workflows/. Install: mkdir -p .github/workflows && cp packaging/release.workflow.yml .github/workflows/release.yml (workflow-scope token), commit."
+  },
+  "cycle_2026_06_16_verify8": {
+    "timestamp": "2026-06-16T00:15:00Z",
+    "owner": "claude",
+    "lock": "2026-06-16T00:12Z-e419",
+    "task": "8th window: await-owner verification + status (frontier=OWNER PIVOT; no auto-runnable model-form task). Fired ~00:12 UTC; lock free; acquire push clean (0db9edd..b3ec885).",
+    "verdict": "VERIFIED_GREEN_NO_MODEL_FORM_CHANGE_FRONTIER_STILL_OWNER_PIVOT",
+    "evidence": {
+      "structural_gates": {
+        "pkg_task1": "ok=True 26/26",
+        "pkg_task2b": "ok=True 20/20"
+      },
+      "pytest": "40 passed (phase36_task5_phase_summary + pkg_task1 + pkg_task2b + igui_task10_offline_install)",
+      "js_offline_self_tests": {
+        "ui_app": "ok=True 0 JS err/0 network",
+        "offline_viewer": "ok=True 0/0",
+        "combined_gui": "ok=True 0/0"
+      },
+      "env": "Python 3.10.12, numpy 2.2.6, scipy ABSENT, node 22 + jsdom"
+    },
+    "integrity": {
+      "ui_app_sha256": "d82c65ec",
+      "governed_headline": 39975.654628199336,
+      "contract": "1.23.0",
+      "model_or_ui_change": false
+    },
+    "discipline": "ONE task; lock held + pushed; fresh /tmp clone git; mounted .git untouched; no model-form change."
   }
 }

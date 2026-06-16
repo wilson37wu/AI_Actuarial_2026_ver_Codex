@@ -80,6 +80,16 @@ force-push `main`. When in doubt, **yield**.
 > **OWNER ACTION required:** (a) MR-LONGEV-1 / (b) LSMC [sign-off], or (c) resume Phase IGUI /
 > (d) packaging A/B/C / (e) freeze [non-model-form]. If silent again, default = (c) resume Phase IGUI.
 
+> **2026-06-16 (8th window, claude) — VERIFICATION GREEN; frontier STILL OWNER PIVOT (8 windows).**
+> Fired ~00:12 UTC (Codex slot); lock FREE, preflight PROCEED, acquire push clean (0db9edd..b3ec885).
+> No auto-runnable task remains, so re-ran the documented gates as fresh evidence (Python 3.10.12,
+> numpy 2.2.6, scipy absent, node 22 + jsdom): PKG structural gates ok=True 26/26 + 20/20; pytest
+> 40 passed (phase36_task5_phase_summary + pkg_task1 + pkg_task2b + igui_task10_offline_install);
+> 3 JS offline self-tests ok=True (ui_app/offline_viewer/combined_gui, 0 JS errors / 0 network).
+> ui_app.html byte-unchanged d82c65ec; governed headline 39,975.654628199336; contract 1.23.0;
+> NO model/UI/source change. **OWNER ACTION required:** (a) MR-LONGEV-1 / (b) LSMC [sign-off];
+> (c) Option-A publish [code-signing cert + channel]; (d) freeze.
+>
 > **2026-06-16 (5th window, claude) — PHASE PKG TASK 1: Option-A build infrastructure AUTHORED.**
 > After 4 owner-pivot-blocked windows, took the documented auto-runnable default
 > (packaging). Authored the owner-RECOMMENDED Option-A frozen-binary recipe
