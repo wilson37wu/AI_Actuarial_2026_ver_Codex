@@ -10864,3 +10864,10 @@ link-existence assertion in build_offline_home.py; else MODEL frontier OWNER PIV
 **Git:** done in fresh /tmp clone per AGENT_COORDINATION.md; mount `.git` untouched. Lock acquired/released as `claude`.
 
 **Next pointer:** option (f) — promote the link-existence check into `scripts/build_offline_home_validate.py` as a standing regression gate. Model frontier remains OWNER PIVOT (awaiting owner decision).
+
+
+---
+
+## Window #24 — 2026-06-16 — Offline-UI option (f): link-existence gate promotion
+
+Promoted the build-time link-existence assertion into the standing stdlib gate `scripts/build_offline_home_validate.py`. The gate parses the shipped `offline_home.html` and asserts every card href resolves to a real on-disk file under ROOT (rebuild-independent; a shipped page can never link to a missing view). Additive, decision-neutral, no artifact rebuild: `offline_home.html`/`ui_app.html`/`ui_data.json` byte-unchanged, headline 39975.654628199336 intact, contract 1.23.0, 0 external refs. One file changed. Verify: py_compile clean; POSITIVE 28/28 ok:true; NEGATIVE injects a missing card href → fails exactly the new self-describing check (ok:false exit 1) → restores ok:true; parity 10/10. Next = option (g): collect the gate into pytest. Git in fresh /tmp clone per protocol.

@@ -31,6 +31,21 @@ def main() -> int:
     checks = []
     def ok(n, c): checks.append((n, bool(c)))
     for v in EXPECT_LINKS: ok(f"link {v}", v in p.links)
+    # Link-existence regression gate (offline-UI option f): promote the build-time
+    # assertion from build_offline_home.build() into this standing, rebuild-independent
+    # gate. Every card href in the SHIPPED offline_home.html MUST resolve to a file that
+    # exists on disk under ROOT, so a shipped landing page can never link to a missing
+    # view. Cards ARE the VIEWS, and chooser hrefs are asserted (at build time) to be a
+    # subset of VIEWS, so verifying every card target also covers every chooser target.
+    # Static check: reads no network, derives/changes no governed figure.
+    _missing_on_disk = sorted({
+        _rel for _rel in (
+            (h or "").split("#", 1)[0].split("?", 1)[0] for h in p.links
+        ) if _rel and not (ROOT / _rel).exists()
+    })
+    ok("every card link target exists on disk"
+       + (f" (missing: {', '.join(_missing_on_disk)})" if _missing_on_disk else ""),
+       not _missing_on_disk)
     ok("title", "Offline Home" in html)
     ok(">=8 figure rows", p.figs >= 8)
     ok("classification banner", "EDUCATIONAL ONLY" in html)
