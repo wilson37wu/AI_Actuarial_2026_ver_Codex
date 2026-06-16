@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T19:09Z-e013",
-  "started_at": "2026-06-16T19:09:58Z",
-  "ttl_minutes": 120,
-  "task": "Offline-UI printable one-page model summary card (additive zero-network, NEXT-POINTER option b)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T19:19:52Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
