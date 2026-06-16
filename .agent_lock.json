@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T03:07Z-d933",
-  "started_at": "2026-06-16T03:07:26Z",
-  "ttl_minutes": 120,
-  "task": "scheduled-cycle-2026-06-16",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T03:15:03Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
