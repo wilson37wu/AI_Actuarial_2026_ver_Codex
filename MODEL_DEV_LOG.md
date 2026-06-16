@@ -10635,3 +10635,26 @@ cross-file pollution, not regressions. Frontier UNCHANGED = OWNER PIVOT. See
 - JS self-tests not re-run (jsdom only on 100%-full /sessions mount); UI byte-identical to last-green baseline => stronger than re-run.
 - No model/UI/source change. Frontier STILL OWNER PIVOT. Owner must pick (a) MR-LONGEV-1 / (b) LSMC [sign-off] / (c) Option-A publish [cert+channel] / (d) extend offline UI [new output/concept] / (e) freeze. Recommend (e) or (a).
 - Status doc: docs/cycle_status/LATEST_CYCLE_STATUS_20260616_verify12.md
+
+---
+
+## 2026-06-16T12:18Z — Verification window #13 (claude)
+
+**Result: GREEN. No model/UI/source change. Frontier still OWNER PIVOT (~13 windows).**
+
+Preflight on a fresh full `/tmp` clone of `origin/main` -> PROCEED; lock acquired (`2026-06-16T12:18Z-035c`).
+No auto-admissible task remained. Marginal contribution this cycle: restored the *live* test gates that
+windows #11-12 skipped — installed `jsdom` + `pytest` into the throwaway clone (allowlisted net) and executed:
+
+- `ui_app_self_test.cjs` -> **ok:true**, 0 network, 0 JS errors
+- `offline_viewer_self_test.cjs` -> **ok:true**, 0 network, 0 JS errors
+- `combined_gui_self_test.cjs` -> **ok:true**, 0 JS errors
+- `ui_app.html` sha256 `d82c65ec…` **BYTE-UNCHANGED**
+- contract **1.23.0** (27 keys); governed headline **39975.654628199336** present
+- PKG Task1 structural validator **26/26 ok:true**; Task2b validator **ok:true**
+- pytest: `test_phase_pkg_task1_build_infra` + `test_phase_pkg_task2b_offline_wheelhouse` + `test_phase36_task5_phase_summary` + `test_phase_igui_task9_summary` = **36 passed**; `test_phase_igui_task10_offline_install` = **16 passed** (52 total)
+- 4 critical JSON files re-parse clean
+
+scipy-dependent model pytest not executed (scipy absent — environmental). All edits/commits in the `/tmp` clone per AGENT_COORDINATION.md.
+
+**Blocker (escalating, ~13 windows):** owner pivot required — (a) MR-LONGEV-1 longevity 5th driver [sign-off]; (b) LSMC SCR proxy [sign-off]; (c) Option-A publish: code-signing cert + channel [owner/infra]; (d) owner-specified offline-UI panel; (e) declare frontier complete & freeze. Recommendation: (e) or (a).
