@@ -47,6 +47,20 @@ force-push `main`. When in doubt, **yield**.
 > model-form change. Authoritative pointer remains `.claude-dev/MODEL_DEV_STATE.json`.
 > Pre-existing (flagged, not auto-fixed): `test_phase36_task5_phase_summary::test_contract_inventory` is RED on origin (frozen report pins 1.21.0 vs test 1.22.0).
 >
+> **2026-06-16 (10th window, claude) — VERIFICATION GREEN; frontier STILL OWNER PIVOT (~10 windows).**
+> Off-schedule fire ~04:08 UTC; lock FREE, preflight PROCEED, acquire pushed clean (c664e42->c5ccc9e).
+> No model-form change auto-ran — all documented auto-admissible work is COMPLETE (Phase IGUI 1-10,
+> Post-IGUI 1-8, packaging A/B/C menu). Re-ran documented gates as FRESH EXECUTED evidence
+> (python3.10, numpy2.2.6, scipy ABSENT, node22+jsdom): 3 JS offline self-tests **ok:true**
+> (`ui_app` tabCount 21 / **0 JS errors / 0 network / 0 external refs**; offline_viewer 4; combined_gui);
+> PKG Task1 structural gate **ok:true 26/26**; PKG Task2b gate **ok:true**; `ui_app.html` sha256
+> **d82c65ec… BYTE-UNCHANGED**; governed headline **39975.654628199336** present; contract **1.23.0**
+> unchanged. Model pytest NOT executed (scipy absent + `/sessions` mount 100% full → pytest
+> uninstallable, Errno 28); env limitation, not a regression — all edits made/re-parsed in the /tmp
+> clone. **OWNER ACTION required (now ~10 windows):** (a) MR-LONGEV-1 / (b) LSMC [model-form, sign-off];
+> (c) Option-A publish [code-signing cert + channel]; (d) extend offline UI [auto-runnable additive];
+> (e) declare frontier complete & **freeze**. Authoritative pointer remains `.claude-dev/MODEL_DEV_STATE.json`.
+>
 > **2026-06-16 (2nd window, claude) — owner-decision research added.** No model-form
 > task auto-ran (frontier = owner pivot). Produced a ranked improvement roadmap:
 > `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260616.md`. Owner picks ONE:
