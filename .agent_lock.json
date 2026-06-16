@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T13:09Z-b2df",
-  "started_at": "2026-06-16T13:09:11Z",
-  "ttl_minutes": 120,
-  "task": "Verification window #14 + offline-UI readiness confirm (frontier owner-pivot)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T13:16:50Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
