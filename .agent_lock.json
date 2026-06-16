@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-16T16:15:34Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-16T17:09Z-b30b",
+  "started_at": "2026-06-16T17:09:18Z",
+  "ttl_minutes": 120,
+  "task": "UI-offline focus / verification window #18",
+  "note": ""
 }
