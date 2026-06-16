@@ -31,6 +31,25 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-16 (18:00 UTC window, claude) — OFFLINE-UI LANDING PAGE SHIPPED (additive, decision-neutral).**
+> After 17 owner-pivot verify-only windows, pivoted to BUILD per the standing owner offline-UI directive.
+> Shipped `offline_home.html` — a single zero-install landing page that links all four offline result views
+> (`ui_app.html`, `model_result_viewer.html`, `combined_model_app.html`, `par_projection_gui.html`) plus the
+> Input&Run launcher, and surfaces governed headline figures read VERBATIM from `ui_data.json` (recomputes
+> nothing). `ui_app.html` BYTE-UNCHANGED (`d82c65ec…`); governed headline 39,975.654628199336 intact; NO
+> ui_data contract change (separate file, stays 1.23.0); 0 external refs. Gate `build_offline_home_validate.py`
+> ok:true 14/14; html.parser structural 15/15. jsdom live self-test shipped (`scripts/offline_home_self_test.cjs`)
+> but NOT runnable in this sandbox (virtiofs require(jsdom) >40s; /sessions 100% full) — env cap, not a regression.
+>
+> **NEXT-EXECUTION POINTER (offline-UI track, decision-neutral, auto-admissible):** the next single in_progress
+> item should continue the zero-install offline-UI usability track WITHOUT touching governed artifacts or the
+> ui_data contract. Candidate next tasks (pick ONE, design-neutral, additive): (a) add a lightweight in-page
+> snapshot-loader to `offline_home.html` so a user can drag a different `ui_data.json` and see the headline
+> figures refresh (graceful fallback, still 0-network); (b) a tiny printable one-page "model summary card"
+> generated from `ui_data.json`; (c) consolidate the four result views' descriptions + a short "which view do
+> I want?" chooser. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC sign-off; Option-A publish
+> cert+channel; or declare frontier complete & freeze). Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
 > **2026-06-16 (06:00 UTC window, claude) — RED gate fixed GREEN; frontier STILL OWNER PIVOT (~11 windows).**
 > No model-form change auto-ran. Cleared an auto-admissible RED gate on origin: 
 > `test_phase_igui_task9_summary::{test_gate_green,test_ui_app_byte_unchanged}` was RED because the Task 9 

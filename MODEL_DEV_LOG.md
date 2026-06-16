@@ -10697,3 +10697,34 @@ contract 1.23.0 unchanged. Live JS self-tests + model pytest NOT runnable here
 - Not runnable here (env caps, not regressions): jsdom JS self-test (>45s cap), scipy/numpy/pytest (absent).
 - Escalation: 17 consecutive owner-pivot windows; re-emailed owner numbered decision list w/ default-if-silent.
 - Lock acquired + released; main never force-pushed.
+
+---
+
+## 2026-06-16 (claude, window #18) — Offline-UI landing page shipped
+
+Pivoted from an 18th pure-verify window to a concrete additive build, per the
+standing owner directive to develop the offline UI for offline use. Shipped
+`offline_home.html`: a single zero-install landing page that links all four offline
+result views (`ui_app.html`, `model_result_viewer.html`, `combined_model_app.html`,
+`par_projection_gui.html`) plus the Input&Run launcher, and surfaces governed
+headline figures read **verbatim** from `ui_data.json` (governed headline
+39,975.654628199336; nested 99.5% SCR 48,707; var-covar SCR 47,293; standalone sum
+62,389; diversification 8,234). The page **recomputes nothing**.
+
+Decision-neutral & additive: `ui_app.html` sha256 `d82c65ec…` **byte-unchanged**;
+governed headline intact; **no `ui_data` contract change** (separate file, stays
+1.23.0); no model/governance recompute; **0 external refs** (USB / air-gapped OK).
+
+New: `offline_home.html`, `scripts/build_offline_home.py`,
+`scripts/build_offline_home_validate.py`, `scripts/offline_home_self_test.cjs`,
+`docs/validation/OFFLINE_HOME_DESIGN_NOTE.md`,
+`docs/cycle_status/LATEST_CYCLE_STATUS_20260616_offline_home.md`.
+
+Verification: stdlib gate `build_offline_home_validate.py` ok:true **14/14**;
+`html.parser` structural **15/15** (all 5 links + figures match `ui_data.json`
+exactly); PKG Task1 gate 26/26; py_compile clean; JSON re-parse 4/4. jsdom live
+self-tests not runnable in sandbox (virtiofs `require(jsdom)` >40 s; `/sessions`
+100 % full) — documented env cap, `.cjs` shipped for CI / owner machines.
+
+Model frontier UNCHANGED = owner pivot (MR-LONGEV-1 / LSMC sign-off; Option-A
+publish cert+channel; or freeze).

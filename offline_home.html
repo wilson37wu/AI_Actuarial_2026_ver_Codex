@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Actuarial Stochastic Model -- Offline Home</title>
+<style>
+  :root { --bg:#0f1722; --panel:#16212e; --ink:#e8eef5; --mut:#9fb0c3;
+    --acc:#4ea1ff; --line:#26384b; --ok:#2ec27e; --warn:#e8b23a; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.5 -apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); }
+  .wrap { max-width:1040px; margin:0 auto; padding:28px 20px 56px; }
+  header h1 { margin:0 0 4px; font-size:24px; }
+  .sub { color:var(--mut); margin:0 0 2px; }
+  .class { display:inline-block; margin-top:10px; padding:4px 10px; border-radius:6px;
+    background:#3a2c12; color:var(--warn); font-size:12.5px; font-weight:600;
+    border:1px solid #5a4519; }
+  h2 { font-size:15px; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--mut); margin:30px 0 12px; }
+  .figs { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:10px; }
+  .fig { background:var(--panel); border:1px solid var(--line); border-radius:9px;
+    padding:12px 14px; display:flex; flex-direction:column; gap:4px; }
+  .fl { color:var(--mut); font-size:12.5px; }
+  .fv { font-size:19px; font-weight:650; font-variant-numeric:tabular-nums; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:14px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:16px 17px; text-decoration:none; color:var(--ink); display:flex;
+    flex-direction:column; gap:8px; transition:border-color .15s, transform .15s; }
+  .card:hover { border-color:var(--acc); transform:translateY(-2px); }
+  .card-h { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .card-t { font-size:16px; font-weight:650; }
+  .card-d { margin:0; color:var(--mut); font-size:13.5px; flex:1; }
+  .badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px;
+    white-space:nowrap; }
+  .badge.zi { background:#11321f; color:var(--ok); border:1px solid #1c5436; }
+  .badge.py { background:#2a2030; color:#d49bff; border:1px solid #4a325a; }
+  .open { color:var(--acc); font-weight:600; font-size:13.5px; }
+  footer { margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
+    color:var(--mut); font-size:12px; }
+  code { background:#0c141d; padding:1px 5px; border-radius:4px; }
+  a.src { color:var(--acc); }
+</style></head>
+<body><div class="wrap">
+  <header>
+    <h1>PAR Fund Stochastic ALM &amp; TVOG</h1>
+    <p class="sub">Offline home &mdash; one place to open every result view. No internet,
+      no install, no server required.</p>
+    <p class="sub">Model version <b>0.2.0</b>
+      &middot; data contract <b>1.23.0</b>
+      &middot; snapshot 2026-06-14T00:28:05.652099+00:00</p>
+    <span class="class">EDUCATIONAL ONLY -- NOT a regulatory capital model</span>
+  </header>
+
+  <h2>Headline governed figures</h2>
+  <div class="figs" id="figs">
+      <div class="fig"><span class="fl">Governed headline SCR component (frozen-t)</span><span class="fv">$39,975.65</span></div>
+      <div class="fig"><span class="fl">Nested 99.5% SCR</span><span class="fv">$48,707</span></div>
+      <div class="fig"><span class="fl">Var-covar / correlated SCR</span><span class="fv">$47,293</span></div>
+      <div class="fig"><span class="fl">Standalone sum (pre-diversification)</span><span class="fv">$62,389</span></div>
+      <div class="fig"><span class="fl">Diversification benefit (nested)</span><span class="fv">$None</span></div>
+      <div class="fig"><span class="fl">Risk drivers (calibrated)</span><span class="fv">11</span></div>
+      <div class="fig"><span class="fl">Deployment gates cleared</span><span class="fv">12/12</span></div>
+      <div class="fig"><span class="fl">Tasks complete</span><span class="fv">118/118</span></div>
+  </div>
+  <p class="sub" style="margin-top:10px; font-size:12.5px;">Figures are read verbatim
+    from the model-output snapshot &mdash; this page computes nothing.</p>
+
+  <h2>Open a view</h2>
+  <div class="cards">
+      <a class="card" href="ui_app.html" data-view="ui_app.html">
+        <div class="card-h"><span class="card-t">Full Results Explorer</span><span class="badge zi">Zero-install</span></div>
+        <p class="card-d">The complete governed result UI: Overview, Inventory &amp; Contract, Calibrations, Capital &amp; Tail, Governance, plus phase deep-dives, chart/CSV export and print-to-PDF.</p>
+        <span class="open">Open &rarr;</span>
+      </a>
+      <a class="card" href="model_result_viewer.html" data-view="model_result_viewer.html">
+        <div class="card-h"><span class="card-t">Result Viewer (light)</span><span class="badge zi">Zero-install</span></div>
+        <p class="card-d">A lighter, faster read-only viewer of the same model-output snapshot.</p>
+        <span class="open">Open &rarr;</span>
+      </a>
+      <a class="card" href="combined_model_app.html" data-view="combined_model_app.html">
+        <div class="card-h"><span class="card-t">Combined Model App</span><span class="badge zi">Zero-install</span></div>
+        <p class="card-d">Combined offline GUI bringing the result surfaces together in one file.</p>
+        <span class="open">Open &rarr;</span>
+      </a>
+      <a class="card" href="par_projection_gui.html" data-view="par_projection_gui.html">
+        <div class="card-h"><span class="card-t">PAR Projection GUI</span><span class="badge zi">Zero-install</span></div>
+        <p class="card-d">Interactive PAR-endowment projection explorer (deterministic walk-through).</p>
+        <span class="open">Open &rarr;</span>
+      </a>
+      <a class="card" href="launchers/README.md" data-view="launchers/README.md">
+        <div class="card-h"><span class="card-t">Input &amp; Run GUI</span><span class="badge py">Needs Python</span></div>
+        <p class="card-d">Enter your own actuarial inputs and run the stochastic model end-to-end on localhost. Needs Python 3.8+ (relaxes zero-install for THIS input+run step only); your run renders into a separate copy and never edits the governed template.</p>
+        <span class="open">Open &rarr;</span>
+      </a>
+  </div>
+
+  <footer>
+    Built 2026-06-16T17:16:01Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
+    self-contained: open by double-click from a USB stick or an air-gapped machine.
+    The governed result template <code>ui_app.html</code> is never modified by this page.
+  </footer>
+</div>
+<script>
+// Offline-only guard: this page makes ZERO network calls. Provenance is embedded.
+(function(){
+  var PROVENANCE = { contract: "1.23.0",
+    headline: 39975.654628199336, source_sha256: "c335c2bf1744a425f7d9b76e09b43f4c2e945f748e4de8b322b88cbb48534c04" };
+  window.__OFFLINE_HOME__ = PROVENANCE;
+})();
+</script>
+</body></html>
