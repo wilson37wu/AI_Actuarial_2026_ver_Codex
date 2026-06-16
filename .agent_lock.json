@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T15:09Z-c96a",
-  "started_at": "2026-06-16T15:09:09Z",
-  "ttl_minutes": 120,
-  "task": "Verification window / frontier check (Phase PKG)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T15:11:16Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
