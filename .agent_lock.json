@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-16T00:18:31Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-16T01:07Z-4799",
+  "started_at": "2026-06-16T01:07:46Z",
+  "ttl_minutes": 120,
+  "task": "06:00Z window: verify gates + frontier check (OWNER PIVOT)",
+  "note": ""
 }
