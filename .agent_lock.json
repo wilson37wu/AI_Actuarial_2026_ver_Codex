@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T12:18Z-035c",
-  "started_at": "2026-06-16T12:18:09Z",
-  "ttl_minutes": 120,
-  "task": "Verification window #13 (live JS self-tests + pytest restored)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T12:19:33Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
