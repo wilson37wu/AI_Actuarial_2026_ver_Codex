@@ -27,10 +27,22 @@ def _live_contract():
 
 
 def test_layer_chain_is_contiguous():
-    """base -> a1 -> a2 version constants form a gap-free chain."""
+    """base -> ... -> published version constants form a gap-free chain.
+
+    The expected "to" sequence is DERIVED from the pipeline's own
+    ``LAYERS`` (base contract followed by each ADDITIVE patch layer's NEW
+    contract) so this guard stays correct as new layers are appended. It was
+    previously pinned to a literal 5-element list and went stale at each
+    contract bump (the 1.22.0 MR-VR-1 step was missing after the 1.23.0
+    MR-VR-2 panel shipped, turning this gate RED). Both endpoints remain
+    explicitly pinned below, and ``validate_chain`` independently asserts
+    contiguity and that the chain terminates at PUBLISHED_CONTRACT."""
     chain = pipe.validate_chain()  # raises on any gap
     tos = [s["to"] for s in chain["steps"]]
-    assert tos == [pipe.BASE_CONTRACT, "1.19.0", "1.20.0", "1.21.0", pipe.PUBLISHED_CONTRACT]
+    expected = [pipe.BASE_CONTRACT] + [new for _script, _prior, new in pipe.LAYERS]
+    assert tos == expected
+    assert tos[0] == pipe.BASE_CONTRACT
+    assert tos[-1] == pipe.PUBLISHED_CONTRACT
 
 
 def test_base_contract_is_starting_point():

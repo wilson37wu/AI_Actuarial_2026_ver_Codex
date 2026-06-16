@@ -1,9 +1,9 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-16T05:30:00Z",
+  "last_run": "2026-06-16T06:11:00Z",
   "last_run_duration_minutes": 22,
-  "last_run_note": "Maintenance (auto-admissible, non-model-form): re-baselined the STALE Phase IGUI Task 9 summary gate UI sha. build_phase_igui_task9_summary.py UI_APP_BASELINE_SHA was frozen at the pre-VR-panel 6dca35b3 while the authorized shipped ui_app.html is d82c65ec (contract 1.23.0, MR-VR-2 panel) - so test_phase_igui_task9_summary::{test_gate_green,test_ui_app_byte_unchanged} were RED on origin (this LIVE-recompute gate compares the current ui_app.html against the constant; the 04:08 UTC Task 10 re-baseline fixed Task 10 but MISSED the identical Task 9 constant). Re-pinned the constant to d82c65ec (mirrors Task 10 + PKG Task1/2b + governance, all already record d82c65ec); Task 9 gate now 13-check ok, file 12/12 PASS. ui_app.html BYTE-UNCHANGED d82c65ec (NOT touched); governed headline 39975.654628199336 untouched; live contract 1.23.0 unchanged; no model parameter/UI change. Frozen Task 2-9 evidence reports retain 6dca35b3 as correct historical 1.21.0-era snapshots (no test reads them; they refresh on next builder run). FRESH executed evidence this sandbox (node22+jsdom via mount node_modules, numpy2.2.6, scipy absent): ui_app self-test ok:true (0 network/0 JS errors/0 external refs); PKG Task1 structural gate ok; IGUI Task10 validate ui_app_byte_unchanged:true; suites in isolation 59/59 PASS (task9 12, task10 16, pkg1 9, pkg2b 7, postigui_task8 15) - the 2 combined-run pkg2b 'bootstrap_self_test_ok' failures are the pre-documented cross-file test-pollution (7/7 in isolation), NOT regressions. Frontier UNCHANGED = OWNER PIVOT (MR-LONGEV-1/LSMC sign-off | Option-A publish cert/channel | extend offline UI additive | freeze).",
+  "last_run_note": "Maintenance (auto-admissible, non-model-form): reconciled the STALE offline-UI contract-chain gate test_ui_contract_pipeline_reconcile::test_layer_chain_is_contiguous, RED on origin since the 1.22.0 MR-VR-1 step went unrepresented after the 1.23.0 MR-VR-2 panel shipped. The literal 5-element expected chain now DERIVES from pipe.LAYERS (base + each layer NEW) with both endpoints still explicitly pinned, so it self-maintains across future additive bumps. ui_app.html BYTE-UNCHANGED (d82c65ec), ui_data.json contract 1.23.0, governed headline 39975.654628199336 bit-identical; only the one test file changed. Frontier UNCHANGED = OWNER PIVOT.",
   "current_phase": "Phase PKG Task 1 COMPLETE: Option-A frozen-binary build recipe authored (PyInstaller spec + CI release matrix gated to manual/tag + structural gate + unittest + docs). Closes the launcher's last COMPUTE prerequisite once an owner runs the build. No model/UI/contract change. NEXT = OWNER PIVOT or Phase PKG Task 2 (code-signing cert / onedir fallback / publish-channel decision - owner/infra inputs needed) | MR-LONGEV-1 / LSMC (sign-off) | freeze.",
   "overall_status": "PHASE_IGUI_TASK9_STALE_UI_SHA_REBASELINED_6dca35b3_TO_d82c65ec_GATE_13_GREEN_12_12_PASS_NO_MODEL_OR_UI_CHANGE_HEADLINE_BIT_IDENTICAL_CONTRACT_1.23.0_FRONTIER_REMAINS_OWNER_PIVOT",
   "phases": {
@@ -1088,7 +1088,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-16T04:08:00Z",
+  "last_updated": "2026-06-16T06:11:00Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -2327,5 +2327,26 @@
     },
     "discipline": "Phase 30 stop-rule honoured; no model parameter/copula/UI-contract change; in_progress pointer unchanged (frontier=owner pivot). All git in /tmp clone (mount full). Lock acquired+released this cycle.",
     "owner_action_required": "Pivot now blocking ~10 consecutive windows. Owner picks ONE: (a) MR-LONGEV-1 longevity 5th driver [model-form, sign-off]; (b) LSMC proxy for SCR [model-form, sign-off]; (c) Option-A publish [code-signing cert + channel, owner/infra]; (d) resume/extend offline UI [auto-runnable additive]; (e) declare frontier complete & FREEZE."
+  },
+  "cycle_2026_06_16_reconcile_gate_fix": {
+    "timestamp": "2026-06-16T06:11:00Z",
+    "owner": "claude",
+    "window": "06:00 UTC (claude) 2026-06-16",
+    "lock": "2026-06-16T06:11Z-851e",
+    "task": "Reconcile stale offline-UI contract-chain gate (RED->GREEN); auto-admissible maintenance, non-model-form",
+    "verdict": "GATE_RED_TO_GREEN_NO_MODEL_OR_UI_OR_CONTRACT_CHANGE_FRONTIER_STILL_OWNER_PIVOT",
+    "root_cause": "test_ui_contract_pipeline_reconcile.py pinned a literal 5-element expected 'to' chain [BASE,1.19.0,1.20.0,1.21.0,PUBLISHED]; when Post-IGUI Task 8 shipped the MR-VR-2 panel (contract 1.22.0->1.23.0) the pipeline chain grew to 6 steps, so the literal list omitted the 1.22.0 MR-VR-1 (postigui_vr) step and asserted index-4 1.22.0 != 1.23.0 -> RED.",
+    "fix": "Derive expected = [BASE_CONTRACT] + [layer NEW for layer in pipe.LAYERS]; keep both endpoints explicitly pinned (tos[0]==BASE, tos[-1]==PUBLISHED). Self-maintaining; cannot go stale on the next additive bump. Only tests/test_ui_contract_pipeline_reconcile.py changed.",
+    "evidence": {
+      "reconcile_suite": "5/5 PASS (was 4/5; test_layer_chain_is_contiguous RED->GREEN)",
+      "contract_coupled_tests": "58 PASS across h1_contract_guard, a2_digests, phase36_task5_phase_summary, postigui_task5_vr_panel, postigui_task8_vr2_panel, reconcile (pytest 9.1.0, numpy 2.2.6, scipy ABSENT but these gates are stdlib/static)",
+      "ui_app_html_sha256": "d82c65ec... BYTE-UNCHANGED",
+      "ui_data_contract": "1.23.0 unchanged",
+      "governed_headline": "39975.654628199336 present (bit-identical)",
+      "external_ref_scan": "no http(s)/CDN/<script src>/<link>/@import/real storage API (sole 'localStorage' hit is a descriptive string)",
+      "js_self_test": "NOT re-executed here (jsdom load of 744KB ui_app.html exceeds 45s sandbox cap); ui_app.html byte-identical to origin which is documented ok:true (0 net/0 err/0 external) earlier today"
+    },
+    "scipy_note": "scipy absent + /sessions mount 100% full; pytest installed to /tmp target. The 6 scipy-dependent model suites were not run here (env limitation, not a regression); the changed gate is static.",
+    "git": "single-file change committed in fresh /tmp clone of origin/main; fetch-rebase-push."
   }
 }

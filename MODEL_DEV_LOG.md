@@ -10610,3 +10610,10 @@ the identical Task 10 constant but missed Task 9. Fix: re-pinned the Task 9 cons
 pkg1 + igui10 validators green. Combined-run pkg2b `bootstrap_self_test_ok` failures = pre-documented
 cross-file pollution, not regressions. Frontier UNCHANGED = OWNER PIVOT. See
 `docs/cycle_status/LATEST_CYCLE_STATUS_20260616_igui_task9_rebaseline.md`.
+
+---
+## 2026-06-16T06:11Z (06:00 UTC window, claude) — Reconcile stale contract-chain gate (RED→GREEN)
+- **Auto-admissible maintenance, non-model-form.** Lock `2026-06-16T06:11Z-851e` (pushed `e009ffa..0d08322`).
+- `test_ui_contract_pipeline_reconcile::test_layer_chain_is_contiguous` was RED on origin: literal expected chain omitted the 1.22.0 MR-VR-1 step after the 1.23.0 MR-VR-2 panel shipped. Fixed by deriving the expected `to`-chain from `pipe.LAYERS` with endpoints still pinned — self-maintaining across future additive bumps. **Only `tests/test_ui_contract_pipeline_reconcile.py` changed.**
+- Evidence: reconcile suite 5/5 PASS; 58 contract-coupled tests PASS; `ui_app.html` `d82c65ec…` BYTE-UNCHANGED; contract 1.23.0; governed headline 39975.654628199336 bit-identical; no external refs. scipy absent / jsdom self-test exceeds 45 s cap → not re-run (ui_app byte-identical to documented-green origin).
+- **Frontier UNCHANGED = OWNER PIVOT.** No model/UI/contract change.
