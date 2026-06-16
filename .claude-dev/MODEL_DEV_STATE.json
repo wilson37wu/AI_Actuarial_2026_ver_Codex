@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-16T08:10:00Z",
-  "last_run_duration_minutes": 12,
-  "last_run_note": "Verification + offline-UI readiness confirmation (auto-admissible, NON-model/NON-UI). Fresh /tmp clone, lock acquired+pushed (cycle 2026-06-16T08:09Z-8fc5, origin ca09716). Gates GREEN: ui_app.html sha256 d82c65ec BYTE-UNCHANGED; governed headline 39975.654628199336 bit-identical; contract 1.23.0; PKG task1 & task2b validators ok:true (20 passed). CONFIRMED owner offline-UI directive SATISFIED: ui_app.html, combined_model_app.html, model_result_viewer.html all scan to 0 external network refs (air-gap double-click, data embedded inline). Flagged sole non-offline legacy file par_projection_gui.html (Chart.js cdnjs dep; superseded by combined_model_app.html) as owner-optional retire/inline. No model parameter/UI/contract change. Frontier REMAINS OWNER PIVOT (~12 windows): pick (a) MR-LONGEV-1 sign-off / (b) LSMC sign-off / (c) Option-A publish cert+channel / (d) extend offline UI / (e) freeze.",
+  "last_run": "2026-06-16T09:09:00Z",
+  "last_run_duration_minutes": 10,
+  "last_run_note": "Verification + frontier confirmation (auto-admissible, NON-model/NON-UI), 11th OWNER-PIVOT window. Fresh /tmp clone of origin/main; lock acquired+pushed (cycle 2026-06-16T09:09Z-41ab). Gates GREEN: ui_app.html sha256 d82c65ec BYTE-UNCHANGED; governed headline 39975.654628199336 bit-identical; contract 1.23.0; 3 offline apps (ui_app/combined_model_app/model_result_viewer) scan to 0 external network refs; build_phase_pkg_task1_validate ok 26/26; build_phase_pkg_task2b_validate ok 20/20. jsdom UI self-tests + scipy pytest not executed here (45s sandbox timeout on 744KB DOM over virtiofs; /sessions 100% full, scipy/pytest uninstallable) - clean in prior windows. No model parameter/UI/contract change. Frontier UNCHANGED = OWNER PIVOT: pick ONE of MR-LONGEV-1[sign-off] / LSMC[sign-off] / Option-A publish[cert+channel] / extend offline UI[auto] / freeze.",
   "current_phase": "Phase PKG Task 1 COMPLETE: Option-A frozen-binary build recipe authored (PyInstaller spec + CI release matrix gated to manual/tag + structural gate + unittest + docs). Closes the launcher's last COMPUTE prerequisite once an owner runs the build. No model/UI/contract change. NEXT = OWNER PIVOT or Phase PKG Task 2 (code-signing cert / onedir fallback / publish-channel decision - owner/infra inputs needed) | MR-LONGEV-1 / LSMC (sign-off) | freeze.",
-  "overall_status": "OFFLINE_UI_DIRECTIVE_CONFIRMED_SATISFIED_3_APPS_ZERO_NETWORK_GATES_GREEN_HEADLINE_BIT_IDENTICAL_CONTRACT_1.23.0_UI_APP_d82c65ec_BYTE_UNCHANGED_FRONTIER_REMAINS_OWNER_PIVOT",
+  "overall_status": "VERIFICATION_GREEN_11TH_OWNER_PIVOT_WINDOW_UI_APP_d82c65ec_BYTE_UNCHANGED_HEADLINE_BIT_IDENTICAL_CONTRACT_1.23.0_3_APPS_ZERO_NETWORK_PKG_VALIDATORS_46_46_FRONTIER_REMAINS_OWNER_PIVOT",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",

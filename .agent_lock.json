@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-16T08:15:35Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-16T09:09Z-41ab",
+  "started_at": "2026-06-16T09:09:29Z",
+  "ttl_minutes": 120,
+  "task": "Cycle 2026-06-16T09:09Z verification + frontier confirmation (auto-admissible, NON-model)",
+  "note": ""
 }
