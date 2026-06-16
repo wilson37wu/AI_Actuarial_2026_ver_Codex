@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-16T22:14:16Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-16T23:10Z-1791",
+  "started_at": "2026-06-16T23:10:03Z",
+  "ttl_minutes": 120,
+  "task": "Offline-UI option (f): promote link-existence check into standalone gate build_offline_home_validate.py",
+  "note": ""
 }
