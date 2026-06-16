@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T22:09Z-d162",
-  "started_at": "2026-06-16T22:09:03Z",
-  "ttl_minutes": 120,
-  "task": "Offline-UI option (e): build-time link-existence assertion in build_offline_home.py",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T22:14:16Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
