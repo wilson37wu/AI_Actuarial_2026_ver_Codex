@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-16T13:12:00Z",
-  "last_run_duration_minutes": 4,
-  "last_run_note": "Verification window #14 (claude). GREEN, no model/UI/source change; frontier STILL OWNER PIVOT (~14 windows). Off-window scheduled fire ~13:09 UTC; lock FREE, preflight PROCEED, acquired+pushed clean (cycle 2026-06-16T13:09Z-b2df). FRESH EXECUTED evidence (py3.10.12, numpy2.2.6, scipy ABSENT, node22.22.3 + jsdom via mount node_modules; pytest9.1.0 pip-installed to /tmp): 3 JS offline self-tests ok:true (ui_app 0 network/0 JS errors + vr2 panel digested; offline_viewer 0/0; combined_gui 0/0); ui_app.html sha256 d82c65ec... BYTE-UNCHANGED; contract 1.23.0 present; governed headline 39975.654628199336 present; 55 pytest PASS (phase36_task5 + pkg_task1 + igui_task10 = 33; pkg_task2b + postigui1-8 = 22). Offline RESULTS UI confirmed zero-install/zero-network/zero-external-ref => user offline-UI directive already satisfied by shipped ui_app.html. /sessions mount 100% full => all edits made + JSON re-parsed in the /tmp clone (not the mount). OWNER ACTION required (now ~14 windows): (a) MR-LONGEV-1 longevity 5th-driver [model-form, sign-off]; (b) LSMC proxy [sign-off]; (c) Option-A publish [code-signing cert + channel]; (d) declare auto-development frontier COMPLETE and FREEZE.",
+  "last_run": "2026-06-16T14:17:30Z",
+  "last_run_duration_minutes": 0,
+  "last_run_note": "Verification window #15 (scheduled claude run). Frontier UNCHANGED = OWNER PIVOT. Static integrity GREEN: ui_app.html d82c65ec byte-unchanged; governed headline 39975.654628199336 present; py_compile clean (par_model_v2+tests); JSON re-parse 5/5 clean (governance 119 records); contract 1.23.0 unchanged. Live JS self-tests + model pytest NOT runnable here (jsdom>45s cap; scipy/pytest absent) - environmental, not a regression. WORKING-FOLDER SYNC: confirmed origin/main is the LATEST (strict superset, 63 vs 56 cycle keys, nothing unique to the mount) and refreshed the working folder from origin/main per the owner sync directive. NO model/UI/contract change. Lock acquired+released this run.",
   "current_phase": "Phase PKG Task 1 COMPLETE: Option-A frozen-binary build recipe authored (PyInstaller spec + CI release matrix gated to manual/tag + structural gate + unittest + docs). Closes the launcher's last COMPUTE prerequisite once an owner runs the build. No model/UI/contract change. NEXT = OWNER PIVOT or Phase PKG Task 2 (code-signing cert / onedir fallback / publish-channel decision - owner/infra inputs needed) | MR-LONGEV-1 / LSMC (sign-off) | freeze.",
-  "overall_status": "VERIFICATION_GREEN_14TH_OWNER_PIVOT_WINDOW_UI_APP_d82c65ec_BYTE_UNCHANGED_CONTRACT_1.23.0_55_PYTEST_PASS_3_OFFLINE_APPS_ZERO_NETWORK_OFFLINE_UI_DIRECTIVE_SATISFIED_FRONTIER_REMAINS_OWNER_PIVOT",
+  "overall_status": "VERIFICATION_GREEN_15TH_OWNER_PIVOT_WINDOW_STATIC_INTEGRITY_UI_APP_d82c65ec_BYTE_UNCHANGED_CONTRACT_1.23.0_WORKING_FOLDER_RESYNCED_TO_ORIGIN_MAIN_LATEST_FRONTIER_REMAINS_OWNER_PIVOT_AWAITING_OWNER_DECISION",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -1088,7 +1088,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-16T10:11:00Z",
+  "last_updated": "2026-06-16T14:17:30Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -2417,5 +2417,24 @@
       "scipy": "absent (environmental, model pytest not run)"
     },
     "frontier": "OWNER PIVOT unchanged (~13 windows): (a) MR-LONGEV-1 (b) LSMC (c) Option-A publish cert/channel (d) owner-specified UI panel (e) freeze"
+  },
+  "cycle_2026_06_16_verify15": {
+    "owner": "claude",
+    "cycle_id": "2026-06-16T14:15Z-461b",
+    "result": "GREEN (static integrity; live JS/pytest not runnable in this sandbox)",
+    "result_window": "#15",
+    "trigger": "scheduled run (claude 06:00/18:00 UTC window)",
+    "evidence": {
+      "ui_app_sha256": "d82c65ec (byte-unchanged)",
+      "governed_headline": "39975.654628199336 present in ui_app.html",
+      "py_compile": "par_model_v2 + tests ALL clean",
+      "json_reparse": "MODEL_DEV_STATE / GOVERNANCE_STORE(119 records) / combined_app_data / ui_data / viewer_data = 5/5 clean",
+      "contract_version": "1.23.0 unchanged",
+      "live_js_self_tests": "NOT RUN - jsdom parse of 744KB ui_app.html exceeds the 45s sandbox wall-clock cap (windows 11-12 were also byte-identity-only)",
+      "pytest": "NOT RUN - scipy/pytest absent in this sandbox (environmental, per prior windows)"
+    },
+    "working_folder_sync": "origin/main confirmed LATEST (63 cycle keys vs working-folder 56; remote strict superset - verify8/9/11/12, w10, w13, reconcile_gate_fix exist only on remote; ZERO cycles unique to the working folder). Working folder was ~7 cycles stale; refreshed from origin/main this run per owner sync directive.",
+    "model_ui_contract_change": "NONE",
+    "frontier": "OWNER PIVOT unchanged (~14 windows): (a) MR-LONGEV-1 longevity 5th driver [model-form, sign-off] (b) LSMC SCR proxy [sign-off] (c) Option-A publish - code-signing cert + channel [owner/infra] (d) owner-specified input/run-GUI or results-UI panel (e) declare frontier complete & freeze"
   }
 }

@@ -10669,3 +10669,21 @@ ui_app.html sha256 d82c65ec… BYTE-UNCHANGED; contract 1.23.0; governed headlin
 /sessions mount 100% full → edited+re-parsed state in /tmp clone. Offline RESULTS UI confirmed zero-install/zero-network →
 standing offline-UI directive already satisfied by frozen d82c65ec. OWNER ACTION (now ~14 windows): MR-LONGEV-1 / LSMC [sign-off];
 Option-A publish [cert+channel]; or declare frontier COMPLETE & FREEZE. See docs/cycle_status/LATEST_CYCLE_STATUS_20260616_w14_verify.md.
+
+---
+
+## 2026-06-16T14:17:50Z — Verification Window #15 (Owner-Pivot) [claude]
+
+GREEN (static integrity). Frontier UNCHANGED = OWNER PIVOT. No model/UI/contract change.
+
+**Working-folder sync (owner directive):** confirmed origin/main is the LATEST — strict superset
+(63 vs 56 cycle keys; verify8/9/11/12, w10, w13, reconcile_gate_fix remote-only; nothing unique to
+the working folder). Working folder was ~7 cycles stale; refreshed from origin/main this run.
+
+**Evidence:** ui_app.html d82c65ec byte-unchanged; governed headline 39975.654628199336 present;
+py_compile clean (par_model_v2+tests); JSON re-parse 5/5 clean (governance 119 records);
+contract 1.23.0 unchanged. Live JS self-tests + model pytest NOT runnable here
+(jsdom >45 s sandbox cap; scipy/pytest absent) — environmental, not regressions.
+
+**Owner decision still required:** (a) MR-LONGEV-1 (b) LSMC (c) Option-A publish cert/channel
+(d) owner-specified GUI/panel (e) freeze. cycle_2026_06_16_verify15.
