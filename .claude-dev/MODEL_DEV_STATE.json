@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-16T15:10:00Z",
+  "last_run": "2026-06-16T16:13:00Z",
   "last_run_duration_minutes": 0,
-  "last_run_note": "Verification window #16 (scheduled claude 18:00Z window). Frontier UNCHANGED = OWNER PIVOT. Static integrity GREEN: ui_app.html d82c65ec byte-unchanged; governed headline 39975.654628199336 present; py_compile clean (par_model_v2+tests); JSON re-parse 4/4 clean; contract 1.23.0 unchanged. WORKING-FOLDER SYNC CONFIRMED: mount artifacts (ui_app.html/ui_data.json/combined_model_app.html/STATE) are BYTE-IDENTICAL to origin/main latest - nothing to refresh. Live JS self-tests + scipy/pytest NOT runnable here (env caps) - environmental, not a regression. No model/UI/contract change (remaining options require owner sign-off). Lock acquired+released this run. ESCALATION: 16 consecutive owner-pivot windows - emailed owner a numbered decision list to unblock.",
+  "last_run_note": "Verification/Owner-Pivot Window #17 (scheduled claude window). Frontier UNCHANGED = OWNER PIVOT. Static integrity GREEN: ui_app.html d82c65ec byte-unchanged; governed headline 39975.654628199336 present; py_compile clean (par_model_v2+tests); JSON re-parse 5/5 clean (ui_data/combined_app_data/viewer_data/STATE/GOVERNANCE_STORE); contract 1.23.0 unchanged; ZERO external refs in ui_app.html (zero-install preserved); PKG Task1 stdlib gate 26/26. WORKING-FOLDER SYNC CONFIRMED: mount ui_app.html/ui_data.json/combined_model_app.html/STATE BYTE-IDENTICAL to origin/main latest. Live jsdom self-test + scipy/pytest NOT runnable here (env caps; not a regression). No model/UI/contract change (all remaining levers need owner sign-off or owner/infra). Lock acquired+released. ESCALATION: 17 consecutive owner-pivot windows - re-emailed owner a numbered decision list with default-if-silent.",
   "current_phase": "Phase PKG Task 1 COMPLETE: Option-A frozen-binary build recipe authored (PyInstaller spec + CI release matrix gated to manual/tag + structural gate + unittest + docs). Closes the launcher's last COMPUTE prerequisite once an owner runs the build. No model/UI/contract change. NEXT = OWNER PIVOT or Phase PKG Task 2 (code-signing cert / onedir fallback / publish-channel decision - owner/infra inputs needed) | MR-LONGEV-1 / LSMC (sign-off) | freeze.",
-  "overall_status": "VERIFICATION_GREEN_16TH_OWNER_PIVOT_WINDOW_STATIC_INTEGRITY_UI_APP_d82c65ec_BYTE_UNCHANGED_CONTRACT_1.23.0_WORKING_FOLDER_BYTE_IDENTICAL_TO_ORIGIN_MAIN_FRONTIER_REMAINS_OWNER_PIVOT_AWAITING_OWNER_DECISION_ESCALATED_VIA_EMAIL",
+  "overall_status": "VERIFICATION_GREEN_17TH_OWNER_PIVOT_WINDOW_STATIC_INTEGRITY_UI_APP_d82c65ec_BYTE_UNCHANGED_CONTRACT_1.23.0_ZERO_EXTERNAL_REFS_PKG_GATE_26_26_WORKING_FOLDER_BYTE_IDENTICAL_TO_ORIGIN_MAIN_FRONTIER_OWNER_PIVOT_AWAITING_OWNER_DECISION_ESCALATED_VIA_EMAIL",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -2436,5 +2436,26 @@
     "working_folder_sync": "origin/main confirmed LATEST (63 cycle keys vs working-folder 56; remote strict superset - verify8/9/11/12, w10, w13, reconcile_gate_fix exist only on remote; ZERO cycles unique to the working folder). Working folder was ~7 cycles stale; refreshed from origin/main this run per owner sync directive.",
     "model_ui_contract_change": "NONE",
     "frontier": "OWNER PIVOT unchanged (~14 windows): (a) MR-LONGEV-1 longevity 5th driver [model-form, sign-off] (b) LSMC SCR proxy [sign-off] (c) Option-A publish - code-signing cert + channel [owner/infra] (d) owner-specified input/run-GUI or results-UI panel (e) declare frontier complete & freeze"
+  },
+  "cycle_2026_06_16_verify17": {
+    "owner": "claude",
+    "result": "GREEN (static integrity; live JS/pytest not runnable in this sandbox)",
+    "result_window": "#17",
+    "trigger": "scheduled run (claude 06:00/18:00 UTC window)",
+    "evidence": {
+      "ui_app_sha256": "d82c65ec (byte-unchanged)",
+      "governed_headline": "39975.654628199336 present in ui_app.html",
+      "py_compile": "par_model_v2 + tests ALL clean",
+      "json_reparse": "ui_data / combined_app_data / viewer_data / STATE / GOVERNANCE_STORE = 5/5 clean",
+      "contract_version": "1.23.0 unchanged",
+      "external_refs": "0 (no cdn/http/googleapis in ui_app.html - zero-install preserved)",
+      "pkg_task1_stdlib_gate": "26/26 pass",
+      "live_js_self_tests": "NOT RUN - jsdom parse of 744KB ui_app.html exceeds 45s sandbox cap",
+      "pytest": "NOT RUN - scipy/numpy/pytest absent in sandbox (environmental)"
+    },
+    "working_folder_sync": "origin/main confirmed LATEST; mount artifacts byte-identical to origin/main (ui_app.html/ui_data.json/combined_model_app.html/STATE all MATCH clone of origin/main).",
+    "model_ui_contract_change": "NONE",
+    "frontier": "OWNER PIVOT unchanged (17 windows): (a) MR-LONGEV-1 [model-form, sign-off] (b) LSMC [sign-off] (c) Option-A publish [code-signing cert + channel, owner/infra] (d) extend offline UI w/ NEW model output [owner-gated] (e) declare frontier complete & FREEZE",
+    "status_file": "docs/cycle_status/LATEST_CYCLE_STATUS_20260616_verify17_owner_pivot.md"
   }
 }

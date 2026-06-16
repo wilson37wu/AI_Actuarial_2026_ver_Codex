@@ -10687,3 +10687,13 @@ contract 1.23.0 unchanged. Live JS self-tests + model pytest NOT runnable here
 
 **Owner decision still required:** (a) MR-LONGEV-1 (b) LSMC (c) Option-A publish cert/channel
 (d) owner-specified GUI/panel (e) freeze. cycle_2026_06_16_verify15.
+
+---
+
+## 2026-06-16 (claude window) — Verification / Owner-Pivot Window #17
+- Frontier UNCHANGED = OWNER PIVOT. No model/UI/contract change (all remaining levers need owner sign-off or owner/infra).
+- Static integrity GREEN: ui_app.html d82c65ec byte-unchanged; governed headline 39975.654628199336 present; py_compile clean (par_model_v2+tests); JSON re-parse 5/5 clean; contract 1.23.0; 0 external refs (zero-install preserved); PKG Task1 stdlib gate 26/26.
+- Working-folder sync: mount artifacts byte-identical to origin/main latest.
+- Not runnable here (env caps, not regressions): jsdom JS self-test (>45s cap), scipy/numpy/pytest (absent).
+- Escalation: 17 consecutive owner-pivot windows; re-emailed owner numbered decision list w/ default-if-silent.
+- Lock acquired + released; main never force-pushed.
