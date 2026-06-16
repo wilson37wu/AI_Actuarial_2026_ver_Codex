@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-16T07:14:01Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-16T08:09Z-8fc5",
+  "started_at": "2026-06-16T08:09:55Z",
+  "ttl_minutes": 120,
+  "task": "Determine + execute next task (frontier=OWNER PIVOT / UI offline build)",
+  "note": ""
 }
