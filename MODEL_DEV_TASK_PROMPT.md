@@ -31,6 +31,31 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-16 (18:00 UTC window, claude) — OFFLINE-UI “WHICH VIEW DO I WANT?” CHOOSER SHIPPED (additive, zero-network, zero new JS).**
+> Executed NEXT-EXECUTION POINTER option (c): `offline_home.html` now has a goal-oriented **view chooser**
+> above the view cards. It consolidates the six result-view descriptions into one-line “if you want to … →
+> open this view” rows (headline-numbers/print → Model Summary Card; in-depth explore → Full Results Explorer;
+> lighter read → Result Viewer; one-file bundle → Combined Model App; interactive walk-through → PAR Projection
+> GUI; enter-your-own-inputs → Input & Run GUI), each linking straight to the matching view and carrying its
+> Zero-install / Needs-Python badge. The chooser is built from a single `CHOOSER` list whose every href is
+> build-time-asserted to also be a `VIEWS` entry, so chooser and cards can never drift. **Static HTML/CSS only —
+> no new JS**, so the zero-JS-error guarantee is trivially preserved. ADDITIVE & decision-neutral: `ui_app.html`
+> and `ui_data.json` BYTE-UNCHANGED (untouched); governed headline 39,975.654628199336 intact; NO `ui_data`
+> contract change (stays 1.23.0); 0 external refs. Verification (EXECUTED): `build_offline_home_validate.py`
+> **22/22** ok:true (was 19/19; +3 chooser gates); `offline_home_loader_parity.cjs` **10/10** ok:true (node);
+> `py_compile` clean; `node --check` clean on the patched `offline_home_self_test.cjs`. NOTE: the jsdom
+> self-test could NOT be executed — jsdom does not run in this sandbox (a trivial JSDOM load also times out);
+> this is the documented reason the stdlib `build_offline_home_validate.py` mirror exists, which ran green. Edited
+> in the `/tmp` clone and copied to the mount (sha256 byte-identical, 4 files) per the virtiofs corruption-hazard protocol.
+>
+> **NEXT-EXECUTION POINTER (offline-UI track, decision-neutral, auto-admissible):** options (a) snapshot-loader,
+> (b) summary card and (c) which-view chooser are DONE. The next single in_progress item = **(d)** a light
+> accessibility / quick-start pass on `offline_home.html` (skip-to-content link, ensure every interactive element
+> is keyboard-reachable, one-line “start here” guidance) — additive, static, no governed-artifact or contract
+> change. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC sign-off; Option-A publish cert+channel; or
+> declare the frontier complete & freeze). Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
+
 > **2026-06-16 (18:00 UTC window, claude) — OFFLINE-UI PRINTABLE SUMMARY CARD SHIPPED (additive, zero-network).**
 > Executed NEXT-EXECUTION POINTER option (b): shipped `model_summary_card.html`, a printable one-page model
 > summary generated from `ui_data.json`. Print-optimised (A4 `@page` + `@media print`; embedded "Print / Save

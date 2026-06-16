@@ -58,6 +58,17 @@
   .lbanner.err { display:block; background:#3a1414; color:#ff8f8f;
     border:1px solid #5a1f1f; }
   .fig.changed { outline:1px solid var(--acc); outline-offset:-1px; }
+  .chooser { display:flex; flex-direction:column; gap:8px; }
+  .crow { display:grid; grid-template-columns:1fr auto; gap:6px 14px; align-items:center;
+    background:var(--panel); border:1px solid var(--line); border-radius:9px;
+    padding:11px 14px; }
+  .cgoal { color:var(--ink); font-size:13.5px; }
+  .cpick { display:flex; align-items:center; gap:8px; white-space:nowrap; }
+  .cpick a { color:var(--acc); text-decoration:none; font-weight:600; font-size:13.5px; }
+  .cpick a:hover { text-decoration:underline; }
+  .cpick .badge { margin-left:2px; }
+  @media (max-width:560px){ .crow { grid-template-columns:1fr; }
+    .cpick { white-space:normal; } }
 </style></head>
 <body><div class="wrap">
   <header>
@@ -103,6 +114,37 @@
     re-renders the figures on this page from that file. It changes no governed artifact
     and uploads nothing; Reset restores the built-in governed snapshot.</p>
 
+  <h2>Which view do I want?</h2>
+  <p class="sub" style="margin-top:-4px; font-size:12.5px;">Pick by what you want to do
+    &mdash; each links straight to the matching view below. Every view is read-only and
+    changes no governed artifact.</p>
+  <div class="chooser">
+      <div class="crow">
+        <span class="cgoal">See the headline capital numbers and the validation scorecard at a glance &mdash; on screen or print / save-as-PDF</span>
+        <span class="cpick"><a href="model_summary_card.html">Model Summary Card &rarr;</a><span class="badge zi">Zero-install</span></span>
+      </div>
+      <div class="crow">
+        <span class="cgoal">Explore the full governed results in depth: capital, tail, calibrations, governance and phase deep-dives, with chart &amp; CSV export</span>
+        <span class="cpick"><a href="ui_app.html">Full Results Explorer &rarr;</a><span class="badge zi">Zero-install</span></span>
+      </div>
+      <div class="crow">
+        <span class="cgoal">Read the same model-output snapshot in a lighter, faster viewer</span>
+        <span class="cpick"><a href="model_result_viewer.html">Result Viewer (light) &rarr;</a><span class="badge zi">Zero-install</span></span>
+      </div>
+      <div class="crow">
+        <span class="cgoal">Open every result surface bundled together in one single file</span>
+        <span class="cpick"><a href="combined_model_app.html">Combined Model App &rarr;</a><span class="badge zi">Zero-install</span></span>
+      </div>
+      <div class="crow">
+        <span class="cgoal">Walk through the PAR-endowment projection interactively</span>
+        <span class="cpick"><a href="par_projection_gui.html">PAR Projection GUI &rarr;</a><span class="badge zi">Zero-install</span></span>
+      </div>
+      <div class="crow">
+        <span class="cgoal">Enter your own actuarial inputs and run the stochastic model end-to-end</span>
+        <span class="cpick"><a href="launchers/README.md">Input &amp; Run GUI &rarr;</a><span class="badge py">Needs Python</span></span>
+      </div>
+  </div>
+
   <h2>Open a view</h2>
   <div class="cards">
       <a class="card" href="ui_app.html" data-view="ui_app.html">
@@ -138,7 +180,7 @@
   </div>
 
   <footer>
-    Built 2026-06-16T19:15:15Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-16T20:17:14Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.

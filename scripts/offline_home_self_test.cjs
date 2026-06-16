@@ -35,6 +35,9 @@ ok("provenance object set", dom.window.__OFFLINE_HOME__ &&
    dom.window.__OFFLINE_HOME__.headline === 39975.654628199336);
 ok("ZERO network calls", net.length === 0);
 ok("ZERO JS errors", errors.length === 0);
+// "which view do I want?" chooser (additive, static) present
+ok("which-view chooser", /Which view do I want\?/.test(doc.body.textContent));
+ok("chooser >=6 rows", doc.querySelectorAll(".crow").length >= 6);
 // snapshot-loader (additive, zero-network) elements present & wired
 ok("loader drop zone", !!doc.getElementById("drop"));
 ok("loader file input", !!doc.getElementById("file"));

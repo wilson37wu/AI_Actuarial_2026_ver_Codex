@@ -41,6 +41,10 @@ def main() -> int:
     ok("standalone_sum verbatim", f"{d['capital']['standalone_sum']:,.0f}" in html)
     ok("zero external refs", not re.search(r"https?://|//cdn|googleapis|unpkg|jsdelivr", html))
     ok("self-contained (no <link>/<script src)", "<link" not in html and "script src" not in html)
+    # "which view do I want?" chooser (additive, static, zero JS) presence
+    ok("which-view chooser heading", "Which view do I want?" in html)
+    ok("chooser has >=6 goal rows", html.count('class="crow"') >= 6)
+    ok("chooser recommends summary card", re.search(r'crow.*?model_summary_card\.html', html, re.S) is not None)
     # snapshot-loader (additive, zero-network) presence
     ok("loader drop zone", 'id="drop"' in html)
     ok("loader file input", 'type="file"' in html and 'id="file"' in html)

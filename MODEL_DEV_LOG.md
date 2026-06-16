@@ -10785,3 +10785,23 @@ mount verified byte-identical to clone (sha match on all five touched files). No
 
 **Model frontier:** STILL OWNER PIVOT — no model-form change auto-ran. Next auto-admissible offline-UI task =
 option (c) "which view do I want?" chooser on `offline_home.html`.
+
+## 2026-06-16T20:20Z — Window #21 (claude 18:00 UTC) — Offline-UI option (c): which-view chooser
+
+Executed NEXT-EXECUTION POINTER option (c). Added a "Which view do I want?" chooser to
+`offline_home.html`: six goal-oriented rows mapping a user intent to the matching result
+view, each a direct link carrying the Zero-install / Needs-Python badge. Built from a
+single `CHOOSER` list whose every href is build-time-asserted to be a `VIEWS` entry, so
+chooser and cards stay single-sourced. Static HTML/CSS only — no new JS.
+
+Invariants: `ui_app.html` and `ui_data.json` BYTE-UNCHANGED (untouched); governed headline
+39975.654628199336 intact; contract 1.23.0 unchanged; 0 external refs.
+
+Verification (EXECUTED): build_offline_home_validate.py 22/22 ok:true (+3 chooser gates);
+offline_home_loader_parity.cjs 10/10 ok:true; py_compile clean; node --check clean on the
+patched self_test.cjs. jsdom self-test UNRUNNABLE in this sandbox (trivial JSDOM load also
+times out → exit 124); mirrored by the stdlib validator which ran green.
+
+Files: offline_home.html, scripts/build_offline_home.py,
+scripts/build_offline_home_validate.py, scripts/offline_home_self_test.cjs.
+Lock 05a444e→50f0d52. Next pointer: option (d) accessibility/quick-start pass; else MODEL frontier OWNER PIVOT.

@@ -49,6 +49,26 @@ VIEWS = [
      "template.", False),
 ]
 
+# "Which view do I want?" chooser -- consolidates the result-view descriptions into
+# goal-oriented one-liners. Every href MUST also be a VIEWS entry (asserted in build()),
+# so the chooser and the cards stay single-sourced and never drift.
+CHOOSER = [
+    ("See the headline capital numbers and the validation scorecard at a glance "
+     "&mdash; on screen or print / save-as-PDF",
+     "model_summary_card.html", "Model Summary Card", True),
+    ("Explore the full governed results in depth: capital, tail, calibrations, "
+     "governance and phase deep-dives, with chart &amp; CSV export",
+     "ui_app.html", "Full Results Explorer", True),
+    ("Read the same model-output snapshot in a lighter, faster viewer",
+     "model_result_viewer.html", "Result Viewer (light)", True),
+    ("Open every result surface bundled together in one single file",
+     "combined_model_app.html", "Combined Model App", True),
+    ("Walk through the PAR-endowment projection interactively",
+     "par_projection_gui.html", "PAR Projection GUI", True),
+    ("Enter your own actuarial inputs and run the stochastic model end-to-end",
+     "launchers/README.md", "Input &amp; Run GUI", False),
+]
+
 # --- Snapshot loader assets (kept OUT of the f-string so JS braces need no escaping) ---
 LOADER_CSS = """
   .loader { background:var(--panel); border:1px solid var(--line); border-radius:11px;
@@ -69,6 +89,19 @@ LOADER_CSS = """
   .lbanner.err { display:block; background:#3a1414; color:#ff8f8f;
     border:1px solid #5a1f1f; }
   .fig.changed { outline:1px solid var(--acc); outline-offset:-1px; }"""
+
+CHOOSER_CSS = """
+  .chooser { display:flex; flex-direction:column; gap:8px; }
+  .crow { display:grid; grid-template-columns:1fr auto; gap:6px 14px; align-items:center;
+    background:var(--panel); border:1px solid var(--line); border-radius:9px;
+    padding:11px 14px; }
+  .cgoal { color:var(--ink); font-size:13.5px; }
+  .cpick { display:flex; align-items:center; gap:8px; white-space:nowrap; }
+  .cpick a { color:var(--acc); text-decoration:none; font-weight:600; font-size:13.5px; }
+  .cpick a:hover { text-decoration:underline; }
+  .cpick .badge { margin-left:2px; }
+  @media (max-width:560px){ .crow { grid-template-columns:1fr; }
+    .cpick { white-space:normal; } }"""
 
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
@@ -246,6 +279,21 @@ def build() -> str:
         f'<span class="fv">{v}</span></div>' for l, v in figures)
     cardhtml = "\n".join(cards)
 
+    # Build the "which view do I want?" chooser; assert it never drifts from VIEWS.
+    _view_hrefs = {v[0] for v in VIEWS}
+    crows = []
+    for goal, chref, clabel, czero in CHOOSER:
+        assert chref in _view_hrefs, f"chooser href not in VIEWS: {chref}"
+        cbadge = ('<span class="badge zi">Zero-install</span>' if czero
+                  else '<span class="badge py">Needs Python</span>')
+        crows.append(
+            f'      <div class="crow">\n'
+            f'        <span class="cgoal">{goal}</span>\n'
+            f'        <span class="cpick"><a href="{html.escape(chref)}">{clabel} '
+            f'&rarr;</a>{cbadge}</span>\n'
+            f'      </div>')
+    chooserhtml = "\n".join(crows)
+
     return f'''<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -287,7 +335,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}
 </style></head>
 <body><div class="wrap">
   <header>
@@ -308,6 +356,14 @@ def build() -> str:
     from the model-output snapshot &mdash; this page computes nothing.</p>
 
 {LOADER_PANEL}
+  <h2>Which view do I want?</h2>
+  <p class="sub" style="margin-top:-4px; font-size:12.5px;">Pick by what you want to do
+    &mdash; each links straight to the matching view below. Every view is read-only and
+    changes no governed artifact.</p>
+  <div class="chooser">
+{chooserhtml}
+  </div>
+
   <h2>Open a view</h2>
   <div class="cards">
 {cardhtml}
