@@ -10588,3 +10588,9 @@ All three packaging recipes (A/B/C) now authored — the A/B/C menu is complete.
 - test_phase_igui_task10_offline_install.py 16/16 PASS (was 2 failed). ui_app.html byte-unchanged d82c65ec…; governed headline 39975.654628199336 untouched; contract 1.23.0 unchanged; no model/UI change.
 - Fresh evidence: 7 JS offline self-tests ok:true (0 net/0 JS err/0 ext refs). PKG Task2b combined-run failures = cross-file test pollution (7/7 in isolation), not regressions.
 - Frontier UNCHANGED = OWNER PIVOT (MR-LONGEV-1/LSMC sign-off | Option-A publish | freeze).
+
+## 2026-06-16 (claude, ~03:07 UTC scheduled fire) — Verification cycle #9; frontier STILL OWNER PIVOT
+- Preflight PROCEED, lock acquired clean (cycle 2026-06-16T03:07Z-d933). No documented auto-runnable task remains: Phase IGUI 1-10, Post-IGUI 1-8, PKG Task1 (Option-A) + Task2b (Option-B) all COMPLETE. MR-LONGEV-1 / LSMC are model-FORM changes requiring owner sign-off (must NOT auto-run); Option-A publish needs code-signing cert + channel.
+- Fresh executed evidence (py3.10.12, numpy2.2.6, scipy ABSENT, node22.22.3+jsdom): ui_app.html sha256 d82c65ec… BYTE-UNCHANGED; governed headline 39975.654628199336 present; contract 1.23.0. PKG Task1 structural gate PASS. JS offline self-tests ok:true — ui_app (21 tabs/0 net/0 JS err), offline_viewer (0 net/0 err), combined_gui. pytest 38 PASSED (phase36_task5 + pkg_task1 + igui_task10); pkg_task2b 7/7 PASS in ISOLATION (the 2 combined-run failures = documented cross-file test pollution, NOT regressions).
+- /sessions mount was 100% full this run → edited+verified state in the /tmp clone (re-parsed JSON), not the mount.
+- NO model parameter / UI / source change. OWNER ACTION required (now ~9 windows): (a) MR-LONGEV-1 / (b) LSMC [sign-off]; (c) Option-A publish [cert+channel]; (d) extend offline UI [auto-runnable]; (e) freeze.

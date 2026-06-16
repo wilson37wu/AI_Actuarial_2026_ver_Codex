@@ -80,6 +80,19 @@ force-push `main`. When in doubt, **yield**.
 > **OWNER ACTION required:** (a) MR-LONGEV-1 / (b) LSMC [sign-off], or (c) resume Phase IGUI /
 > (d) packaging A/B/C / (e) freeze [non-model-form]. If silent again, default = (c) resume Phase IGUI.
 
+> **2026-06-16 (9th window, claude) — VERIFICATION GREEN; frontier STILL OWNER PIVOT (~9 windows).**
+> Off-schedule scheduled fire ~03:07 UTC; lock FREE, preflight PROCEED, acquired clean (cycle
+> 2026-06-16T03:07Z-d933). No documented auto-admissible task remains (Phase IGUI 1-10, Post-IGUI 1-8,
+> PKG Task1 Option-A + Task2b Option-B all COMPLETE). Re-ran documented gates as fresh executed evidence
+> (py3.10.12, numpy2.2.6, scipy absent, node22.22.3+jsdom): ui_app.html sha256 d82c65ec… BYTE-UNCHANGED;
+> governed headline 39975.654628199336 present; contract 1.23.0; PKG Task1 structural gate PASS; 3 JS
+> offline self-tests ok:true (ui_app 21 tabs/0 net/0 err, offline_viewer, combined_gui); pytest 38 passed
+> (phase36_task5 + pkg_task1 + igui_task10); pkg_task2b 7/7 PASS in isolation (combined-run 2 fails =
+> documented cross-file pollution, NOT regressions). NOTE: /sessions mount was 100% full → edited+verified
+> state in the /tmp clone (JSON re-parsed). NO model/UI/source change. **OWNER ACTION required (now ~9
+> windows):** (a) MR-LONGEV-1 / (b) LSMC [sign-off]; (c) Option-A publish [cert+channel]; (d) extend
+> offline UI [auto-runnable additive]; (e) freeze. Authoritative pointer remains `.claude-dev/MODEL_DEV_STATE.json`.
+>
 > **2026-06-16 (8th window, claude) — VERIFICATION GREEN; frontier STILL OWNER PIVOT (8 windows).**
 > Fired ~00:12 UTC (Codex slot); lock FREE, preflight PROCEED, acquire push clean (0db9edd..b3ec885).
 > No auto-runnable task remains, so re-ran the documented gates as fresh evidence (Python 3.10.12,
