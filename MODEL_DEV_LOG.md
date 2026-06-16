@@ -10594,3 +10594,19 @@ All three packaging recipes (A/B/C) now authored — the A/B/C menu is complete.
 - Fresh executed evidence (py3.10.12, numpy2.2.6, scipy ABSENT, node22.22.3+jsdom): ui_app.html sha256 d82c65ec… BYTE-UNCHANGED; governed headline 39975.654628199336 present; contract 1.23.0. PKG Task1 structural gate PASS. JS offline self-tests ok:true — ui_app (21 tabs/0 net/0 JS err), offline_viewer (0 net/0 err), combined_gui. pytest 38 PASSED (phase36_task5 + pkg_task1 + igui_task10); pkg_task2b 7/7 PASS in ISOLATION (the 2 combined-run failures = documented cross-file test pollution, NOT regressions).
 - /sessions mount was 100% full this run → edited+verified state in the /tmp clone (re-parsed JSON), not the mount.
 - NO model parameter / UI / source change. OWNER ACTION required (now ~9 windows): (a) MR-LONGEV-1 / (b) LSMC [sign-off]; (c) Option-A publish [cert+channel]; (d) extend offline UI [auto-runnable]; (e) freeze.
+
+---
+
+## 2026-06-16 (06:00 UTC window, claude) — Phase IGUI Task 9 summary-gate UI-sha RE-BASELINE (auto-admissible maintenance)
+
+Cleared a RED gate on `origin/main`: `test_phase_igui_task9_summary::{test_gate_green, test_ui_app_byte_unchanged}`.
+Root cause: `scripts/build_phase_igui_task9_summary.py` is a LIVE-recompute gate (hashes the current
+`ui_app.html` and asserts equality to `UI_APP_BASELINE_SHA`); the constant was stale at the pre-VR-panel
+`6dca35b3…` while the shipped `ui_app.html` is `d82c65ec…` (contract 1.23.0). The ~04:08 UTC cycle re-baselined
+the identical Task 10 constant but missed Task 9. Fix: re-pinned the Task 9 constant `6dca35b3…` → `d82c65ec…`
+(mirrors Task 10 + PKG Task1/2b + governance). `ui_app.html` byte-unchanged; governed headline
+39975.654628199336 untouched; contract 1.23.0 unchanged; no model/UI change. Evidence: task9 12/12 PASS (was
+10/12); 59/59 in isolation (task9/igui10/pkg1/pkg2b/postigui8); ui_app self-test ok:true 0-net/0-err;
+pkg1 + igui10 validators green. Combined-run pkg2b `bootstrap_self_test_ok` failures = pre-documented
+cross-file pollution, not regressions. Frontier UNCHANGED = OWNER PIVOT. See
+`docs/cycle_status/LATEST_CYCLE_STATUS_20260616_igui_task9_rebaseline.md`.

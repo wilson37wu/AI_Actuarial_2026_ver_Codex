@@ -31,6 +31,19 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-16 (06:00 UTC window, claude) — RED gate fixed GREEN; frontier STILL OWNER PIVOT (~11 windows).**
+> No model-form change auto-ran. Cleared an auto-admissible RED gate on origin: 
+> `test_phase_igui_task9_summary::{test_gate_green,test_ui_app_byte_unchanged}` was RED because the Task 9 
+> builder is a LIVE-recompute gate whose `UI_APP_BASELINE_SHA` was stale at the pre-VR-panel `6dca35b3…` 
+> while the shipped `ui_app.html` is `d82c65ec…` (contract 1.23.0). The ~04:08 UTC cycle re-baselined Task 10 
+> but missed the identical Task 9 constant. Re-pinned `6dca35b3…`→`d82c65ec…` (mirrors Task 10 + PKG Task1/2b 
+> + governance). `ui_app.html` BYTE-UNCHANGED; governed headline 39975.654628199336 untouched; contract 1.23.0 
+> unchanged; no model/UI change. Evidence: task9 12/12 PASS (was 10/12); 59/59 suites in isolation; ui_app 
+> self-test ok:true 0-net/0-err; pkg1+igui10 validators green (combined-run pkg2b `bootstrap_self_test_ok` 
+> failures = pre-documented cross-file pollution, not regressions). **OWNER ACTION required (now ~11 windows):** 
+> (a) MR-LONGEV-1 / (b) LSMC [model-form, sign-off]; (c) Option-A publish [code-signing cert + channel]; 
+> (d) extend offline UI [needs NEW model output → owner-gated]; (e) declare frontier complete & **freeze**.
+>
 > **NEXT-EXECUTION POINTER — updated 2026-06-15 (cycle: Post-Phase-IGUI Task 8, claude).**
 > Task 8 COMPLETE: the ADDITIVE, display-only offline-UI **MR-VR-2 outer-loop**
 > variance-reduction panel (`postigui_vr2`) shipped on the zero-install RESULTS UI

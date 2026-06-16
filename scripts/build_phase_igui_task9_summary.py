@@ -49,9 +49,15 @@ REPORT_JSON = Path("docs/validation/PHASE_IGUI_TASK9_PHASE_SUMMARY.json")
 REPORT_MD = Path("docs/validation/PHASE_IGUI_TASK9_PHASE_SUMMARY.md")
 PACKAGING_CARD = Path("docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md")
 
-# The certified zero-install RESULTS-UI baseline (Task 8). Byte-identity to this
-# value is what carries the nine-suite / 522+-check offline battery verdict forward.
-UI_APP_BASELINE_SHA = "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65"
+# The certified zero-install RESULTS-UI baseline. Byte-identity to this value is
+# what carries the nine-suite / 522+-check offline battery verdict forward.
+# RE-BASELINED 2026-06-16 (claude): the authorized shipped ui_app.html advanced to
+# d82c65ec via Post-IGUI Task 5 (contract 1.21->1.22 VR panel) + Task 8 (1.22->1.23
+# VR-2 panel). This LIVE-recompute gate was stale at the pre-VR-panel 6dca35b3,
+# so test_phase_igui_task9_summary was RED on origin. Re-pinned to the live
+# d82c65ec, mirroring the 04:08 UTC Task 10 re-baseline + PKG Task1/2b + governance
+# (all already record d82c65ec). No model/UI/contract change; ui_app.html unchanged.
+UI_APP_BASELINE_SHA = "d82c65ecc7f7130a07b34d55c9500e93e23dd71626d18c3002c4e0777bd1fee6"
 HEADLINE = "39975.654628199336"
 
 CHANGE_TITLE = ("Phase IGUI Task 9 - phase summary + consolidated re-audit; "
