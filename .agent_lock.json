@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-15T23:15:52Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-16T00:12Z-e419",
+  "started_at": "2026-06-16T00:12:20Z",
+  "ttl_minutes": 120,
+  "task": "8th window verification + status (frontier=OWNER PIVOT, no auto-runnable model-form task)",
+  "note": ""
 }
