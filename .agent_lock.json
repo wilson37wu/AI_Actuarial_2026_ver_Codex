@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T14:15Z-461b",
-  "started_at": "2026-06-16T14:15:05Z",
-  "ttl_minutes": 120,
-  "task": "Verification window #15 (owner-pivot) + working-folder sync to latest origin/main",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T14:20:13Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
