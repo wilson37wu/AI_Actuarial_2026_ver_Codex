@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T21:10Z-eeec",
-  "started_at": "2026-06-16T21:10:40Z",
-  "ttl_minutes": 120,
-  "task": "Offline-UI option (d): accessibility/quick-start pass on offline_home.html",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T21:17:59Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
