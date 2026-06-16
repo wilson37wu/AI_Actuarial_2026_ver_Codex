@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-16T14:17:30Z",
+  "last_run": "2026-06-16T15:10:00Z",
   "last_run_duration_minutes": 0,
-  "last_run_note": "Verification window #15 (scheduled claude run). Frontier UNCHANGED = OWNER PIVOT. Static integrity GREEN: ui_app.html d82c65ec byte-unchanged; governed headline 39975.654628199336 present; py_compile clean (par_model_v2+tests); JSON re-parse 5/5 clean (governance 119 records); contract 1.23.0 unchanged. Live JS self-tests + model pytest NOT runnable here (jsdom>45s cap; scipy/pytest absent) - environmental, not a regression. WORKING-FOLDER SYNC: confirmed origin/main is the LATEST (strict superset, 63 vs 56 cycle keys, nothing unique to the mount) and refreshed the working folder from origin/main per the owner sync directive. NO model/UI/contract change. Lock acquired+released this run.",
+  "last_run_note": "Verification window #16 (scheduled claude 18:00Z window). Frontier UNCHANGED = OWNER PIVOT. Static integrity GREEN: ui_app.html d82c65ec byte-unchanged; governed headline 39975.654628199336 present; py_compile clean (par_model_v2+tests); JSON re-parse 4/4 clean; contract 1.23.0 unchanged. WORKING-FOLDER SYNC CONFIRMED: mount artifacts (ui_app.html/ui_data.json/combined_model_app.html/STATE) are BYTE-IDENTICAL to origin/main latest - nothing to refresh. Live JS self-tests + scipy/pytest NOT runnable here (env caps) - environmental, not a regression. No model/UI/contract change (remaining options require owner sign-off). Lock acquired+released this run. ESCALATION: 16 consecutive owner-pivot windows - emailed owner a numbered decision list to unblock.",
   "current_phase": "Phase PKG Task 1 COMPLETE: Option-A frozen-binary build recipe authored (PyInstaller spec + CI release matrix gated to manual/tag + structural gate + unittest + docs). Closes the launcher's last COMPUTE prerequisite once an owner runs the build. No model/UI/contract change. NEXT = OWNER PIVOT or Phase PKG Task 2 (code-signing cert / onedir fallback / publish-channel decision - owner/infra inputs needed) | MR-LONGEV-1 / LSMC (sign-off) | freeze.",
-  "overall_status": "VERIFICATION_GREEN_15TH_OWNER_PIVOT_WINDOW_STATIC_INTEGRITY_UI_APP_d82c65ec_BYTE_UNCHANGED_CONTRACT_1.23.0_WORKING_FOLDER_RESYNCED_TO_ORIGIN_MAIN_LATEST_FRONTIER_REMAINS_OWNER_PIVOT_AWAITING_OWNER_DECISION",
+  "overall_status": "VERIFICATION_GREEN_16TH_OWNER_PIVOT_WINDOW_STATIC_INTEGRITY_UI_APP_d82c65ec_BYTE_UNCHANGED_CONTRACT_1.23.0_WORKING_FOLDER_BYTE_IDENTICAL_TO_ORIGIN_MAIN_FRONTIER_REMAINS_OWNER_PIVOT_AWAITING_OWNER_DECISION_ESCALATED_VIA_EMAIL",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
