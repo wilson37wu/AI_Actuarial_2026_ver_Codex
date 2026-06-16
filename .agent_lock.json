@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T20:12Z-760e",
-  "started_at": "2026-06-16T20:12:59Z",
-  "ttl_minutes": 120,
-  "task": "Offline-UI option (c): which-view chooser on offline_home.html",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T20:22:52Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
