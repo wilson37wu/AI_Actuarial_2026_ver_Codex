@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-16T09:12:36Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-16T10:11Z-2b9a",
+  "started_at": "2026-06-16T10:11:29Z",
+  "ttl_minutes": 120,
+  "task": "Verification \u2014 12th OWNER-PIVOT window (no model/UI change)",
+  "note": ""
 }

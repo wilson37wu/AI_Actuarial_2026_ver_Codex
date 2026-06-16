@@ -10626,3 +10626,12 @@ cross-file pollution, not regressions. Frontier UNCHANGED = OWNER PIVOT. See
 - Flagged sole non-offline legacy file: par_projection_gui.html loads Chart.js from cdnjs (superseded by combined_model_app.html) — owner-optional retire/inline.
 - No model parameter / UI byte / contract change. Frontier REMAINS OWNER PIVOT (~12 windows): (a) MR-LONGEV-1 / (b) LSMC / (c) Option-A publish / (d) extend offline UI / (e) freeze.
 - Status doc: docs/cycle_status/LATEST_CYCLE_STATUS_20260616_offline_ui_readiness_confirm.md
+
+---
+## 2026-06-16T10:11Z — Verification #12 (claude, OWNER-PIVOT window ~12)
+- Preflight: fresh /tmp FULL clone of origin/main (HEAD 8d594ab); discarded a stale shallow clone (cf2f1d8) with read-only .git. Lock acquired+pushed (cycle 2026-06-16T10:11Z-2b9a).
+- No auto-admissible task remained; re-ran documented gates as fresh evidence.
+- GREEN: ui_app.html sha256 d82c65ec BYTE-UNCHANGED; governed headline 39975.654628199336 present; contract 1.23.0; PKG Task1 validator ok:true 26/26; pytest 24 passed (pkg_task1 + phase36_task5 + pkg_task2b).
+- JS self-tests not re-run (jsdom only on 100%-full /sessions mount); UI byte-identical to last-green baseline => stronger than re-run.
+- No model/UI/source change. Frontier STILL OWNER PIVOT. Owner must pick (a) MR-LONGEV-1 / (b) LSMC [sign-off] / (c) Option-A publish [cert+channel] / (d) extend offline UI [new output/concept] / (e) freeze. Recommend (e) or (a).
+- Status doc: docs/cycle_status/LATEST_CYCLE_STATUS_20260616_verify12.md
