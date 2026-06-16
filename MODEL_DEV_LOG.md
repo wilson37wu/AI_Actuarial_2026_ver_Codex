@@ -10658,3 +10658,14 @@ windows #11-12 skipped — installed `jsdom` + `pytest` into the throwaway clone
 scipy-dependent model pytest not executed (scipy absent — environmental). All edits/commits in the `/tmp` clone per AGENT_COORDINATION.md.
 
 **Blocker (escalating, ~13 windows):** owner pivot required — (a) MR-LONGEV-1 longevity 5th driver [sign-off]; (b) LSMC SCR proxy [sign-off]; (c) Option-A publish: code-signing cert + channel [owner/infra]; (d) owner-specified offline-UI panel; (e) declare frontier complete & freeze. Recommendation: (e) or (a).
+
+---
+
+## 2026-06-16T13:12Z — Verification window #14 (claude) — GREEN, frontier OWNER PIVOT
+No model/UI/source change. Lock FREE → preflight PROCEED → acquired clean (cycle 2026-06-16T13:09Z-b2df).
+Fresh executed evidence: 3 JS offline self-tests ok:true (ui_app/offline_viewer/combined_gui; 0 network / 0 JS errors);
+ui_app.html sha256 d82c65ec… BYTE-UNCHANGED; contract 1.23.0; governed headline 39975.654628199336 present;
+55 pytest PASS (phase36_task5 + pkg_task1 + igui_task10 = 33; pkg_task2b + postigui1-8 = 22). scipy ABSENT (env, not regression);
+/sessions mount 100% full → edited+re-parsed state in /tmp clone. Offline RESULTS UI confirmed zero-install/zero-network →
+standing offline-UI directive already satisfied by frozen d82c65ec. OWNER ACTION (now ~14 windows): MR-LONGEV-1 / LSMC [sign-off];
+Option-A publish [cert+channel]; or declare frontier COMPLETE & FREEZE. See docs/cycle_status/LATEST_CYCLE_STATUS_20260616_w14_verify.md.
