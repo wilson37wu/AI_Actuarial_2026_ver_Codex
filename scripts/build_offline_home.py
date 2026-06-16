@@ -298,6 +298,24 @@ def build() -> str:
         f'<span class="fv">{v}</span></div>' for l, v in figures)
     cardhtml = "\n".join(cards)
 
+    # Build-time link-existence assertion (offline-UI option e): every VIEWS href
+    # -- and, by the chooser-drift check below, every CHOOSER href, which must be a
+    # VIEWS entry -- MUST resolve to a file that actually exists on disk at build
+    # time, so the landing page can never ship a link to a missing view. Static
+    # check; reads nothing from the network, derives/changes no governed figure.
+    _missing = []
+    for _v in VIEWS:
+        _href = _v[0]
+        # hrefs are plain relative paths; defend against any future anchor/query.
+        _rel = _href.split("#", 1)[0].split("?", 1)[0]
+        if not (ROOT / _rel).exists():
+            _missing.append(_href)
+    if _missing:
+        raise SystemExit(
+            "FAIL: offline_home would link to missing view target(s): "
+            + ", ".join(sorted(_missing))
+            + " (every VIEWS href must exist on disk at build time)")
+
     # Build the "which view do I want?" chooser; assert it never drifts from VIEWS.
     _view_hrefs = {v[0] for v in VIEWS}
     crows = []

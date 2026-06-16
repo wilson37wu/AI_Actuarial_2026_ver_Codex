@@ -31,6 +31,31 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-16 (Window #23, claude) — OFFLINE-UI BUILD-TIME LINK-EXISTENCE ASSERTION SHIPPED (additive, build-time only, zero-network, zero new JS).**
+> Executed NEXT-EXECUTION POINTER option (e): `scripts/build_offline_home.py` `build()` now asserts
+> that **every `VIEWS` href resolves to a file that actually exists on disk** under `ROOT` before
+> emitting `offline_home.html`. `CHOOSER` hrefs are covered transitively (the pre-existing
+> chooser-drift `assert` already requires each chooser href to be a `VIEWS` entry). A missing target
+> raises `SystemExit` naming the offending href(s), so the landing page can never ship a link to a
+> missing view. **Static/build-time only — no new runtime JS, no network**, so the zero-JS-error
+> guarantee holds. ADDITIVE & decision-neutral: `ui_app.html` and `ui_data.json` **BYTE-UNCHANGED**;
+> all six view artifacts byte-unchanged; governed headline **39,975.654628199336** intact; NO contract
+> change (stays **1.23.0**); 0 external refs. Regenerated `offline_home.html` differs from prior only in
+> the build-timestamp line (assertion emits NO output). Verification (EXECUTED in /tmp clone AND
+> re-verified on mount after cp): `py_compile` clean; positive build OK (18,966 bytes, 0 external refs);
+> **NEGATIVE test PASS** (injected a bogus missing href into `VIEWS` → `build()` raised `SystemExit`);
+> `build_offline_home_validate.py` **27/27** ok:true; `offline_home_loader_parity.cjs` **10/10** ok:true
+> (node). jsdom self-test remains UNRUNNABLE in sandbox (documented; mirrored by stdlib validate).
+>
+> **NEXT-EXECUTION POINTER (offline-UI track, decision-neutral, auto-admissible):** options (a)
+> snapshot-loader, (b) summary card, (c) which-view chooser, (d) accessibility/quick-start pass and
+> (e) build-time link-existence assertion are ALL DONE. The next single in_progress item = **(f)**:
+> PROMOTE the link-existence check into the standalone gate `scripts/build_offline_home_validate.py`
+> so it runs as a standing regression check independent of a rebuild (the check currently only fires
+> inside `build()`) — additive, static, no governed-artifact or contract change. The MODEL frontier
+> remains OWNER PIVOT (MR-LONGEV-1 / LSMC sign-off; Option-A publish cert+channel; or declare the
+> frontier complete & freeze). Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
 > **2026-06-16 (18:00 UTC window, claude) — OFFLINE-UI ACCESSIBILITY / QUICK-START PASS SHIPPED (additive, zero-network, zero new JS).**
 > Executed NEXT-EXECUTION POINTER option (d): a light accessibility / quick-start pass on
 > `offline_home.html`. Adds (1) a **skip-to-content link** (`a.skip` → `#main`, visible only on
@@ -3015,15 +3040,4 @@ Phase IGUI is **COMPLETE** (input+run GUI MVP + one-click packaging + own-run re
 
 **NEXT (the single in_progress item): Post-Phase-IGUI Task 3** - following the design-note-first discipline, PRE-REGISTER the recorded NEXT candidate **MR-VR-1** (inner-path antithetic / CRN variance reduction for the TVOG inner loop) with fixed acceptance gates (frozen-headline invariance; unbiasedness vs the governed estimator; demonstrated variance-reduction ratio with CIs; idempotent digest; governance OWNER_REVIEW). Implementation deferred to the following cycle, exactly as MR-CAL-1 was. This is admissible under the Phase 30 stop-rule (variance reduction is a numerical-efficiency change, NOT a copula-structure candidate; no model parameter changes).
 
-**Standing constraints (BINDING):** Phase 30 stop-rule - NO new copula-structure candidates under MR-016; MR-016/MR-017 owner decisions pending; governed headline frozen single-df t **39,975.654628199336**. NO model parameter change without owner sign-off; ONE task per cycle; fresh-clone git per AGENT_COORDINATION.md; end-of-run status email.
-
-**Alternative pivots (owner-directed):** if the owner selects packaging option A/B/C, build the corresponding build-spec / CI release-matrix skeleton (no in-sandbox build); or continue offline-UI usability per the standing UI directive.
-
-
----
-
-## NEXT EXECUTION POINTER (updated 2026-06-15 after Post-Phase-IGUI Task 5 — MR-VR-1 OFFLINE-UI PANEL COMPLETE)
-
-**Post-Phase-IGUI Task 5 is COMPLETE.** The MR-VR-1 inner-path variance-reduction study is now surfaced as an ADDITIVE, display-only offline-UI efficiency panel (contract **1.22.0**, +`postigui_vr` key): work-normalised VR ratios + 95% CIs (antithetic 1.882x / CRN 18.93x / Sobol-RQMC 2241.11x), effective sample size, target-SE inner-path counts n*, unbiasedness, and the antithetic-99.5% INEFFECTIVE disclosure. Governed headline 39,975.654628199336 BIT-IDENTICAL; adoption immaterial, REPORTED-NOT-applied. ui_app self-test ok:true 421 checks (tabCount 20) 0/0; pipeline chain validates to 1.22.0; ChangeRecord `16d987632ecc42569f4d4665dd56582e` OWNER_REVIEW.
-
-**NEXT (the single in_progress item): Post-Phase-IGUI Task 7 — implement MR-VR-2 (gated by the Task 6 pre-registration).** Task 6 COMPLETE: design note pre-registered MR-VR-2 (RQMC + control-variates variance reduction for the OUTER capital/SCR loop) under fixed gates G1–G6, governance ChangeRecord 78ae269bdf63466787b030cc59029b43 OWNER_REVIEW (records 116, audit 144, integrity OK), self-consistency 22/22, tests 8/8. Task 7 = IMPLEMENT the MR-VR-2 outer-loop study (scrambled-Sobol RQMC + closed-form/proxy control variate on the governed 99.5% SCR): meet G1 governed-headline BIT-IDENTICAL (DISCLOSED/ADDITIVE, never adopt); G2 unbiasedness (control beta fit out-of-sample; RQMC mean over ≥200 scramble seeds within 0.5% of crude); G3 ≥200-replicate CI work-normalised VR ratios at the 99.5% target with disclosed control-target ρ and 1/(1−ρ²); G4 slice-stable SeedSequence reproducibility + run digest; G5 adoption dSCR REPORTED-NOT-applied (open MR if >1% of headline); G6 governance ChangeRecord OWNER_REVIEW + unit tests + any offline-UI surface ADDITIVE only. NO model parameter change; no copula structure (Phase 30 stop-rule); MR-016/MR-017 owner-pendin
+**Standing constraints (BINDING):** Phase 30 stop-rule - NO new copula-structure candidates under MR-016; MR-016/MR-017 owner decisions pending; governed headline frozen single-df t 

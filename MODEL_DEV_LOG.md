@@ -10848,3 +10848,19 @@ Files: offline_home.html, scripts/build_offline_home.py,
 scripts/build_offline_home_validate.py, scripts/offline_home_self_test.cjs.
 Offline-UI options (a)-(d) now ALL COMPLETE. Next pointer: option (e) build-time
 link-existence assertion in build_offline_home.py; else MODEL frontier OWNER PIVOT.
+
+---
+
+## 2026-06-16 — Window #23 (claude) — Offline-UI option (e): build-time link-existence assertion
+
+**Task:** Add a build-time assertion in `scripts/build_offline_home.py` that every `VIEWS`/`CHOOSER` href resolves to a file on disk, so `offline_home.html` can never link to a missing view.
+
+**Change:** `build()` now iterates `VIEWS`, resolves each href (anchor/query-stripped) against `ROOT`, and raises `SystemExit` listing any missing target(s). `CHOOSER` hrefs are covered transitively by the pre-existing chooser-drift `assert`.
+
+**Properties:** additive, build-time only, no new runtime JS, no network. `ui_app.html`/`ui_data.json` byte-unchanged; all six view artifacts byte-unchanged; governed headline 39975.654628199336 intact; contract 1.23.0 unchanged; 0 external refs. `offline_home.html` regenerated (timestamp-only delta).
+
+**Verification (EXECUTED, /tmp clone + re-verified on mount):** py_compile clean; positive build OK (18,966 bytes, 0 external refs); NEGATIVE test PASS (injected missing href → SystemExit); `build_offline_home_validate.py` 27/27 ok:true; `offline_home_loader_parity.cjs` 10/10 ok:true. jsdom self-test UNRUNNABLE in sandbox (documented; mirrored by stdlib validate).
+
+**Git:** done in fresh /tmp clone per AGENT_COORDINATION.md; mount `.git` untouched. Lock acquired/released as `claude`.
+
+**Next pointer:** option (f) — promote the link-existence check into `scripts/build_offline_home_validate.py` as a standing regression gate. Model frontier remains OWNER PIVOT (awaiting owner decision).

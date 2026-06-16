@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-16T21:15:00Z",
-  "last_run_duration_minutes": 12,
-  "last_run_note": "Window #22 (scheduled claude 18:00 UTC window). Offline-UI track, NEXT-EXECUTION POINTER option (d) SHIPPED: a light accessibility / quick-start pass on offline_home.html. Adds (1) a skip-to-content link (visible only on keyboard focus) that jumps to a new <main id=\"main\"> landmark, (2) a visible :focus-visible keyboard focus ring on every interactive element (cards, chooser links, drop zone, buttons), (3) a prefers-reduced-motion fallback that disables hover transforms/transitions, and (4) a one-line 'New here? Start with the Full Results Explorer...' start-here guidance callout in the header. STATIC CSS/HTML only -- NO new JS, so the zero-JS-error guarantee is preserved. ADDITIVE & decision-neutral: ui_app.html and ui_data.json BYTE-UNCHANGED; governed headline 39975.654628199336 intact; contract stays 1.23.0; 0 external refs. Verification (EXECUTED in /tmp clone AND re-verified on mount after cp): build_offline_home_validate.py 27/27 ok:true (was 22/22, +5 a11y gates); offline_home_loader_parity.cjs 10/10 ok:true (node); py_compile clean; node --check clean on patched self-test. jsdom self-test still UNRUNNABLE in sandbox (documented; mirrored by stdlib validate). NOTE: mount in-place editor truncated 2 files mid-write (documented virtiofs hazard) -- recovered by editing in /tmp clone and cp to mount (sha256 byte-identical, 4 files). Offline-UI options (a)-(d) now ALL COMPLETE.",
-  "current_phase": "Offline-UI usability track (owner-directed): options (a) snapshot-loader [W19], (b) printable summary card [W20], (c) 'which view do I want?' chooser [W21] and (d) accessibility/quick-start pass [W22] ALL COMPLETE. offline_home.html now ships a zero-install offline result surface with headline figures, a local snapshot-loader, a goal-oriented view chooser, full keyboard accessibility (skip link, focus ring, reduced-motion) and a start-here callout. NEXT (offline-UI, decision-neutral, auto-admissible) = option (e): a build-time link-existence assertion in build_offline_home.py so every VIEWS/CHOOSER href is verified to exist on disk at build time (the landing page can never link to a missing view) -- additive, static, no governed-artifact or contract change. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC sign-off; Option-A publish cert+channel; or declare the frontier complete & freeze) - all model-form/packaging items need owner/infra inputs.",
-  "overall_status": "OFFLINE_UI_ACCESSIBILITY_QUICKSTART_PASS_SHIPPED_W22_ADDITIVE_ZERO_NETWORK_ZERO_NEW_JS_SKIP_LINK_FOCUS_RING_REDUCED_MOTION_START_HERE_UI_APP_AND_UI_DATA_BYTE_UNCHANGED_CONTRACT_1.23.0_UNCHANGED_VALIDATE_27_27_PARITY_10_10_JSDOM_SELFTEST_UNRUNNABLE_IN_SANDBOX_MIRRORED_BY_STDLIB_OFFLINE_UI_OPTIONS_A_TO_D_ALL_COMPLETE_MODEL_FRONTIER_OWNER_PIVOT_AWAITING_OWNER_DECISION",
+  "last_run": "2026-06-16T22:12:00Z",
+  "last_run_duration_minutes": null,
+  "last_run_note": "Window #23 (scheduled claude window). Offline-UI track NEXT-EXECUTION POINTER option (e) SHIPPED: a build-time LINK-EXISTENCE ASSERTION in scripts/build_offline_home.py. build() now verifies every VIEWS href (and thus every CHOOSER href, which must already be a VIEWS entry) resolves to a file that actually exists on disk under ROOT before emitting offline_home.html; if any target is missing the build raises SystemExit with the offending href(s) listed, so the landing page can never ship a link to a missing view. STATIC/build-time only -- no new runtime JS, no network, zero-JS-error guarantee preserved. ADDITIVE & decision-neutral: ui_app.html and ui_data.json BYTE-UNCHANGED; governed headline 39975.654628199336 intact; data contract stays 1.23.0; 0 external refs; all 6 view artifacts byte-unchanged. Regenerated offline_home.html differs from prior only in the build-timestamp line (assertion emits NO output). Verification (EXECUTED in /tmp clone AND re-verified on mount after cp): py_compile clean; positive build OK (18,966 bytes, 0 external refs); NEGATIVE test confirmed the assertion raises SystemExit when a bogus missing href is injected into VIEWS; build_offline_home_validate.py 27/27 ok:true; offline_home_loader_parity.cjs 10/10 ok:true (node). jsdom self-test still UNRUNNABLE in sandbox (documented; mirrored by stdlib validate). Git done in a fresh /tmp clone per protocol (mount .git untouched).",
+  "current_phase": "Offline-UI usability/hardening track (owner-directed): options (a) snapshot-loader [W19], (b) printable summary card [W20], (c) 'which view do I want?' chooser [W21], (d) accessibility/quick-start pass [W22] and (e) build-time link-existence assertion [W23] ALL COMPLETE. offline_home.html is a zero-install offline result surface with headline figures, a local snapshot-loader, a goal-oriented view chooser, full keyboard accessibility, a start-here callout, and a build-time guarantee that it can never link to a missing view. NEXT (offline-UI, decision-neutral, auto-admissible) = option (f): PROMOTE the link-existence check into the standalone gate scripts/build_offline_home_validate.py so it runs as a standing regression check independent of a rebuild (currently it only fires inside build()) -- additive, static, no governed-artifact or contract change. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC sign-off; Option-A publish cert+channel; or declare the frontier complete & freeze) - all model-form/packaging items need owner/infra inputs.",
+  "overall_status": "OFFLINE_UI_LINK_EXISTENCE_ASSERTION_SHIPPED_W23_ADDITIVE_BUILD_TIME_ONLY_ZERO_NETWORK_ZERO_NEW_JS_EVERY_VIEWS_HREF_VERIFIED_ON_DISK_AT_BUILD_NEGATIVE_TEST_GREEN_UI_APP_AND_UI_DATA_BYTE_UNCHANGED_CONTRACT_1.23.0_UNCHANGED_HEADLINE_39975.65_INTACT_VALIDATE_27_27_PARITY_10_10_JSDOM_SELFTEST_UNRUNNABLE_IN_SANDBOX_MIRRORED_BY_STDLIB_OFFLINE_UI_OPTIONS_A_TO_E_ALL_COMPLETE_MODEL_FRONTIER_OWNER_PIVOT_AWAITING_OWNER_DECISION",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -1088,7 +1088,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-16T14:17:30Z",
+  "last_updated": "2026-06-16T22:12:00Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -2584,5 +2584,32 @@
     },
     "incident_note": "mount in-place editor truncated build_offline_home.py and build_offline_home_validate.py mid-write (documented virtiofs corruption hazard); recovered by re-applying edits in the /tmp clone and cp-ing to the mount, then re-validating on the mount (27/27).",
     "next_pointer": "offline-UI option (e): build-time link-existence assertion in build_offline_home.py; else MODEL frontier OWNER PIVOT"
+  },
+  "cycle_2026_06_16_link_existence_assert": {
+    "owner": "claude",
+    "window": 23,
+    "task": "Offline-UI option (e): build-time link-existence assertion in build_offline_home.py",
+    "completed_at": "2026-06-16T22:12:00Z",
+    "summary": "Added a build-time assertion in build() that every VIEWS href resolves to an existing file on disk under ROOT (CHOOSER hrefs covered transitively via the existing chooser-drift assert). Missing target -> SystemExit listing the offending href(s).",
+    "files_changed": [
+      "scripts/build_offline_home.py",
+      "offline_home.html (rebuilt; timestamp-only delta)"
+    ],
+    "additive": true,
+    "governed_artifacts_changed": false,
+    "contract_version": "1.23.0",
+    "governed_headline": 39975.654628199336,
+    "verification": {
+      "py_compile": "clean",
+      "positive_build": "OK 18966 bytes, 0 external refs",
+      "negative_test": "SystemExit raised on injected missing href (PASS)",
+      "build_offline_home_validate": "27/27 ok:true",
+      "offline_home_loader_parity": "10/10 ok:true (node)",
+      "ui_app_html_byte_unchanged": true,
+      "ui_data_json_byte_unchanged": true,
+      "re_verified_on_mount": true,
+      "jsdom_self_test": "UNRUNNABLE in sandbox (documented; mirrored by stdlib validate)"
+    },
+    "next_pointer": "option (f): promote link-existence check into build_offline_home_validate.py as a standing gate"
   }
 }
