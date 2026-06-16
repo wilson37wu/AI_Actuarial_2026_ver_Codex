@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T16:08Z-c7fe",
-  "started_at": "2026-06-16T16:08:28Z",
-  "ttl_minutes": 120,
-  "task": "Phase PKG / UI offline build (owner-pivot window)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T16:15:34Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
