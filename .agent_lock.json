@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-16T05:08Z-bbb7",
-  "started_at": "2026-06-16T05:08:29Z",
-  "ttl_minutes": 120,
-  "task": "Owner-pivot cycle: verify + additive offline-UI / research roadmap (no model-form change)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-16T05:18:03Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
