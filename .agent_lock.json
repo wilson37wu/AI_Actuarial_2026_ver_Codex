@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-16T10:16:24Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-16T11:13Z-effb",
+  "started_at": "2026-06-16T11:13:27Z",
+  "ttl_minutes": 120,
+  "task": "Verification/maintenance pass (12th OWNER-PIVOT window): fresh JS+pytest evidence, invariants, status email",
+  "note": ""
 }
