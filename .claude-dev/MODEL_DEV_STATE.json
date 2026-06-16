@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-16T20:20:00Z",
+  "last_run": "2026-06-16T21:15:00Z",
   "last_run_duration_minutes": 12,
-  "last_run_note": "Window #21 (scheduled claude 18:00 UTC window). Offline-UI track, NEXT-EXECUTION POINTER option (c) SHIPPED: a 'Which view do I want?' chooser on offline_home.html. It consolidates the six result-view descriptions into goal-oriented one-liners ('See the headline numbers...' -> Model Summary Card; 'Explore in depth...' -> Full Results Explorer; etc.), each linking straight to the matching view, with the Zero-install / Needs-Python badge carried through. Chooser is built from a single CHOOSER list whose every href is asserted to also be a VIEWS entry (build-time assert), so chooser and cards can never drift. Static HTML/CSS only - NO new JS, so the zero-JS-error guarantee is trivially preserved. ADDITIVE & decision-neutral: ui_app.html and ui_data.json BYTE-UNCHANGED (not touched); governed headline 39975.654628199336 intact; NO ui_data contract change (stays 1.23.0); 0 external refs. Verification (EXECUTED): build_offline_home_validate.py now 22/22 ok:true (was 19/19; +3 chooser gates: heading present, >=6 goal rows, recommends summary card); offline_home_loader_parity.cjs 10/10 ok:true (node); py_compile clean on both py scripts; node --check clean on the patched self_test.cjs. NOTE: the jsdom self-test (offline_home_self_test.cjs, patched with 2 mirrored chooser gates) could NOT be executed - jsdom does not run in this sandbox (a trivial JSDOM load also times out at 124); this is the documented reason the stdlib validate.py mirror exists, which DID run green. Edited in the /tmp clone and cp'd to mount (sha256 byte-identical, 4 files) per the virtiofs corruption-hazard protocol. Lock acquired+pushed (05a444e->50f0d52).",
-  "current_phase": "Offline-UI usability track (owner-directed): options (a) snapshot-loader [W19], (b) printable summary card [W20] and (c) 'which view do I want?' chooser [W21] ALL COMPLETE. offline_home.html now ships a zero-install offline result surface with headline figures, a local snapshot-loader, a goal-oriented view chooser and links to every view. NEXT (offline-UI, decision-neutral, auto-admissible) = option (d): a light accessibility / quick-start pass on offline_home.html (skip-to-content link, ensure every interactive element is keyboard-reachable, one-line 'start here' guidance) -- additive, static, no governed-artifact or contract change. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC sign-off; Option-A publish cert+channel; or declare the frontier complete & freeze) - all model-form/packaging items need owner/infra inputs.",
-  "overall_status": "OFFLINE_UI_WHICH_VIEW_CHOOSER_SHIPPED_W21_ADDITIVE_ZERO_NETWORK_ZERO_NEW_JS_UI_APP_AND_UI_DATA_BYTE_UNCHANGED_CONTRACT_1.23.0_UNCHANGED_VALIDATE_22_22_PARITY_10_10_JSDOM_SELFTEST_UNRUNNABLE_IN_SANDBOX_MIRRORED_BY_STDLIB_MODEL_FRONTIER_OWNER_PIVOT_AWAITING_OWNER_DECISION",
+  "last_run_note": "Window #22 (scheduled claude 18:00 UTC window). Offline-UI track, NEXT-EXECUTION POINTER option (d) SHIPPED: a light accessibility / quick-start pass on offline_home.html. Adds (1) a skip-to-content link (visible only on keyboard focus) that jumps to a new <main id=\"main\"> landmark, (2) a visible :focus-visible keyboard focus ring on every interactive element (cards, chooser links, drop zone, buttons), (3) a prefers-reduced-motion fallback that disables hover transforms/transitions, and (4) a one-line 'New here? Start with the Full Results Explorer...' start-here guidance callout in the header. STATIC CSS/HTML only -- NO new JS, so the zero-JS-error guarantee is preserved. ADDITIVE & decision-neutral: ui_app.html and ui_data.json BYTE-UNCHANGED; governed headline 39975.654628199336 intact; contract stays 1.23.0; 0 external refs. Verification (EXECUTED in /tmp clone AND re-verified on mount after cp): build_offline_home_validate.py 27/27 ok:true (was 22/22, +5 a11y gates); offline_home_loader_parity.cjs 10/10 ok:true (node); py_compile clean; node --check clean on patched self-test. jsdom self-test still UNRUNNABLE in sandbox (documented; mirrored by stdlib validate). NOTE: mount in-place editor truncated 2 files mid-write (documented virtiofs hazard) -- recovered by editing in /tmp clone and cp to mount (sha256 byte-identical, 4 files). Offline-UI options (a)-(d) now ALL COMPLETE.",
+  "current_phase": "Offline-UI usability track (owner-directed): options (a) snapshot-loader [W19], (b) printable summary card [W20], (c) 'which view do I want?' chooser [W21] and (d) accessibility/quick-start pass [W22] ALL COMPLETE. offline_home.html now ships a zero-install offline result surface with headline figures, a local snapshot-loader, a goal-oriented view chooser, full keyboard accessibility (skip link, focus ring, reduced-motion) and a start-here callout. NEXT (offline-UI, decision-neutral, auto-admissible) = option (e): a build-time link-existence assertion in build_offline_home.py so every VIEWS/CHOOSER href is verified to exist on disk at build time (the landing page can never link to a missing view) -- additive, static, no governed-artifact or contract change. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC sign-off; Option-A publish cert+channel; or declare the frontier complete & freeze) - all model-form/packaging items need owner/infra inputs.",
+  "overall_status": "OFFLINE_UI_ACCESSIBILITY_QUICKSTART_PASS_SHIPPED_W22_ADDITIVE_ZERO_NETWORK_ZERO_NEW_JS_SKIP_LINK_FOCUS_RING_REDUCED_MOTION_START_HERE_UI_APP_AND_UI_DATA_BYTE_UNCHANGED_CONTRACT_1.23.0_UNCHANGED_VALIDATE_27_27_PARITY_10_10_JSDOM_SELFTEST_UNRUNNABLE_IN_SANDBOX_MIRRORED_BY_STDLIB_OFFLINE_UI_OPTIONS_A_TO_D_ALL_COMPLETE_MODEL_FRONTIER_OWNER_PIVOT_AWAITING_OWNER_DECISION",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -2547,5 +2547,42 @@
       "new_js": false
     },
     "next_pointer": "offline-UI option (d): accessibility/quick-start pass on offline_home.html; else MODEL frontier OWNER PIVOT"
+  },
+  "cycle_2026_06_16_a11y_quickstart": {
+    "when_utc": "2026-06-16T21:15:00Z",
+    "owner": "claude",
+    "window": "#22 (18:00 UTC)",
+    "pointer_executed": "offline-UI option (d) accessibility/quick-start pass",
+    "files_changed": [
+      "offline_home.html",
+      "scripts/build_offline_home.py",
+      "scripts/build_offline_home_validate.py",
+      "scripts/offline_home_self_test.cjs"
+    ],
+    "additions": [
+      "skip-to-content link (a.skip -> #main), visible only on keyboard focus",
+      "<main id=\"main\" tabindex=\"-1\"> landmark replacing the wrap div",
+      ":focus-visible keyboard focus ring on a/button/.drop/[tabindex]",
+      "prefers-reduced-motion fallback (disables hover transforms/transitions)",
+      "one-line 'New here?' start-here guidance callout (.start) in header"
+    ],
+    "verification": {
+      "build_offline_home_validate": "27/27 ok:true (was 22/22; +5 a11y gates)",
+      "offline_home_loader_parity": "10/10 ok:true",
+      "jsdom_self_test": "UNRUNNABLE in sandbox (jsdom load times out); mirrored by stdlib validate 27/27",
+      "py_compile": "clean",
+      "node_check": "clean",
+      "mount_reverify_after_cp": "27/27 ok:true (sha256 byte-identical, 4 files)"
+    },
+    "invariants": {
+      "ui_app_html": "byte-unchanged (untouched)",
+      "ui_data_json": "byte-unchanged (untouched)",
+      "contract_version": "1.23.0 unchanged",
+      "governed_headline": 39975.654628199336,
+      "external_refs": 0,
+      "new_js": false
+    },
+    "incident_note": "mount in-place editor truncated build_offline_home.py and build_offline_home_validate.py mid-write (documented virtiofs corruption hazard); recovered by re-applying edits in the /tmp clone and cp-ing to the mount, then re-validating on the mount (27/27).",
+    "next_pointer": "offline-UI option (e): build-time link-existence assertion in build_offline_home.py; else MODEL frontier OWNER PIVOT"
   }
 }

@@ -51,6 +51,12 @@ def main() -> int:
     ok("loader reset button", 'id="reset"' in html)
     ok("loader reads locally (FileReader)", "FileReader" in html)
     ok("loader updatable header ids", 'id="hv"' in html and 'id="hc"' in html and 'id="hs"' in html)
+    # accessibility / quick-start pass (additive, static, zero JS) presence
+    ok("skip-to-content link", 'class="skip"' in html and 'href="#main"' in html)
+    ok("main landmark target", 'id="main"' in html and "<main" in html)
+    ok("keyboard focus-visible ring", ":focus-visible" in html)
+    ok("reduced-motion fallback", "prefers-reduced-motion" in html)
+    ok("start-here guidance", 'class="start"' in html and "New here?" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

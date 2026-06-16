@@ -69,8 +69,23 @@
   .cpick .badge { margin-left:2px; }
   @media (max-width:560px){ .crow { grid-template-columns:1fr; }
     .cpick { white-space:normal; } }
+  .skip { position:absolute; left:-9999px; top:0; z-index:200; background:var(--acc);
+    color:#06121f; padding:9px 15px; border-radius:0 0 8px 0; font-weight:700;
+    text-decoration:none; }
+  .skip:focus { left:0; }
+  .start { margin:12px 0 0; padding:9px 13px; background:#0c1f33; border:1px solid #1d4060;
+    border-radius:8px; color:var(--ink); font-size:13px; }
+  .start b { color:var(--acc); }
+  a:focus-visible, button:focus-visible, .drop:focus-visible, [tabindex]:focus-visible {
+    outline:2px solid var(--acc); outline-offset:2px; border-radius:6px; }
+  main:focus { outline:none; }
+  @media (prefers-reduced-motion: reduce){
+    * { transition:none !important; }
+    .card:hover { transform:none; } }
 </style></head>
-<body><div class="wrap">
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <main id="main" class="wrap" tabindex="-1">
   <header>
     <h1>PAR Fund Stochastic ALM &amp; TVOG</h1>
     <p class="sub">Offline home &mdash; one place to open every result view. No internet,
@@ -78,6 +93,9 @@
     <p class="sub">Model version <b id="hv">0.2.0</b>
       &middot; data contract <b id="hc">1.23.0</b>
       &middot; snapshot <span id="hs">2026-06-14T00:28:05.652099+00:00</span></p>
+    <p class="start">New here? <b>Start with the Full Results Explorer</b> below for the
+      complete read-only results, or use the &ldquo;Which view do I want?&rdquo; chooser to
+      pick by goal. Every view is read-only and changes no governed figure.</p>
     <span class="class">EDUCATIONAL ONLY -- NOT a regulatory capital model</span>
   </header>
 
@@ -180,12 +198,12 @@
   </div>
 
   <footer>
-    Built 2026-06-16T20:17:14Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-16T21:14:40Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
   </footer>
-</div>
+  </main>
 <script>
 // Offline-only guard: this page makes ZERO network calls. Provenance is embedded.
 (function(){

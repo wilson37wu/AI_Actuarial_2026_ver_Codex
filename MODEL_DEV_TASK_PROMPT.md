@@ -31,6 +31,35 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-16 (18:00 UTC window, claude) — OFFLINE-UI ACCESSIBILITY / QUICK-START PASS SHIPPED (additive, zero-network, zero new JS).**
+> Executed NEXT-EXECUTION POINTER option (d): a light accessibility / quick-start pass on
+> `offline_home.html`. Adds (1) a **skip-to-content link** (`a.skip` → `#main`, visible only on
+> keyboard focus) that jumps to a new **`<main id="main">` landmark**; (2) a visible
+> **`:focus-visible` keyboard focus ring** on every interactive element (cards, chooser links, drop
+> zone, buttons) — there was previously no visible focus state; (3) a **`prefers-reduced-motion`
+> fallback** that disables the card hover transform and transitions; and (4) a one-line
+> **"New here? …" start-here guidance** callout in the header pointing first-timers to the Full
+> Results Explorer / the view chooser. **Static HTML/CSS only — no new JS**, so the zero-JS-error
+> guarantee is preserved. ADDITIVE & decision-neutral: `ui_app.html` and `ui_data.json`
+> BYTE-UNCHANGED; governed headline 39,975.654628199336 intact; NO `ui_data` contract change (stays
+> 1.23.0); 0 external refs. Verification (EXECUTED): `build_offline_home_validate.py` **27/27** ok:true
+> (was 22/22; +5 a11y gates); `offline_home_loader_parity.cjs` **10/10** ok:true (node); `py_compile`
+> clean; `node --check` clean on the patched self-test; re-validated on the mount after cp (27/27,
+> sha256 byte-identical, 4 files). The jsdom self-test remains UNRUNNABLE in this sandbox (jsdom load
+> times out) — the documented reason the stdlib validator mirror exists. NOTE: the mount in-place
+> editor truncated 2 files mid-write (documented virtiofs hazard); recovered by editing in the `/tmp`
+> clone and cp-ing to the mount.
+>
+> **NEXT-EXECUTION POINTER (offline-UI track, decision-neutral, auto-admissible):** options (a)
+> snapshot-loader, (b) summary card, (c) which-view chooser and (d) accessibility/quick-start pass are
+> ALL DONE. The next single in_progress item = **(e)** a build-time **link-existence assertion** in
+> `scripts/build_offline_home.py` — assert every `VIEWS`/`CHOOSER` href resolves to a file that
+> actually exists on disk at build time, so the landing page can never link to a missing view —
+> additive, static, no governed-artifact or contract change. The MODEL frontier remains OWNER PIVOT
+> (MR-LONGEV-1 / LSMC sign-off; Option-A publish cert+channel; or declare the frontier complete &
+> freeze). Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
+
 > **2026-06-16 (18:00 UTC window, claude) — OFFLINE-UI “WHICH VIEW DO I WANT?” CHOOSER SHIPPED (additive, zero-network, zero new JS).**
 > Executed NEXT-EXECUTION POINTER option (c): `offline_home.html` now has a goal-oriented **view chooser**
 > above the view cards. It consolidates the six result-view descriptions into one-line “if you want to … →

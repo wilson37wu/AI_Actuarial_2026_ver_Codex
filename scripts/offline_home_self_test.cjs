@@ -44,6 +44,11 @@ ok("loader file input", !!doc.getElementById("file"));
 ok("loader reset button", !!doc.getElementById("reset"));
 ok("loader banner region", !!doc.getElementById("lbanner"));
 ok("updatable header ids", !!doc.getElementById("hv") && !!doc.getElementById("hc") && !!doc.getElementById("hs"));
+// accessibility / quick-start pass (additive, static, zero JS) present & wired
+const _skip = doc.querySelector("a.skip");
+ok("skip-to-content link -> #main", !!_skip && _skip.getAttribute("href") === "#main");
+ok("main landmark target", !!doc.getElementById("main") && doc.getElementById("main").tagName === "MAIN");
+ok("start-here guidance", !!doc.querySelector(".start") && /New here\?/.test(doc.body.textContent));
 
 const failed = checks.filter(c => !c.pass);
 const result = { ok: failed.length === 0, checks: checks.length,

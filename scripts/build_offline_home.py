@@ -103,6 +103,25 @@ CHOOSER_CSS = """
   @media (max-width:560px){ .crow { grid-template-columns:1fr; }
     .cpick { white-space:normal; } }"""
 
+# Accessibility / quick-start pass (added 2026-06-16, claude window) -- static CSS only,
+# NO new JS, so the zero-JS-error guarantee is preserved. Provides: a skip-to-content link
+# (visible only on keyboard focus), a visible keyboard focus ring on every interactive
+# element, a reduced-motion fallback, and styling for the one-line "Start here" guidance.
+A11Y_CSS = """
+  .skip { position:absolute; left:-9999px; top:0; z-index:200; background:var(--acc);
+    color:#06121f; padding:9px 15px; border-radius:0 0 8px 0; font-weight:700;
+    text-decoration:none; }
+  .skip:focus { left:0; }
+  .start { margin:12px 0 0; padding:9px 13px; background:#0c1f33; border:1px solid #1d4060;
+    border-radius:8px; color:var(--ink); font-size:13px; }
+  .start b { color:var(--acc); }
+  a:focus-visible, button:focus-visible, .drop:focus-visible, [tabindex]:focus-visible {
+    outline:2px solid var(--acc); outline-offset:2px; border-radius:6px; }
+  main:focus { outline:none; }
+  @media (prefers-reduced-motion: reduce){
+    * { transition:none !important; }
+    .card:hover { transform:none; } }"""
+
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -335,9 +354,11 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}
 </style></head>
-<body><div class="wrap">
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <main id="main" class="wrap" tabindex="-1">
   <header>
     <h1>{html.escape(meta.get("model_name","Actuarial Stochastic Model"))}</h1>
     <p class="sub">Offline home &mdash; one place to open every result view. No internet,
@@ -345,6 +366,9 @@ def build() -> str:
     <p class="sub">Model version <b id="hv">{html.escape(str(meta.get("model_version","")))}</b>
       &middot; data contract <b id="hc">{html.escape(str(d.get("contract_version","")))}</b>
       &middot; snapshot <span id="hs">{html.escape(str(meta.get("generated_utc","")))}</span></p>
+    <p class="start">New here? <b>Start with the Full Results Explorer</b> below for the
+      complete read-only results, or use the &ldquo;Which view do I want?&rdquo; chooser to
+      pick by goal. Every view is read-only and changes no governed figure.</p>
     <span class="class">{html.escape(meta.get("classification","EDUCATIONAL ONLY"))}</span>
   </header>
 
@@ -375,7 +399,7 @@ def build() -> str:
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
   </footer>
-</div>
+  </main>
 <script>
 // Offline-only guard: this page makes ZERO network calls. Provenance is embedded.
 (function(){{
