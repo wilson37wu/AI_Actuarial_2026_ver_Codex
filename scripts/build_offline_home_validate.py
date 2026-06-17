@@ -231,6 +231,24 @@ def main() -> int:
        "chart.js" not in html.lower()
        and f"{(float(_none_v) - float(_wa_v)):,.0f}" not in html)
     ok("relief strip loader-parity hook", "redrawReliefStrip" in html)
+    # Var-covar vs nested aggregation-method margin strip (W42, additive, inline-SVG, zero net)
+    _vc_v = _cap.get("correlated_scr")
+    _ns_v = _cap.get("nested_scr")
+    ok("aggmethod heading", "aggregation-method margin" in html.lower())
+    ok("aggmethod svg", 'id="aggmethod"' in html)
+    ok("aggmethod two point markers (var-covar + nested)",
+       html.count('class="agmpt varcov"') == 1 and html.count('class="agmpt nested"') == 1)
+    ok("aggmethod gap region present", html.count('class="agmgap"') == 1)
+    ok("aggmethod both governed values verbatim",
+       (_vc_v is not None) and (_ns_v is not None)
+       and (f"{float(_vc_v):,.0f}" in html) and (f"{float(_ns_v):,.0f}" in html))
+    ok("aggmethod ordering (var-covar <= nested, governed)",
+       float(_vc_v) <= float(_ns_v))
+    ok("aggmethod neutral note", "neutrally" in html.lower())
+    ok("aggmethod derives nothing (no numeric diff label, svg inline, no chart lib)",
+       "chart.js" not in html.lower()
+       and f"{abs(float(_ns_v) - float(_vc_v)):,.0f}" not in html)
+    ok("aggmethod loader-parity hook", "redrawAggMethod" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

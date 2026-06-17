@@ -354,6 +354,33 @@ RELIEFSTRIP_CSS = """
   .relgaplab { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
   .relcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# Var-covar vs nested SCR aggregation-method margin strip (added 2026-06-18, claude window
+# W42) -- an ADDITIVE, inline-SVG one-row strip that DISPLAYS two already-governed 99.5% SCR
+# figures as two point markers on ONE shared scale: the var-covar / correlated SCR
+# (correlated_scr) and the full nested-simulation SCR (nested_scr). The region between them is
+# shaded as the aggregation-method margin (how far the full nested simulation sits from the
+# linear var-covar approximation). Both endpoint values are read verbatim from ui_data.json's
+# ``capital`` block; the margin is shown PURELY graphically and NO numeric difference is
+# derived. Decision-neutral: both are governed bases shown for comparison, the governed
+# headline stays the frozen-t basis and this strip implies no basis selection. No JS library,
+# no network, no external ref -- baked at build time and (for snapshot-loader parity) redrawn
+# by the same in-page JS (redrawAggMethod), so a loaded snapshot and Reset keep parity.
+AGGMETHOD_GEO = {"x0": 70.0, "x1": 478.0, "y": 48.0, "bh": 20.0}  # px in 560 viewBox
+AGGMETHOD_CSS = """
+  .agm-wrap { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .agm-wrap svg { width:100%; height:auto; display:block; }
+  .agmtrack { stroke:var(--line); stroke-width:1; }
+  .agmgap { fill:#7e9cd8; opacity:0.20; }
+  .agmpt { stroke-width:2.5; }
+  .agmpt.varcov { stroke:#7e9cd8; }
+  .agmpt.nested { stroke:#c8824e; }
+  .agmlab { font-size:11.5px; font-weight:650; }
+  .agmlab.varcov { fill:#7e9cd8; }
+  .agmlab.nested { fill:#c8824e; }
+  .agmgaplab { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
+  .agmcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -388,6 +415,7 @@ LOADER_JS = """
   var NCI = { x0:116, x1:466, vy:40, ey:92, bh:16 };  // mirrors NESTEDCI_GEO in the Python builder
   var EVM = { x0:70, x1:478, y:48, bh:20 };  // mirrors ESVARMARGIN_GEO in the Python builder
   var REL = { x0:70, x1:478, y:48, bh:20 };  // mirrors RELIEFSTRIP_GEO in the Python builder
+  var AGM = { x0:70, x1:478, y:48, bh:20 };  // mirrors AGGMETHOD_GEO in the Python builder
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -677,6 +705,34 @@ LOADER_JS = """
         lab.textContent = pre + cur + fmt(pt, 0); }
     });
   }
+  // Redraw the var-covar vs nested aggregation-method margin strip from a (possibly loaded)
+  // snapshot. Pure display: x = value/range scaling on a shared scale, mirroring
+  // _aggmethod_svg in the builder. The margin gap rect/label are positioned graphically; no
+  // numeric diff computed.
+  function redrawAggMethod(cap, cur){
+    var svg = document.getElementById("aggmethod");
+    if (!svg || !cap) return;
+    var c = Number(cap.correlated_scr), n = Number(cap.nested_scr);
+    if (!isFinite(c) || !isFinite(n)) return;
+    var lo = Math.min(c, n), hi = Math.max(c, n);
+    var pad = (hi - lo) * 0.18 || 1;
+    var vmin = lo - pad, vmax = hi + pad, span = (vmax - vmin) || 1;
+    function X(val){ return AGM.x0 + (Number(val) - vmin) / span * (AGM.x1 - AGM.x0); }
+    var gap = svg.querySelector('rect.agmgap[data-series="agmgap"]');
+    if (gap){ gap.setAttribute("x", X(lo).toFixed(1));
+      gap.setAttribute("width", Math.max(0, X(hi) - X(lo)).toFixed(1)); }
+    var glab = svg.querySelector('text.agmgaplab[data-series="agmgap"]');
+    if (glab) glab.setAttribute("x", ((X(lo) + X(hi)) / 2).toFixed(1));
+    [["agmvarcov", c, "end", "Var-covar: "], ["agmnested", n, "start", "Nested: "]].forEach(function(r){
+      var s = r[0], pt = r[1], anchor = r[2], pre = r[3];
+      var tick = svg.querySelector('line.agmpt[data-series="' + s + '"]');
+      if (tick){ tick.setAttribute("x1", X(pt).toFixed(1)); tick.setAttribute("x2", X(pt).toFixed(1)); }
+      var lab = svg.querySelector('text.agmlab[data-series="' + s + '"]');
+      if (lab){ var tx = anchor === "end" ? X(pt) - 4 : X(pt) + 4;
+        lab.setAttribute("x", tx.toFixed(1));
+        lab.textContent = pre + cur + fmt(pt, 0); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -722,6 +778,8 @@ LOADER_JS = """
         redrawActionsLadder(d.capital || {}, _cur8); } catch(e){}
       try { var _cur9 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawReliefStrip(d.capital || {}, _cur9); } catch(e){}
+      try { var _cur10 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawAggMethod(d.capital || {}, _cur10); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -753,6 +811,8 @@ LOADER_JS = """
     DEFAULT.actionsHTML = _wal0 ? _wal0.innerHTML : null;
     var _rel0 = document.getElementById("reliefstrip");
     DEFAULT.reliefHTML = _rel0 ? _rel0.innerHTML : null;
+    var _agm0 = document.getElementById("aggmethod");
+    DEFAULT.aggmethodHTML = _agm0 ? _agm0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -801,6 +861,8 @@ LOADER_JS = """
       if (_walsvg && DEFAULT.actionsHTML != null) _walsvg.innerHTML = DEFAULT.actionsHTML;
       var _relsvg = document.getElementById("reliefstrip");
       if (_relsvg && DEFAULT.reliefHTML != null) _relsvg.innerHTML = DEFAULT.reliefHTML;
+      var _agmsvg = document.getElementById("aggmethod");
+      if (_agmsvg && DEFAULT.aggmethodHTML != null) _agmsvg.innerHTML = DEFAULT.aggmethodHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -1304,6 +1366,64 @@ def _reliefstrip_svg(cap, cur):
         f'credited with. Read verbatim from the model-output snapshot; shown neutrally.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _aggmethod_svg(cap, cur):
+    """Inline-SVG one-row strip DISPLAYING two GOVERNED 99.5% SCR figures as two point markers
+    on ONE shared scale -- the var-covar / correlated SCR (correlated_scr) and the full
+    nested-simulation SCR (nested_scr) -- with the region between them shaded as the
+    aggregation-method margin (how far the full nested simulation sits from the linear var-covar
+    approximation). Both endpoint values are read verbatim; the margin is shown PURELY
+    graphically and NO numeric difference is derived. Decision-neutral: both are governed bases
+    shown for comparison and the governed headline stays the frozen-t basis. Mirrors
+    ``redrawAggMethod`` in LOADER_JS.
+    """
+    g = AGGMETHOD_GEO
+    x0, x1, y, bh = g["x0"], g["x1"], g["y"], g["bh"]
+    varcov = cap.get("correlated_scr")
+    nested = cap.get("nested_scr")
+    vals = [float(v) for v in (varcov, nested) if isinstance(v, (int, float))]
+    if len(vals) >= 2:
+        lo, hi = min(vals), max(vals)
+        pad = (hi - lo) * 0.18 or 1.0
+        vmin, vmax = lo - pad, hi + pad
+    else:
+        vmin, vmax = 0.0, 1.0
+    span = (vmax - vmin) or 1.0
+
+    def X(v):
+        return x0 + (float(v) - vmin) / span * (x1 - x0)
+
+    parts = [f'<line class="agmtrack" x1="{x0:.1f}" y1="{y:.1f}" '
+             f'x2="{x1:.1f}" y2="{y:.1f}"></line>']
+    if varcov is not None and nested is not None:
+        glo, ghi = X(min(varcov, nested)), X(max(varcov, nested))
+        parts.append(f'<rect class="agmgap" data-series="agmgap" x="{glo:.1f}" '
+                     f'y="{y - bh / 2:.1f}" width="{max(0.0, ghi - glo):.1f}" '
+                     f'height="{bh:.1f}" rx="3"></rect>')
+        parts.append(f'<text class="agmgaplab" data-series="agmgap" '
+                     f'x="{(glo + ghi) / 2:.1f}" y="{y - bh / 2 - 6:.1f}">'
+                     f'aggregation-method margin</text>')
+    rows = [("varcov", "Var-covar", varcov, "end"),
+            ("nested", "Nested", nested, "start")]
+    for s, label, pt, anchor in rows:
+        if pt is None:
+            continue
+        px = X(pt)
+        parts.append(f'<line class="agmpt {s}" data-series="agm{s}" x1="{px:.1f}" '
+                     f'y1="{y - bh / 2 - 6:.1f}" x2="{px:.1f}" '
+                     f'y2="{y + bh / 2 + 6:.1f}"></line>')
+        tx = px - 4 if anchor == "end" else px + 4
+        parts.append(f'<text class="agmlab {s}" data-series="agm{s}" '
+                     f'text-anchor="{anchor}" x="{tx:.1f}" y="{y + bh / 2 + 20:.1f}">'
+                     f'{html.escape(label)}: {html.escape(cur + _fmt(pt, 0))}</text>')
+    height = int(y + bh / 2 + 30)
+    return (
+        f'<svg id="aggmethod" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Var-covar versus nested SCR aggregation-method margin strip: the governed '
+        f'var-covar / correlated 99.5% SCR and the full nested-simulation 99.5% SCR as two point '
+        f'markers on one shared scale, with the gap between them shaded as the aggregation-method '
+        f'margin. Read verbatim from the model-output snapshot; shown neutrally.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -1350,6 +1470,7 @@ def build() -> str:
     copulafamily = _copulafamily_svg(cap, cur)
     actionsladder = _actionsladder_svg(cap, cur)
     reliefstrip = _reliefstrip_svg(cap, cur)
+    aggmethod = _aggmethod_svg(cap, cur)
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
@@ -1431,7 +1552,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -1553,6 +1674,19 @@ def build() -> str:
     management actions are credited with). Both endpoint values are read verbatim from the
     model-output snapshot; the relief gap is shown purely graphically and the governed headline
     stays the frozen-t basis &mdash; this chart computes nothing.</p>
+
+  <h2>Var-covar vs nested SCR &mdash; aggregation-method margin</h2>
+  <div class="agm-wrap">
+  {aggmethod}
+  </div>
+  <p class="agmcap"><span class="tkey" style="background:#7e9cd8"></span>Var-covar / correlated
+    <span class="tkey" style="background:#c8824e"></span>Nested &mdash; the governed var-covar /
+    correlated 99.5% SCR and the full nested-simulation 99.5% SCR on one shared scale, with the
+    region between them shaded as the aggregation-method margin (how far the full nested
+    simulation sits from the linear var-covar approximation). Both endpoint values are read
+    verbatim from the model-output snapshot; the margin is shown <b>neutrally</b> and purely
+    graphically, the governed headline stays the frozen-t basis &mdash; this chart computes
+    nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>
