@@ -103,6 +103,8 @@ cd /tmp/cycle_clone
 ```
 Write/verify source + state files on the mount (or off-mount), then **copy** them into the clone (`cp` preserves integrity; the in-place editor has corrupted files mid-write before — always re-parse JSON after writing). Never run `git add/commit` in the mounted worktree.
 
+> **Git identity in the throwaway clone.** A fresh clone inherits no `user.name`/`user.email`, so `git commit` fails with *"Author identity unknown"*. `scripts/agent_lock.py` now **self-heals** this (`_ensure_identity`): it sets a repo-local fallback identity (`<owner>-cowork-agent` / `<owner>-agent@actuarial-bot.local`) when none is configured, and **refuses to report a false `ACQUIRED`/`RELEASED`** if a commit silently fails (it verifies HEAD actually advanced and carries the intended owner before pushing, else exits 2). Previously an unset identity made the lock commit a no-op while the push of a stale HEAD returned 0 — a silent clobbering hazard. Regression-tested in `tests/test_agent_lock_identity.py`.
+
 ### Codex (normal Linux checkout)
 Operate in your checkout directly. Still: fetch-rebase before push, honour the lock, and never force-push `main`.
 

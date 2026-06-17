@@ -1,9 +1,9 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-17T03:11:00Z",
+  "last_run": "2026-06-17T04:16:00Z",
   "last_run_duration_minutes": null,
-  "last_run_note": "Window #27 (claude). VERIFICATION + HOLD cycle. Lock FREE -> acquired+verified on origin (2026-06-17T03:10Z-b190). No auto-admissible task open (offline-UI pool a-g EXHAUSTED at W25; research v2 current from W26) -> per standing rule produced verification + owner-pivot status report ONLY; no model-form change started, no governed-artifact rebuild. EVIDENCE: offline_home gate 28/28 ok:true; tests/test_offline_home_validate.py 4/4 OK (stdlib; pytest absent); offline_home_loader_parity.cjs 10/10 (node); 157 test_* files. Governed md5 BYTE-UNCHANGED (offline_home=9bf29b8a8b8faab0ea1c61e539036a37, ui_app=818249497e95ff25b8e4dda50d38502e, ui_data=70b747a05c00d29bd6e286a7ee4cf42c); contract 1.23.0; headline 39975.654628199336 intact. Mount working tree md5-identical to origin/main -> no upstream drift. Added docs/cycle_status/LATEST_CYCLE_STATUS_20260617_w27_verify.md. Git in fresh /tmp clone; mount .git untouched. Status email sent to wilsonwukl@gmail.com. FRONTIER STILL OWNER PIVOT.",
+  "last_run_note": "Window #28 (claude). COORDINATION-INFRA HARDENING (decision-neutral; NO model-form change, NO governed-artifact rebuild). Lock FREE -> acquired on origin (cycle 2026-06-17T04:10Z-82fe) AFTER discovering+fixing a latent false-ACQUIRE: scripts/agent_lock.py reported ACQUIRED while git identity was unset because the lock commit silently failed and the no-op push of a stale HEAD returned 0 -> the lock never reached origin (a real two-agent clobbering hazard; STEP-0 infra). FIX: added _ensure_identity(owner) (repo-local fallback identity when none configured; never overwrites an existing one) wired into cmd_acquire/cmd_release; hardened _write_commit_push to verify HEAD actually advanced AND the committed lock carries the intended owner before pushing, else exit(2) (genuine local commit failure is now FATAL, not a false success). EVIDENCE: tests/test_agent_lock_identity.py 4/4 OK (stdlib unittest; self-heal, no-overwrite, real-commit-lands-on-origin, hook-rejection->exit2); py_compile OK; clone<->mount md5-identical for agent_lock.py + AGENT_COORDINATION.md (doc section 5 documents the self-heal). GOVERNED ARTIFACTS UNTOUCHED: offline_home/ui_app/ui_data not modified this cycle; contract 1.23.0; headline 39975.654628199336 intact. Mount file-tool write corrupted scripts/agent_lock.py mid-write (truncated to 214 lines on disk) -> rebuilt the patch in the /tmp clone (Linux fs) and cp'd to the mount per AGENT_COORDINATION.md s5. Git in fresh /tmp clone; mount .git untouched. MODEL FRONTIER STILL OWNER PIVOT (stop-rule-admissible efficiency/diagnostic pool MR-CAL-1/VR-1/VR-2 + offline-UI a-g EXHAUSTED; MR-LONGEV-1 longevity 5th-driver / packaging A-B-C / freeze all need owner sign-off). Status email sent to wilsonwukl@gmail.com.",
   "current_phase": "Offline-UI usability/hardening track (owner-directed): options (a) snapshot-loader [W19], (b) printable summary card [W20], (c) view chooser [W21], (d) accessibility/quick-start [W22], (e) build-time link-existence assertion [W23], (f) PROMOTE that check into the standing stdlib gate [W24], and (g) COLLECT that standing gate into the pytest suite [W25] ALL COMPLETE. The offline-UI decision-neutral / auto-admissible pool (a)-(g) is now EXHAUSTED: offline_home.html is a zero-install offline result surface with headline figures, local snapshot-loader, goal-oriented chooser, full keyboard accessibility, start-here callout, a build-time guarantee it can never link to a missing view, a standing rebuild-independent regression gate re-asserting that guarantee (28/28), AND automatic pytest collection of that gate. NEXT = OWNER PIVOT (no further auto-admissible offline-UI items): (1) MODEL frontier - MR-LONGEV-1 longevity 5th-driver (parameter-adding model-FORM change, needs owner sign-off) / LSMC sign-off; (2) Option-A publish cert+channel (packaging, needs infra inputs); or (3) declare the auto-development frontier COMPLETE and freeze. All remaining items need owner/infra inputs.",
   "overall_status": "W26_MODEL_IMPROVEMENT_RESEARCH_V2_SHIPPED_DOCS_RESEARCH_MODEL_IMPROVEMENT_RESEARCH_20260617_MD_EXTENDS_V1_WITH_2025_LIT_TRANSFORMER_LSMC_MULTIPOP_LONGEVITY_BASIS_RISK_AND_NEW_MLMC_NESTED_EFFICIENCY_CANDIDATE_PLUS_OWNER_DECISION_MATRIX_TASKPROMPT_NEXT_EXEC_POINTER_REFRESHED_DOCUMENTATION_ONLY_DECISION_NEUTRAL_NO_MODEL_FORM_CHANGE_NO_ARTIFACT_REBUILD_OFFLINE_HOME_AND_UI_APP_AND_UI_DATA_BYTE_UNCHANGED_CONTRACT_1.23.0_HEADLINE_39975.65_INTACT_GATE_28_28_OK_AUTO_ADMISSIBLE_POOLS_REMAIN_EXHAUSTED_MODEL_FRONTIER_OWNER_PIVOT_AWAITING_OWNER_DECISION",
   "phases": {
@@ -2633,5 +2633,28 @@
     "evidence": "offline_home gate 28/28 ok:true; tests/test_offline_home_validate.py 4/4 OK (stdlib unittest; pytest absent); offline_home_loader_parity.cjs 10/10 ok:true (node); 157 test_* files. Governed md5 BYTE-UNCHANGED offline_home=9bf29b8a8b8faab0ea1c61e539036a37 ui_app=818249497e95ff25b8e4dda50d38502e ui_data=70b747a05c00d29bd6e286a7ee4cf42c; contract 1.23.0; headline 39975.654628199336 intact.",
     "artifact_changes": "NONE (decision-neutral). Added docs/cycle_status/LATEST_CYCLE_STATUS_20260617_w27_verify.md only; state + log updated.",
     "owner_action_required": "Pick ONE: (1) MR-LONGEV-1 longevity 5th-driver [model-form, sign-off]; (2) LSMC SCR proxy [sign-off]; (3) MLMC nested-loop efficiency [no re-baseline, equivalence-gated]; (4) Option-A publish [infra inputs]; (5) declare frontier COMPLETE & FREEZE. Matrix: docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md."
+  },
+  "cycle_2026_06_17_w28_lock_safety": {
+    "when": "2026-06-17T04:16:00Z",
+    "owner": "claude",
+    "window": "06:00 UTC (early; lock FREE)",
+    "cycle_id": "2026-06-17T04:10Z-82fe",
+    "task": "agent_lock.py false-ACQUIRE hardening (coordination infra; decision-neutral)",
+    "verdict": "PASS",
+    "defect": "agent_lock.py reported ACQUIRED/RELEASED on unset git identity: commit silently failed, no-op push of stale HEAD returned 0, lock never reached origin -> two-agent clobbering hazard.",
+    "fix": [
+      "_ensure_identity(owner): repo-local fallback identity when none set; never overwrites existing",
+      "_write_commit_push: verify HEAD advanced AND committed lock owner==intended before push; else sys.exit(2)",
+      "wired _ensure_identity into cmd_acquire + cmd_release",
+      "AGENT_COORDINATION.md s5 documents identity self-heal + false-success guard"
+    ],
+    "tests": "tests/test_agent_lock_identity.py 4/4 OK (stdlib unittest; ~14.7s each due to slow sandbox git I/O so run individually)",
+    "governed_unchanged": {
+      "contract": "1.23.0",
+      "headline": "39975.654628199336",
+      "offline_home_ui_app_ui_data": "not modified this cycle"
+    },
+    "git": "fresh /tmp clone of origin/main; mount .git untouched; mount file-tool write corrupted agent_lock.py mid-write -> rebuilt in clone + cp to mount",
+    "frontier": "OWNER PIVOT (model-form changes + packaging A/B/C + freeze all need owner sign-off)"
   }
 }

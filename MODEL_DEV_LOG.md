@@ -10920,3 +10920,10 @@ re-confirmed present/bit-identical. Git in fresh /tmp clone; mount .git untouche
 **Artifact changes:** NONE. Added `docs/cycle_status/LATEST_CYCLE_STATUS_20260617_w27_verify.md`; updated state + this log.
 
 **Owner action required (blocking ~16 windows):** (1) MR-LONGEV-1 longevity 5th-driver [model-form, sign-off]; (2) LSMC SCR proxy [sign-off]; (3) MLMC nested-loop efficiency [no re-baseline, equivalence-gated]; (4) Option-A publish [infra inputs]; (5) declare frontier COMPLETE & FREEZE. Matrix in `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`.
+
+
+---
+
+## 2026-06-17T04:16:00Z — Window #28 (claude) — agent_lock.py false-ACQUIRE hardening
+
+Decision-neutral coordination-infra fix. Discovered in STEP-0 that scripts/agent_lock.py reported false ACQUIRED on a fresh clone with unset git identity (silent commit failure + no-op push of stale HEAD returning 0 => lock never reached origin; two-agent clobbering hazard). Fix: _ensure_identity(owner) fallback identity (no overwrite) wired into cmd_acquire/cmd_release; _write_commit_push now verifies HEAD advanced + committed owner matches before push, else exit(2). Tests: tests/test_agent_lock_identity.py 4/4 OK (stdlib). AGENT_COORDINATION.md s5 updated. Governed offline_home/ui_app/ui_data UNCHANGED; contract 1.23.0; headline 39975.654628199336 intact. Frontier still OWNER PIVOT.
