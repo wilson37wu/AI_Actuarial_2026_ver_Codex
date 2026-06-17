@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-17T00:15:55Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-17T01:09Z-7c46",
+  "started_at": "2026-06-17T01:09:26Z",
+  "ttl_minutes": 120,
+  "task": "Research further stochastic-model improvements; update task-prompt next-execution pointer (auto-admissible pool exhausted)",
+  "note": ""
 }
