@@ -238,6 +238,13 @@ def test_offline_self_test_script_runs_on_rendered_html(tmp_path, data):
         pytest.skip("node is not available")
     html_path = tmp_path / "viewer.html"
     html_path.write_text(_mod().render_html(data), encoding="utf-8")
+    # Make the repo-root node_modules discoverable (jsdom lives there; node_modules
+    # is gitignored, so it is present on dev hosts / the mount but absent in a fresh
+    # clone or clean CI checkout). Mirrors tests/test_phase36_task4_e3_evidence_pack.py.
+    env = dict(os.environ)
+    _nm = os.path.join(_REPO, "node_modules")
+    if os.path.isdir(_nm):
+        env["NODE_PATH"] = _nm + os.pathsep + env.get("NODE_PATH", "")
     result = subprocess.run(
         [node, _SELF_TEST, str(html_path)],
         cwd=_REPO,
@@ -245,7 +252,18 @@ def test_offline_self_test_script_runs_on_rendered_html(tmp_path, data):
         capture_output=True,
         timeout=90,  # bumped from 10s: headless Node render self-test needs ~25s on slow CI/sandbox hosts (P19T1)
         check=False,
+        env=env,
     )
+    # The self-test requires the optional `jsdom` module. When it is not installed
+    # (fresh clone / clean CI without node_modules), SKIP rather than hard-fail:
+    # the stdlib mirror (build_offline_home_validate / offline_home_loader_parity)
+    # provides rebuild-independent coverage, and this jsdom path still runs wherever
+    # node_modules/jsdom is present. Canonical pattern: test_phase36_task4 line ~125.
+    _out = (result.stderr or "") + (result.stdout or "")
+    if result.returncode != 0 and (
+        "Cannot find module 'jsdom'" in _out or "MODULE_NOT_FOUND" in _out
+    ):
+        pytest.skip("jsdom unavailable: " + _out.strip()[:200])
     assert result.returncode == 0, result.stdout + result.stderr
     checks = json.loads(result.stdout)["checks"]
     assert checks["networkCalls"] == 0

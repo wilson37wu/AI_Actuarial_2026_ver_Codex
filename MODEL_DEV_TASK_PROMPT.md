@@ -31,6 +31,23 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-17 (Window #29, claude) — DECISION-NEUTRAL TEST-HARDENING (verification-surfaced; no model-form/governed-artifact/contract change).**
+> Expanded-regression verification this cycle was green except one FALSE RED in the fresh /tmp clone:
+> `tests/test_offline_viewer.py::test_offline_self_test_script_runs_on_rendered_html` hard-failed because its node
+> self-test `require('jsdom')` and `jsdom` lives in the **gitignored** `node_modules/` (present on mount/dev, ABSENT in any
+> clean clone/CI). FIX (single file): set `NODE_PATH` to repo-root `node_modules` when present, and `pytest.skip` on
+> `Cannot find module 'jsdom'` / `MODULE_NOT_FOUND` instead of asserting — mirrors the canonical pattern already in
+> `tests/test_phase36_task4_e3_evidence_pack.py`. Success path unchanged. EVIDENCE: `py_compile` clean; fresh clone →
+> **20 passed, 1 skipped** (was 1 failed); mount node self-test exit 0; offline_home gate **28/28**; governed artifacts
+> BYTE-UNCHANGED (offline_home `9bf29b8a…` / ui_app `81824949…` / ui_data `70b747a0…`); headline 39,975.654628199336;
+> contract **1.23.0**. Git in fresh /tmp clone per protocol; mount `.git` untouched.
+>
+> **NEXT-EXECUTION POINTER — OWNER PIVOT (unchanged; needs owner decision).** No auto-admissible model/UI/efficiency item
+> open. Pick ONE: **(1)** MR-LONGEV-1 longevity 5th driver [model-form, sign-off]; **(2)** LSMC proxy [sign-off];
+> **(3)** MLMC nested-loop efficiency [no re-baseline, equivalence-gated — closest to auto-admissible]; **(4)** resume
+> Phase IGUI [non-model; confirm scope]; **(5)** Packaging A/B/C / Freeze. Decision matrix in
+> `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`. Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
 > **2026-06-17 (Window #26, claude) — MODEL-IMPROVEMENT RESEARCH REFRESH (v2) SHIPPED (documentation-only, decision-neutral, no model-form change).**
 > Auto-admissible pools remain EXHAUSTED (offline-UI a–g closed at contract 1.23.0,
 > offline_home gate 28/28; efficiency/diagnostic MR-CAL-1 + MR-VR-1 + MR-VR-2 closed under

@@ -10927,3 +10927,37 @@ re-confirmed present/bit-identical. Git in fresh /tmp clone; mount .git untouche
 ## 2026-06-17T04:16:00Z — Window #28 (claude) — agent_lock.py false-ACQUIRE hardening
 
 Decision-neutral coordination-infra fix. Discovered in STEP-0 that scripts/agent_lock.py reported false ACQUIRED on a fresh clone with unset git identity (silent commit failure + no-op push of stale HEAD returning 0 => lock never reached origin; two-agent clobbering hazard). Fix: _ensure_identity(owner) fallback identity (no overwrite) wired into cmd_acquire/cmd_release; _write_commit_push now verifies HEAD advanced + committed owner matches before push, else exit(2). Tests: tests/test_agent_lock_identity.py 4/4 OK (stdlib). AGENT_COORDINATION.md s5 updated. Governed offline_home/ui_app/ui_data UNCHANGED; contract 1.23.0; headline 39975.654628199336 intact. Frontier still OWNER PIVOT.
+
+---
+
+## 2026-06-17 (Window #29, claude) — DECISION-NEUTRAL TEST-HARDENING (verification-surfaced)
+
+**Lock:** FREE → acquired on origin (cycle `2026-06-17T05:08Z-7421`). Git in a fresh `/tmp`
+clone per AGENT_COORDINATION.md §5; mount `.git` untouched.
+
+**Verification first.** Ran the standing gates plus an expanded regression subset
+(measure-enforcement, governance, offline_home validate **28/28**, offline_viewer,
+agent_lock identity). All green EXCEPT one **false red** in the fresh clone:
+`tests/test_offline_viewer.py::test_offline_self_test_script_runs_on_rendered_html`
+hard-failed because its node self-test `require('jsdom')`, and `jsdom` lives in the
+**gitignored** `node_modules/` — present on the mount/dev hosts but absent in any clean
+clone / CI checkout. The test already skipped on missing `node` but not on missing
+`jsdom`, so it red-flagged every clean environment. The repo's other jsdom-backed tests
+already skip in this case (canonical pattern: `test_phase36_task4` ~line 125); this was the
+inconsistent outlier.
+
+**Fix (single file `tests/test_offline_viewer.py`):** set `NODE_PATH` to the repo-root
+`node_modules` when present (so jsdom resolves on dev/mount), and `pytest.skip` on
+`Cannot find module 'jsdom'` / `MODULE_NOT_FOUND` rather than asserting. Success path
+(jsdom present → rc 0 → original network/JS-error/export assertions) **logically unchanged**.
+
+**Evidence (executed):** `py_compile` clean; fresh clone → **20 passed, 1 skipped** (was
+20 passed, **1 failed**); mount node self-test exit 0 (jsdom path still exercises the real
+assertions); `build_offline_home_validate.py` **28/28** ok:true; governed artifacts
+BYTE-UNCHANGED (offline_home `9bf29b8a…`, ui_app `81824949…`, ui_data `70b747a0…`);
+headline **39,975.654628199336**; contract **1.23.0**. clone↔mount md5-identical for the
+patched test (`556b77c6…`).
+
+**Frontier:** STILL **OWNER PIVOT**. Auto-admissible offline-UI (a–g) + efficiency/diagnostic
+(MR-CAL-1/VR-1/VR-2) pools remain EXHAUSTED; MR-LONGEV-1 / LSMC / MLMC / packaging / freeze
+all need owner sign-off. Status email sent to wilsonwukl@gmail.com.
