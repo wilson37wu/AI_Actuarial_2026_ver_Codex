@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-17T04:10Z-82fe",
-  "started_at": "2026-06-17T04:10:15Z",
-  "ttl_minutes": 120,
-  "task": "Offline-UI advancement (owner-directed)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-17T04:20:13Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
