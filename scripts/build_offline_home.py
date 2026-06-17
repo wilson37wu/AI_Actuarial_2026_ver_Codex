@@ -275,6 +275,30 @@ ESVARMARGIN_CSS = """
   .evmgaplab { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
   .evmcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# Copula-family mini-comparison (added 2026-06-17, claude window W39) -- an ADDITIVE,
+# inline-SVG horizontal mini bar set that DISPLAYS the already-governed copula-CANDIDATE
+# SCR-component bootstrap means (single-t, grouped-t, vine) graphically on ONE shared scale.
+# Recomputes nothing: each bar's length is value/max scaling of a governed number read
+# verbatim from ui_data.json's ``capital`` block. The model's SELECTED aggregation copula is
+# the Gaussian copula (``selected_copula``); these three families are alternative CANDIDATES
+# shown NEUTRALLY for comparison -- the chart implies NO selection and derives NO new number.
+# No JS library, no network, no external ref -- baked at build time and (for snapshot-loader
+# parity) redrawn by the same in-page JS that refreshes the figures.
+COPULAFAMILY_MAXW = 430.0  # px: same value gutter as CAPBRIDGE_MAXW, inside the 560 viewBox
+_COPULA_ROWS = [
+    ("single_t_copula_scr_component_bootstrap_mean", "Single-t"),
+    ("grouped_t_copula_scr_component_bootstrap_mean", "Grouped-t"),
+    ("vine_copula_scr_component_bootstrap_mean", "Vine / pair-copula"),
+]
+COPULAFAMILY_CSS = """
+  .cfbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .cfbridge svg { width:100%; height:auto; display:block; }
+  .cfcbar-label { fill:var(--mut); font-size:12px; }
+  .cfcval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .cfcbar { fill:#7a86c8; }
+  .cfccap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -372,6 +396,28 @@ LOADER_JS = """
       var v = vals[i];
       var rect = svg.querySelector('rect.dbar[data-key="' + k + '"]');
       var txt = svg.querySelector('text.dbval[data-key="' + k + '"]');
+      var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
+        txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
+    });
+  }
+  // Redraw the copula-family candidate bars from a (possibly loaded) snapshot. Pure
+  // display: width = value/max scaled to CB_MAXW, mirroring _copulafamily_svg in the builder.
+  function redrawCopulaFamily(cap, cur){
+    var svg = document.getElementById("copulafamily");
+    if (!svg) return;
+    var keys = ["single_t_copula_scr_component_bootstrap_mean",
+      "grouped_t_copula_scr_component_bootstrap_mean",
+      "vine_copula_scr_component_bootstrap_mean"];
+    var vals = keys.map(function(k){ return Number(cap[k]); });
+    var present = vals.filter(function(v){ return isFinite(v); });
+    var mx = present.length ? Math.max.apply(null, present) : 0;
+    if (!(mx > 0)) return;
+    keys.forEach(function(k, i){
+      var v = vals[i];
+      var rect = svg.querySelector('rect.cfcbar[data-key="' + k + '"]');
+      var txt = svg.querySelector('text.cfcval[data-key="' + k + '"]');
       var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
       if (rect) rect.setAttribute("width", w.toFixed(1));
       if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
@@ -567,6 +613,8 @@ LOADER_JS = """
         redrawNestedCI(d.tail || {}, _cur5); } catch(e){}
       try { var _cur6 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawEsVarMargin(d.tail || {}, _cur6); } catch(e){}
+      try { var _cur7 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawCopulaFamily(d.capital || {}, _cur7); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -592,6 +640,8 @@ LOADER_JS = """
     DEFAULT.nestedciHTML = _nc0 ? _nc0.innerHTML : null;
     var _ev0 = document.getElementById("esvarmargin");
     DEFAULT.esvarmarginHTML = _ev0 ? _ev0.innerHTML : null;
+    var _cf0 = document.getElementById("copulafamily");
+    DEFAULT.copfamHTML = _cf0 ? _cf0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -634,6 +684,8 @@ LOADER_JS = """
       if (_ncsvg && DEFAULT.nestedciHTML != null) _ncsvg.innerHTML = DEFAULT.nestedciHTML;
       var _evsvg = document.getElementById("esvarmargin");
       if (_evsvg && DEFAULT.esvarmarginHTML != null) _evsvg.innerHTML = DEFAULT.esvarmarginHTML;
+      var _cfsvg = document.getElementById("copulafamily");
+      if (_cfsvg && DEFAULT.copfamHTML != null) _cfsvg.innerHTML = DEFAULT.copfamHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -997,6 +1049,47 @@ def _esvarmargin_svg(tail, cur):
         f'by which ES exceeds VaR. Read verbatim from the model-output snapshot.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _copulafamily_svg(cap, cur):
+    """Inline-SVG horizontal mini bar set DISPLAYING the three GOVERNED copula-CANDIDATE
+    SCR-component bootstrap means (single-t, grouped-t, vine) on ONE shared scale.
+
+    Pure display: bar length = value / max(value) scaled to COPULAFAMILY_MAXW px. Derives no
+    new number; each value is read verbatim from ui_data.json's ``capital`` block. The bars
+    are baked in a FIXED neutral order (no ranking) -- the model's selected aggregation copula
+    is the Gaussian copula, so the candidates are shown purely for comparison and imply NO
+    pick. Each <rect>/<text> carries a ``data-key`` so the snapshot-loader JS can redraw it
+    from a freshly loaded snapshot. Mirrors ``redrawCopulaFamily`` in LOADER_JS.
+    """
+    rows = []
+    for k, label in _COPULA_ROWS:
+        try:
+            v = float(cap.get(k))
+        except (TypeError, ValueError):
+            v = None
+        rows.append((k, label, v))
+    present = [r[2] for r in rows if r[2] is not None]
+    mx = max(present) if present else 0.0
+    top, row_h, bar_h = 6, 34, 15
+    parts = []
+    for i, (k, label, v) in enumerate(rows):
+        label_y = top + i * row_h + 11
+        bar_y = top + i * row_h + 16
+        w = (v / mx * COPULAFAMILY_MAXW) if (v is not None and mx > 0) else 0.0
+        vtxt = f"{cur}{_fmt(v, 0)}" if v is not None else "n/a"
+        parts.append(
+            f'<text class="cfcbar-label" x="2" y="{label_y}">{html.escape(label)}</text>'
+            f'<rect class="cfcbar" data-key="{k}" x="2" y="{bar_y}" rx="3" '
+            f'width="{w:.1f}" height="{bar_h}"></rect>'
+            f'<text class="cfcval" data-key="{k}" x="{w + 8:.1f}" '
+            f'y="{bar_y + bar_h - 3}">{html.escape(vtxt)}</text>')
+    height = top + len(rows) * row_h + 4
+    return (
+        f'<svg id="copulafamily" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Copula-family candidate comparison bar chart: the single-t, grouped-t '
+        f'and vine copula SCR-component bootstrap means on one shared scale, read verbatim '
+        f'from the model-output snapshot. Shown neutrally; the selected copula is Gaussian.">'
+        f'\n    ' + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -1040,6 +1133,7 @@ def build() -> str:
     tailci = _tailci_svg(_tail, cur)
     nestedci = _nestedci_svg(_tail, cur)
     esvarmargin = _esvarmargin_svg(_tail, cur)
+    copulafamily = _copulafamily_svg(cap, cur)
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
@@ -1121,7 +1215,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -1208,6 +1302,17 @@ def build() -> str:
     margin (the amount by which ES, the average loss beyond the 99.5% point, exceeds VaR).
     Both endpoint values are read verbatim from the model-output snapshot; the gap is shown
     purely graphically &mdash; this chart computes nothing.</p>
+
+  <h2>Copula-family candidate comparison</h2>
+  <div class="cfbridge">
+  {copulafamily}
+  </div>
+  <p class="cfccap">Each bar is one alternative dependence-copula family's governed
+    SCR-component bootstrap mean &mdash; single-t, grouped-t and vine &mdash; scaled to the
+    largest of the three on a shared scale. The model's selected aggregation copula is the
+    <b>Gaussian</b> copula; these three families are shown <b>neutrally</b> for comparison and
+    imply no selection. Every value is read verbatim from the model-output snapshot &mdash;
+    this chart computes nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>

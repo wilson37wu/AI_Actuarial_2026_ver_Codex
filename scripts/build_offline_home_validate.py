@@ -178,6 +178,24 @@ def main() -> int:
        "chart.js" not in html.lower()
        and f"{(float(t.get('final_es')) - float(t.get('final_var'))):,.0f}" not in html)
     ok("esvar margin loader-parity hook", "redrawEsVarMargin" in html)
+    # Copula-family candidate comparison (W39, additive, inline-SVG, zero JS dep, zero net)
+    _cap = d.get("capital", {})
+    _cf_keys = ["single_t_copula_scr_component_bootstrap_mean",
+                "grouped_t_copula_scr_component_bootstrap_mean",
+                "vine_copula_scr_component_bootstrap_mean"]
+    ok("copula family heading", "copula-family candidate comparison" in html.lower())
+    ok("copula family svg", 'id="copulafamily"' in html)
+    ok("copula family 3 bars", html.count('class="cfcbar"') == 3)
+    ok("copula family 3 value texts", html.count('class="cfcval"') == 3)
+    ok("copula family three governed means verbatim",
+       all((_cap.get(k) is not None) and (f"{float(_cap.get(k)):,.0f}" in html)
+           for k in _cf_keys))
+    ok("copula family neutral note (selected copula = gaussian, no pick implied)",
+       (str(_cap.get("selected_copula")).lower() == "gaussian")
+       and ("gaussian" in html.lower()) and ("neutrally" in html.lower()))
+    ok("copula family derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("copula family loader-parity hook", "redrawCopulaFamily" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

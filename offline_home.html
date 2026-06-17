@@ -158,6 +158,13 @@
   .evmlab.es  { fill:#e8b23a; }
   .evmgaplab { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
   .evmcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .cfbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .cfbridge svg { width:100%; height:auto; display:block; }
+  .cfcbar-label { fill:var(--mut); font-size:12px; }
+  .cfcval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .cfcbar { fill:#7a86c8; }
+  .cfccap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -319,6 +326,21 @@
     Both endpoint values are read verbatim from the model-output snapshot; the gap is shown
     purely graphically &mdash; this chart computes nothing.</p>
 
+  <h2>Copula-family candidate comparison</h2>
+  <div class="cfbridge">
+  <svg id="copulafamily" viewBox="0 0 560 112" role="img" aria-label="Copula-family candidate comparison bar chart: the single-t, grouped-t and vine copula SCR-component bootstrap means on one shared scale, read verbatim from the model-output snapshot. Shown neutrally; the selected copula is Gaussian.">
+    <text class="cfcbar-label" x="2" y="17">Single-t</text><rect class="cfcbar" data-key="single_t_copula_scr_component_bootstrap_mean" x="2" y="22" rx="3" width="406.2" height="15"></rect><text class="cfcval" data-key="single_t_copula_scr_component_bootstrap_mean" x="414.2" y="34">$39,595</text>
+    <text class="cfcbar-label" x="2" y="51">Grouped-t</text><rect class="cfcbar" data-key="grouped_t_copula_scr_component_bootstrap_mean" x="2" y="56" rx="3" width="362.9" height="15"></rect><text class="cfcval" data-key="grouped_t_copula_scr_component_bootstrap_mean" x="370.9" y="68">$35,372</text>
+    <text class="cfcbar-label" x="2" y="85">Vine / pair-copula</text><rect class="cfcbar" data-key="vine_copula_scr_component_bootstrap_mean" x="2" y="90" rx="3" width="430.0" height="15"></rect><text class="cfcval" data-key="vine_copula_scr_component_bootstrap_mean" x="438.0" y="102">$41,918</text>
+  </svg>
+  </div>
+  <p class="cfccap">Each bar is one alternative dependence-copula family's governed
+    SCR-component bootstrap mean &mdash; single-t, grouped-t and vine &mdash; scaled to the
+    largest of the three on a shared scale. The model's selected aggregation copula is the
+    <b>Gaussian</b> copula; these three families are shown <b>neutrally</b> for comparison and
+    imply no selection. Every value is read verbatim from the model-output snapshot &mdash;
+    this chart computes nothing.</p>
+
   <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -404,7 +426,7 @@
   </div>
 
   <footer>
-    Built 2026-06-17T14:15:17Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-17T15:12:57Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -494,6 +516,28 @@
       var v = vals[i];
       var rect = svg.querySelector('rect.dbar[data-key="' + k + '"]');
       var txt = svg.querySelector('text.dbval[data-key="' + k + '"]');
+      var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
+        txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
+    });
+  }
+  // Redraw the copula-family candidate bars from a (possibly loaded) snapshot. Pure
+  // display: width = value/max scaled to CB_MAXW, mirroring _copulafamily_svg in the builder.
+  function redrawCopulaFamily(cap, cur){
+    var svg = document.getElementById("copulafamily");
+    if (!svg) return;
+    var keys = ["single_t_copula_scr_component_bootstrap_mean",
+      "grouped_t_copula_scr_component_bootstrap_mean",
+      "vine_copula_scr_component_bootstrap_mean"];
+    var vals = keys.map(function(k){ return Number(cap[k]); });
+    var present = vals.filter(function(v){ return isFinite(v); });
+    var mx = present.length ? Math.max.apply(null, present) : 0;
+    if (!(mx > 0)) return;
+    keys.forEach(function(k, i){
+      var v = vals[i];
+      var rect = svg.querySelector('rect.cfcbar[data-key="' + k + '"]');
+      var txt = svg.querySelector('text.cfcval[data-key="' + k + '"]');
       var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
       if (rect) rect.setAttribute("width", w.toFixed(1));
       if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
@@ -689,6 +733,8 @@
         redrawNestedCI(d.tail || {}, _cur5); } catch(e){}
       try { var _cur6 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawEsVarMargin(d.tail || {}, _cur6); } catch(e){}
+      try { var _cur7 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawCopulaFamily(d.capital || {}, _cur7); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -714,6 +760,8 @@
     DEFAULT.nestedciHTML = _nc0 ? _nc0.innerHTML : null;
     var _ev0 = document.getElementById("esvarmargin");
     DEFAULT.esvarmarginHTML = _ev0 ? _ev0.innerHTML : null;
+    var _cf0 = document.getElementById("copulafamily");
+    DEFAULT.copfamHTML = _cf0 ? _cf0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -756,6 +804,8 @@
       if (_ncsvg && DEFAULT.nestedciHTML != null) _ncsvg.innerHTML = DEFAULT.nestedciHTML;
       var _evsvg = document.getElementById("esvarmargin");
       if (_evsvg && DEFAULT.esvarmarginHTML != null) _evsvg.innerHTML = DEFAULT.esvarmarginHTML;
+      var _cfsvg = document.getElementById("copulafamily");
+      if (_cfsvg && DEFAULT.copfamHTML != null) _cfsvg.innerHTML = DEFAULT.copfamHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
