@@ -250,6 +250,31 @@ NESTEDCI_CSS = """
   .ncirange { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
   .ncicap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# --- ES-vs-VaR tail-thickness margin strip (offline-UI W38) ---
+# Decision-neutral, additive, zero-network. Shows the governed 99.5% VaR and ES tail
+# estimates as two point markers on ONE shared scale, with the region between them shaded as
+# the tail-thickness margin (ES exceeds VaR -- the extra capital the heavier ES measure
+# implies over VaR). Both endpoint values (``final_var``/``final_es``) are read verbatim from
+# ui_data.json's ``tail`` block; the gap is shown PURELY graphically -- NO numeric difference
+# is computed/derived. Complements the W36 VaR/ES CI strip (which shows sampling uncertainty)
+# by isolating the MEASURE-CHOICE gap between VaR and ES. Redrawn by the snapshot-loader JS
+# (redrawEsVarMargin), so a loaded snapshot and Reset keep parity.
+ESVARMARGIN_GEO = {"x0": 70.0, "x1": 478.0, "y": 48.0, "bh": 20.0}  # px in 560 viewBox
+ESVARMARGIN_CSS = """
+  .evm-wrap { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .evm-wrap svg { width:100%; height:auto; display:block; }
+  .evmtrack { stroke:var(--line); stroke-width:1; }
+  .evmgap { fill:#d49bff; opacity:0.22; }
+  .evmpt { stroke-width:2.5; }
+  .evmpt.var { stroke:#4ea1ff; }
+  .evmpt.es  { stroke:#e8b23a; }
+  .evmlab { font-size:11.5px; font-weight:650; }
+  .evmlab.var { fill:#4ea1ff; }
+  .evmlab.es  { fill:#e8b23a; }
+  .evmgaplab { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
+  .evmcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -282,6 +307,7 @@ LOADER_JS = """
   var TS = { x0:10, x1:498, y0:14, y1:118 };  // mirrors TAILSPARK_GEO in the Python builder
   var TCI = { x0:86, x1:470, vy:40, ey:92, bh:16 };  // mirrors TAILCI_GEO in the Python builder
   var NCI = { x0:116, x1:466, vy:40, ey:92, bh:16 };  // mirrors NESTEDCI_GEO in the Python builder
+  var EVM = { x0:70, x1:478, y:48, bh:20 };  // mirrors ESVARMARGIN_GEO in the Python builder
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -475,6 +501,33 @@ LOADER_JS = """
       }
     });
   }
+  // Redraw the ES-vs-VaR tail-thickness margin strip from a (possibly loaded) snapshot.
+  // Pure display: x = value/range scaling on a shared scale, mirroring _esvarmargin_svg in
+  // the builder. The gap rect/label are positioned graphically; no numeric diff is computed.
+  function redrawEsVarMargin(tail, cur){
+    var svg = document.getElementById("esvarmargin");
+    if (!svg || !tail) return;
+    var v = Number(tail.final_var), e = Number(tail.final_es);
+    if (!isFinite(v) || !isFinite(e)) return;
+    var lo = Math.min(v, e), hi = Math.max(v, e);
+    var pad = (hi - lo) * 0.18 || 1;
+    var vmin = lo - pad, vmax = hi + pad, span = (vmax - vmin) || 1;
+    function X(val){ return EVM.x0 + (Number(val) - vmin) / span * (EVM.x1 - EVM.x0); }
+    var gap = svg.querySelector('rect.evmgap[data-series="evmgap"]');
+    if (gap){ gap.setAttribute("x", X(lo).toFixed(1));
+      gap.setAttribute("width", Math.max(0, X(hi) - X(lo)).toFixed(1)); }
+    var glab = svg.querySelector('text.evmgaplab[data-series="evmgap"]');
+    if (glab) glab.setAttribute("x", ((X(lo) + X(hi)) / 2).toFixed(1));
+    [["evmvar", v, "end", "99.5% VaR: "], ["evmes", e, "start", "99.5% ES: "]].forEach(function(r){
+      var s = r[0], pt = r[1], anchor = r[2], pre = r[3];
+      var tick = svg.querySelector('line.evmpt[data-series="' + s + '"]');
+      if (tick){ tick.setAttribute("x1", X(pt).toFixed(1)); tick.setAttribute("x2", X(pt).toFixed(1)); }
+      var lab = svg.querySelector('text.evmlab[data-series="' + s + '"]');
+      if (lab){ var tx = anchor === "end" ? X(pt) - 4 : X(pt) + 4;
+        lab.setAttribute("x", tx.toFixed(1));
+        lab.textContent = pre + cur + fmt(pt, 0); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -512,6 +565,8 @@ LOADER_JS = """
         redrawTailCI(d.tail || {}, _cur4); } catch(e){}
       try { var _cur5 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawNestedCI(d.tail || {}, _cur5); } catch(e){}
+      try { var _cur6 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawEsVarMargin(d.tail || {}, _cur6); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -535,6 +590,8 @@ LOADER_JS = """
     DEFAULT.tailciHTML = _tc0 ? _tc0.innerHTML : null;
     var _nc0 = document.getElementById("nestedci");
     DEFAULT.nestedciHTML = _nc0 ? _nc0.innerHTML : null;
+    var _ev0 = document.getElementById("esvarmargin");
+    DEFAULT.esvarmarginHTML = _ev0 ? _ev0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -575,6 +632,8 @@ LOADER_JS = """
       if (_tcsvg && DEFAULT.tailciHTML != null) _tcsvg.innerHTML = DEFAULT.tailciHTML;
       var _ncsvg = document.getElementById("nestedci");
       if (_ncsvg && DEFAULT.nestedciHTML != null) _ncsvg.innerHTML = DEFAULT.nestedciHTML;
+      var _evsvg = document.getElementById("esvarmargin");
+      if (_evsvg && DEFAULT.esvarmarginHTML != null) _evsvg.innerHTML = DEFAULT.esvarmarginHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -885,6 +944,59 @@ def _nestedci_svg(tail, cur):
         f'model-output snapshot.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _esvarmargin_svg(tail, cur):
+    """Inline-SVG one-row strip DISPLAYING the governed 99.5% VaR and ES tail estimates as
+    two point markers on ONE shared scale, with the region between them shaded as the
+    tail-thickness margin (ES exceeds VaR). Both endpoint values (``final_var``/``final_es``)
+    are read verbatim; the gap is shown PURELY graphically -- no numeric difference is
+    derived. Mirrors ``redrawEsVarMargin`` in LOADER_JS.
+    """
+    g = ESVARMARGIN_GEO
+    x0, x1, y, bh = g["x0"], g["x1"], g["y"], g["bh"]
+    var = tail.get("final_var")
+    es = tail.get("final_es")
+    vals = [float(v) for v in (var, es) if isinstance(v, (int, float))]
+    if len(vals) >= 2:
+        lo, hi = min(vals), max(vals)
+        pad = (hi - lo) * 0.18 or 1.0
+        vmin, vmax = lo - pad, hi + pad
+    else:
+        vmin, vmax = 0.0, 1.0
+    span = (vmax - vmin) or 1.0
+
+    def X(v):
+        return x0 + (float(v) - vmin) / span * (x1 - x0)
+
+    parts = [f'<line class="evmtrack" x1="{x0:.1f}" y1="{y:.1f}" '
+             f'x2="{x1:.1f}" y2="{y:.1f}"></line>']
+    if var is not None and es is not None:
+        glo, ghi = X(min(var, es)), X(max(var, es))
+        parts.append(f'<rect class="evmgap" data-series="evmgap" x="{glo:.1f}" '
+                     f'y="{y - bh / 2:.1f}" width="{max(0.0, ghi - glo):.1f}" '
+                     f'height="{bh:.1f}" rx="3"></rect>')
+        parts.append(f'<text class="evmgaplab" data-series="evmgap" '
+                     f'x="{(glo + ghi) / 2:.1f}" y="{y - bh / 2 - 6:.1f}">'
+                     f'tail-thickness margin</text>')
+    rows = [("var", "99.5% VaR", var, "end"), ("es", "99.5% ES", es, "start")]
+    for s, label, pt, anchor in rows:
+        if pt is None:
+            continue
+        px = X(pt)
+        parts.append(f'<line class="evmpt {s}" data-series="evm{s}" x1="{px:.1f}" '
+                     f'y1="{y - bh / 2 - 6:.1f}" x2="{px:.1f}" '
+                     f'y2="{y + bh / 2 + 6:.1f}"></line>')
+        tx = px - 4 if anchor == "end" else px + 4
+        parts.append(f'<text class="evmlab {s}" data-series="evm{s}" '
+                     f'text-anchor="{anchor}" x="{tx:.1f}" y="{y + bh / 2 + 20:.1f}">'
+                     f'{html.escape(label)}: {html.escape(cur + _fmt(pt, 0))}</text>')
+    height = int(y + bh / 2 + 30)
+    return (
+        f'<svg id="esvarmargin" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Tail-thickness margin: the governed 99.5% VaR and ES estimates as two '
+        f'point markers on one shared scale, with the gap between them shaded as the margin '
+        f'by which ES exceeds VaR. Read verbatim from the model-output snapshot.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -927,6 +1039,7 @@ def build() -> str:
     tailspark = _tailspark_svg(_tail, cur)
     tailci = _tailci_svg(_tail, cur)
     nestedci = _nestedci_svg(_tail, cur)
+    esvarmargin = _esvarmargin_svg(_tail, cur)
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
@@ -1008,7 +1121,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -1084,6 +1197,17 @@ def build() -> str:
     much wider, so the extra sampling noise of the nested route is visible. The point sits
     inside both bands. Every value is read verbatim from the model-output snapshot &mdash;
     this chart computes nothing.</p>
+
+  <h2>VaR vs ES &mdash; tail-thickness margin</h2>
+  <div class="evm-wrap">
+  {esvarmargin}
+  </div>
+  <p class="evmcap"><span class="tkey" style="background:#4ea1ff"></span>99.5% VaR
+    <span class="tkey" style="background:#e8b23a"></span>99.5% ES &mdash; the two governed tail
+    measures on one shared scale, with the region between them shaded as the tail-thickness
+    margin (the amount by which ES, the average loss beyond the 99.5% point, exceeds VaR).
+    Both endpoint values are read verbatim from the model-output snapshot; the gap is shown
+    purely graphically &mdash; this chart computes nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>

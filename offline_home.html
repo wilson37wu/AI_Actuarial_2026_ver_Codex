@@ -145,6 +145,19 @@
   .nciv { font-size:11.5px; font-weight:650; fill:var(--ink); }
   .ncirange { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
   .ncicap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .evm-wrap { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .evm-wrap svg { width:100%; height:auto; display:block; }
+  .evmtrack { stroke:var(--line); stroke-width:1; }
+  .evmgap { fill:#d49bff; opacity:0.22; }
+  .evmpt { stroke-width:2.5; }
+  .evmpt.var { stroke:#4ea1ff; }
+  .evmpt.es  { stroke:#e8b23a; }
+  .evmlab { font-size:11.5px; font-weight:650; }
+  .evmlab.var { fill:#4ea1ff; }
+  .evmlab.es  { fill:#e8b23a; }
+  .evmgaplab { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
+  .evmcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -287,6 +300,25 @@
     inside both bands. Every value is read verbatim from the model-output snapshot &mdash;
     this chart computes nothing.</p>
 
+  <h2>VaR vs ES &mdash; tail-thickness margin</h2>
+  <div class="evm-wrap">
+  <svg id="esvarmargin" viewBox="0 0 560 88" role="img" aria-label="Tail-thickness margin: the governed 99.5% VaR and ES estimates as two point markers on one shared scale, with the gap between them shaded as the margin by which ES exceeds VaR. Read verbatim from the model-output snapshot.">
+    <line class="evmtrack" x1="70.0" y1="48.0" x2="478.0" y2="48.0"></line>
+    <rect class="evmgap" data-series="evmgap" x="124.0" y="38.0" width="300.0" height="20.0" rx="3"></rect>
+    <text class="evmgaplab" data-series="evmgap" x="274.0" y="32.0">tail-thickness margin</text>
+    <line class="evmpt var" data-series="evmvar" x1="124.0" y1="32.0" x2="124.0" y2="64.0"></line>
+    <text class="evmlab var" data-series="evmvar" text-anchor="end" x="120.0" y="78.0">99.5% VaR: $158,701</text>
+    <line class="evmpt es" data-series="evmes" x1="424.0" y1="32.0" x2="424.0" y2="64.0"></line>
+    <text class="evmlab es" data-series="evmes" text-anchor="start" x="428.0" y="78.0">99.5% ES: $163,080</text>
+  </svg>
+  </div>
+  <p class="evmcap"><span class="tkey" style="background:#4ea1ff"></span>99.5% VaR
+    <span class="tkey" style="background:#e8b23a"></span>99.5% ES &mdash; the two governed tail
+    measures on one shared scale, with the region between them shaded as the tail-thickness
+    margin (the amount by which ES, the average loss beyond the 99.5% point, exceeds VaR).
+    Both endpoint values are read verbatim from the model-output snapshot; the gap is shown
+    purely graphically &mdash; this chart computes nothing.</p>
+
   <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -372,7 +404,7 @@
   </div>
 
   <footer>
-    Built 2026-06-17T13:16:25Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-17T14:15:17Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -397,6 +429,7 @@
   var TS = { x0:10, x1:498, y0:14, y1:118 };  // mirrors TAILSPARK_GEO in the Python builder
   var TCI = { x0:86, x1:470, vy:40, ey:92, bh:16 };  // mirrors TAILCI_GEO in the Python builder
   var NCI = { x0:116, x1:466, vy:40, ey:92, bh:16 };  // mirrors NESTEDCI_GEO in the Python builder
+  var EVM = { x0:70, x1:478, y:48, bh:20 };  // mirrors ESVARMARGIN_GEO in the Python builder
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -590,6 +623,33 @@
       }
     });
   }
+  // Redraw the ES-vs-VaR tail-thickness margin strip from a (possibly loaded) snapshot.
+  // Pure display: x = value/range scaling on a shared scale, mirroring _esvarmargin_svg in
+  // the builder. The gap rect/label are positioned graphically; no numeric diff is computed.
+  function redrawEsVarMargin(tail, cur){
+    var svg = document.getElementById("esvarmargin");
+    if (!svg || !tail) return;
+    var v = Number(tail.final_var), e = Number(tail.final_es);
+    if (!isFinite(v) || !isFinite(e)) return;
+    var lo = Math.min(v, e), hi = Math.max(v, e);
+    var pad = (hi - lo) * 0.18 || 1;
+    var vmin = lo - pad, vmax = hi + pad, span = (vmax - vmin) || 1;
+    function X(val){ return EVM.x0 + (Number(val) - vmin) / span * (EVM.x1 - EVM.x0); }
+    var gap = svg.querySelector('rect.evmgap[data-series="evmgap"]');
+    if (gap){ gap.setAttribute("x", X(lo).toFixed(1));
+      gap.setAttribute("width", Math.max(0, X(hi) - X(lo)).toFixed(1)); }
+    var glab = svg.querySelector('text.evmgaplab[data-series="evmgap"]');
+    if (glab) glab.setAttribute("x", ((X(lo) + X(hi)) / 2).toFixed(1));
+    [["evmvar", v, "end", "99.5% VaR: "], ["evmes", e, "start", "99.5% ES: "]].forEach(function(r){
+      var s = r[0], pt = r[1], anchor = r[2], pre = r[3];
+      var tick = svg.querySelector('line.evmpt[data-series="' + s + '"]');
+      if (tick){ tick.setAttribute("x1", X(pt).toFixed(1)); tick.setAttribute("x2", X(pt).toFixed(1)); }
+      var lab = svg.querySelector('text.evmlab[data-series="' + s + '"]');
+      if (lab){ var tx = anchor === "end" ? X(pt) - 4 : X(pt) + 4;
+        lab.setAttribute("x", tx.toFixed(1));
+        lab.textContent = pre + cur + fmt(pt, 0); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -627,6 +687,8 @@
         redrawTailCI(d.tail || {}, _cur4); } catch(e){}
       try { var _cur5 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawNestedCI(d.tail || {}, _cur5); } catch(e){}
+      try { var _cur6 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawEsVarMargin(d.tail || {}, _cur6); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -650,6 +712,8 @@
     DEFAULT.tailciHTML = _tc0 ? _tc0.innerHTML : null;
     var _nc0 = document.getElementById("nestedci");
     DEFAULT.nestedciHTML = _nc0 ? _nc0.innerHTML : null;
+    var _ev0 = document.getElementById("esvarmargin");
+    DEFAULT.esvarmarginHTML = _ev0 ? _ev0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -690,6 +754,8 @@
       if (_tcsvg && DEFAULT.tailciHTML != null) _tcsvg.innerHTML = DEFAULT.tailciHTML;
       var _ncsvg = document.getElementById("nestedci");
       if (_ncsvg && DEFAULT.nestedciHTML != null) _ncsvg.innerHTML = DEFAULT.nestedciHTML;
+      var _evsvg = document.getElementById("esvarmargin");
+      if (_evsvg && DEFAULT.esvarmarginHTML != null) _evsvg.innerHTML = DEFAULT.esvarmarginHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });

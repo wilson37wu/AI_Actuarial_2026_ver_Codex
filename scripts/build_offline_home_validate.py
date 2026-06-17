@@ -164,6 +164,20 @@ def main() -> int:
        (_no is not None) and (f"n={_no:,.0f}" in html or f"n={_no}" in html))
     ok("nested CI derives nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower())
+    # ES-vs-VaR tail-thickness margin strip (W38, additive, inline-SVG, zero JS dep, zero net)
+    ok("esvar margin heading", "tail-thickness margin" in html.lower())
+    ok("esvar margin svg", 'id="esvarmargin"' in html)
+    ok("esvar margin two point markers (var+es)",
+       html.count('class="evmpt var"') == 1 and html.count('class="evmpt es"') == 1)
+    ok("esvar margin gap region present", html.count('class="evmgap"') == 1)
+    ok("esvar margin final_var/final_es verbatim",
+       f"{t.get('final_var'):,.0f}" in html and f"{t.get('final_es'):,.0f}" in html)
+    ok("esvar margin ordering (ES >= VaR, governed)",
+       float(t.get('final_es')) >= float(t.get('final_var')))
+    ok("esvar margin derives nothing (no numeric diff label, svg inline, no chart lib)",
+       "chart.js" not in html.lower()
+       and f"{(float(t.get('final_es')) - float(t.get('final_var'))):,.0f}" not in html)
+    ok("esvar margin loader-parity hook", "redrawEsVarMargin" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))
