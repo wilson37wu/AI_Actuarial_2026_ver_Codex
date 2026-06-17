@@ -122,6 +122,24 @@ A11Y_CSS = """
     * { transition:none !important; }
     .card:hover { transform:none; } }"""
 
+# Capital-at-a-glance graphic (added 2026-06-17, claude window) -- an ADDITIVE, inline-SVG
+# horizontal bar chart that DISPLAYS the already-governed capital figures graphically. It
+# recomputes nothing: each bar's length is just a value/max scaling of three governed
+# numbers (standalone sum, var-covar/correlated SCR, nested 99.5% SCR) read verbatim from
+# ui_data.json. No JS library, no network, no external ref -- the SVG is baked at build time
+# and (for snapshot-loader parity) redrawn by the same in-page JS that refreshes the figures.
+CAPBRIDGE_MAXW = 430.0  # px: max bar width inside the 560-wide viewBox (leaves a value gutter)
+CAPBRIDGE_CSS = """
+  .cbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .cbridge svg { width:100%; height:auto; display:block; }
+  .cbar-label { fill:var(--mut); font-size:12.5px; }
+  .cbval { fill:var(--ink); font-size:12.5px; font-weight:650; }
+  .cbar.s0 { fill:#3a4a5e; }
+  .cbar.s1 { fill:#2f6db0; }
+  .cbar.s2 { fill:#4ea1ff; }
+  .cbcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -148,7 +166,8 @@ LOADER_JS = """
 // FileReader. Mirrors the Python figure mapping so a loaded ui_data.json renders by the
 // same rules. Built-in governed snapshot stays the default (Reset restores it).
 (function(){
-  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"" };
+  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null };
+  var CB_MAXW = 430;  // mirrors CAPBRIDGE_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -179,6 +198,26 @@ LOADER_JS = """
   }
   function esc(s){ var e = document.createElement("div"); e.textContent = String(s); return e.innerHTML; }
   function setText(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; }
+  // Redraw the capital-at-a-glance bars from a (possibly loaded) snapshot. Pure display:
+  // bar width = value/max scaled to CB_MAXW, mirroring _capbridge_svg in the Python builder.
+  function redrawBridge(cap, cur){
+    var svg = document.getElementById("capbridge");
+    if (!svg) return;
+    var keys = ["standalone_sum", "correlated_scr", "nested_scr"];
+    var vals = keys.map(function(k){ return Number(cap[k]); });
+    var present = vals.filter(function(v){ return isFinite(v); });
+    var mx = present.length ? Math.max.apply(null, present) : 0;
+    if (!(mx > 0)) return;
+    keys.forEach(function(k, i){
+      var v = vals[i];
+      var rect = svg.querySelector('rect.cbar[data-key="' + k + '"]');
+      var txt = svg.querySelector('text.cbval[data-key="' + k + '"]');
+      var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
+        txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -206,6 +245,8 @@ LOADER_JS = """
       "snapshot (no summary / capital / contract_version). Figures unchanged."); return; }
     try {
       render(extract(d), true);
+      try { var _cur = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawBridge(d.capital || {}, _cur); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -219,6 +260,8 @@ LOADER_JS = """
     DEFAULT.hv = (document.getElementById("hv") || {}).textContent || "";
     DEFAULT.hc = (document.getElementById("hc") || {}).textContent || "";
     DEFAULT.hs = (document.getElementById("hs") || {}).textContent || "";
+    var _b0 = document.getElementById("capbridge");
+    DEFAULT.bridgeHTML = _b0 ? _b0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -249,6 +292,8 @@ LOADER_JS = """
     if (rb) rb.addEventListener("click", function(){
       figs.innerHTML = DEFAULT.figsHTML;
       setText("hv", DEFAULT.hv); setText("hc", DEFAULT.hc); setText("hs", DEFAULT.hs);
+      var _bsvg = document.getElementById("capbridge");
+      if (_bsvg && DEFAULT.bridgeHTML != null) _bsvg.innerHTML = DEFAULT.bridgeHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -260,6 +305,48 @@ def _fmt(x, dp=0):
         return f"{float(x):,.{dp}f}"
     except Exception:
         return html.escape(str(x))
+
+def _capbridge_svg(cap, cur):
+    """Build an inline-SVG horizontal bar chart of three GOVERNED capital figures.
+
+    Pure display: bar length = value / max(value) scaled to CAPBRIDGE_MAXW px. Derives no
+    new number; the visible gap from the standalone sum down to the nested SCR is the
+    diversification effect, shown implicitly (not computed). Each <rect>/<text> carries a
+    ``data-key`` so the snapshot-loader JS can redraw it from a freshly loaded snapshot.
+    """
+    rows = [
+        ("standalone_sum", "Standalone sum (pre-diversification)", "s0"),
+        ("correlated_scr", "Var-covar / correlated SCR", "s1"),
+        ("nested_scr", "Nested 99.5% SCR", "s2"),
+    ]
+    vals = []
+    for k, _label, _cls in rows:
+        try:
+            vals.append(float(cap.get(k)))
+        except (TypeError, ValueError):
+            vals.append(None)
+    present = [v for v in vals if v is not None]
+    mx = max(present) if present else 0.0
+    top, row_h, bar_h = 8, 46, 18
+    parts = []
+    for i, (k, label, cls) in enumerate(rows):
+        v = vals[i]
+        label_y = top + i * row_h + 12
+        bar_y = top + i * row_h + 18
+        w = (v / mx * CAPBRIDGE_MAXW) if (v is not None and mx > 0) else 0.0
+        vtxt = f"{cur}{_fmt(v, 0)}" if v is not None else "n/a"
+        parts.append(
+            f'<text class="cbar-label" x="2" y="{label_y}">{html.escape(label)}</text>'
+            f'<rect class="cbar {cls}" data-key="{k}" x="2" y="{bar_y}" rx="4" '
+            f'width="{w:.1f}" height="{bar_h}"></rect>'
+            f'<text class="cbval" data-key="{k}" x="{w + 8:.1f}" '
+            f'y="{bar_y + bar_h - 4}">{html.escape(vtxt)}</text>')
+    height = top + len(rows) * row_h + 4
+    return (
+        f'<svg id="capbridge" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Capital comparison bar chart: standalone sum, var-covar SCR and '
+        f'nested 99.5% SCR, read verbatim from the model-output snapshot.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
 
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
@@ -297,6 +384,7 @@ def build() -> str:
         f'      <div class="fig"><span class="fl">{html.escape(l)}</span>'
         f'<span class="fv">{v}</span></div>' for l, v in figures)
     cardhtml = "\n".join(cards)
+    capbridge = _capbridge_svg(cap, cur)
 
     # Build-time link-existence assertion (offline-UI option e): every VIEWS href
     # -- and, by the chooser-drift check below, every CHOOSER href, which must be a
@@ -372,7 +460,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -396,6 +484,14 @@ def build() -> str:
   </div>
   <p class="sub" style="margin-top:10px; font-size:12.5px;">Figures are read verbatim
     from the model-output snapshot &mdash; this page computes nothing.</p>
+
+  <h2>Capital at a glance</h2>
+  <div class="cbridge">
+  {capbridge}
+  </div>
+  <p class="cbcap">Bars are scaled to the largest value (the standalone sum). The visible gap
+    from the standalone sum down to the nested 99.5% SCR is the diversification effect. Every
+    value is read verbatim from the model-output snapshot &mdash; this chart computes nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>

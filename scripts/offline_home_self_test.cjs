@@ -49,6 +49,15 @@ const _skip = doc.querySelector("a.skip");
 ok("skip-to-content link -> #main", !!_skip && _skip.getAttribute("href") === "#main");
 ok("main landmark target", !!doc.getElementById("main") && doc.getElementById("main").tagName === "MAIN");
 ok("start-here guidance", !!doc.querySelector(".start") && /New here\?/.test(doc.body.textContent));
+// capital-at-a-glance graphic (additive, inline-SVG, zero JS dep) present
+ok("capital bridge heading", /Capital at a glance/.test(doc.body.textContent));
+ok("capital bridge svg present", !!doc.getElementById("capbridge"));
+ok("capital bridge 3 bars", doc.querySelectorAll("#capbridge rect.cbar").length === 3);
+ok("capital bridge 3 value texts", doc.querySelectorAll("#capbridge text.cbval").length === 3);
+ok("capital bridge standalone bar widest", (function(){
+  const r = k => Number(doc.querySelector('#capbridge rect.cbar[data-key="'+k+'"]').getAttribute("width"));
+  return r("standalone_sum") >= r("correlated_scr") && r("standalone_sum") >= r("nested_scr");
+})());
 
 const failed = checks.filter(c => !c.pass);
 const result = { ok: failed.length === 0, checks: checks.length,

@@ -31,6 +31,23 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-17 (Window #33, claude) — OWNER-DIRECTED OFFLINE-UI FEATURE SHIPPED (additive, decision-neutral; no model-form / governed-artifact / contract change).**
+> Acted on the owner's standing scheduled-task directive ("focus on building the offline UI ... display graphically and interactively the result"), the explicit pivot W27-W32 kept escalating for.
+> Added a zero-install, zero-network inline-SVG **"Capital at a glance"** bar chart to `offline_home.html` that DISPLAYS three already-governed capital figures verbatim
+> (standalone sum $62,389 / var-covar SCR $47,293 / nested 99.5% SCR $48,707). Pure display (value/max bar scaling; derives NO new number — the standalone->nested gap shows
+> diversification implicitly). Snapshot-loader JS redraws the bars on load; Reset restores them (parity preserved). `ui_data.json` / `ui_app.html` / `combined_model_app.html` /
+> `model_summary_card.html` **BYTE-UNCHANGED**; headline **39,975.654628199336** intact; contract **1.23.0**. Verify: `build_offline_home_validate` **34/34** ok:true (was 28; +6
+> capital-bridge checks); `offline_home_loader_parity` **10/10**; both inline `<script>` blocks `node --check` clean; baked SVG geometry verified (standalone widest=430px, nested
+> 335.7px). jsdom self-test env-unrunnable (virtiofs `node_modules`; documented W23/W29), mirrored by the stdlib gate. Git in a fresh /tmp clone; mount `.git` untouched.
+> NOTE: the in-place mount editor truncated the builder mid-write (documented virtiofs hazard) -> recovered from the pristine origin copy and re-applied all edits programmatically in the clone.
+>
+> **NEXT-EXECUTION POINTER.** Offline-UI graphical track is now OPEN per the owner directive (landing page carries a graphical capital view). Next single auto-admissible offline-UI item:
+> add ONE more zero-install, zero-network, decision-neutral graphic reading ONLY governed model output — e.g. a **tail/convergence sparkline** (VaR/ES vs outer-count, with the recommended n* marker)
+> or a **per-driver SCR mini bar set** — additive only (no contract bump unless a new view file is introduced; offline_home is a separate file and needs none), `build_offline_home_validate` + loader-parity
+> must stay green, headline bit-identical. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC / MLMC sign-off; Packaging A/B/C; or declare frontier complete & freeze) — decision matrix in
+> `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`. Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
+
 > **2026-06-17 (Window #30, claude) — DECISION-NEUTRAL VERIFICATION + OWNER-PIVOT ESCALATION (no model-form / governed-artifact / contract change).**
 > Fresh /tmp clone of origin/main; governed artifacts BYTE-IDENTICAL mount↔origin (offline_home `9bf29b8a…` / ui_app `81824949…` / ui_data `70b747a0…`).
 > Standing gates ALL GREEN: build_offline_home_validate **28/28** ok:true; build_model_summary_card_validate **25** ok:true;

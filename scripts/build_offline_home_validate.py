@@ -72,6 +72,15 @@ def main() -> int:
     ok("keyboard focus-visible ring", ":focus-visible" in html)
     ok("reduced-motion fallback", "prefers-reduced-motion" in html)
     ok("start-here guidance", 'class="start"' in html and "New here?" in html)
+    # capital-at-a-glance graphic (additive, inline-SVG, zero JS dep, zero network) presence
+    ok("capital bridge heading", "Capital at a glance" in html)
+    ok("capital bridge svg", 'id="capbridge"' in html)
+    ok("capital bridge 3 bars", html.count('class="cbar ') == 3)
+    ok("capital bridge 3 value texts", html.count('class="cbval"') == 3)
+    ok("capital bridge keys (governed)",
+       all('data-key="%s"' % k in html for k in ("standalone_sum", "correlated_scr", "nested_scr")))
+    ok("capital bridge derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower() and "d3" not in html.lower())
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

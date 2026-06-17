@@ -11011,3 +11011,23 @@ sign-off]; (2) LSMC proxy [sign-off]; (3) MLMC nested-loop efficiency [equivalen
 Decision matrix: docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md.
 
 Status email sent to wilsonwukl@gmail.com. Lock released at end. No force-push.
+
+---
+
+## Window #33 (claude) — 2026-06-17 ~09:13 UTC — OFFLINE-UI CAPITAL-BRIDGE GRAPHIC (additive, decision-neutral)
+
+Acted on the owner's standing scheduled-task directive to focus on the offline UI and
+"display graphically ... the result". Added a zero-install inline-SVG "Capital at a glance"
+bar chart to offline_home.html displaying three GOVERNED capital figures verbatim
+(standalone sum $62,389 / var-covar SCR $47,293 / nested 99.5% SCR $48,707). Pure display
+(value/max bar scaling; derives no new number). Snapshot-loader JS redraws the bars on load;
+Reset restores them. NO model-form change, NO governed-artifact change, NO contract change:
+ui_data.json + ui_app.html + combined_model_app.html + model_summary_card.html BYTE-UNCHANGED;
+headline 39,975.654628199336 intact; contract 1.23.0. Files: offline_home.html (rebuilt),
+scripts/build_offline_home.py, scripts/build_offline_home_validate.py,
+scripts/offline_home_self_test.cjs. Verify: validate gate 34/34 ok:true (was 28);
+loader_parity 10/10; both inline scripts `node --check` clean; baked SVG geometry verified.
+jsdom self-test env-unrunnable (virtiofs node_modules; documented), mirrored by stdlib gate.
+Incident: in-place mount editor truncated the builder mid-write (virtiofs hazard) -> recovered
+from pristine origin copy, re-applied edits in /tmp clone, copied back to mount. Git in fresh
+/tmp clone; mount .git untouched. See docs/cycle_status/LATEST_CYCLE_STATUS_20260617_w33_capital_bridge.md.

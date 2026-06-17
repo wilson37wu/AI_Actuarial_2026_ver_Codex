@@ -82,6 +82,15 @@
   @media (prefers-reduced-motion: reduce){
     * { transition:none !important; }
     .card:hover { transform:none; } }
+  .cbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .cbridge svg { width:100%; height:auto; display:block; }
+  .cbar-label { fill:var(--mut); font-size:12.5px; }
+  .cbval { fill:var(--ink); font-size:12.5px; font-weight:650; }
+  .cbar.s0 { fill:#3a4a5e; }
+  .cbar.s1 { fill:#2f6db0; }
+  .cbar.s2 { fill:#4ea1ff; }
+  .cbcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -112,6 +121,18 @@
   </div>
   <p class="sub" style="margin-top:10px; font-size:12.5px;">Figures are read verbatim
     from the model-output snapshot &mdash; this page computes nothing.</p>
+
+  <h2>Capital at a glance</h2>
+  <div class="cbridge">
+  <svg id="capbridge" viewBox="0 0 560 150" role="img" aria-label="Capital comparison bar chart: standalone sum, var-covar SCR and nested 99.5% SCR, read verbatim from the model-output snapshot.">
+    <text class="cbar-label" x="2" y="20">Standalone sum (pre-diversification)</text><rect class="cbar s0" data-key="standalone_sum" x="2" y="26" rx="4" width="430.0" height="18"></rect><text class="cbval" data-key="standalone_sum" x="438.0" y="40">$62,389</text>
+    <text class="cbar-label" x="2" y="66">Var-covar / correlated SCR</text><rect class="cbar s1" data-key="correlated_scr" x="2" y="72" rx="4" width="326.0" height="18"></rect><text class="cbval" data-key="correlated_scr" x="334.0" y="86">$47,293</text>
+    <text class="cbar-label" x="2" y="112">Nested 99.5% SCR</text><rect class="cbar s2" data-key="nested_scr" x="2" y="118" rx="4" width="335.7" height="18"></rect><text class="cbval" data-key="nested_scr" x="343.7" y="132">$48,707</text>
+  </svg>
+  </div>
+  <p class="cbcap">Bars are scaled to the largest value (the standalone sum). The visible gap
+    from the standalone sum down to the nested 99.5% SCR is the diversification effect. Every
+    value is read verbatim from the model-output snapshot &mdash; this chart computes nothing.</p>
 
   <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
@@ -198,7 +219,7 @@
   </div>
 
   <footer>
-    Built 2026-06-16T22:11:25Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-17T09:18:39Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -217,7 +238,8 @@
 // FileReader. Mirrors the Python figure mapping so a loaded ui_data.json renders by the
 // same rules. Built-in governed snapshot stays the default (Reset restores it).
 (function(){
-  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"" };
+  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null };
+  var CB_MAXW = 430;  // mirrors CAPBRIDGE_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -248,6 +270,26 @@
   }
   function esc(s){ var e = document.createElement("div"); e.textContent = String(s); return e.innerHTML; }
   function setText(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; }
+  // Redraw the capital-at-a-glance bars from a (possibly loaded) snapshot. Pure display:
+  // bar width = value/max scaled to CB_MAXW, mirroring _capbridge_svg in the Python builder.
+  function redrawBridge(cap, cur){
+    var svg = document.getElementById("capbridge");
+    if (!svg) return;
+    var keys = ["standalone_sum", "correlated_scr", "nested_scr"];
+    var vals = keys.map(function(k){ return Number(cap[k]); });
+    var present = vals.filter(function(v){ return isFinite(v); });
+    var mx = present.length ? Math.max.apply(null, present) : 0;
+    if (!(mx > 0)) return;
+    keys.forEach(function(k, i){
+      var v = vals[i];
+      var rect = svg.querySelector('rect.cbar[data-key="' + k + '"]');
+      var txt = svg.querySelector('text.cbval[data-key="' + k + '"]');
+      var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
+        txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -275,6 +317,8 @@
       "snapshot (no summary / capital / contract_version). Figures unchanged."); return; }
     try {
       render(extract(d), true);
+      try { var _cur = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawBridge(d.capital || {}, _cur); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -288,6 +332,8 @@
     DEFAULT.hv = (document.getElementById("hv") || {}).textContent || "";
     DEFAULT.hc = (document.getElementById("hc") || {}).textContent || "";
     DEFAULT.hs = (document.getElementById("hs") || {}).textContent || "";
+    var _b0 = document.getElementById("capbridge");
+    DEFAULT.bridgeHTML = _b0 ? _b0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -318,6 +364,8 @@
     if (rb) rb.addEventListener("click", function(){
       figs.innerHTML = DEFAULT.figsHTML;
       setText("hv", DEFAULT.hv); setText("hc", DEFAULT.hc); setText("hs", DEFAULT.hs);
+      var _bsvg = document.getElementById("capbridge");
+      if (_bsvg && DEFAULT.bridgeHTML != null) _bsvg.innerHTML = DEFAULT.bridgeHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
