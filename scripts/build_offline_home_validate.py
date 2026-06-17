@@ -139,6 +139,31 @@ def main() -> int:
        (len(_eci) >= 2 and _eci[0] <= float(t.get('final_es')) <= _eci[1]))
     ok("tail CI derives nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower())
+    # Nested-vs-copula VaR CI comparison (W37, additive, inline-SVG, zero JS dep, zero net)
+    _nci = t.get("nested_var_ci") or []
+    _no = t.get("nested_n_outer")
+    ok("nested CI heading", "nested vs copula" in html.lower())
+    ok("nested CI svg", 'id="nestedci"' in html)
+    ok("nested CI two bands (copula+nested)",
+       html.count('class="nciband copula"') == 1 and html.count('class="nciband nested"') == 1)
+    ok("nested CI two point markers (copula+nested)",
+       html.count('class="ncipt copula"') == 1 and html.count('class="ncipt nested"') == 1)
+    ok("nested CI nested_var_ci endpoints verbatim",
+       (len(_nci) >= 2) and f"{_nci[0]:,.0f}" in html and f"{_nci[1]:,.0f}" in html)
+    ok("nested CI copula var_ci endpoints verbatim",
+       (len(_vci) >= 2) and f"{_vci[0]:,.0f}" in html and f"{_vci[1]:,.0f}" in html)
+    ok("nested CI governed point (final_var) verbatim",
+       f"{t.get('final_var'):,.0f}" in html)
+    ok("nested CI point inside BOTH bands (governed consistency)",
+       (len(_vci) >= 2 and _vci[0] <= float(t.get('final_var')) <= _vci[1]) and
+       (len(_nci) >= 2 and _nci[0] <= float(t.get('final_var')) <= _nci[1]))
+    ok("nested CI nested band wider than copula band (estimator-noise ordering)",
+       (len(_vci) >= 2 and len(_nci) >= 2) and
+       (float(_nci[1]) - float(_nci[0])) > (float(_vci[1]) - float(_vci[0])))
+    ok("nested CI outer-count label present",
+       (_no is not None) and (f"n={_no:,.0f}" in html or f"n={_no}" in html))
+    ok("nested CI derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

@@ -224,6 +224,32 @@ TAILCI_CSS = """
   .cirange { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
   .cicap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# --- Nested-vs-copula VaR confidence-interval comparison (offline-UI W37) ---
+# Decision-neutral, additive, zero-network. Shows the governed 99.5% VaR estimate's
+# Monte-Carlo confidence band from TWO governed estimators on ONE shared scale: the
+# copula-simulated band (``var_ci``, tight -- the converged estimator) vs the NESTED
+# estimator's band (``nested_var_ci``) computed at only ``nested_n_outer`` outer scenarios
+# (wide -- more sampling noise). Both rows mark the SAME governed point (``final_var``),
+# which lies inside both bands. Every x-coordinate is a value/range scaling of a governed
+# number -- no number is derived. Complements the W36 VaR/ES CI strip by isolating the
+# ESTIMATOR-CHOICE uncertainty for VaR. Redrawn by the snapshot-loader JS (redrawNestedCI).
+NESTEDCI_GEO = {"x0": 116.0, "x1": 466.0, "vy": 40.0, "ey": 92.0, "bh": 16.0}  # px in 560 viewBox
+NESTEDCI_CSS = """
+  .ncici-wrap { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .ncici-wrap svg { width:100%; height:auto; display:block; }
+  .ncitrack { stroke:var(--line); stroke-width:1; }
+  .nciband { opacity:0.30; }
+  .nciband.copula { fill:#2ec27e; }
+  .nciband.nested { fill:#e8b23a; }
+  .ncipt { stroke-width:2; }
+  .ncipt.copula { stroke:#2ec27e; }
+  .ncipt.nested { stroke:#e8b23a; }
+  .ncilab { fill:var(--mut); font-size:11px; }
+  .nciv { font-size:11.5px; font-weight:650; fill:var(--ink); }
+  .ncirange { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
+  .ncicap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -251,10 +277,11 @@ LOADER_JS = """
 // same rules. Built-in governed snapshot stays the default (Reset restores it).
 (function(){
   var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null, driversHTML:null,
-    tailHTML:null, tailciHTML:null };
+    tailHTML:null, tailciHTML:null, nestedciHTML:null };
   var CB_MAXW = 430;  // mirrors CAPBRIDGE_MAXW in scripts/build_offline_home.py
   var TS = { x0:10, x1:498, y0:14, y1:118 };  // mirrors TAILSPARK_GEO in the Python builder
   var TCI = { x0:86, x1:470, vy:40, ey:92, bh:16 };  // mirrors TAILCI_GEO in the Python builder
+  var NCI = { x0:116, x1:466, vy:40, ey:92, bh:16 };  // mirrors NESTEDCI_GEO in the Python builder
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -413,6 +440,41 @@ LOADER_JS = """
       }
     });
   }
+  // coordinates = value/range scaling on a shared scale, mirroring _nestedci_svg in builder.
+  function redrawNestedCI(tail, cur){
+    var svg = document.getElementById("nestedci");
+    if (!svg || !tail) return;
+    var vci = tail.var_ci || [], nci = tail.nested_var_ci || [], pt = Number(tail.final_var);
+    var rows = [
+      { s:"ncicopula", lo:Number(vci[0]), hi:Number(vci[1]), pt:pt, y:NCI.vy },
+      { s:"ncinested", lo:Number(nci[0]), hi:Number(nci[1]), pt:pt, y:NCI.ey }
+    ];
+    var all = [];
+    rows.forEach(function(r){ [r.lo, r.hi].forEach(function(v){ if (isFinite(v)) all.push(v); }); });
+    if (all.length < 2) return;
+    var vmin = Math.min.apply(null, all), vmax = Math.max.apply(null, all);
+    var span = (vmax - vmin) || 1;
+    function X(v){ return NCI.x0 + (Number(v) - vmin) / span * (NCI.x1 - NCI.x0); }
+    rows.forEach(function(r){
+      var band = svg.querySelector('rect.nciband[data-series="' + r.s + '"]');
+      if (band && isFinite(r.lo) && isFinite(r.hi)){
+        band.setAttribute("x", X(r.lo).toFixed(1));
+        band.setAttribute("width", Math.max(0, X(r.hi) - X(r.lo)).toFixed(1));
+      }
+      var tick = svg.querySelector('line.ncipt[data-series="' + r.s + '"]');
+      if (tick && isFinite(r.pt)){
+        tick.setAttribute("x1", X(r.pt).toFixed(1));
+        tick.setAttribute("x2", X(r.pt).toFixed(1));
+      }
+      var pv = svg.querySelector('text.nciv[data-series="' + r.s + '"]');
+      if (pv && isFinite(r.pt)) pv.textContent = cur + fmt(r.pt, 0);
+      var rg = svg.querySelector('text.ncirange[data-series="' + r.s + '"]');
+      if (rg && isFinite(r.lo) && isFinite(r.hi)){
+        rg.setAttribute("x", ((X(r.lo) + X(r.hi)) / 2).toFixed(1));
+        rg.textContent = fmt(r.lo, 0) + " to " + fmt(r.hi, 0);
+      }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -448,6 +510,8 @@ LOADER_JS = """
         redrawTail(d.tail || {}, _cur3); } catch(e){}
       try { var _cur4 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawTailCI(d.tail || {}, _cur4); } catch(e){}
+      try { var _cur5 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawNestedCI(d.tail || {}, _cur5); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -469,6 +533,8 @@ LOADER_JS = """
     DEFAULT.tailHTML = _t0 ? _t0.innerHTML : null;
     var _tc0 = document.getElementById("tailci");
     DEFAULT.tailciHTML = _tc0 ? _tc0.innerHTML : null;
+    var _nc0 = document.getElementById("nestedci");
+    DEFAULT.nestedciHTML = _nc0 ? _nc0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -507,6 +573,8 @@ LOADER_JS = """
       if (_tsvg && DEFAULT.tailHTML != null) _tsvg.innerHTML = DEFAULT.tailHTML;
       var _tcsvg = document.getElementById("tailci");
       if (_tcsvg && DEFAULT.tailciHTML != null) _tcsvg.innerHTML = DEFAULT.tailciHTML;
+      var _ncsvg = document.getElementById("nestedci");
+      if (_ncsvg && DEFAULT.nestedciHTML != null) _ncsvg.innerHTML = DEFAULT.nestedciHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -755,6 +823,68 @@ def _tailci_svg(tail, cur):
         f'marked. Read verbatim from the model-output snapshot.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _nestedci_svg(tail, cur):
+    """Inline-SVG comparison of the GOVERNED 99.5% VaR estimate's confidence band from two
+    estimators on one shared scale: the copula-simulated band (``var_ci``) vs the nested
+    estimator's band (``nested_var_ci`` at ``nested_n_outer`` outer scenarios). Both rows mark
+    the same governed point (``final_var``). Every x-coordinate is a value/range scaling of a
+    governed number -- no number is derived. Mirrors ``redrawNestedCI`` in LOADER_JS.
+    """
+    g = NESTEDCI_GEO
+    x0, x1 = g["x0"], g["x1"]
+    n_outer = tail.get("nested_n_outer")
+    nlbl = ("Nested VaR (n=%s)" % _fmt(n_outer, 0)) if n_outer is not None else "Nested VaR"
+    pt = tail.get("final_var")
+    rows = [
+        ("copula", "Copula VaR", tail.get("var_ci") or [], pt, g["vy"]),
+        ("nested", nlbl, tail.get("nested_var_ci") or [], pt, g["ey"]),
+    ]
+    ends = []
+    for _s, _l, ci, _pt, _y in rows:
+        if len(ci) >= 2:
+            try:
+                ends.append(float(ci[0])); ends.append(float(ci[1]))
+            except (TypeError, ValueError):
+                pass
+    vmin = min(ends) if ends else 0.0
+    vmax = max(ends) if ends else 1.0
+    span = (vmax - vmin) or 1.0
+
+    def X(v):
+        return x0 + (float(v) - vmin) / span * (x1 - x0)
+
+    bh = g["bh"]
+    parts = []
+    for s, label, ci, pt_, y in rows:
+        parts.append(f'<line class="ncitrack" x1="{x0:.1f}" y1="{y:.1f}" '
+                     f'x2="{x1:.1f}" y2="{y:.1f}"></line>')
+        parts.append(f'<text class="ncilab" x="2" y="{y + 4:.1f}">{html.escape(label)}</text>')
+        if len(ci) >= 2:
+            lo, hi = float(ci[0]), float(ci[1])
+            bx, bw = X(lo), max(0.0, X(hi) - X(lo))
+            parts.append(f'<rect class="nciband {s}" data-series="nci{s}" x="{bx:.1f}" '
+                         f'y="{y - bh / 2:.1f}" width="{bw:.1f}" height="{bh:.1f}" rx="3"></rect>')
+            cx = (X(lo) + X(hi)) / 2
+            parts.append(f'<text class="ncirange" data-series="nci{s}" x="{cx:.1f}" '
+                         f'y="{y + bh / 2 + 12:.1f}">{html.escape(_fmt(lo, 0))} to '
+                         f'{html.escape(_fmt(hi, 0))}</text>')
+        if pt_ is not None:
+            px = X(pt_)
+            parts.append(f'<line class="ncipt {s}" data-series="nci{s}" x1="{px:.1f}" '
+                         f'y1="{y - bh / 2 - 3:.1f}" x2="{px:.1f}" '
+                         f'y2="{y + bh / 2 + 3:.1f}"></line>')
+            parts.append(f'<text class="nciv {s}" data-series="nci{s}" text-anchor="start" '
+                         f'x="{x1 + 6:.1f}" y="{y + 4:.1f}">'
+                         f'{html.escape(cur + _fmt(pt_, 0))}</text>')
+    height = int(g["ey"] + bh / 2 + 18)
+    return (
+        f'<svg id="nestedci" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Nested vs copula-simulated VaR confidence-interval comparison: the '
+        f'governed 99.5% VaR shown as the copula-simulated band and the wider nested-estimator '
+        f'band on a shared scale, with the governed point marked. Read verbatim from the '
+        f'model-output snapshot.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -796,11 +926,13 @@ def build() -> str:
     _tail = d.get("tail", {}) or {}
     tailspark = _tailspark_svg(_tail, cur)
     tailci = _tailci_svg(_tail, cur)
+    nestedci = _nestedci_svg(_tail, cur)
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
     _t_nstar = _fmt(_tail.get("recommended_n_outer"), 0)
     _t_converged = "converged" if _tail.get("converged") else "not yet converged"
+    _nci_nouter = _fmt(_tail.get("nested_n_outer"), 0)
 
     # Build-time link-existence assertion (offline-UI option e): every VIEWS href
     # -- and, by the chooser-drift check below, every CHOOSER href, which must be a
@@ -876,7 +1008,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -939,6 +1071,19 @@ def build() -> str:
     single shared scale, so the sampling uncertainty around the converged figures is visible.
     Every value is read verbatim from the model-output snapshot &mdash; this chart computes
     nothing.</p>
+
+  <h2>Nested vs copula-simulated VaR &mdash; confidence intervals</h2>
+  <div class="ncici-wrap">
+  {nestedci}
+  </div>
+  <p class="ncicap"><span class="tkey" style="background:#2ec27e"></span>Copula-simulated
+    <span class="tkey" style="background:#e8b23a"></span>Nested (n={_nci_nouter}) &mdash; the
+    same governed 99.5% VaR point (the vertical marker) shown inside two confidence bands on
+    one shared scale: the copula-simulated band (the converged estimator) is tight, while the
+    nested estimator's band &mdash; computed at only {_nci_nouter} outer scenarios &mdash; is
+    much wider, so the extra sampling noise of the nested route is visible. The point sits
+    inside both bands. Every value is read verbatim from the model-output snapshot &mdash;
+    this chart computes nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>

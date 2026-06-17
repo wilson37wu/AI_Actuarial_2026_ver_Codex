@@ -31,6 +31,28 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-17 (Window #37, claude) — OWNER-DIRECTED OFFLINE-UI GRAPHIC SHIPPED (additive, decision-neutral; no model-form / governed-artifact / contract change).**
+> Executed the W36 NEXT-EXECUTION POINTER single auto-admissible offline-UI item. Added a zero-install, zero-network inline-SVG **"Nested vs copula-simulated VaR — confidence intervals"** comparison
+> (`svg id="nestedci"`) to `offline_home.html` that DISPLAYS the already-governed 99.5% **VaR** estimate as a Monte-Carlo confidence **band** from TWO governed estimators on ONE shared scale: the
+> **copula-simulated** band (`tail.var_ci` = [158,421; 158,961], tight — the converged estimator) versus the **nested** estimator band (`tail.nested_var_ci` = [155,619; 165,809], wide) computed at only
+> `tail.nested_n_outer` = **160** outer scenarios. Both rows mark the SAME governed point (`tail.final_var` **$158,701**), which lies inside BOTH bands. Pure display (every x-coordinate = value/range scaling
+> of a governed number); derives NO new number. Complements the W36 VaR/ES CI strip by isolating the **estimator-choice** sampling uncertainty for VaR — the nested band (350px) visibly dwarfs the copula band
+> (18.5px). Each `<rect>/<line>/<text>` carries `data-series` (namespaced `ncicopula`/`ncinested` so it never collides with W36 `civar`/`cies`) so the snapshot-loader JS (`redrawNestedCI`, mirroring
+> `_nestedci_svg`) redraws on load and Reset restores it (parity preserved). `ui_data.json` / `ui_app.html` / `combined_model_app.html` / `model_summary_card.html` / `model_result_viewer.html`
+> **BYTE-UNCHANGED** (git diff clean vs HEAD); headline **39,975.654628199336** intact (1 occ); contract **1.23.0**. Verify: `build_offline_home_validate` **72/72** ok:true (was 61; +11 nested-CI checks incl.
+> nested_var_ci/var_ci endpoints verbatim, final_var verbatim, point-inside-BOTH-bands governed consistency, nested-band-wider-than-copula ordering, n=160 label, derives-nothing); `offline_home_loader_parity`
+> **10/10**; both inline `<script>` blocks `node --check` clean; **baked SVG geometry node-verified** (ncicopula band x=212.2/w=18.5, ncinested band x=116.0/w=350.0, point-marker x=221.9 reproduced EXACTLY by
+> the `redrawNestedCI` mirror — loader/Reset parity). jsdom self-test env-unrunnable (gitignored `node_modules`; W23/W29), mirrored by the stdlib gate. Git in a fresh /tmp clone; mount `.git` untouched; edits
+> applied programmatically in the ext4 clone (11 anchor groups, count-asserted) to avoid the documented virtiofs in-place-editor truncation. `offline_home.html` md5 now `80261ee38545c62e70d3b73272cc3429`.
+>
+> **NEXT-EXECUTION POINTER.** Offline-UI graphical track stays OPEN per the owner directive (landing page now carries FIVE governed graphics: W33 capital bridge + W34 driver bars + W35 tail-convergence
+> sparkline + W36 VaR/ES CI band + W37 nested-vs-copula VaR CI comparison). Next single auto-admissible offline-UI item: add ONE more zero-install, zero-network, decision-neutral graphic reading ONLY governed
+> model output — e.g. a **selected-copula family mini-comparison** (the three governed copula candidates' SCR-component bootstrap means `single_t/grouped_t/vine` on a shared scale, with the selected one marked)
+> or an **ES-vs-VaR margin strip** (governed `final_es` − `final_var` shown as the tail-thickness gap, both verbatim) — additive only (no contract bump; offline_home is a separate file),
+> `build_offline_home_validate` + loader-parity must stay green, headline bit-identical, governed artifacts byte-unchanged. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC / MLMC sign-off; Packaging
+> A/B/C; or declare frontier complete & freeze) — decision matrix in `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`. Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
+
 > **2026-06-17 (Window #36, claude) — OWNER-DIRECTED OFFLINE-UI GRAPHIC SHIPPED (additive, decision-neutral; no model-form / governed-artifact / contract change).**
 > Executed the W35 NEXT-EXECUTION POINTER's single auto-admissible offline-UI item. Added a zero-install, zero-network inline-SVG **"VaR & ES with confidence intervals"** strip
 > (`svg id="tailci"`) to `offline_home.html` that DISPLAYS the already-governed 99.5% **VaR** and **ES** tail estimates each as a Monte-Carlo confidence **band** (`tail.var_ci` = [158,421;

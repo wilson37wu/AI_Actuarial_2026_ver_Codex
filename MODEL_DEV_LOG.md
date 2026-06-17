@@ -11074,3 +11074,30 @@ reading ONLY governed model output - e.g. a **diversification-waterfall** (stand
 nested_scr with the governed div_benefit_nested step labelled) or a **nested-vs-copula CI comparison**
 (`tail.nested_var_ci` n_outer=160 wide band vs the copula-simulated `tail.var_ci`) - additive only, gates green,
 headline bit-identical, governed artifacts byte-unchanged. MODEL frontier remains OWNER PIVOT.
+
+---
+
+## 2026-06-17T13:18Z — Window #37 (claude) — OFFLINE-UI: NESTED-vs-COPULA VaR CI COMPARISON (additive, decision-neutral)
+
+Executed the W36 NEXT-EXECUTION POINTER single auto-admissible offline-UI item. Added a zero-install,
+zero-network inline-SVG **"Nested vs copula-simulated VaR — confidence intervals"** comparison
+(`svg id="nestedci"`) to `offline_home.html`. Displays the governed 99.5% VaR estimate as a Monte-Carlo
+confidence band from two governed estimators on one shared scale: copula-simulated `tail.var_ci`
+[158,421; 158,961] (tight) vs nested `tail.nested_var_ci` [155,619; 165,809] (wide, at
+`nested_n_outer`=160); both rows mark the same governed point `final_var` $158,701 (inside both bands).
+Pure display — derives no new number. data-series namespaced `ncicopula`/`ncinested`; snapshot-loader
+`redrawNestedCI` redraws on load, Reset restores (parity preserved).
+
+Files: `offline_home.html` (md5 80261ee38545c62e70d3b73272cc3429), `scripts/build_offline_home.py`
+(+`_nestedci_svg`, CSS/geo, loader JS, Reset), `scripts/build_offline_home_validate.py` (+11 checks).
+
+Verification: py_compile clean; build OK 43,270 bytes / 0 external refs; `build_offline_home_validate`
+**72/72** ok:true (was 61); `offline_home_loader_parity` **10/10**; 2/2 inline `<script>` blocks
+`node --check` clean; SVG geometry node-verified (ncicopula x212.2/w18.5, ncinested x116.0/w350.0,
+point x221.9 reproduced by the JS mirror). Headline 39,975.654628199336 intact; contract 1.23.0
+unchanged; ui_data.json/ui_app.html/combined_model_app.html/model_summary_card.html/model_result_viewer.html
+byte-unchanged (git diff clean vs HEAD). Git in fresh /tmp clone; mount .git untouched.
+
+**NEXT:** Offline-UI track stays OPEN (5 graphics now). Next single auto-admissible item: one more
+decision-neutral graphic reading only governed output (selected-copula family mini-comparison, or
+ES-vs-VaR margin strip). MODEL frontier remains OWNER PIVOT.
