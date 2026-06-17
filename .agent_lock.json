@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-17T05:08Z-7421",
-  "started_at": "2026-06-17T05:08:33Z",
-  "ttl_minutes": 120,
-  "task": "W29 offline-UI/maintenance cycle (owner-pivot pending)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-17T05:26:04Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
