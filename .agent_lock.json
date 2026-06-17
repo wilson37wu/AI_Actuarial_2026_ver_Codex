@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-17T01:17:23Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-17T03:10Z-b190",
+  "started_at": "2026-06-17T03:10:32Z",
+  "ttl_minutes": 120,
+  "task": "Window #27 cycle: integrity verify + owner-pivot status report",
+  "note": ""
 }
