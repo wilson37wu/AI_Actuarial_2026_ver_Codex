@@ -172,6 +172,19 @@
   .walval { fill:var(--ink); font-size:12px; font-weight:650; }
   .walbar { fill:#3f9d7a; }
   .walcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .rel-wrap { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .rel-wrap svg { width:100%; height:auto; display:block; }
+  .reltrack { stroke:var(--line); stroke-width:1; }
+  .relgap { fill:#3f9d7a; opacity:0.22; }
+  .relpt { stroke-width:2.5; }
+  .relpt.none { stroke:#e8b23a; }
+  .relpt.withact { stroke:#3f9d7a; }
+  .rellab { font-size:11.5px; font-weight:650; }
+  .rellab.none { fill:#e8b23a; }
+  .rellab.withact { fill:#3f9d7a; }
+  .relgaplab { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
+  .relcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -365,6 +378,26 @@
     stays the frozen-t basis. Every value is read verbatim from the model-output snapshot
     &mdash; this chart computes nothing.</p>
 
+  <h2>Management-action relief strip</h2>
+  <div class="rel-wrap">
+  <svg id="reliefstrip" viewBox="0 0 560 88" role="img" aria-label="Management-action relief strip: the governed nested 99.5% SCR with no management actions and with joint management actions as two point markers on one shared scale, with the gap between them shaded as the relief management actions are credited with. Read verbatim from the model-output snapshot; shown neutrally.">
+    <line class="reltrack" x1="70.0" y1="48.0" x2="478.0" y2="48.0"></line>
+    <rect class="relgap" data-series="relgap" x="124.0" y="38.0" width="300.0" height="20.0" rx="3"></rect>
+    <text class="relgaplab" data-series="relgap" x="274.0" y="32.0">management-action relief</text>
+    <line class="relpt withact" data-series="relwithact" x1="124.0" y1="32.0" x2="124.0" y2="64.0"></line>
+    <text class="rellab withact" data-series="relwithact" text-anchor="end" x="120.0" y="78.0">With actions: $33,118</text>
+    <line class="relpt none" data-series="relnone" x1="424.0" y1="32.0" x2="424.0" y2="64.0"></line>
+    <text class="rellab none" data-series="relnone" text-anchor="start" x="428.0" y="78.0">No actions: $48,707</text>
+  </svg>
+  </div>
+  <p class="relcap"><span class="tkey" style="background:#e8b23a"></span>No actions
+    <span class="tkey" style="background:#3f9d7a"></span>With actions &mdash; the governed
+    nested 99.5% SCR with no management actions and with joint management actions on one shared
+    scale, with the region between them shaded as the management-action relief (the reduction
+    management actions are credited with). Both endpoint values are read verbatim from the
+    model-output snapshot; the relief gap is shown purely graphically and the governed headline
+    stays the frozen-t basis &mdash; this chart computes nothing.</p>
+
   <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -450,7 +483,7 @@
   </div>
 
   <footer>
-    Built 2026-06-17T16:16:16Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-17T18:13:55Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -476,6 +509,7 @@
   var TCI = { x0:86, x1:470, vy:40, ey:92, bh:16 };  // mirrors TAILCI_GEO in the Python builder
   var NCI = { x0:116, x1:466, vy:40, ey:92, bh:16 };  // mirrors NESTEDCI_GEO in the Python builder
   var EVM = { x0:70, x1:478, y:48, bh:20 };  // mirrors ESVARMARGIN_GEO in the Python builder
+  var REL = { x0:70, x1:478, y:48, bh:20 };  // mirrors RELIEFSTRIP_GEO in the Python builder
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -738,6 +772,33 @@
         lab.textContent = pre + cur + fmt(pt, 0); }
     });
   }
+  // Redraw the management-action relief strip from a (possibly loaded) snapshot. Pure
+  // display: x = value/range scaling on a shared scale, mirroring _reliefstrip_svg in the
+  // builder. The relief gap rect/label are positioned graphically; no numeric diff computed.
+  function redrawReliefStrip(cap, cur){
+    var svg = document.getElementById("reliefstrip");
+    if (!svg || !cap) return;
+    var n = Number(cap.nested_scr), a = Number(cap.nested_scr_with_actions);
+    if (!isFinite(n) || !isFinite(a)) return;
+    var lo = Math.min(n, a), hi = Math.max(n, a);
+    var pad = (hi - lo) * 0.18 || 1;
+    var vmin = lo - pad, vmax = hi + pad, span = (vmax - vmin) || 1;
+    function X(val){ return REL.x0 + (Number(val) - vmin) / span * (REL.x1 - REL.x0); }
+    var gap = svg.querySelector('rect.relgap[data-series="relgap"]');
+    if (gap){ gap.setAttribute("x", X(lo).toFixed(1));
+      gap.setAttribute("width", Math.max(0, X(hi) - X(lo)).toFixed(1)); }
+    var glab = svg.querySelector('text.relgaplab[data-series="relgap"]');
+    if (glab) glab.setAttribute("x", ((X(lo) + X(hi)) / 2).toFixed(1));
+    [["relwithact", a, "end", "With actions: "], ["relnone", n, "start", "No actions: "]].forEach(function(r){
+      var s = r[0], pt = r[1], anchor = r[2], pre = r[3];
+      var tick = svg.querySelector('line.relpt[data-series="' + s + '"]');
+      if (tick){ tick.setAttribute("x1", X(pt).toFixed(1)); tick.setAttribute("x2", X(pt).toFixed(1)); }
+      var lab = svg.querySelector('text.rellab[data-series="' + s + '"]');
+      if (lab){ var tx = anchor === "end" ? X(pt) - 4 : X(pt) + 4;
+        lab.setAttribute("x", tx.toFixed(1));
+        lab.textContent = pre + cur + fmt(pt, 0); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -781,6 +842,8 @@
         redrawCopulaFamily(d.capital || {}, _cur7); } catch(e){}
       try { var _cur8 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawActionsLadder(d.capital || {}, _cur8); } catch(e){}
+      try { var _cur9 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawReliefStrip(d.capital || {}, _cur9); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -810,6 +873,8 @@
     DEFAULT.copfamHTML = _cf0 ? _cf0.innerHTML : null;
     var _wal0 = document.getElementById("actionsladder");
     DEFAULT.actionsHTML = _wal0 ? _wal0.innerHTML : null;
+    var _rel0 = document.getElementById("reliefstrip");
+    DEFAULT.reliefHTML = _rel0 ? _rel0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -856,6 +921,8 @@
       if (_cfsvg && DEFAULT.copfamHTML != null) _cfsvg.innerHTML = DEFAULT.copfamHTML;
       var _walsvg = document.getElementById("actionsladder");
       if (_walsvg && DEFAULT.actionsHTML != null) _walsvg.innerHTML = DEFAULT.actionsHTML;
+      var _relsvg = document.getElementById("reliefstrip");
+      if (_relsvg && DEFAULT.reliefHTML != null) _relsvg.innerHTML = DEFAULT.reliefHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });

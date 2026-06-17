@@ -213,6 +213,24 @@ def main() -> int:
     ok("actions ladder derives nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower())
     ok("actions ladder loader-parity hook", "redrawActionsLadder" in html)
+    # Management-action relief strip (W41, additive, inline-SVG, zero JS dep, zero net)
+    _none_v = _cap.get("nested_scr")
+    _wa_v = _cap.get("nested_scr_with_actions")
+    ok("relief strip heading", "management-action relief strip" in html.lower())
+    ok("relief strip svg", 'id="reliefstrip"' in html)
+    ok("relief strip two point markers (no-actions + with-actions)",
+       html.count('class="relpt none"') == 1 and html.count('class="relpt withact"') == 1)
+    ok("relief strip gap region present", html.count('class="relgap"') == 1)
+    ok("relief strip both governed values verbatim",
+       (_none_v is not None) and (_wa_v is not None)
+       and (f"{float(_none_v):,.0f}" in html) and (f"{float(_wa_v):,.0f}" in html))
+    ok("relief strip ordering (with-actions <= no-actions, governed)",
+       float(_wa_v) <= float(_none_v))
+    ok("relief strip neutral note", "neutrally" in html.lower())
+    ok("relief strip derives nothing (no numeric diff label, svg inline, no chart lib)",
+       "chart.js" not in html.lower()
+       and f"{(float(_none_v) - float(_wa_v)):,.0f}" not in html)
+    ok("relief strip loader-parity hook", "redrawReliefStrip" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

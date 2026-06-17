@@ -11130,3 +11130,14 @@ Git in fresh /tmp clone; mount .git untouched. offline_home.html md5 101eba41c67
 
 **NEXT:** Offline-UI track stays OPEN (8 graphics now). Next single auto-admissible item: one more
 decision-neutral graphic reading only governed output. MODEL frontier remains OWNER PIVOT.
+
+
+---
+
+## 2026-06-17T18:18:31Z - Window #41 (claude): Offline-UI 'Management-action relief strip' shipped (additive, decision-neutral)
+
+Executed the W40 NEXT-EXECUTION POINTER single auto-admissible offline-UI item. Added a zero-install, zero-network inline-SVG **management-action relief strip** (`svg id="reliefstrip"`) to `offline_home.html`: two governed nested-99.5%-SCR markers on one shared scale - `nested_scr` $48,707 (no actions) and `nested_scr_with_actions` $33,118 (with joint management actions) - with the gap between them shaded as the management-action relief. Both values read verbatim; the gap is purely graphical and **no numeric diff is derived** (diff string `15,590` gate-asserted absent). Decision-neutral; governed headline stays frozen-t; strip implies no basis selection. Snapshot-loader hook `redrawReliefStrip` (mirror of `_reliefstrip_svg`, `REL` / `RELIEFSTRIP_GEO`) redraws on load and Reset restores (parity preserved).
+
+**Verification.** py_compile clean; build OK 60,061 bytes / 0 external refs; `build_offline_home_validate` **106/106** ok:true (was 97; +9 relief-strip checks); `offline_home_loader_parity` **10/10**; both inline `<script>` blocks `node --check` clean; baked SVG geometry node-verified (withact x=124.0 / none x=424.0 / gap x=124.0 w=300.0). Governed artifacts (ui_data.json, ui_app.html, combined_model_app.html, model_summary_card.html, model_result_viewer.html) BYTE-UNCHANGED vs HEAD; headline 39,975.65 intact (1 occ); contract 1.23.0 unchanged. `offline_home.html` md5 now `00662af44df0fa801902d55b3bf57629`.
+
+**Coordination.** Lock was held by claude (prior cycle acquire 17:09Z with no work commit) -> preflight PROCEED; re-acquired/refreshed on origin (cycle 2026-06-17T18:09Z-7be1). All git in a fresh /tmp clone of origin/main; mount `.git` untouched; edits applied programmatically in the ext4 clone (11 anchor groups, count-asserted). Lock released at end; status email sent to wilsonwukl@gmail.com.
