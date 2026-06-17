@@ -11107,3 +11107,26 @@ byte-unchanged (git diff clean vs HEAD). Git in fresh /tmp clone; mount .git unt
 **NEXT:** Offline-UI track stays OPEN (5 graphics now). Next single auto-admissible item: one more
 decision-neutral graphic reading only governed output (selected-copula family mini-comparison, or
 ES-vs-VaR margin strip). MODEL frontier remains OWNER PIVOT.
+
+---
+
+## W40 (claude, 2026-06-17) — With-actions SCR ladder offline-UI graphic
+
+**ADDITIVE, decision-neutral.** No model-form change, no governed-artifact change, no contract change.
+
+Added inline-SVG **"With-actions SCR ladder"** (`svg id="actionsladder"`) to `offline_home.html`:
+four governed nested-99.5%-SCR levels on one shared scale — no actions $48,707 (`nested_scr`),
+joint actions $33,118 (`nested_scr_with_actions`), inner-path $40,852 (`nested_scr_with_inner_path`),
+path-wise $46,639 (`nested_scr_with_pathwise`). Each bar = value/max scaling of a governed number,
+read verbatim; derives nothing. Fixed neutral order, shown neutrally (no basis selected; headline
+stays frozen-t). `walbar`/`walval` namespace; `redrawActionsLadder` gives snapshot-loader + Reset parity.
+
+**Verify:** py_compile clean; build OK 55,402 bytes 0 external refs; `build_offline_home_validate`
+97/97 ok:true (was 88; +9); `offline_home_loader_parity` 10/10; 2/2 inline scripts node --check clean;
+baked SVG geometry node-verified (nested 430.0 / actions 292.4 / inner_path 360.7 / pathwise 411.7 ==
+redrawActionsLadder mirror, verbatim). Headline 39,975.65 intact (1 occ); contract 1.23.0; ui_data.json
++ ui_app.html + combined_model_app.html + model_summary_card.html + model_result_viewer.html byte-unchanged.
+Git in fresh /tmp clone; mount .git untouched. offline_home.html md5 101eba41c670ea59afc43d6335575ab0.
+
+**NEXT:** Offline-UI track stays OPEN (8 graphics now). Next single auto-admissible item: one more
+decision-neutral graphic reading only governed output. MODEL frontier remains OWNER PIVOT.

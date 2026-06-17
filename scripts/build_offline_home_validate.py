@@ -196,6 +196,23 @@ def main() -> int:
     ok("copula family derives nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower())
     ok("copula family loader-parity hook", "redrawCopulaFamily" in html)
+    # With-actions SCR ladder (W40, additive, inline-SVG, zero JS dep, zero net)
+    _wal_keys = ["nested_scr", "nested_scr_with_actions",
+                 "nested_scr_with_inner_path", "nested_scr_with_pathwise"]
+    ok("actions ladder heading", "with-actions scr ladder" in html.lower())
+    ok("actions ladder svg", 'id="actionsladder"' in html)
+    ok("actions ladder 4 bars", html.count('class="walbar"') == 4)
+    ok("actions ladder 4 value texts", html.count('class="walval"') == 4)
+    ok("actions ladder four governed levels verbatim",
+       all((_cap.get(k) is not None) and (f"{float(_cap.get(k)):,.0f}" in html)
+           for k in _wal_keys))
+    ok("actions ladder keys (governed)",
+       all('data-key="%s"' % k in html for k in _wal_keys))
+    ok("actions ladder neutral note (no basis selected)",
+       "neutrally" in html.lower())
+    ok("actions ladder derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("actions ladder loader-parity hook", "redrawActionsLadder" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

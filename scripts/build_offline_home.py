@@ -299,6 +299,33 @@ COPULAFAMILY_CSS = """
   .cfcbar { fill:#7a86c8; }
   .cfccap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# With-actions SCR ladder (added 2026-06-18, claude window W40) -- an ADDITIVE, inline-SVG
+# horizontal mini bar set that DISPLAYS the four already-governed nested-99.5%-SCR figures
+# under successively richer management-action modelling bases on ONE shared scale: no actions,
+# with joint management actions, with inner-path action dynamics, and with path-wise bonus
+# declaration. Recomputes nothing: each bar's length is value/max scaling of a governed number
+# read verbatim from ui_data.json's ``capital`` block (nested_scr, nested_scr_with_actions,
+# nested_scr_with_inner_path, nested_scr_with_pathwise). The bars are baked in a FIXED neutral
+# modelling-progression order; these are alternative management-action bases shown NEUTRALLY for
+# comparison -- the chart implies NO selection (the governed headline stays the frozen-t basis)
+# and derives NO new number. No JS library, no network, no external ref -- baked at build time
+# and (for snapshot-loader parity) redrawn by the same in-page JS that refreshes the figures.
+ACTIONSLADDER_MAXW = 430.0  # px: same value gutter as CAPBRIDGE_MAXW, inside the 560 viewBox
+_ACTIONS_ROWS = [
+    ("nested_scr", "Nested 99.5% SCR (no actions)"),
+    ("nested_scr_with_actions", "With joint management actions"),
+    ("nested_scr_with_inner_path", "With inner-path action dynamics"),
+    ("nested_scr_with_pathwise", "With path-wise bonus declaration"),
+]
+ACTIONSLADDER_CSS = """
+  .walbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .walbridge svg { width:100%; height:auto; display:block; }
+  .walbar-label { fill:var(--mut); font-size:12px; }
+  .walval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .walbar { fill:#3f9d7a; }
+  .walcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -418,6 +445,26 @@ LOADER_JS = """
       var v = vals[i];
       var rect = svg.querySelector('rect.cfcbar[data-key="' + k + '"]');
       var txt = svg.querySelector('text.cfcval[data-key="' + k + '"]');
+      var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
+        txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
+    });
+  }
+  // Redraw the with-actions SCR ladder bars from a (possibly loaded) snapshot. Pure
+  // display: width = value/max scaled to CB_MAXW, mirroring _actionsladder_svg in the builder.
+  function redrawActionsLadder(cap, cur){
+    var svg = document.getElementById("actionsladder");
+    if (!svg) return;
+    var keys = ["nested_scr","nested_scr_with_actions","nested_scr_with_inner_path","nested_scr_with_pathwise"];
+    var vals = keys.map(function(k){ return Number(cap[k]); });
+    var present = vals.filter(function(v){ return isFinite(v); });
+    var mx = present.length ? Math.max.apply(null, present) : 0;
+    if (!(mx > 0)) return;
+    keys.forEach(function(k, i){
+      var v = vals[i];
+      var rect = svg.querySelector('rect.walbar[data-key="' + k + '"]');
+      var txt = svg.querySelector('text.walval[data-key="' + k + '"]');
       var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
       if (rect) rect.setAttribute("width", w.toFixed(1));
       if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
@@ -615,6 +662,8 @@ LOADER_JS = """
         redrawEsVarMargin(d.tail || {}, _cur6); } catch(e){}
       try { var _cur7 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawCopulaFamily(d.capital || {}, _cur7); } catch(e){}
+      try { var _cur8 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawActionsLadder(d.capital || {}, _cur8); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -642,6 +691,8 @@ LOADER_JS = """
     DEFAULT.esvarmarginHTML = _ev0 ? _ev0.innerHTML : null;
     var _cf0 = document.getElementById("copulafamily");
     DEFAULT.copfamHTML = _cf0 ? _cf0.innerHTML : null;
+    var _wal0 = document.getElementById("actionsladder");
+    DEFAULT.actionsHTML = _wal0 ? _wal0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -686,6 +737,8 @@ LOADER_JS = """
       if (_evsvg && DEFAULT.esvarmarginHTML != null) _evsvg.innerHTML = DEFAULT.esvarmarginHTML;
       var _cfsvg = document.getElementById("copulafamily");
       if (_cfsvg && DEFAULT.copfamHTML != null) _cfsvg.innerHTML = DEFAULT.copfamHTML;
+      var _walsvg = document.getElementById("actionsladder");
+      if (_walsvg && DEFAULT.actionsHTML != null) _walsvg.innerHTML = DEFAULT.actionsHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -1090,6 +1143,48 @@ def _copulafamily_svg(cap, cur):
         f'from the model-output snapshot. Shown neutrally; the selected copula is Gaussian.">'
         f'\n    ' + "\n    ".join(parts) + "\n  </svg>")
 
+def _actionsladder_svg(cap, cur):
+    """Inline-SVG horizontal mini bar set DISPLAYING the four GOVERNED nested-99.5%-SCR
+    figures under successively richer management-action modelling bases on ONE shared scale.
+
+    Pure display: bar length = value / max(value) scaled to ACTIONSLADDER_MAXW px. Derives no
+    new number; each value is read verbatim from ui_data.json's ``capital`` block. The bars are
+    baked in a FIXED neutral modelling-progression order (no ranking, no pick) -- these are
+    alternative management-action bases shown purely for comparison; the governed headline SCR
+    component stays the frozen-t basis. Each <rect>/<text> carries a ``data-key`` so the
+    snapshot-loader JS can redraw it. Mirrors ``redrawActionsLadder`` in LOADER_JS.
+    """
+    rows = []
+    for k, label in _ACTIONS_ROWS:
+        try:
+            v = float(cap.get(k))
+        except (TypeError, ValueError):
+            v = None
+        rows.append((k, label, v))
+    present = [r[2] for r in rows if r[2] is not None]
+    mx = max(present) if present else 0.0
+    top, row_h, bar_h = 6, 34, 15
+    parts = []
+    for i, (k, label, v) in enumerate(rows):
+        label_y = top + i * row_h + 11
+        bar_y = top + i * row_h + 16
+        w = (v / mx * ACTIONSLADDER_MAXW) if (v is not None and mx > 0) else 0.0
+        vtxt = f"{cur}{_fmt(v, 0)}" if v is not None else "n/a"
+        parts.append(
+            f'<text class="walbar-label" x="2" y="{label_y}">{html.escape(label)}</text>'
+            f'<rect class="walbar" data-key="{k}" x="2" y="{bar_y}" rx="3" '
+            f'width="{w:.1f}" height="{bar_h}"></rect>'
+            f'<text class="walval" data-key="{k}" x="{w + 8:.1f}" '
+            f'y="{bar_y + bar_h - 3}">{html.escape(vtxt)}</text>')
+    height = top + len(rows) * row_h + 4
+    return (
+        f'<svg id="actionsladder" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="With-actions SCR ladder bar chart: the nested 99.5% SCR under no '
+        f'actions, joint management actions, inner-path action dynamics and path-wise bonus '
+        f'declaration on one shared scale, read verbatim from the model-output snapshot. '
+        f'Shown neutrally; no basis is selected.">'
+        f'\n    ' + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -1134,6 +1229,7 @@ def build() -> str:
     nestedci = _nestedci_svg(_tail, cur)
     esvarmargin = _esvarmargin_svg(_tail, cur)
     copulafamily = _copulafamily_svg(cap, cur)
+    actionsladder = _actionsladder_svg(cap, cur)
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
@@ -1215,7 +1311,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -1313,6 +1409,18 @@ def build() -> str:
     <b>Gaussian</b> copula; these three families are shown <b>neutrally</b> for comparison and
     imply no selection. Every value is read verbatim from the model-output snapshot &mdash;
     this chart computes nothing.</p>
+
+  <h2>With-actions SCR ladder</h2>
+  <div class="walbridge">
+  {actionsladder}
+  </div>
+  <p class="walcap">Each bar is the governed nested 99.5% SCR under a successively richer
+    management-action modelling basis &mdash; no actions, with joint management actions, with
+    inner-path action dynamics, and with path-wise bonus declaration &mdash; scaled to the
+    largest of the four on a shared scale. These are alternative modelling bases shown
+    <b>neutrally</b> for comparison; the chart implies no selection and the governed headline
+    stays the frozen-t basis. Every value is read verbatim from the model-output snapshot
+    &mdash; this chart computes nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>

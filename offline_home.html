@@ -165,6 +165,13 @@
   .cfcval { fill:var(--ink); font-size:12px; font-weight:650; }
   .cfcbar { fill:#7a86c8; }
   .cfccap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .walbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .walbridge svg { width:100%; height:auto; display:block; }
+  .walbar-label { fill:var(--mut); font-size:12px; }
+  .walval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .walbar { fill:#3f9d7a; }
+  .walcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -341,6 +348,23 @@
     imply no selection. Every value is read verbatim from the model-output snapshot &mdash;
     this chart computes nothing.</p>
 
+  <h2>With-actions SCR ladder</h2>
+  <div class="walbridge">
+  <svg id="actionsladder" viewBox="0 0 560 146" role="img" aria-label="With-actions SCR ladder bar chart: the nested 99.5% SCR under no actions, joint management actions, inner-path action dynamics and path-wise bonus declaration on one shared scale, read verbatim from the model-output snapshot. Shown neutrally; no basis is selected.">
+    <text class="walbar-label" x="2" y="17">Nested 99.5% SCR (no actions)</text><rect class="walbar" data-key="nested_scr" x="2" y="22" rx="3" width="430.0" height="15"></rect><text class="walval" data-key="nested_scr" x="438.0" y="34">$48,707</text>
+    <text class="walbar-label" x="2" y="51">With joint management actions</text><rect class="walbar" data-key="nested_scr_with_actions" x="2" y="56" rx="3" width="292.4" height="15"></rect><text class="walval" data-key="nested_scr_with_actions" x="300.4" y="68">$33,118</text>
+    <text class="walbar-label" x="2" y="85">With inner-path action dynamics</text><rect class="walbar" data-key="nested_scr_with_inner_path" x="2" y="90" rx="3" width="360.7" height="15"></rect><text class="walval" data-key="nested_scr_with_inner_path" x="368.7" y="102">$40,852</text>
+    <text class="walbar-label" x="2" y="119">With path-wise bonus declaration</text><rect class="walbar" data-key="nested_scr_with_pathwise" x="2" y="124" rx="3" width="411.7" height="15"></rect><text class="walval" data-key="nested_scr_with_pathwise" x="419.7" y="136">$46,639</text>
+  </svg>
+  </div>
+  <p class="walcap">Each bar is the governed nested 99.5% SCR under a successively richer
+    management-action modelling basis &mdash; no actions, with joint management actions, with
+    inner-path action dynamics, and with path-wise bonus declaration &mdash; scaled to the
+    largest of the four on a shared scale. These are alternative modelling bases shown
+    <b>neutrally</b> for comparison; the chart implies no selection and the governed headline
+    stays the frozen-t basis. Every value is read verbatim from the model-output snapshot
+    &mdash; this chart computes nothing.</p>
+
   <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -426,7 +450,7 @@
   </div>
 
   <footer>
-    Built 2026-06-17T15:12:57Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-17T16:16:16Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -538,6 +562,26 @@
       var v = vals[i];
       var rect = svg.querySelector('rect.cfcbar[data-key="' + k + '"]');
       var txt = svg.querySelector('text.cfcval[data-key="' + k + '"]');
+      var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
+        txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
+    });
+  }
+  // Redraw the with-actions SCR ladder bars from a (possibly loaded) snapshot. Pure
+  // display: width = value/max scaled to CB_MAXW, mirroring _actionsladder_svg in the builder.
+  function redrawActionsLadder(cap, cur){
+    var svg = document.getElementById("actionsladder");
+    if (!svg) return;
+    var keys = ["nested_scr","nested_scr_with_actions","nested_scr_with_inner_path","nested_scr_with_pathwise"];
+    var vals = keys.map(function(k){ return Number(cap[k]); });
+    var present = vals.filter(function(v){ return isFinite(v); });
+    var mx = present.length ? Math.max.apply(null, present) : 0;
+    if (!(mx > 0)) return;
+    keys.forEach(function(k, i){
+      var v = vals[i];
+      var rect = svg.querySelector('rect.walbar[data-key="' + k + '"]');
+      var txt = svg.querySelector('text.walval[data-key="' + k + '"]');
       var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
       if (rect) rect.setAttribute("width", w.toFixed(1));
       if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
@@ -735,6 +779,8 @@
         redrawEsVarMargin(d.tail || {}, _cur6); } catch(e){}
       try { var _cur7 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawCopulaFamily(d.capital || {}, _cur7); } catch(e){}
+      try { var _cur8 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawActionsLadder(d.capital || {}, _cur8); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -762,6 +808,8 @@
     DEFAULT.esvarmarginHTML = _ev0 ? _ev0.innerHTML : null;
     var _cf0 = document.getElementById("copulafamily");
     DEFAULT.copfamHTML = _cf0 ? _cf0.innerHTML : null;
+    var _wal0 = document.getElementById("actionsladder");
+    DEFAULT.actionsHTML = _wal0 ? _wal0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -806,6 +854,8 @@
       if (_evsvg && DEFAULT.esvarmarginHTML != null) _evsvg.innerHTML = DEFAULT.esvarmarginHTML;
       var _cfsvg = document.getElementById("copulafamily");
       if (_cfsvg && DEFAULT.copfamHTML != null) _cfsvg.innerHTML = DEFAULT.copfamHTML;
+      var _walsvg = document.getElementById("actionsladder");
+      if (_walsvg && DEFAULT.actionsHTML != null) _walsvg.innerHTML = DEFAULT.actionsHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
