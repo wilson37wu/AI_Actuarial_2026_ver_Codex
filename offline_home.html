@@ -219,6 +219,13 @@
   .csbar.sel { fill:#2ec27e; }
   .cssel { fill:var(--ok); font-size:10.5px; font-weight:700; }
   .cscap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .cubridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .cubridge svg { width:100%; height:auto; display:block; }
+  .cubar-label { fill:var(--mut); font-size:12px; }
+  .cuval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .cubar { fill:#6f8ab7; }
+  .cucap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -496,6 +503,22 @@
     chosen here, and the governed headline stays the frozen-t basis. Each value is read verbatim
     from the model-output snapshot &mdash; this chart computes nothing.</p>
 
+  <h2>Copula tail dependence &mdash; fitted candidates (upper)</h2>
+  <div class="cubridge">
+  <svg id="copulautd" viewBox="0 0 560 108" role="img" aria-label="Copula upper-tail-dependence bar chart: the governed fitted full-copula candidate upper-tail-dependence coefficients on one shared scale. Read verbatim from the model-output snapshot.">
+    <text class="cubar-label" x="2" y="17">Gaussian</text><rect class="cubar" data-key="gaussian" x="2" y="22" rx="3" width="0.0" height="15"></rect><text class="cuval" data-key="gaussian" x="8.0" y="34">0.0000</text>
+    <text class="cubar-label" x="2" y="47">Student-t</text><rect class="cubar" data-key="student_t" x="2" y="52" rx="3" width="109.7" height="15"></rect><text class="cuval" data-key="student_t" x="117.7" y="64">0.0046</text>
+    <text class="cubar-label" x="2" y="77">Survival Clayton</text><rect class="cubar" data-key="survival_clayton" x="2" y="82" rx="3" width="360.0" height="15"></rect><text class="cuval" data-key="survival_clayton" x="368.0" y="94">0.0151</text>
+  </svg>
+  </div>
+  <p class="cucap">Each bar is one <b>fitted</b> dependence-copula candidate's governed
+    upper-tail-dependence coefficient (&lambda;<sub>U</sub>) &mdash; a measure of how strongly
+    extreme adverse co-movements cluster in the joint upper tail &mdash; scaled to the largest of
+    them on a shared scale. Each coefficient is read verbatim from the model-output snapshot. The
+    candidates are shown <b>neutrally</b>: the model selects its aggregation copula by AIC, <b>not
+    by this metric</b>, so no bar is marked here and the governed headline stays the frozen-t
+    basis &mdash; this chart computes nothing.</p>
+
   <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -581,7 +604,7 @@
   </div>
 
   <footer>
-    Built 2026-06-17T22:17:23Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-17T23:12:51Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -611,6 +634,7 @@
   var AGM = { x0:70, x1:478, y:48, bh:20 };  // mirrors AGGMETHOD_GEO in the Python builder
   var DC = { x0:12, x1:508 };  // mirrors DIVCREDIT_GEO (x-scale) in the Python builder
   var CS_MAXW = 360;  // mirrors COPULASELECT_MAXW in scripts/build_offline_home.py
+  var CU_MAXW = 360;  // mirrors COPULAUTD_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -999,6 +1023,33 @@
       if (tag) tag.setAttribute("x", (w + 8).toFixed(1));
     });
   }
+  // Redraw the copula upper-tail-dependence bars from a (possibly loaded) snapshot. Pure
+  // display: each fitted candidate's bar width = upper_tail_dependence/max scaled to CU_MAXW,
+  // mirroring _copulautd_svg. Decision-neutral: NO selection is implied by this metric.
+  function redrawCopulaUtd(cap, cur){
+    var svg = document.getElementById("copulautd");
+    if (!svg || !cap) return;
+    var cop = cap.copula || {};
+    var lst = cop.copulas || cop.candidates || [];
+    var vals = [];
+    lst.forEach(function(c){
+      if (c && typeof c === "object" && isFinite(Number(c.upper_tail_dependence)))
+        vals.push(Number(c.upper_tail_dependence));
+    });
+    var mx = vals.length ? Math.max.apply(null, vals) : 0;
+    if (!(mx > 0)) return;
+    lst.forEach(function(c){
+      if (!c || typeof c !== "object") return;
+      var name = String(c.name);
+      var v = Number(c.upper_tail_dependence);
+      if (!isFinite(v)) return;
+      var w = v / mx * CU_MAXW;
+      var rect = svg.querySelector('rect.cubar[data-key="' + name + '"]');
+      var txt = svg.querySelector('text.cuval[data-key="' + name + '"]');
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1)); txt.textContent = fmt(v, 4); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -1050,6 +1101,8 @@
         redrawDivCredit(d.capital || {}, _cur11); } catch(e){}
       try { var _cur12 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawCopulaSelect(d.capital || {}, _cur12); } catch(e){}
+      try { var _cur13 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawCopulaUtd(d.capital || {}, _cur13); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -1087,6 +1140,8 @@
     DEFAULT.divcreditHTML = _dc0 ? _dc0.innerHTML : null;
     var _cs0 = document.getElementById("copulaselect");
     DEFAULT.copulaselectHTML = _cs0 ? _cs0.innerHTML : null;
+    var _cu0 = document.getElementById("copulautd");
+    DEFAULT.copulautdHTML = _cu0 ? _cu0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -1141,6 +1196,8 @@
       if (_dcsvg && DEFAULT.divcreditHTML != null) _dcsvg.innerHTML = DEFAULT.divcreditHTML;
       var _cssvg = document.getElementById("copulaselect");
       if (_cssvg && DEFAULT.copulaselectHTML != null) _cssvg.innerHTML = DEFAULT.copulaselectHTML;
+      var _cusvg = document.getElementById("copulautd");
+      if (_cusvg && DEFAULT.copulautdHTML != null) _cusvg.innerHTML = DEFAULT.copulautdHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });

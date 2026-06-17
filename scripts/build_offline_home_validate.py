@@ -299,6 +299,28 @@ def main() -> int:
     ok("copulaselect derives nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower())
     ok("copulaselect loader-parity hook", "redrawCopulaSelect" in html)
+    # Copula upper-tail-dependence strip (W45, additive, inline-SVG, zero JS dep, zero net)
+    _cu_cands = [(str(c.get("name")), float(c.get("upper_tail_dependence")))
+                 for c in _cs_list
+                 if isinstance(c, dict)
+                 and isinstance(c.get("upper_tail_dependence"), (int, float))
+                 and c.get("name") is not None]
+    ok("copulautd heading", "copula tail dependence" in html.lower())
+    ok("copulautd svg", 'id="copulautd"' in html)
+    ok("copulautd >=2 fitted candidates", len(_cu_cands) >= 2)
+    ok("copulautd bars == candidate count",
+       html.count('class="cubar"') == len(_cu_cands))
+    ok("copulautd value texts == candidate count",
+       html.count('class="cuval"') == len(_cu_cands))
+    ok("copulautd coefficients verbatim (4dp)",
+       all(f"{v:,.4f}" in html for _, v in _cu_cands) and len(_cu_cands) > 0)
+    ok("copulautd candidate keys present",
+       all(('data-key="%s"' % n) in html for n, _ in _cu_cands))
+    ok("copulautd decision-neutral (selected by AIC, not this metric)",
+       "not\n    by this metric" in html.lower() or "not by this metric" in html.lower())
+    ok("copulautd derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("copulautd loader-parity hook", "redrawCopulaUtd" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

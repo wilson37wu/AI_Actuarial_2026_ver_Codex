@@ -228,6 +228,24 @@ COPULASELECT_CSS = """
   .cssel { fill:var(--ok); font-size:10.5px; font-weight:700; }
   .cscap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# Copula upper-tail-dependence strip (added 2026-06-18, claude window W45) -- an ADDITIVE,
+# inline-SVG horizontal mini bar set that DISPLAYS the GOVERNED fitted full-copula candidates'
+# upper-tail-dependence coefficients (lambda_U) on ONE shared scale, read verbatim from
+# capital.copula.copulas[].upper_tail_dependence. Decision-neutral: the model selects its
+# aggregation copula by AIC, NOT by this metric, so NO bar is marked/selected and the governed
+# headline stays the frozen-t basis. Recomputes nothing: each bar length is value/max scaling of
+# a governed number read verbatim. No JS library, no network, no external ref -- baked at build
+# time and redrawn by redrawCopulaUtd (loader/Reset parity).
+COPULAUTD_MAXW = 360.0  # px gutter inside the 560 viewBox (room for the coefficient value)
+COPULAUTD_CSS = """
+  .cubridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .cubridge svg { width:100%; height:auto; display:block; }
+  .cubar-label { fill:var(--mut); font-size:12px; }
+  .cuval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .cubar { fill:#6f8ab7; }
+  .cucap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 # Tail-convergence sparkline (added 2026-06-17, claude window W35) -- an ADDITIVE, inline-SVG
 # line chart that DISPLAYS the already-governed tail-convergence diagnostic graphically: the
 # 99.5% VaR and ES liability estimates plotted against the outer-scenario count grid, with a
@@ -479,6 +497,7 @@ LOADER_JS = """
   var AGM = { x0:70, x1:478, y:48, bh:20 };  // mirrors AGGMETHOD_GEO in the Python builder
   var DC = { x0:12, x1:508 };  // mirrors DIVCREDIT_GEO (x-scale) in the Python builder
   var CS_MAXW = 360;  // mirrors COPULASELECT_MAXW in scripts/build_offline_home.py
+  var CU_MAXW = 360;  // mirrors COPULAUTD_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -867,6 +886,33 @@ LOADER_JS = """
       if (tag) tag.setAttribute("x", (w + 8).toFixed(1));
     });
   }
+  // Redraw the copula upper-tail-dependence bars from a (possibly loaded) snapshot. Pure
+  // display: each fitted candidate's bar width = upper_tail_dependence/max scaled to CU_MAXW,
+  // mirroring _copulautd_svg. Decision-neutral: NO selection is implied by this metric.
+  function redrawCopulaUtd(cap, cur){
+    var svg = document.getElementById("copulautd");
+    if (!svg || !cap) return;
+    var cop = cap.copula || {};
+    var lst = cop.copulas || cop.candidates || [];
+    var vals = [];
+    lst.forEach(function(c){
+      if (c && typeof c === "object" && isFinite(Number(c.upper_tail_dependence)))
+        vals.push(Number(c.upper_tail_dependence));
+    });
+    var mx = vals.length ? Math.max.apply(null, vals) : 0;
+    if (!(mx > 0)) return;
+    lst.forEach(function(c){
+      if (!c || typeof c !== "object") return;
+      var name = String(c.name);
+      var v = Number(c.upper_tail_dependence);
+      if (!isFinite(v)) return;
+      var w = v / mx * CU_MAXW;
+      var rect = svg.querySelector('rect.cubar[data-key="' + name + '"]');
+      var txt = svg.querySelector('text.cuval[data-key="' + name + '"]');
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1)); txt.textContent = fmt(v, 4); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -918,6 +964,8 @@ LOADER_JS = """
         redrawDivCredit(d.capital || {}, _cur11); } catch(e){}
       try { var _cur12 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawCopulaSelect(d.capital || {}, _cur12); } catch(e){}
+      try { var _cur13 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawCopulaUtd(d.capital || {}, _cur13); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -955,6 +1003,8 @@ LOADER_JS = """
     DEFAULT.divcreditHTML = _dc0 ? _dc0.innerHTML : null;
     var _cs0 = document.getElementById("copulaselect");
     DEFAULT.copulaselectHTML = _cs0 ? _cs0.innerHTML : null;
+    var _cu0 = document.getElementById("copulautd");
+    DEFAULT.copulautdHTML = _cu0 ? _cu0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -1009,6 +1059,8 @@ LOADER_JS = """
       if (_dcsvg && DEFAULT.divcreditHTML != null) _dcsvg.innerHTML = DEFAULT.divcreditHTML;
       var _cssvg = document.getElementById("copulaselect");
       if (_cssvg && DEFAULT.copulaselectHTML != null) _cssvg.innerHTML = DEFAULT.copulaselectHTML;
+      var _cusvg = document.getElementById("copulautd");
+      if (_cusvg && DEFAULT.copulautdHTML != null) _cusvg.innerHTML = DEFAULT.copulautdHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -1689,6 +1741,55 @@ def _copulaselect_svg(cap, cur):
         f'copula marked. Read verbatim from the model-output snapshot.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _copulautd_candidates(cap):
+    """Return [(name, upper_tail_dependence)] for the GOVERNED fitted full-copula candidates,
+    read verbatim from ``capital.copula.copulas[]`` (falls back to ``candidates``). Pure read."""
+    cop = cap.get("copula") or {}
+    lst = cop.get("copulas") or cop.get("candidates") or []
+    out = []
+    for c in lst:
+        if not isinstance(c, dict):
+            continue
+        name = c.get("name")
+        v = c.get("upper_tail_dependence")
+        if name is None or not isinstance(v, (int, float)):
+            continue
+        out.append((str(name), float(v)))
+    return out
+
+def _copulautd_svg(cap, cur):
+    """Inline-SVG horizontal mini bar set DISPLAYING the GOVERNED fitted full-copula candidates'
+    upper-tail-dependence coefficients (lambda_U) on ONE shared scale. Pure display: bar length =
+    value/max(value) scaled to COPULAUTD_MAXW px; each coefficient read verbatim. Derives no new
+    number and marks NO selection -- the model picks its aggregation copula by AIC, not by this
+    metric. Mirrors ``redrawCopulaUtd`` in LOADER_JS. (``cur`` accepted for signature symmetry; a
+    tail-dependence coefficient is unit-free so no currency symbol is shown.)
+    """
+    cands = _copulautd_candidates(cap)
+    present = [v for _, v in cands]
+    mx = max(present) if present else 0.0
+    top, row_h, bar_h = 6, 30, 15
+    parts = []
+    for i, (name, v) in enumerate(cands):
+        label = _COPULASELECT_LABELS.get(name.lower(), name.replace("_", " ").title())
+        label_y = top + i * row_h + 11
+        bar_y = top + i * row_h + 16
+        w = (v / mx * COPULAUTD_MAXW) if mx > 0 else 0.0
+        vtxt = f"{_fmt(v, 4)}"
+        parts.append(
+            f'<text class="cubar-label" x="2" y="{label_y}">{html.escape(label)}</text>'
+            f'<rect class="cubar" data-key="{html.escape(name)}" x="2" y="{bar_y}" rx="3" '
+            f'width="{w:.1f}" height="{bar_h}"></rect>'
+            f'<text class="cuval" data-key="{html.escape(name)}" x="{w + 8:.1f}" '
+            f'y="{bar_y + bar_h - 3}">{html.escape(vtxt)}</text>')
+    height = top + max(1, len(cands)) * row_h + 12
+    return (
+        f'<svg id="copulautd" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Copula upper-tail-dependence bar chart: the governed fitted full-copula '
+        f'candidate upper-tail-dependence coefficients on one shared scale. Read verbatim from '
+        f'the model-output snapshot.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -1738,6 +1839,7 @@ def build() -> str:
     aggmethod = _aggmethod_svg(cap, cur)
     divcredit = _divcredit_svg(cap, cur)
     copulaselect = _copulaselect_svg(cap, cur)
+    copulautd = _copulautd_svg(cap, cur)
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
@@ -1819,7 +1921,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}{DIVCREDIT_CSS}{COPULASELECT_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}{DIVCREDIT_CSS}{COPULASELECT_CSS}{COPULAUTD_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -1978,6 +2080,18 @@ def build() -> str:
     copula the model selected by AIC (per Solvency II Art. 234); it is shown for transparency, not
     chosen here, and the governed headline stays the frozen-t basis. Each value is read verbatim
     from the model-output snapshot &mdash; this chart computes nothing.</p>
+
+  <h2>Copula tail dependence &mdash; fitted candidates (upper)</h2>
+  <div class="cubridge">
+  {copulautd}
+  </div>
+  <p class="cucap">Each bar is one <b>fitted</b> dependence-copula candidate's governed
+    upper-tail-dependence coefficient (&lambda;<sub>U</sub>) &mdash; a measure of how strongly
+    extreme adverse co-movements cluster in the joint upper tail &mdash; scaled to the largest of
+    them on a shared scale. Each coefficient is read verbatim from the model-output snapshot. The
+    candidates are shown <b>neutrally</b>: the model selects its aggregation copula by AIC, <b>not
+    by this metric</b>, so no bar is marked here and the governed headline stays the frozen-t
+    basis &mdash; this chart computes nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>

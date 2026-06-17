@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-18T22:10:00Z",
+  "last_run": "2026-06-17T23:13:57Z",
   "last_run_duration_minutes": null,
-  "last_run_note": "Window #44 (claude). ADDITIVE, decision-neutral offline-UI graphic shipped (NO model-form change, NO governed-artifact change, NO contract change). Added a zero-install, zero-network inline-SVG 'Copula model-selection -- fitted candidates (AIC)' (svg id=copulaselect): the GOVERNED fitted full-copula candidates' aggregated 99.5% SCRs -- gaussian 41,604 (AIC-selected), student_t 41,880, survival_clayton 43,840 -- on one shared scale, AIC-selected copula marked. Distinct from W39 (single_t/grouped_t/vine component bootstrap means). Derives nothing; AIC-selected tag DISPLAYS the governed selected_copula. The 12th governed landing-page graphic. Verify: validate 137/137, loader_parity 10/10, unittest 4/4, node --check clean, geometry parity exact. Governed artifacts byte-unchanged; headline 39,975.65 (1 occ); contract 1.23.0. STRONG NOTE: the offline-UI graphic pool is now VERY rich (12 graphics); owner should consider declaring the offline-UI graphical track COMPLETE and pivoting to the MODEL frontier / Phase IGUI.",
-  "current_phase": "Offline-UI graphical track (owner-directed): landing page now carries TWELVE zero-install, zero-network, decision-neutral inline-SVG graphics over governed model output -- (1) capital bridge [W33], (2) standalone SCR by driver [W34], (3) tail-convergence sparkline [W35], (4) VaR & ES CIs [W36], (5) nested vs copula VaR CI [W37], (6) VaR vs ES tail-thickness margin [W38], (7) copula-family candidate comparison [W39], (8) with-actions SCR ladder [W40], (9) management-action relief strip [W41], (10) var-covar vs nested aggregation-method margin [W42], (11) standalone vs diversified per-driver overlay [W43], (12) copula model-selection -- fitted candidates AIC [W44]; all redrawn by the snapshot-loader and restored by Reset. The offline-UI graphic pool is now VERY rich (12 graphics) -- owner should consider declaring the offline-UI graphical track COMPLETE and pivoting back to the MODEL frontier (MR-LONGEV-1 longevity 5th driver / LSMC / MLMC sign-off; Packaging A/B/C; or freeze) or to the owner-directed EXCLUSIVE Phase IGUI input+run GUI. Decision matrix in docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md.",
-  "overall_status": "W44_OFFLINE_UI_COPULA_MODEL_SELECTION_STRIP_SHIPPED_ADDITIVE_DECISION_NEUTRAL_INLINE_SVG_THREE_GOVERNED_FITTED_FULL_COPULA_CANDIDATE_AGGREGATED_SCRS_GAUSSIAN_41604_AIC_SELECTED_STUDENT_T_41880_SURVIVAL_CLAYTON_43840_ON_ONE_SCALE_AIC_SELECTED_MARKED_DISTINCT_FROM_W39_COMPONENT_BOOTSTRAP_MEANS_DERIVES_NOTHING_GOVERNED_VERBATIM_HEADLINE_FROZEN_T_39975.65_INTACT_CONTRACT_1.23.0_VALIDATE_137_137_OK_LOADER_PARITY_10_10_UNITTEST_4_4_NODE_CHECK_CLEAN_GEOMETRY_PARITY_EXACT_GOVERNED_ARTIFACTS_BYTE_UNCHANGED_TWELVE_GOVERNED_LANDING_PAGE_GRAPHICS_OWNER_SHOULD_CONSIDER_DECLARING_OFFLINE_UI_GRAPHICAL_TRACK_COMPLETE_AND_PIVOTING_TO_MODEL_FRONTIER_OR_PHASE_IGUI_VIRTIOFS_TRUNCATION_AVOIDED_VIA_EXT4_CLONE_BUILDER_REGEN",
+  "last_run_note": "Window #45 (claude). ADDITIVE, decision-neutral offline-UI graphic shipped (NO model-form change, NO governed-artifact change, NO contract change). Added a zero-install, zero-network inline-SVG 'Copula tail dependence -- fitted candidates (upper)' (svg id=copulautd): the GOVERNED fitted full-copula candidates' upper-tail-dependence coefficients lambda_U read verbatim from capital.copula.copulas[].upper_tail_dependence -- gaussian 0.0000, student_t 0.0046, survival_clayton 0.0151 -- on one shared scale. Decision-neutral: NO bar marked/selected because the model selects its aggregation copula by AIC, not by this metric; governed headline stays the frozen-t basis. The 13th governed landing-page graphic; complements W44 (fitted-candidate aggregated SCRs) by showing the same fitted copulas' tail-dependence. Verify: validate 147/147 (was 137; +10 copulautd checks), loader_parity 10/10, unittest 4/4, node --check clean (both inline scripts), geometry parity exact (baked cubar widths gaussian 0.0 / student_t 109.7 / survival_clayton 360.0 reproduced EXACTLY by JS redrawCopulaUtd mirror). Governed artifacts (ui_data.json, ui_app.html, combined_model_app.html, model_summary_card.html, model_result_viewer.html) byte-unchanged; headline 39,975.65 (1 occ); contract 1.23.0. offline_home.html md5 240ffd910ab9d6a7025d936ff5c36d7a. STRONG NOTE: offline-UI graphic pool now VERY rich (13 graphics); owner should consider declaring the offline-UI graphical track COMPLETE and pivoting to the MODEL frontier / Phase IGUI / freeze.",
+  "current_phase": "Offline-UI graphical track (owner-directed): landing page now carries THIRTEEN zero-install, zero-network, decision-neutral inline-SVG graphics over governed model output -- (1) capital bridge [W33], (2) standalone SCR by driver [W34], (3) tail-convergence sparkline [W35], (4) VaR & ES CIs [W36], (5) nested vs copula VaR CI [W37], (6) VaR vs ES tail-thickness margin [W38], (7) copula-family candidate comparison [W39], (8) with-actions SCR ladder [W40], (9) management-action relief strip [W41], (10) var-covar vs nested aggregation-method margin [W42], (11) standalone vs diversified per-driver overlay [W43], (12) copula model-selection fitted candidates AIC [W44], (13) copula upper-tail-dependence fitted candidates [W45]; all redrawn by the snapshot-loader and restored by Reset. STRONG RECOMMENDATION: owner should declare the offline-UI graphical track COMPLETE and pivot to the MODEL frontier (MR-LONGEV-1 longevity 5th driver / LSMC / MLMC sign-off; Packaging A/B/C; or freeze) or to Phase IGUI. Decision matrix in docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md.",
+  "overall_status": "W45_OFFLINE_UI_COPULA_UPPER_TAIL_DEPENDENCE_STRIP_SHIPPED_ADDITIVE_DECISION_NEUTRAL_INLINE_SVG_THREE_GOVERNED_FITTED_FULL_COPULA_UTD_COEFFS_GAUSSIAN_0.0000_STUDENT_T_0.0046_SURVIVAL_CLAYTON_0.0151_ON_ONE_SCALE_NO_SELECTION_MARKED_AIC_NOT_THIS_METRIC_DERIVES_NOTHING_GOVERNED_VERBATIM_HEADLINE_FROZEN_T_39975.65_INTACT_CONTRACT_1.23.0_VALIDATE_147_147_OK_LOADER_PARITY_10_10_UNITTEST_4_4_NODE_CHECK_CLEAN_GEOMETRY_PARITY_EXACT_GOVERNED_ARTIFACTS_BYTE_UNCHANGED_THIRTEEN_GOVERNED_LANDING_PAGE_GRAPHICS_OWNER_SHOULD_CONSIDER_DECLARING_OFFLINE_UI_GRAPHICAL_TRACK_COMPLETE_AND_PIVOTING_TO_MODEL_FRONTIER_OR_PHASE_IGUI_OR_FREEZE",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -2892,6 +2892,37 @@
       "contract": "1.23.0 unchanged"
     },
     "offline_home_md5": "c2d8db7e9e886d898433f9c92e51fe3b",
+    "files_changed": [
+      "offline_home.html",
+      "scripts/build_offline_home.py",
+      "scripts/build_offline_home_validate.py"
+    ]
+  },
+  "cycle_2026_06_18_w45": {
+    "when": "2026-06-17T23:13:57Z",
+    "owner": "claude",
+    "window": 45,
+    "task": "Offline-UI W45: copula upper-tail-dependence strip (fitted-candidate lambda_U coefficients; additive, decision-neutral, no selection marked)",
+    "graphic": "svg id=copulautd -- the GOVERNED fitted full-copula candidates' upper_tail_dependence (capital.copula.copulas[].upper_tail_dependence) on one shared scale; complements W44 (aggregated_scr) by showing the same fitted copulas' tail dependence",
+    "governed_values_verbatim": {
+      "gaussian_upper_tail_dependence": 0.0,
+      "student_t_upper_tail_dependence": 0.004586,
+      "survival_clayton_upper_tail_dependence": 0.015056
+    },
+    "derives_nothing": "each bar = value/max scaling of a governed upper_tail_dependence read verbatim and formatted to 4dp; NO selection marked (AIC selects, not this metric); no numeric diff derived",
+    "verify": {
+      "validate": "147/147 ok (was 137; +10 copulautd checks)",
+      "loader_parity": "10/10",
+      "unittest": "4/4 OK",
+      "node_check": "both inline scripts clean",
+      "geometry_parity": "baked cubar widths gaussian 0.0 / student_t 109.7 / survival_clayton 360.0 reproduced EXACTLY by Python build and JS redrawCopulaUtd mirror"
+    },
+    "invariants": {
+      "governed_artifacts": "byte-unchanged (ui_data.json, ui_app.html, combined_model_app.html, model_summary_card.html, model_result_viewer.html) -- git status clean",
+      "headline": "39,975.65 (1 occ)",
+      "contract": "1.23.0 unchanged"
+    },
+    "offline_home_md5": "240ffd910ab9d6a7025d936ff5c36d7a",
     "files_changed": [
       "offline_home.html",
       "scripts/build_offline_home.py",

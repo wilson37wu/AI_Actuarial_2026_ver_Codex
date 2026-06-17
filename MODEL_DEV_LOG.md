@@ -11182,3 +11182,7 @@ intact (1 occ); contract 1.23.0 unchanged. Verify: validate 126/126 (was 115; +1
 nest x=399.2 + credit x=399.2/w=108.8 reproduced exactly; stack end 508.0). offline_home.html md5
 af1f13da027778012f50ca9282e73d3c. Git in fresh /tmp ext4 clone; builder regenerates the html to
 avoid virtiofs truncation; mount .git untouched.
+
+
+## 2026-06-18 Window #45 (claude) - W45 offline-UI copula upper-tail-dependence strip
+Additive, decision-neutral inline-SVG `svg id=copulautd` added to `offline_home.html`: governed fitted full-copula candidates' upper-tail-dependence coefficients (gaussian 0.0000 / student_t 0.0046 / survival_clayton 0.0151) read verbatim from `capital.copula.copulas[].upper_tail_dependence` on one shared scale; NO selection marked (AIC selects, not this metric). 13th governed landing-page graphic. Verify: validate 147/147, loader_parity 10/10, unittest 4/4, node --check clean, geometry parity exact (cubar widths 0.0/109.7/360.0). Governed artifacts byte-unchanged; headline 39,975.65 (1 occ); contract 1.23.0. offline_home.html md5 240ffd910ab9d6a7025d936ff5c36d7a. Files: offline_home.html, scripts/build_offline_home.py, scripts/build_offline_home_validate.py.
