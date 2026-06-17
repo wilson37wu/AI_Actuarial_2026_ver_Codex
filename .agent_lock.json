@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-17T00:11Z-7c7a",
-  "started_at": "2026-06-17T00:11:45Z",
-  "ttl_minutes": 120,
-  "task": "Offline-UI option (g): collect build_offline_home_validate into pytest suite",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-17T00:15:55Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
