@@ -10906,3 +10906,17 @@ re-confirmed present/bit-identical. Git in fresh /tmp clone; mount .git untouche
 **Frontier:** OWNER PIVOT — (1) MR-LONGEV-1 [model-form, sign-off]; (2) LSMC proxy
 [sign-off]; (3) MLMC nested-loop efficiency [new, no re-baseline, equivalence-gated];
 (4) Phase IGUI resume [non-model]; (5) Packaging A/B/C / Freeze.
+
+---
+
+## 2026-06-17 — Window #27 (claude) — VERIFICATION + HOLD (decision-neutral)
+
+**Decision:** No auto-admissible task open. Offline-UI pool (a)-(g) EXHAUSTED at W25; research note v2 current from W26. Per the standing rule (until owner picks a pivot, a run produces a status report and does NOT start a model-form change) this cycle ran verification + owner-pivot status report only. No governed-artifact rebuild.
+
+**Coordination:** Lock FREE at ~03:10 UTC -> `preflight` PROCEED -> `acquire` pushed + verified on `origin/main` (cycle `2026-06-17T03:10Z-b190`, owner=claude) before any work. All git in a fresh `/tmp` clone; mount `.git` untouched. Mount working tree md5-identical to `origin/main` for all governed artifacts + state -> no upstream drift to integrate.
+
+**Evidence (executed):** offline_home gate 28/28 ok:true; `tests/test_offline_home_validate.py` 4/4 OK (stdlib unittest; pytest absent in sandbox); `offline_home_loader_parity.cjs` 10/10 ok:true (node); 157 `test_*` files present. Governed md5 BYTE-UNCHANGED: offline_home=`9bf29b8a8b8faab0ea1c61e539036a37`, ui_app=`818249497e95ff25b8e4dda50d38502e`, ui_data=`70b747a05c00d29bd6e286a7ee4cf42c`. Contract `1.23.0`; headline `39975.654628199336` intact.
+
+**Artifact changes:** NONE. Added `docs/cycle_status/LATEST_CYCLE_STATUS_20260617_w27_verify.md`; updated state + this log.
+
+**Owner action required (blocking ~16 windows):** (1) MR-LONGEV-1 longevity 5th-driver [model-form, sign-off]; (2) LSMC SCR proxy [sign-off]; (3) MLMC nested-loop efficiency [no re-baseline, equivalence-gated]; (4) Option-A publish [infra inputs]; (5) declare frontier COMPLETE & FREEZE. Matrix in `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`.
