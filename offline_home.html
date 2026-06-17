@@ -115,6 +115,22 @@
   .tcap   { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
   .tkey   { display:inline-block; width:11px; height:3px; border-radius:2px;
     vertical-align:middle; margin:0 4px 0 10px; }
+  .ciband-wrap { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .ciband-wrap svg { width:100%; height:auto; display:block; }
+  .citrack { stroke:var(--line); stroke-width:1; }
+  .ciband { opacity:0.30; }
+  .ciband.var { fill:#4ea1ff; }
+  .ciband.es  { fill:#e8b23a; }
+  .cipt { stroke-width:2; }
+  .cipt.var { stroke:#4ea1ff; }
+  .cipt.es  { stroke:#e8b23a; }
+  .cilab { fill:var(--mut); font-size:12px; }
+  .civ { font-size:11.5px; font-weight:650; }
+  .civ.var { fill:#4ea1ff; }
+  .civ.es  { fill:#e8b23a; }
+  .cirange { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
+  .cicap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -207,6 +223,30 @@
     <b>converged</b>. Every coordinate is read verbatim from the model-output snapshot
     &mdash; this chart computes nothing.</p>
 
+  <h2>VaR &amp; ES with confidence intervals</h2>
+  <div class="ciband-wrap">
+  <svg id="tailci" viewBox="0 0 560 118" role="img" aria-label="VaR/ES confidence-interval strip: the governed 99.5% VaR and ES estimates each shown as a Monte-Carlo confidence band with the point estimate marked. Read verbatim from the model-output snapshot.">
+    <line class="citrack" x1="86.0" y1="40.0" x2="470.0" y2="40.0"></line>
+    <text class="cilab" x="2" y="44.0">99.5% VaR</text>
+    <rect class="ciband var" data-series="civar" x="86.0" y="32.0" width="41.6" height="16.0" rx="3"></rect>
+    <text class="cirange" data-series="civar" x="106.8" y="60.0">158,421 to 158,961</text>
+    <line class="cipt var" data-series="civar" x1="107.6" y1="29.0" x2="107.6" y2="51.0"></line>
+    <text class="civ var" data-series="civar" text-anchor="start" x="476.0" y="44.0">$158,701</text>
+    <line class="citrack" x1="86.0" y1="92.0" x2="470.0" y2="92.0"></line>
+    <text class="cilab" x="2" y="96.0">99.5% ES</text>
+    <rect class="ciband es" data-series="cies" x="417.7" y="84.0" width="52.3" height="16.0" rx="3"></rect>
+    <text class="cirange" data-series="cies" x="443.9" y="112.0">162,722 to 163,400</text>
+    <line class="cipt es" data-series="cies" x1="445.3" y1="81.0" x2="445.3" y2="103.0"></line>
+    <text class="civ es" data-series="cies" text-anchor="start" x="476.0" y="96.0">$163,080</text>
+  </svg>
+  </div>
+  <p class="cicap"><span class="tkey" style="background:#4ea1ff"></span>99.5% VaR
+    <span class="tkey" style="background:#e8b23a"></span>99.5% ES &mdash; each governed tail
+    estimate (the vertical marker) shown with its Monte-Carlo confidence band (lighter) on a
+    single shared scale, so the sampling uncertainty around the converged figures is visible.
+    Every value is read verbatim from the model-output snapshot &mdash; this chart computes
+    nothing.</p>
+
   <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -292,7 +332,7 @@
   </div>
 
   <footer>
-    Built 2026-06-17T11:20:06Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-17T12:16:54Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -312,9 +352,10 @@
 // same rules. Built-in governed snapshot stays the default (Reset restores it).
 (function(){
   var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null, driversHTML:null,
-    tailHTML:null };
+    tailHTML:null, tailciHTML:null };
   var CB_MAXW = 430;  // mirrors CAPBRIDGE_MAXW in scripts/build_offline_home.py
   var TS = { x0:10, x1:498, y0:14, y1:118 };  // mirrors TAILSPARK_GEO in the Python builder
+  var TCI = { x0:86, x1:470, vy:40, ey:92, bh:16 };  // mirrors TAILCI_GEO in the Python builder
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -437,6 +478,42 @@
     var gl = svg.querySelector('text[data-key="grid_last"]');
     if (gl){ gl.setAttribute("x", X(n - 1).toFixed(1)); gl.textContent = fmt(grid[n - 1], 0); }
   }
+  // Redraw the VaR/ES point-vs-CI band strip from a (possibly loaded) snapshot. Pure display:
+  // coordinates = value/range scaling on a shared scale, mirroring _tailci_svg in the builder.
+  function redrawTailCI(tail, cur){
+    var svg = document.getElementById("tailci");
+    if (!svg || !tail) return;
+    var vci = tail.var_ci || [], eci = tail.es_ci || [];
+    var rows = [
+      { s:"civar", lo:Number(vci[0]), hi:Number(vci[1]), pt:Number(tail.final_var), y:TCI.vy },
+      { s:"cies",  lo:Number(eci[0]), hi:Number(eci[1]), pt:Number(tail.final_es), y:TCI.ey }
+    ];
+    var all = [];
+    rows.forEach(function(r){ [r.lo, r.hi].forEach(function(v){ if (isFinite(v)) all.push(v); }); });
+    if (all.length < 2) return;
+    var vmin = Math.min.apply(null, all), vmax = Math.max.apply(null, all);
+    var span = (vmax - vmin) || 1;
+    function X(v){ return TCI.x0 + (Number(v) - vmin) / span * (TCI.x1 - TCI.x0); }
+    rows.forEach(function(r){
+      var band = svg.querySelector('rect.ciband[data-series="' + r.s + '"]');
+      if (band && isFinite(r.lo) && isFinite(r.hi)){
+        band.setAttribute("x", X(r.lo).toFixed(1));
+        band.setAttribute("width", Math.max(0, X(r.hi) - X(r.lo)).toFixed(1));
+      }
+      var tick = svg.querySelector('line.cipt[data-series="' + r.s + '"]');
+      if (tick && isFinite(r.pt)){
+        tick.setAttribute("x1", X(r.pt).toFixed(1));
+        tick.setAttribute("x2", X(r.pt).toFixed(1));
+      }
+      var pv = svg.querySelector('text.civ[data-series="' + r.s + '"]');
+      if (pv && isFinite(r.pt)) pv.textContent = cur + fmt(r.pt, 0);
+      var rg = svg.querySelector('text.cirange[data-series="' + r.s + '"]');
+      if (rg && isFinite(r.lo) && isFinite(r.hi)){
+        rg.setAttribute("x", ((X(r.lo) + X(r.hi)) / 2).toFixed(1));
+        rg.textContent = fmt(r.lo, 0) + " to " + fmt(r.hi, 0);
+      }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -470,6 +547,8 @@
         redrawDrivers(d.capital || {}, _cur2); } catch(e){}
       try { var _cur3 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawTail(d.tail || {}, _cur3); } catch(e){}
+      try { var _cur4 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawTailCI(d.tail || {}, _cur4); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -489,6 +568,8 @@
     DEFAULT.driversHTML = _d0 ? _d0.innerHTML : null;
     var _t0 = document.getElementById("tailspark");
     DEFAULT.tailHTML = _t0 ? _t0.innerHTML : null;
+    var _tc0 = document.getElementById("tailci");
+    DEFAULT.tailciHTML = _tc0 ? _tc0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -525,6 +606,8 @@
       if (_dsvg && DEFAULT.driversHTML != null) _dsvg.innerHTML = DEFAULT.driversHTML;
       var _tsvg = document.getElementById("tailspark");
       if (_tsvg && DEFAULT.tailHTML != null) _tsvg.innerHTML = DEFAULT.tailHTML;
+      var _tcsvg = document.getElementById("tailci");
+      if (_tcsvg && DEFAULT.tailciHTML != null) _tcsvg.innerHTML = DEFAULT.tailciHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });

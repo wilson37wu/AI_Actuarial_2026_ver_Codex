@@ -196,6 +196,34 @@ TAILSPARK_CSS = """
   .tkey   { display:inline-block; width:11px; height:3px; border-radius:2px;
     vertical-align:middle; margin:0 4px 0 10px; }"""
 
+# VaR/ES point-vs-CI band strip (added 2026-06-17, claude window W36) -- an ADDITIVE,
+# inline-SVG strip that DISPLAYS the already-governed 99.5% VaR and ES tail estimates each
+# as a Monte-Carlo confidence-interval BAND with the governed point estimate marked on it.
+# Recomputes nothing: every coordinate is a value/range scaling of governed numbers read
+# verbatim from ui_data.json's ``tail`` block (var_ci / es_ci band ends, final_var / final_es
+# point markers) on a single shared scale. Complements the W35 convergence sparkline (VaR/ES
+# vs the outer-scenario count) by showing the SAMPLING UNCERTAINTY around the converged
+# estimates. No JS library, no network, no external ref -- baked at build time and (for
+# snapshot-loader parity) redrawn by the same in-page JS that refreshes the figures.
+TAILCI_GEO = {"x0": 86.0, "x1": 470.0, "vy": 40.0, "ey": 92.0, "bh": 16.0}  # px in 560 viewBox
+TAILCI_CSS = """
+  .ciband-wrap { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .ciband-wrap svg { width:100%; height:auto; display:block; }
+  .citrack { stroke:var(--line); stroke-width:1; }
+  .ciband { opacity:0.30; }
+  .ciband.var { fill:#4ea1ff; }
+  .ciband.es  { fill:#e8b23a; }
+  .cipt { stroke-width:2; }
+  .cipt.var { stroke:#4ea1ff; }
+  .cipt.es  { stroke:#e8b23a; }
+  .cilab { fill:var(--mut); font-size:12px; }
+  .civ { font-size:11.5px; font-weight:650; }
+  .civ.var { fill:#4ea1ff; }
+  .civ.es  { fill:#e8b23a; }
+  .cirange { fill:var(--mut); font-size:10.5px; text-anchor:middle; }
+  .cicap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -223,9 +251,10 @@ LOADER_JS = """
 // same rules. Built-in governed snapshot stays the default (Reset restores it).
 (function(){
   var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null, driversHTML:null,
-    tailHTML:null };
+    tailHTML:null, tailciHTML:null };
   var CB_MAXW = 430;  // mirrors CAPBRIDGE_MAXW in scripts/build_offline_home.py
   var TS = { x0:10, x1:498, y0:14, y1:118 };  // mirrors TAILSPARK_GEO in the Python builder
+  var TCI = { x0:86, x1:470, vy:40, ey:92, bh:16 };  // mirrors TAILCI_GEO in the Python builder
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -348,6 +377,42 @@ LOADER_JS = """
     var gl = svg.querySelector('text[data-key="grid_last"]');
     if (gl){ gl.setAttribute("x", X(n - 1).toFixed(1)); gl.textContent = fmt(grid[n - 1], 0); }
   }
+  // Redraw the VaR/ES point-vs-CI band strip from a (possibly loaded) snapshot. Pure display:
+  // coordinates = value/range scaling on a shared scale, mirroring _tailci_svg in the builder.
+  function redrawTailCI(tail, cur){
+    var svg = document.getElementById("tailci");
+    if (!svg || !tail) return;
+    var vci = tail.var_ci || [], eci = tail.es_ci || [];
+    var rows = [
+      { s:"civar", lo:Number(vci[0]), hi:Number(vci[1]), pt:Number(tail.final_var), y:TCI.vy },
+      { s:"cies",  lo:Number(eci[0]), hi:Number(eci[1]), pt:Number(tail.final_es), y:TCI.ey }
+    ];
+    var all = [];
+    rows.forEach(function(r){ [r.lo, r.hi].forEach(function(v){ if (isFinite(v)) all.push(v); }); });
+    if (all.length < 2) return;
+    var vmin = Math.min.apply(null, all), vmax = Math.max.apply(null, all);
+    var span = (vmax - vmin) || 1;
+    function X(v){ return TCI.x0 + (Number(v) - vmin) / span * (TCI.x1 - TCI.x0); }
+    rows.forEach(function(r){
+      var band = svg.querySelector('rect.ciband[data-series="' + r.s + '"]');
+      if (band && isFinite(r.lo) && isFinite(r.hi)){
+        band.setAttribute("x", X(r.lo).toFixed(1));
+        band.setAttribute("width", Math.max(0, X(r.hi) - X(r.lo)).toFixed(1));
+      }
+      var tick = svg.querySelector('line.cipt[data-series="' + r.s + '"]');
+      if (tick && isFinite(r.pt)){
+        tick.setAttribute("x1", X(r.pt).toFixed(1));
+        tick.setAttribute("x2", X(r.pt).toFixed(1));
+      }
+      var pv = svg.querySelector('text.civ[data-series="' + r.s + '"]');
+      if (pv && isFinite(r.pt)) pv.textContent = cur + fmt(r.pt, 0);
+      var rg = svg.querySelector('text.cirange[data-series="' + r.s + '"]');
+      if (rg && isFinite(r.lo) && isFinite(r.hi)){
+        rg.setAttribute("x", ((X(r.lo) + X(r.hi)) / 2).toFixed(1));
+        rg.textContent = fmt(r.lo, 0) + " to " + fmt(r.hi, 0);
+      }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -381,6 +446,8 @@ LOADER_JS = """
         redrawDrivers(d.capital || {}, _cur2); } catch(e){}
       try { var _cur3 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawTail(d.tail || {}, _cur3); } catch(e){}
+      try { var _cur4 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawTailCI(d.tail || {}, _cur4); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -400,6 +467,8 @@ LOADER_JS = """
     DEFAULT.driversHTML = _d0 ? _d0.innerHTML : null;
     var _t0 = document.getElementById("tailspark");
     DEFAULT.tailHTML = _t0 ? _t0.innerHTML : null;
+    var _tc0 = document.getElementById("tailci");
+    DEFAULT.tailciHTML = _tc0 ? _tc0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -436,6 +505,8 @@ LOADER_JS = """
       if (_dsvg && DEFAULT.driversHTML != null) _dsvg.innerHTML = DEFAULT.driversHTML;
       var _tsvg = document.getElementById("tailspark");
       if (_tsvg && DEFAULT.tailHTML != null) _tsvg.innerHTML = DEFAULT.tailHTML;
+      var _tcsvg = document.getElementById("tailci");
+      if (_tcsvg && DEFAULT.tailciHTML != null) _tcsvg.innerHTML = DEFAULT.tailciHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -624,6 +695,66 @@ def _tailspark_svg(tail, cur):
         f'recommended count n*. Read verbatim from the model-output snapshot.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _tailci_svg(tail, cur):
+    """Inline-SVG strip of the GOVERNED 99.5% VaR / ES estimates with their CI bands.
+
+    Pure display: each row draws the governed Monte-Carlo confidence interval (``var_ci`` /
+    ``es_ci``) as a band and marks the governed point estimate (``final_var`` / ``final_es``)
+    on it. Every x-coordinate is a value/range scaling of a governed number on a single shared
+    scale spanning the four CI endpoints -- no number is derived. Each element carries a
+    ``data-series`` so the snapshot-loader JS can redraw it (mirrors ``redrawTailCI``).
+    """
+    g = TAILCI_GEO
+    x0, x1 = g["x0"], g["x1"]
+    rows = [
+        ("var", "99.5% VaR", tail.get("var_ci") or [], tail.get("final_var"), g["vy"]),
+        ("es", "99.5% ES", tail.get("es_ci") or [], tail.get("final_es"), g["ey"]),
+    ]
+    ends = []
+    for _s, _l, ci, _pt, _y in rows:
+        if len(ci) >= 2:
+            try:
+                ends.append(float(ci[0])); ends.append(float(ci[1]))
+            except (TypeError, ValueError):
+                pass
+    vmin = min(ends) if ends else 0.0
+    vmax = max(ends) if ends else 1.0
+    span = (vmax - vmin) or 1.0
+
+    def X(v):
+        return x0 + (float(v) - vmin) / span * (x1 - x0)
+
+    bh = g["bh"]
+    parts = []
+    for s, label, ci, pt, y in rows:
+        parts.append(f'<line class="citrack" x1="{x0:.1f}" y1="{y:.1f}" '
+                     f'x2="{x1:.1f}" y2="{y:.1f}"></line>')
+        parts.append(f'<text class="cilab" x="2" y="{y + 4:.1f}">{html.escape(label)}</text>')
+        if len(ci) >= 2:
+            lo, hi = float(ci[0]), float(ci[1])
+            bx, bw = X(lo), max(0.0, X(hi) - X(lo))
+            parts.append(f'<rect class="ciband {s}" data-series="ci{s}" x="{bx:.1f}" '
+                         f'y="{y - bh / 2:.1f}" width="{bw:.1f}" height="{bh:.1f}" rx="3"></rect>')
+            cx = (X(lo) + X(hi)) / 2
+            parts.append(f'<text class="cirange" data-series="ci{s}" x="{cx:.1f}" '
+                         f'y="{y + bh / 2 + 12:.1f}">{html.escape(_fmt(lo, 0))} to '
+                         f'{html.escape(_fmt(hi, 0))}</text>')
+        if pt is not None:
+            px = X(pt)
+            parts.append(f'<line class="cipt {s}" data-series="ci{s}" x1="{px:.1f}" '
+                         f'y1="{y - bh / 2 - 3:.1f}" x2="{px:.1f}" '
+                         f'y2="{y + bh / 2 + 3:.1f}"></line>')
+            parts.append(f'<text class="civ {s}" data-series="ci{s}" text-anchor="start" '
+                         f'x="{x1 + 6:.1f}" y="{y + 4:.1f}">'
+                         f'{html.escape(cur + _fmt(pt, 0))}</text>')
+    height = int(g["ey"] + bh / 2 + 18)
+    return (
+        f'<svg id="tailci" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="VaR/ES confidence-interval strip: the governed 99.5% VaR and ES '
+        f'estimates each shown as a Monte-Carlo confidence band with the point estimate '
+        f'marked. Read verbatim from the model-output snapshot.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -664,6 +795,7 @@ def build() -> str:
     driverbars = _driverbars_svg(cap, cur)
     _tail = d.get("tail", {}) or {}
     tailspark = _tailspark_svg(_tail, cur)
+    tailci = _tailci_svg(_tail, cur)
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
@@ -744,7 +876,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -796,6 +928,17 @@ def build() -> str:
     is the recommended count <b>n* = {_t_nstar}</b>, where the model declares the tail estimate
     <b>{_t_converged}</b>. Every coordinate is read verbatim from the model-output snapshot
     &mdash; this chart computes nothing.</p>
+
+  <h2>VaR &amp; ES with confidence intervals</h2>
+  <div class="ciband-wrap">
+  {tailci}
+  </div>
+  <p class="cicap"><span class="tkey" style="background:#4ea1ff"></span>99.5% VaR
+    <span class="tkey" style="background:#e8b23a"></span>99.5% ES &mdash; each governed tail
+    estimate (the vertical marker) shown with its Monte-Carlo confidence band (lighter) on a
+    single shared scale, so the sampling uncertainty around the converged figures is visible.
+    Every value is read verbatim from the model-output snapshot &mdash; this chart computes
+    nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>

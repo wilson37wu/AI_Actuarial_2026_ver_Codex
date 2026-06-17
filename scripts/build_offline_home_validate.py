@@ -119,6 +119,26 @@ def main() -> int:
        (t.get("converged") is True) and "converged" in html)
     ok("tail spark derives nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower() and "d3.min" not in html.lower())
+    # VaR/ES point-vs-CI band strip (additive, inline-SVG, zero JS dep, zero network)
+    _vci = t.get("var_ci") or []
+    _eci = t.get("es_ci") or []
+    ok("tail CI heading", "confidence interval" in html.lower())
+    ok("tail CI svg", 'id="tailci"' in html)
+    ok("tail CI two bands (var+es)",
+       html.count('class="ciband var"') == 1 and html.count('class="ciband es"') == 1)
+    ok("tail CI two point markers (var+es)",
+       html.count('class="cipt var"') == 1 and html.count('class="cipt es"') == 1)
+    ok("tail CI var_ci endpoints verbatim",
+       (len(_vci) >= 2) and f"{_vci[0]:,.0f}" in html and f"{_vci[1]:,.0f}" in html)
+    ok("tail CI es_ci endpoints verbatim",
+       (len(_eci) >= 2) and f"{_eci[0]:,.0f}" in html and f"{_eci[1]:,.0f}" in html)
+    ok("tail CI point estimates verbatim",
+       f"{t.get('final_var'):,.0f}" in html and f"{t.get('final_es'):,.0f}" in html)
+    ok("tail CI point inside its CI band (governed consistency)",
+       (len(_vci) >= 2 and _vci[0] <= float(t.get('final_var')) <= _vci[1]) and
+       (len(_eci) >= 2 and _eci[0] <= float(t.get('final_es')) <= _eci[1]))
+    ok("tail CI derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

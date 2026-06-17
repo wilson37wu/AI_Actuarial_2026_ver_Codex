@@ -11035,3 +11035,42 @@ from pristine origin copy, re-applied edits in /tmp clone, copied back to mount.
 
 ## 2026-06-17 — Window #35 (claude) — Offline-UI 'Tail convergence' sparkline (additive, decision-neutral)
 Added a zero-install/zero-network inline-SVG tail-convergence sparkline to `offline_home.html`: governed 99.5% VaR & ES (`tail.var_path`/`tail.es_path`) vs outer-scenario grid (`tail.outer_grid`), dashed marker at governed n* = 200,000 (`tail.recommended_n_outer`; converged=true), verbatim end labels $158,701 / $163,080. Pure display (value/range scaling); derives nothing; data-key/data-series so the snapshot-loader `redrawTail` redraws on load and Reset restores (parity). No contract bump (1.23.0); governed artifacts byte-unchanged; headline 39,975.654628199336 intact. Gates: validate 52/52, loader-parity 10/10, node --check clean, node geometry-parity exact. INCIDENT: virtiofs editor truncated both builder + validate scripts mid-write -> recovered from pristine origin clone, re-applied edits programmatically, built/validated in ext4 clone, cp'd to mount (md5 match). offline_home.html md5 3b7963d0905794bf6fdcd5de3333dabd.
+
+---
+
+## Run 2026-06-17T12:19:03Z - Window #36 (claude) - Offline-UI: VaR/ES confidence-interval band strip
+
+**Task (single, auto-admissible per W35 NEXT-EXECUTION POINTER):** add one more zero-install,
+zero-network, decision-neutral inline-SVG graphic over governed model output.
+
+**Shipped:** a 'VaR & ES with confidence intervals' strip (`svg id="tailci"`) in `offline_home.html`.
+Each of the two governed 99.5% tail estimates is drawn as a Monte-Carlo confidence band
+(`tail.var_ci`=[158,421; 158,961], `tail.es_ci`=[162,722; 163,400]) with the governed point estimate
+marked (`tail.final_var` $158,701 / `tail.final_es` $163,080) on a single shared scale spanning the
+four CI endpoints. Pure display - every x-coordinate is a value/range scaling of a governed number;
+nothing is derived. Complements the W35 convergence sparkline by exposing the sampling uncertainty
+around the converged figures. Elements carry `data-series` (namespaced `civar`/`cies`) so the
+snapshot-loader (`redrawTailCI`, mirroring `_tailci_svg`) redraws on load and Reset restores it.
+
+**Verification:** py_compile clean; build OK 38,050 bytes / 0 external refs; `build_offline_home_validate`
+**61/61** ok:true (was 52; +9 tail-CI checks: var_ci/es_ci endpoints verbatim, point estimates verbatim,
+point-inside-CI governed consistency, two bands + two markers present, derives-nothing); `offline_home_loader_parity`
+**10/10**; both inline `<script>` blocks `node --check` clean; baked SVG geometry **node-verified** (band
+x+width and point-marker x reproduced exactly by the `redrawTailCI` mirror). Governed headline
+39,975.654628199336 intact (1 occ); contract **1.23.0**; `ui_data.json` / `ui_app.html` /
+`combined_model_app.html` / `model_summary_card.html` / `model_result_viewer.html` **byte-unchanged**
+(md5 SAME vs HEAD). `offline_home.html` md5 now `5d32d55880e2b68cf1dd86ad70f6cfcc`.
+
+**Process:** lock was FREE; acquired on origin; all git in a fresh /tmp clone of origin/main, mount
+`.git` untouched; edits applied programmatically in the ext4 clone (anchor-count-asserted), then `cp`'d
+to the mount (md5 match) to avoid the documented virtiofs in-place-editor truncation. jsdom self-test
+and pytest env-unrunnable (gitignored node_modules; /sessions disk 100% full) - mirrored by the executed
+stdlib 61/61 gate, loader-parity, node --check, and node geometry-parity.
+
+**NEXT-EXECUTION POINTER.** Offline-UI graphical track stays OPEN per owner directive (landing page now
+carries FOUR governed graphics: capital bridge + driver bars + tail-convergence sparkline + VaR/ES CI band).
+Next single auto-admissible offline-UI item: ONE more zero-install, zero-network, decision-neutral graphic
+reading ONLY governed model output - e.g. a **diversification-waterfall** (standalone_sum -> correlated_scr ->
+nested_scr with the governed div_benefit_nested step labelled) or a **nested-vs-copula CI comparison**
+(`tail.nested_var_ci` n_outer=160 wide band vs the copula-simulated `tail.var_ci`) - additive only, gates green,
+headline bit-identical, governed artifacts byte-unchanged. MODEL frontier remains OWNER PIVOT.

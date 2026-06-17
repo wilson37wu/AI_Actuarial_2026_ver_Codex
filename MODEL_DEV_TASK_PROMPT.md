@@ -31,6 +31,28 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-17 (Window #36, claude) — OWNER-DIRECTED OFFLINE-UI GRAPHIC SHIPPED (additive, decision-neutral; no model-form / governed-artifact / contract change).**
+> Executed the W35 NEXT-EXECUTION POINTER's single auto-admissible offline-UI item. Added a zero-install, zero-network inline-SVG **"VaR & ES with confidence intervals"** strip
+> (`svg id="tailci"`) to `offline_home.html` that DISPLAYS the already-governed 99.5% **VaR** and **ES** tail estimates each as a Monte-Carlo confidence **band** (`tail.var_ci` = [158,421;
+> 158,961], `tail.es_ci` = [162,722; 163,400]) with the governed point estimate marked (`tail.final_var` **$158,701** / `tail.final_es` **$163,080**), on a single shared scale spanning the four
+> CI endpoints. Pure display (every x-coordinate = value/range scaling of a governed number); derives NO new number. Complements the W35 convergence sparkline (VaR/ES vs outer-count) by
+> showing the **sampling uncertainty** around the converged figures. Each `<rect>/<line>/<text>` carries `data-series` (namespaced `civar`/`cies` so it never collides with the tailspark dot
+> count) so the snapshot-loader JS (`redrawTailCI`, mirroring `_tailci_svg`) redraws on load and Reset restores it (parity preserved). `ui_data.json` / `ui_app.html` / `combined_model_app.html`
+> / `model_summary_card.html` / `model_result_viewer.html` **BYTE-UNCHANGED** (md5 SAME vs HEAD); headline **39,975.654628199336** intact (1 occ); contract **1.23.0**. Verify:
+> `build_offline_home_validate` **61/61** ok:true (was 52; +9 tail-CI checks incl. var_ci/es_ci endpoints verbatim, point estimates verbatim, point-inside-CI governed consistency, two bands +
+> two markers, derives-nothing); `offline_home_loader_parity` **10/10**; both inline `<script>` blocks `node --check` clean; **baked SVG geometry node-verified** (band x+width and point-marker x
+> reproduced EXACTLY by the `redrawTailCI` mirror — loader/Reset parity). jsdom self-test env-unrunnable (gitignored `node_modules`; W23/W29), mirrored by the stdlib gate. pytest env-unrunnable
+> (`/sessions` 100% full). Git in a fresh /tmp clone; mount `.git` untouched; edits applied programmatically in the ext4 clone (anchor-count-asserted) then `cp`'d to the mount (md5 match) to
+> avoid the documented virtiofs in-place-editor truncation. `offline_home.html` md5 now `5d32d55880e2b68cf1dd86ad70f6cfcc`.
+>
+> **NEXT-EXECUTION POINTER.** Offline-UI graphical track stays OPEN per the owner directive (landing page now carries FOUR governed graphics: W33 capital bridge + W34 driver bars + W35
+> tail-convergence sparkline + W36 VaR/ES CI band). Next single auto-admissible offline-UI item: add ONE more zero-install, zero-network, decision-neutral graphic reading ONLY governed model
+> output — e.g. a **diversification waterfall** (standalone_sum -> correlated_scr -> nested_scr with the governed `div_benefit_nested` step labelled) or a **nested-vs-copula CI comparison**
+> (`tail.nested_var_ci` n_outer=160 wide band vs the copula-simulated `tail.var_ci`) — additive only (no contract bump; offline_home is a separate file), `build_offline_home_validate` + loader-parity
+> must stay green, headline bit-identical, governed artifacts byte-unchanged. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC / MLMC sign-off; Packaging A/B/C; or declare frontier
+> complete & freeze) — decision matrix in `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`. Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
+
 > **2026-06-17 (Window #35, claude) — OWNER-DIRECTED OFFLINE-UI GRAPHIC SHIPPED (additive, decision-neutral; no model-form / governed-artifact / contract change).**
 > Executed the W34 NEXT-EXECUTION POINTER's single auto-admissible offline-UI item. Added a zero-install, zero-network inline-SVG **"Tail convergence"** sparkline to
 > `offline_home.html` that DISPLAYS the already-governed tail-convergence diagnostic graphically: the 99.5% **VaR** and **ES** liability estimates (`tail.var_path` / `tail.es_path`)
