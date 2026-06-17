@@ -140,6 +140,33 @@ CAPBRIDGE_CSS = """
   .cbar.s2 { fill:#4ea1ff; }
   .cbcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# Standalone-SCR-by-driver graphic (added 2026-06-17, claude window) -- an ADDITIVE,
+# inline-SVG horizontal mini bar set that DISPLAYS the seven already-governed standalone
+# (pre-diversification) per-driver capital charges graphically. Recomputes nothing: each
+# bar's length is value/max scaling of a governed number read verbatim from ui_data.json
+# (rate/equity/credit/lapse/mortality/fx/liquidity _scr). The seven sum to the governed
+# standalone_sum shown above (consistency asserted in the stdlib gate). No JS library, no
+# network, no external ref -- the SVG is baked at build time and (for snapshot-loader
+# parity) redrawn by the same in-page JS that refreshes the figures.
+DRIVERBARS_MAXW = 430.0  # px: same value gutter as CAPBRIDGE_MAXW, inside the 560 viewBox
+_DRIVER_ROWS = [
+    ("rate_scr", "Interest rate"),
+    ("equity_scr", "Equity"),
+    ("credit_scr", "Credit"),
+    ("lapse_scr", "Lapse"),
+    ("mortality_scr", "Mortality"),
+    ("fx_scr", "FX"),
+    ("liquidity_scr", "Liquidity"),
+]
+DRIVERBARS_CSS = """
+  .dbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .dbridge svg { width:100%; height:auto; display:block; }
+  .dbar-label { fill:var(--mut); font-size:12px; }
+  .dbval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .dbar { fill:#2f6db0; }
+  .dbcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -166,7 +193,7 @@ LOADER_JS = """
 // FileReader. Mirrors the Python figure mapping so a loaded ui_data.json renders by the
 // same rules. Built-in governed snapshot stays the default (Reset restores it).
 (function(){
-  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null };
+  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null, driversHTML:null };
   var CB_MAXW = 430;  // mirrors CAPBRIDGE_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
@@ -218,6 +245,26 @@ LOADER_JS = """
         txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
     });
   }
+  // Redraw the per-driver standalone-SCR bars from a (possibly loaded) snapshot. Pure
+  // display: width = value/max scaled to CB_MAXW, mirroring _driverbars_svg in the builder.
+  function redrawDrivers(cap, cur){
+    var svg = document.getElementById("driverbars");
+    if (!svg) return;
+    var keys = ["rate_scr","equity_scr","credit_scr","lapse_scr","mortality_scr","fx_scr","liquidity_scr"];
+    var vals = keys.map(function(k){ return Number(cap[k]); });
+    var present = vals.filter(function(v){ return isFinite(v); });
+    var mx = present.length ? Math.max.apply(null, present) : 0;
+    if (!(mx > 0)) return;
+    keys.forEach(function(k, i){
+      var v = vals[i];
+      var rect = svg.querySelector('rect.dbar[data-key="' + k + '"]');
+      var txt = svg.querySelector('text.dbval[data-key="' + k + '"]');
+      var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
+        txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -247,6 +294,8 @@ LOADER_JS = """
       render(extract(d), true);
       try { var _cur = (((d.meta || {}).currency || {}).symbol) || "";
         redrawBridge(d.capital || {}, _cur); } catch(e){}
+      try { var _cur2 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawDrivers(d.capital || {}, _cur2); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -262,6 +311,8 @@ LOADER_JS = """
     DEFAULT.hs = (document.getElementById("hs") || {}).textContent || "";
     var _b0 = document.getElementById("capbridge");
     DEFAULT.bridgeHTML = _b0 ? _b0.innerHTML : null;
+    var _d0 = document.getElementById("driverbars");
+    DEFAULT.driversHTML = _d0 ? _d0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -294,6 +345,8 @@ LOADER_JS = """
       setText("hv", DEFAULT.hv); setText("hc", DEFAULT.hc); setText("hs", DEFAULT.hs);
       var _bsvg = document.getElementById("capbridge");
       if (_bsvg && DEFAULT.bridgeHTML != null) _bsvg.innerHTML = DEFAULT.bridgeHTML;
+      var _dsvg = document.getElementById("driverbars");
+      if (_dsvg && DEFAULT.driversHTML != null) _dsvg.innerHTML = DEFAULT.driversHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -348,6 +401,46 @@ def _capbridge_svg(cap, cur):
         f'nested 99.5% SCR, read verbatim from the model-output snapshot.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _driverbars_svg(cap, cur):
+    """Inline-SVG horizontal mini bar set of the seven GOVERNED standalone per-driver SCRs.
+
+    Pure display: bar length = value / max(value) scaled to DRIVERBARS_MAXW px. Derives no
+    new number; the seven charges sum to the governed standalone_sum (shown above and gate-
+    asserted). Rows are baked sorted by magnitude for readability; each <rect>/<text> carries
+    a ``data-key`` so the snapshot-loader JS can redraw each row from a freshly loaded
+    snapshot (re-sorting is unnecessary -- only widths/values change).
+    """
+    rows = []
+    for k, label in _DRIVER_ROWS:
+        try:
+            v = float(cap.get(k))
+        except (TypeError, ValueError):
+            v = None
+        rows.append((k, label, v))
+    rows.sort(key=lambda r: (r[2] is not None, r[2] if r[2] is not None else 0.0),
+              reverse=True)
+    present = [r[2] for r in rows if r[2] is not None]
+    mx = max(present) if present else 0.0
+    top, row_h, bar_h = 6, 34, 15
+    parts = []
+    for i, (k, label, v) in enumerate(rows):
+        label_y = top + i * row_h + 11
+        bar_y = top + i * row_h + 16
+        w = (v / mx * DRIVERBARS_MAXW) if (v is not None and mx > 0) else 0.0
+        vtxt = f"{cur}{_fmt(v, 0)}" if v is not None else "n/a"
+        parts.append(
+            f'<text class="dbar-label" x="2" y="{label_y}">{html.escape(label)}</text>'
+            f'<rect class="dbar" data-key="{k}" x="2" y="{bar_y}" rx="3" '
+            f'width="{w:.1f}" height="{bar_h}"></rect>'
+            f'<text class="dbval" data-key="{k}" x="{w + 8:.1f}" '
+            f'y="{bar_y + bar_h - 3}">{html.escape(vtxt)}</text>')
+    height = top + len(rows) * row_h + 4
+    return (
+        f'<svg id="driverbars" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Standalone SCR by risk driver bar chart: seven per-driver standalone '
+        f'capital charges, read verbatim from the model-output snapshot.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -385,6 +478,7 @@ def build() -> str:
         f'<span class="fv">{v}</span></div>' for l, v in figures)
     cardhtml = "\n".join(cards)
     capbridge = _capbridge_svg(cap, cur)
+    driverbars = _driverbars_svg(cap, cur)
 
     # Build-time link-existence assertion (offline-UI option e): every VIEWS href
     # -- and, by the chooser-drift check below, every CHOOSER href, which must be a
@@ -460,7 +554,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -492,6 +586,15 @@ def build() -> str:
   <p class="cbcap">Bars are scaled to the largest value (the standalone sum). The visible gap
     from the standalone sum down to the nested 99.5% SCR is the diversification effect. Every
     value is read verbatim from the model-output snapshot &mdash; this chart computes nothing.</p>
+
+  <h2>Standalone SCR by risk driver</h2>
+  <div class="dbridge">
+  {driverbars}
+  </div>
+  <p class="dbcap">Each bar is one of the seven standalone (pre-diversification) risk-driver
+    capital charges, scaled to the largest driver charge. Together the seven sum to the
+    standalone total shown above. Every value is read verbatim from the model-output snapshot
+    &mdash; this chart computes nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>

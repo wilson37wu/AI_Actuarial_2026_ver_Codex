@@ -91,6 +91,13 @@
   .cbar.s1 { fill:#2f6db0; }
   .cbar.s2 { fill:#4ea1ff; }
   .cbcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .dbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .dbridge svg { width:100%; height:auto; display:block; }
+  .dbar-label { fill:var(--mut); font-size:12px; }
+  .dbval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .dbar { fill:#2f6db0; }
+  .dbcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -133,6 +140,23 @@
   <p class="cbcap">Bars are scaled to the largest value (the standalone sum). The visible gap
     from the standalone sum down to the nested 99.5% SCR is the diversification effect. Every
     value is read verbatim from the model-output snapshot &mdash; this chart computes nothing.</p>
+
+  <h2>Standalone SCR by risk driver</h2>
+  <div class="dbridge">
+  <svg id="driverbars" viewBox="0 0 560 248" role="img" aria-label="Standalone SCR by risk driver bar chart: seven per-driver standalone capital charges, read verbatim from the model-output snapshot.">
+    <text class="dbar-label" x="2" y="17">Lapse</text><rect class="dbar" data-key="lapse_scr" x="2" y="22" rx="3" width="430.0" height="15"></rect><text class="dbval" data-key="lapse_scr" x="438.0" y="34">$22,539</text>
+    <text class="dbar-label" x="2" y="51">Equity</text><rect class="dbar" data-key="equity_scr" x="2" y="56" rx="3" width="303.9" height="15"></rect><text class="dbval" data-key="equity_scr" x="311.9" y="68">$15,932</text>
+    <text class="dbar-label" x="2" y="85">Interest rate</text><rect class="dbar" data-key="rate_scr" x="2" y="90" rx="3" width="276.4" height="15"></rect><text class="dbval" data-key="rate_scr" x="284.4" y="102">$14,486</text>
+    <text class="dbar-label" x="2" y="119">Credit</text><rect class="dbar" data-key="credit_scr" x="2" y="124" rx="3" width="89.9" height="15"></rect><text class="dbval" data-key="credit_scr" x="97.9" y="136">$4,714</text>
+    <text class="dbar-label" x="2" y="153">FX</text><rect class="dbar" data-key="fx_scr" x="2" y="158" rx="3" width="81.8" height="15"></rect><text class="dbval" data-key="fx_scr" x="89.8" y="170">$4,286</text>
+    <text class="dbar-label" x="2" y="187">Mortality</text><rect class="dbar" data-key="mortality_scr" x="2" y="192" rx="3" width="7.4" height="15"></rect><text class="dbval" data-key="mortality_scr" x="15.4" y="204">$387</text>
+    <text class="dbar-label" x="2" y="221">Liquidity</text><rect class="dbar" data-key="liquidity_scr" x="2" y="226" rx="3" width="0.9" height="15"></rect><text class="dbval" data-key="liquidity_scr" x="8.9" y="238">$45</text>
+  </svg>
+  </div>
+  <p class="dbcap">Each bar is one of the seven standalone (pre-diversification) risk-driver
+    capital charges, scaled to the largest driver charge. Together the seven sum to the
+    standalone total shown above. Every value is read verbatim from the model-output snapshot
+    &mdash; this chart computes nothing.</p>
 
   <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
@@ -219,7 +243,7 @@
   </div>
 
   <footer>
-    Built 2026-06-17T09:18:39Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-17T10:15:08Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -238,7 +262,7 @@
 // FileReader. Mirrors the Python figure mapping so a loaded ui_data.json renders by the
 // same rules. Built-in governed snapshot stays the default (Reset restores it).
 (function(){
-  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null };
+  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null, driversHTML:null };
   var CB_MAXW = 430;  // mirrors CAPBRIDGE_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
@@ -290,6 +314,26 @@
         txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
     });
   }
+  // Redraw the per-driver standalone-SCR bars from a (possibly loaded) snapshot. Pure
+  // display: width = value/max scaled to CB_MAXW, mirroring _driverbars_svg in the builder.
+  function redrawDrivers(cap, cur){
+    var svg = document.getElementById("driverbars");
+    if (!svg) return;
+    var keys = ["rate_scr","equity_scr","credit_scr","lapse_scr","mortality_scr","fx_scr","liquidity_scr"];
+    var vals = keys.map(function(k){ return Number(cap[k]); });
+    var present = vals.filter(function(v){ return isFinite(v); });
+    var mx = present.length ? Math.max.apply(null, present) : 0;
+    if (!(mx > 0)) return;
+    keys.forEach(function(k, i){
+      var v = vals[i];
+      var rect = svg.querySelector('rect.dbar[data-key="' + k + '"]');
+      var txt = svg.querySelector('text.dbval[data-key="' + k + '"]');
+      var w = (isFinite(v) ? v / mx : 0) * CB_MAXW;
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1));
+        txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -319,6 +363,8 @@
       render(extract(d), true);
       try { var _cur = (((d.meta || {}).currency || {}).symbol) || "";
         redrawBridge(d.capital || {}, _cur); } catch(e){}
+      try { var _cur2 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawDrivers(d.capital || {}, _cur2); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -334,6 +380,8 @@
     DEFAULT.hs = (document.getElementById("hs") || {}).textContent || "";
     var _b0 = document.getElementById("capbridge");
     DEFAULT.bridgeHTML = _b0 ? _b0.innerHTML : null;
+    var _d0 = document.getElementById("driverbars");
+    DEFAULT.driversHTML = _d0 ? _d0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -366,6 +414,8 @@
       setText("hv", DEFAULT.hv); setText("hc", DEFAULT.hc); setText("hs", DEFAULT.hs);
       var _bsvg = document.getElementById("capbridge");
       if (_bsvg && DEFAULT.bridgeHTML != null) _bsvg.innerHTML = DEFAULT.bridgeHTML;
+      var _dsvg = document.getElementById("driverbars");
+      if (_dsvg && DEFAULT.driversHTML != null) _dsvg.innerHTML = DEFAULT.driversHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });

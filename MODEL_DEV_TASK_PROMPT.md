@@ -31,6 +31,24 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-17 (Window #34, claude) — OWNER-DIRECTED OFFLINE-UI GRAPHIC SHIPPED (additive, decision-neutral; no model-form / governed-artifact / contract change).**
+> Executed the W33 NEXT-EXECUTION POINTER's single auto-admissible offline-UI item. Added a zero-install, zero-network inline-SVG **"Standalone SCR by risk driver"** 7-bar set to
+> `offline_home.html` that DISPLAYS the seven already-governed standalone per-driver capital charges verbatim (lapse $22,539 / equity $15,932 / rate $14,486 / credit $4,714 /
+> fx $4,286 / mortality $387 / liquidity $45). Pure display (value/max bar scaling, rows baked sorted by magnitude); derives NO new number. The seven sum EXACTLY to the governed
+> standalone_sum $62,389 (now gate-asserted). Each `<rect>/<text>` carries a `data-key` so the snapshot-loader JS redraws the bars on load and Reset restores them (parity preserved).
+> `ui_data.json` / `ui_app.html` / `combined_model_app.html` / `model_summary_card.html` / `model_result_viewer.html` **BYTE-UNCHANGED**; headline **39,975.654628199336** intact (1 occ);
+> contract **1.23.0**. Verify: `build_offline_home_validate` **42/42** ok:true (was 34; +8 driver-bar checks incl. seven-sum==standalone_sum consistency); `offline_home_loader_parity`
+> **10/10**; both inline `<script>` blocks `node --check` clean; baked SVG geometry verified (lapse widest=430px; every width == value/max*430 exactly). jsdom self-test env-unrunnable
+> (gitignored `node_modules`; documented W23/W29), mirrored by the stdlib gate. pytest env-unrunnable (`/sessions` 100% full). Git in a fresh /tmp clone; mount `.git` untouched; edits
+> applied programmatically in the clone then re-validated on the mount copy (virtiofs corruption avoided). `offline_home.html` md5 now `7550357a1d40b2daed14a44b15733edd`.
+>
+> **NEXT-EXECUTION POINTER.** Offline-UI graphical track stays OPEN per the owner directive (landing page now carries TWO governed graphics: W33 capital bridge + W34 driver bars).
+> Next single auto-admissible offline-UI item: add ONE more zero-install, zero-network, decision-neutral graphic reading ONLY governed model output — e.g. a **tail/convergence sparkline**
+> (VaR/ES vs outer-count with the recommended n* marker) or a **diversification-benefit mini-bar** (standalone_sum vs nested_scr vs the governed div_benefit_nested) — additive only (no
+> contract bump; offline_home is a separate file), `build_offline_home_validate` + loader-parity must stay green, headline bit-identical, governed artifacts byte-unchanged. The MODEL frontier
+> remains OWNER PIVOT (MR-LONGEV-1 / LSMC / MLMC sign-off; Packaging A/B/C; or declare frontier complete & freeze) — decision matrix in `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`.
+> Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
 > **2026-06-17 (Window #33, claude) — OWNER-DIRECTED OFFLINE-UI FEATURE SHIPPED (additive, decision-neutral; no model-form / governed-artifact / contract change).**
 > Acted on the owner's standing scheduled-task directive ("focus on building the offline UI ... display graphically and interactively the result"), the explicit pivot W27-W32 kept escalating for.
 > Added a zero-install, zero-network inline-SVG **"Capital at a glance"** bar chart to `offline_home.html` that DISPLAYS three already-governed capital figures verbatim

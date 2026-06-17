@@ -81,6 +81,22 @@ def main() -> int:
        all('data-key="%s"' % k in html for k in ("standalone_sum", "correlated_scr", "nested_scr")))
     ok("capital bridge derives nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower() and "d3" not in html.lower())
+    # standalone-SCR-by-driver mini bars (additive, inline-SVG, zero JS dep, zero network)
+    _dkeys = ("rate_scr", "equity_scr", "credit_scr", "lapse_scr",
+              "mortality_scr", "fx_scr", "liquidity_scr")
+    ok("driver bars heading", "Standalone SCR by risk driver" in html)
+    ok("driver bars svg", 'id="driverbars"' in html)
+    ok("driver bars 7 bars", html.count('class="dbar"') == 7)
+    ok("driver bars 7 value texts", html.count('class="dbval"') == 7)
+    ok("driver bars keys (governed)",
+       all('data-key="%s"' % k in html for k in _dkeys))
+    ok("driver bars values verbatim",
+       all(f"{d['capital'][k]:,.0f}" in html for k in _dkeys))
+    _dsum = sum(float(d['capital'][k]) for k in _dkeys)
+    ok("driver bars sum == standalone_sum (governed consistency)",
+       abs(_dsum - float(d['capital']['standalone_sum'])) < 1e-6)
+    ok("driver bars derive nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))
