@@ -11150,3 +11150,22 @@ Executed the W41 NEXT-EXECUTION POINTER single auto-admissible offline-UI item. 
 **Verification.** py_compile clean; build OK 64,810 bytes / 0 external refs; `build_offline_home_validate` **115/115** ok:true (was 106; +9 aggmethod checks); `offline_home_loader_parity` **10/10**; both inline `<script>` blocks `node --check` clean; baked SVG geometry node-verified (varcov x=124.0 / nested x=424.0 / gap x=124.0 w=300.0 reproduced exactly by the `redrawAggMethod` mirror). Governed artifacts (ui_data.json, ui_app.html, combined_model_app.html, model_summary_card.html, model_result_viewer.html) BYTE-UNCHANGED vs HEAD; headline 39,975.65 intact (1 occ); contract 1.23.0 unchanged. `offline_home.html` md5 now `36c3e68ca4c0671ca261f8fbdf2c2c43`.
 
 **Coordination.** Preflight PROCEED (lock free, released by claude 18:19Z); acquired cycle 2026-06-17T19:09Z-45d7. All git in a fresh /tmp clone of origin/main; mount `.git` untouched; edits applied programmatically in the ext4 clone (10 anchor groups, count-asserted) to avoid the documented virtiofs in-place-editor truncation. Lock released at end; status email sent to wilsonwukl@gmail.com.
+
+---
+## 2026-06-18 — Window #43 (claude) — Offline-UI W43: standalone-vs-diversified per-driver overlay
+
+ADDITIVE, decision-neutral offline-UI graphic. Added inline-SVG `id="divcredit"` to
+`offline_home.html`: the seven governed standalone per-driver `_scr` charges stacked end-to-end
+(cumulative length = governed `standalone_sum` $62,389), with the governed diversified
+`nested_scr` ($48,707) as a vertical dashed reference line on the same scale; the amber-shaded
+stack portion beyond the line is the diversification credit (shown purely graphically — would-be
+diff `13,682` gate-asserted ABSENT; `div_benefit_nested` is None this snapshot). 11th governed
+landing-page graphic. Fixed canonical stack order shared by Python `_divcredit_svg` and JS
+`redrawDivCredit`; `DC` mirrors `DIVCREDIT_GEO` x-scale; snapshot-loader redraws + Reset restores
+(parity preserved). Governed artifacts byte-unchanged (ui_data.json, ui_app.html,
+combined_model_app.html, model_summary_card.html, model_result_viewer.html); headline 39,975.65
+intact (1 occ); contract 1.23.0 unchanged. Verify: validate 126/126 (was 115; +11), loader-parity
+10/10, unittest 4/4, both inline scripts node --check clean, baked geometry node-verified (7 segs +
+nest x=399.2 + credit x=399.2/w=108.8 reproduced exactly; stack end 508.0). offline_home.html md5
+af1f13da027778012f50ca9282e73d3c. Git in fresh /tmp ext4 clone; builder regenerates the html to
+avoid virtiofs truncation; mount .git untouched.

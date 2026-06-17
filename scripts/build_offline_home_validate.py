@@ -249,6 +249,29 @@ def main() -> int:
        "chart.js" not in html.lower()
        and f"{abs(float(_ns_v) - float(_vc_v)):,.0f}" not in html)
     ok("aggmethod loader-parity hook", "redrawAggMethod" in html)
+    # Standalone-vs-diversified per-driver overlay (W43, additive, inline-SVG, zero JS dep, zero net)
+    _dc_order = ["lapse_scr", "equity_scr", "rate_scr", "credit_scr",
+                 "fx_scr", "mortality_scr", "liquidity_scr"]
+    _ss_v = _cap.get("standalone_sum")
+    _ne_v = _cap.get("nested_scr")
+    ok("divcredit heading", "standalone vs diversified" in html.lower())
+    ok("divcredit svg", 'id="divcredit"' in html)
+    ok("divcredit 7 stacked segments", html.count('class="dcseg"') == 7)
+    ok("divcredit segment keys (governed)",
+       all('data-key="%s"' % k in html for k in _dc_order))
+    ok("divcredit nested reference line present", html.count('class="dcnest"') == 1)
+    ok("divcredit credit region present", html.count('class="dccredit"') == 1)
+    ok("divcredit both governed endpoints verbatim",
+       (_ss_v is not None) and (_ne_v is not None)
+       and (f"{float(_ss_v):,.0f}" in html) and (f"{float(_ne_v):,.0f}" in html))
+    ok("divcredit ordering (nested <= standalone_sum, governed)",
+       float(_ne_v) <= float(_ss_v))
+    ok("divcredit segments sum == standalone_sum (governed consistency)",
+       abs(sum(float(_cap[k]) for k in _dc_order) - float(_ss_v)) < 1e-6)
+    ok("divcredit derives nothing (no numeric credit label, svg inline, no chart lib)",
+       "chart.js" not in html.lower()
+       and f"{(float(_ss_v) - float(_ne_v)):,.0f}" not in html)
+    ok("divcredit loader-parity hook", "redrawDivCredit" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

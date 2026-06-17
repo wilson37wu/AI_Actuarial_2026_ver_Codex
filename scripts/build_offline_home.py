@@ -167,6 +167,40 @@ DRIVERBARS_CSS = """
   .dbar { fill:#2f6db0; }
   .dbcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# Standalone-vs-diversified per-driver overlay (added 2026-06-18, claude window W43) -- an
+# ADDITIVE, inline-SVG horizontal STACKED bar that DISPLAYS the seven already-governed
+# standalone (pre-diversification) per-driver SCR charges stacked end-to-end (their cumulative
+# length is the governed standalone_sum) with the governed DIVERSIFIED nested 99.5% SCR drawn
+# as a vertical reference line on the SAME scale. The portion of the stack lying beyond the
+# nested reference line -- the amount by which the pre-diversification sum exceeds the
+# diversified capital requirement -- is shaded as the diversification credit. Recomputes
+# nothing: every x-coordinate is a value/standalone_sum scaling of a governed number read
+# verbatim from ui_data.json's ``capital`` block (the seven _scr charges, standalone_sum,
+# nested_scr); NO numeric difference is derived -- the credit is shown PURELY graphically.
+# Decision-neutral: both bases are governed and the governed headline stays the frozen-t basis.
+# No JS library, no network, no external ref -- baked at build time and (for snapshot-loader
+# parity) redrawn by the same in-page JS (redrawDivCredit), so a loaded snapshot and Reset
+# keep parity. The fixed canonical stack order is shared by Python and JS so cumulative
+# positions reproduce exactly (re-sorting is unnecessary -- only widths/positions change).
+DIVCREDIT_GEO = {"x0": 12.0, "x1": 508.0, "y": 58.0, "bh": 30.0}  # px in 560 viewBox
+_DIVCREDIT_ORDER = ["lapse_scr", "equity_scr", "rate_scr", "credit_scr",
+                    "fx_scr", "mortality_scr", "liquidity_scr"]
+_DIVCREDIT_PALETTE = ["#2f6db0", "#4ea1ff", "#3f9d7a", "#c8824e",
+                      "#b07ec8", "#8a93a3", "#7e9cd8"]
+DIVCREDIT_CSS = """
+  .dcbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .dcbridge svg { width:100%; height:auto; display:block; }
+  .dctrack { stroke:var(--line); stroke-width:1; }
+  .dcseg { stroke:var(--panel); stroke-width:0.75; }
+  .dccredit { fill:#e8b23a; opacity:0.18; stroke:#e8b23a; stroke-width:1;
+    stroke-dasharray:3 2; }
+  .dccreditlab { fill:var(--warn); font-size:10.5px; text-anchor:middle; font-weight:650; }
+  .dcnest { stroke:#e8eef5; stroke-width:2; stroke-dasharray:4 3; }
+  .dcnestlab { fill:var(--ink); font-size:11.5px; font-weight:650; text-anchor:middle; }
+  .dcsumlab { fill:var(--mut); font-size:11.5px; font-weight:650; }
+  .dccap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 # Tail-convergence sparkline (added 2026-06-17, claude window W35) -- an ADDITIVE, inline-SVG
 # line chart that DISPLAYS the already-governed tail-convergence diagnostic graphically: the
 # 99.5% VaR and ES liability estimates plotted against the outer-scenario count grid, with a
@@ -416,6 +450,7 @@ LOADER_JS = """
   var EVM = { x0:70, x1:478, y:48, bh:20 };  // mirrors ESVARMARGIN_GEO in the Python builder
   var REL = { x0:70, x1:478, y:48, bh:20 };  // mirrors RELIEFSTRIP_GEO in the Python builder
   var AGM = { x0:70, x1:478, y:48, bh:20 };  // mirrors AGGMETHOD_GEO in the Python builder
+  var DC = { x0:12, x1:508 };  // mirrors DIVCREDIT_GEO (x-scale) in the Python builder
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -733,6 +768,44 @@ LOADER_JS = """
         lab.textContent = pre + cur + fmt(pt, 0); }
     });
   }
+  // Redraw the standalone-vs-diversified per-driver overlay from a (possibly loaded) snapshot.
+  // Pure display: the seven governed driver charges are stacked end-to-end (cumulative length =
+  // standalone_sum) and the governed diversified nested SCR is a vertical reference line on the
+  // same scale; the stack beyond the line is the diversification credit. Mirrors _divcredit_svg
+  // in the builder. Fixed canonical order so cumulative positions reproduce exactly; no numeric
+  // difference computed.
+  function redrawDivCredit(cap, cur){
+    var svg = document.getElementById("divcredit");
+    if (!svg || !cap) return;
+    var order = ["lapse_scr","equity_scr","rate_scr","credit_scr","fx_scr","mortality_scr","liquidity_scr"];
+    var ssum = Number(cap.standalone_sum);
+    if (!isFinite(ssum) || !(ssum > 0)) return;
+    function X(v){ return DC.x0 + (Number(v) / ssum) * (DC.x1 - DC.x0); }
+    var cum = 0;
+    order.forEach(function(k){
+      var v = Number(cap[k]); if (!isFinite(v)) v = 0;
+      var xa = X(cum), xb = X(cum + v); cum += v;
+      var rect = svg.querySelector('rect.dcseg[data-key="' + k + '"]');
+      if (rect){ rect.setAttribute("x", xa.toFixed(1));
+        rect.setAttribute("width", Math.max(0, xb - xa).toFixed(1)); }
+    });
+    var nested = Number(cap.nested_scr);
+    if (isFinite(nested)){
+      var xn = X(nested);
+      var cr = svg.querySelector('rect.dccredit[data-series="dccredit"]');
+      if (cr){ cr.setAttribute("x", xn.toFixed(1));
+        cr.setAttribute("width", Math.max(0, DC.x1 - xn).toFixed(1)); }
+      var crl = svg.querySelector('text.dccreditlab[data-series="dccredit"]');
+      if (crl) crl.setAttribute("x", ((xn + DC.x1) / 2).toFixed(1));
+      var ln = svg.querySelector('line.dcnest[data-series="dcnest"]');
+      if (ln){ ln.setAttribute("x1", xn.toFixed(1)); ln.setAttribute("x2", xn.toFixed(1)); }
+      var nl = svg.querySelector('text.dcnestlab[data-series="dcnest"]');
+      if (nl){ nl.setAttribute("x", xn.toFixed(1));
+        nl.textContent = "Diversified (nested): " + cur + fmt(nested, 0); }
+    }
+    var sl = svg.querySelector('text.dcsumlab[data-series="dcsum"]');
+    if (sl) sl.textContent = "Standalone sum (pre-diversification): " + cur + fmt(ssum, 0);
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -780,6 +853,8 @@ LOADER_JS = """
         redrawReliefStrip(d.capital || {}, _cur9); } catch(e){}
       try { var _cur10 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawAggMethod(d.capital || {}, _cur10); } catch(e){}
+      try { var _cur11 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawDivCredit(d.capital || {}, _cur11); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -813,6 +888,8 @@ LOADER_JS = """
     DEFAULT.reliefHTML = _rel0 ? _rel0.innerHTML : null;
     var _agm0 = document.getElementById("aggmethod");
     DEFAULT.aggmethodHTML = _agm0 ? _agm0.innerHTML : null;
+    var _dc0 = document.getElementById("divcredit");
+    DEFAULT.divcreditHTML = _dc0 ? _dc0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -863,6 +940,8 @@ LOADER_JS = """
       if (_relsvg && DEFAULT.reliefHTML != null) _relsvg.innerHTML = DEFAULT.reliefHTML;
       var _agmsvg = document.getElementById("aggmethod");
       if (_agmsvg && DEFAULT.aggmethodHTML != null) _agmsvg.innerHTML = DEFAULT.aggmethodHTML;
+      var _dcsvg = document.getElementById("divcredit");
+      if (_dcsvg && DEFAULT.divcreditHTML != null) _dcsvg.innerHTML = DEFAULT.divcreditHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -1366,6 +1445,68 @@ def _reliefstrip_svg(cap, cur):
         f'credited with. Read verbatim from the model-output snapshot; shown neutrally.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _divcredit_svg(cap, cur):
+    """Inline-SVG horizontal STACKED bar DISPLAYING the seven GOVERNED standalone per-driver SCR
+    charges stacked end-to-end (their cumulative length is the governed standalone_sum) with the
+    GOVERNED diversified nested 99.5% SCR drawn as a vertical reference line on the SAME scale.
+    The portion of the stack lying beyond the nested reference line -- the amount by which the
+    pre-diversification sum exceeds the diversified capital requirement -- is shaded as the
+    diversification credit. Pure display: every x-coordinate is a value/standalone_sum scaling of
+    a governed number read verbatim; NO numeric difference is derived (the credit is shown PURELY
+    graphically). Decision-neutral. Mirrors ``redrawDivCredit`` in LOADER_JS.
+    """
+    g = DIVCREDIT_GEO
+    x0, x1, y, bh = g["x0"], g["x1"], g["y"], g["bh"]
+    ssum = cap.get("standalone_sum")
+    nested = cap.get("nested_scr")
+    try:
+        vmax = float(ssum)
+    except (TypeError, ValueError):
+        vmax = 0.0
+    span = x1 - x0
+
+    def X(v):
+        return x0 + (float(v) / vmax) * span if vmax > 0 else x0
+
+    parts = [f'<line class="dctrack" x1="{x0:.1f}" y1="{y + bh:.1f}" '
+             f'x2="{x1:.1f}" y2="{y + bh:.1f}"></line>']
+    cum = 0.0
+    for i, k in enumerate(_DIVCREDIT_ORDER):
+        try:
+            v = float(cap.get(k))
+        except (TypeError, ValueError):
+            v = 0.0
+        xa, xb = X(cum), X(cum + v)
+        cum += v
+        fill = _DIVCREDIT_PALETTE[i % len(_DIVCREDIT_PALETTE)]
+        parts.append(f'<rect class="dcseg" data-key="{k}" data-i="{i}" x="{xa:.1f}" '
+                     f'y="{y:.1f}" width="{max(0.0, xb - xa):.1f}" height="{bh:.1f}" '
+                     f'fill="{fill}"><title>{html.escape(k)}</title></rect>')
+    if nested is not None and vmax > 0:
+        xn = X(nested)
+        parts.append(f'<rect class="dccredit" data-series="dccredit" x="{xn:.1f}" '
+                     f'y="{y:.1f}" width="{max(0.0, x1 - xn):.1f}" height="{bh:.1f}"></rect>')
+        parts.append(f'<text class="dccreditlab" data-series="dccredit" '
+                     f'x="{(xn + x1) / 2:.1f}" y="{y - 8:.1f}">diversification credit</text>')
+        parts.append(f'<line class="dcnest" data-series="dcnest" x1="{xn:.1f}" '
+                     f'y1="{y - 6:.1f}" x2="{xn:.1f}" y2="{y + bh + 6:.1f}"></line>')
+        parts.append(f'<text class="dcnestlab" data-series="dcnest" x="{xn:.1f}" '
+                     f'y="{y + bh + 20:.1f}">Diversified (nested): '
+                     f'{html.escape(cur + _fmt(nested, 0))}</text>')
+    if vmax > 0:
+        parts.append(f'<text class="dcsumlab" data-series="dcsum" text-anchor="end" '
+                     f'x="{x1:.1f}" y="{y - 26:.1f}">Standalone sum (pre-diversification): '
+                     f'{html.escape(cur + _fmt(ssum, 0))}</text>')
+    height = int(y + bh + 30)
+    return (
+        f'<svg id="divcredit" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Standalone versus diversified per-driver overlay: the seven governed '
+        f'standalone per-driver SCR charges stacked end-to-end to the governed standalone sum, '
+        f'with the governed diversified nested 99.5% SCR as a vertical reference line on the '
+        f'same scale; the stack lying beyond the line is the diversification credit. Read '
+        f'verbatim from the model-output snapshot; shown neutrally.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
+
 def _aggmethod_svg(cap, cur):
     """Inline-SVG one-row strip DISPLAYING two GOVERNED 99.5% SCR figures as two point markers
     on ONE shared scale -- the var-covar / correlated SCR (correlated_scr) and the full
@@ -1471,6 +1612,7 @@ def build() -> str:
     actionsladder = _actionsladder_svg(cap, cur)
     reliefstrip = _reliefstrip_svg(cap, cur)
     aggmethod = _aggmethod_svg(cap, cur)
+    divcredit = _divcredit_svg(cap, cur)
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
@@ -1552,7 +1694,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}{DIVCREDIT_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -1686,6 +1828,19 @@ def build() -> str:
     simulation sits from the linear var-covar approximation). Both endpoint values are read
     verbatim from the model-output snapshot; the margin is shown <b>neutrally</b> and purely
     graphically, the governed headline stays the frozen-t basis &mdash; this chart computes
+    nothing.</p>
+
+  <h2>Standalone vs diversified &mdash; per-driver overlay</h2>
+  <div class="dcbridge">
+  {divcredit}
+  </div>
+  <p class="dccap">The seven governed standalone (pre-diversification) risk-driver charges are
+    stacked end-to-end, so the full stack length is the governed standalone sum. The dashed
+    white line is the governed <b>diversified</b> nested 99.5% SCR on the same scale; the shaded
+    amber portion of the stack lying beyond that line is the <b>diversification credit</b> &mdash;
+    the amount by which the simple pre-diversification sum exceeds the diversified capital
+    requirement. Both endpoint values are read verbatim from the model-output snapshot; the
+    credit is shown <b>neutrally</b> and purely graphically &mdash; this chart computes
     nothing.</p>
 
 {LOADER_PANEL}
