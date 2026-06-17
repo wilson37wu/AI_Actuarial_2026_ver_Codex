@@ -97,6 +97,28 @@ def main() -> int:
        abs(_dsum - float(d['capital']['standalone_sum'])) < 1e-6)
     ok("driver bars derive nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower())
+    # tail-convergence sparkline (additive, inline-SVG, zero JS dep, zero network) presence
+    t = d.get("tail", {}) or {}
+    _grid = t.get("outer_grid") or []
+    ok("tail spark heading", "Tail convergence" in html)
+    ok("tail spark svg", 'id="tailspark"' in html)
+    ok("tail spark two series polylines",
+       'data-key="var_path"' in html and 'data-key="es_path"' in html)
+    ok("tail spark var dots == grid len",
+       html.count('data-series="var"') == len(_grid) and len(_grid) > 0)
+    ok("tail spark es dots == grid len",
+       html.count('data-series="es"') == len(_grid) and len(_grid) > 0)
+    ok("tail spark n* marker (governed recommended_n_outer)",
+       'data-key="recommended_n_outer"' in html
+       and f"{t.get('recommended_n_outer'):,.0f}" in html)
+    ok("tail spark final VaR/ES verbatim",
+       f"{t.get('final_var'):,.0f}" in html and f"{t.get('final_es'):,.0f}" in html)
+    ok("tail spark grid endpoints verbatim",
+       (not _grid) or (f"{_grid[0]:,.0f}" in html and f"{_grid[-1]:,.0f}" in html))
+    ok("tail spark converged flag (governed) shown",
+       (t.get("converged") is True) and "converged" in html)
+    ok("tail spark derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower() and "d3.min" not in html.lower())
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

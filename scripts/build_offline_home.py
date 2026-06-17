@@ -167,6 +167,35 @@ DRIVERBARS_CSS = """
   .dbar { fill:#2f6db0; }
   .dbcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# Tail-convergence sparkline (added 2026-06-17, claude window W35) -- an ADDITIVE, inline-SVG
+# line chart that DISPLAYS the already-governed tail-convergence diagnostic graphically: the
+# 99.5% VaR and ES liability estimates plotted against the outer-scenario count grid, with a
+# marker at the GOVERNED recommended outer count n* (the point at which the model declares the
+# tail estimate converged). Recomputes nothing: every plotted coordinate is just a value/range
+# scaling of governed numbers read verbatim from ui_data.json's ``tail`` block (outer_grid,
+# var_path, es_path, recommended_n_outer, final_var, final_es, converged). No JS library, no
+# network, no external ref -- the SVG is baked at build time and (for snapshot-loader parity)
+# redrawn by the same in-page JS that refreshes the figures.
+TAILSPARK_GEO = {"x0": 10.0, "x1": 498.0, "y0": 14.0, "y1": 118.0}  # px inside the 560 viewBox
+TAILSPARK_CSS = """
+  .tspark { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .tspark svg { width:100%; height:auto; display:block; }
+  .tbase { stroke:var(--line); stroke-width:1; }
+  .tvar { fill:none; stroke:#4ea1ff; stroke-width:2; }
+  .tes  { fill:none; stroke:#e8b23a; stroke-width:2; }
+  .tdot.var { fill:#4ea1ff; }
+  .tdot.es  { fill:#e8b23a; }
+  .tval { font-size:11.5px; font-weight:650; }
+  .tval.var { fill:#4ea1ff; }
+  .tval.es  { fill:#e8b23a; }
+  .tnstar { stroke:#2ec27e; stroke-width:1.2; stroke-dasharray:4 3; }
+  .tnlab  { fill:var(--ok); font-size:11px; font-weight:650; text-anchor:end; }
+  .taxis  { fill:var(--mut); font-size:10.5px; }
+  .tcap   { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .tkey   { display:inline-block; width:11px; height:3px; border-radius:2px;
+    vertical-align:middle; margin:0 4px 0 10px; }"""
+
 LOADER_PANEL = """  <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -193,8 +222,10 @@ LOADER_JS = """
 // FileReader. Mirrors the Python figure mapping so a loaded ui_data.json renders by the
 // same rules. Built-in governed snapshot stays the default (Reset restores it).
 (function(){
-  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null, driversHTML:null };
+  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null, driversHTML:null,
+    tailHTML:null };
   var CB_MAXW = 430;  // mirrors CAPBRIDGE_MAXW in scripts/build_offline_home.py
+  var TS = { x0:10, x1:498, y0:14, y1:118 };  // mirrors TAILSPARK_GEO in the Python builder
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -265,6 +296,58 @@ LOADER_JS = """
         txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
     });
   }
+  // Redraw the tail-convergence sparkline from a (possibly loaded) snapshot. Pure display:
+  // coordinates = value/range scaling, mirroring _tailspark_svg in the Python builder.
+  function redrawTail(tail, cur){
+    var svg = document.getElementById("tailspark");
+    if (!svg || !tail) return;
+    var grid = tail.outer_grid || [], vp = tail.var_path || [], ep = tail.es_path || [];
+    var n = Math.min(grid.length, vp.length, ep.length);
+    if (n < 1) return;
+    var all = vp.slice(0, n).concat(ep.slice(0, n)).map(Number).filter(isFinite);
+    if (!all.length) return;
+    var vmin = Math.min.apply(null, all), vmax = Math.max.apply(null, all);
+    var span = (vmax - vmin) || 1;
+    function X(i){ return TS.x0 + (n > 1 ? i / (n - 1) : 0) * (TS.x1 - TS.x0); }
+    function Y(v){ return TS.y1 - (Number(v) - vmin) / span * (TS.y1 - TS.y0); }
+    function poly(key, arr){
+      var el = svg.querySelector('polyline[data-key="' + key + '"]');
+      if (!el) return;
+      var p = [];
+      for (var i = 0; i < n; i++) p.push(X(i).toFixed(1) + "," + Y(arr[i]).toFixed(1));
+      el.setAttribute("points", p.join(" "));
+    }
+    poly("var_path", vp); poly("es_path", ep);
+    function dots(series, arr){
+      var ds = svg.querySelectorAll('circle[data-series="' + series + '"]');
+      for (var i = 0; i < ds.length; i++){
+        var idx = Number(ds[i].getAttribute("data-i"));
+        if (idx < n && isFinite(Number(arr[idx]))){
+          ds[i].setAttribute("cx", X(idx).toFixed(1));
+          ds[i].setAttribute("cy", Y(arr[idx]).toFixed(1));
+        }
+      }
+    }
+    dots("var", vp); dots("es", ep);
+    function endlab(key, arr){
+      var t = svg.querySelector('text[data-key="' + key + '"]');
+      if (t){ t.setAttribute("y", (Y(arr[n - 1]) + 3).toFixed(1));
+        t.textContent = cur + fmt(arr[n - 1], 0); }
+    }
+    endlab("final_var", vp); endlab("final_es", ep);
+    var rec = Number(tail.recommended_n_outer), mi = n - 1;
+    for (var i = 0; i < n; i++){ if (Number(grid[i]) === rec){ mi = i; break; } }
+    var mxp = X(mi);
+    var line = svg.querySelector('line[data-key="recommended_n_outer"]');
+    if (line){ line.setAttribute("x1", mxp.toFixed(1)); line.setAttribute("x2", mxp.toFixed(1)); }
+    var nlab = svg.querySelector('text.tnlab[data-key="recommended_n_outer"]');
+    if (nlab){ nlab.setAttribute("x", mxp.toFixed(1));
+      nlab.textContent = "n* = " + fmt(rec, 0); }
+    var gf = svg.querySelector('text[data-key="grid_first"]');
+    if (gf){ gf.setAttribute("x", X(0).toFixed(1)); gf.textContent = fmt(grid[0], 0); }
+    var gl = svg.querySelector('text[data-key="grid_last"]');
+    if (gl){ gl.setAttribute("x", X(n - 1).toFixed(1)); gl.textContent = fmt(grid[n - 1], 0); }
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -296,6 +379,8 @@ LOADER_JS = """
         redrawBridge(d.capital || {}, _cur); } catch(e){}
       try { var _cur2 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawDrivers(d.capital || {}, _cur2); } catch(e){}
+      try { var _cur3 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawTail(d.tail || {}, _cur3); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -313,6 +398,8 @@ LOADER_JS = """
     DEFAULT.bridgeHTML = _b0 ? _b0.innerHTML : null;
     var _d0 = document.getElementById("driverbars");
     DEFAULT.driversHTML = _d0 ? _d0.innerHTML : null;
+    var _t0 = document.getElementById("tailspark");
+    DEFAULT.tailHTML = _t0 ? _t0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -347,6 +434,8 @@ LOADER_JS = """
       if (_bsvg && DEFAULT.bridgeHTML != null) _bsvg.innerHTML = DEFAULT.bridgeHTML;
       var _dsvg = document.getElementById("driverbars");
       if (_dsvg && DEFAULT.driversHTML != null) _dsvg.innerHTML = DEFAULT.driversHTML;
+      var _tsvg = document.getElementById("tailspark");
+      if (_tsvg && DEFAULT.tailHTML != null) _tsvg.innerHTML = DEFAULT.tailHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -441,6 +530,100 @@ def _driverbars_svg(cap, cur):
         f'capital charges, read verbatim from the model-output snapshot.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _tailspark_svg(tail, cur):
+    """Inline-SVG convergence sparkline of the GOVERNED tail diagnostic.
+
+    Pure display: the 99.5% VaR and ES liability estimates (``var_path`` / ``es_path``) are
+    plotted against the outer-scenario grid (``outer_grid``); each coordinate is a value/range
+    scaling of a governed number -- no number is derived. A dashed marker sits at the governed
+    recommended outer count ``recommended_n_outer`` (= n*, where the model declares the tail
+    estimate converged). Each element carries a ``data-key``/``data-series`` so the snapshot-
+    loader JS can redraw it from a freshly loaded snapshot (mirrors ``redrawTail`` in LOADER_JS).
+    """
+    grid = list(tail.get("outer_grid") or [])
+    vp = list(tail.get("var_path") or [])
+    ep = list(tail.get("es_path") or [])
+    n = min(len(grid), len(vp), len(ep))
+    g = TAILSPARK_GEO
+    x0, x1, y0, y1 = g["x0"], g["x1"], g["y0"], g["y1"]
+    nums = []
+    for v in (vp[:n] + ep[:n]):
+        try:
+            nums.append(float(v))
+        except (TypeError, ValueError):
+            pass
+    vmin = min(nums) if nums else 0.0
+    vmax = max(nums) if nums else 1.0
+    span = (vmax - vmin) or 1.0
+
+    def X(i):
+        return x0 + (i / (n - 1) if n > 1 else 0.0) * (x1 - x0)
+
+    def Y(v):
+        return y1 - (float(v) - vmin) / span * (y1 - y0)
+
+    def _poly(key, cls, arr):
+        pts = " ".join(f"{X(i):.1f},{Y(arr[i]):.1f}" for i in range(n))
+        return f'<polyline class="{cls}" data-key="{key}" points="{pts}"></polyline>'
+
+    def _dots(series, cls, arr):
+        return "\n    ".join(
+            f'<circle class="tdot {cls}" data-series="{series}" data-i="{i}" '
+            f'cx="{X(i):.1f}" cy="{Y(arr[i]):.1f}" r="3"></circle>' for i in range(n))
+
+    # n* marker: governed recommended outer count (index in the grid; default rightmost).
+    rec = tail.get("recommended_n_outer")
+    mi = n - 1 if n else 0
+    for i in range(n):
+        try:
+            if float(grid[i]) == float(rec):
+                mi = i
+                break
+        except (TypeError, ValueError):
+            pass
+    mx = X(mi) if n else x1
+    rec_txt = _fmt(rec, 0) if rec is not None else "n/a"
+
+    parts = []
+    # baseline
+    parts.append(f'<line class="tbase" x1="{x0:.1f}" y1="{y1:.1f}" '
+                 f'x2="{x1:.1f}" y2="{y1:.1f}"></line>')
+    # n* marker line + label (drawn first so the series lines sit on top)
+    parts.append(f'<line class="tnstar" data-key="recommended_n_outer" x1="{mx:.1f}" '
+                 f'y1="{y0:.1f}" x2="{mx:.1f}" y2="{y1:.1f}"></line>')
+    parts.append(f'<text class="tnlab" data-key="recommended_n_outer" x="{mx:.1f}" '
+                 f'y="{y0 - 3:.1f}">n* = {html.escape(rec_txt)}</text>')
+    # series polylines + dots
+    if n:
+        parts.append(_poly("var_path", "tvar", vp))
+        parts.append(_poly("es_path", "tes", ep))
+        parts.append(_dots("var", "var", vp))
+        parts.append(_dots("es", "es", ep))
+        # end value labels (governed final VaR / ES, verbatim)
+        fv = tail.get("final_var", vp[n - 1] if n else None)
+        fe = tail.get("final_es", ep[n - 1] if n else None)
+        parts.append(
+            f'<text class="tval var" data-key="final_var" x="{x1 + 4:.1f}" '
+            f'y="{Y(vp[n - 1]) + 3:.1f}">{html.escape(cur + _fmt(fv, 0))}</text>')
+        parts.append(
+            f'<text class="tval es" data-key="final_es" x="{x1 + 4:.1f}" '
+            f'y="{Y(ep[n - 1]) + 3:.1f}">{html.escape(cur + _fmt(fe, 0))}</text>')
+        # x-axis endpoint labels (governed grid first/last, verbatim)
+        parts.append(f'<text class="taxis" data-key="grid_first" text-anchor="start" '
+                     f'x="{X(0):.1f}" y="{y1 + 14:.1f}">{html.escape(_fmt(grid[0], 0))}</text>')
+        parts.append(f'<text class="taxis" data-key="grid_last" text-anchor="end" '
+                     f'x="{X(n - 1):.1f}" y="{y1 + 14:.1f}">'
+                     f'{html.escape(_fmt(grid[n - 1], 0))}</text>')
+    parts.append(f'<text class="taxis" text-anchor="middle" x="{(x0 + x1) / 2:.1f}" '
+                 f'y="{y1 + 14:.1f}">outer scenarios &rarr;</text>')
+    height = int(y1 + 22)
+    return (
+        f'<svg id="tailspark" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Tail-convergence sparkline: 99.5% VaR and ES liability estimates '
+        f'plotted against the outer-scenario count, with a marker at the governed '
+        f'recommended count n*. Read verbatim from the model-output snapshot.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -479,6 +662,13 @@ def build() -> str:
     cardhtml = "\n".join(cards)
     capbridge = _capbridge_svg(cap, cur)
     driverbars = _driverbars_svg(cap, cur)
+    _tail = d.get("tail", {}) or {}
+    tailspark = _tailspark_svg(_tail, cur)
+    _tgrid = list(_tail.get("outer_grid") or [])
+    _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
+    _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
+    _t_nstar = _fmt(_tail.get("recommended_n_outer"), 0)
+    _t_converged = "converged" if _tail.get("converged") else "not yet converged"
 
     # Build-time link-existence assertion (offline-UI option e): every VIEWS href
     # -- and, by the chooser-drift check below, every CHOOSER href, which must be a
@@ -554,7 +744,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -594,6 +784,17 @@ def build() -> str:
   <p class="dbcap">Each bar is one of the seven standalone (pre-diversification) risk-driver
     capital charges, scaled to the largest driver charge. Together the seven sum to the
     standalone total shown above. Every value is read verbatim from the model-output snapshot
+    &mdash; this chart computes nothing.</p>
+
+  <h2>Tail convergence</h2>
+  <div class="tspark">
+  {tailspark}
+  </div>
+  <p class="tcap"><span class="tkey" style="background:#4ea1ff"></span>99.5% VaR
+    <span class="tkey" style="background:#e8b23a"></span>99.5% ES &mdash; the governed tail
+    estimates as the outer-scenario count rises from {_t_lo} to {_t_hi}. The dashed green marker
+    is the recommended count <b>n* = {_t_nstar}</b>, where the model declares the tail estimate
+    <b>{_t_converged}</b>. Every coordinate is read verbatim from the model-output snapshot
     &mdash; this chart computes nothing.</p>
 
 {LOADER_PANEL}

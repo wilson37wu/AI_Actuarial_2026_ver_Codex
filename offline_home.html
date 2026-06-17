@@ -98,6 +98,23 @@
   .dbval { fill:var(--ink); font-size:12px; font-weight:650; }
   .dbar { fill:#2f6db0; }
   .dbcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .tspark { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .tspark svg { width:100%; height:auto; display:block; }
+  .tbase { stroke:var(--line); stroke-width:1; }
+  .tvar { fill:none; stroke:#4ea1ff; stroke-width:2; }
+  .tes  { fill:none; stroke:#e8b23a; stroke-width:2; }
+  .tdot.var { fill:#4ea1ff; }
+  .tdot.es  { fill:#e8b23a; }
+  .tval { font-size:11.5px; font-weight:650; }
+  .tval.var { fill:#4ea1ff; }
+  .tval.es  { fill:#e8b23a; }
+  .tnstar { stroke:#2ec27e; stroke-width:1.2; stroke-dasharray:4 3; }
+  .tnlab  { fill:var(--ok); font-size:11px; font-weight:650; text-anchor:end; }
+  .taxis  { fill:var(--mut); font-size:10.5px; }
+  .tcap   { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .tkey   { display:inline-block; width:11px; height:3px; border-radius:2px;
+    vertical-align:middle; margin:0 4px 0 10px; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -156,6 +173,38 @@
   <p class="dbcap">Each bar is one of the seven standalone (pre-diversification) risk-driver
     capital charges, scaled to the largest driver charge. Together the seven sum to the
     standalone total shown above. Every value is read verbatim from the model-output snapshot
+    &mdash; this chart computes nothing.</p>
+
+  <h2>Tail convergence</h2>
+  <div class="tspark">
+  <svg id="tailspark" viewBox="0 0 560 140" role="img" aria-label="Tail-convergence sparkline: 99.5% VaR and ES liability estimates plotted against the outer-scenario count, with a marker at the governed recommended count n*. Read verbatim from the model-output snapshot.">
+    <line class="tbase" x1="10.0" y1="118.0" x2="498.0" y2="118.0"></line>
+    <line class="tnstar" data-key="recommended_n_outer" x1="498.0" y1="14.0" x2="498.0" y2="118.0"></line>
+    <text class="tnlab" data-key="recommended_n_outer" x="498.0" y="11.0">n* = 200,000</text>
+    <polyline class="tvar" data-key="var_path" points="10.0,118.0 132.0,95.8 254.0,95.4 376.0,94.6 498.0,96.8"></polyline>
+    <polyline class="tes" data-key="es_path" points="10.0,54.5 132.0,25.1 254.0,22.4 376.0,15.2 498.0,14.0"></polyline>
+    <circle class="tdot var" data-series="var" data-i="0" cx="10.0" cy="118.0" r="3"></circle>
+    <circle class="tdot var" data-series="var" data-i="1" cx="132.0" cy="95.8" r="3"></circle>
+    <circle class="tdot var" data-series="var" data-i="2" cx="254.0" cy="95.4" r="3"></circle>
+    <circle class="tdot var" data-series="var" data-i="3" cx="376.0" cy="94.6" r="3"></circle>
+    <circle class="tdot var" data-series="var" data-i="4" cx="498.0" cy="96.8" r="3"></circle>
+    <circle class="tdot es" data-series="es" data-i="0" cx="10.0" cy="54.5" r="3"></circle>
+    <circle class="tdot es" data-series="es" data-i="1" cx="132.0" cy="25.1" r="3"></circle>
+    <circle class="tdot es" data-series="es" data-i="2" cx="254.0" cy="22.4" r="3"></circle>
+    <circle class="tdot es" data-series="es" data-i="3" cx="376.0" cy="15.2" r="3"></circle>
+    <circle class="tdot es" data-series="es" data-i="4" cx="498.0" cy="14.0" r="3"></circle>
+    <text class="tval var" data-key="final_var" x="502.0" y="99.8">$158,701</text>
+    <text class="tval es" data-key="final_es" x="502.0" y="17.0">$163,080</text>
+    <text class="taxis" data-key="grid_first" text-anchor="start" x="10.0" y="132.0">10,000</text>
+    <text class="taxis" data-key="grid_last" text-anchor="end" x="498.0" y="132.0">200,000</text>
+    <text class="taxis" text-anchor="middle" x="254.0" y="132.0">outer scenarios &rarr;</text>
+  </svg>
+  </div>
+  <p class="tcap"><span class="tkey" style="background:#4ea1ff"></span>99.5% VaR
+    <span class="tkey" style="background:#e8b23a"></span>99.5% ES &mdash; the governed tail
+    estimates as the outer-scenario count rises from 10,000 to 200,000. The dashed green marker
+    is the recommended count <b>n* = 200,000</b>, where the model declares the tail estimate
+    <b>converged</b>. Every coordinate is read verbatim from the model-output snapshot
     &mdash; this chart computes nothing.</p>
 
   <h2>Load a different snapshot (optional)</h2>
@@ -243,7 +292,7 @@
   </div>
 
   <footer>
-    Built 2026-06-17T10:15:08Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-17T11:20:06Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -262,8 +311,10 @@
 // FileReader. Mirrors the Python figure mapping so a loaded ui_data.json renders by the
 // same rules. Built-in governed snapshot stays the default (Reset restores it).
 (function(){
-  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null, driversHTML:null };
+  var DEFAULT = { figsHTML:null, hv:"", hc:"", hs:"", bridgeHTML:null, driversHTML:null,
+    tailHTML:null };
   var CB_MAXW = 430;  // mirrors CAPBRIDGE_MAXW in scripts/build_offline_home.py
+  var TS = { x0:10, x1:498, y0:14, y1:118 };  // mirrors TAILSPARK_GEO in the Python builder
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -334,6 +385,58 @@
         txt.textContent = (isFinite(v) ? cur + fmt(v, 0) : "n/a"); }
     });
   }
+  // Redraw the tail-convergence sparkline from a (possibly loaded) snapshot. Pure display:
+  // coordinates = value/range scaling, mirroring _tailspark_svg in the Python builder.
+  function redrawTail(tail, cur){
+    var svg = document.getElementById("tailspark");
+    if (!svg || !tail) return;
+    var grid = tail.outer_grid || [], vp = tail.var_path || [], ep = tail.es_path || [];
+    var n = Math.min(grid.length, vp.length, ep.length);
+    if (n < 1) return;
+    var all = vp.slice(0, n).concat(ep.slice(0, n)).map(Number).filter(isFinite);
+    if (!all.length) return;
+    var vmin = Math.min.apply(null, all), vmax = Math.max.apply(null, all);
+    var span = (vmax - vmin) || 1;
+    function X(i){ return TS.x0 + (n > 1 ? i / (n - 1) : 0) * (TS.x1 - TS.x0); }
+    function Y(v){ return TS.y1 - (Number(v) - vmin) / span * (TS.y1 - TS.y0); }
+    function poly(key, arr){
+      var el = svg.querySelector('polyline[data-key="' + key + '"]');
+      if (!el) return;
+      var p = [];
+      for (var i = 0; i < n; i++) p.push(X(i).toFixed(1) + "," + Y(arr[i]).toFixed(1));
+      el.setAttribute("points", p.join(" "));
+    }
+    poly("var_path", vp); poly("es_path", ep);
+    function dots(series, arr){
+      var ds = svg.querySelectorAll('circle[data-series="' + series + '"]');
+      for (var i = 0; i < ds.length; i++){
+        var idx = Number(ds[i].getAttribute("data-i"));
+        if (idx < n && isFinite(Number(arr[idx]))){
+          ds[i].setAttribute("cx", X(idx).toFixed(1));
+          ds[i].setAttribute("cy", Y(arr[idx]).toFixed(1));
+        }
+      }
+    }
+    dots("var", vp); dots("es", ep);
+    function endlab(key, arr){
+      var t = svg.querySelector('text[data-key="' + key + '"]');
+      if (t){ t.setAttribute("y", (Y(arr[n - 1]) + 3).toFixed(1));
+        t.textContent = cur + fmt(arr[n - 1], 0); }
+    }
+    endlab("final_var", vp); endlab("final_es", ep);
+    var rec = Number(tail.recommended_n_outer), mi = n - 1;
+    for (var i = 0; i < n; i++){ if (Number(grid[i]) === rec){ mi = i; break; } }
+    var mxp = X(mi);
+    var line = svg.querySelector('line[data-key="recommended_n_outer"]');
+    if (line){ line.setAttribute("x1", mxp.toFixed(1)); line.setAttribute("x2", mxp.toFixed(1)); }
+    var nlab = svg.querySelector('text.tnlab[data-key="recommended_n_outer"]');
+    if (nlab){ nlab.setAttribute("x", mxp.toFixed(1));
+      nlab.textContent = "n* = " + fmt(rec, 0); }
+    var gf = svg.querySelector('text[data-key="grid_first"]');
+    if (gf){ gf.setAttribute("x", X(0).toFixed(1)); gf.textContent = fmt(grid[0], 0); }
+    var gl = svg.querySelector('text[data-key="grid_last"]');
+    if (gl){ gl.setAttribute("x", X(n - 1).toFixed(1)); gl.textContent = fmt(grid[n - 1], 0); }
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -365,6 +468,8 @@
         redrawBridge(d.capital || {}, _cur); } catch(e){}
       try { var _cur2 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawDrivers(d.capital || {}, _cur2); } catch(e){}
+      try { var _cur3 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawTail(d.tail || {}, _cur3); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -382,6 +487,8 @@
     DEFAULT.bridgeHTML = _b0 ? _b0.innerHTML : null;
     var _d0 = document.getElementById("driverbars");
     DEFAULT.driversHTML = _d0 ? _d0.innerHTML : null;
+    var _t0 = document.getElementById("tailspark");
+    DEFAULT.tailHTML = _t0 ? _t0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -416,6 +523,8 @@
       if (_bsvg && DEFAULT.bridgeHTML != null) _bsvg.innerHTML = DEFAULT.bridgeHTML;
       var _dsvg = document.getElementById("driverbars");
       if (_dsvg && DEFAULT.driversHTML != null) _dsvg.innerHTML = DEFAULT.driversHTML;
+      var _tsvg = document.getElementById("tailspark");
+      if (_tsvg && DEFAULT.tailHTML != null) _tsvg.innerHTML = DEFAULT.tailHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });

@@ -11031,3 +11031,7 @@ jsdom self-test env-unrunnable (virtiofs node_modules; documented), mirrored by 
 Incident: in-place mount editor truncated the builder mid-write (virtiofs hazard) -> recovered
 from pristine origin copy, re-applied edits in /tmp clone, copied back to mount. Git in fresh
 /tmp clone; mount .git untouched. See docs/cycle_status/LATEST_CYCLE_STATUS_20260617_w33_capital_bridge.md.
+
+
+## 2026-06-17 — Window #35 (claude) — Offline-UI 'Tail convergence' sparkline (additive, decision-neutral)
+Added a zero-install/zero-network inline-SVG tail-convergence sparkline to `offline_home.html`: governed 99.5% VaR & ES (`tail.var_path`/`tail.es_path`) vs outer-scenario grid (`tail.outer_grid`), dashed marker at governed n* = 200,000 (`tail.recommended_n_outer`; converged=true), verbatim end labels $158,701 / $163,080. Pure display (value/range scaling); derives nothing; data-key/data-series so the snapshot-loader `redrawTail` redraws on load and Reset restores (parity). No contract bump (1.23.0); governed artifacts byte-unchanged; headline 39,975.654628199336 intact. Gates: validate 52/52, loader-parity 10/10, node --check clean, node geometry-parity exact. INCIDENT: virtiofs editor truncated both builder + validate scripts mid-write -> recovered from pristine origin clone, re-applied edits programmatically, built/validated in ext4 clone, cp'd to mount (md5 match). offline_home.html md5 3b7963d0905794bf6fdcd5de3333dabd.

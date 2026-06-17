@@ -31,6 +31,28 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-17 (Window #35, claude) — OWNER-DIRECTED OFFLINE-UI GRAPHIC SHIPPED (additive, decision-neutral; no model-form / governed-artifact / contract change).**
+> Executed the W34 NEXT-EXECUTION POINTER's single auto-admissible offline-UI item. Added a zero-install, zero-network inline-SVG **"Tail convergence"** sparkline to
+> `offline_home.html` that DISPLAYS the already-governed tail-convergence diagnostic graphically: the 99.5% **VaR** and **ES** liability estimates (`tail.var_path` / `tail.es_path`)
+> plotted against the outer-scenario grid (`tail.outer_grid` = 10,000/25,000/50,000/100,000/200,000), with a dashed marker at the governed recommended count **n\* = 200,000**
+> (`tail.recommended_n_outer`; `tail.converged=true`) and verbatim end labels final_var **$158,701** / final_es **$163,080**. Pure display (every coordinate = value/range scaling of
+> governed numbers); derives NO new number. Each `<polyline>/<circle>/<line>/<text>` carries `data-key`/`data-series` so the snapshot-loader JS (`redrawTail`, mirroring `_tailspark_svg`)
+> redraws on load and Reset restores them (parity preserved). `ui_data.json` / `ui_app.html` / `combined_model_app.html` / `model_summary_card.html` / `model_result_viewer.html`
+> **BYTE-UNCHANGED** (md5 SAME vs HEAD); headline **39,975.654628199336** intact (1 occ); contract **1.23.0**. Verify: `build_offline_home_validate` **52/52** ok:true (was 42; +10
+> tail-spark checks); `offline_home_loader_parity` **10/10**; both inline `<script>` blocks `node --check` clean; **baked SVG geometry node-verified** (VaR & ES polyline points and the
+> n\* marker x reproduced EXACTLY by the `redrawTail` mirror — loader/Reset parity). jsdom self-test env-unrunnable (gitignored `node_modules`; W23/W29), mirrored by the stdlib gate.
+> pytest env-unrunnable (`/sessions` full). Git in a fresh /tmp clone; mount `.git` untouched. INCIDENT: the virtiofs in-place editor truncated BOTH `scripts/build_offline_home.py`
+> AND `scripts/build_offline_home_validate.py` mid-write (documented W33 hazard) — recovered from the pristine origin copies in the clone, re-applied ALL edits programmatically
+> (anchor-count-asserted), built + validated entirely in the ext4 clone, then `cp`'d the validated files to the mount (md5 match). `offline_home.html` md5 now `3b7963d0905794bf6fdcd5de3333dabd`.
+>
+> **NEXT-EXECUTION POINTER.** Offline-UI graphical track stays OPEN per the owner directive (landing page now carries THREE governed graphics: W33 capital bridge + W34 driver bars + W35
+> tail-convergence sparkline). Next single auto-admissible offline-UI item: add ONE more zero-install, zero-network, decision-neutral graphic reading ONLY governed model output — e.g. a
+> **diversification-benefit mini-bar** (`standalone_sum` vs `correlated_scr` vs `nested_scr` vs the governed `div_benefit_nested`) or a **VaR/ES point-vs-CI band** strip from `tail.var_ci` /
+> `tail.es_ci` — additive only (no contract bump; offline_home is a separate file), `build_offline_home_validate` + loader-parity must stay green, headline bit-identical, governed artifacts
+> byte-unchanged. The MODEL frontier remains OWNER PIVOT (MR-LONGEV-1 / LSMC / MLMC sign-off; Packaging A/B/C; or declare frontier complete & freeze) — decision matrix in
+> `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`. Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
+
 > **2026-06-17 (Window #34, claude) — OWNER-DIRECTED OFFLINE-UI GRAPHIC SHIPPED (additive, decision-neutral; no model-form / governed-artifact / contract change).**
 > Executed the W33 NEXT-EXECUTION POINTER's single auto-admissible offline-UI item. Added a zero-install, zero-network inline-SVG **"Standalone SCR by risk driver"** 7-bar set to
 > `offline_home.html` that DISPLAYS the seven already-governed standalone per-driver capital charges verbatim (lapse $22,539 / equity $15,932 / rate $14,486 / credit $4,714 /
