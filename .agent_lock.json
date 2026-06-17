@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-17T19:19:45Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-17T21:07Z-55e8",
+  "started_at": "2026-06-17T21:07:28Z",
+  "ttl_minutes": 120,
+  "task": "W43 offline-UI: standalone-vs-diversified per-driver overlay (additive, decision-neutral)",
+  "note": ""
 }
