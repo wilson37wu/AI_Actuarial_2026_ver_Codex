@@ -201,6 +201,33 @@ DIVCREDIT_CSS = """
   .dcsumlab { fill:var(--mut); font-size:11.5px; font-weight:650; }
   .dccap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# Copula model-selection strip (added 2026-06-18, claude window W44) -- an ADDITIVE, inline-SVG
+# horizontal mini bar set that DISPLAYS the GOVERNED FITTED full-copula candidates' aggregated
+# 99.5% SCRs on ONE shared scale -- the actual candidates the model's AIC model-selection ranked
+# (read verbatim from ui_data.json's ``capital.copula.copulas[]``: each entry's ``name`` and
+# ``aggregated_scr``) -- with the GOVERNED AIC-selected copula (``capital.selected_copula``)
+# marked. Distinct from the W39 copula-family strip (single-t/grouped-t/vine BOOTSTRAP MEANS);
+# this strip shows the FITTED copulas' aggregated SCRs that feed the AIC selection. Recomputes
+# nothing: each bar length is value/max scaling of a governed number read verbatim; the
+# "AIC-selected" tag merely DISPLAYS the model's governed selection, it makes none.
+# Decision-neutral: the governed headline stays the frozen-t basis. No JS library, no network,
+# no external ref -- baked at build time and redrawn by redrawCopulaSelect (loader/Reset parity).
+COPULASELECT_MAXW = 360.0  # px gutter inside the 560 viewBox (room for value + selected tag)
+_COPULASELECT_LABELS = {
+    "gaussian": "Gaussian", "student_t": "Student-t", "survival_clayton": "Survival Clayton",
+    "clayton": "Clayton", "gumbel": "Gumbel", "frank": "Frank", "t": "Student-t",
+}
+COPULASELECT_CSS = """
+  .csbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .csbridge svg { width:100%; height:auto; display:block; }
+  .csbar-label { fill:var(--mut); font-size:12px; }
+  .csval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .csbar { fill:#8a93a3; }
+  .csbar.sel { fill:#2ec27e; }
+  .cssel { fill:var(--ok); font-size:10.5px; font-weight:700; }
+  .cscap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 # Tail-convergence sparkline (added 2026-06-17, claude window W35) -- an ADDITIVE, inline-SVG
 # line chart that DISPLAYS the already-governed tail-convergence diagnostic graphically: the
 # 99.5% VaR and ES liability estimates plotted against the outer-scenario count grid, with a
@@ -451,6 +478,7 @@ LOADER_JS = """
   var REL = { x0:70, x1:478, y:48, bh:20 };  // mirrors RELIEFSTRIP_GEO in the Python builder
   var AGM = { x0:70, x1:478, y:48, bh:20 };  // mirrors AGGMETHOD_GEO in the Python builder
   var DC = { x0:12, x1:508 };  // mirrors DIVCREDIT_GEO (x-scale) in the Python builder
+  var CS_MAXW = 360;  // mirrors COPULASELECT_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -806,6 +834,39 @@ LOADER_JS = """
     var sl = svg.querySelector('text.dcsumlab[data-series="dcsum"]');
     if (sl) sl.textContent = "Standalone sum (pre-diversification): " + cur + fmt(ssum, 0);
   }
+  // Redraw the copula model-selection bars from a (possibly loaded) snapshot. Pure display:
+  // each fitted candidate's bar width = aggregated_scr/max scaled to CS_MAXW, mirroring
+  // _copulaselect_svg. The "AIC-selected" highlight follows the governed selected_copula.
+  function redrawCopulaSelect(cap, cur){
+    var svg = document.getElementById("copulaselect");
+    if (!svg || !cap) return;
+    var cop = cap.copula || {};
+    var lst = cop.copulas || cop.candidates || [];
+    var sel = String(cap.selected_copula || "").toLowerCase();
+    var vals = [];
+    lst.forEach(function(c){
+      if (c && typeof c === "object" && isFinite(Number(c.aggregated_scr)))
+        vals.push(Number(c.aggregated_scr));
+    });
+    var mx = vals.length ? Math.max.apply(null, vals) : 0;
+    if (!(mx > 0)) return;
+    lst.forEach(function(c){
+      if (!c || typeof c !== "object") return;
+      var name = String(c.name);
+      var v = Number(c.aggregated_scr);
+      if (!isFinite(v)) return;
+      var w = v / mx * CS_MAXW;
+      var rect = svg.querySelector('rect.csbar[data-key="' + name + '"]');
+      var txt = svg.querySelector('text.csval[data-key="' + name + '"]');
+      var tag = svg.querySelector('text.cssel[data-key="' + name + '"]');
+      if (rect){
+        rect.setAttribute("width", w.toFixed(1));
+        rect.setAttribute("class", name.toLowerCase() === sel ? "csbar sel" : "csbar");
+      }
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1)); txt.textContent = cur + fmt(v, 0); }
+      if (tag) tag.setAttribute("x", (w + 8).toFixed(1));
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -855,6 +916,8 @@ LOADER_JS = """
         redrawAggMethod(d.capital || {}, _cur10); } catch(e){}
       try { var _cur11 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawDivCredit(d.capital || {}, _cur11); } catch(e){}
+      try { var _cur12 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawCopulaSelect(d.capital || {}, _cur12); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -890,6 +953,8 @@ LOADER_JS = """
     DEFAULT.aggmethodHTML = _agm0 ? _agm0.innerHTML : null;
     var _dc0 = document.getElementById("divcredit");
     DEFAULT.divcreditHTML = _dc0 ? _dc0.innerHTML : null;
+    var _cs0 = document.getElementById("copulaselect");
+    DEFAULT.copulaselectHTML = _cs0 ? _cs0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -942,6 +1007,8 @@ LOADER_JS = """
       if (_agmsvg && DEFAULT.aggmethodHTML != null) _agmsvg.innerHTML = DEFAULT.aggmethodHTML;
       var _dcsvg = document.getElementById("divcredit");
       if (_dcsvg && DEFAULT.divcreditHTML != null) _dcsvg.innerHTML = DEFAULT.divcreditHTML;
+      var _cssvg = document.getElementById("copulaselect");
+      if (_cssvg && DEFAULT.copulaselectHTML != null) _cssvg.innerHTML = DEFAULT.copulaselectHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -1565,6 +1632,63 @@ def _aggmethod_svg(cap, cur):
         f'margin. Read verbatim from the model-output snapshot; shown neutrally.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _copulaselect_candidates(cap):
+    """Return [(name, aggregated_scr)] for the GOVERNED fitted full-copula candidates, read
+    verbatim from ``capital.copula.copulas[]`` (falls back to ``candidates``). Pure read."""
+    cop = cap.get("copula") or {}
+    lst = cop.get("copulas") or cop.get("candidates") or []
+    out = []
+    for c in lst:
+        if not isinstance(c, dict):
+            continue
+        name = c.get("name")
+        v = c.get("aggregated_scr")
+        if name is None or not isinstance(v, (int, float)):
+            continue
+        out.append((str(name), float(v)))
+    return out
+
+def _copulaselect_svg(cap, cur):
+    """Inline-SVG horizontal mini bar set DISPLAYING the GOVERNED fitted full-copula candidates'
+    aggregated 99.5% SCRs (the candidates the model's AIC selection ranked) on ONE shared scale,
+    with the GOVERNED AIC-selected copula marked. Pure display: bar length = value/max(value)
+    scaled to COPULASELECT_MAXW px; each value read verbatim. Derives no new number; the
+    "AIC-selected" tag merely displays the governed ``selected_copula``. Mirrors
+    ``redrawCopulaSelect`` in LOADER_JS.
+    """
+    cands = _copulaselect_candidates(cap)
+    selected = str(cap.get("selected_copula") or "").lower()
+    present = [v for _, v in cands]
+    mx = max(present) if present else 0.0
+    top, row_h, bar_h = 6, 34, 15
+    parts = []
+    for i, (name, v) in enumerate(cands):
+        label = _COPULASELECT_LABELS.get(name.lower(), name.replace("_", " ").title())
+        label_y = top + i * row_h + 11
+        bar_y = top + i * row_h + 16
+        w = (v / mx * COPULASELECT_MAXW) if mx > 0 else 0.0
+        is_sel = (name.lower() == selected)
+        cls = "csbar sel" if is_sel else "csbar"
+        vtxt = f"{cur}{_fmt(v, 0)}"
+        parts.append(
+            f'<text class="csbar-label" x="2" y="{label_y}">{html.escape(label)}</text>'
+            f'<rect class="{cls}" data-key="{html.escape(name)}" x="2" y="{bar_y}" rx="3" '
+            f'width="{w:.1f}" height="{bar_h}"></rect>'
+            f'<text class="csval" data-key="{html.escape(name)}" x="{w + 8:.1f}" '
+            f'y="{bar_y + bar_h - 3}">{html.escape(vtxt)}</text>')
+        if is_sel:
+            parts.append(
+                f'<text class="cssel" data-series="cssel" '
+                f'data-key="{html.escape(name)}" x="{w + 8:.1f}" '
+                f'y="{bar_y + bar_h - 3 + 13:.0f}">&#9656; AIC-selected</text>')
+    height = top + max(1, len(cands)) * row_h + 14
+    return (
+        f'<svg id="copulaselect" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Copula model-selection bar chart: the governed fitted full-copula '
+        f'candidate aggregated 99.5% SCRs on one shared scale, with the model AIC-selected '
+        f'copula marked. Read verbatim from the model-output snapshot.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -1613,6 +1737,7 @@ def build() -> str:
     reliefstrip = _reliefstrip_svg(cap, cur)
     aggmethod = _aggmethod_svg(cap, cur)
     divcredit = _divcredit_svg(cap, cur)
+    copulaselect = _copulaselect_svg(cap, cur)
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
@@ -1694,7 +1819,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}{DIVCREDIT_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}{DIVCREDIT_CSS}{COPULASELECT_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -1842,6 +1967,17 @@ def build() -> str:
     requirement. Both endpoint values are read verbatim from the model-output snapshot; the
     credit is shown <b>neutrally</b> and purely graphically &mdash; this chart computes
     nothing.</p>
+
+  <h2>Copula model-selection &mdash; fitted candidates (AIC)</h2>
+  <div class="csbridge">
+  {copulaselect}
+  </div>
+  <p class="cscap">Each bar is one <b>fitted</b> dependence-copula candidate's governed aggregated
+    99.5% SCR &mdash; the candidates the model's own AIC model-selection ranked &mdash; scaled to
+    the largest of them on a shared scale. The green bar tagged <b>&#9656; AIC-selected</b> is the
+    copula the model selected by AIC (per Solvency II Art. 234); it is shown for transparency, not
+    chosen here, and the governed headline stays the frozen-t basis. Each value is read verbatim
+    from the model-output snapshot &mdash; this chart computes nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>

@@ -272,6 +272,33 @@ def main() -> int:
        "chart.js" not in html.lower()
        and f"{(float(_ss_v) - float(_ne_v)):,.0f}" not in html)
     ok("divcredit loader-parity hook", "redrawDivCredit" in html)
+    # Copula model-selection strip (W44, additive, inline-SVG, zero JS dep, zero net)
+    _cop = (_cap.get("copula") or {})
+    _cs_list = _cop.get("copulas") or _cop.get("candidates") or []
+    _cs_cands = [(str(c.get("name")), float(c.get("aggregated_scr")))
+                 for c in _cs_list
+                 if isinstance(c, dict) and isinstance(c.get("aggregated_scr"), (int, float))
+                 and c.get("name") is not None]
+    _cs_sel = str(_cap.get("selected_copula") or "").lower()
+    ok("copulaselect heading", "copula model-selection" in html.lower())
+    ok("copulaselect svg", 'id="copulaselect"' in html)
+    ok("copulaselect >=2 fitted candidates", len(_cs_cands) >= 2)
+    ok("copulaselect bars == candidate count",
+       html.count('class="csbar"') + html.count('class="csbar sel"') == len(_cs_cands))
+    ok("copulaselect value texts == candidate count",
+       html.count('class="csval"') == len(_cs_cands))
+    ok("copulaselect candidate SCRs verbatim",
+       all(f"{v:,.0f}" in html for _, v in _cs_cands) and len(_cs_cands) > 0)
+    ok("copulaselect candidate keys present",
+       all(('data-key="%s"' % n) in html for n, _ in _cs_cands))
+    ok("copulaselect AIC-selected copula is governed & marked",
+       (_cs_sel in [n.lower() for n, _ in _cs_cands])
+       and ('class="csbar sel"' in html) and ("AIC-selected" in html))
+    ok("copulaselect selected SCR matches selected_copula (governed consistency)",
+       any(n.lower() == _cs_sel and f"{v:,.0f}" in html for n, v in _cs_cands))
+    ok("copulaselect derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("copulaselect loader-parity hook", "redrawCopulaSelect" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

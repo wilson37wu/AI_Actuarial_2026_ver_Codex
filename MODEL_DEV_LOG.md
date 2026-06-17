@@ -11152,6 +11152,19 @@ Executed the W41 NEXT-EXECUTION POINTER single auto-admissible offline-UI item. 
 **Coordination.** Preflight PROCEED (lock free, released by claude 18:19Z); acquired cycle 2026-06-17T19:09Z-45d7. All git in a fresh /tmp clone of origin/main; mount `.git` untouched; edits applied programmatically in the ext4 clone (10 anchor groups, count-asserted) to avoid the documented virtiofs in-place-editor truncation. Lock released at end; status email sent to wilsonwukl@gmail.com.
 
 ---
+## 2026-06-18 — Window #44 (claude) — Offline-UI W44: copula model-selection strip (fitted candidates, AIC)
+
+ADDITIVE, decision-neutral offline-UI graphic. NO model-form / governed-artifact / contract change.
+
+- **Graphic:** inline-SVG `svg id="copulaselect"` mini bar set on `offline_home.html` showing the three GOVERNED fitted full-copula candidates' aggregated 99.5% SCRs on one shared scale (read verbatim from `capital.copula.copulas[].aggregated_scr`): Gaussian 41,604 (AIC-selected), Student-t 41,880, Survival Clayton 43,840; the AIC-selected copula (`capital.selected_copula` = gaussian) is marked (green bar + ▸ AIC-selected tag).
+- **Distinct from W39** (which shows single_t/grouped_t/vine SCR-component bootstrap MEANS): W44 shows the FITTED copulas' aggregated SCRs that feed the AIC model-selection (Solvency II Art. 234).
+- **Derives nothing:** each bar = value/max scaling of a governed number read verbatim; the AIC-selected tag DISPLAYS the governed selection, it makes none. Decision-neutral; governed headline stays frozen-t.
+- **Loader/Reset parity:** `redrawCopulaSelect` (mirrors `_copulaselect_svg`; `CS_MAXW` mirrors `COPULASELECT_MAXW`); namespace csbar/csval/cssel (no collision W33-W43); DEFAULT capture + Reset restore added.
+- **Verify:** `build_offline_home_validate` 137/137 (was 126; +11); `offline_home_loader_parity` 10/10; `tests/test_offline_home_validate` 4/4 (stdlib unittest); both inline scripts `node --check` clean; geometry parity exact (csbar widths 341.6 / 343.9 / 360.0 reproduced by Python build and JS redraw mirror).
+- **Invariants:** ui_data.json / ui_app.html / combined_model_app.html / model_summary_card.html / model_result_viewer.html byte-unchanged (git status clean); headline 39,975.65 (1 occ); contract 1.23.0. `offline_home.html` md5 `c2d8db7e9e886d898433f9c92e51fe3b`.
+- **Git hygiene:** fresh /tmp clone; mount `.git` untouched; builder regenerated in the ext4 clone to avoid the documented virtiofs in-place-editor truncation (the Edit tool truncated the mounted builder mid-write this cycle; recovered by `git checkout` of pristine source in the clone + re-applying edits off-virtiofs).
+- **Pointer:** offline-UI graphic pool now VERY rich (12 graphics); STRONG RECOMMENDATION the owner declare the offline-UI graphical track COMPLETE and pivot to the MODEL frontier or Phase IGUI.
+
 ## 2026-06-18 — Window #43 (claude) — Offline-UI W43: standalone-vs-diversified per-driver overlay
 
 ADDITIVE, decision-neutral offline-UI graphic. Added inline-SVG `id="divcredit"` to

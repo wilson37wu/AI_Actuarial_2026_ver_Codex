@@ -210,6 +210,15 @@
   .dcnestlab { fill:var(--ink); font-size:11.5px; font-weight:650; text-anchor:middle; }
   .dcsumlab { fill:var(--mut); font-size:11.5px; font-weight:650; }
   .dccap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .csbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .csbridge svg { width:100%; height:auto; display:block; }
+  .csbar-label { fill:var(--mut); font-size:12px; }
+  .csval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .csbar { fill:#8a93a3; }
+  .csbar.sel { fill:#2ec27e; }
+  .cssel { fill:var(--ok); font-size:10.5px; font-weight:700; }
+  .cscap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -471,6 +480,22 @@
     credit is shown <b>neutrally</b> and purely graphically &mdash; this chart computes
     nothing.</p>
 
+  <h2>Copula model-selection &mdash; fitted candidates (AIC)</h2>
+  <div class="csbridge">
+  <svg id="copulaselect" viewBox="0 0 560 122" role="img" aria-label="Copula model-selection bar chart: the governed fitted full-copula candidate aggregated 99.5% SCRs on one shared scale, with the model AIC-selected copula marked. Read verbatim from the model-output snapshot.">
+    <text class="csbar-label" x="2" y="17">Gaussian</text><rect class="csbar sel" data-key="gaussian" x="2" y="22" rx="3" width="341.6" height="15"></rect><text class="csval" data-key="gaussian" x="349.6" y="34">$41,604</text>
+    <text class="cssel" data-series="cssel" data-key="gaussian" x="349.6" y="47">&#9656; AIC-selected</text>
+    <text class="csbar-label" x="2" y="51">Student-t</text><rect class="csbar" data-key="student_t" x="2" y="56" rx="3" width="343.9" height="15"></rect><text class="csval" data-key="student_t" x="351.9" y="68">$41,880</text>
+    <text class="csbar-label" x="2" y="85">Survival Clayton</text><rect class="csbar" data-key="survival_clayton" x="2" y="90" rx="3" width="360.0" height="15"></rect><text class="csval" data-key="survival_clayton" x="368.0" y="102">$43,840</text>
+  </svg>
+  </div>
+  <p class="cscap">Each bar is one <b>fitted</b> dependence-copula candidate's governed aggregated
+    99.5% SCR &mdash; the candidates the model's own AIC model-selection ranked &mdash; scaled to
+    the largest of them on a shared scale. The green bar tagged <b>&#9656; AIC-selected</b> is the
+    copula the model selected by AIC (per Solvency II Art. 234); it is shown for transparency, not
+    chosen here, and the governed headline stays the frozen-t basis. Each value is read verbatim
+    from the model-output snapshot &mdash; this chart computes nothing.</p>
+
   <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -556,7 +581,7 @@
   </div>
 
   <footer>
-    Built 2026-06-17T21:14:51Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-17T22:17:23Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -585,6 +610,7 @@
   var REL = { x0:70, x1:478, y:48, bh:20 };  // mirrors RELIEFSTRIP_GEO in the Python builder
   var AGM = { x0:70, x1:478, y:48, bh:20 };  // mirrors AGGMETHOD_GEO in the Python builder
   var DC = { x0:12, x1:508 };  // mirrors DIVCREDIT_GEO (x-scale) in the Python builder
+  var CS_MAXW = 360;  // mirrors COPULASELECT_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -940,6 +966,39 @@
     var sl = svg.querySelector('text.dcsumlab[data-series="dcsum"]');
     if (sl) sl.textContent = "Standalone sum (pre-diversification): " + cur + fmt(ssum, 0);
   }
+  // Redraw the copula model-selection bars from a (possibly loaded) snapshot. Pure display:
+  // each fitted candidate's bar width = aggregated_scr/max scaled to CS_MAXW, mirroring
+  // _copulaselect_svg. The "AIC-selected" highlight follows the governed selected_copula.
+  function redrawCopulaSelect(cap, cur){
+    var svg = document.getElementById("copulaselect");
+    if (!svg || !cap) return;
+    var cop = cap.copula || {};
+    var lst = cop.copulas || cop.candidates || [];
+    var sel = String(cap.selected_copula || "").toLowerCase();
+    var vals = [];
+    lst.forEach(function(c){
+      if (c && typeof c === "object" && isFinite(Number(c.aggregated_scr)))
+        vals.push(Number(c.aggregated_scr));
+    });
+    var mx = vals.length ? Math.max.apply(null, vals) : 0;
+    if (!(mx > 0)) return;
+    lst.forEach(function(c){
+      if (!c || typeof c !== "object") return;
+      var name = String(c.name);
+      var v = Number(c.aggregated_scr);
+      if (!isFinite(v)) return;
+      var w = v / mx * CS_MAXW;
+      var rect = svg.querySelector('rect.csbar[data-key="' + name + '"]');
+      var txt = svg.querySelector('text.csval[data-key="' + name + '"]');
+      var tag = svg.querySelector('text.cssel[data-key="' + name + '"]');
+      if (rect){
+        rect.setAttribute("width", w.toFixed(1));
+        rect.setAttribute("class", name.toLowerCase() === sel ? "csbar sel" : "csbar");
+      }
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1)); txt.textContent = cur + fmt(v, 0); }
+      if (tag) tag.setAttribute("x", (w + 8).toFixed(1));
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -989,6 +1048,8 @@
         redrawAggMethod(d.capital || {}, _cur10); } catch(e){}
       try { var _cur11 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawDivCredit(d.capital || {}, _cur11); } catch(e){}
+      try { var _cur12 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawCopulaSelect(d.capital || {}, _cur12); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -1024,6 +1085,8 @@
     DEFAULT.aggmethodHTML = _agm0 ? _agm0.innerHTML : null;
     var _dc0 = document.getElementById("divcredit");
     DEFAULT.divcreditHTML = _dc0 ? _dc0.innerHTML : null;
+    var _cs0 = document.getElementById("copulaselect");
+    DEFAULT.copulaselectHTML = _cs0 ? _cs0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -1076,6 +1139,8 @@
       if (_agmsvg && DEFAULT.aggmethodHTML != null) _agmsvg.innerHTML = DEFAULT.aggmethodHTML;
       var _dcsvg = document.getElementById("divcredit");
       if (_dcsvg && DEFAULT.divcreditHTML != null) _dcsvg.innerHTML = DEFAULT.divcreditHTML;
+      var _cssvg = document.getElementById("copulaselect");
+      if (_cssvg && DEFAULT.copulaselectHTML != null) _cssvg.innerHTML = DEFAULT.copulaselectHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
