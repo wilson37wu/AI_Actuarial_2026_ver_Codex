@@ -31,6 +31,34 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-17 (Window #26, claude) — MODEL-IMPROVEMENT RESEARCH REFRESH (v2) SHIPPED (documentation-only, decision-neutral, no model-form change).**
+> Auto-admissible pools remain EXHAUSTED (offline-UI a–g closed at contract 1.23.0,
+> offline_home gate 28/28; efficiency/diagnostic MR-CAL-1 + MR-VR-1 + MR-VR-2 closed under
+> the Phase 30 stop-rule). Per the standing rule — *until the owner picks a pivot, a run
+> produces a status report and does NOT start a model-form change* — this cycle executed the
+> owner's standing "research further improvement + update the prompt" instruction. Added
+> `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md` (v2): extends the 2026-06-16 v1 note
+> with 2025-literature grounding (transformer-LSMC; multi-population / longevity-basis-risk
+> mortality; MLMC nested simulations), a refined longevity recommendation (single-population
+> Lee-Carter additive first, two-population/affine staged behind it), a **NEW efficiency
+> candidate — Multilevel Monte Carlo (MLMC) with antithetic inner sampling for the nested SCR
+> loop** (re-organises the estimator, no model-form change, no headline re-baseline →
+> closest to auto-admissible of the efficiency options), and an owner decision matrix.
+> ADDITIVE & decision-neutral: `offline_home.html` / `ui_app.html` / `ui_data.json`
+> BYTE-UNCHANGED (md5 9bf29b8a8b8faab0ea1c61e539036a37 / 818249497e95ff25b8e4dda50d38502e /
+> 70b747a05c00d29bd6e286a7ee4cf42c); governed headline 39,975.654628199336 intact; contract
+> stays 1.23.0; 0 external refs. Verification: offline_home gate 28/28 ok:true; contract +
+> VR panels + headline re-confirmed present and bit-identical. Git done in a fresh /tmp clone
+> per protocol (mount `.git` untouched).
+>
+> **NEXT-EXECUTION POINTER — OWNER PIVOT (no auto-admissible model/UI/efficiency item open).**
+> Pick ONE (none auto-starts a model-form change): **(1)** MR-LONGEV-1 longevity 5th driver
+> [model-form, sign-off]; **(2)** LSMC proxy [sign-off]; **(3)** MLMC nested-loop efficiency
+> [NEW — no re-baseline, equivalence-gated, closest to auto-admissible]; **(4)** resume
+> Phase IGUI [non-model, confirm scope]; **(5)** Packaging A/B/C / Freeze. Ranked rationale +
+> decision matrix in `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`. Authoritative
+> in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
 > **2026-06-16 (Window #23, claude) — OFFLINE-UI BUILD-TIME LINK-EXISTENCE ASSERTION SHIPPED (additive, build-time only, zero-network, zero new JS).**
 > Executed NEXT-EXECUTION POINTER option (e): `scripts/build_offline_home.py` `build()` now asserts
 > that **every `VIEWS` href resolves to a file that actually exists on disk** under `ROOT` before

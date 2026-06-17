@@ -10876,3 +10876,33 @@ Promoted the build-time link-existence assertion into the standing stdlib gate `
 ## Window #25 — 2026-06-17 — Offline-UI option (g): pytest collection of the offline_home gate
 
 Collected the standing stdlib gate `scripts/build_offline_home_validate.py` into the pytest suite via new `tests/test_offline_home_validate.py`. The wrapper (plain-stdlib `unittest`) importlib-loads the gate, captures its JSON report, and asserts `main()==0`, `report.ok` true, `failed==[]`, and `passed==checks` with `checks>=20`. The offline_home structural + link-existence + governed-headline guarantee now re-runs automatically on every test run, not only on demand. Additive, decision-neutral: only `tests/test_offline_home_validate.py` added (1 new file); NO governed-artifact rebuild — `offline_home.html`/`ui_app.html`/`ui_data.json` byte-unchanged (md5 9bf29b8a…, 81824949…, 70b747a0…), headline 39975.654628199336 intact, contract 1.23.0, 0 external refs. Verify: py_compile clean; gate direct-run 28/28 ok:true; new test 4/4 OK under `python3 -m unittest` (pytest absent in sandbox but the test is stdlib unittest → collects identically under pytest). This EXHAUSTS the offline-UI decision-neutral pool (a)–(g); next is an OWNER PIVOT (MR-LONGEV-1 longevity 5th-driver / Option-A publish cert+channel / declare frontier complete & freeze). Coordination: `agent_lock.py acquire` returned ACQUIRED but its internal commit silently no-op'd (fresh /tmp clone had no git identity) so the lock was never pushed; detected via git status/log, configured identity, genuinely committed+pushed the lock (1b4d6c1→850697f) before any work. Git done in fresh /tmp clone per protocol.
+
+---
+
+## 2026-06-17 — Window #26 (claude) — Model-improvement research refresh (v2), documentation-only
+
+**Task (single, auto-admissible):** auto-admissible pools exhausted → per standing owner
+instruction, research further stochastic-model improvements and refresh the task-prompt
+NEXT-EXECUTION POINTER. No model-form change.
+
+**Shipped:** `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md` (v2) — extends the
+2026-06-16 v1 note with 2025-literature grounding (transformer-LSMC; multi-population /
+longevity-basis-risk mortality; MLMC nested simulations), a refined longevity
+recommendation (single-population Lee-Carter additive first; two-population/affine staged
+behind it), a **new efficiency candidate — Multilevel Monte Carlo (MLMC) with antithetic
+inner sampling for the nested SCR loop** (estimator re-organisation, no model-form change,
+no headline re-baseline → closest to auto-admissible), and an owner decision matrix.
+Refreshed `MODEL_DEV_TASK_PROMPT.md` NEXT-EXECUTION POINTER + cycle status doc
+`docs/cycle_status/LATEST_CYCLE_STATUS_20260617_w26_model_research_refresh.md`.
+
+**Decision-neutrality:** documentation only; no source/artifact rebuild. Governed
+artifacts byte-unchanged (md5 offline_home=9bf29b8a8b8faab0ea1c61e539036a37,
+ui_app=818249497e95ff25b8e4dda50d38502e, ui_data=70b747a05c00d29bd6e286a7ee4cf42c);
+headline 39975.654628199336 intact; contract 1.23.0; 0 external refs.
+
+**Verification:** offline_home gate 28/28 ok:true; contract + VR panels + headline
+re-confirmed present/bit-identical. Git in fresh /tmp clone; mount .git untouched.
+
+**Frontier:** OWNER PIVOT — (1) MR-LONGEV-1 [model-form, sign-off]; (2) LSMC proxy
+[sign-off]; (3) MLMC nested-loop efficiency [new, no re-baseline, equivalence-gated];
+(4) Phase IGUI resume [non-model]; (5) Packaging A/B/C / Freeze.
