@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-17T11:10Z-4810",
-  "started_at": "2026-06-17T11:10:18Z",
-  "ttl_minutes": 120,
-  "task": "W35 offline-UI decision-neutral graphic (tail/convergence sparkline)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-17T11:23:33Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
