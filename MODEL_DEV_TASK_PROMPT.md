@@ -31,6 +31,18 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-17 (Window #30, claude) — DECISION-NEUTRAL VERIFICATION + OWNER-PIVOT ESCALATION (no model-form / governed-artifact / contract change).**
+> Fresh /tmp clone of origin/main; governed artifacts BYTE-IDENTICAL mount↔origin (offline_home `9bf29b8a…` / ui_app `81824949…` / ui_data `70b747a0…`).
+> Standing gates ALL GREEN: build_offline_home_validate **28/28** ok:true; build_model_summary_card_validate **25** ok:true;
+> build_phase_pkg_task1_validate ok:true; build_phase_pkg_task2b_validate **20** ok:true; pytest test_offline_viewer **20 passed / 1 skipped**
+> (W29 jsdom skip-guard holds in a clean clone); pytest test_agent_lock_identity passed. contract **1.23.0**; headline **39,975.654628199336** intact.
+> Auto-admissible pools REMAIN EXHAUSTED; no work item started per standing rule. Status email sent to wilsonwukl@gmail.com.
+>
+> **NEXT-EXECUTION POINTER — OWNER PIVOT (unchanged; needs owner decision).** No auto-admissible model/UI/efficiency item open.
+> Pick ONE: **(1)** MR-LONGEV-1 longevity 5th driver [model-form, sign-off]; **(2)** LSMC proxy [sign-off]; **(3)** MLMC nested-loop
+> efficiency [equivalence-gated, closest to auto-admissible]; **(4)** resume Phase IGUI [non-model; confirm scope]; **(5)** Packaging A/B/C / Freeze.
+> Decision matrix in `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`. Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
 > **2026-06-17 (Window #29, claude) — DECISION-NEUTRAL TEST-HARDENING (verification-surfaced; no model-form/governed-artifact/contract change).**
 > Expanded-regression verification this cycle was green except one FALSE RED in the fresh /tmp clone:
 > `tests/test_offline_viewer.py::test_offline_self_test_script_runs_on_rendered_html` hard-failed because its node

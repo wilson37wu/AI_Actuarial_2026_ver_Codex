@@ -10961,3 +10961,22 @@ patched test (`556b77c6…`).
 **Frontier:** STILL **OWNER PIVOT**. Auto-admissible offline-UI (a–g) + efficiency/diagnostic
 (MR-CAL-1/VR-1/VR-2) pools remain EXHAUSTED; MR-LONGEV-1 / LSMC / MLMC / packaging / freeze
 all need owner sign-off. Status email sent to wilsonwukl@gmail.com.
+
+---
+
+## 2026-06-17 — Window #30 (claude) — DECISION-NEUTRAL VERIFICATION + OWNER-PIVOT ESCALATION
+
+No model-form / governed-artifact / contract change. Lock free → acquired on origin
+(cycle 2026-06-17T06:11Z-cba8). Fresh /tmp clone of origin/main; governed artifacts byte-identical
+mount↔origin (offline_home 9bf29b8a…, ui_app 81824949…, ui_data 70b747a0…).
+
+Standing gates ALL GREEN: build_offline_home_validate 28/28 ok:true; build_model_summary_card_validate
+25 passed ok:true; build_phase_pkg_task1_validate ok:true; build_phase_pkg_task2b_validate 20 passed ok:true;
+pytest tests/test_offline_viewer.py 20 passed / 1 skipped (W29 jsdom skip-guard holds in a clean clone);
+pytest tests/test_agent_lock_identity.py passed. contract 1.23.0; headline 39,975.654628199336 intact.
+
+Auto-admissible pools remain EXHAUSTED (offline-UI a–g + efficiency MR-CAL-1/VR-1/VR-2). All remaining
+items need owner/infra sign-off: MR-LONGEV-1 longevity 5th driver (model-form), LSMC proxy, MLMC nested-loop
+efficiency (equivalence-gated, closest to auto-admissible), Packaging A/B/C, or declare frontier complete & freeze.
+Per standing rule, no model-form work started; cycle confirmed integrity and escalated the owner decision via email.
+Cycle status: docs/cycle_status/LATEST_CYCLE_STATUS_20260617_w30_verify.md.
