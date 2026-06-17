@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-17T14:09Z-e014",
-  "started_at": "2026-06-17T14:09:54Z",
-  "ttl_minutes": 120,
-  "task": "W38 offline-UI 6th decision-neutral SVG graphic (copula-family mini-comparison)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-17T14:19:44Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
