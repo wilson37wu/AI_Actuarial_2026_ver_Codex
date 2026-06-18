@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-18T10:12:10Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-18T11:10Z-49a5",
+  "started_at": "2026-06-18T11:10:01Z",
+  "ttl_minutes": 120,
+  "task": "W53/W54 verification/reproducibility heartbeat (no-op-equivalent); auto-admissible pool exhausted; owner decision is sole blocker",
+  "note": ""
 }
