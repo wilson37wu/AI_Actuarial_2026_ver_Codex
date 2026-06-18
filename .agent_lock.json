@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-18T03:14:44Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-18T04:08Z-ddc9",
+  "started_at": "2026-06-18T04:08:36Z",
+  "ttl_minutes": 120,
+  "task": "Offline-UI W47: copula log-likelihood companion strip (governed loglik verbatim, additive, decision-neutral)",
+  "note": ""
 }
