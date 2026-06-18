@@ -288,6 +288,42 @@ COPULALL_CSS = """
   .cllbar { fill:#8a93a3; }
   .cllcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# Graphic navigation index ("Jump to a chart", added 2026-06-18, claude window W48) -- an
+# ADDITIVE, static, zero-JS, zero-network in-page navigator. It is NOT another data graphic:
+# it lists the governed charts already on this long landing page and links each to that
+# chart's existing <svg id="..."> anchor so a keyboard or pointer user can jump straight to
+# any chart. It reads/derives/changes NO governed figure and adds no new number; the targets
+# are the unchanged svg ids, so the snapshot-loader/Reset parity is untouched. A build-time
+# assertion (in build()) guarantees every nav target resolves to a real svg id on the page.
+GNAV_ITEMS = [
+    ("capbridge",    "Capital at a glance"),
+    ("driverbars",   "Standalone SCR by risk driver"),
+    ("tailspark",    "Tail convergence"),
+    ("tailci",       "VaR &amp; ES confidence intervals"),
+    ("nestedci",     "Nested vs copula VaR intervals"),
+    ("esvarmargin",  "VaR vs ES tail-thickness margin"),
+    ("copulafamily", "Copula-family candidates"),
+    ("actionsladder","With-actions SCR ladder"),
+    ("reliefstrip",  "Management-action relief"),
+    ("aggmethod",    "Var-covar vs nested SCR"),
+    ("divcredit",    "Standalone vs diversified"),
+    ("copulaselect", "Copula model-selection (AIC)"),
+    ("copulautd",    "Copula upper-tail dependence"),
+    ("copulaaic",    "Copula selection criterion (AIC)"),
+    ("copulall",     "Copula goodness-of-fit (log-likelihood)"),
+]
+GNAV_CSS = """
+  .gnav { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:4px 16px 14px; margin-top:18px; }
+  .gnav h2 { margin:14px 0 10px; }
+  .gnav-list { list-style:none; margin:0; padding:0; display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:8px; }
+  .gnav-link { display:block; padding:8px 11px; border:1px solid var(--line);
+    border-radius:8px; background:#0c141d; color:var(--acc); text-decoration:none;
+    font-size:13px; transition:border-color .15s, transform .15s; }
+  .gnav-link:hover { border-color:var(--acc); transform:translateY(-1px); }
+  .gnav-cap { color:var(--mut); font-size:12px; margin:11px 2px 0; }"""
+
 # Tail-convergence sparkline (added 2026-06-17, claude window W35) -- an ADDITIVE, inline-SVG
 # line chart that DISPLAYS the already-governed tail-convergence diagnostic graphically: the
 # 99.5% VaR and ES liability estimates plotted against the outer-scenario count grid, with a
@@ -2067,6 +2103,25 @@ def build() -> str:
     copulautd = _copulautd_svg(cap, cur)
     copulaaic = _copulaaic_svg(cap, cur)
     copulall = _copulall_svg(cap, cur)
+    # Graphic navigation index (W48): static jump links to each chart's existing svg id.
+    _gnav_lis = "\n".join(
+        f'      <li><a class="gnav-link" href="#{gid}">{label}</a></li>'
+        for gid, label in GNAV_ITEMS)
+    gnavhtml = (
+        '  <nav class="gnav" aria-label="Jump to a chart">\n'
+        '    <h2>Jump to a chart</h2>\n'
+        f'    <ul class="gnav-list">\n{_gnav_lis}\n    </ul>\n'
+        f'    <p class="gnav-cap">In-page navigation only &mdash; {len(GNAV_ITEMS)} governed '
+        'charts on this page. Each link jumps to a chart; nothing is computed or changed.</p>\n'
+        '  </nav>')
+    # Build-time safety: every nav target MUST resolve to a real svg id rendered on the page.
+    _gnav_body = "".join([capbridge, driverbars, tailspark, tailci, nestedci, esvarmargin,
+        copulafamily, actionsladder, reliefstrip, aggmethod, divcredit, copulaselect,
+        copulautd, copulaaic, copulall])
+    _gnav_missing = [g for g, _ in GNAV_ITEMS if ('id="%s"' % g) not in _gnav_body]
+    if _gnav_missing:
+        raise SystemExit("FAIL: gnav target(s) have no matching svg id on page: "
+                         + ", ".join(_gnav_missing))
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
@@ -2148,7 +2203,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}{DIVCREDIT_CSS}{COPULASELECT_CSS}{COPULAUTD_CSS}{COPULAAIC_CSS}{COPULALL_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}{DIVCREDIT_CSS}{COPULASELECT_CSS}{COPULAUTD_CSS}{COPULAAIC_CSS}{COPULALL_CSS}{GNAV_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -2172,6 +2227,8 @@ def build() -> str:
   </div>
   <p class="sub" style="margin-top:10px; font-size:12.5px;">Figures are read verbatim
     from the model-output snapshot &mdash; this page computes nothing.</p>
+
+{gnavhtml}
 
   <h2>Capital at a glance</h2>
   <div class="cbridge">

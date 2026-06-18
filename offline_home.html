@@ -242,6 +242,16 @@
   .cllval { fill:var(--ink); font-size:12px; font-weight:650; }
   .cllbar { fill:#8a93a3; }
   .cllcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .gnav { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:4px 16px 14px; margin-top:18px; }
+  .gnav h2 { margin:14px 0 10px; }
+  .gnav-list { list-style:none; margin:0; padding:0; display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:8px; }
+  .gnav-link { display:block; padding:8px 11px; border:1px solid var(--line);
+    border-radius:8px; background:#0c141d; color:var(--acc); text-decoration:none;
+    font-size:13px; transition:border-color .15s, transform .15s; }
+  .gnav-link:hover { border-color:var(--acc); transform:translateY(-1px); }
+  .gnav-cap { color:var(--mut); font-size:12px; margin:11px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -272,6 +282,28 @@
   </div>
   <p class="sub" style="margin-top:10px; font-size:12.5px;">Figures are read verbatim
     from the model-output snapshot &mdash; this page computes nothing.</p>
+
+  <nav class="gnav" aria-label="Jump to a chart">
+    <h2>Jump to a chart</h2>
+    <ul class="gnav-list">
+      <li><a class="gnav-link" href="#capbridge">Capital at a glance</a></li>
+      <li><a class="gnav-link" href="#driverbars">Standalone SCR by risk driver</a></li>
+      <li><a class="gnav-link" href="#tailspark">Tail convergence</a></li>
+      <li><a class="gnav-link" href="#tailci">VaR &amp; ES confidence intervals</a></li>
+      <li><a class="gnav-link" href="#nestedci">Nested vs copula VaR intervals</a></li>
+      <li><a class="gnav-link" href="#esvarmargin">VaR vs ES tail-thickness margin</a></li>
+      <li><a class="gnav-link" href="#copulafamily">Copula-family candidates</a></li>
+      <li><a class="gnav-link" href="#actionsladder">With-actions SCR ladder</a></li>
+      <li><a class="gnav-link" href="#reliefstrip">Management-action relief</a></li>
+      <li><a class="gnav-link" href="#aggmethod">Var-covar vs nested SCR</a></li>
+      <li><a class="gnav-link" href="#divcredit">Standalone vs diversified</a></li>
+      <li><a class="gnav-link" href="#copulaselect">Copula model-selection (AIC)</a></li>
+      <li><a class="gnav-link" href="#copulautd">Copula upper-tail dependence</a></li>
+      <li><a class="gnav-link" href="#copulaaic">Copula selection criterion (AIC)</a></li>
+      <li><a class="gnav-link" href="#copulall">Copula goodness-of-fit (log-likelihood)</a></li>
+    </ul>
+    <p class="gnav-cap">In-page navigation only &mdash; 15 governed charts on this page. Each link jumps to a chart; nothing is computed or changed.</p>
+  </nav>
 
   <h2>Capital at a glance</h2>
   <div class="cbridge">
@@ -676,7 +708,7 @@
   </div>
 
   <footer>
-    Built 2026-06-18T01:12:32Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-18T02:12:21Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.

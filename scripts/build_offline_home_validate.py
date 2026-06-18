@@ -371,6 +371,29 @@ def main() -> int:
     ok("copulall derives nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower())
     ok("copulall loader-parity hook", "redrawCopulaLogLik" in html)
+    # Graphic navigation index ("Jump to a chart", W48, additive, static, zero JS, zero net).
+    # NOT another data graphic -- a keyboard/pointer navigator that links each governed chart
+    # already on the page to its existing <svg id>. Derives/changes no figure; targets are the
+    # unchanged svg ids so loader/Reset parity is untouched.
+    _gnav_ids = ["capbridge", "driverbars", "tailspark", "tailci", "nestedci", "esvarmargin",
+                 "copulafamily", "actionsladder", "reliefstrip", "aggmethod", "divcredit",
+                 "copulaselect", "copulautd", "copulaaic", "copulall"]
+    ok("gnav present (Jump to a chart)", 'class="gnav"' in html and "Jump to a chart" in html)
+    ok("gnav is an accessible landmark (nav + aria-label)",
+       "<nav" in html and 'aria-label="Jump to a chart"' in html)
+    ok("gnav uses a list", '<ul class="gnav-list">' in html)
+    ok("gnav links == graphic count",
+       html.count('class="gnav-link"') == len(_gnav_ids))
+    ok("gnav links every graphic svg id",
+       all(('href="#%s"' % g) in html for g in _gnav_ids))
+    ok("gnav targets all resolve to a real svg id on the page",
+       all((('href="#%s"' % g) in html) and (('id="%s"' % g) in html) for g in _gnav_ids))
+    ok("gnav placed before the first chart",
+       (lambda a, b: a != -1 and b != -1 and a < b)(html.find('class="gnav"'),
+                                                    html.find('id="capbridge"')))
+    ok("gnav derives nothing (navigation only, no chart lib)",
+       'class="gnav-cap"' in html and "nothing is computed or changed" in html.lower()
+       and "chart.js" not in html.lower())
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))
