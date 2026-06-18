@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-18T14:09Z-2eab",
-  "started_at": "2026-06-18T14:09:48Z",
-  "ttl_minutes": 120,
-  "task": "W57 LSMC SCR-proxy validation design note (design-note-first) + verification + task-prompt update",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-18T14:13:40Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
