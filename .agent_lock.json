@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-18T18:10Z-f1c4",
-  "started_at": "2026-06-18T18:10:07Z",
-  "ttl_minutes": 120,
-  "task": "W61 verification (post-W60 MLMC stage-3 push integrity check)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-18T18:12:46Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
