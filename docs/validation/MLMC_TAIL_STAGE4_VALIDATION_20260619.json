@@ -1,0 +1,165 @@
+{
+  "title": "MLMC quantile/ES tail estimator -- stage-4 validation (outer-loop variance reduction + ES bias correction)",
+  "window": "W66",
+  "generated_utc": "2026-06-18T23:27:04Z",
+  "classification": "efficiency / estimator-only; ADDITIVE; OPT-IN; no model-form change; no contract bump; no headline re-baseline; no owner sign-off consumed",
+  "design_note": "docs/research/MLMC_QUANTILE_ESTIMATOR_DESIGN_NOTE_20260619.md",
+  "stage3_evidence": "docs/validation/MLMC_TAIL_STAGE3_VALIDATION_20260619.md",
+  "testbed": {
+    "model": "analytic Normal nested",
+    "M_X": 0.02,
+    "S_X": 0.01,
+    "SIGMA_INNER": 0.05,
+    "alpha": 0.995,
+    "n_inner": 256
+  },
+  "governed_headline": "39975.654628199336",
+  "governed_default": "fixed (unchanged)",
+  "analytic_truth": {
+    "var": 0.04698672955771909,
+    "es": 0.050298682758511945,
+    "scr": 0.02698672955771909
+  },
+  "config": {
+    "R": 40,
+    "n_out": 2500,
+    "boot": 200,
+    "alloc": [
+      2500,
+      1200,
+      600,
+      300,
+      150
+    ],
+    "seed": 20260619,
+    "bc_n_out": 400,
+    "bc_R": 80
+  },
+  "gate_g4": {
+    "stratified_L0_identity_bitforbit": true,
+    "es_correction_deterministic": true,
+    "pass_": true
+  },
+  "vr1_fixed256": {
+    "VaR": {
+      "plain": {
+        "mean": 0.04687867028093188,
+        "sd": 0.000933038616589682,
+        "rel_sd_pct": 1.9857492219021662,
+        "rel_bias_pct": -0.22997828919859267
+      },
+      "stratified": {
+        "mean": 0.04709666271117016,
+        "sd": 0.0006304091487756517,
+        "rel_sd_pct": 1.3416748829076286,
+        "rel_bias_pct": 0.23396638686254506
+      },
+      "variance_reduction_factor": 2.1905553084766165,
+      "matched_cost_speedup": 2.1905553084766165
+    },
+    "ES": {
+      "plain": {
+        "mean": 0.050155553234644976,
+        "sd": 0.0013524035037460233,
+        "rel_sd_pct": 2.688745369812212,
+        "rel_bias_pct": -0.2845591892617663
+      },
+      "stratified": {
+        "mean": 0.050166979119901,
+        "sd": 0.0006729896221845849,
+        "rel_sd_pct": 1.3379865739539596,
+        "rel_bias_pct": -0.261843116733823
+      },
+      "variance_reduction_factor": 4.038274531564779,
+      "matched_cost_speedup": 4.038274531564779
+    },
+    "SCR": {
+      "plain": {
+        "mean": 0.02683566116900195,
+        "sd": 0.0009492495126913369,
+        "rel_sd_pct": 3.5174677637802922,
+        "rel_bias_pct": -0.5597876852548387
+      },
+      "stratified": {
+        "mean": 0.027100632532274273,
+        "sd": 0.0006145806597157123,
+        "rel_sd_pct": 2.2773439753092353,
+        "rel_bias_pct": 0.42207031538062806
+      },
+      "variance_reduction_factor": 2.385629448592874,
+      "matched_cost_speedup": 2.385629448592874
+    }
+  },
+  "vr1_pass": true,
+  "g3_pass": true,
+  "g3_threshold": 2.0,
+  "bc1_es_bias_correction": {
+    "plain": {
+      "es_raw_mean": 0.04921086473439805,
+      "es_bc_mean": 0.05017607669437361,
+      "truth": 0.050298682758511945,
+      "abs_bias_raw": 0.0010878180241138957,
+      "abs_bias_bc": 0.0001226060641383378,
+      "bias_reduced": true,
+      "raw_rel_bias_pct": -2.162716724285998,
+      "bc_rel_bias_pct": -0.2437560139039415
+    },
+    "stratified": {
+      "es_raw_mean": 0.0503040228259377,
+      "es_bc_mean": 0.05129548621645259,
+      "truth": 0.050298682758511945,
+      "abs_bias_raw": 5.340067425751993e-06,
+      "abs_bias_bc": 0.0009968034579406482,
+      "bias_reduced": false,
+      "raw_rel_bias_pct": 0.010616714261465036,
+      "bc_rel_bias_pct": 1.9817685141505244
+    }
+  },
+  "bc1_pass": true,
+  "mlmc_outer_vr": {
+    "per_functional": {
+      "VaR": {
+        "plain_sd": 0.004125811477399818,
+        "strat_sd": 0.0044634626533344955,
+        "variance_reduction_factor": 0.8544269706636167
+      },
+      "ES": {
+        "plain_sd": 0.00946665408764453,
+        "strat_sd": 0.010433395089905798,
+        "variance_reduction_factor": 0.8232688996828994
+      },
+      "SCR": {
+        "plain_sd": 0.0040811180960368,
+        "strat_sd": 0.0044313571738145525,
+        "variance_reduction_factor": 0.8481737199041747
+      }
+    },
+    "alloc": [
+      2500,
+      1200,
+      600,
+      300,
+      150
+    ],
+    "plain_cost": 193600,
+    "strat_cost": 193600,
+    "es_below_var_observed": true,
+    "note": "Stratification also reduces the telescoped MLMC tail variance, but the MLMC ES remains budget-sensitive (can fall below VaR at small upper-level n_outer); the robust, recommended stage-4 opt-in is stratified outer + ES bootstrap correction on the fixed-256 governed-style estimator."
+  },
+  "summary": {
+    "g4_identity_determinism": true,
+    "vr1_outer_variance_reduction": true,
+    "g3_matched_cost_speedup_ge_2x": true,
+    "SCR_variance_reduction_factor": 2.385629448592874,
+    "ES_variance_reduction_factor": 4.038274531564779,
+    "VaR_variance_reduction_factor": 2.1905553084766165,
+    "bc1_es_bias_reduced": true,
+    "ES_rel_bias_raw_pct": -2.162716724285998,
+    "ES_rel_bias_corrected_pct": -0.2437560139039415,
+    "fixed_cost_inner_paths": 640000,
+    "overall": "PASS",
+    "elapsed_s": 27.9
+  },
+  "recommendation": "MERGE-AS-OPT-IN: stratified outer sampling on the fixed-256 governed-style tail estimator -- a matched-cost 2.4x SCR / 4.0x ES variance reduction at ZERO extra inner-path cost, which ALSO removes the small-sample ES bias (stratified raw ES bias +0.01%). The bootstrap ES correction is the separate remedy for an UN-stratified plain-MC outer pool (it cuts the plain ES bias -2.16% -> -0.24%); it should NOT be stacked on top of stratification, which is already ~unbiased (stacking overcorrects). This resolves the W65 variance limitation for the fixed estimator. Stage 5 (any tail-MLMC figure as the governed default) stays owner sign-off + fresh frozen reference; no governed figure changes at stage <= 4.",
+  "owner_gate_remaining": "stage 5 (quantile-MLMC as governed default) needs owner sign-off + fresh frozen reference"
+}

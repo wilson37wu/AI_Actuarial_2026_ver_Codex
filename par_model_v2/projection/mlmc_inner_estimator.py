@@ -748,3 +748,163 @@ def mlmc_nested_tail(
         var_empirical=float("nan"), es_empirical=float("nan"), var_smoothed=var_sm,
         ladder=list(ladder), levels=levels,
     )
+
+
+# ===========================================================================
+# W66 (2026-06-19): MLMC tail estimator -- STAGE 4 (outer-loop variance
+# reduction + Expected-Shortfall bias correction). ADDITIVE / OPT-IN /
+# numpy-only / deterministic given a seed / no I/O / no global state.
+#
+# Stage 3 (W65, docs/validation/MLMC_TAIL_STAGE3_VALIDATION_20260619.md) found
+# the W64 quantile/ES tail estimator UNBIASED & CONSISTENT but HIGH-VARIANCE at
+# feasible replicate budgets (ES single-run s.d. ~10%), and carrying a modest
+# *downward* optimizer's-curse bias in the empirical Expected-Shortfall (the
+# argmin / min of a noisy Rockafellar-Uryasev objective is biased low; Jensen).
+# Stage 4 adds the two efficiency tools the design note prescribes WITHOUT
+# touching the governed headline ``39,975.654628199336`` (default estimator stays
+# ``"fixed"``; making any tail-MLMC figure the governed default remains the
+# owner-signed-off stage 5):
+#
+#   (1) OUTER-LOOP VARIANCE REDUCTION via equal-probability STRATIFIED sampling
+#       of the (Gaussian) outer real-world driver. For a (near-)monotone
+#       conditional liability ``L(X)`` stratifying ``X`` stratifies ``L`` and
+#       sharply cuts the variance of the tail VaR/ES estimators while leaving
+#       them unbiased. Drop-in ``OuterSampler`` -- composes with BOTH
+#       :func:`nested_single_level_tail` and :func:`mlmc_nested_tail`.
+#   (2) ES BOOTSTRAP BIAS CORRECTION -- the standard resampling bias estimate
+#       ``bias_hat = E*[ES(L*)] - ES(L)`` (negative for the downward-biased
+#       empirical ES); corrected ``ES_bc = ES - bias_hat = 2*ES - E*[ES(L*)]``
+#       lifts the estimate toward the true ES.
+#
+# A numpy-only inverse-normal-CDF (Acklam rational approximation, max abs error
+# ~1.2e-9 over p in [1e-12, 1-1e-12]) keeps the stratified sampler dependency-
+# free (no scipy.stats.qmc / ppf required, matching the module's pure-numpy
+# import discipline).
+# ===========================================================================
+
+# --- Acklam inverse normal CDF coefficients (numpy-only ppf) ---------------
+_ACK_A = (-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02,
+          1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00)
+_ACK_B = (-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02,
+          6.680131188771972e+01, -1.328068155288572e+01)
+_ACK_C = (-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00,
+          -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00)
+_ACK_D = (7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00,
+          3.754408661907416e+00)
+_ACK_PLOW = 0.02425
+_ACK_PHIGH = 1.0 - _ACK_PLOW
+
+
+def _norm_ppf(p: np.ndarray) -> np.ndarray:
+    """Vectorised inverse standard-normal CDF (Acklam). numpy-only; |err|~1e-9.
+
+    Used by :func:`stratified_normal_outer_sampler` so stratification needs no
+    scipy. ``p`` is clipped to ``[1e-12, 1-1e-12]`` to stay finite.
+    """
+    p = np.clip(np.asarray(p, dtype=float), 1e-12, 1.0 - 1e-12)
+    a0, a1, a2, a3, a4, a5 = _ACK_A
+    b0, b1, b2, b3, b4 = _ACK_B
+    c0, c1, c2, c3, c4, c5 = _ACK_C
+    d0, d1, d2, d3 = _ACK_D
+    q = np.empty_like(p)
+    lo = p < _ACK_PLOW
+    hi = p > _ACK_PHIGH
+    mid = ~(lo | hi)
+    if lo.any():
+        u = np.sqrt(-2.0 * np.log(p[lo]))
+        q[lo] = (((((c0 * u + c1) * u + c2) * u + c3) * u + c4) * u + c5) / \
+                ((((d0 * u + d1) * u + d2) * u + d3) * u + 1.0)
+    if hi.any():
+        u = np.sqrt(-2.0 * np.log(1.0 - p[hi]))
+        q[hi] = -(((((c0 * u + c1) * u + c2) * u + c3) * u + c4) * u + c5) / \
+                ((((d0 * u + d1) * u + d2) * u + d3) * u + 1.0)
+    if mid.any():
+        u = p[mid] - 0.5
+        r = u * u
+        q[mid] = (((((a0 * r + a1) * r + a2) * r + a3) * r + a4) * r + a5) * u / \
+                 (((((b0 * r + b1) * r + b2) * r + b3) * r + b4) * r + 1.0)
+    return q
+
+
+def stratified_normal_outer_sampler(mu: float = 0.0, sigma: float = 1.0,
+                                    *, antithetic: bool = False) -> OuterSampler:
+    """Equal-probability **stratified** Gaussian ``OuterSampler`` (variance reduction).
+
+    Returns ``f(rng, n)`` drawing ``n`` outer realisations ``mu + sigma*Z`` where the
+    ``n`` standard-normal ``Z`` are one-per-stratum: ``u_i = (i + U_i)/n`` with
+    ``U_i ~ U[0,1)`` (a stratified sample of the uniform), then ``Z_i = Phi^{-1}(u_i)``.
+    This is a drop-in replacement for a plain ``rng.normal(mu, sigma, n)`` sampler
+    that leaves every estimand unchanged in expectation but reduces the Monte-Carlo
+    variance of tail quantile / ES estimators (guaranteed stratum coverage of the
+    upper tail). Deterministic given ``rng``.
+
+    ``antithetic=True`` reflects the stratified half ``{Z}`` with ``{-Z}`` to enforce
+    exact sample symmetry about ``mu`` (mean bias = 0 by construction); default is
+    plain stratification.
+    """
+    mu = float(mu)
+    sigma = float(sigma)
+
+    def sampler(rng: np.random.Generator, n: int) -> np.ndarray:
+        n = int(n)
+        if n <= 0:
+            return np.empty(0, dtype=float)
+        if antithetic:
+            h = (n + 1) // 2
+            u = (np.arange(h) + rng.random(h)) / h
+            z = _norm_ppf(u)
+            z = np.concatenate([z, -z])[:n]
+        else:
+            u = (np.arange(n) + rng.random(n)) / n
+            z = _norm_ppf(u)
+        return mu + sigma * z
+
+    return sampler
+
+
+def es_bias_corrected(liabilities: np.ndarray,
+                      alpha: float = DEFAULT_TAIL_CONFIDENCE,
+                      *, n_boot: int = 400, rng: np.random.Generator,
+                      method: str = "ru") -> tuple:
+    """Bootstrap bias-corrected Expected-Shortfall -> ``(es_bc, diagnostics)``.
+
+    The empirical ES (RU minimum or tail-mean) of a finite sample is a *downward*
+    biased estimator of the true ES (optimizer's curse / Jensen on a noisy convex
+    objective; the W65 stage-3 finding). The non-parametric bootstrap estimates the
+    bias as ``bias_hat = mean_b[ ES(L*_b) ] - ES(L)`` and returns the corrected
+    estimate ``ES_bc = ES(L) - bias_hat = 2*ES(L) - mean_b[ES(L*_b)]``. Pure numpy,
+    deterministic given ``rng``.
+
+    ``method="ru"`` uses the Rockafellar-Uryasev minimiser ES (the canonical tail
+    estimator); ``method="empirical"`` uses ``mean(L | L >= VaR)``.
+    """
+    L = np.asarray(liabilities, dtype=float)
+    n = L.size
+    if n == 0:
+        raise ValueError("empty liability sample")
+    if method == "ru":
+        def _es(a):
+            return ru_minimise_var_es(a, alpha)[1]
+    elif method == "empirical":
+        def _es(a):
+            return _empirical_var_es(a, alpha)[1]
+    else:
+        raise ValueError("method must be 'ru' or 'empirical'")
+    es_hat = float(_es(L))
+    nb = int(n_boot)
+    boot = np.empty(nb, dtype=float)
+    for b in range(nb):
+        boot[b] = _es(L[rng.integers(0, n, n)])
+    boot_mean = float(boot.mean())
+    bias_hat = boot_mean - es_hat
+    es_bc = es_hat - bias_hat
+    diagnostics = {
+        "es_raw": es_hat,
+        "es_bc": float(es_bc),
+        "bias_hat": float(bias_hat),
+        "boot_mean": boot_mean,
+        "boot_se": float(boot.std(ddof=1)) if nb > 1 else 0.0,
+        "n_boot": nb,
+        "method": method,
+    }
+    return float(es_bc), diagnostics

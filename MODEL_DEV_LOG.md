@@ -11342,3 +11342,37 @@ validate 177/177, loader_parity 10/10, unittest 4/4, MLMC suite 29 passed/2 scip
 `scripts/build_mlmc_tail_stage3_validation.py`, `docs/validation/MLMC_TAIL_STAGE3_VALIDATION_20260619.{md,json}`,
 `tests/test_mlmc_tail_stage3.py`. Git in fresh /tmp ext4 clone (origin ahead of stale mount: mount=W59,
 origin=W64). NEXT = W66 MLMC stage 4 (cost/variance-decay + variance reduction + ES bias correction) OR owner pivot A/B/C/D/E.
+
+## W66 (claude, 2026-06-19, 18:00Z window) — MLMC tail-estimator STAGE 4 (variance reduction + ES bias correction); VERDICT PASS
+
+Executed the explicit W65 "Next" pointer (W66 = MLMC stage 4). Resolves the stage-3 CONDITIONAL verdict
+(the 99.5% quantile/ES tail functionals were unbiased but high-variance at feasible budgets, ES single-run
+s.d. ~10%, plus a modest downward optimizer's-curse ES bias) with the two design-note tools. Efficiency /
+estimator-only; ADDITIVE; OPT-IN; no model-form change; no contract bump; no headline re-baseline; no owner
+sign-off consumed.
+
+Added (additive, ~140 lines) to `par_model_v2/projection/mlmc_inner_estimator.py`: `_norm_ppf` (numpy-only
+Acklam inverse-normal CDF, |err|~1e-9), `stratified_normal_outer_sampler` (equal-probability stratified
+Gaussian OuterSampler; drop-in; deterministic), `es_bias_corrected` (bootstrap bias-corrected ES,
+`ES_bc = 2*ES - E*[ES(L*)]`).
+
+Pre-registered stage-4 gates (PASS): on the governed-style fixed-256 estimator, stratified outer sampling
+gives a matched-cost replicate-variance reduction VaR 2.19x / ES 4.04x / SCR 2.39x at ZERO extra inner-path
+cost (640,000 inner paths both arms; stratification is free, so the factor IS the speedup) => G3 >=2x PASS
+(SCR 2.39x); bootstrap ES correction cuts the small-sample (n_outer=400) ES rel-bias -2.16% -> -0.24% (~9x)
+=> BC1 PASS; stratified `mlmc_nested_tail(L=0)` bit-for-bit == fixed + correction deterministic => G4 PASS.
+Nuance (documented in the card): stratification ALREADY removes the small-sample ES bias (stratified raw
+bias ~+0.01%) -> do NOT stack the bootstrap correction on stratification (overcorrects). MLMC telescoped
+tail stays budget-sensitive (ES can fall below VaR at small upper-level n_outer) -> recommended opt-in is
+stratified outer on the fixed-256 estimator, not the telescoped MLMC tail.
+
+ADDITIVE/opt-in: governed headline `39975.654628199336` + all governed artifacts byte-unchanged
+(offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`), contract `1.23.0`. Gates: validate 177/177,
+loader_parity 10/10, unittest 4/4, MLMC suite 41 passed (was 31; +10 stage-4) [throwaway venv numpy 2.2.6 /
+scipy 1.15.3 / pytest 9.1.0]. New files: `scripts/build_mlmc_tail_stage4_validation.py`,
+`docs/validation/MLMC_TAIL_STAGE4_VALIDATION_20260619.{md,json}`, `tests/test_mlmc_tail_stage4.py` (10/10).
+Git in fresh /tmp ext4 clone (origin ahead of stale mount: mount=W59, origin=W65; mount re-synced; mount NOT
+100% full this cycle, ~317G free). NEXT = W67 stage-4b wiring (expose stratified sampler + opt-in ES
+correction as a selectable variance-reduction MODE on the opt-in tail path, default OFF, frozen-snapshot
+equivalence gated; auto-runnable) OR owner pivot A/B/C/D/E; stage 5 (tail-MLMC as governed default) = owner
+sign-off + fresh frozen reference only.
