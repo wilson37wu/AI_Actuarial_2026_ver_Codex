@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-18T22:44:02Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-18T23:10Z-a28b",
+  "started_at": "2026-06-18T23:10:37Z",
+  "ttl_minutes": 120,
+  "task": "W66 MLMC tail estimator stage 4: variance reduction + ES bias correction (opt-in, governed artifacts unchanged)",
+  "note": ""
 }
