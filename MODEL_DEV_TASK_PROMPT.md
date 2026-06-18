@@ -41,6 +41,16 @@ force-push `main`. When in doubt, **yield**.
 
 # Automated Actuarial Model Development Task
 
+> **2026-06-19 (Window #59, claude) - VERIFICATION + OWNER DECISION BRIEF (no model-form / governed-artifact / contract change).**
+> The auto-admissible work queue is EMPTY. The offline-UI graphical track is exhausted (15 governed graphics W33-W47) and the W58 MLMC inner-estimator **stage-2 prototype** is shipped (opt-in, NOT wired into the governed run). Every remaining forward option is **owner-decision-gated**. This cycle re-ran the full integrity suite - `build_offline_home_validate` **177/177**, `offline_home_loader_parity` **10/10**, `tests/test_offline_home_validate` **4/4**, `tests/test_mlmc_inner_estimator` **8/8** (throwaway venv numpy/scipy/pandas) - all green; `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9` byte-identical W52-W59; governed artifacts byte-unchanged; headline **39,975.65** intact (1 occ); contract **1.23.0**. Git in a fresh /tmp ext4 clone; mount `.git` untouched; lock `03e37dc` acquired + released. Status emailed to owner.
+>
+> **NEXT-EXECUTION POINTER (OWNER DECISION REQUIRED - sole gate).** No autonomous task remains. The owner must pick ONE:
+> 1. **MLMC stage 3** *(recommended next forward step; auto-runnable, no headline re-baseline)* - wire opt-in `inner_estimator='mlmc'` into the governed nested run, run **G1** frozen-snapshot headline equivalence and confirm **G3** >=2x net cost cut at N_L=256.
+> 2. **A** MR-LONGEV-1 (longevity 5th driver) - model-form change, headline re-baseline.
+> 3. **B** LSMC proxy sign-off. 4. **C** Phase IGUI (Actuarial Input & Run GUI; owner-directed exclusive). 5. **D** No-prerequisite packaging (frozen compute binary). 6. **E** Declare model frontier complete & freeze.
+> Decision matrix: `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`. Authoritative in_progress pointer = `.claude-dev/MODEL_DEV_STATE.json`.
+
+
 > **2026-06-18 (Window #52, claude) — VERIFICATION / REPRODUCIBILITY HEARTBEAT (no-op-equivalent; no model-form / governed-artifact / contract change; NO new graphic).**
 > **FOURTH consecutive no-op cycle (W49–W52).** The auto-admissible offline-UI pool — 15 governed data graphics (W33–W47) **plus** the W48 navigation index — is **EXHAUSTED**; Phase IGUI is complete. Re-ran the full offline-UI gate suite on `origin/main` HEAD and confirmed **green**: `build_offline_home_validate` **177/177** ok:true; `offline_home_loader_parity` **10/10**; `tests/test_offline_home_validate` **4/4** (stdlib unittest); both inline `<script>` blocks `node --check` clean. Governed artifacts (`ui_data.json` / `ui_app.html` / `combined_model_app.html` / `model_summary_card.html` / `model_result_viewer.html`) **BYTE-UNCHANGED** (git diff clean); headline **39,975.65** intact; contract **1.23.0**; `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`. Git in a fresh `/tmp` ext4 clone; the `/sessions` mount is **100% full (0 bytes free) AND delete-forbidden**, so all work + state writes were done in the clone and pushed (origin = source of truth) and the Windows working-folder mirror **cannot be refreshed** (stale at W46). Cycle status: `docs/cycle_status/LATEST_CYCLE_STATUS_20260618_w52_verify.md`.
 >

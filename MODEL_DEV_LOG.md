@@ -11258,3 +11258,24 @@ Advanced the W57 design-note→prototype sequence (Option 3, MLMC inner loop). N
 - Gates: G2 ≤1% rel-err PASS (analytic 0.42%; REAL governed inner sampler max 0.115% across 4 short-rate states); G4 reproducibility PASS; G5 no-spillover PASS; G3 cost MEASURED 1.03× (toy; ≥2× = real-SCR stage-3); G1 frozen-snapshot equivalence DEFERRED stage-3.
 - Verification GREEN: build_offline_home_validate 177/177, loader_parity 10/10, unittest 4/4, node --check clean; offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52–W58); governed artifacts byte-unchanged; headline 39,975.65 intact; contract 1.23.0.
 - Next: owner may approve MLMC stage 3 (wire flag, run G1/G3 at N_L=256 — auto-runnable, no re-baseline) or pick A/B/C/D/E. Stage 5 (MLMC default) needs sign-off.
+
+---
+
+## Window #59 — 2026-06-19 (claude) — VERIFICATION + OWNER DECISION BRIEF
+
+No model-form / governed-artifact / contract change. Auto-admissible work queue is empty:
+the offline-UI graphical track is exhausted (15 governed graphics W33–W47) and the W58 MLMC
+inner-estimator stage-2 prototype is shipped (opt-in, not wired into the governed run). All
+remaining forward options are owner-decision-gated: MLMC **stage 3** (wire opt-in
+`inner_estimator='mlmc'` into the governed nested run + G1 frozen-snapshot equivalence +
+confirm G3 ≥2× at N_L=256 — auto-runnable, no headline re-baseline), or model-frontier
+options **A** MR-LONGEV-1 / **B** LSMC sign-off / **C** Phase IGUI / **D** Packaging / **E** Freeze.
+
+Full integrity suite re-run, all green and byte-stable vs W58/origin-main:
+`build_offline_home_validate` 177/177, `offline_home_loader_parity` 10/10,
+`tests/test_offline_home_validate` 4/4, `tests/test_mlmc_inner_estimator` 8/8 (throwaway venv
+with numpy/scipy/pandas). `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`
+(byte-identical W52–W59); governed artifacts byte-unchanged (empty `git status`); headline
+`39,975.65` intact (1 occ); contract `1.23.0`. Git in a fresh `/tmp` ext4 clone of
+`origin/main`; mount `.git` untouched; lock `03e37dc` acquired and released at cycle end.
+Status emailed to owner. NEXT = owner decision; recommended forward step = MLMC stage 3.
