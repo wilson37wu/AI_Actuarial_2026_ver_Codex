@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-18T00:07Z-6cbe",
-  "started_at": "2026-06-18T00:07:54Z",
-  "ttl_minutes": 120,
-  "task": "W46 offline-UI copula AIC/loglik strip",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-18T00:14:24Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
