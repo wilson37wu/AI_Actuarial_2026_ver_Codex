@@ -11305,3 +11305,8 @@ New: `scripts/build_mlmc_stage3_validation.py`,
 03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52–W60); governed artifacts
 byte-unchanged; headline 39,975.65 (1 occ); contract 1.23.0. NEXT (W61): owner
 decision — MLMC stage 5 needs sign-off + a quantile-MLMC estimator; else A/B/C/D/E.
+
+
+## W63 (claude, 2026-06-19 18:00Z) — Quantile/ES-MLMC estimator design note (stage-5 prerequisite b; design-only)
+
+Shipped `docs/research/MLMC_QUANTILE_ESTIMATOR_DESIGN_NOTE_20260619.md`. Establishes the shipped mean-MLMC estimator (identity_payoff) cannot cover the governed SCR `VaR_0.995(L)-E[L]` (nonlinear tail functional, O(1/N_inner) Gordy-Juneja inner-sampling bias); prescribes the Rockafellar-Uryasev ES representation (Lipschitz objective) as primary estimator + smoothed-indicator CDF oracle + antithetic coupling, and pre-registers a new bias gate G0 atop G1-G5. Design-only: no model-form/contract/governed-artifact change. Gates green: build_offline_home_validate 177/177, loader_parity 10/10, offline unittest 4/4, MLMC 15 passed +1 scipy-skip; offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52-W63); headline 39,975.65 (1 occ); contract 1.23.0. NEXT = W64 MLMC stage-2 quantile prototype (mlmc_nested_tail, opt-in) OR owner pivot A/B/C/D/E.
