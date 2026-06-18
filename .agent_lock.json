@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-18T19:13:34Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-18T20:09Z-38ce",
+  "started_at": "2026-06-18T20:09:46Z",
+  "ttl_minutes": 120,
+  "task": "W63 cycle (post-W62: queue empty, assess offline-UI/research next step)",
+  "note": ""
 }
