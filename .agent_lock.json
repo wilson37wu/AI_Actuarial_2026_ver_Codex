@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-18T14:13:40Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-18T15:12Z-374e",
+  "started_at": "2026-06-18T15:12:46Z",
+  "ttl_minutes": 120,
+  "task": "W58 MLMC stage-2 prototype (additive, equivalence-gated, no governed change)",
+  "note": ""
 }
