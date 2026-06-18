@@ -1,9 +1,9 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-18T12:09:00Z",
-  "last_run_duration_minutes": 18,
-  "last_run_note": "Window #56 (claude). VERIFICATION + decisive Owner Decision Brief (loop-breaking; eighth cycle W49-W56 with no admissible work beyond green-gate verification). NO model-form / governed-artifact / contract change; NO new graphic. offline_home.html byte-identical to W52-W55 (md5 03d6538d3cae9efb83062ecbfab096e9). Gates green+reproducible: build_offline_home_validate 177/177 ok:true, offline_home_loader_parity 10/10, tests/test_offline_home_validate 4/4 (stdlib unittest), both inline <script> node --check clean. Governed artifacts byte-unchanged; headline 39,975.654628199336 intact (1 occ); contract 1.23.0. ADDED (docs only): docs/research/OWNER_DECISION_BRIEF_20260618.md -- one-page memo declaring the owner offline-UI directive FULFILLED (15 inline-SVG charts + jump-nav + client-side snapshot loader + Reset, zero-install/zero-network; companion ui_app/model_result_viewer/combined_model_app/model_summary_card) and forcing the single owner decision A(longevity 5th driver, sign-off) / B(LSMC, sign-off) / C(Phase IGUI, auto-runnable once confirmed) / D(Packaging, auto-runnable once selected) / E(Freeze); recommend C or E. Emailed owner the brief. STOP repeating heartbeats as progress -- the only remaining gate is the owner decision.",
+  "last_run": "2026-06-18T14:10:00Z",
+  "last_run_duration_minutes": 12,
+  "last_run_note": "Window #57 (claude). LOOP-BREAKING FORWARD RESEARCH (design-note-first; NOT another verification heartbeat, NOT a model-form change, NO governed-artifact change, NO contract bump). Per the standing instruction to research further model improvement once the offline-UI directive is fulfilled, authored docs/research/MLMC_NESTED_LOOP_DESIGN_NOTE_20260618.md - the design-note-first prerequisite the MODEL_IMPROVEMENT_RESEARCH_20260617 matrix names for Option 3 (MLMC nested-loop inner estimator; lowest-risk auto-admissible pivot, equivalence-gated, no re-baseline). Note specifies methodology (telescoping multilevel estimator over inner-path ladder + antithetic inner sampling), integration as an OPT-IN inner_estimator flag with 'fixed' default (headline byte-identical), 5 pre-registered gates (same-headline equivalence, <=1% tail rel-err, >=2x cost cut, reproducibility, no-spillover), staged plan, rollback, one-line owner ask. Verification this cycle: build_offline_home_validate 177/177 ok:true; offline_home_loader_parity 10/10; tests/test_offline_home_validate 4/4 (stdlib unittest); offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 byte-identical to W52-W56; governed artifacts git-clean; headline 39,975.65 intact (1 occ); contract 1.23.0. Git in fresh /tmp ext4 clone; mount .git untouched; /sessions mount reported full+delete-forbidden so all writes done in the clone. Cycle status: docs/cycle_status/LATEST_CYCLE_STATUS_20260618_w57_mlmc_design_note.md.",
   "current_phase": "Offline-UI graphical track (owner-directed): landing page now carries FIFTEEN zero-install, zero-network, decision-neutral inline-SVG graphics over governed model output (W33-W47); W47 = copula goodness-of-fit log-likelihood companion to the W46 AIC strip. The natural governed copula model-selection / fit metrics (aggregated SCR, AIC, upper-tail-dependence, log-likelihood) are ALL now shown; auto-admissible offline-UI candidates EXHAUSTED. STRONGEST RECOMMENDATION: owner should declare the offline-UI graphical track COMPLETE and pivot to the MODEL frontier (MR-LONGEV-1 / LSMC / MLMC sign-off; Packaging A/B/C; or freeze) or Phase IGUI. Decision matrix docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md.",
   "overall_status": "W56_VERIFICATION_PLUS_OWNER_DECISION_BRIEF_LOOP_BREAKING_OFFLINE_UI_DIRECTIVE_FULFILLED_15_CHARTS_PLUS_NAV_PLUS_SNAPSHOT_LOADER_ZERO_INSTALL_GATES_GREEN_177_177_10_10_4_4_NODE_CHECK_CLEAN_HEADLINE_39975.65_INTACT_CONTRACT_1.23.0_GOVERNED_ARTIFACTS_BYTE_UNCHANGED_ONLY_REMAINING_GATE_IS_OWNER_DECISION_A_LONGEVITY_B_LSMC_C_PHASE_IGUI_D_PACKAGING_E_FREEZE_RECOMMEND_C_OR_E",
   "phases": {
@@ -3102,5 +3102,26 @@
     ],
     "decision_required": "A longevity 5th driver (sign-off) / B LSMC (sign-off) / C Phase IGUI (auto once confirmed) / D Packaging (auto once selected) / E Freeze; recommend C or E",
     "emailed_owner": true
+  },
+  "cycle_2026_06_18_w57_mlmc_design_note": {
+    "window": 57,
+    "owner": "claude",
+    "date": "2026-06-18T14:10:00Z",
+    "type": "design-note-first forward research (loop-breaking)",
+    "model_form_change": false,
+    "contract_change": false,
+    "headline_rebaselined": false,
+    "deliverable": "docs/research/MLMC_NESTED_LOOP_DESIGN_NOTE_20260618.md",
+    "option": "Option 3 (MLMC nested inner-loop estimator) per MODEL_IMPROVEMENT_RESEARCH_20260617",
+    "gates_verified": {
+      "build_offline_home_validate": "177/177",
+      "offline_home_loader_parity": "10/10",
+      "unittest_test_offline_home_validate": "4/4",
+      "offline_home_md5": "03d6538d3cae9efb83062ecbfab096e9",
+      "headline": "39975.65",
+      "contract": "1.23.0",
+      "governed_artifacts": "byte-unchanged"
+    },
+    "next": "Owner decision still the sole gate among A/B/C/D/E. If owner approves MLMC stage 2, prototype behind opt-in flag; else single verification pass + re-send brief."
   }
 }

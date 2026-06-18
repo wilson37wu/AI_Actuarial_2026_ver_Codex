@@ -11244,3 +11244,8 @@ Invariants: governed artifacts (ui_data.json, ui_app.html, combined_model_app.ht
 Environment: `/sessions` mount **100% full (0 bytes free)**; delete/rename blocked by virtiofs. All writes were done in the /tmp ext4 clone and pushed — **origin = source of truth**; the stale mount checkout (last at W46) was not modified.
 
 **ESCALATION (sixth straight no-op).** Continued verification heartbeats add no further value. Everything remaining is **owner-gated**: (a) MR-LONGEV-1 longevity 5th driver [model-FORM change, sign-off]; (b) LSMC SCR proxy [sign-off]; (c) Packaging Option A publish [code-signing cert + channel, owner/infra]; (d) **declare the auto-development frontier COMPLETE and FREEZE** (stop the heartbeats). Recommend (d) absent owner direction. Decision matrix: `docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md`. Cycle status: `docs/cycle_status/LATEST_CYCLE_STATUS_20260618_w54_verify.md`.
+
+
+---
+## 2026-06-18 W57 (claude) — MLMC nested-loop design note (loop-breaking forward research)
+Authored docs/research/MLMC_NESTED_LOOP_DESIGN_NOTE_20260618.md (design-note-first prerequisite for Option 3, the auto-admissible MLMC inner-loop estimator pivot; estimator-only, no model-form change, equivalence-gated, no re-baseline). 5 pre-registered gates incl. same-headline equivalence + <=1% tail rel-err + >=2x cost cut. Verification green+reproducible: build_offline_home_validate 177/177; loader_parity 10/10; unittest 4/4; offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52-W56); headline 39,975.65 intact; contract 1.23.0; governed artifacts byte-unchanged. Sole remaining gate = owner decision A/B/C/D/E (rec C or E); MLMC stage 2 now de-risked + approvable without re-baseline.
