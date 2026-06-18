@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-18T21:11Z-b262",
-  "started_at": "2026-06-18T21:11:18Z",
-  "ttl_minutes": 120,
-  "task": "W64 MLMC stage-2 quantile/ES prototype (mlmc_nested_tail, opt-in, auto-runnable)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-18T21:26:18Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
