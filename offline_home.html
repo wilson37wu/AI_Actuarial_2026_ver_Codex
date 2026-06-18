@@ -226,6 +226,15 @@
   .cuval { fill:var(--ink); font-size:12px; font-weight:650; }
   .cubar { fill:#6f8ab7; }
   .cucap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .cabridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .cabridge svg { width:100%; height:auto; display:block; }
+  .cabar-label { fill:var(--mut); font-size:12px; }
+  .caval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .cabar { fill:#8a93a3; }
+  .cabar.sel { fill:#2ec27e; }
+  .casel { fill:var(--ok); font-size:10.5px; font-weight:700; }
+  .cacap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -537,6 +546,44 @@
   <p class="sub" style="margin-top:8px; font-size:12.5px;">Loading a snapshot only
     re-renders the figures on this page from that file. It changes no governed artifact
     and uploads nothing; Reset restores the built-in governed snapshot.</p>
+    basis &mdash; this chart computes nothing.</p>
+
+  <h2>Copula model-selection criterion &mdash; fitted candidates (AIC)</h2>
+  <div class="cabridge">
+  <svg id="copulaaic" viewBox="0 0 560 122" role="img" aria-label="Copula AIC bar chart: the governed fitted full-copula candidate Akaike Information Criterion values on one shared scale, with the model AIC-selected copula marked. Read verbatim from the model-output snapshot.">
+    <text class="cabar-label" x="2" y="17">Gaussian</text><rect class="cabar sel" data-key="gaussian" x="2" y="22" rx="3" width="360.0" height="15"></rect><text class="caval" data-key="gaussian" x="368.0" y="34">-332.6774</text>
+    <text class="casel" data-series="casel" data-key="gaussian" x="368.0" y="47">&#9656; AIC-selected</text>
+    <text class="cabar-label" x="2" y="51">Student-t</text><rect class="cabar" data-key="student_t" x="2" y="56" rx="3" width="350.9" height="15"></rect><text class="caval" data-key="student_t" x="358.9" y="68">-324.2924</text>
+    <text class="cabar-label" x="2" y="85">Survival Clayton</text><rect class="cabar" data-key="survival_clayton" x="2" y="90" rx="3" width="13.0" height="15"></rect><text class="caval" data-key="survival_clayton" x="21.0" y="102">-12.0279</text>
+  </svg>
+  </div>
+  <p class="cacap">Each bar is one <b>fitted</b> dependence-copula candidate's governed
+    <b>AIC</b> (Akaike Information Criterion) &mdash; the actual statistic the model's own copula
+    model-selection minimises (lower AIC = better fit after the parameter penalty; per Solvency II
+    Art. 234) &mdash; with bar length scaled to the largest |AIC| on a shared scale and the signed
+    value printed verbatim. The green bar tagged <b>&#9656; AIC-selected</b> is the minimum-AIC
+    copula the model selected; it is shown for transparency, not chosen here, and the governed
+    headline stays the frozen-t basis. Each value is read verbatim from the model-output snapshot
+    &mdash; this chart computes nothing.</p>
+
+  <h2>Load a different snapshot (optional)</h2>
+  <div class="loader" id="loader">
+    <div class="drop" id="drop" tabindex="0" role="button"
+      aria-label="Load a different ui_data.json snapshot from this computer">
+      Drag a <b>ui_data.json</b> here, or <b>click to choose a file</b>, to refresh the
+      figures above from a different model-output snapshot.<br/>
+      <span style="font-size:12px">Stays fully offline &mdash; the file is read locally in
+      your browser; nothing leaves this computer.</span>
+      <input type="file" id="file" accept=".json,application/json" style="display:none"/>
+    </div>
+    <div class="lbtns">
+      <button class="btn" id="reset" type="button">Reset to built-in snapshot</button>
+    </div>
+    <div class="lbanner" id="lbanner" role="status" aria-live="polite"></div>
+  </div>
+  <p class="sub" style="margin-top:8px; font-size:12.5px;">Loading a snapshot only
+    re-renders the figures on this page from that file. It changes no governed artifact
+    and uploads nothing; Reset restores the built-in governed snapshot.</p>
 
   <h2>Which view do I want?</h2>
   <p class="sub" style="margin-top:-4px; font-size:12.5px;">Pick by what you want to do
@@ -604,7 +651,7 @@
   </div>
 
   <footer>
-    Built 2026-06-17T23:12:51Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-18T00:12:17Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -635,6 +682,7 @@
   var DC = { x0:12, x1:508 };  // mirrors DIVCREDIT_GEO (x-scale) in the Python builder
   var CS_MAXW = 360;  // mirrors COPULASELECT_MAXW in scripts/build_offline_home.py
   var CU_MAXW = 360;  // mirrors COPULAUTD_MAXW in scripts/build_offline_home.py
+  var CA_MAXW = 360;  // mirrors COPULAAIC_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -1050,6 +1098,40 @@
       if (txt){ txt.setAttribute("x", (w + 8).toFixed(1)); txt.textContent = fmt(v, 4); }
     });
   }
+  function render(ex, fromLoad){  }
+  // Redraw the copula AIC bars from a (possibly loaded) snapshot. Pure display: each fitted
+  // candidate's bar width = |aic|/max(|aic|) scaled to CA_MAXW, mirroring _copulaaic_svg. AIC is
+  // the governed selection criterion, so the highlight follows the governed selected_copula.
+  function redrawCopulaAic(cap, cur){
+    var svg = document.getElementById("copulaaic");
+    if (!svg || !cap) return;
+    var cop = cap.copula || {};
+    var lst = cop.copulas || cop.candidates || [];
+    var sel = String(cap.selected_copula || "").toLowerCase();
+    var vals = [];
+    lst.forEach(function(c){
+      if (c && typeof c === "object" && isFinite(Number(c.aic)))
+        vals.push(Math.abs(Number(c.aic)));
+    });
+    var mx = vals.length ? Math.max.apply(null, vals) : 0;
+    if (!(mx > 0)) return;
+    lst.forEach(function(c){
+      if (!c || typeof c !== "object") return;
+      var name = String(c.name);
+      var v = Number(c.aic);
+      if (!isFinite(v)) return;
+      var w = Math.abs(v) / mx * CA_MAXW;
+      var rect = svg.querySelector('rect.cabar[data-key="' + name + '"]');
+      var txt = svg.querySelector('text.caval[data-key="' + name + '"]');
+      var tag = svg.querySelector('text.casel[data-key="' + name + '"]');
+      if (rect){
+        rect.setAttribute("width", w.toFixed(1));
+        rect.setAttribute("class", name.toLowerCase() === sel ? "cabar sel" : "cabar");
+      }
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1)); txt.textContent = fmt(v, 4); }
+      if (tag) tag.setAttribute("x", (w + 8).toFixed(1));
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -1103,6 +1185,8 @@
         redrawCopulaSelect(d.capital || {}, _cur12); } catch(e){}
       try { var _cur13 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawCopulaUtd(d.capital || {}, _cur13); } catch(e){}
+      try { var _cur14 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawCopulaAic(d.capital || {}, _cur14); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -1142,6 +1226,8 @@
     DEFAULT.copulaselectHTML = _cs0 ? _cs0.innerHTML : null;
     var _cu0 = document.getElementById("copulautd");
     DEFAULT.copulautdHTML = _cu0 ? _cu0.innerHTML : null;
+    var _ca0 = document.getElementById("copulaaic");
+    DEFAULT.copulaaicHTML = _ca0 ? _ca0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -1198,6 +1284,8 @@
       if (_cssvg && DEFAULT.copulaselectHTML != null) _cssvg.innerHTML = DEFAULT.copulaselectHTML;
       var _cusvg = document.getElementById("copulautd");
       if (_cusvg && DEFAULT.copulautdHTML != null) _cusvg.innerHTML = DEFAULT.copulautdHTML;
+      var _casvg = document.getElementById("copulaaic");
+      if (_casvg && DEFAULT.copulaaicHTML != null) _casvg.innerHTML = DEFAULT.copulaaicHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });

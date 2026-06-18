@@ -321,6 +321,31 @@ def main() -> int:
     ok("copulautd derives nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower())
     ok("copulautd loader-parity hook", "redrawCopulaUtd" in html)
+    # Copula AIC strip (W46, additive, inline-SVG, zero JS dep, zero net)
+    _ca_cands = [(str(c.get("name")), float(c.get("aic")))
+                 for c in _cs_list
+                 if isinstance(c, dict) and isinstance(c.get("aic"), (int, float))
+                 and c.get("name") is not None]
+    ok("copulaaic heading", "copula model-selection criterion" in html.lower())
+    ok("copulaaic svg", 'id="copulaaic"' in html)
+    ok("copulaaic >=2 fitted candidates", len(_ca_cands) >= 2)
+    ok("copulaaic bars == candidate count",
+       html.count('class="cabar"') + html.count('class="cabar sel"') == len(_ca_cands))
+    ok("copulaaic value texts == candidate count",
+       html.count('class="caval"') == len(_ca_cands))
+    ok("copulaaic AIC values verbatim (4dp signed)",
+       all(f"{v:,.4f}" in html for _, v in _ca_cands) and len(_ca_cands) > 0)
+    ok("copulaaic candidate keys present",
+       all(('data-key="%s"' % n) in html for n, _ in _ca_cands))
+    ok("copulaaic AIC-selected copula is governed, minimum-AIC & marked",
+       (_cs_sel in [n.lower() for n, _ in _ca_cands])
+       and (_cs_sel == min(_ca_cands, key=lambda t: t[1])[0].lower())
+       and ('class="cabar sel"' in html) and ("AIC-selected" in html))
+    ok("copulaaic selected AIC matches selected_copula (governed consistency)",
+       any(n.lower() == _cs_sel and f"{v:,.4f}" in html for n, v in _ca_cands))
+    ok("copulaaic derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("copulaaic loader-parity hook", "redrawCopulaAic" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))
