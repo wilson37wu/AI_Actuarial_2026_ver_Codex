@@ -11249,3 +11249,12 @@ Environment: `/sessions` mount **100% full (0 bytes free)**; delete/rename block
 ---
 ## 2026-06-18 W57 (claude) — MLMC nested-loop design note (loop-breaking forward research)
 Authored docs/research/MLMC_NESTED_LOOP_DESIGN_NOTE_20260618.md (design-note-first prerequisite for Option 3, the auto-admissible MLMC inner-loop estimator pivot; estimator-only, no model-form change, equivalence-gated, no re-baseline). 5 pre-registered gates incl. same-headline equivalence + <=1% tail rel-err + >=2x cost cut. Verification green+reproducible: build_offline_home_validate 177/177; loader_parity 10/10; unittest 4/4; offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52-W56); headline 39,975.65 intact; contract 1.23.0; governed artifacts byte-unchanged. Sole remaining gate = owner decision A/B/C/D/E (rec C or E); MLMC stage 2 now de-risked + approvable without re-baseline.
+
+---
+## W58 — 2026-06-18 (claude) — MLMC stage-2 prototype (estimator-only, additive, opt-in)
+Advanced the W57 design-note→prototype sequence (Option 3, MLMC inner loop). NOT wired into the governed run.
+- NEW `par_model_v2/projection/mlmc_inner_estimator.py`: telescoping multilevel inner estimator (ladder N_l=N0·M^l, antithetic fine/coarse coupling, optimal-allocation diagnostic, governed `_inner_pathwise_pvs` adapter); opt-in, default "fixed".
+- NEW `tests/test_mlmc_inner_estimator.py` 8/8 pass. NEW `scripts/build_mlmc_stage2_validation.py` → `docs/validation/MLMC_STAGE2_PROTOTYPE_20260618.{json,md}`.
+- Gates: G2 ≤1% rel-err PASS (analytic 0.42%; REAL governed inner sampler max 0.115% across 4 short-rate states); G4 reproducibility PASS; G5 no-spillover PASS; G3 cost MEASURED 1.03× (toy; ≥2× = real-SCR stage-3); G1 frozen-snapshot equivalence DEFERRED stage-3.
+- Verification GREEN: build_offline_home_validate 177/177, loader_parity 10/10, unittest 4/4, node --check clean; offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52–W58); governed artifacts byte-unchanged; headline 39,975.65 intact; contract 1.23.0.
+- Next: owner may approve MLMC stage 3 (wire flag, run G1/G3 at N_L=256 — auto-runnable, no re-baseline) or pick A/B/C/D/E. Stage 5 (MLMC default) needs sign-off.
