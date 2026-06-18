@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-18T17:08Z-58b5",
-  "started_at": "2026-06-18T17:08:23Z",
-  "ttl_minutes": 120,
-  "task": "W60 (claude 18:00) - investigate MLMC stage-3 admissibility / verification + owner brief",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-18T17:20:13Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
