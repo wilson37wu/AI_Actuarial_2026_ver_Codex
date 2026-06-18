@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-18T00:14:24Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-18T01:09Z-628c",
+  "started_at": "2026-06-18T01:09:08Z",
+  "ttl_minutes": 120,
+  "task": "W47 offline-UI copula log-likelihood strip (additive, decision-neutral)",
+  "note": ""
 }
