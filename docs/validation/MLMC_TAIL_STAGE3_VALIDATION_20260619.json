@@ -1,0 +1,195 @@
+{
+  "title": "MLMC quantile/ES tail estimator -- stage-3 validation",
+  "window": "W65",
+  "generated_utc": "2026-06-18T22:39:27Z",
+  "classification": "efficiency / estimator-only; ADDITIVE; OPT-IN; no model-form change; no contract bump; no headline re-baseline; no owner sign-off consumed",
+  "design_note": "docs/research/MLMC_QUANTILE_ESTIMATOR_DESIGN_NOTE_20260619.md",
+  "stage2_evidence": "docs/validation/MLMC_TAIL_STAGE2_PROTOTYPE_20260619.md",
+  "testbed": {
+    "model": "analytic Normal nested",
+    "M_X": 0.02,
+    "S_X": 0.01,
+    "SIGMA_INNER": 0.05,
+    "alpha": 0.995
+  },
+  "governed_headline": "39975.654628199336",
+  "governed_default": "fixed (unchanged)",
+  "benchmark": {
+    "var": 0.04694017788269548,
+    "es": 0.050337266556384534,
+    "scr": 0.026934861134205578,
+    "var_emp": 0.04694020356710136,
+    "es_emp": 0.0503372665563845,
+    "mean_l": 0.0200053167484899,
+    "n_outer": 150000,
+    "method": "vectorised_inner_mean_reduction",
+    "boot": {
+      "var": {
+        "se": 9.226418115271545e-05,
+        "lo": 0.04677557230160212,
+        "hi": 0.04715478023539168
+      },
+      "es": {
+        "se": 0.00017200938733684666,
+        "lo": 0.04998249782125345,
+        "hi": 0.05067684844299428
+      },
+      "scr": {
+        "se": 9.049347039292737e-05,
+        "lo": 0.026757991921347066,
+        "hi": 0.02712673910213153
+      }
+    },
+    "cross_check": {
+      "module": {
+        "var": 0.04753036409696654,
+        "es": 0.05103980367940455,
+        "scr": 0.027466324109577372,
+        "mean_l": 0.020064039987389166,
+        "n_outer": 18000,
+        "method": "module_nested_single_level_tail"
+      },
+      "rel_diff": {
+        "var": 0.012573156747423217,
+        "es": 0.013956600568151182,
+        "scr": 0.01973141694415009
+      }
+    }
+  },
+  "analytic_truth": {
+    "var": 0.04698672955771909,
+    "es": 0.050298682758511945,
+    "scr": 0.02698672955771909
+  },
+  "estimator_mean": {
+    "var": 0.048043812082959915,
+    "es": 0.04720673470846909,
+    "scr": 0.028053409394077865
+  },
+  "se_bias": {
+    "var": 0.00041353874288539016,
+    "es": 0.0010479219733547243,
+    "scr": 0.00040455500138592866
+  },
+  "pre_registered_gates": {
+    "VaR": {
+      "benchmark": 0.04694017788269548,
+      "truth": 0.04698672955771909,
+      "estimator_mean": 0.048043812082959915,
+      "rel_err_vs_bench": 0.02351150443064877,
+      "rel_err_vs_truth": 0.022497469715194594,
+      "boot_se": 9.226418115271545e-05,
+      "ci95": [
+        0.04677557230160212,
+        0.04715478023539168
+      ],
+      "g1_in_ci": false,
+      "g2_rel_pass_vs_truth": false,
+      "se_bias": 0.00041353874288539016,
+      "bias_vs_truth": 0.001057082525240824,
+      "bias_ci95": [
+        0.00024654658918545926,
+        0.0018676184612961885
+      ],
+      "bias_ci_contains_zero": false,
+      "spread_vs_truth": {
+        "min": 0.00014354390270830447,
+        "median": 0.0348128801759444,
+        "max": 0.12083778902368887,
+        "mean": 0.03725696777570351,
+        "est_sd": 0.002025917817882426
+      }
+    },
+    "ES": {
+      "benchmark": 0.050337266556384534,
+      "truth": 0.050298682758511945,
+      "estimator_mean": 0.04720673470846909,
+      "rel_err_vs_bench": 0.06219113714505786,
+      "rel_err_vs_truth": 0.061471749963861864,
+      "boot_se": 0.00017200938733684666,
+      "ci95": [
+        0.04998249782125345,
+        0.05067684844299428
+      ],
+      "g1_in_ci": false,
+      "g2_rel_pass_vs_truth": false,
+      "se_bias": 0.0010479219733547243,
+      "bias_vs_truth": -0.003091948050042856,
+      "bias_ci95": [
+        -0.005145875117818116,
+        -0.001038020982267596
+      ],
+      "bias_ci_contains_zero": false,
+      "spread_vs_truth": {
+        "min": 0.014451943043043553,
+        "median": 0.08832988412381798,
+        "max": 0.24568566973443265,
+        "mean": 0.09800507915496204,
+        "est_sd": 0.005133748249939008
+      }
+    },
+    "SCR": {
+      "benchmark": 0.026934861134205578,
+      "truth": 0.02698672955771909,
+      "estimator_mean": 0.028053409394077865,
+      "rel_err_vs_bench": 0.041527901491639825,
+      "rel_err_vs_truth": 0.039526087593436066,
+      "boot_se": 9.049347039292737e-05,
+      "ci95": [
+        0.026757991921347066,
+        0.02712673910213153
+      ],
+      "g1_in_ci": false,
+      "g2_rel_pass_vs_truth": false,
+      "se_bias": 0.00040455500138592866,
+      "bias_vs_truth": 0.0010666798363587748,
+      "bias_ci95": [
+        0.0002737520336423547,
+        0.001859607639075195
+      ],
+      "bias_ci_contains_zero": false,
+      "spread_vs_truth": {
+        "min": 0.0006932357654335743,
+        "median": 0.05672007756479088,
+        "max": 0.2082597744671098,
+        "mean": 0.0637109132380236,
+        "est_sd": 0.001981906652572933
+      }
+    }
+  },
+  "summary": {
+    "identity_bitforbit": true,
+    "deterministic": true,
+    "g0_unbiased_all": false,
+    "VaR_relerr_vs_truth": 0.022497469715194594,
+    "ES_relerr_vs_truth": 0.061471749963861864,
+    "SCR_relerr_vs_truth": 0.039526087593436066,
+    "ES_single_run_sd_pct": 10.20652623168394,
+    "overall": "CONDITIONAL",
+    "elapsed_s": 26.1
+  },
+  "config": {
+    "bench_outer": 150000,
+    "boot": 400,
+    "cross_outer": 18000,
+    "R": 24,
+    "n0": 16,
+    "alloc": [
+      8000,
+      3500,
+      1700,
+      850,
+      420
+    ],
+    "ladder": [
+      16,
+      32,
+      64,
+      128,
+      256
+    ],
+    "n_inner": 256,
+    "mlmc_inner_cost": 565120
+  },
+  "owner_gate_remaining": "stage 4 (G3 cost/variance-decay at N_L=256 with larger budget + outer-loop variance reduction -> merge-as-opt-in vs shelve); stage 5 (quantile-MLMC as governed default) needs owner sign-off + fresh frozen reference"
+}

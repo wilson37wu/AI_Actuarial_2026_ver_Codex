@@ -11324,3 +11324,21 @@ Results: telescoping identity G4 bit-for-bit (mlmc L=0 == fixed on VaR/ES/SCR/me
 Ops: all git in a fresh /tmp ext4 clone of origin/main (mount 100% full + delete-forbidden; pip -> /tmp/pylibs); mount .git untouched; origin/main is source of truth. Lock acquired + released.
 
 Next: W65 = stage 3 (G0/G1/G2 bias+equivalence+tail-accuracy validation card vs fixed-256 on the frozen snapshot; auto-runnable). Then stage 4 (G3 cost/variance-decay => merge-as-opt-in vs shelve). Stage 5 (governed default) = owner sign-off only. Owner pivot options remain open (Phase IGUI is the owner's stated exclusive next major initiative).
+
+---
+
+## W65 (claude, 2026-06-19, 18:00Z slot) — MLMC stage-3 tail validation (G0/G1/G2); VERDICT CONDITIONAL
+
+Stage 3 of the quantile/ES MLMC design note: validated the W64 opt-in `mlmc_nested_tail` against a
+fixed-256 governed-style benchmark (vectorised exact inner-mean reduction + bootstrap CI; cross-checked
+≤1.97% vs the module explicit-draw benchmark and ≤0.19% vs closed-form Normal truth). **Robust facts PASS:**
+telescoping identity (`L=0`==fixed) bit-for-bit, deterministic, estimator consistent. **Central finding:**
+the quantile/ES tail functionals are high-variance at feasible R (ES single-run s.d. ≈10%; replicate-mean
+rel-err vs truth ≈ VaR 2.3% / ES 6.1% / SCR 4.0%) and ES carries a modest downward optimizer's-curse bias,
+so **G1/G2 accuracy are Monte-Carlo-resolution-limited** and deferred to stage 4 (variance reduction +
+ES bias correction). ADDITIVE/opt-in: governed headline `39975.654628199336` + all governed artifacts
+**byte-unchanged** (offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`), contract `1.23.0`. Gates:
+validate 177/177, loader_parity 10/10, unittest 4/4, MLMC suite 29 passed/2 scipy-skip. New files:
+`scripts/build_mlmc_tail_stage3_validation.py`, `docs/validation/MLMC_TAIL_STAGE3_VALIDATION_20260619.{md,json}`,
+`tests/test_mlmc_tail_stage3.py`. Git in fresh /tmp ext4 clone (origin ahead of stale mount: mount=W59,
+origin=W64). NEXT = W66 MLMC stage 4 (cost/variance-decay + variance reduction + ES bias correction) OR owner pivot A/B/C/D/E.
