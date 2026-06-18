@@ -76,7 +76,8 @@ import json
 import time
 import uuid
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Tuple
+from typing import (TYPE_CHECKING, Callable, Dict, List, Optional,
+                    Sequence, Tuple)
 
 import numpy as np
 
@@ -366,9 +367,11 @@ class NestedTVOGResult:
     run_id: str
     duration_seconds: float
     audit_entry_id: Optional[str] = None
+    inner_estimator: str = "fixed"
+    mlmc_diagnostics: Optional[dict] = None
 
     def summary(self) -> dict:
-        return {
+        out = {
             "capital": self.capital.summary(),
             "n_outer": self.n_outer,
             "n_inner": self.n_inner,
@@ -377,6 +380,12 @@ class NestedTVOGResult:
             "run_id": self.run_id,
             "duration_seconds": round(self.duration_seconds, 4),
         }
+        # ADDITIVE: only surfaced for an opt-in MLMC run; fixed runs are
+        # byte-identical to the pre-stage-3 summary (mlmc_diagnostics is None).
+        if self.mlmc_diagnostics is not None:
+            out["inner_estimator"] = self.inner_estimator
+            out["mlmc_diagnostics"] = self.mlmc_diagnostics
+        return out
 
 
 class NestedStochasticTVOGEngine:
@@ -422,7 +431,21 @@ class NestedStochasticTVOGEngine:
         governance_store: Optional["GovernanceStore"] = None,
         actor: str = "NestedStochasticTVOGEngine",
         phase: str = "Phase 14: Production Residual Closure and Model Sophistication",
+        inner_estimator: str = "fixed",
+        mlmc_n0: int = 16,
+        mlmc_M: int = 2,
+        mlmc_L: int = 4,
+        mlmc_n_outer_per_level: Optional[Sequence[int]] = None,
     ) -> NestedTVOGResult:
+        # OPT-IN inner estimator. "fixed" (default) is the governed single-level
+        # nested estimator and is byte-identical to every prior run. "mlmc"
+        # additionally attaches mean-liability efficiency diagnostics (stage 3);
+        # it NEVER changes the governed SCR/VaR/ES headline, which is a quantile
+        # and stays fixed single-level (MLMC-as-default is owner-gated stage 5).
+        if inner_estimator not in ("fixed", "mlmc"):
+            raise ValueError(
+                "inner_estimator must be 'fixed' or 'mlmc', got "
+                + repr(inner_estimator))
         t0 = time.monotonic()
         run_id = "nested-" + uuid.uuid4().hex[:8]
         rem = self.product.term_months - self.capital_horizon_months
@@ -448,6 +471,27 @@ class NestedStochasticTVOGEngine:
         capital = capital_metrics_from_liabilities(
             cond_l, self.confidence_level, self.capital_horizon_months
         )
+
+        # OPT-IN MLMC mean-liability diagnostics (additive; does not alter any
+        # governed figure above). Computed AFTER the governed capital so a
+        # diagnostic failure can never affect the headline path.
+        mlmc_diag = None
+        if inner_estimator == "mlmc":
+            from par_model_v2.projection.mlmc_inner_estimator import (
+                engine_mean_liability_diagnostics,
+            )
+            mlmc_diag = engine_mean_liability_diagnostics(
+                product=self.product, hw_params=self.hw_params,
+                capital_horizon_months=self.capital_horizon_months,
+                outer_measure=self.outer_measure,
+                initial_curve=self.initial_curve,
+                annual_qx_fn=self.annual_qx_fn,
+                n_inner=n_inner, seed=seed,
+                fixed_mean_liability=float(cond_l.mean()),
+                fixed_n_outer=len(outer_x),
+                n0=mlmc_n0, M=mlmc_M, L=mlmc_L,
+                n_outer_per_level=mlmc_n_outer_per_level,
+            )
         duration = time.monotonic() - t0
 
         audit_entry_id = None
@@ -474,6 +518,7 @@ class NestedStochasticTVOGEngine:
             inner_standard_errors=inner_se, n_outer=len(outer_x), n_inner=n_inner,
             total_inner_valuations=len(outer_x) * n_inner, run_id=run_id,
             duration_seconds=duration, audit_entry_id=audit_entry_id,
+            inner_estimator=inner_estimator, mlmc_diagnostics=mlmc_diag,
         )
 
 

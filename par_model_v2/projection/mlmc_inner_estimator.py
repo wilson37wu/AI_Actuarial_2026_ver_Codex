@@ -301,3 +301,130 @@ def governed_inner_sampler_factory(rem_months: int, h_month: int):
             int(h_month), seed=seed)
 
     return sampler
+
+
+# ---------------------------------------------------------------------------
+# Stage-3 wiring helper: opt-in MLMC mean-liability diagnostics for the
+# governed nested engine (ADDITIVE; never touches the governed SCR headline).
+# ---------------------------------------------------------------------------
+def engine_mean_liability_diagnostics(
+    *,
+    product,
+    hw_params,
+    capital_horizon_months: int,
+    outer_measure,
+    initial_curve=None,
+    annual_qx_fn=None,
+    n_inner: int = 256,
+    seed: int = 42,
+    fixed_mean_liability: float | None = None,
+    fixed_n_outer: int | None = None,
+    n0: int = 16,
+    M: int = 2,
+    L: int = 4,
+    n_outer_per_level: Sequence[int] | None = None,
+) -> dict:
+    """Opt-in MLMC diagnostics for the governed nested engine (stage 3).
+
+    Estimates the OUTER mean conditional liability ``theta = E_X[L(X)]`` -- the
+    SINGLE estimand for which nested MLMC is unbiased (``L`` enters linearly, so
+    the identity outer functional carries no inner-sampling bias). This is the
+    governed run's ``conditional_liabilities.mean()``; the MLMC estimate of the
+    SAME population quantity is returned alongside a matched-RMSE cost ratio.
+
+    IMPORTANT: this is a DIAGNOSTIC sidecar. The governed SCR/VaR/ES headline is
+    a *quantile* of the L(X) distribution, NOT its mean, so it is deliberately
+    NOT computed here -- a quantile-MLMC headline is owner-signed-off stage 5.
+    The governed engine continues to derive every capital figure from the fixed
+    single-level estimator; selecting ``inner_estimator='mlmc'`` only attaches
+    these mean-liability efficiency diagnostics.
+
+    Returns a JSON-serialisable dict with the MLMC mean estimate, the fixed
+    benchmark, the equivalence relative error (gate G1), the matched-RMSE
+    speedup at ``N_L = n_inner`` (gate G3), the level ladder, and per-level
+    stats. Deterministic given ``seed``.
+    """
+    # Lazy import to avoid a circular import at module load and to keep the
+    # heavy HW/ESG stack out of pure-numpy import paths.
+    from par_model_v2.projection.nested_stochastic_tvog import (
+        _outer_states, _inner_pathwise_pvs,
+    )
+
+    rem = int(product.term_months) - int(capital_horizon_months)
+    H = int(capital_horizon_months)
+
+    def outer_sampler(rng: np.random.Generator, n: int) -> np.ndarray:
+        child = int(rng.integers(0, 2 ** 31 - 1))
+        return _outer_states(int(n), H, outer_measure, hw_params,
+                             initial_curve, child)
+
+    def inner_sampler(x: float, m: int, rng: np.random.Generator) -> np.ndarray:
+        child = int(rng.integers(0, 2 ** 31 - 1))
+        return _inner_pathwise_pvs(
+            float(x), int(m), rem, product, hw_params, H, child, annual_qx_fn)
+
+    if n_outer_per_level is None:
+        # Geometric outer taper: more outer states at coarse (cheap) levels.
+        base = max(int(fixed_n_outer or 256), 64)
+        n_outer_per_level = [max(int(base // (M ** lvl)), 8) for lvl in range(L + 1)]
+
+    ladder = inner_path_ladder(n0, M, L)
+    if ladder[-1] != int(n_inner):
+        # Keep the finest level aligned with the governed n_inner so the two
+        # estimators share an estimand exactly.
+        L_adj = 0
+        nlad = [n0]
+        while nlad[-1] < int(n_inner):
+            nlad.append(nlad[-1] * M)
+            L_adj += 1
+        if nlad[-1] == int(n_inner):
+            ladder = nlad
+            L = L_adj
+            if len(n_outer_per_level) != L + 1:
+                base = max(int(fixed_n_outer or 256), 64)
+                n_outer_per_level = [max(int(base // (M ** lvl)), 8)
+                                     for lvl in range(L + 1)]
+
+    rng_ml = np.random.default_rng(int(seed) ^ 0x5151)
+    ml = mlmc_nested(outer_sampler, inner_sampler, payoff=identity_payoff,
+                     n0=n0, M=M, L=L, n_outer_per_level=list(n_outer_per_level),
+                     rng=rng_ml, antithetic=True)
+
+    # Matched-RMSE single-level benchmark at the finest level (cost to reach the
+    # MLMC std-error with a plain fixed-N_L nested run).
+    rng_sl = np.random.default_rng(int(seed) ^ 0x2727)
+    n_out_bench = max(int(fixed_n_outer or 256), 128)
+    sl = nested_single_level(outer_sampler, inner_sampler,
+                             payoff=identity_payoff, n_outer=n_out_bench,
+                             n_inner=int(ladder[-1]), rng=rng_sl)
+    var_g = (sl.std_error ** 2) * sl.n_outer  # per-outer variance of g(L_{N_L})
+    if ml.std_error > 0:
+        n_eq = var_g / (ml.std_error ** 2)            # outer count to match SE
+        cost_eq_single = n_eq * ladder[-1]            # single-level inner cost
+        speedup = float(cost_eq_single / max(ml.inner_path_cost, 1))
+    else:
+        speedup = float("inf")
+
+    bench_mean = (float(fixed_mean_liability) if fixed_mean_liability is not None
+                  else float(sl.estimate))
+    denom = abs(bench_mean) if abs(bench_mean) > 1e-9 else 1.0
+    rel_err = abs(ml.estimate - bench_mean) / denom
+
+    return {
+        "estimand": "outer_mean_conditional_liability_E_X[L(X)]",
+        "finest_n_inner": int(ladder[-1]),
+        "ladder": [int(v) for v in ladder],
+        "n_outer_per_level": [int(v) for v in n_outer_per_level],
+        "mlmc_mean_liability": float(ml.estimate),
+        "mlmc_std_error": float(ml.std_error),
+        "mlmc_inner_path_cost": int(ml.inner_path_cost),
+        "fixed_mean_liability_benchmark": bench_mean,
+        "single_level_benchmark_mean": float(sl.estimate),
+        "single_level_benchmark_se": float(sl.std_error),
+        "single_level_benchmark_n_outer": int(sl.n_outer),
+        "equivalence_rel_err": float(rel_err),          # gate G1 (mean estimand)
+        "matched_rmse_speedup_x": float(speedup),       # gate G3
+        "levels": ml.summary()["levels"],
+        "note": ("Diagnostic sidecar only; the governed SCR/VaR/ES headline is "
+                 "a quantile and stays fixed single-level (stage-5 owner gate)."),
+    }

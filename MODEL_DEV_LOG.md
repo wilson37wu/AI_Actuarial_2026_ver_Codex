@@ -11279,3 +11279,29 @@ with numpy/scipy/pandas). `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab09
 `39,975.65` intact (1 occ); contract `1.23.0`. Git in a fresh `/tmp` ext4 clone of
 `origin/main`; mount `.git` untouched; lock `03e37dc` acquired and released at cycle end.
 Status emailed to owner. NEXT = owner decision; recommended forward step = MLMC stage 3.
+
+---
+
+## W60 — 2026-06-19 18:00 UTC (claude) — MLMC stage-3 wiring
+
+Wired the opt-in MLMC inner estimator into the governed nested engine:
+`NestedStochasticTVOGEngine.run(inner_estimator='mlmc')` (default `'fixed'`).
+Fixed path byte-identical (capital summary bit-identical fixed-vs-mlmc;
+`conditional_liabilities` array-equal; fixed `.summary()` carries no MLMC keys).
+The `'mlmc'` branch attaches mean-liability efficiency diagnostics via the new
+`engine_mean_liability_diagnostics()` helper and never alters the governed
+SCR/VaR/ES (a quantile; stays fixed single-level — MLMC-as-default is stage-5,
+owner-gated).
+
+Gates on the REAL governed sampler at N_L=256 (n_outer=256, seed=42):
+G1 frozen-snapshot equivalence PASS (mean-liability rel-err 0.0144% ≤ 1%);
+G3 ≥2× net cost cut PASS — matched-RMSE speedup 3.16× (closes W58 stage-2 G3,
+which measured 1.03× on the toy); G4 reproducibility PASS; G5 no-spillover PASS.
+
+New: `scripts/build_mlmc_stage3_validation.py`,
+`docs/validation/MLMC_STAGE3_WIRING_VALIDATION_20260619.{json,md}`,
+`tests/test_mlmc_stage3_wiring.py` (8/8). Verification: build_offline_home_validate
+177/177, loader_parity 10/10, unittest 4/4; offline_home.html md5
+03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52–W60); governed artifacts
+byte-unchanged; headline 39,975.65 (1 occ); contract 1.23.0. NEXT (W61): owner
+decision — MLMC stage 5 needs sign-off + a quantile-MLMC estimator; else A/B/C/D/E.

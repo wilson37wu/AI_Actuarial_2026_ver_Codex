@@ -1,0 +1,137 @@
+{
+  "title": "MLMC inner-estimator -- stage-3 wiring validation",
+  "window": "W60",
+  "generated_utc": "2026-06-18T17:15:39Z",
+  "classification": "estimator-only; ADDITIVE; opt-in; wired behind inner_estimator='mlmc' (default 'fixed'); no model-form change; no contract bump; governed headline unchanged",
+  "design_note": "docs/research/MLMC_NESTED_LOOP_DESIGN_NOTE_20260618.md",
+  "stage2_evidence": "docs/validation/MLMC_STAGE2_PROTOTYPE_20260618.md",
+  "wired_into_governed_run": true,
+  "governed_config": {
+    "product": {
+      "term_years": 10,
+      "issue_age": 40,
+      "gender": "M",
+      "sum_assured": 100000,
+      "annual_premium": 6000
+    },
+    "n_outer": 256,
+    "n_inner": 256,
+    "seed": 42,
+    "capital_horizon_months": 12
+  },
+  "governed_capital_fixed": {
+    "confidence_level": 0.995,
+    "mean_liability": 84262.8329,
+    "var_liability": 104582.1586,
+    "es_liability": 105378.3911,
+    "scr_proxy": 20319.3258,
+    "n_outer": 256,
+    "capital_horizon_months": 12
+  },
+  "mlmc_diagnostics": {
+    "estimand": "outer_mean_conditional_liability_E_X[L(X)]",
+    "finest_n_inner": 256,
+    "ladder": [
+      16,
+      32,
+      64,
+      128,
+      256
+    ],
+    "n_outer_per_level": [
+      256,
+      128,
+      64,
+      32,
+      16
+    ],
+    "mlmc_mean_liability": 84256.83172526187,
+    "mlmc_std_error": 503.46006939446454,
+    "mlmc_inner_path_cost": 20480,
+    "fixed_mean_liability_benchmark": 84262.832850468,
+    "single_level_benchmark_mean": 84259.27305312103,
+    "single_level_benchmark_se": 522.3014922323896,
+    "single_level_benchmark_n_outer": 256,
+    "equivalence_rel_err": 7.12191247684806e-05,
+    "matched_rmse_speedup_x": 3.443994497552442,
+    "levels": [
+      {
+        "level": 0,
+        "n_inner_fine": 16,
+        "n_inner_coarse": 0,
+        "n_outer": 256,
+        "mean_diff": 84256.83172526187,
+        "var_diff": 64888842.61751784,
+        "inner_path_cost": 4096
+      },
+      {
+        "level": 1,
+        "n_inner_fine": 32,
+        "n_inner_coarse": 16,
+        "n_outer": 128,
+        "mean_diff": 0.0,
+        "var_diff": 7.669983380649177e-23,
+        "inner_path_cost": 4096
+      },
+      {
+        "level": 2,
+        "n_inner_fine": 64,
+        "n_inner_coarse": 32,
+        "n_outer": 64,
+        "mean_diff": 4.547473508864641e-13,
+        "var_diff": 8.045972688452307e-23,
+        "inner_path_cost": 4096
+      },
+      {
+        "level": 3,
+        "n_inner_fine": 128,
+        "n_inner_coarse": 64,
+        "n_outer": 32,
+        "mean_diff": -1.3642420526593924e-12,
+        "var_diff": 5.955700410381799e-23,
+        "inner_path_cost": 4096
+      },
+      {
+        "level": 4,
+        "n_inner_fine": 256,
+        "n_inner_coarse": 128,
+        "n_outer": 16,
+        "mean_diff": 0.0,
+        "var_diff": 0.0,
+        "inner_path_cost": 4096
+      }
+    ],
+    "note": "Diagnostic sidecar only; the governed SCR/VaR/ES headline is a quantile and stays fixed single-level (stage-5 owner gate)."
+  },
+  "pre_registered_gates": {
+    "G1_frozen_snapshot_equivalence": {
+      "stage": 3,
+      "status": "PASS",
+      "governed_capital_bit_identical_fixed_vs_mlmc": true,
+      "fixed_run_summary_unchanged": true,
+      "mean_liability_rel_err": 7.12191247684806e-05,
+      "threshold": 0.01,
+      "pass": true
+    },
+    "G3_ge_2x_net_cost_cut_at_NL256": {
+      "stage": 3,
+      "status": "PASS",
+      "matched_rmse_speedup_x": 3.443994497552442,
+      "finest_n_inner": 256,
+      "threshold": 2.0,
+      "real_governed_sampler": true,
+      "pass": true
+    },
+    "G4_staged_eq_monolithic_reproducibility": {
+      "stage": 3,
+      "status": "PASS",
+      "pass": true
+    },
+    "G5_governed_artifact_no_spillover": {
+      "stage": 3,
+      "status": "PASS",
+      "note": "verified out-of-band by the cycle gate suite (build_offline_home_validate + git status): governed artifacts byte-unchanged, headline 39,975.65 intact, contract unchanged."
+    }
+  },
+  "owner_gate_remaining": "stage 5: making MLMC the default for a governed quantile figure (SCR/VaR/ES) needs owner sign-off + a fresh frozen reference; the quantile functional is non-linear so a quantile-MLMC estimator is required first."
+}

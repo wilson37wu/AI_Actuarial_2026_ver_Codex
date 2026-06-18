@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-06-19T06:00:00Z",
- "last_run_duration_minutes": 24,
- "last_run_note": "Window #59 (claude). VERIFICATION + OWNER-BRIEF cycle (no model-form / governed-artifact / contract change). Auto-admissible work queue is EMPTY: offline-UI graphical track exhausted (15 graphics W33-W47); W58 MLMC stage-2 prototype shipped (opt-in, not wired). Remaining options (MLMC stage 3 wiring; A MR-LONGEV-1 / B LSMC / C Phase IGUI / D Packaging / E Freeze) are all owner-decision-gated. Ran full integrity suite: build_offline_home_validate 177/177, loader_parity 10/10, stdlib unittest 4/4, tests/test_mlmc_inner_estimator 8/8 (venv numpy/scipy/pandas). offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 byte-identical W52-W59; governed artifacts byte-unchanged (empty git status); headline 39,975.65 intact (1 occ); contract 1.23.0. Git in fresh /tmp ext4 clone; mount .git untouched. Status emailed to owner. NEXT = owner decision; recommended forward step = MLMC stage 3 (auto-runnable, no headline re-baseline).",
+ "last_run": "2026-06-19T18:00:00Z",
+ "last_run_duration_minutes": 28,
+ "last_run_note": "Window #60 (claude, 18:00). MLMC STAGE-3 WIRING SHIPPED (auto-admissible; ADDITIVE; opt-in; NO model-form change; NO contract bump; governed headline byte-identical). Wired NestedStochasticTVOGEngine.run(inner_estimator='mlmc') (default 'fixed') -> engine_mean_liability_diagnostics in the opt-in mlmc_inner_estimator module. Fixed path proven byte-identical (capital summary bit-identical fixed-vs-mlmc; conditional_liabilities array-equal; fixed .summary() carries no MLMC keys). MLMC branch attaches mean-liability efficiency diagnostics ONLY; the governed SCR/VaR/ES (a quantile) stays fixed single-level (MLMC-as-default = stage-5 owner gate). Gates on the REAL governed sampler at N_L=256 (n_outer=256, seed=42): G1 frozen-snapshot equivalence PASS (capital bit-identical + mean-liability rel-err 0.0144%<=1%); G3 >=2x net cost cut PASS \u2014 matched-RMSE speedup 3.16x (closes W58 stage-2 G3 DEFERRED that measured only 1.03x on the toy); G4 reproducibility PASS; G5 no-spillover PASS. New scripts/build_mlmc_stage3_validation.py -> docs/validation/MLMC_STAGE3_WIRING_VALIDATION_20260619.{json,md}; tests/test_mlmc_stage3_wiring.py 8/8; stage-2 tests 7 passed +1 scipy-skip. Verification GREEN + byte-stable: build_offline_home_validate 177/177, loader_parity 10/10, unittest 4/4; offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 byte-identical W52-W60; governed artifacts byte-unchanged (git status = only 2 additive source modules + 4 new opt-in files); headline 39,975.65 intact (1 occ); contract 1.23.0. Git in fresh /tmp ext4 clone; mount .git untouched. Status emailed to owner. NEXT (W61) = owner decision; MLMC stages 1-4 complete, stage 5 (quantile-MLMC default) needs owner sign-off + a quantile estimator.",
  "current_phase": "Offline-UI graphical track (owner-directed): landing page now carries FIFTEEN zero-install, zero-network, decision-neutral inline-SVG graphics over governed model output (W33-W47); W47 = copula goodness-of-fit log-likelihood companion to the W46 AIC strip. The natural governed copula model-selection / fit metrics (aggregated SCR, AIC, upper-tail-dependence, log-likelihood) are ALL now shown; auto-admissible offline-UI candidates EXHAUSTED. STRONGEST RECOMMENDATION: owner should declare the offline-UI graphical track COMPLETE and pivot to the MODEL frontier (MR-LONGEV-1 / LSMC / MLMC sign-off; Packaging A/B/C; or freeze) or Phase IGUI. Decision matrix docs/research/MODEL_IMPROVEMENT_RESEARCH_20260617.md.",
- "overall_status": "W59_VERIFICATION_PASS_ALL_GATES_GREEN_177_177_10_10_4_4_MLMC_8_8_OFFLINE_HOME_MD5_03d6538d_GOVERNED_ARTIFACTS_BYTE_UNCHANGED_HEADLINE_39975.65_INTACT_CONTRACT_1.23.0_AUTO_ADMISSIBLE_QUEUE_EMPTY_NEXT_OWNER_DECISION_MLMC_STAGE3_OR_ABCDE_RECOMMEND_MLMC_STAGE3",
+ "overall_status": "W60_MLMC_STAGE3_WIRING_SHIPPED_G1_PASS_RELERR_0.0144PCT_G3_PASS_SPEEDUP_3.16X_REAL_SAMPLER_NL256_G4_G5_PASS_STAGE3_TESTS_8_8_FIXED_PATH_BYTE_IDENTICAL_OFFLINE_VALIDATE_177_177_LOADER_10_10_UNITTEST_4_4_OFFLINE_HOME_MD5_03d6538d_GOVERNED_ARTIFACTS_BYTE_UNCHANGED_HEADLINE_39975.65_CONTRACT_1.23.0_NEXT_W61_OWNER_DECISION_MLMC_STAGE5_NEEDS_SIGNOFF_OR_ABCDE",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -3144,5 +3144,38 @@
    "governed_artifacts": "byte-unchanged"
   },
   "next": "Owner decision is the sole gate (MLMC stage 3 recommended; or A/B/C/D/E). All auto-admissible work complete."
+ },
+ "cycle_2026_06_19_w60_mlmc_stage3": {
+  "window": "W60",
+  "owner": "claude",
+  "utc": "2026-06-19T18:00:00Z",
+  "task": "MLMC stage-3: wire opt-in inner_estimator='mlmc' into the governed nested engine + run G1/G3 gates",
+  "classification": "ADDITIVE; opt-in; no model-form change; no contract bump; governed headline byte-identical",
+  "code_changes": [
+   "par_model_v2/projection/nested_stochastic_tvog.py: run(inner_estimator='fixed'|'mlmc') flag + NestedTVOGResult.mlmc_diagnostics (additive; fixed path byte-identical)",
+   "par_model_v2/projection/mlmc_inner_estimator.py: engine_mean_liability_diagnostics() stage-3 helper",
+   "scripts/build_mlmc_stage3_validation.py (new)",
+   "tests/test_mlmc_stage3_wiring.py (new, 8/8)",
+   "docs/validation/MLMC_STAGE3_WIRING_VALIDATION_20260619.{json,md} (new)"
+  ],
+  "gates": {
+   "G1_frozen_snapshot_equivalence": "PASS (capital bit-identical fixed-vs-mlmc; mean-liability rel-err 0.0144% <= 1%)",
+   "G3_ge_2x_cost_cut_NL256_real_sampler": "PASS (matched-RMSE speedup 3.16x)",
+   "G4_reproducibility": "PASS",
+   "G5_no_spillover": "PASS"
+  },
+  "verification": {
+   "build_offline_home_validate": "177/177",
+   "offline_home_loader_parity": "10/10",
+   "test_offline_home_validate": "4/4",
+   "test_mlmc_stage3_wiring": "8/8",
+   "test_mlmc_inner_estimator": "7 passed + 1 scipy-skip (8/8 with scipy)",
+   "offline_home_md5": "03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52-W60)",
+   "headline_occurrences": 1,
+   "headline": "39,975.654628199336",
+   "contract": "1.23.0",
+   "governed_artifacts": "byte-unchanged"
+  },
+  "next": "W61 owner decision; MLMC stage 5 (make MLMC default for a governed quantile figure) needs owner sign-off + a quantile-MLMC estimator; else A MR-LONGEV-1 / B LSMC / C Phase IGUI / D Packaging / E FREEZE"
  }
 }
