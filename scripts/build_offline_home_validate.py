@@ -346,6 +346,31 @@ def main() -> int:
     ok("copulaaic derives nothing (svg inline, no chart lib)",
        "chart.js" not in html.lower())
     ok("copulaaic loader-parity hook", "redrawCopulaAic" in html)
+    # Copula log-likelihood strip (W47, additive, inline-SVG, zero JS dep, zero net)
+    _cll_cands = [(str(c.get("name")), float(c.get("loglik")))
+                  for c in _cs_list
+                  if isinstance(c, dict) and isinstance(c.get("loglik"), (int, float))
+                  and c.get("name") is not None]
+    ok("copulall heading", "copula goodness-of-fit" in html.lower())
+    ok("copulall svg", 'id="copulall"' in html)
+    ok("copulall >=2 fitted candidates", len(_cll_cands) >= 2)
+    ok("copulall bars == candidate count",
+       html.count('class="cllbar"') == len(_cll_cands))
+    ok("copulall value texts == candidate count",
+       html.count('class="cllval"') == len(_cll_cands))
+    ok("copulall log-likelihood values verbatim (4dp)",
+       all(f"{v:,.4f}" in html for _, v in _cll_cands) and len(_cll_cands) > 0)
+    ok("copulall candidate keys present",
+       all(('data-key="%s"' % n) in html for n, _ in _cll_cands))
+    ok("copulall decision-neutral (selected by AIC, not raw log-likelihood; no bar marked)",
+       ("not by raw log-likelihood" in html.lower()
+        or "not\n    by raw log-likelihood" in html.lower())
+       and ('class="cllbar sel"' not in html))
+    ok("copulall companion to AIC (penalty relation noted)",
+       "before" in html.lower() and "aic" in html.lower() and 'id="copulall"' in html)
+    ok("copulall derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("copulall loader-parity hook", "redrawCopulaLogLik" in html)
     failed = [n for n, c in checks if not c]
     print(json.dumps({"ok": not failed, "checks": len(checks),
                       "passed": len(checks) - len(failed), "failed": failed}, indent=2))

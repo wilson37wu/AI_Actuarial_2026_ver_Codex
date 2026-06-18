@@ -269,6 +269,25 @@ COPULAAIC_CSS = """
   .casel { fill:var(--ok); font-size:10.5px; font-weight:700; }
   .cacap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
 
+# Copula goodness-of-fit log-likelihood strip (added 2026-06-18, claude window W47) -- an ADDITIVE,
+# decision-neutral inline-SVG mini bar set DISPLAYING the GOVERNED fitted full-copula candidates'
+# maximised log-likelihood on ONE shared scale, read verbatim from capital.copula.copulas[].loglik.
+# Companion to the W46 AIC strip: AIC = -2*loglik + 2*k, so this shows the raw fit BEFORE the
+# parameter penalty. Recomputes nothing: each bar length is loglik/max(loglik) scaling of a
+# governed number read verbatim and the value is printed verbatim (4dp). DECISION-NEUTRAL: the
+# model selects its aggregation copula by AIC, NOT by raw log-likelihood, so NO bar is marked and
+# the governed headline stays the frozen-t basis. No JS library, no network, no external ref --
+# baked at build time and redrawn by redrawCopulaLogLik (loader/Reset parity).
+COPULALL_MAXW = 360.0  # px gutter inside the 560 viewBox (room for the log-likelihood value)
+COPULALL_CSS = """
+  .cllbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .cllbridge svg { width:100%; height:auto; display:block; }
+  .cllbar-label { fill:var(--mut); font-size:12px; }
+  .cllval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .cllbar { fill:#8a93a3; }
+  .cllcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }"""
+
 # Tail-convergence sparkline (added 2026-06-17, claude window W35) -- an ADDITIVE, inline-SVG
 # line chart that DISPLAYS the already-governed tail-convergence diagnostic graphically: the
 # 99.5% VaR and ES liability estimates plotted against the outer-scenario count grid, with a
@@ -522,6 +541,7 @@ LOADER_JS = """
   var CS_MAXW = 360;  // mirrors COPULASELECT_MAXW in scripts/build_offline_home.py
   var CU_MAXW = 360;  // mirrors COPULAUTD_MAXW in scripts/build_offline_home.py
   var CA_MAXW = 360;  // mirrors COPULAAIC_MAXW in scripts/build_offline_home.py
+  var CLL_MAXW = 360;  // mirrors COPULALL_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -971,6 +991,33 @@ LOADER_JS = """
       if (tag) tag.setAttribute("x", (w + 8).toFixed(1));
     });
   }
+  // Redraw the copula log-likelihood bars from a (possibly loaded) snapshot. Pure display: each
+  // fitted candidate's bar width = loglik/max(loglik) scaled to CLL_MAXW, mirroring _copulall_svg.
+  // Decision-neutral: the model selects by AIC, NOT raw log-likelihood, so NO bar is marked.
+  function redrawCopulaLogLik(cap, cur){
+    var svg = document.getElementById("copulall");
+    if (!svg || !cap) return;
+    var cop = cap.copula || {};
+    var lst = cop.copulas || cop.candidates || [];
+    var vals = [];
+    lst.forEach(function(c){
+      if (c && typeof c === "object" && isFinite(Number(c.loglik)))
+        vals.push(Number(c.loglik));
+    });
+    var mx = vals.length ? Math.max.apply(null, vals) : 0;
+    if (!(mx > 0)) return;
+    lst.forEach(function(c){
+      if (!c || typeof c !== "object") return;
+      var name = String(c.name);
+      var v = Number(c.loglik);
+      if (!isFinite(v)) return;
+      var w = v / mx * CLL_MAXW;
+      var rect = svg.querySelector('rect.cllbar[data-key="' + name + '"]');
+      var txt = svg.querySelector('text.cllval[data-key="' + name + '"]');
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1)); txt.textContent = fmt(v, 4); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -1026,6 +1073,8 @@ LOADER_JS = """
         redrawCopulaUtd(d.capital || {}, _cur13); } catch(e){}
       try { var _cur14 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawCopulaAic(d.capital || {}, _cur14); } catch(e){}
+      try { var _cur15 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawCopulaLogLik(d.capital || {}, _cur15); } catch(e){}
       var c = d.contract_version ? (" \\u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \\u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \\u2014 click Reset to restore.");
@@ -1067,6 +1116,8 @@ LOADER_JS = """
     DEFAULT.copulautdHTML = _cu0 ? _cu0.innerHTML : null;
     var _ca0 = document.getElementById("copulaaic");
     DEFAULT.copulaaicHTML = _ca0 ? _ca0.innerHTML : null;
+    var _cl0 = document.getElementById("copulall");
+    DEFAULT.copulallHTML = _cl0 ? _cl0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -1125,6 +1176,8 @@ LOADER_JS = """
       if (_cusvg && DEFAULT.copulautdHTML != null) _cusvg.innerHTML = DEFAULT.copulautdHTML;
       var _casvg = document.getElementById("copulaaic");
       if (_casvg && DEFAULT.copulaaicHTML != null) _casvg.innerHTML = DEFAULT.copulaaicHTML;
+      var _clsvg = document.getElementById("copulall");
+      if (_clsvg && DEFAULT.copulallHTML != null) _clsvg.innerHTML = DEFAULT.copulallHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
@@ -1912,6 +1965,56 @@ def _copulaaic_svg(cap, cur):
         f'marked. Read verbatim from the model-output snapshot.">\n    '
         + "\n    ".join(parts) + "\n  </svg>")
 
+def _copulall_candidates(cap):
+    """Return [(name, loglik)] for the GOVERNED fitted full-copula candidates, read verbatim from
+    ``capital.copula.copulas[]`` (falls back to ``candidates``). Pure read."""
+    cop = cap.get("copula") or {}
+    lst = cop.get("copulas") or cop.get("candidates") or []
+    out = []
+    for c in lst:
+        if not isinstance(c, dict):
+            continue
+        name = c.get("name")
+        v = c.get("loglik")
+        if name is None or not isinstance(v, (int, float)):
+            continue
+        out.append((str(name), float(v)))
+    return out
+
+def _copulall_svg(cap, cur):
+    """Inline-SVG horizontal mini bar set DISPLAYING the GOVERNED fitted full-copula candidates'
+    maximised log-likelihood on ONE shared scale. Pure display: bar length = loglik/max(loglik)
+    scaled to COPULALL_MAXW px; each value read verbatim (4dp). Companion to ``_copulaaic_svg``
+    (AIC = -2*loglik + 2k): this is the raw fit BEFORE the parameter penalty. Derives no new
+    number and marks NO selection -- the model picks its aggregation copula by AIC, not by raw
+    log-likelihood. Mirrors ``redrawCopulaLogLik`` in LOADER_JS. (``cur`` accepted for signature
+    symmetry; a log-likelihood is unit-free so no currency symbol is shown.)
+    """
+    cands = _copulall_candidates(cap)
+    present = [v for _, v in cands]
+    mx = max(present) if present else 0.0
+    top, row_h, bar_h = 6, 30, 15
+    parts = []
+    for i, (name, v) in enumerate(cands):
+        label = _COPULASELECT_LABELS.get(name.lower(), name.replace("_", " ").title())
+        label_y = top + i * row_h + 11
+        bar_y = top + i * row_h + 16
+        w = (v / mx * COPULALL_MAXW) if mx > 0 else 0.0
+        vtxt = f"{_fmt(v, 4)}"
+        parts.append(
+            f'<text class="cllbar-label" x="2" y="{label_y}">{html.escape(label)}</text>'
+            f'<rect class="cllbar" data-key="{html.escape(name)}" x="2" y="{bar_y}" rx="3" '
+            f'width="{w:.1f}" height="{bar_h}"></rect>'
+            f'<text class="cllval" data-key="{html.escape(name)}" x="{w + 8:.1f}" '
+            f'y="{bar_y + bar_h - 3}">{html.escape(vtxt)}</text>')
+    height = top + max(1, len(cands)) * row_h + 12
+    return (
+        f'<svg id="copulall" viewBox="0 0 560 {height}" role="img" '
+        f'aria-label="Copula log-likelihood bar chart: the governed fitted full-copula candidate '
+        f'maximised log-likelihood values on one shared scale. Read verbatim from the '
+        f'model-output snapshot.">\n    '
+        + "\n    ".join(parts) + "\n  </svg>")
+
 def build() -> str:
     d = json.loads(UI_DATA.read_text(encoding="utf-8"))
     meta = d.get("meta", {})
@@ -1963,6 +2066,7 @@ def build() -> str:
     copulaselect = _copulaselect_svg(cap, cur)
     copulautd = _copulautd_svg(cap, cur)
     copulaaic = _copulaaic_svg(cap, cur)
+    copulall = _copulall_svg(cap, cur)
     _tgrid = list(_tail.get("outer_grid") or [])
     _t_lo = _fmt(_tgrid[0], 0) if _tgrid else "n/a"
     _t_hi = _fmt(_tgrid[-1], 0) if _tgrid else "n/a"
@@ -2044,7 +2148,7 @@ def build() -> str:
   footer {{ margin-top:34px; padding-top:16px; border-top:1px solid var(--line);
     color:var(--mut); font-size:12px; }}
   code {{ background:#0c141d; padding:1px 5px; border-radius:4px; }}
-  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}{DIVCREDIT_CSS}{COPULASELECT_CSS}{COPULAUTD_CSS}{COPULAAIC_CSS}
+  a.src {{ color:var(--acc); }}{LOADER_CSS}{CHOOSER_CSS}{A11Y_CSS}{CAPBRIDGE_CSS}{DRIVERBARS_CSS}{TAILSPARK_CSS}{TAILCI_CSS}{NESTEDCI_CSS}{ESVARMARGIN_CSS}{COPULAFAMILY_CSS}{ACTIONSLADDER_CSS}{RELIEFSTRIP_CSS}{AGGMETHOD_CSS}{DIVCREDIT_CSS}{COPULASELECT_CSS}{COPULAUTD_CSS}{COPULAAIC_CSS}{COPULALL_CSS}
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -2230,6 +2334,20 @@ def build() -> str:
     copula the model selected; it is shown for transparency, not chosen here, and the governed
     headline stays the frozen-t basis. Each value is read verbatim from the model-output snapshot
     &mdash; this chart computes nothing.</p>
+
+  <h2>Copula goodness-of-fit &mdash; fitted candidates (log-likelihood)</h2>
+  <div class="cllbridge">
+  {copulall}
+  </div>
+  <p class="cllcap">Each bar is one <b>fitted</b> dependence-copula candidate's governed
+    maximised <b>log-likelihood</b> &mdash; the raw goodness-of-fit <b>before</b> the
+    parameter penalty (the companion W46 chart adds that penalty to form the AIC the model
+    actually minimises: AIC = &minus;2&middot;log-likelihood + 2<i>k</i>) &mdash; with bar length
+    scaled to the largest of them on a shared scale and the value printed verbatim. The
+    candidates are shown <b>neutrally</b>: the model selects its aggregation copula by <b>AIC,
+    not by raw log-likelihood</b>, so no bar is marked here and the governed headline stays the
+    frozen-t basis. Each value is read verbatim from the model-output snapshot &mdash; this chart
+    computes nothing.</p>
 
 {LOADER_PANEL}
   <h2>Which view do I want?</h2>

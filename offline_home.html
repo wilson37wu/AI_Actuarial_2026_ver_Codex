@@ -235,6 +235,13 @@
   .cabar.sel { fill:#2ec27e; }
   .casel { fill:var(--ok); font-size:10.5px; font-weight:700; }
   .cacap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
+  .cllbridge { background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:14px 16px 10px; }
+  .cllbridge svg { width:100%; height:auto; display:block; }
+  .cllbar-label { fill:var(--mut); font-size:12px; }
+  .cllval { fill:var(--ink); font-size:12px; font-weight:650; }
+  .cllbar { fill:#8a93a3; }
+  .cllcap { color:var(--mut); font-size:12.5px; margin:9px 2px 0; }
 </style></head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -566,6 +573,24 @@
     headline stays the frozen-t basis. Each value is read verbatim from the model-output snapshot
     &mdash; this chart computes nothing.</p>
 
+  <h2>Copula goodness-of-fit &mdash; fitted candidates (log-likelihood)</h2>
+  <div class="cllbridge">
+  <svg id="copulall" viewBox="0 0 560 108" role="img" aria-label="Copula log-likelihood bar chart: the governed fitted full-copula candidate maximised log-likelihood values on one shared scale. Read verbatim from the model-output snapshot.">
+    <text class="cllbar-label" x="2" y="17">Gaussian</text><rect class="cllbar" data-key="gaussian" x="2" y="22" rx="3" width="360.0" height="15"></rect><text class="cllval" data-key="gaussian" x="368.0" y="34">187.3387</text>
+    <text class="cllbar-label" x="2" y="47">Student-t</text><rect class="cllbar" data-key="student_t" x="2" y="52" rx="3" width="353.9" height="15"></rect><text class="cllval" data-key="student_t" x="361.9" y="64">184.1462</text>
+    <text class="cllbar-label" x="2" y="77">Survival Clayton</text><rect class="cllbar" data-key="survival_clayton" x="2" y="82" rx="3" width="13.5" height="15"></rect><text class="cllval" data-key="survival_clayton" x="21.5" y="94">7.0140</text>
+  </svg>
+  </div>
+  <p class="cllcap">Each bar is one <b>fitted</b> dependence-copula candidate's governed
+    maximised <b>log-likelihood</b> &mdash; the raw goodness-of-fit <b>before</b> the
+    parameter penalty (the companion W46 chart adds that penalty to form the AIC the model
+    actually minimises: AIC = &minus;2&middot;log-likelihood + 2<i>k</i>) &mdash; with bar length
+    scaled to the largest of them on a shared scale and the value printed verbatim. The
+    candidates are shown <b>neutrally</b>: the model selects its aggregation copula by <b>AIC,
+    not by raw log-likelihood</b>, so no bar is marked here and the governed headline stays the
+    frozen-t basis. Each value is read verbatim from the model-output snapshot &mdash; this chart
+    computes nothing.</p>
+
   <h2>Load a different snapshot (optional)</h2>
   <div class="loader" id="loader">
     <div class="drop" id="drop" tabindex="0" role="button"
@@ -651,7 +676,7 @@
   </div>
 
   <footer>
-    Built 2026-06-18T00:12:17Z from <a class="src" href="ui_data.json">ui_data.json</a>
+    Built 2026-06-18T01:12:32Z from <a class="src" href="ui_data.json">ui_data.json</a>
     (sha256 <code>c335c2bf1744a425&hellip;</code>). Zero-install pages are fully
     self-contained: open by double-click from a USB stick or an air-gapped machine.
     The governed result template <code>ui_app.html</code> is never modified by this page.
@@ -683,6 +708,7 @@
   var CS_MAXW = 360;  // mirrors COPULASELECT_MAXW in scripts/build_offline_home.py
   var CU_MAXW = 360;  // mirrors COPULAUTD_MAXW in scripts/build_offline_home.py
   var CA_MAXW = 360;  // mirrors COPULAAIC_MAXW in scripts/build_offline_home.py
+  var CLL_MAXW = 360;  // mirrors COPULALL_MAXW in scripts/build_offline_home.py
   function fmt(x, dp){
     if (x === null || x === undefined) return "None";
     var n = Number(x);
@@ -1132,6 +1158,33 @@
       if (tag) tag.setAttribute("x", (w + 8).toFixed(1));
     });
   }
+  // Redraw the copula log-likelihood bars from a (possibly loaded) snapshot. Pure display: each
+  // fitted candidate's bar width = loglik/max(loglik) scaled to CLL_MAXW, mirroring _copulall_svg.
+  // Decision-neutral: the model selects by AIC, NOT raw log-likelihood, so NO bar is marked.
+  function redrawCopulaLogLik(cap, cur){
+    var svg = document.getElementById("copulall");
+    if (!svg || !cap) return;
+    var cop = cap.copula || {};
+    var lst = cop.copulas || cop.candidates || [];
+    var vals = [];
+    lst.forEach(function(c){
+      if (c && typeof c === "object" && isFinite(Number(c.loglik)))
+        vals.push(Number(c.loglik));
+    });
+    var mx = vals.length ? Math.max.apply(null, vals) : 0;
+    if (!(mx > 0)) return;
+    lst.forEach(function(c){
+      if (!c || typeof c !== "object") return;
+      var name = String(c.name);
+      var v = Number(c.loglik);
+      if (!isFinite(v)) return;
+      var w = v / mx * CLL_MAXW;
+      var rect = svg.querySelector('rect.cllbar[data-key="' + name + '"]');
+      var txt = svg.querySelector('text.cllval[data-key="' + name + '"]');
+      if (rect) rect.setAttribute("width", w.toFixed(1));
+      if (txt){ txt.setAttribute("x", (w + 8).toFixed(1)); txt.textContent = fmt(v, 4); }
+    });
+  }
   function render(ex, fromLoad){
     var figs = document.getElementById("figs");
     var prev = [].map.call(figs.querySelectorAll(".fv"), function(n){ return n.textContent; });
@@ -1187,6 +1240,8 @@
         redrawCopulaUtd(d.capital || {}, _cur13); } catch(e){}
       try { var _cur14 = (((d.meta || {}).currency || {}).symbol) || "";
         redrawCopulaAic(d.capital || {}, _cur14); } catch(e){}
+      try { var _cur15 = (((d.meta || {}).currency || {}).symbol) || "";
+        redrawCopulaLogLik(d.capital || {}, _cur15); } catch(e){}
       var c = d.contract_version ? (" \u00b7 contract " + d.contract_version) : "";
       banner("ok", "Loaded " + name + c + " \u00b7 read locally, no network. Built-in " +
         "governed snapshot unchanged \u2014 click Reset to restore.");
@@ -1228,6 +1283,8 @@
     DEFAULT.copulautdHTML = _cu0 ? _cu0.innerHTML : null;
     var _ca0 = document.getElementById("copulaaic");
     DEFAULT.copulaaicHTML = _ca0 ? _ca0.innerHTML : null;
+    var _cl0 = document.getElementById("copulall");
+    DEFAULT.copulallHTML = _cl0 ? _cl0.innerHTML : null;
     var drop = document.getElementById("drop"), file = document.getElementById("file");
     if (!drop || !file) return;
     function readFile(f){
@@ -1286,6 +1343,8 @@
       if (_cusvg && DEFAULT.copulautdHTML != null) _cusvg.innerHTML = DEFAULT.copulautdHTML;
       var _casvg = document.getElementById("copulaaic");
       if (_casvg && DEFAULT.copulaaicHTML != null) _casvg.innerHTML = DEFAULT.copulaaicHTML;
+      var _clsvg = document.getElementById("copulall");
+      if (_clsvg && DEFAULT.copulallHTML != null) _clsvg.innerHTML = DEFAULT.copulallHTML;
       banner("ok", "Restored the built-in governed snapshot.");
     });
   });
