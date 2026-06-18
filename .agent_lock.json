@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-18T19:09Z-d0aa",
-  "started_at": "2026-06-18T19:09:17Z",
-  "ttl_minutes": 120,
-  "task": "MLMC stage 3: wire opt-in inner_estimator=mlmc into governed nested run (flag default fixed); run G1 headline-equivalence + G3 cost",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-18T19:13:34Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
