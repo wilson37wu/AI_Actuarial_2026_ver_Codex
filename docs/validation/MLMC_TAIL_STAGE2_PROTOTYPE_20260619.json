@@ -1,0 +1,55 @@
+{
+  "window": "W64",
+  "date": "2026-06-19",
+  "owner": "claude",
+  "classification": "efficiency/estimator-only; opt-in; no model-form change; no contract bump; no headline re-baseline; no owner sign-off consumed",
+  "estimator": "mlmc_nested_tail (Rockafellar-Uryasev ES representation; smoothed-CDF VaR oracle; antithetic fine/coarse coupling)",
+  "pytest": {
+    "tail_tests": "10 passed, 1 scipy-skip",
+    "regression_mlmc": "15 passed, 1 scipy-skip"
+  },
+  "telescoping_identity_G4": {
+    "var_equal": true,
+    "es_equal": true,
+    "scr_equal": true,
+    "mean_equal": true,
+    "var_value": "0.04848761013595475"
+  },
+  "ru_recovery": {
+    "var_ru": 0.04668687986386043,
+    "es_ru": 0.049909544375980254,
+    "var_emp": 0.04668213915446787,
+    "es_emp": 0.049909544375980254,
+    "var_smoothed": 0.04712490827881444,
+    "var_relerr_vs_truth": 0.006381582559184582,
+    "es_relerr_vs_truth": 0.007736552155848215,
+    "ru_vs_empirical_var_absdiff": 4.7407093925616595e-06
+  },
+  "mlmc_consistency": {
+    "ladder": [
+      16,
+      32,
+      64,
+      128
+    ],
+    "var_mlmc": 0.04559154551805476,
+    "var_fixed": 0.04814966361544047,
+    "var_relerr": 0.05312847287608838,
+    "es_relerr": 0.05090692188134443,
+    "mean_relerr": 0.0032780211230873145,
+    "inner_path_cost": 390400
+  },
+  "determinism": {
+    "var_equal": true,
+    "es_equal": true
+  },
+  "gates": {
+    "G4_identity": "PASS (bit-for-bit L=0==fixed)",
+    "G5_no_spillover": "PASS (offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 unchanged; headline 39975.654628199336; contract 1.23.0; governed artifacts byte-identical)",
+    "G0_bias": "DEFERRED to stage 3",
+    "G1_equivalence": "DEFERRED to stage 3",
+    "G2_tail_accuracy": "DEFERRED to stage 3",
+    "G3_cost": "DEFERRED to stage 4"
+  },
+  "module_sha256": "c982dbcf34ab882ea135cdef2c1c0fb23b71fd6cbe8f3baac4af45df99ba1cc6"
+}

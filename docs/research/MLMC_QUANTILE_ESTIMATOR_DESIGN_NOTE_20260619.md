@@ -135,7 +135,9 @@ rather than a correctness reject.
    gate G0. [DONE]
 2. Prototype `mlmc_nested_tail` (RU-ES primary + smoothed-indicator oracle) behind the
    opt-in flag; unit-test the **telescoping identity** (top-level-only path == fixed-256
-   VaR/ES bit-for-bit) and the RU minimiser recovering VaR.
+   VaR/ES bit-for-bit) and the RU minimiser recovering VaR. **[DONE — W64, 2026-06-19;
+   evidence `docs/validation/MLMC_TAIL_STAGE2_PROTOTYPE_20260619.md`, 10+1s tail tests,
+   identity bit-for-bit, RU recovery 0.64%/0.77% vs Normal truth.]**
 3. Bias + equivalence + tail-accuracy validation (G0-G2) on the frozen snapshot; produce a
    validation card analogous to `MLMC_STAGE3_WIRING_VALIDATION_20260619.md`.
 4. Cost / variance-decay study (G3) at `N_L=256`; decide merge-as-opt-in vs shelve.

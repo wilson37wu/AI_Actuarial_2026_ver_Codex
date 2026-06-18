@@ -11310,3 +11310,17 @@ decision — MLMC stage 5 needs sign-off + a quantile-MLMC estimator; else A/B/C
 ## W63 (claude, 2026-06-19 18:00Z) — Quantile/ES-MLMC estimator design note (stage-5 prerequisite b; design-only)
 
 Shipped `docs/research/MLMC_QUANTILE_ESTIMATOR_DESIGN_NOTE_20260619.md`. Establishes the shipped mean-MLMC estimator (identity_payoff) cannot cover the governed SCR `VaR_0.995(L)-E[L]` (nonlinear tail functional, O(1/N_inner) Gordy-Juneja inner-sampling bias); prescribes the Rockafellar-Uryasev ES representation (Lipschitz objective) as primary estimator + smoothed-indicator CDF oracle + antithetic coupling, and pre-registers a new bias gate G0 atop G1-G5. Design-only: no model-form/contract/governed-artifact change. Gates green: build_offline_home_validate 177/177, loader_parity 10/10, offline unittest 4/4, MLMC 15 passed +1 scipy-skip; offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52-W63); headline 39,975.65 (1 occ); contract 1.23.0. NEXT = W64 MLMC stage-2 quantile prototype (mlmc_nested_tail, opt-in) OR owner pivot A/B/C/D/E.
+
+---
+
+## W64 — 2026-06-19 (claude, 18:00Z slot) — MLMC stage-2 quantile/ES prototype
+
+**Type:** forward-research / efficiency-estimator (stage-2 prototype); auto-runnable; opt-in; no owner sign-off consumed; no model-form change; no contract bump; no headline re-baseline.
+
+Implemented the quantile/ES-aware tail-functional MLMC estimator pre-registered by the W63 design note (`docs/research/MLMC_QUANTILE_ESTIMATOR_DESIGN_NOTE_20260619.md`). Added to `par_model_v2/projection/mlmc_inner_estimator.py` (ADDITIVE, +320 lines): `ru_objective`, `ru_minimise_var_es` (Rockafellar-Uryasev ES = min_q[q + E[(L-q)_+]/(1-a)], VaR = argmin, exact breakpoint minimiser), `smoothed_cdf_var` (sigmoid-CDF VaR oracle), `_empirical_var_es`, `TailEstimate`, `nested_single_level_tail` (governed-style fixed benchmark), and `mlmc_nested_tail` (telescopes the Lipschitz RU objective + the mean over the geometric inner ladder with antithetic fine/coarse coupling; recovers VaR/ES/SCR; L=0 is the exact single-level reduction).
+
+Results: telescoping identity G4 bit-for-bit (mlmc L=0 == fixed on VaR/ES/SCR/mean); RU recovers VaR to 0.64% / ES to 0.77% vs Normal truth and matches empirical np.quantile VaR to 4.7e-6; MLMC L>0 consistent (VaR rel-err 5.3%/ES 5.1% vs fixed-128 at modest samples, mean 0.33%; shrinks 5.9%->2.8% as finest n_outer 1000->3000); deterministic under fixed seed. Tests: `tests/test_mlmc_tail_estimator.py` 10 passed + 1 scipy-skip; regression `test_mlmc_inner_estimator` + `test_mlmc_stage3_wiring` 15 passed + 1 scipy-skip (unchanged). G5 no-spillover PASS: `offline_home.html` md5 03d6538d3cae9efb83062ecbfab096e9 unchanged, headline 39975.654628199336, contract 1.23.0, governed artifacts byte-identical (git shows only the additive module change + new test). Evidence: `docs/validation/MLMC_TAIL_STAGE2_PROTOTYPE_20260619.{md,json}`.
+
+Ops: all git in a fresh /tmp ext4 clone of origin/main (mount 100% full + delete-forbidden; pip -> /tmp/pylibs); mount .git untouched; origin/main is source of truth. Lock acquired + released.
+
+Next: W65 = stage 3 (G0/G1/G2 bias+equivalence+tail-accuracy validation card vs fixed-256 on the frozen snapshot; auto-runnable). Then stage 4 (G3 cost/variance-decay => merge-as-opt-in vs shelve). Stage 5 (governed default) = owner sign-off only. Owner pivot options remain open (Phase IGUI is the owner's stated exclusive next major initiative).
