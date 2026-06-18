@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-18T06:10Z-8d3b",
-  "started_at": "2026-06-18T06:10:03Z",
-  "ttl_minutes": 120,
-  "task": "Window #51 verification/reproducibility refresh (offline-UI pool exhausted; owner pivot pending)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-18T06:12:17Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
