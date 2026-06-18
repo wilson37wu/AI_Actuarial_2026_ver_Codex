@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-18T21:26:18Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-18T22:14Z-96c1",
+  "started_at": "2026-06-18T22:14:56Z",
+  "ttl_minutes": 120,
+  "task": "W65 MLMC stage-3 validation card (G0/G1/G2: bias + frozen-snapshot equivalence + tail-accuracy) for mlmc_nested_tail vs fixed-256 governed benchmark; opt-in, additive, no headline re-baseline",
+  "note": ""
 }
