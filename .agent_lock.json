@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-18T12:09Z-3314",
-  "started_at": "2026-06-18T12:09:14Z",
-  "ttl_minutes": 120,
-  "task": "W51 cycle: assess frontier / owner-pending decision; verification refresh or next admissible step",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-18T12:14:41Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
