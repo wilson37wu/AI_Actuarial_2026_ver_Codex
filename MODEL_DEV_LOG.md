@@ -11414,3 +11414,22 @@ acquired `cb09a01`). RECONCILED a stale-state bug: the structured `in_progress` 
 `postigui_vr2`, contract 1.23.0) — moved to `completed`. NEXT = W68 single verification/consumer-doc pass
 (auto, no new graphic / no model-FORM change) OR owner pivot A/B/C/D/E; stage 5 (tail-MLMC as governed
 default) = owner sign-off + fresh frozen reference only.
+
+---
+
+## Window #68 — 2026-06-19T01:15:45Z (claude) — W68 stage-4b CONSUMER-DOC + VERIFICATION PASS
+
+**Type:** documentation + verification only. No model-form change · no contract bump · no headline re-baseline · no owner sign-off consumed. **Verdict: PASS.**
+
+Executed the W67 NEXT pointer (options i+ii). Shipped `docs/research/MLMC_TAIL_VR_MODE_CONSUMER_NOTE_20260619.md` — a practitioner note for selecting `tail_capital_diagnostics(variance_reduction in {none,stratified,stratified_antithetic}, es_bias_correction)` on the opt-in tail path (modes table, ES-bias "do-not-stack" rule, copy-paste example, return-dict reference, stage-5 owner-gating boundary) — plus a full end-to-end verification.
+
+**Verification GREEN + byte-stable** (throwaway venv numpy 2.2.6 / scipy 1.15.3 / pandas / pytest 9.1.0):
+- `build_offline_home_validate` **177/177**; `offline_home_loader_parity.cjs` **10/10**; `tests/test_offline_home_validate` **4/4**.
+- MLMC suite **53 passed / 0 failed** (inner + stage3 + tail + tail-stage3/4/4b; the 3 scipy-oracle tests that env-skipped at W67 now execute and pass).
+- Stage-4b re-validation deterministic: G-W67a frozen-snapshot equivalence / G-W67b mode-selectable VR / G-W67c determinism+ES identity / G-W67d no-spillover **ALL PASS**; matched-cost **VaR 2.620× / ES 2.858× / SCR 2.456×** (G3 ≥2× PASS); `git status` clean after re-running the builder ⇒ byte-reproducible.
+- Frozen tail snapshot reproduced bit-for-bit: var `0.04820076634696653` / es `0.051878781816970275` / scr `0.027892778037151456`.
+- `offline_home.html` md5 **03d6538d3cae9efb83062ecbfab096e9** (byte-identical W52–W68); governed headline **39975.654628199336** intact (32 occ.); `ui_data.json` contract **1.23.0**; only the new note + cycle-status + state/log added.
+
+**Frontier:** MLMC quantile/ES tail efficiency = design→prototype→stage3→stage4→stage4b-WIRED+DOCUMENTED. The **auto-admissible model frontier is EXHAUSTED short of stage 5.** Remaining options are all OWNER-GATED: (A) MR-LONGEV-1 [model-form, sign-off] / (B) LSMC [sign-off] / (C) Phase IGUI [auto] / (D) Packaging A/B/C [auto] / (E) FREEZE; stage 5 (tail-MLMC governed default) needs owner sign-off + fresh frozen reference.
+
+**Coordination:** git in a fresh `/tmp` ext4 clone; mount `.git` untouched; lock `2026-06-19T01:09Z-d8e4` acquired + released. Ran off-window (01:0xZ) because the scheduled task fired then and the lock was free (push-based acquire is the race authority); no Codex collision. **NEXT = W69** owner-pivot decision (A/B/C/D/E); absent a pivot, a light verification + owner-brief re-send.
