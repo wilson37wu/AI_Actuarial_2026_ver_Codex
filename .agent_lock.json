@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-19T18:48:21Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-19T19:35Z-855e",
+  "started_at": "2026-06-19T19:35:44Z",
+  "ttl_minutes": 120,
+  "task": "Owner pivot C+D: Phase IGUI (input+run GUI) then packaging/CI",
+  "note": ""
 }
