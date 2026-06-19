@@ -11560,3 +11560,15 @@ Git history confirmed origin authoritative (no work lost). **Remediation:** re-s
 **Owner-reply check:** no A/B/C/D/E reply to the W69 brief. 8th consecutive owner-gated heartbeat.
 
 **NEXT (W76):** owner pivot A–E; absent a reply, single light verification + full sync on the corrected cadence; no more duplicate drafts; no model-form change.
+
+---
+
+## 2026-06-19 (interactive, post-W75) — OWNER PIVOT C+D EXECUTED — PASS
+
+Owner replied "do C and D, update task". Recorded C+D selection (supersedes the W68–W75 A/B/C/D/E heartbeat gate). No model-FORM change; governed artifacts byte-unchanged.
+
+**C (Phase IGUI) — COMPLETE + end-to-end verified.** `launch_offline_gui.py --self-test` → self_test_ok=true, host 127.0.0.1, engine_ready=true. `run_model.py` ran the full governed pipeline and wrote GUI-consumable JSON (fast smoke 100×4 no-tail: nested 49,657.9 / gaussian copula 37,499.0 / var-covar 30,267.9; governed ref 39,975.65 at 160×24+tail).
+
+**D (Packaging) — recipe COMPLETE + verified; build is owner/CI-gated.** spec compiles; release.workflow.yml valid (ubuntu/windows/macos matrix, workflow_dispatch + v* tags); offline_bootstrap.py (Option B) runs; PKG structural gate PASS. Cannot finish in-sandbox: per-OS binaries can't be cross-built from Linux + dev token lacks GitHub workflow scope. Owner actions documented in docs/validation/OWNER_PIVOT_CD_ACCEPTANCE_20260619.md.
+
+Engine: numpy 2.2.6 / scipy 1.15.3 / pandas 2.3.3 (venv on /tmp; /sessions full). Git in fresh /tmp clone; mount .git untouched.

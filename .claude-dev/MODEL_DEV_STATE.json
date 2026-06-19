@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-19T18:20:00Z",
+  "last_run": "2026-06-19T19:45:00Z",
   "last_run_duration_minutes": 10,
-  "last_run_note": "Window #75 (claude, 18:00Z window). VERIFICATION HEARTBEAT + FULL TRACKED-FILE SYNC + DEFINITIVE SCHEDULE-MISFIRE FIX (VERIFIED PERSISTED) + OWNER-REPLY CHECK. Verdict PASS. Took over an interrupted 17:10Z same-owner (claude) W75 lock (origin HEAD cad888d was only the acquire, no work/release); preflight PROCEED (re-entrant); re-acquired 2026-06-19T18:14Z-d95e. KEY: W74's claimed cron fix had NOT persisted -- live config still '0 * * * *' hourly (caused the 17:06Z+18:06Z back-to-back misfires + 50+ dup drafts). Re-applied cron '0 2,14 * * *' (18:00/06:00 UTC) via scheduled-tasks MCP and VERIFIED by re-list (nextRunAt 2026-06-20T06:06:01Z, enabled). Verification GREEN: build_offline_home_validate 177/177; offline_home_loader_parity 10/10; offline_home.html md5 03d6538d (byte-identical W52-W75); headline 39975.654628199336 (1 occ); ui_data.json md5 70b747a0 contract 1.23.0; state+governance JSON parse OK. Full sync: 1606 tracked -> 1605 MATCH, 0 stale, 0 missing. Owner inbox: NO A/B/C/D/E reply. 8th consecutive owner-gated heartbeat. Git in fresh /tmp clone; mount .git untouched. NEXT=W76 on the corrected 12h cadence: owner pivot A-E; absent a reply, single light verification + full sync; no more duplicate drafts.",
+  "last_run_note": "Interactive owner pivot (post-W75): owner replied 'do C and D, update task'. Recorded C+D selection (supersedes the A-E heartbeat gate). C (Phase IGUI) verified END-TO-END: launch_offline_gui --self-test self_test_ok=true engine_ready=true host=127.0.0.1; run_model.py ran the full governed pipeline and produced GUI-consumable JSON (fast smoke 100x4 no-tail). D (packaging) verified: spec compiles, release CI workflow valid (ubuntu/windows/macos matrix, workflow_dispatch + v* tags), Option-B offline_bootstrap runs, PKG structural gate PASS, launcher self-test = the CI smoke assertion. D build is owner/CI-gated by design: per-OS binaries can't be cross-built from Linux + dev token lacks GitHub workflow scope to activate .github/workflows/. Documented owner actions delivered. Governed artifacts byte-unchanged (offline_home.html 03d6538d; ui_data.json 1.23.0). Git in fresh /tmp clone; mount .git untouched. Acceptance: docs/validation/OWNER_PIVOT_CD_ACCEPTANCE_20260619.md.",
   "current_phase": "MODEL frontier (auto-admissible efficiency track): quantile/ES-aware MLMC for the governed SCR. W57 design -> W58 mean prototype -> W60 stage-3 mean wiring -> W63 quantile design note -> W64 quantile/ES PROTOTYPE (mlmc_nested_tail, Rockafellar-Uryasev, opt-in). Offline-UI graphical track holds at 11 inline-SVG graphics (owner may declare COMPLETE). Owner-stated EXCLUSIVE next major initiative remains Phase IGUI (input+run GUI); MLMC efficiency stages 2-4 are auto-runnable and do not consume owner sign-off (only stage 5 = governed default does).",
-  "overall_status": "W75_VERIFICATION_PASS_GREEN_PLUS_FULL_TRACKED_FILE_SYNC_1606_1605_MATCH_0_STALE_SCHEDULE_MISFIRE_FIXED_DEFINITIVELY_CRON_0_2_14_VERIFIED_PERSISTED_NEXTRUN_20260620_0606UTC_ENABLED_REVERSIBLE_W74_FIX_HAD_NOT_PERSISTED_NO_OWNER_PIVOT_REPLY_ORIGIN_CODE_UNCHANGED_OFFLINE_HOME_MD5_03d6538d_HEADLINE_39975.654628199336_CONTRACT_1.23.0_VALIDATE_177_177_LOADER_PARITY_10_10_8TH_CONSECUTIVE_HEARTBEAT_OWNER_PIVOT_ABCDE_REQUIRED_NEXT_W76",
+  "overall_status": "OWNER_PIVOT_CD_EXECUTED_C_COMPLETE_END_TO_END_VERIFIED_D_AUTHORED_VERIFIED_BUILD_OWNER_CI_GATED_GOVERNED_ARTIFACTS_UNCHANGED_03d6538d_CONTRACT_1.23.0_A_E_HEARTBEAT_SUPERSEDED",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -789,8 +789,8 @@
     "average_cycle_duration_minutes": 53,
     "cycles_run": 165,
     "tasks_total": 116,
-    "last_task": "W75 verification heartbeat + full sync + DEFINITIVE schedule-misfire fix (cron 0 2,14 * * * verified persisted) (PASS)",
-    "next_task": "W76 owner-pivot decision A/B/C/D/E; absent a reply, a SINGLE light verification + full tracked-file sync on the corrected 12h cadence; stage 5 governed default owner sign-off only",
+    "last_task": "Owner pivot C+D executed: C end-to-end verified; D authored+verified (build owner/CI-gated)",
+    "next_task": "Auto-cycles: maintain/verify C run-path + assist D activation (owner installs CI workflow + tags/dispatches, or local pyinstaller build). Stage-5 governed default remains separately sign-off-gated.",
     "phase20_complete": true,
     "offline_ui_contract_version": "1.13.0",
     "last_ui_self_test": "node scripts/ui_app_self_test.cjs ui_app.html -> ok:true; 172 checks; tabCount 13; 0 network / 0 JS errors"
@@ -1091,7 +1091,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-19T18:20:00Z",
+  "last_updated": "2026-06-19T19:45:00Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -1834,7 +1834,7 @@
     ],
     "note": "Resume deprioritized items only after a usable Phase IGUI MVP, or when IGUI is blocked awaiting owner input. .claude-dev/MODEL_DEV_STATE.json remains the authoritative in_progress pointer; Phase IGUI is QUEUED (status 'planned'), not yet in_progress, so the current phase finishes first."
   },
-  "next_major_initiative": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14; EXCLUSIVE after current in-flight UI phase)",
+  "next_major_initiative": "OWNER PIVOT RESOLVED 2026-06-19: C (Phase IGUI) COMPLETE+verified; D (packaging) authored+verified, build is owner/CI-gated. Auto-cycles maintain C+D; no A-E heartbeat.",
   "cycle_2026_06_14_phase36_task1": {
     "when": "2026-06-14T14:07Z-14:25Z",
     "owner": "claude",
@@ -3656,5 +3656,46 @@
     "consecutive_owner_gated_heartbeats": 8,
     "lock": "fresh /tmp clone (mount .git untouched); lock 2026-06-19T18:14Z-d95e acquired+released; no Codex collision (held lock was claude's own interrupted run, not codex)",
     "next": "W76 (now on the verified-correct 06:00/18:00 UTC cadence): owner-pivot decision A/B/C/D/E; absent a reply, a SINGLE light verification + full tracked-file sync; do NOT add further duplicate drafts (50+ exist); do NOT make any model-FORM change; the W69 brief docs/research/OWNER_DECISION_BRIEF_W69_20260619.md stands."
+  },
+  "owner_direction_2026_06_19_CD": {
+    "set_at": "2026-06-19T19:45:00Z",
+    "set_by": "owner (interactive session)",
+    "directive": "do C and D — execute Phase IGUI (input+run GUI) and Packaging/build+CI.",
+    "supersedes": "the W68-W75 A/B/C/D/E owner-decision heartbeat gate; the model frontier stays at the auto-admissible boundary (stage 5 still needs separate sign-off and is NOT part of C/D).",
+    "interpretation": "By choosing C the owner confirms acceptance of the relaxed zero-install constraint for the input+run GUI (per 2026-06-14 owner_direction). The committed zero-install RESULTS UI (ui_app.html) stays unchanged.",
+    "C_status": "COMPLETE + end-to-end verified this session (launch self_test_ok=true engine_ready=true; run_model.py governed pipeline executed end-to-end, GUI-consumable JSON produced).",
+    "D_status": "Build recipe AUTHORED + VERIFIED (spec compiles, CI workflow valid, Option-B bootstrap runs, structural gate PASS). Producing installable binaries is the documented owner/CI step: per-OS binaries can't be cross-built from the Linux sandbox, and the dev token lacks GitHub `workflow` scope to activate .github/workflows/. Owner installs the workflow (workflow-scope token) then tags/dispatches, OR builds locally with one pyinstaller command.",
+    "evidence": [
+      "docs/validation/OWNER_PIVOT_CD_ACCEPTANCE_20260619.md",
+      "docs/validation/OWNER_PIVOT_CD_ACCEPTANCE_20260619.json"
+    ]
+  },
+  "cycle_2026_06_19_owner_pivot_CD": {
+    "window": "interactive (post-W75, same session)",
+    "owner": "claude",
+    "timestamp": "2026-06-19T19:45:00Z",
+    "type": "owner pivot executed (C+D) + verification; no model-FORM change; governed artifacts byte-unchanged",
+    "verdict": "PASS",
+    "C_verified": {
+      "launch_self_test_ok": true,
+      "host": "127.0.0.1",
+      "engine_ready": true,
+      "run_model_end_to_end": "PASS (fast smoke 100x4 no-tail: nested 49657.9 / gaussian copula 37499.0 / var-covar 30267.9; governed ref 39975.65 at 160x24+tail)"
+    },
+    "D_verified": {
+      "spec_compiles": true,
+      "ci_workflow_yaml_valid": true,
+      "option_b_bootstrap_runs": true,
+      "pkg_task1_structural_gate": "PASS",
+      "launcher_self_test": "PASS (CI smoke assertion)"
+    },
+    "D_remaining_owner_actions": [
+      "install workflow to .github/workflows/release.yml (workflow-scope token)",
+      "tag v* or Actions workflow_dispatch, or local pyinstaller build"
+    ],
+    "governed_artifacts": "UNCHANGED (offline_home.html md5 03d6538d; ui_data.json 70b747a0 contract 1.23.0)",
+    "lock": "fresh /tmp clone; lock 2026-06-19T19:35Z-855e; mount .git untouched",
+    "engine": "numpy 2.2.6 / scipy 1.15.3 / pandas 2.3.3 (venv on /tmp; /sessions full)",
+    "next": "Auto-cycles: maintain+verify C (run-path smoke green) and assist D activation (the build is owner/CI-gated); NO A-E heartbeat. Stage-5 governed-default remains separately sign-off-gated and out of scope for C/D."
   }
 }
