@@ -11376,3 +11376,41 @@ Git in fresh /tmp ext4 clone (origin ahead of stale mount: mount=W59, origin=W65
 correction as a selectable variance-reduction MODE on the opt-in tail path, default OFF, frozen-snapshot
 equivalence gated; auto-runnable) OR owner pivot A/B/C/D/E; stage 5 (tail-MLMC as governed default) = owner
 sign-off + fresh frozen reference only.
+
+## W67 (claude, 2026-06-19, ~00:20Z window) — MLMC tail-estimator STAGE 4B WIRING (selectable variance-reduction MODE); VERDICT PASS
+
+Executed the explicit W66 "Next" pointer (W67 = stage-4b wiring). Packaged the W66 stage-4 tail tools
+(`stratified_normal_outer_sampler` + `es_bias_corrected`) into ONE mode-selectable entry point on the
+opt-in tail path — `par_model_v2/projection/mlmc_inner_estimator.tail_capital_diagnostics(...)` plus the
+`resolve_tail_outer_sampler(mode, mu, sigma)` resolver and the `TAIL_VR_MODES =
+('none','stratified','stratified_antithetic')` constant. This is the tail analogue of the W60 stage-3
+`engine_mean_liability_diagnostics` mean wiring: an additive, opt-in, default-OFF efficiency sidecar that
+never moves the governed headline.
+
+Pre-registered gates (build_mlmc_tail_stage4b_wiring.py → overall PASS):
+- G-W67a frozen-snapshot equivalence — the DEFAULT mode (`variance_reduction='none'`,
+  `es_bias_correction=False`) reproduces a FROZEN W67 reference snapshot bit-for-bit AND equals a plain-outer
+  `nested_single_level_tail` call bit-for-bit. Frozen ref @ (mu_x=0.02, sigma_x=0.01, sigma_inner=0.05,
+  n_outer=4000, n_inner=256, seed=20260619): VaR `0.04820076634696653` / ES `0.051878781816970275` / SCR
+  `0.027892778037151456` / mean_liability `0.020307988309815075` / cost 1,024,000. => the default path is
+  provably unchanged.
+- G-W67b mode-selectable VR — stratified mode keeps the SAME inner-path cost yet delivers a matched-cost
+  replicate variance-reduction of VaR 2.62× / ES 2.86× / SCR 2.46× (SCR ≥ 2× → G3 PASS); the
+  `stratified_antithetic` mode is also wired and matched-cost.
+- G-W67c determinism + ES identity — same seed → identical dict; the optional ES bootstrap correction is
+  deterministic, obeys `es_bc == 2·es_raw − boot_mean`, and is ADDITIVE (the canonical VaR/ES/SCR stay
+  bit-identical when it is enabled).
+- G-W67d no-spillover — governed artifacts byte-unchanged (offline_home.html md5
+  `03d6538d3cae9efb83062ecbfab096e9`), governed headline `39975.654628199336`, contract `1.23.0`.
+
+ADDITIVE/opt-in: only `par_model_v2/projection/mlmc_inner_estimator.py` modified (+123 lines, new symbols
+only); 4 new files (`scripts/build_mlmc_tail_stage4b_wiring.py`,
+`docs/validation/MLMC_TAIL_STAGE4B_WIRING_20260619.{md,json}`, `tests/test_mlmc_tail_stage4b.py`). Tests:
+MLMC tail suites 38 passed / 0 failed (`test_mlmc_tail_stage4b` 12/12 + stage4 9 + tail_estimator 10 + inner
+7); 3 scipy-oracle checks SKIP (scipy absent in this sandbox — documented env limit, not a regression; run
+via a minimal pytest shim, numpy 2.2.6). Git in fresh /tmp ext4 clone (origin = W66 release `34ec134`; lock
+acquired `cb09a01`). RECONCILED a stale-state bug: the structured `in_progress` still listed
+"Post-Phase-IGUI Task 8", but that offline-UI MR-VR-2 panel was ALREADY shipped on origin (ui_data.json
+`postigui_vr2`, contract 1.23.0) — moved to `completed`. NEXT = W68 single verification/consumer-doc pass
+(auto, no new graphic / no model-FORM change) OR owner pivot A/B/C/D/E; stage 5 (tail-MLMC as governed
+default) = owner sign-off + fresh frozen reference only.

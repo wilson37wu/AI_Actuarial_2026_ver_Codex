@@ -908,3 +908,126 @@ def es_bias_corrected(liabilities: np.ndarray,
         "method": method,
     }
     return float(es_bc), diagnostics
+
+
+# ===========================================================================
+# W67 (2026-06-19): STAGE-4B WIRING -- selectable tail variance-reduction MODE
+# ---------------------------------------------------------------------------
+# Packages the W66 stage-4 tail tools (stratified outer sampling + ES bootstrap
+# bias correction) as a single, mode-selectable diagnostics entry point on the
+# opt-in tail path -- the tail analogue of the W60 stage-3
+# ``engine_mean_liability_diagnostics`` mean wiring. DEFAULT is OFF
+# (``variance_reduction="none"``, ``es_bias_correction=False``): the default
+# path is the EXACT plain fixed-N_inner ``nested_single_level_tail`` estimator,
+# so the governed SCR/VaR/ES headline 39,975.654628199336 is byte-identical and
+# a frozen-snapshot equivalence gate holds bit-for-bit. Selecting a stratified
+# mode swaps in the W66 ``stratified_normal_outer_sampler`` (matched cost: no
+# extra inner paths) and optionally applies the ES bootstrap correction, both
+# proven in docs/validation/MLMC_TAIL_STAGE4_VALIDATION_20260619.md. OPT-IN /
+# ADDITIVE: no contract bump, no model-form change; making any tail-MLMC figure
+# the governed default remains stage 5 (owner sign-off + fresh frozen reference).
+# ===========================================================================
+
+TAIL_VR_MODES = ("none", "stratified", "stratified_antithetic")
+
+
+def resolve_tail_outer_sampler(mode: str, mu: float, sigma: float) -> OuterSampler:
+    """Map a tail variance-reduction MODE to a Gaussian ``OuterSampler``.
+
+    ``"none"`` -> plain i.i.d. ``rng.normal(mu, sigma, n)`` (the governed-style
+    default, bit-identical to the pre-W67 estimator); ``"stratified"`` /
+    ``"stratified_antithetic"`` -> the W66 equal-probability stratified sampler
+    (optionally antithetic). Unknown modes raise ``ValueError`` (mirrors the
+    engine's invalid ``inner_estimator`` rejection).
+    """
+    if mode not in TAIL_VR_MODES:
+        raise ValueError(
+            "variance_reduction must be one of " + repr(TAIL_VR_MODES)
+            + ", got " + repr(mode))
+    mu = float(mu)
+    sigma = float(sigma)
+    if mode == "none":
+        def plain(rng: np.random.Generator, n: int) -> np.ndarray:
+            return rng.normal(mu, sigma, size=int(n))
+        return plain
+    if mode == "stratified":
+        return stratified_normal_outer_sampler(mu, sigma)
+    return stratified_normal_outer_sampler(mu, sigma, antithetic=True)
+
+
+def tail_capital_diagnostics(
+    *,
+    mu_x: float,
+    sigma_x: float,
+    sigma_inner: float,
+    alpha: float = DEFAULT_TAIL_CONFIDENCE,
+    n_outer: int,
+    n_inner: int = 256,
+    seed: int = 20260619,
+    variance_reduction: str = "none",
+    es_bias_correction: bool = False,
+    es_bias_n_boot: int = 200,
+    es_bias_method: str = "ru",
+) -> dict:
+    """Opt-in, mode-selectable tail VaR/ES/SCR diagnostics (stage-4b wiring).
+
+    Governed-STYLE analytic nested tail estimator (the exact testbed the W66
+    stage-4 study validated): a 1-D Gaussian outer driver ``X ~ N(mu_x, sigma_x)``
+    with inner liability draws ``N(X, sigma_inner)``. ``variance_reduction``
+    selects the outer-sampling MODE; with the default ``"none"`` (and
+    ``es_bias_correction=False``) the returned ``var``/``es``/``scr`` are
+    BIT-IDENTICAL to ``nested_single_level_tail`` driven by a plain i.i.d. outer
+    pool at the same seed -- the frozen-snapshot equivalence guarantee. Selecting
+    ``"stratified"`` / ``"stratified_antithetic"`` reduces the Monte-Carlo
+    variance of the tail functionals at the SAME inner-path cost (stratification
+    is free); ``es_bias_correction=True`` additionally attaches the W66
+    bootstrap-corrected ES (do NOT stack it on a stratified pool -- already
+    ~unbiased). Deterministic given ``seed``; JSON-serialisable; never moves the
+    governed headline (a fixed single-level figure until owner-signed-off stage 5).
+    """
+    outer = resolve_tail_outer_sampler(variance_reduction, mu_x, sigma_x)
+
+    def inner(x: float, m: int, rng: np.random.Generator) -> np.ndarray:
+        return rng.normal(float(x), float(sigma_inner), size=int(m))
+
+    est = nested_single_level_tail(
+        outer, inner, alpha=float(alpha), n_outer=int(n_outer),
+        n_inner=int(n_inner), rng=np.random.default_rng(int(seed)))
+
+    out = {
+        "estimand": "tail_capital_VaR_ES_SCR_at_alpha",
+        "variance_reduction": variance_reduction,
+        "es_bias_correction": bool(es_bias_correction),
+        "alpha": float(alpha),
+        "n_outer": int(est.n_outer),
+        "n_inner": int(n_inner),
+        "inner_path_cost": int(est.inner_path_cost),
+        "var": float(est.var),
+        "es": float(est.es),
+        "scr": float(est.scr),
+        "mean_liability": float(est.mean_liability),
+        "var_empirical": float(est.var_empirical),
+        "es_empirical": float(est.es_empirical),
+        "governed_default": "fixed (none); governed SCR/VaR/ES headline unchanged",
+        "note": ("Governed-style analytic nested tail estimator; opt-in stage-4b "
+                 "wiring of the W66 stratified / ES-bias tools. Stage 5 (governed "
+                 "default) needs owner sign-off + a fresh frozen reference."),
+    }
+
+    if es_bias_correction:
+        # Re-draw the SAME conditional-liability sample (same seed) so the
+        # correction applies to the estimate's own L; the bootstrap uses an
+        # independent, deterministic rng.
+        L = _per_outer_mean_liabilities(
+            outer, inner, int(n_outer), int(n_inner),
+            np.random.default_rng(int(seed)))
+        es_bc, diag = es_bias_corrected(
+            L, float(alpha), n_boot=int(es_bias_n_boot),
+            rng=np.random.default_rng(int(seed) ^ 0x42B0),
+            method=str(es_bias_method))
+        out["es_bias_corrected"] = float(es_bc)
+        out["es_bias_hat"] = float(diag["bias_hat"])
+        out["es_bias_boot_mean"] = float(diag["boot_mean"])
+        out["es_bias_n_boot"] = int(diag["n_boot"])
+
+    return out
