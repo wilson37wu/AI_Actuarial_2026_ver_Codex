@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-19T00:25:06Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-19T01:09Z-d8e4",
+  "started_at": "2026-06-19T01:09:34Z",
+  "ttl_minutes": 120,
+  "task": "W68 stage-4b consumer-doc/verify",
+  "note": ""
 }
