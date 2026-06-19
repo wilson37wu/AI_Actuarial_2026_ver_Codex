@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-19T09:09Z-9241",
-  "started_at": "2026-06-19T09:09:01Z",
-  "ttl_minutes": 120,
-  "task": "W72 owner-pivot check + prescribed light verification pass",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-19T09:18:18Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
