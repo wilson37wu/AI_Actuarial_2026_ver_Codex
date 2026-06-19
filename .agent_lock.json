@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-19T11:10Z-e4d0",
-  "started_at": "2026-06-19T11:10:47Z",
-  "ttl_minutes": 120,
-  "task": "W74 verification heartbeat + full tracked-file sync check + owner-reply check",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-19T11:18:12Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
