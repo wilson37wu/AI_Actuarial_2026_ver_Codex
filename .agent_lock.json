@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-18T23:31:32Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-19T00:10Z-4b06",
+  "started_at": "2026-06-19T00:10:30Z",
+  "ttl_minutes": 120,
+  "task": "W67: offline-UI/MLMC frontier task (resolve in_progress on inspection)",
+  "note": ""
 }
