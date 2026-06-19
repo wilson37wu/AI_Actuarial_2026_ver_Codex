@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-19T02:09Z-d0a7",
-  "started_at": "2026-06-19T02:09:30Z",
-  "ttl_minutes": 120,
-  "task": "W69 offline-UI increment + verification",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-19T02:20:02Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
