@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-19T11:18:12Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-19T12:11Z-e3b1",
+  "started_at": "2026-06-19T12:11:28Z",
+  "ttl_minutes": 120,
+  "task": "W75 schedule-fix verification + tracked-file sync + consolidated owner status",
+  "note": ""
 }
