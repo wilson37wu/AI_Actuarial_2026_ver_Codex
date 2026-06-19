@@ -11433,3 +11433,26 @@ Executed the W67 NEXT pointer (options i+ii). Shipped `docs/research/MLMC_TAIL_V
 **Frontier:** MLMC quantile/ES tail efficiency = design→prototype→stage3→stage4→stage4b-WIRED+DOCUMENTED. The **auto-admissible model frontier is EXHAUSTED short of stage 5.** Remaining options are all OWNER-GATED: (A) MR-LONGEV-1 [model-form, sign-off] / (B) LSMC [sign-off] / (C) Phase IGUI [auto] / (D) Packaging A/B/C [auto] / (E) FREEZE; stage 5 (tail-MLMC governed default) needs owner sign-off + fresh frozen reference.
 
 **Coordination:** git in a fresh `/tmp` ext4 clone; mount `.git` untouched; lock `2026-06-19T01:09Z-d8e4` acquired + released. Ran off-window (01:0xZ) because the scheduled task fired then and the lock was free (push-based acquire is the race authority); no Codex collision. **NEXT = W69** owner-pivot decision (A/B/C/D/E); absent a pivot, a light verification + owner-brief re-send.
+
+---
+
+## Window #69 — 2026-06-19T02:1xZ (claude) — W69 verification pass + consolidated owner-decision brief
+
+**Type:** verification + documentation only. NO model-form change · NO contract bump · NO headline re-baseline · NO new graphic · NO owner sign-off consumed. **Verdict: PASS.**
+
+Executed the W68 "NEXT-EXECUTION POINTER (W69)" exactly: the auto-admissible model frontier is EXHAUSTED short of owner-gated stage 5 and the offline-UI graphic pool is saturated (15 governed charts), so the prescribed step is a single light verification pass + an owner-brief refresh — no near-duplicate graphic, no model-form change. Additionally consolidated the standing A/B/C/D/E pivot into one durable, decision-ready document.
+
+**Shipped:** `docs/research/OWNER_DECISION_BRIEF_W69_20260619.md` — single decision-ready brief (both auto-admissible tracks complete; A/B/C/D/E options with pros/cons; recommendation E-freeze, or B→D→C if the owner intends interactive re-runs; evidence index).
+
+**Verification GREEN + byte-stable** (throwaway venv numpy 2.2.6 / scipy 1.15.3 / pandas 2.3.3 / pytest 9.1.0):
+- `build_offline_home_validate` **177/177**; `offline_home_loader_parity.cjs` **10/10**; `tests/test_offline_home_validate` **4/4**.
+- MLMC suite **53 passed / 0 failed** (inner + stage3 + tail + tail-stage3/4/4b).
+- Stage-4b re-validation deterministic: G-W67a/b/c/d **ALL PASS**; matched-cost **VaR 2.620× / ES 2.858× / SCR 2.456×** (G3 ≥2× PASS); `git status` clean after re-running the builder ⇒ byte-reproducible.
+- Frozen tail snapshot reproduced bit-for-bit: var `0.04820076634696653` / es `0.051878781816970275` / scr `0.027892778037151456`; `es_bias_corrected` `0.052047740945333806`.
+- `offline_home.html` md5 **03d6538d3cae9efb83062ecbfab096e9** (byte-identical W52–W69); governed headline **39975.654628199336** intact (32 occ.); `ui_data.json` contract **1.23.0**; only the new brief + cycle-status + state/log/task-prompt updated.
+
+**Offline UI status (owner directive):** the zero-install, display-only offline UI is feature-complete — `offline_home.html` (15 inline-SVG governed charts + jump-nav + "which view" chooser + drag-drop snapshot loader) and `ui_app.html` (tabbed viewer, PNG/CSV/PDF export, ARIA a11y, jsdom 0-network self-test). The directive ("UI uses only the model output to display graphically and interactively the result") is satisfied.
+
+**Frontier:** auto-admissible model frontier EXHAUSTED short of stage 5; offline-UI graphical + interactive tracks COMPLETE. Options all OWNER-GATED: (A) MR-LONGEV-1 [model-form, sign-off] / (B) LSMC [sign-off] / (C) Phase IGUI [auto, conflicts with display-only directive] / (D) Packaging A/B/C [needs build env] / (E) FREEZE; stage 5 (tail-MLMC governed default) needs owner sign-off + fresh frozen reference.
+
+**Coordination:** mount already in sync with origin/main at W68 (state/log/html/task-prompt diff-clean; mount ~317G free). Git in a fresh `/tmp` ext4 clone; mount `.git` untouched; lock `2026-06-19T02:09Z-d0a7` acquired + released. Ran off-window (~02:0xZ) because the scheduled task fired and the lock was free (push-based acquire is the race authority); no Codex collision. **NEXT = W70** owner-pivot decision (A/B/C/D/E); absent a reply, a single light verification pass (the W69 brief stands — do not re-send a near-identical brief every cycle).
