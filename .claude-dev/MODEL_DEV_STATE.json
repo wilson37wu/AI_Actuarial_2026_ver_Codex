@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-19T11:15:00Z",
-  "last_run_duration_minutes": 8,
-  "last_run_note": "Window #74 (claude). W74 VERIFICATION HEARTBEAT + FULL TRACKED-FILE SYNC CHECK + OWNER-REPLY CHECK + SCHEDULE-MISFIRE CORRECTION. Verdict PASS. Owner inbox checked for an A/B/C/D/E reply to the W69 owner-decision brief: NONE (only an Anthropic usage-credit promo). Ran the prescribed W74 work: (1) FULL git ls-files md5 diff mount vs a fresh origin/main clone = 1605 tracked -> 1604 MATCH, 0 STALE, 0 MISSING, 1 dynamic (.agent_lock.json): mount FULLY in sync with origin (W73's 4-file resync held, no new drift). (2) Light verification GREEN: build_offline_home_validate 177/177; offline_home_loader_parity 10/10; offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52-W74, headline 39975.654628199336 intact 1 occ); ui_data.json md5 70b747a05c00d29bd6e286a7ee4cf42c contract 1.23.0; MODEL_DEV_STATE.json + GOVERNANCE_STORE.json parse OK. Heavy MLMC suite (53 tests) NOT re-run (scipy absent; W72 ran 53/0 <1d ago vs the md5-identical code; redundant); byte-reproducibility rebuild skipped (artifact md5-identical to the W73-verified build). KEY ACTION THIS CYCLE -- the standing W70-W73 escalation RESOLVED AT SOURCE: diagnosed the cron of scheduled task 'auto_actuarial_stochastic_model' = '0 * * * *' (EVERY HOUR), contradicting AGENT_COORDINATION.md + this task's STEP 0 (Claude window = 06:00/18:00 UTC, 12h). Hourly firing produced 50+ near-identical owner status drafts over days + ~10 redundant runs/day. CORRECTED cron -> '0 2,14 * * *' (local HKT/UTC+8 = 18:00 & 06:00 UTC), task left ENABLED, fully reversible; reported to owner. Git in a FRESH /tmp clone (mount .git untouched); lock 2026-06-19T11:10Z-e4d0 acquired 11:10Z. Ran in the 06:00Z window (~11:1xZ) -- last hourly misfire before the cadence correction. 7th consecutive owner-gated heartbeat; consolidated status email DRAFT produced for wilsonwukl@gmail.com (headlines the schedule fix + the required A/B/C/D/E pivot). NEXT=W75 (now on corrected 06:00/18:00 UTC cadence): owner-pivot decision; absent a reply, single light verification + full tracked-file sync; do NOT add further duplicate drafts (50+ exist).",
+  "last_run": "2026-06-19T18:20:00Z",
+  "last_run_duration_minutes": 10,
+  "last_run_note": "Window #75 (claude, 18:00Z window). VERIFICATION HEARTBEAT + FULL TRACKED-FILE SYNC + DEFINITIVE SCHEDULE-MISFIRE FIX (VERIFIED PERSISTED) + OWNER-REPLY CHECK. Verdict PASS. Took over an interrupted 17:10Z same-owner (claude) W75 lock (origin HEAD cad888d was only the acquire, no work/release); preflight PROCEED (re-entrant); re-acquired 2026-06-19T18:14Z-d95e. KEY: W74's claimed cron fix had NOT persisted -- live config still '0 * * * *' hourly (caused the 17:06Z+18:06Z back-to-back misfires + 50+ dup drafts). Re-applied cron '0 2,14 * * *' (18:00/06:00 UTC) via scheduled-tasks MCP and VERIFIED by re-list (nextRunAt 2026-06-20T06:06:01Z, enabled). Verification GREEN: build_offline_home_validate 177/177; offline_home_loader_parity 10/10; offline_home.html md5 03d6538d (byte-identical W52-W75); headline 39975.654628199336 (1 occ); ui_data.json md5 70b747a0 contract 1.23.0; state+governance JSON parse OK. Full sync: 1606 tracked -> 1605 MATCH, 0 stale, 0 missing. Owner inbox: NO A/B/C/D/E reply. 8th consecutive owner-gated heartbeat. Git in fresh /tmp clone; mount .git untouched. NEXT=W76 on the corrected 12h cadence: owner pivot A-E; absent a reply, single light verification + full sync; no more duplicate drafts.",
   "current_phase": "MODEL frontier (auto-admissible efficiency track): quantile/ES-aware MLMC for the governed SCR. W57 design -> W58 mean prototype -> W60 stage-3 mean wiring -> W63 quantile design note -> W64 quantile/ES PROTOTYPE (mlmc_nested_tail, Rockafellar-Uryasev, opt-in). Offline-UI graphical track holds at 11 inline-SVG graphics (owner may declare COMPLETE). Owner-stated EXCLUSIVE next major initiative remains Phase IGUI (input+run GUI); MLMC efficiency stages 2-4 are auto-runnable and do not consume owner sign-off (only stage 5 = governed default does).",
-  "overall_status": "W74_VERIFICATION_PASS_GREEN_PLUS_FULL_TRACKED_FILE_SYNC_1604_1604_MATCH_0_STALE_NO_OWNER_PIVOT_REPLY_ORIGIN_CODE_UNCHANGED_SCHEDULE_MISFIRE_CORRECTED_CRON_0_STAR_HOURLY_TO_0_2_14_06UTC_18UTC_TASK_ENABLED_REVERSIBLE_50PLUS_DUPLICATE_DRAFTS_FLAGGED_OFFLINE_HOME_MD5_03d6538d_HEADLINE_39975.654628199336_CONTRACT_1.23.0_VALIDATE_177_177_LOADER_PARITY_10_10_FRONTIER_EXHAUSTED_SHORT_OF_STAGE5_OFFLINE_UI_FEATURE_COMPLETE_15_CHARTS_7TH_CONSECUTIVE_HEARTBEAT_OWNER_PIVOT_ABCDE_REQUIRED_NEXT_W75",
+  "overall_status": "W75_VERIFICATION_PASS_GREEN_PLUS_FULL_TRACKED_FILE_SYNC_1606_1605_MATCH_0_STALE_SCHEDULE_MISFIRE_FIXED_DEFINITIVELY_CRON_0_2_14_VERIFIED_PERSISTED_NEXTRUN_20260620_0606UTC_ENABLED_REVERSIBLE_W74_FIX_HAD_NOT_PERSISTED_NO_OWNER_PIVOT_REPLY_ORIGIN_CODE_UNCHANGED_OFFLINE_HOME_MD5_03d6538d_HEADLINE_39975.654628199336_CONTRACT_1.23.0_VALIDATE_177_177_LOADER_PARITY_10_10_8TH_CONSECUTIVE_HEARTBEAT_OWNER_PIVOT_ABCDE_REQUIRED_NEXT_W76",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -789,8 +789,8 @@
     "average_cycle_duration_minutes": 53,
     "cycles_run": 165,
     "tasks_total": 116,
-    "last_task": "W67 MLMC tail estimator stage-4b: selectable variance-reduction MODE wiring (PASS 4/4 gates)",
-    "next_task": "W68 stage-4b consumer-doc/verification pass (auto, no new graphic / no model-FORM change) OR owner pivot A/B/C/D/E; stage 5 governed default owner sign-off only",
+    "last_task": "W75 verification heartbeat + full sync + DEFINITIVE schedule-misfire fix (cron 0 2,14 * * * verified persisted) (PASS)",
+    "next_task": "W76 owner-pivot decision A/B/C/D/E; absent a reply, a SINGLE light verification + full tracked-file sync on the corrected 12h cadence; stage 5 governed default owner sign-off only",
     "phase20_complete": true,
     "offline_ui_contract_version": "1.13.0",
     "last_ui_self_test": "node scripts/ui_app_self_test.cjs ui_app.html -> ok:true; 172 checks; tabCount 13; 0 network / 0 JS errors"
@@ -1091,7 +1091,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-19T08:16:00Z",
+  "last_updated": "2026-06-19T18:20:00Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -3618,5 +3618,43 @@
     },
     "frontier": "unchanged - auto-admissible model frontier EXHAUSTED short of owner-gated stage 5; offline-UI graphical+interactive COMPLETE (15 charts). Owner-gated: A MR-LONGEV-1 [model-form,sign-off] / B LSMC [sign-off] / C Phase IGUI [auto, conflicts w/ display-only] / D Packaging A/B/C [build env/cert] / E FREEZE. 7th consecutive owner-gated heartbeat",
     "next_pointer": "W75 on corrected 06:00/18:00 UTC cadence: owner-pivot decision; absent a reply, single light verification + full tracked-file md5 sync; do NOT add further duplicate drafts (50+ exist); respect any owner schedule change"
+  },
+  "cycle_2026_06_19_w75": {
+    "window": 75,
+    "owner": "claude",
+    "timestamp": "2026-06-19T18:20:00Z",
+    "type": "verification heartbeat + full tracked-file sync check + DEFINITIVE schedule-misfire fix (VERIFIED persisted) + owner-reply check (no model-form / governed-artifact / contract change; no new graphic; no new owner brief; no owner sign-off consumed; origin/main code unchanged)",
+    "verdict": "PASS",
+    "ran_in_window": "18:00Z (legitimate Claude window; ~18:1xZ)",
+    "lock_takeover": "origin/main HEAD at clone time was cad888d = an interrupted 17:10Z same-owner (claude) W75 lock-acquire with NO subsequent work/release commit; agent_lock.py preflight returned PROCEED (re-entrant same-owner); re-acquired fresh lock 2026-06-19T18:14Z-d95e and completed the cycle",
+    "owner_reply_check": "searched owner inbox (newer_than:5d subject:actuarial|model|stochastic|pivot|SCR|freeze|LSMC|longevity; and in:inbox newer_than:2d) for an A/B/C/D/E reply to the W69 owner-decision brief: NONE; no near-identical brief re-sent",
+    "full_sync_check": {
+      "method": "git ls-files md5 diff, mount vs fresh origin/main --depth 1 clone",
+      "result": "1606 tracked -> 1605 MATCH, 0 STALE, 0 MISSING, 1 dynamic (.agent_lock.json)",
+      "conclusion": "mount fully in sync with origin/main; no re-sync needed"
+    },
+    "verification": {
+      "build_offline_home_validate": "177/177",
+      "offline_home_loader_parity": "10/10",
+      "offline_home_md5": "03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52-W75)",
+      "ui_data_md5": "70b747a05c00d29bd6e286a7ee4cf42c contract 1.23.0",
+      "headline": "39975.654628199336 intact (1 occ in offline_home.html)",
+      "json_parse": "MODEL_DEV_STATE.json + GOVERNANCE_STORE.json OK",
+      "env": "numpy present + node v22.22.3 in this sandbox",
+      "mlmc_suite": "NOT re-run (code md5-identical to W72's 53/0 run; redundant)",
+      "byte_reproducibility_rebuild": "skipped (offline_home.html md5-identical to W73/W74-verified build)"
+    },
+    "schedule_fix_definitive": {
+      "finding": "W74's CLAIMED cron correction did NOT persist -- live task config at this run still showed cronExpression '0 * * * *' (hourly), enabled, which produced the back-to-back 17:06Z + 18:06Z misfires this cycle and the 50+ duplicate drafts over prior days",
+      "local_timezone_confirmed": "HKT/UTC+8 (cross-checked vs sibling tasks: daily-markets-briefing '0 7 * * *' == '07:00 HKT'; friday-weekly-digest '0 18 * * 5' == '18:00 HKT')",
+      "applied_cron": "0 2,14 * * * (02:00 & 14:00 HKT = 18:00 & 06:00 UTC = the documented Claude window)",
+      "verified_persisted": "re-listed scheduled tasks after update: cronExpression now '0 2,14 * * *'; nextRunAt 2026-06-20T06:06:01Z (= 14:06 HKT = 06:06 UTC morning window); enabled=true; jitter 361s",
+      "reversible": "yes -- owner can set any cadence or disable via task settings",
+      "harm_resolved": "stops ~10 redundant runs/day, lock churn, and the duplicate-status-draft flood; restores the task's own documented 12h cadence (maintenance, not new behavior)"
+    },
+    "governed_artifacts_changed": "NONE",
+    "consecutive_owner_gated_heartbeats": 8,
+    "lock": "fresh /tmp clone (mount .git untouched); lock 2026-06-19T18:14Z-d95e acquired+released; no Codex collision (held lock was claude's own interrupted run, not codex)",
+    "next": "W76 (now on the verified-correct 06:00/18:00 UTC cadence): owner-pivot decision A/B/C/D/E; absent a reply, a SINGLE light verification + full tracked-file sync; do NOT add further duplicate drafts (50+ exist); do NOT make any model-FORM change; the W69 brief docs/research/OWNER_DECISION_BRIEF_W69_20260619.md stands."
   }
 }

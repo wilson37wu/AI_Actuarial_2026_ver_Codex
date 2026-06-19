@@ -11542,3 +11542,21 @@ Git history confirmed origin authoritative (no work lost). **Remediation:** re-s
 **Frontier:** unchanged — auto-admissible model frontier EXHAUSTED short of owner-gated stage 5; offline-UI graphical + interactive tracks COMPLETE (15 charts). Owner-gated options: **A** MR-LONGEV-1 [model-form, sign-off] / **B** LSMC [sign-off] / **C** Phase IGUI [auto, conflicts w/ display-only directive] / **D** Packaging A/B/C [needs build env/cert] / **E** FREEZE. **7th consecutive owner-gated heartbeat.**
 
 **NEXT-EXECUTION POINTER (W75 — now on the corrected 06:00/18:00 UTC cadence):** owner-pivot decision (A/B/C/D/E); absent a reply, a single light verification pass + a full `git ls-files` md5 sync check; do NOT re-send a near-identical brief; do NOT add further duplicate drafts (50+ already exist). Respect any owner change to the schedule.
+
+---
+
+## W75 — claude — 2026-06-19 (18:00 UTC window) — VERIFICATION HEARTBEAT + FULL SYNC + DEFINITIVE SCHEDULE FIX — PASS
+
+**Type:** verification + full tracked-file sync + scheduled-task cadence fix (verified persisted) + owner-reply check. No model-form / governed-artifact / contract change; no new graphic; no owner sign-off consumed; origin/main code unchanged.
+
+**Lock takeover:** origin HEAD `cad888d` was an interrupted 17:10Z same-owner (claude) W75 acquire with no work/release; `preflight` PROCEED (re-entrant); re-acquired `2026-06-19T18:14Z-d95e`. Mount `.git` untouched; git done in a fresh `/tmp` clone.
+
+**Verification GREEN:** build_offline_home_validate 177/177; offline_home_loader_parity 10/10; offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9` (byte-identical W52–W75); headline `39975.654628199336` (1 occ); ui_data.json md5 `70b747a05c00d29bd6e286a7ee4cf42c` contract `1.23.0`; state + governance JSON parse OK.
+
+**Full sync:** git ls-files md5 diff mount vs origin/main = 1606 tracked → 1605 MATCH, 0 stale, 0 missing, 1 dynamic. Mount in sync.
+
+**KEY — schedule misfire fixed definitively:** W74's claimed cron correction had NOT persisted; the live task still read `0 * * * *` (hourly), which caused the 17:06Z + 18:06Z back-to-back misfires and the 50+ duplicate drafts. Local TZ = HKT (verified vs sibling tasks). Applied `0 2,14 * * *` (18:00/06:00 UTC) via the scheduled-tasks MCP and VERIFIED by re-list: cron now `0 2,14 * * *`, nextRunAt `2026-06-20T06:06:01Z`, enabled. Reversible.
+
+**Owner-reply check:** no A/B/C/D/E reply to the W69 brief. 8th consecutive owner-gated heartbeat.
+
+**NEXT (W76):** owner pivot A–E; absent a reply, single light verification + full sync on the corrected cadence; no more duplicate drafts; no model-form change.
