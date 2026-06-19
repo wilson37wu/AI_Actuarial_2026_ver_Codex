@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-19T03:17:36Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-19T08:10Z-343b",
+  "started_at": "2026-06-19T08:10:14Z",
+  "ttl_minutes": 120,
+  "task": "W71 verification heartbeat + owner-pivot check",
+  "note": ""
 }
