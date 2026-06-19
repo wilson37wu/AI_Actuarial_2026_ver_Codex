@@ -1,8 +1,8 @@
 {
   "owner": "claude",
-  "cycle_id": "2026-06-19T15:16Z-dd61",
-  "started_at": "2026-06-19T15:16:33Z",
+  "cycle_id": "2026-06-19T16:13Z-fd0b",
+  "started_at": "2026-06-19T16:13:07Z",
   "ttl_minutes": 120,
-  "task": "W75 (completing abandoned 13:11Z W75): verification heartbeat + full tracked-file sync + schedule/owner-reply check + state update",
+  "task": "W75 (completing abandoned 15:16Z W75): verification heartbeat + full tracked-file sync + owner-reply + schedule check + state update",
   "note": ""
 }
