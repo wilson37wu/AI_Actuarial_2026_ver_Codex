@@ -11572,3 +11572,21 @@ Owner replied "do C and D, update task". Recorded C+D selection (supersedes the 
 **D (Packaging) — recipe COMPLETE + verified; build is owner/CI-gated.** spec compiles; release.workflow.yml valid (ubuntu/windows/macos matrix, workflow_dispatch + v* tags); offline_bootstrap.py (Option B) runs; PKG structural gate PASS. Cannot finish in-sandbox: per-OS binaries can't be cross-built from Linux + dev token lacks GitHub workflow scope. Owner actions documented in docs/validation/OWNER_PIVOT_CD_ACCEPTANCE_20260619.md.
 
 Engine: numpy 2.2.6 / scipy 1.15.3 / pandas 2.3.3 (venv on /tmp; /sessions full). Git in fresh /tmp clone; mount .git untouched.
+
+---
+
+## 2026-06-21T06:20:00Z — Window #76 (claude) — W76 C+D maintenance verification (auto-cycle)
+
+Window #76 (claude). C+D MAINTENANCE-VERIFICATION cycle per the owner C+D pivot auto-cycle pointer. No model-FORM change; governed artifacts byte-unchanged; no contract bump; no owner sign-off consumed; origin/main code unchanged. Verdict PASS.
+
+**Schedule:** first run on the verified-correct cadence `0 2,14 * * *` (06:00/18:00 UTC) — fired 06:06:12Z in the Claude window, next 18:06:01Z; the W74/W75 fix HELD (no hourly misfire, no duplicate-draft churn).
+
+**C (Phase IGUI) — GREEN on the PINNED engine lock** (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3): `launch_offline_gui.py --self-test` → self_test_ok=true, host 127.0.0.1, engine_ready=true. `run_model.py` fast smoke 100×4 no-tail bit-matched W75 (nested 49,657.9 / gaussian copula 37,499.0 / var-covar 30,267.9); RUN_MODEL_SUMMARY.json well-formed (GUI-consumable).
+
+**D (Packaging) — GREEN; build owner/CI-gated.** spec AST-OK; release.workflow.yml valid (package-release; workflow_dispatch+push; build matrix ubuntu/windows/macos; release ubuntu); offline_bootstrap.py AST-OK + --self-test PASS (offline guarantee --no-index --find-links wheelhouse); PKG structural gate 26/26 overall_pass. .github/workflows NOT installed + 0 v* tags → per-OS binary build remains owner/CI-gated (expected).
+
+**Integrity GREEN + byte-stable:** build_offline_home_validate 177/177; tests/test_offline_home_validate 4/4; offline_home_loader_parity 10/10; offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 (byte-identical W52–W76); ui_data.json md5 70b747a05c00d29bd6e286a7ee4cf42c contract 1.23.0; headline 39975.654628199336 (1 occ).
+
+**Full tracked-file sync** (git ls-files md5, Downloads mount vs origin/main): 1610 tracked → 1609 MATCH, 0 stale, 0 missing, 1 dynamic (.agent_lock.json) → mount fully in sync.
+
+**Owner inbox** in:inbox newer_than:3d empty; no new directive beyond the 2026-06-19 C+D pivot. Git in a fresh /tmp clone; mount .git untouched; lock 2026-06-21T06:10Z-753d acquired+released. Status email drafted/sent to wilsonwukl@gmail.com.
