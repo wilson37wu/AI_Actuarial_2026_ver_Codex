@@ -67,7 +67,7 @@ AFFECTED_COMPONENTS = [
 def _load_p23t4_motivation() -> dict:
     """Archived Phase 23 Task 4 figures (motivation; NOT consumed by gates)."""
     try:
-        with open(P23T4) as fh:
+        with open(P23T4, encoding="utf-8") as fh:
             r = json.load(fh)
         a = r.get("aggregation_with_actions", {})
         return {
@@ -334,7 +334,7 @@ def main(use_governance: bool = False, fast: bool = False) -> dict:
         fh.write(_md(note))
     out = {"verdict": note["verdict"], "json": JSON_PATH, "md": MD_PATH}
     if use_governance:
-        store = GovernanceStore.from_json(open(GOV_PATH).read())
+        store = GovernanceStore.from_json(open(GOV_PATH, encoding="utf-8").read())
         gov = apply_governance(store, note)
         if gov.get("added"):
             with open(GOV_PATH, "w", encoding="utf-8") as fh:

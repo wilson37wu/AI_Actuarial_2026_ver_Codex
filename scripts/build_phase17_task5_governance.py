@@ -275,7 +275,7 @@ def _md(summary: dict) -> str:
 
 
 def main(use_governance: bool = False) -> dict:
-    blob = open(GOV_PATH).read()
+    blob = open(GOV_PATH, encoding="utf-8").read()
     store = GovernanceStore.from_json(blob)
     summary = apply_phase17_task5_governance(store)
 

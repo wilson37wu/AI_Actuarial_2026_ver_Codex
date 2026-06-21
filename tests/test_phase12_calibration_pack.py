@@ -85,7 +85,7 @@ class TestPhase12CalibrationPack:
         md_path = pack.write_markdown(tmp_path / "pack.md")
         assert json_path.exists()
         assert md_path.exists()
-        assert "Phase 12 Calibration Assumption Pack" in md_path.read_text()
+        assert "Phase 12 Calibration Assumption Pack" in md_path.read_text(encoding="utf-8")
 
     def test_category_filter(self):
         pack = build_phase12_calibration_pack("2026-06-04", categories=("curve", "liability"))

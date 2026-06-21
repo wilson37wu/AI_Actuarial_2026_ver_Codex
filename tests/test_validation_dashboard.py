@@ -307,7 +307,7 @@ def test_t27_write_creates_two_files():
 def test_t28_written_json_is_valid():
     with tempfile.TemporaryDirectory() as tmpdir:
         j, _ = write_validation_dashboard(output_dir=tmpdir)
-        with open(j) as f:
+        with open(j, encoding="utf-8") as f:
             parsed = json.load(f)
         assert "sections" in parsed
 
@@ -315,7 +315,7 @@ def test_t28_written_json_is_valid():
 def test_t29_written_markdown_non_empty():
     with tempfile.TemporaryDirectory() as tmpdir:
         _, m = write_validation_dashboard(output_dir=tmpdir)
-        with open(m) as f:
+        with open(m, encoding="utf-8") as f:
             content = f.read()
         assert len(content) > 1000
 

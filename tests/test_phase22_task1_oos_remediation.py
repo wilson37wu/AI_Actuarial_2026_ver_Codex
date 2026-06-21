@@ -173,7 +173,7 @@ class TestTargetedDiagnostics:
 class TestSavedReport:
     @pytest.fixture(scope="class")
     def rep(self):
-        return json.loads(REPORT.read_text())["validation"]
+        return json.loads(REPORT.read_text(encoding="utf-8"))["validation"]
 
     def test_verdict_pass(self, rep):
         assert rep["verdict"].startswith("PASS")

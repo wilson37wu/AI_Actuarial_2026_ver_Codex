@@ -220,7 +220,7 @@ class TestRunPhase13Backtest:
     def test_oos_report_json_roundtrips(self, result):
         rep, _gs, d = result
         import json
-        j = json.loads((d / "PHASE13_OOS_BACKTEST_REPORT.json").read_text())
+        j = json.loads((d / "PHASE13_OOS_BACKTEST_REPORT.json").read_text(encoding="utf-8"))
         assert j["gate_g09"]["status"] == "PASS"
         assert j["observations"]["full"] >= G09_MIN_OBSERVATIONS
 

@@ -136,7 +136,7 @@ def test_validate_rejects_wrong_precomputed_length(validator):
 
 @pytest.mark.skipif(not REPORT.exists(), reason="evidence report not built")
 def test_saved_phase22_task2_report_gate():
-    rep = json.loads(REPORT.read_text())["validation"]
+    rep = json.loads(REPORT.read_text(encoding="utf-8"))["validation"]
     assert rep["verdict"].startswith("PASS")
     assert rep["selected_row"]["oos_r2"] >= 0.95
     assert rep["capital_comparison"]["var_rel_error"] <= 0.10

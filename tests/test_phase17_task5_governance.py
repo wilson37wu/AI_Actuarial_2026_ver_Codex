@@ -39,7 +39,7 @@ def _load(path, name):
 
 
 def _fresh_store() -> GovernanceStore:
-    return GovernanceStore.from_json(open(_GOV).read())
+    return GovernanceStore.from_json(open(_GOV, encoding="utf-8").read())
 
 
 def _pre_refresh_store(mod) -> GovernanceStore:
@@ -128,7 +128,7 @@ def test_canonical_store_already_refreshed_is_consistent():
 
 def test_limitation_card_present_and_complete():
     assert os.path.exists(_CARD)
-    text = open(_CARD).read()
+    text = open(_CARD, encoding="utf-8").read()
     for marker in [
         "EDUCATIONAL ONLY", "Model-use restrictions",
         "MR-012", "MR-010", "MR-011", "APS X2", "OWNER_REVIEW",

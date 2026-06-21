@@ -92,7 +92,7 @@ def test_html_is_offline_safe(data):
 
 
 def test_template_has_token():
-    tpl = open(_TEMPLATE).read()
+    tpl = open(_TEMPLATE, encoding="utf-8").read()
     assert "/*__VIEWER_DATA__*/null" in tpl
     assert "<!DOCTYPE html>" in tpl
 
@@ -142,7 +142,7 @@ def test_loss_percentiles_and_seeds(data):
 
 
 def test_template_has_task2_charts():
-    tpl = open(_TEMPLATE).read()
+    tpl = open(_TEMPLATE, encoding="utf-8").read()
     for token in ["function histChart", "function ciBar", "function renderLossPanel",
                   'id="lossSeed"', 'id="lossCl"', 'id="lossPct"', 'id="lossChart"']:
         assert token in tpl, "missing Task 2 viewer element: " + token
@@ -150,7 +150,7 @@ def test_template_has_task2_charts():
 
 # ---------------------------------------------------------------- Task 3 proxy + aggregation
 def test_template_has_task3_views():
-    tpl = open(_TEMPLATE).read()
+    tpl = open(_TEMPLATE, encoding="utf-8").read()
     for token in ["function waterfallChart", "function viewAggregation",
                   "Overfit gap", '["agg","Aggregation",viewAggregation]',
                   "Diversification-benefit waterfall"]:
@@ -169,7 +169,7 @@ def test_aggregation_data_supports_waterfall(data):
 
 def test_loss_emitter_is_calculation_side_only():
     # The viewer template must not import or run the model; all numbers are pre-computed.
-    tpl = open(_TEMPLATE).read().lower()
+    tpl = open(_TEMPLATE, encoding="utf-8").read().lower()
     for forbidden in ["math.random", "numpy", "fetch(", "xmlhttprequest", "import("]:
         assert forbidden not in tpl, "viewer must not compute/fetch: " + forbidden
 

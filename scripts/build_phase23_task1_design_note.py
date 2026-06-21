@@ -109,7 +109,7 @@ def pre_study(n: int = 150_000, seed: int = 42) -> dict:
 def p22_motivation() -> dict:
     if not os.path.exists(P22T4):
         return {}
-    d = json.load(open(P22T4))
+    d = json.load(open(P22T4, encoding="utf-8"))
     agg = d.get("aggregation", {})
     return {
         "var_covar_scr": agg.get("var_covar_scr"),
@@ -300,7 +300,7 @@ def main(use_governance: bool = False) -> dict:
     note = build_design_note()
     os.makedirs(OUT_DIR, exist_ok=True)
     gov = {"added": False, "reason": "dry-run (--governance not set)"}
-    store = GovernanceStore.from_json(open(GOV_PATH).read())
+    store = GovernanceStore.from_json(open(GOV_PATH, encoding="utf-8").read())
     if use_governance:
         gov = apply_governance(store, note)
         with open(GOV_PATH, "w", encoding="utf-8") as fh:

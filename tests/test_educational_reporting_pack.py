@@ -396,7 +396,7 @@ class TestEducationalReportingPack:
         )
         path = pack.write_json(tmp_path / "edpack.json")
         assert path.exists()
-        data = json.loads(path.read_text())
+        data = json.loads(path.read_text(encoding="utf-8"))
         assert data["pack_id"] == pack.pack_id
 
     def test_write_markdown(self, small_portfolio, run_meta, tmp_path):
@@ -408,7 +408,7 @@ class TestEducationalReportingPack:
         )
         path = pack.write_markdown(tmp_path / "edpack.md")
         assert path.exists()
-        text = path.read_text()
+        text = path.read_text(encoding="utf-8")
         assert "Educational Reporting Pack" in text
 
     def test_markdown_contains_all_sections(self, small_portfolio, run_meta, tmp_path):
@@ -417,7 +417,7 @@ class TestEducationalReportingPack:
             run_id=run_meta["run_id"],
             lock_id=run_meta["lock_id"],
         )
-        md = pack.write_markdown(tmp_path / "full.md").read_text()
+        md = pack.write_markdown(tmp_path / "full.md").read_text(encoding="utf-8")
         for heading in ("Model Run Log", "Movement Analysis", "Risk Metrics",
                         "Validation Exceptions", "Sign-Off Checklist"):
             assert heading in md, f"Missing section: {heading}"

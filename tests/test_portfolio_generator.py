@@ -182,7 +182,7 @@ def test_roundtrip_csv(small_result, tmp_path):
 
 def test_metadata_serialisable(small_result, tmp_path):
     path = write_metadata(small_result, tmp_path / "meta.json")
-    meta = json.loads(path.read_text())
+    meta = json.loads(path.read_text(encoding="utf-8"))
     assert meta["n_policies"] == len(small_result.policies)
     assert meta["digest_sha256"] == small_result.digest
     assert meta["seed"] == SMALL.seed

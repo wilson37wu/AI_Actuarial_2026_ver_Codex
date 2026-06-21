@@ -33,7 +33,7 @@ DATA_TOKEN = "/*__VIEWER_DATA__*/null"
 
 def _load(path: str) -> Optional[dict]:
     try:
-        with open(path) as fh:
+        with open(path, encoding="utf-8") as fh:
             return json.load(fh)
     except (OSError, ValueError):
         return None

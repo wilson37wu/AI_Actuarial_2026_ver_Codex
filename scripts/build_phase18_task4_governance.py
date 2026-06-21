@@ -71,7 +71,7 @@ STANDARD_REFERENCES = [
 
 
 def _load(path: str) -> dict:
-    return json.load(open(path)) if os.path.exists(path) else {}
+    return json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {}
 
 
 def _has_change_record(store: GovernanceStore, title: str) -> bool:
@@ -370,7 +370,7 @@ def _md(summary: dict) -> str:
 
 
 def main(use_governance: bool = False) -> dict:
-    store = GovernanceStore.from_json(open(GOV_PATH).read())
+    store = GovernanceStore.from_json(open(GOV_PATH, encoding="utf-8").read())
     summary = apply(store)
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(JSON_PATH, "w", encoding="utf-8") as fh:

@@ -444,14 +444,14 @@ class TestPerformanceBenchmarkReport:
         out = tmp_path / "bench.md"
         path = report.write_markdown(out)
         assert path.exists()
-        content = path.read_text()
+        content = path.read_text(encoding="utf-8")
         assert "Performance Benchmark" in content
         assert report.benchmark_id in content
 
     def test_markdown_contains_stage_table(self, report, tmp_path):
         out = tmp_path / "bench2.md"
         report.write_markdown(out)
-        content = out.read_text()
+        content = out.read_text(encoding="utf-8")
         assert "portfolio_generation" in content
         assert "chunked_processing" in content
 

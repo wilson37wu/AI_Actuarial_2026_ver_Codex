@@ -96,7 +96,7 @@ AFFECTED_COMPONENTS = [
 def _load_p26t3_motivation() -> dict:
     """Archived Phase 26 Task 3 figures (motivation; NOT consumed by gates)."""
     try:
-        with open(P26T3) as fh:
+        with open(P26T3, encoding="utf-8") as fh:
             r = json.load(fh)
         res = r.get("result", r)
         decomp = res.get("residual_gap_decomposition", {})
@@ -490,7 +490,7 @@ def main(use_governance: bool = False, fast: bool = False) -> dict:
         fh.write(_card(note))
     out = {"verdict": note["verdict"], "json": JSON_PATH, "md": MD_PATH, "card": CARD_PATH}
     if use_governance:
-        store = GovernanceStore.from_json(open(GOV_PATH).read())
+        store = GovernanceStore.from_json(open(GOV_PATH, encoding="utf-8").read())
         gov = apply_governance(store, note)
         if gov.get("added"):
             with open(GOV_PATH, "w", encoding="utf-8") as fh:

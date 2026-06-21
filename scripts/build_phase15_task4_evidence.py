@@ -51,7 +51,7 @@ def build(use_governance: bool = False):
         from par_model_v2.governance.audit_trail import (
             GovernanceStore, ChangeRecord, EntryType, SignOffStatus,
         )
-        gs = GovernanceStore.from_json(open(GOV_PATH).read())
+        gs = GovernanceStore.from_json(open(GOV_PATH, encoding="utf-8").read())
 
     report = eng.run(cfg, governance_store=gs)
 

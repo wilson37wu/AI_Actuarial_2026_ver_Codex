@@ -158,14 +158,14 @@ def test_use_restrictions_contract():
 
 # ---------------------------------------------------------------- note contract
 def test_note_json_exists_and_passes():
-    with open(NOTE_JSON) as fh:
+    with open(NOTE_JSON, encoding="utf-8") as fh:
         note = json.load(fh)
     assert note["verdict"] == "PASS"
     assert note["classification"] == "EDUCATIONAL"
 
 
 def test_note_json_contract_keys():
-    with open(NOTE_JSON) as fh:
+    with open(NOTE_JSON, encoding="utf-8") as fh:
         note = json.load(fh)
     for k in ("candidate_chosen", "candidates_not_chosen", "motivation_from_phase24_task3",
               "problem", "method_design", "pre_study_recognition_lag", "gap_analysis",
@@ -175,13 +175,13 @@ def test_note_json_contract_keys():
 
 
 def test_note_json_pre_study_checks_true():
-    with open(NOTE_JSON) as fh:
+    with open(NOTE_JSON, encoding="utf-8") as fh:
         pre_ = json.load(fh)["pre_study_recognition_lag"]
     assert pre_["understatement_sign_ok"] and pre_["bounds_ok"] and pre_["relief_ordering_ok"]
 
 
 def test_note_json_gap_analysis_covers_standards():
-    with open(NOTE_JSON) as fh:
+    with open(NOTE_JSON, encoding="utf-8") as fh:
         gaps = json.load(fh)["gap_analysis"]
     text = " ".join(g["standard"] for g in gaps)
     for s in ("Art. 23", "ASOP 56", "TAS M", "Art. 234"):
@@ -189,7 +189,7 @@ def test_note_json_gap_analysis_covers_standards():
 
 
 def test_note_md_headers_present():
-    with open(NOTE_MD) as fh:
+    with open(NOTE_MD, encoding="utf-8") as fh:
         md = fh.read()
     for h in ("## 0. Candidate selection", "## 1. Problem", "## 2. Method",
               "## 3. Pre-study", "## 4. Gap analysis", "## 5. Acceptance criteria",
@@ -198,6 +198,6 @@ def test_note_md_headers_present():
 
 
 def test_card_exists_with_gates():
-    with open(CARD_MD) as fh:
+    with open(CARD_MD, encoding="utf-8") as fh:
         card = fh.read()
     assert "Path-Wise Bonus Declaration" in card and "Pre-registered gates" in card

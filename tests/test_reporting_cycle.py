@@ -353,7 +353,7 @@ class TestSignOffPack:
     def test_write_markdown_produces_file(self, tiny_portfolio, tmp_path):
         pack = self._build_pack(tiny_portfolio, approved=True)
         path = pack.write_markdown(tmp_path / "pack.md")
-        content = path.read_text()
+        content = path.read_text(encoding="utf-8")
         assert "Sign-Off Pack" in content
         assert "CLEARED" in content
 

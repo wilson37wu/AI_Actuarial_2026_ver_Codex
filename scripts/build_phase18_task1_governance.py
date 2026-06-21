@@ -65,7 +65,7 @@ STANDARD_REFERENCES = [
 
 def _load_evidence() -> dict:
     if os.path.exists(EVIDENCE_REPORT):
-        return json.load(open(EVIDENCE_REPORT))
+        return json.load(open(EVIDENCE_REPORT, encoding="utf-8"))
     return {}
 
 
@@ -302,7 +302,7 @@ def _md(summary: dict) -> str:
 
 
 def main(use_governance: bool = False) -> dict:
-    store = GovernanceStore.from_json(open(GOV_PATH).read())
+    store = GovernanceStore.from_json(open(GOV_PATH, encoding="utf-8").read())
     summary = apply_phase18_task1_governance(store)
 
     os.makedirs(OUT_DIR, exist_ok=True)

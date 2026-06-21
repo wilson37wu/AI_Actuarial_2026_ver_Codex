@@ -181,7 +181,7 @@ def test_use_restrictions_educational():
 @pytest.fixture(scope="module")
 def note():
     assert os.path.exists(NOTE_JSON), "run scripts/build_phase24_task1_design_note.py first"
-    with open(NOTE_JSON) as fh:
+    with open(NOTE_JSON, encoding="utf-8") as fh:
         return json.load(fh)
 
 
@@ -215,7 +215,7 @@ def test_note_pre_study_mechanism_recorded(note):
 
 def test_note_markdown_rendered():
     assert os.path.exists(NOTE_MD)
-    md = open(NOTE_MD).read()
+    md = open(NOTE_MD, encoding="utf-8").read()
     assert "Verdict: PASS" in md
     assert "action-after-aggregation" in md.lower()
     assert "no gate-shopping" in md.lower()

@@ -393,7 +393,7 @@ def main(use_governance: bool = False, fast: bool = False) -> dict:
         fh.write(_card(note))
     out = {"verdict": note["verdict"], "json": JSON_PATH, "md": MD_PATH, "card": CARD_PATH}
     if use_governance:
-        store = GovernanceStore.from_json(open(GOV_PATH).read())
+        store = GovernanceStore.from_json(open(GOV_PATH, encoding="utf-8").read())
         gov = apply_governance(store, note)
         if gov.get("added"):
             with open(GOV_PATH, "w", encoding="utf-8") as fh:
