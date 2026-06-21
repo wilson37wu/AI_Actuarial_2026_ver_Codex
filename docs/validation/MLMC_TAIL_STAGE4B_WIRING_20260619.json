@@ -1,0 +1,147 @@
+{
+  "title": "MLMC quantile/ES tail estimator -- stage-4b wiring (selectable variance-reduction MODE on the opt-in tail path)",
+  "window": "W67",
+  "generated_utc": "2026-06-19T00:18:25Z",
+  "classification": "efficiency / estimator-only WIRING; ADDITIVE; OPT-IN; default OFF; no model-form change; no contract bump; no headline re-baseline; no owner sign-off consumed",
+  "design_note": "docs/research/MLMC_QUANTILE_ESTIMATOR_DESIGN_NOTE_20260619.md",
+  "stage4_evidence": "docs/validation/MLMC_TAIL_STAGE4_VALIDATION_20260619.md",
+  "api": {
+    "entry_point": "par_model_v2.projection.mlmc_inner_estimator.tail_capital_diagnostics",
+    "resolver": "par_model_v2.projection.mlmc_inner_estimator.resolve_tail_outer_sampler",
+    "modes": [
+      "none",
+      "stratified",
+      "stratified_antithetic"
+    ],
+    "default": "variance_reduction='none', es_bias_correction=False",
+    "pattern": "tail analogue of the W60 stage-3 engine_mean_liability_diagnostics wiring"
+  },
+  "governed_headline": "39975.654628199336",
+  "governed_default": "fixed (unchanged)",
+  "frozen_reference": {
+    "config": {
+      "mu_x": 0.02,
+      "sigma_x": 0.01,
+      "sigma_inner": 0.05,
+      "n_outer": 4000,
+      "n_inner": 256,
+      "seed": 20260619
+    },
+    "snapshot": {
+      "var": 0.04820076634696653,
+      "es": 0.051878781816970275,
+      "scr": 0.027892778037151456,
+      "mean_liability": 0.020307988309815075,
+      "var_empirical": 0.048203134971483055,
+      "es_empirical": 0.051878781816970275,
+      "inner_path_cost": 1024000
+    }
+  },
+  "default_mode_diagnostics": {
+    "estimand": "tail_capital_VaR_ES_SCR_at_alpha",
+    "variance_reduction": "none",
+    "es_bias_correction": false,
+    "alpha": 0.995,
+    "n_outer": 4000,
+    "n_inner": 256,
+    "inner_path_cost": 1024000,
+    "var": 0.04820076634696653,
+    "es": 0.051878781816970275,
+    "scr": 0.027892778037151456,
+    "mean_liability": 0.020307988309815075,
+    "var_empirical": 0.048203134971483055,
+    "es_empirical": 0.051878781816970275,
+    "governed_default": "fixed (none); governed SCR/VaR/ES headline unchanged",
+    "note": "Governed-style analytic nested tail estimator; opt-in stage-4b wiring of the W66 stratified / ES-bias tools. Stage 5 (governed default) needs owner sign-off + a fresh frozen reference."
+  },
+  "stratified_mode_diagnostics": {
+    "estimand": "tail_capital_VaR_ES_SCR_at_alpha",
+    "variance_reduction": "stratified",
+    "es_bias_correction": false,
+    "alpha": 0.995,
+    "n_outer": 4000,
+    "n_inner": 256,
+    "inner_path_cost": 1024000,
+    "var": 0.04643622525756724,
+    "es": 0.0499623656293576,
+    "scr": 0.026480928117097718,
+    "mean_liability": 0.019955297140469525,
+    "var_empirical": 0.0464363100542613,
+    "es_empirical": 0.049962365629357616,
+    "governed_default": "fixed (none); governed SCR/VaR/ES headline unchanged",
+    "note": "Governed-style analytic nested tail estimator; opt-in stage-4b wiring of the W66 stratified / ES-bias tools. Stage 5 (governed default) needs owner sign-off + a fresh frozen reference."
+  },
+  "es_bias_correction_example": {
+    "estimand": "tail_capital_VaR_ES_SCR_at_alpha",
+    "variance_reduction": "none",
+    "es_bias_correction": true,
+    "alpha": 0.995,
+    "n_outer": 4000,
+    "n_inner": 256,
+    "inner_path_cost": 1024000,
+    "var": 0.04820076634696653,
+    "es": 0.051878781816970275,
+    "scr": 0.027892778037151456,
+    "mean_liability": 0.020307988309815075,
+    "var_empirical": 0.048203134971483055,
+    "es_empirical": 0.051878781816970275,
+    "governed_default": "fixed (none); governed SCR/VaR/ES headline unchanged",
+    "note": "Governed-style analytic nested tail estimator; opt-in stage-4b wiring of the W66 stratified / ES-bias tools. Stage 5 (governed default) needs owner sign-off + a fresh frozen reference.",
+    "es_bias_corrected": 0.052047740945333806,
+    "es_bias_hat": -0.00016895912836353139,
+    "es_bias_boot_mean": 0.051709822688606744,
+    "es_bias_n_boot": 200
+  },
+  "gate_g_w67a": {
+    "frozen_snapshot_bitforbit": true,
+    "equals_plain_nested_single_level": true,
+    "default_is_off": true,
+    "pass_": true
+  },
+  "gate_g_w67b": {
+    "stratified_same_inner_path_cost": true,
+    "stratified_differs_from_plain": true,
+    "variance_reduction_factor": {
+      "VaR": 2.620375389894298,
+      "ES": 2.857957658574906,
+      "SCR": 2.4560260357227595
+    },
+    "all_gt_1x": true,
+    "g3_scr_ge_2x": true,
+    "antithetic_mode_ok": true,
+    "pass_": true
+  },
+  "gate_g_w67c": {
+    "default_deterministic": true,
+    "es_correction_deterministic": true,
+    "es_bootstrap_identity": true,
+    "es_correction_additive_core_unchanged": true,
+    "pass_": true
+  },
+  "gate_g_w67d": {
+    "headline_echoed": true,
+    "note": "governed artifacts byte-unchanged verified out-of-band (cycle gate suite + git status)"
+  },
+  "config": {
+    "R": 40,
+    "vr_n_out": 1500,
+    "boot": 200,
+    "seed": 20260619
+  },
+  "summary": {
+    "g_w67a_frozen_snapshot_equivalence": true,
+    "g_w67b_mode_selectable_vr": true,
+    "g_w67c_determinism_and_es_identity": true,
+    "g_w67d_no_spillover": true,
+    "SCR_variance_reduction_factor": 2.4560260357227595,
+    "ES_variance_reduction_factor": 2.857957658574906,
+    "VaR_variance_reduction_factor": 2.620375389894298,
+    "g3_matched_cost_speedup_ge_2x": true,
+    "es_bias_corrected": 0.052047740945333806,
+    "es_bias_hat": -0.00016895912836353139,
+    "overall": "PASS",
+    "elapsed_s": 3.1
+  },
+  "recommendation": "MERGE-AS-OPT-IN WIRING: tail_capital_diagnostics exposes the W66 stratified outer sampler (and the optional ES bootstrap correction) as a selectable variance-reduction MODE on the opt-in tail path. The default 'none' mode is bit-identical to the pre-W67 plain fixed-256 estimator (frozen-snapshot equivalence), so the governed headline is untouched. Selecting 'stratified' delivers a matched-cost 2.46x SCR / 2.86x ES variance reduction at ZERO extra inner-path cost. Stage 5 (any tail-MLMC figure as the governed default) stays owner sign-off + a fresh frozen reference.",
+  "owner_gate_remaining": "stage 5 (quantile-MLMC as governed default) needs owner sign-off + fresh frozen reference"
+}

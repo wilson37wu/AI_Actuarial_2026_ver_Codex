@@ -533,3 +533,154 @@ def load_portfolio(path: Path | str) -> pd.DataFrame:
     if path.suffix.lower() == ".parquet":
         return pd.read_parquet(path)
     return pd.read_csv(path)
+
+
+# ---------------------------------------------------------------------------
+# Phase UIL Task 2 (B2): user model points (additive, backward-compatible)
+# ---------------------------------------------------------------------------
+
+#: Template product types (scripts/load_user_inputs.py) -> PAR product line.
+#: ``GMMB_EQ_2026`` is the equity-guarantee book and is routed by the run
+#: orchestrator (B3), not the PAR portfolio.
+USER_PRODUCT_LINE_MAP: Mapping[str, str] = {
+    "HKCD_PAR_2026": PRODUCT_LINE_CASH,
+    "HKRB_PAR_2026": PRODUCT_LINE_RB,
+}
+
+
+def split_model_points(model_points: Sequence[Mapping[str, object]]
+                       ) -> Tuple[list, list]:
+    """Split user model points into (PAR rows, GMMB rows)."""
+    par, gmmb = [], []
+    for p in model_points:
+        (gmmb if str(p.get("product_type")) == "GMMB_EQ_2026" else par).append(dict(p))
+    return par, gmmb
+
+
+def portfolio_from_model_points(
+    model_points: Sequence[Mapping[str, object]],
+    *,
+    cash_mechanics: Optional[HKCashDividendMechanics] = None,
+    rb_mechanics: Optional[HKReversionaryBonusMechanics] = None,
+) -> PortfolioGenerationResult:
+    """Build the unified PAR portfolio table from user model points.
+
+    Each model point becomes ONE record with ``inforce_count`` equal to the
+    user's ``policy_count`` (model-point semantics).  Rows are validated
+    fail-loud against the Phase 10 product mechanics ranges; every offending
+    row is reported (source_row refers to the template row).  GMMB rows must
+    be split out first (``split_model_points``); passing one here is an error.
+
+    The synthetic generator (``generate_hk_par_portfolio``) is untouched: with
+    no user inputs the pipeline remains bit-identical to the governed runs.
+    """
+    cash_mechanics = cash_mechanics or default_hk_cash_dividend_mechanics()
+    rb_mechanics = rb_mechanics or default_hk_reversionary_bonus_mechanics()
+    if not model_points:
+        raise ValueError("model_points is empty -- nothing to build")
+
+    errors = []
+    rows = []
+    n_cd = n_rb = 0
+    for k, p in enumerate(model_points):
+        src = p.get("source_row", k + 1)
+        n_before = len(errors)
+        ptype = str(p.get("product_type"))
+        line = USER_PRODUCT_LINE_MAP.get(ptype)
+        if line is None:
+            errors.append("row %s: product_type %r is not a PAR product "
+                          "(GMMB rows are routed by the orchestrator)" % (src, ptype))
+            continue
+        mech = cash_mechanics if line == PRODUCT_LINE_CASH else rb_mechanics
+        try:
+            age = int(p["issue_age"]); term = int(p["term_years"])
+            sa = float(p["sum_assured"]); prem = float(p["annual_premium"])
+            count = int(p["policy_count"]); vb = float(p["vested_bonus"])
+            gender = str(p["gender"]).upper()
+        except (KeyError, TypeError, ValueError) as exc:
+            errors.append("row %s: incomplete or non-numeric model point (%s)" % (src, exc))
+            continue
+        if not (mech.issue_age_min <= age <= mech.issue_age_max):
+            errors.append("row %s: issue_age %d outside mechanics range [%d, %d]"
+                          % (src, age, mech.issue_age_min, mech.issue_age_max))
+        if not (mech.min_sum_assured <= sa <= mech.max_sum_assured):
+            errors.append("row %s: sum_assured %s outside mechanics range [%s, %s]"
+                          % (src, sa, mech.min_sum_assured, mech.max_sum_assured))
+        if term <= 0:
+            errors.append("row %s: term_years must be positive" % src)
+        if count <= 0:
+            errors.append("row %s: policy_count must be positive" % src)
+        if prem < 0 or vb < 0:
+            errors.append("row %s: annual_premium and vested_bonus must be >= 0" % src)
+        if line == PRODUCT_LINE_CASH and vb > 0:
+            errors.append("row %s: cash-dividend product cannot carry a vested "
+                          "reversionary bonus (got %s)" % (src, vb))
+        if gender not in ("M", "F"):
+            errors.append("row %s: gender must be M or F, got %r" % (src, gender))
+        if len(errors) > n_before:
+            continue
+        if line == PRODUCT_LINE_CASH:
+            n_cd += 1
+            pid = "UCD%06d" % n_cd
+            dividend_option, bonus_option = "CASH", "NONE"
+        else:
+            n_rb += 1
+            pid = "URB%06d" % n_rb
+            dividend_option, bonus_option = "NONE", "VESTED_REVERSIONARY"
+        rows.append({
+            "policy_id": pid,
+            "product_line": line,
+            "product_code": mech.product_code,
+            "issue_age": age,
+            "gender": gender,
+            "term_years": term,
+            "sum_assured": sa,
+            "annual_premium": prem,
+            "policy_year": 1,
+            "initial_vested_bonus": vb,
+            "inforce_count": float(count),
+            "premium_mode": "ANNUAL",
+            "dividend_option": dividend_option,
+            "bonus_option": bonus_option,
+            "distribution_channel": "DIRECT",
+            "source_id": "USER_INPUTS",
+        })
+    if errors:
+        raise ValueError("user model points rejected:\n  " + "\n  ".join(errors))
+
+    table = pd.DataFrame(rows, columns=list(UNIFIED_COLUMNS))
+    table = table.sort_values(["product_line", "policy_id"], kind="mergesort").reset_index(drop=True)
+    config = replace(PortfolioGenerationConfig(), n_policies=len(table),
+                     source_id="USER_INPUTS")
+    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return PortfolioGenerationResult(
+        policies=table,
+        summary=portfolio_summary(table),
+        config=config,
+        generated_at=generated_at,
+        digest=portfolio_digest(table),
+    )
+
+
+def build_portfolio(
+    config: Optional[PortfolioGenerationConfig] = None,
+    *,
+    user_inputs: Optional[Mapping[str, object]] = None,
+    cash_mechanics: Optional[HKCashDividendMechanics] = None,
+    rb_mechanics: Optional[HKReversionaryBonusMechanics] = None,
+) -> PortfolioGenerationResult:
+    """Single entry point for B2/B3: user model points if supplied, else the
+    synthetic governed book (bit-identical to ``generate_hk_par_portfolio``).
+    """
+    from par_model_v2.user_inputs import user_model_points
+
+    pts = user_model_points(dict(user_inputs) if user_inputs is not None else None)
+    if pts:
+        par_pts, _gmmb = split_model_points(pts)
+        if not par_pts:
+            raise ValueError("user inputs contain no PAR model points "
+                             "(only GMMB rows); nothing to build")
+        return portfolio_from_model_points(
+            par_pts, cash_mechanics=cash_mechanics, rb_mechanics=rb_mechanics)
+    return generate_hk_par_portfolio(
+        config, cash_mechanics=cash_mechanics, rb_mechanics=rb_mechanics)

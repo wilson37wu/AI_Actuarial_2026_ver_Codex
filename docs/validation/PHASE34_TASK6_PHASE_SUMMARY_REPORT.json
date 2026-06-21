@@ -1,0 +1,65 @@
+{
+  "task": "Phase 34 Task 6 - phase summary + final consolidated re-audit",
+  "date": "2026-06-14",
+  "phase_status": "PHASE_34_COMPLETE",
+  "contract_version": "1.18.0",
+  "scope": "documentation + verification only; no source/data/contract change",
+  "self_test_suites": {
+    "ui_app_self_test": {
+      "ok": true,
+      "checks": 340
+    },
+    "offline_viewer_self_test": {
+      "ok": true,
+      "checks": 11
+    },
+    "combined_gui_self_test": {
+      "ok": true,
+      "checks": 27
+    },
+    "ui_app_userrun_fallback_test": {
+      "ok": true,
+      "checks": 9
+    },
+    "ui_app_distribution_fallback_test": {
+      "ok": true,
+      "checks": 9
+    },
+    "ui_app_integrity_fallback_test": {
+      "ok": true,
+      "checks": 10
+    },
+    "ui_app_search_deeplink_test": {
+      "ok": true,
+      "checks": 18
+    },
+    "ui_app_bundle_printall_test": {
+      "ok": true,
+      "checks": 21
+    }
+  },
+  "self_test_total_checks": 445,
+  "self_test_suites_green": "8/8",
+  "network_calls": 0,
+  "js_errors": 0,
+  "external_refs": {
+    "ui_app.html": 0,
+    "model_result_viewer.html": 0,
+    "combined_model_app.html": 0
+  },
+  "contract_inventory": {
+    "contract_version": "1.18.0",
+    "ui_app_island_id": "ui-data",
+    "embeddedParsed": true,
+    "tabCount": 18,
+    "change_records": 92,
+    "risk_rows": 17
+  },
+  "byte_identical_to_origin": {
+    "ui_app.html": true,
+    "ui_data.json": true
+  },
+  "governed_headline_frozen": "39975.654628199336",
+  "verdict": "PHASE 34 COMPLETE",
+  "next": "Phase 35 - offline UI accessibility & evidence-integrity deepening (scoped, not started this cycle)"
+}

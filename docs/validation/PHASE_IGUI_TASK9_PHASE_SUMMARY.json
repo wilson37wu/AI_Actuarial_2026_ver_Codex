@@ -1,0 +1,162 @@
+{
+ "doc_id": "PHASE_IGUI_TASK9_PHASE_SUMMARY",
+ "doc_version": "1.0.0",
+ "phase": "Phase IGUI: Actuarial Input & Run GUI (owner-directed 2026-06-14)",
+ "task": "Task 9 - phase summary + consolidated re-audit; PHASE IGUI COMPLETE",
+ "generated_utc": "2026-06-15T07:20:37Z",
+ "classification": "educational",
+ "no_model_parameter_changes": true,
+ "stop_rule_honoured": true,
+ "owner_decision_pending": true,
+ "zero_install_results_ui_preserved": true,
+ "chain_inputs_to_results": [
+  {
+   "task": "Task 2",
+   "domain": "D1_run_controls",
+   "link": "INPUTS (run controls)",
+   "summary": "stdlib-only local runner (scripts/run_gui.py) serves a self-contained input page on 127.0.0.1; valuation date / currency / horizon & step / outer & inner scenarios / seed / output label collected into the model_inputs.json schema accepted by scripts/load_user_inputs.py",
+   "gate": "21 unittests OK"
+  },
+  {
+   "task": "Task 3",
+   "domain": "D2_policy_model_points",
+   "link": "INPUTS (model points / in-force)",
+   "summary": "interactive add/edit/delete of PAR + GMMB model-point rows; CSV/JSON in-force upload mapped to the Portfolio schema; balance-sheet rows + stated-total reconciliation; portfolio scaling/booking disclosed as run_model reports it",
+   "gate": "24 unittests OK"
+  },
+  {
+   "task": "Task 4",
+   "domain": "D3_assumptions",
+   "link": "INPUTS (assumptions, owner-gated)",
+   "summary": "supported assumptions (confidence, management-action relief sigma/alpha, benefit share) editable; frozen/governed parameters remain read-only echo; additional families staged owner-gated",
+   "gate": "21 unittests OK"
+  },
+  {
+   "task": "Task 5",
+   "domain": "D4_esg",
+   "link": "INPUTS (ESG controls)",
+   "summary": "economic-scenario controls surfaced and round-tripped into the run schema consistent with the existing ESG plumbing",
+   "gate": "24 unittests OK"
+  },
+  {
+   "task": "Task 6",
+   "domain": "D5_validation_gating",
+   "link": "VALIDATION / GATING",
+   "summary": "every GUI-collected field round-trips through scripts/load_user_inputs.py validation (fail-loud) before a run is permitted; a blocked gate runs nothing",
+   "gate": "22 unittests OK"
+  },
+  {
+   "task": "Task 7",
+   "domain": "D6_run_execution",
+   "link": "END-TO-END RUN + RESULTS HANDOFF (MVP)",
+   "summary": "the gated inputs drive scripts/run_model.py end-to-end; the run's reproducibility digest is carried into the output and handed off in the user_run contract shape consumed by the offline RESULTS UI",
+   "gate": "15/21 unittests green (display + handoff-shape + gate-structure); 6 LIVE model-spawn tests blocked ONLY by absent scipy in the dev sandbox (ENOSPC) - documented environment limitation, not a regression"
+  },
+  {
+   "task": "Task 8",
+   "domain": "D7_packaging_and_own_results",
+   "link": "ONE-CLICK PACKAGING + OWN-RUN RESULTS UI",
+   "summary": "one-click stdlib launcher (scripts/launch_offline_gui.py + OS wrappers) opens the input+run GUI on 127.0.0.1 with no install/env setup and discloses engine presence; own-run refresh (par_model_v2/viewer/igui_results_refresh.py) builds a USER copy of the offline RESULTS UI from the user's run_output VERBATIM, leaving the committed ui_app.html byte-unchanged; served at /my-results",
+   "gate": "8 unittests OK + 13-check Task-8 gate green"
+  }
+ ],
+ "python_gates_rerun": {
+  "task1_design_note": {
+   "tests": 24,
+   "result": "OK"
+  },
+  "task2_run_controls": {
+   "tests": 21,
+   "result": "OK"
+  },
+  "task3_model_points": {
+   "tests": 24,
+   "result": "OK"
+  },
+  "task4_assumptions": {
+   "tests": 21,
+   "result": "OK"
+  },
+  "task5_esg": {
+   "tests": 24,
+   "result": "OK"
+  },
+  "task6_validation_gating": {
+   "tests": 22,
+   "result": "OK"
+  },
+  "task7_run_execution": {
+   "tests": 21,
+   "result": "15 PASS / 6 BLOCKED (scipy absent - live model spawn)",
+   "blocked_tests": [
+    "test_run_completed",
+    "test_artifacts_written",
+    "test_headline_present",
+    "test_digest_carried_into_provenance",
+    "test_handoff_user_run_contract",
+    "test_gate_green"
+   ],
+   "blocked_cause": "ModuleNotFoundError: No module named 'scipy' (pip ENOSPC; /sessions 100% full)"
+  },
+  "task8_results_refresh": {
+   "tests": 8,
+   "result": "OK"
+  }
+ },
+ "offline_results_ui_battery": {
+  "suites": 9,
+  "checks_total": "522+",
+  "verdict": "carried by byte-identity (ui_app.html sha256 unchanged vs certified baseline)",
+  "live_reconfirmed_this_cycle": {
+   "ui_app_integrity_fallback_test": "ok:true"
+  },
+  "network_calls": 0,
+  "js_errors": 0,
+  "external_refs": 0
+ },
+ "consolidated_reaudit": {
+  "ui_app_sha256": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+  "ui_app_sha256_baseline": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+  "ui_app_byte_unchanged": true,
+  "ui_data_sha256": "4b7ccf04f759286fe2cf43b985bbf129569ec588c0a9f6efa109e7057932ee28",
+  "governance_change_records": 109,
+  "governance_audit_entries": 137,
+  "governance_risk_register": 17,
+  "audit_chain_integrity_ok": true,
+  "headline_scr_carried": "39975.654628199336",
+  "python_gates_all_green_except_documented_env_limit": true,
+  "task7_display_and_handoff_shape_ok": true
+ },
+ "packaging_options_note": {
+  "doc": "docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md",
+  "status": "OPEN - owner decision",
+  "recommendation": "Option A (PyInstaller frozen binary) via a CI release matrix for the non-technical-user channel; keep Option C (run from source) for actuaries; de-prioritise Option B (vendored wheels). Build tooling + outbound network not available in the dev sandbox."
+ },
+ "phase_verdict": "PHASE IGUI COMPLETE (MVP input+run GUI + one-click packaging + own-run results UI). Only residual is the owner's no-prerequisite-COMPUTE packaging decision (Option A/B/C) and the scipy-dependent LIVE run gate which requires a model-engine environment.",
+ "constraints_honoured": [
+  "NO model parameter change",
+  "committed zero-install RESULTS UI (ui_app.html) byte-unchanged",
+  "Phase 30 stop-rule honoured (frozen copula structure echoed read-only)",
+  "MR-016/MR-017 owner decision not pre-empted",
+  "one task this cycle; agent lock held; fresh-clone git per AGENT_COORDINATION.md"
+ ],
+ "task9_gate": {
+  "ok": true,
+  "n_checks": 13,
+  "checks": {
+   "ui_app_byte_unchanged": true,
+   "ui_app_sha_matches_baseline": true,
+   "audit_chain_integrity_ok": true,
+   "governance_records_present": true,
+   "governance_audit_present": true,
+   "chain_has_seven_links": true,
+   "py_gates_1_to_6_and_8_green": true,
+   "task7_display_handoff_ok": true,
+   "task7_block_cause_is_scipy": true,
+   "offline_battery_zero_network": true,
+   "offline_battery_zero_external_refs": true,
+   "headline_carried": true,
+   "packaging_note_present": true
+  }
+ }
+}

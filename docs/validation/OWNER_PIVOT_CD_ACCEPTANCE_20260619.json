@@ -1,0 +1,45 @@
+{
+  "owner_decision": "do C and D (interactive, 2026-06-19)",
+  "supersedes": "W68-W75 A/B/C/D/E heartbeat gate",
+  "C_phase_igui": {
+    "status": "COMPLETE_AND_END_TO_END_VERIFIED",
+    "launch_self_test": {
+      "self_test_ok": true,
+      "host": "127.0.0.1",
+      "engine_ready": true,
+      "numpy": true,
+      "scipy": true
+    },
+    "run_model_smoke": {
+      "config": "n_outer=100 n_inner=4 no_tail (fast smoke, NOT governed)",
+      "nested_scr": 49657.9,
+      "gaussian_copula_scr": 37499.0,
+      "var_covar_scr": 30267.9,
+      "governed_reference": "39975.654628199336 (160x24 + tail)",
+      "outputs": [
+        "RUN_MODEL_AGGREGATION_REPORT.json",
+        "RUN_MODEL_SUMMARY.json"
+      ]
+    }
+  },
+  "D_packaging": {
+    "status": "AUTHORED_AND_VERIFIED_BUILD_IS_OWNER_CI_STEP",
+    "verified": {
+      "spec_compiles": true,
+      "ci_workflow_yaml_valid": true,
+      "option_b_bootstrap_runs": true,
+      "structural_gate": "PASS"
+    },
+    "blocked_in_sandbox": [
+      "per-OS binaries cannot be cross-built from Linux",
+      "dev token lacks GitHub workflow scope to activate .github/workflows/"
+    ],
+    "owner_actions": [
+      "cp packaging/release.workflow.yml .github/workflows/release.yml (workflow-scope token) + commit",
+      "git tag v1.0.0 && git push origin v1.0.0  OR  Actions tab workflow_dispatch",
+      "or local: pip install pyinstaller==6.11.1 -r requirements-engine-lock.txt && pyinstaller --clean --noconfirm packaging/actuarial_gui.spec"
+    ]
+  },
+  "governed_artifacts_unchanged": true,
+  "engine": "numpy 2.2.6 / scipy 1.15.3 / pandas 2.3.3"
+}

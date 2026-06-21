@@ -1,0 +1,37 @@
+{
+  "ui_app": {
+    "ok": true,
+    "n_checks": 283,
+    "network_calls": 0,
+    "js_errors": 0,
+    "failed_checks": []
+  },
+  "distribution_fallback": {
+    "ok": true,
+    "n_checks": 9,
+    "network_calls": 0,
+    "js_errors": 0,
+    "failed_checks": []
+  },
+  "userrun_fallback": {
+    "ok": true,
+    "n_checks": 9,
+    "network_calls": 0,
+    "js_errors": 0,
+    "failed_checks": []
+  },
+  "offline_viewer": {
+    "ok": true,
+    "n_checks": 11,
+    "network_calls": 0,
+    "js_errors": 0,
+    "failed_checks": []
+  },
+  "combined_gui": {
+    "ok": true,
+    "n_checks": 27,
+    "network_calls": 0,
+    "js_errors": 0,
+    "failed_checks": []
+  }
+}

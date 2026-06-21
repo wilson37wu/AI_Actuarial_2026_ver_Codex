@@ -1,0 +1,205 @@
+{
+ "candidate_id": "MR-VR-1",
+ "classification": "EFFICIENCY",
+ "vr_techniques": [
+  "crude_iid",
+  "antithetic",
+  "crn",
+  "sobol_qmc"
+ ],
+ "grid": {
+  "n_inner": 4096,
+  "n_inner_tail": 8192,
+  "n_replicates": 256,
+  "n_outer": 2000,
+  "alpha": 0.995,
+  "s0": 100.0,
+  "guarantee": 105.0,
+  "sigma": 0.18,
+  "term": 10.0,
+  "base_rate": 0.025,
+  "seeds": {
+   "master": 20260615,
+   "outer": 770115,
+   "scr_inner": 330921,
+   "cp_shift": 90210
+  }
+ },
+ "governed_headline_invariance": {
+  "bit_identical": true,
+  "max_abs_dev": 0.0,
+  "tol": 1e-09,
+  "additive_disclosed_not_a_swap": true,
+  "before": {
+   "frozen_t_component_scr": 39975.654628199336,
+   "nested_pathwise_scr": 46638.9
+  },
+  "after": {
+   "frozen_t_component_scr": 39975.654628199336,
+   "nested_pathwise_scr": 46638.9
+  }
+ },
+ "replicate_study": {
+  "n_replicates": 256,
+  "n_inner": 4096,
+  "analytic_inner_value": 12.47097943131038,
+  "estimator_summaries": {
+   "crude": {
+    "mean": 12.491351618400433,
+    "std": 0.2575908521940407,
+    "var": 0.06635304713405213,
+    "se_rel": 0.020621535608251994,
+    "ci95_lo": 11.979942694172268,
+    "ci95_hi": 12.980788084912795
+   },
+   "antithetic": {
+    "mean": 12.450642741832795,
+    "std": 0.18776386367099746,
+    "var": 0.035255268500660915,
+    "se_rel": 0.015080656281312407,
+    "ci95_lo": 12.059521401788826,
+    "ci95_hi": 12.75862701855076
+   },
+   "sobol_qmc": {
+    "mean": 12.470792083325662,
+    "std": 0.005441251069644711,
+    "var": 2.9607213202909713e-05,
+    "se_rel": 0.00043631960450371483,
+    "ci95_lo": 12.462431659555431,
+    "ci95_hi": 12.479883234409309
+   },
+   "crn_difference": {
+    "mean": 12.46765145617881,
+    "std": 0.283255820060831,
+    "var": 0.08023385959833387,
+    "se_rel": 0.022719260404127917,
+    "ci95_lo": 11.953645236118193,
+    "ci95_hi": 13.071158285467062
+   },
+   "crn_independent": {
+    "mean": 12.588968640760523,
+    "std": 1.2323742734035035,
+    "var": 1.5187463497468132,
+    "se_rel": 0.0978931879624615,
+    "ci95_lo": 10.232906767246908,
+    "ci95_hi": 14.840945186206078
+   }
+  },
+  "variance_reduction_ratios": {
+   "antithetic": {
+    "ratio": 1.8820746502840624,
+    "ci95_lo": 1.4560569943202872,
+    "ci95_hi": 2.4027247702624623,
+    "useful_ge_threshold": true
+   },
+   "sobol_qmc": {
+    "ratio": 2241.110863062624,
+    "ci95_lo": 1841.0713368694057,
+    "ci95_hi": 2729.704653859232,
+    "useful_ge_threshold": true
+   },
+   "crn": {
+    "ratio": 18.928995281417965,
+    "ci95_lo": 14.671436095033126,
+    "ci95_hi": 24.30386378876018,
+    "useful_ge_threshold": true
+   }
+  },
+  "effective_sample_size": {
+   "antithetic": 7708.97776756352,
+   "sobol_qmc": 9179590.095104508,
+   "crn": 77533.16467268798
+  },
+  "n_star_for_target_se": {
+   "crude": 19064.16263519518,
+   "antithetic": 10129.333941306642,
+   "sobol_qmc": 8.50656830476595,
+   "crn": 1007.1407569058832
+  },
+  "target_se_rel": 0.01,
+  "unbiasedness": {
+   "analytic_value": 12.47097943131038,
+   "crude_mean": 12.491351618400433,
+   "crude_rel_vs_analytic": 0.0016335675319058029,
+   "antithetic_rel_vs_crude": 0.003258964907182028,
+   "antithetic_rel_vs_analytic": 0.001630721114536218,
+   "sobol_rel_vs_crude": 0.0016459015567607117,
+   "sobol_rel_vs_analytic": 1.5022716198746352e-05,
+   "crn_rel_vs_crude": 0.0018973256814507583,
+   "crn_rel_vs_analytic": 0.0002668575591756245,
+   "tol_rel": 0.005,
+   "all_within_tol": true
+  },
+  "any_useful_ge_1p5x": true,
+  "interpretation": "Work-normalised variance-reduction ratios are an UPPER bound idealisation: the inner integrand here is the smooth 1-D Black-Scholes put, where Sobol-RQMC's O(N^-1) convergence yields a very large ratio at N_inner. Real nested valuations with payoff kinks and higher inner dimension will see SMALLER (but still material) RQMC gains - the recorded outer-basis precedents (Sobol 2.8x-7.1x) are the realistic operating range. CRN across the guarantee-on/off legs is dimension-robust; antithetic helps the smooth mean but not the extreme quantile (see tail_study)."
+ },
+ "tail_study": {
+  "alpha": 0.995,
+  "n_inner": 8192,
+  "n_replicates": 256,
+  "crude_quantile": {
+   "mean": 62.11856821074331,
+   "std": 0.640035862459429,
+   "var": 0.40964590523418515,
+   "se_rel": 0.010303454842810362,
+   "ci95_lo": 61.00800972204634,
+   "ci95_hi": 63.45415952817922
+  },
+  "antithetic_quantile": {
+   "mean": 62.15380814100637,
+   "std": 0.5583437972764416,
+   "var": 0.3117477959570761,
+   "se_rel": 0.008983259658197367,
+   "ci95_lo": 60.982494530884495,
+   "ci95_hi": 63.17201601479969
+  },
+  "antithetic_work_normalised_ratio": {
+   "ratio": 1.3140298361262144,
+   "ci95_lo": 1.036717081567517,
+   "ci95_hi": 1.6916558902517878,
+   "useful_ge_threshold": false
+  },
+  "antithetic_ineffective_at_995": true,
+  "precedent_outer_basis": {
+   "antithetic_p19_4d": 0.72,
+   "antithetic_p21": 0.78
+  },
+  "disclosure": "Antithetic pairing is expected-INEFFECTIVE for the extreme 99.5% capital quantile: the symmetric +Z/-Z transform reduces the variance of smooth means but not of an extreme order statistic. The measured work-normalised ratio is reported with a CI and sits BELOW the 1.5x 'useful' bar - the same qualitative finding as the recorded outer-basis antithetic precedents (0.72x-0.78x, also sub-useful): antithetic is NOT the lever for the extreme quantile. Sobol-RQMC and CRN are the useful levers for the inner estimator."
+ },
+ "adoption_materiality": {
+  "scr_proxy_analytic": 12.408135295175088,
+  "scr_proxy_crude_inner_mc": 12.978658824237888,
+  "scr_proxy_sobol_inner_mc": 12.426661557074917,
+  "indicated_dscr_abs_vs_crude": -0.5519972671629709,
+  "indicated_rel_dscr": -1.380833590586369e-05,
+  "materiality_threshold_rel": 0.01,
+  "is_material": false,
+  "applied": false,
+  "n_outer": 2000,
+  "n_inner_scr_pass": 1024,
+  "disposition": "REPORTED, NOT applied. The variance-reduced estimator is additive / disclosed; the governed production estimator and headline stay frozen."
+ },
+ "digest": "cc0c2fea2bf9b86db75f6239a9ba6e3e0a1577a1e1290e24ce13732eb0c0f0d7",
+ "validation_gate": {
+  "ok": true,
+  "n_checks": 16,
+  "checks": {
+   "G1_headline_bit_identical": true,
+   "G1_headline_value_unmoved": true,
+   "G1_additive_not_swap": true,
+   "G2_replicates_ge_gate": true,
+   "G2_unbiased_within_tol": true,
+   "G3_ratios_have_ci": true,
+   "G3_ess_present": true,
+   "G3_nstar_present": true,
+   "G3_useful_ge_1p5x": true,
+   "G3_antithetic_tail_disclosed": true,
+   "G4_grid_pinned": true,
+   "G4_digest_present": true,
+   "G5_reported_not_applied": true,
+   "G5_materiality_branch": true,
+   "G6_efficiency_classification": true,
+   "G6_four_techniques": true
+  }
+ }
+}

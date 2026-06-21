@@ -1,0 +1,131 @@
+{
+ "summary": {
+  "metadata": {
+   "summary_id": "PHASE31_OWNER_DECISION_SUMMARY",
+   "summary_version": "1.0.0",
+   "derived_from": {
+    "pack_id": "PHASE31_OWNER_DECISION_PACK",
+    "pack_version": "1.0.0"
+   },
+   "phase": "Phase 31: Owner Decision Package (Dependence)",
+   "task": "Task 3 - owner-facing summary of the assembled pack",
+   "classification": "EDUCATIONAL",
+   "no_model_parameter_changes": true
+  },
+  "decision_required": "Decide how to dispose of the quantified dependence-form residual 3,637.3 between the governed component SCR headline 39,975.7 and the nested path-wise reference 46,638.9. Dependence-FORM escalation is CLOSED by the Phase 30 binding stop-rule; three pre-registered options remain open. The choice rests solely with the model owner - nothing is pre-selected.",
+  "key_figures": {
+   "governed_headline": 39975.654628199336,
+   "headline_move_through_p27_p30_pct": 0.0,
+   "disclosed_vine_point": 42458.5527095696,
+   "disclosed_vine_ci95": [
+    38654.68530800363,
+    45284.252553628474
+   ],
+   "nested_reference": 46638.9,
+   "nested_inside_vine_ci95": false,
+   "copula_form_residual": 3637.298487404965,
+   "total_gap": 4180.3472904304
+  },
+  "options_at_a_glance": [
+   {
+    "option_id": "O1_adopt_disclosed_vine_readout",
+    "summary": "Adopt the disclosed 2-tree vine read-out (42,458.6) as the governed component-SCR headline, replacing the frozen single-df t (39,975.7).",
+    "capital_effect_abs": 2482.8980813702656,
+    "governance_risk": "HIGH - adopts a candidate whose 95% CI excludes the nested reference",
+    "escalation_path_open": false
+   },
+   {
+    "option_id": "O2_accept_residual_with_monitoring",
+    "summary": "Keep the frozen single-df t headline; formally ACCEPT the quantified copula-form residual 3,637.3 as a documented model limitation.",
+    "capital_effect_abs": 0.0,
+    "governance_risk": "MEDIUM - residual persists but is quantified, disclosed and monitored",
+    "escalation_path_open": false
+   },
+   {
+    "option_id": "O3_fund_second_independent_nested_run",
+    "summary": "Fund former roadmap option B: a SECOND, independent nested path-wise run (fresh seeds, independent implementation checks) to quantify the sampling error of the nested reference 46,638.9 - the only escalation path the Phase 30 binding stop-rule left open.",
+    "capital_effect_abs": 0.0,
+    "governance_risk": "LOW - adds information only; no model change",
+    "escalation_path_open": true
+   }
+  ],
+  "what_happens_next": [
+   {
+    "step": 1,
+    "actor": "preparer (model development)",
+    "action": "assemble the evidence pack EXACTLY per evidence_pack_registry(); bit-for-bit consistency gate against the frozen archived references"
+   },
+   {
+    "step": 2,
+    "actor": "independent peer reviewer",
+    "action": "review pack completeness, figure provenance and the neutral presentation of all three options (no recommendation embedded)"
+   },
+   {
+    "step": 3,
+    "actor": "model owner",
+    "action": "owner review meeting: walk through governed headline, disclosed candidates, residual ladder, stop-rule record and the three options with their pre-registered acceptance criteria"
+   },
+   {
+    "step": 4,
+    "actor": "model owner",
+    "action": "record the decision (O1/O2/O3) and its rationale in a governance ChangeRecord; the decision is NOT made by the model developer or any agent"
+   },
+   {
+    "step": 5,
+    "actor": "preparer (model development)",
+    "action": "execute the selected option's acceptance criteria; update MR-016/MR-017 dispositions accordingly"
+   },
+   {
+    "step": 6,
+    "actor": "preparer (model development)",
+    "action": "propagate any NEW disclosure surface to the offline UI (additive contract bump only) and archive the pack"
+   }
+  ],
+  "where_to_find_detail": {
+   "full_pack_id": "PHASE31_OWNER_DECISION_PACK",
+   "full_pack_files": "docs/validation/PHASE31_TASK2_OWNER_DECISION_PACK.{json,md}",
+   "design_note_files": "docs/validation/PHASE31_TASK1_DESIGN_NOTE.{json,md}",
+   "note": "every figure above is reproduced bit-for-bit from the full pack; the pack adds provenance, acceptance criteria, the glossary and the blank decision record"
+  },
+  "caveats": [
+   "ONE nested run only; its own sampling error is unquantified - the motivation for option O3",
+   "the Phase 30 binding stop-rule ENDED dependence-form escalation; O3 is the only open escalation path",
+   "risk register: MR-016 OPEN - quantified copula-form residual disclosed; MR-017 OPEN - vine-form limitations (truncation)"
+  ]
+ },
+ "task3_gate": {
+  "checks": {
+   "summary_identity": true,
+   "derived_from_assembled_pack": true,
+   "educational_no_param_changes": true,
+   "all_required_sections": true,
+   "governed_headline_bit_for_bit": true,
+   "vine_point_bit_for_bit": true,
+   "vine_ci_bit_for_bit": true,
+   "nested_bit_for_bit": true,
+   "residual_bit_for_bit": true,
+   "total_gap_bit_for_bit": true,
+   "headline_move_zero": true,
+   "nested_ci_flag_consistent": true,
+   "decision_states_residual": true,
+   "options_in_registry_order": true,
+   "option_attributes_bit_for_bit": true,
+   "only_o3_escalation_open": true,
+   "no_steering_language": true,
+   "no_recommended_key": true,
+   "no_decision_prefilled": true,
+   "workflow_steps_match_pack": true,
+   "points_to_full_pack": true,
+   "single_run_caveat_present": true,
+   "stop_rule_closure_stated": true,
+   "risk_register_stated": true,
+   "one_page_word_cap": true
+  },
+  "ok": true,
+  "n_checks": 25
+ },
+ "ui_decision": {
+  "new_disclosure_surface": false,
+  "ui_contract_bump": false
+ }
+}

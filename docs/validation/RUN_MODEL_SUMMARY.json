@@ -1,0 +1,47 @@
+{
+ "run_timestamp": "2026-06-11T06:24:24.113908+00:00",
+ "output_label": "WorkedExample_TemplateDemoBook",
+ "currency": {
+  "code": "USD",
+  "symbol": "$",
+  "decimals": 0,
+  "scale": "units",
+  "thousands": "comma",
+  "market_label": "Local market",
+  "valuation_date": "2026-01-01"
+ },
+ "inputs": "production_run/model_inputs.json",
+ "headline": {
+  "nested_scr": 71112.05935353745,
+  "copula_selected": "gaussian",
+  "copula_scr": 49825.854878830345,
+  "var_covar_scr": 37625.87169423637,
+  "standalone_scr": {
+   "rate": 15740.704656600166,
+   "equity": 21206.773662311054,
+   "credit": 7709.873580639818,
+   "lapse": 30360.362242001695,
+   "mortality": 381.1154575620555,
+   "fx": 3414.427260991953,
+   "liquidity": 52.71822416481139
+  },
+  "esg_understatement_pct": 0.47089323475815387
+ },
+ "bootstrap_ci": {
+  "var_point": 192141.08016533384,
+  "var_ci": [
+   191055.21527037953,
+   193042.3760191425
+  ],
+  "es_ci": [
+   196768.30428082845,
+   200043.5408869306
+  ],
+  "var_ci_rel_halfwidth": 0.005171098098993369,
+  "n_bootstrap": 50
+ },
+ "verdict": "REVIEW",
+ "duration_seconds": 7.784018701997411,
+ "evidence": "RUN_MODEL_AGGREGATION_REPORT.json",
+ "wall_clock_seconds": 7.804
+}

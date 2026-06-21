@@ -1,0 +1,100 @@
+{
+  "task": "Phase 33 Task 2 - interactive cross-phase SCR comparator (gap G1)",
+  "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
+  "generated_utc": "2026-06-12T11:03:34.336376+00:00",
+  "verdict": "PASS",
+  "gap_closed": "G1",
+  "next": "Task 3 (gap G2): embedded-distribution drill-down with precomputed grids (contract 1.16.0 -> 1.17.0 additive)",
+  "ui_contract_checks": {
+    "contract_version": "1.16.0",
+    "contract_unchanged_1_16_0": true,
+    "ui_data_json_byte_identical_to_head": true,
+    "embedded_snapshot_byte_identical_to_head": true,
+    "all_source_keys_already_embedded": true,
+    "governed_headline_exact": true,
+    "all_five_cis_have_bounds": true,
+    "panel_div_in_html": true,
+    "tab_title_in_html": true,
+    "renderer_in_html": true,
+    "default_baseline_frozen_t": true,
+    "display_arithmetic_labelled": true,
+    "neutrality_registry_order": true,
+    "no_steering_language": true,
+    "zero_external_refs": true,
+    "single_file_bytes": 579989,
+    "all_passed": true,
+    "headline_readouts": {
+      "governed_headline_frozen_t": 39975.654628199336,
+      "grouped_t_point": 35604.39894619743,
+      "skew_t_point": 39980.95565911311,
+      "vine2_point": 42458.5527095696,
+      "tree3_point": 42458.5527095696,
+      "nested_reference": 46638.9,
+      "registry_order": [
+        "frozen_t",
+        "grouped_t",
+        "skew_t",
+        "vine2",
+        "tree3",
+        "nested"
+      ]
+    }
+  },
+  "self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 248,
+    "failed_checks": [],
+    "cmp_checks": {
+      "cmpTabPresent": true,
+      "cmpTabTextPresent": true,
+      "cmpRegistryOrder": true,
+      "cmpGovernedHeadlineExactKey": true,
+      "cmpDefaultBaselineFrozenT": true,
+      "cmpDeltaSignsDefault": true,
+      "cmpCiOverlayRendered": true,
+      "cmpBaselineSwitchWorks": true,
+      "cmpGovernedPersistsNonDefaultBaseline": true,
+      "cmpBaselineRestoreWorks": true,
+      "cmpDisplayArithmeticLabelled": true,
+      "cmpNothingRecomputedStated": true,
+      "cmpNeutralityStated": true,
+      "cmpNoSteeringLanguage": true,
+      "cmpProvenanceRows": true,
+      "cmpNestedPointOnly": true
+    }
+  },
+  "offline_viewer_self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 11,
+    "failed_checks": [],
+    "cmp_checks": {}
+  },
+  "combined_gui_self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 27,
+    "failed_checks": [],
+    "cmp_checks": {}
+  },
+  "userrun_fallback_self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 9,
+    "failed_checks": [],
+    "cmp_checks": {}
+  },
+  "governance": {
+    "added_change_record": true,
+    "change_record_id": "a87fd9f8aaaa47b1bd9b57f82c5f380b",
+    "change_record_status": "OWNER_REVIEW",
+    "audit_entries": "113->114",
+    "change_records": "85->86",
+    "audit_integrity_verify_all": true
+  }
+}

@@ -110,6 +110,64 @@ setTimeout(() => {
   const p28GapRows = document.querySelectorAll("#phase28 table.p28gaptable tbody tr").length;
   const p28BarRects = document.querySelectorAll("#phase28 svg.chart rect.bar").length;
 
+  // Phase 29 Task 5: open the Vine Tail (P29) panel and count its elements.
+  const p29Tab = tabs.find(t => t.getAttribute("data-target") === "phase29");
+  if (p29Tab) p29Tab.click();
+  const p29Cards = document.querySelectorAll("#phase29 .card").length;
+  const p29GateCrits = document.querySelectorAll("#phase29 .crit").length;
+  const p29PairRows = document.querySelectorAll("#phase29 table.p29pairs tbody tr").length;
+  const p29GapRows = document.querySelectorAll("#phase29 table.p29gaptable tbody tr").length;
+  const p29BarRects = document.querySelectorAll("#phase29 svg.chart rect.bar").length;
+
+  // Phase 30 Task 5: open the Stop-Rule (P30) panel and count its elements.
+  const p30Tab = tabs.find(t => t.getAttribute("data-target") === "phase30");
+  if (p30Tab) p30Tab.click();
+  const p30Cards = document.querySelectorAll("#phase30 .card").length;
+  const p30GateCrits = document.querySelectorAll("#phase30 .crit").length;
+  const p30PairRows = document.querySelectorAll("#phase30 table.p30pairs tbody tr").length;
+  const p30EdgeRows = document.querySelectorAll("#phase30 table.p30edges tbody tr").length;
+  const p30GapRows = document.querySelectorAll("#phase30 table.p30gaptable tbody tr").length;
+  const p30BarRects = document.querySelectorAll("#phase30 svg.chart rect.bar").length;
+  const p30El = document.getElementById("phase30");
+  const p30Text = (p30El && p30El.textContent) || "";
+
+  // Phase 32 Task 2 (gap G1): open the Owner Decision (P31) panel and count
+  // its elements - evidence cards, option cards (registry order), workflow,
+  // BLANK decision record, provenance, residual ladder, history, bar chart.
+  const odTab = tabs.find(t => t.getAttribute("data-target") === "ownerdecision");
+  if (odTab) odTab.click();
+  const odCards = document.querySelectorAll("#ownerdecision .card").length;
+  const odOptionCards = document.querySelectorAll("#ownerdecision .card.odoption").length;
+  const odLadderRows = document.querySelectorAll("#ownerdecision table.odladder tbody tr").length;
+  const odHistRows = document.querySelectorAll("#ownerdecision table.odhist tbody tr").length;
+  const odWfRows = document.querySelectorAll("#ownerdecision table.odwf tbody tr").length;
+  const odDrRows = document.querySelectorAll("#ownerdecision table.oddr tbody tr").length;
+  const odProvRows = document.querySelectorAll("#ownerdecision table.odprov tbody tr").length;
+  const odBarRects = document.querySelectorAll("#ownerdecision svg.chart rect.bar").length;
+  const odBlankChips = [...document.querySelectorAll("#ownerdecision table.oddr .chip")]
+    .filter(c => /BLANK/.test(c.textContent)).length;
+  const odEl = document.getElementById("ownerdecision");
+  const odText = (odEl && odEl.textContent) || "";
+  const odO1 = odText.indexOf("O1_adopt_disclosed_vine_readout");
+  const odO2 = odText.indexOf("O2_accept_residual_with_monitoring");
+  const odO3 = odText.indexOf("O3_fund_second_independent_nested_run");
+
+  // Phase 32 Task 3 (gap G2): open the User Run (UIL) panel and count its
+  // elements - headline cards, standalone-SCR table + bar chart, bootstrap
+  // CI table, run-configuration table (with per-setting provenance),
+  // model-point/portfolio table, input & display provenance table.
+  const urTab = tabs.find(t => t.getAttribute("data-target") === "userrun");
+  if (urTab) urTab.click();
+  const urCards = document.querySelectorAll("#userrun .card").length;
+  const urScrRows = document.querySelectorAll("#userrun table.urscr tbody tr").length;
+  const urCiRows = document.querySelectorAll("#userrun table.urci tbody tr").length;
+  const urPlanRows = document.querySelectorAll("#userrun table.urplan tbody tr").length;
+  const urPfRows = document.querySelectorAll("#userrun table.urpf tbody tr").length;
+  const urProvRows = document.querySelectorAll("#userrun table.urprov tbody tr").length;
+  const urBarRects = document.querySelectorAll("#userrun svg.chart rect.bar").length;
+  const urEl = document.getElementById("userrun");
+  const urText = (urEl && urEl.textContent) || "";
+
   // UI Task 4: open the Governance & assumptions view and click through every sub-view.
   const govTab = tabs.find(t => t.getAttribute("data-target") === "governance");
   if (govTab) govTab.click();
@@ -129,6 +187,12 @@ setTimeout(() => {
   if (firstCrow) firstCrow.click();
   const govSignoff = document.querySelectorAll("#gov-changes .tl-soh").length;
   const govAuditBadge = document.querySelectorAll("#gov-audit .auditbadge").length;
+  // Phase 32 Task 4 (gap G3): governance-store completeness sweep surface.
+  const govStoreSyncCards = document.querySelectorAll("#gov-audit .storesync .card").length;
+  const govAuditEl = document.getElementById("gov-audit");
+  const govAuditText = (govAuditEl && govAuditEl.textContent) || "";
+  const govChangesText = (document.getElementById("gov-changes") || {}).textContent || "";
+  const govSyncBadges = (govChangesText.match(/store-sync/g) || []).length;
   govBtns.forEach(b => { if (b.getAttribute("data-view") === "gates") b.click(); });
 
   // UI Task 5: export buttons, CSV builders, ARIA roles, print stylesheet.
@@ -148,7 +212,719 @@ setTimeout(() => {
   const printCssPresent = /@media print/.test(html);
   const dataTitlePanels = document.querySelectorAll('.panel[data-title]').length;
   const bodyText = document.body.textContent || "";
+
+  // Phase 34 Task 2 (gap H1): data-contract integrity guard surface.
+  const intTab = tabs.find(t => t.getAttribute("data-target") === "integrity");
+  if (intTab) intTab.click();
+  const intEl = document.getElementById("integrity");
+  const intText = (intEl && intEl.textContent) || "";
+  const intKeyRows = document.querySelectorAll('#integrity table.inttable tbody tr').length;
+  const intAbsentRows = document.querySelectorAll('#integrity table.inttable tbody tr[data-int-present="0"]').length;
+  const intBannerEl = document.getElementById("integritybanner");
+  const intBannerVisible = !!intBannerEl && intBannerEl.style.display !== "none" && intBannerEl.getAttribute("aria-hidden") === "false";
+  const uiDataObj = (function(){ const mm = html.match(/\/\*__UI_DATA__\*\/(.*?)<\/script>/s); try { return JSON.parse(mm[1]); } catch(e){ return null; } })();
+  const intManifest = uiDataObj && uiDataObj.contract_manifest;
+
+  // Phase UIL Task 4 (B4+A1): currency wire-through assertions.
+  // Parse the embedded contract to learn the configured currency, then assert
+  // the GUI actually renders money with that symbol and shows the badge.
+  let uiMeta = {};
+  let uiGov = {};
+  try {
+    const rawData = (document.getElementById("ui-data").textContent || "")
+      .replace("/*__UI_DATA__*/", "").trim();
+    const uiParsed = JSON.parse(rawData) || {};
+    uiMeta = uiParsed.meta || {};
+    uiGov = uiParsed.governance || {};
+  } catch (e) { /* leave uiMeta empty; checks below will fail loudly */ }
+  // Phase 32 Task 4 (gap G3): sweep consistency recomputed from embedded data.
+  const g3ss = uiGov.store_sync || {};
+  const g3supp = uiGov.change_records_supplement || [];
+  const g3embedded = uiGov.change_records || [];
+  const g3ids = new Set(g3embedded.map(c => c.record_id));
+  const g3overlap = g3supp.filter(c => g3ids.has(c.record_id)).length;
+  const g3statusTotal = Object.values(g3ss.change_record_status_counts || {})
+    .reduce((a, b) => a + b, 0);
+  const curCfg = uiMeta.currency || {};
+  const symEsc = curCfg.symbol
+    ? curCfg.symbol.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") : null;
+  const moneyRe = symEsc ? new RegExp(symEsc + "[0-9][0-9,]*") : null;
+
+  // Phase 33 Task 2 (gap G1): interactive cross-phase SCR comparator.
+  const cmpTab = tabs.find(t => t.getAttribute("data-target") === "comparator");
+  if (cmpTab) cmpTab.click();
+  const cmpEl = document.getElementById("comparator");
+  const cmpText0 = (cmpEl && cmpEl.textContent) || "";
+  const readCmpRows = () => [...document.querySelectorAll("#comparator table.cmptable tbody tr")];
+  const readCmpDeltas = () => { const m = {}; readCmpRows().forEach(r => {
+    const td = r.querySelector("td.cmpdelta");
+    if (td) m[r.getAttribute("data-cmp-id")] = td.getAttribute("data-cmp-delta"); }); return m; };
+  const cmpRows0 = readCmpRows();
+  const cmpIds0 = cmpRows0.map(r => r.getAttribute("data-cmp-id"));
+  const cmpPoints0 = {}; cmpRows0.forEach(r => { cmpPoints0[r.getAttribute("data-cmp-id")] = r.getAttribute("data-cmp-point"); });
+  const cmpDelta0 = readCmpDeltas();
+  const cmpCiSvg0 = document.querySelectorAll("#comparator svg.chart").length;
+  const cmpCiCircles0 = document.querySelectorAll("#comparator svg.chart circle").length;
+  const cmpVineBtn = [...document.querySelectorAll("#cmpnav .segbtn")].find(b => b.getAttribute("data-base") === "vine2");
+  if (cmpVineBtn) cmpVineBtn.click();
+  const cmpDelta1 = readCmpDeltas();
+  const cmpText1 = (cmpEl && cmpEl.textContent) || "";
+  const cmpCiSvg1 = document.querySelectorAll("#comparator svg.chart").length;
+  const cmpFrozenBtn = [...document.querySelectorAll("#cmpnav .segbtn")].find(b => b.getAttribute("data-base") === "frozen_t");
+  if (cmpFrozenBtn) cmpFrozenBtn.click();
+  const cmpText2 = (cmpEl && cmpEl.textContent) || "";
+  const cmpDelta2 = readCmpDeltas();
+  const cmpProvRows = document.querySelectorAll("#comparator table.cmpprov tbody tr").length;
+
+  // Phase 33 Task 3 (gap G2): embedded-distribution drill-down explorer.
+  let dxData = null;
+  try {
+    const rawDx = (document.getElementById("ui-data").textContent || "")
+      .replace("/*__UI_DATA__*/", "").trim();
+    dxData = (JSON.parse(rawDx) || {}).distribution_explorer || null;
+  } catch (e) { /* dxData stays null; checks fail loudly */ }
+  const dxTab = tabs.find(t => t.getAttribute("data-target") === "distexplorer");
+  if (dxTab) dxTab.click();
+  const dxEl = document.getElementById("distexplorer");
+  const dxText0 = (dxEl && dxEl.textContent) || "";
+  const dxSvg0 = document.querySelectorAll("#dxcdf svg.chart").length;
+  const dxPts0 = document.querySelectorAll("#dxcdf svg.chart circle.dxpt").length;
+  const dxSeedPaths0 = document.querySelectorAll("#dxcdf svg.chart path.dxseed").length;
+  const dxQRows = [...document.querySelectorAll("#distexplorer table.dxqtable tbody tr")];
+  const dxPRows = [...document.querySelectorAll("#distexplorer table.dxptable tbody tr")];
+  const dxSRows = document.querySelectorAll("#distexplorer table.dxstable tbody tr").length;
+  const dxP50Row = dxPRows.find(r => r.getAttribute("data-dx-p") === "0.5");
+  const dxSlider = document.getElementById("dxslider");
+  const dxReadout = document.getElementById("dx-readout");
+  let dxReadoutLast = "", dxReadoutFirst = "";
+  if (dxSlider && dxReadout) {
+    dxSlider.value = String(dxSlider.max);
+    dxSlider.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+    dxReadoutLast = dxReadout.textContent || "";
+    dxSlider.value = "0";
+    dxSlider.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+    dxReadoutFirst = dxReadout.textContent || "";
+  }
+  const dxTailBtn = [...document.querySelectorAll("#dxnav .segbtn")].find(b => b.getAttribute("data-zoom") === "tail");
+  if (dxTailBtn) dxTailBtn.click();
+  const dxSvgTail = document.querySelectorAll("#dxcdf svg.chart").length;
+  const dxPtsTail = document.querySelectorAll("#dxcdf svg.chart circle.dxpt").length;
+  const dxFullBtn = [...document.querySelectorAll("#dxnav .segbtn")].find(b => b.getAttribute("data-zoom") === "full");
+  if (dxFullBtn) dxFullBtn.click();
+  const dxPtsBack = document.querySelectorAll("#dxcdf svg.chart circle.dxpt").length;
+  const dxCdfP = ((dxData || {}).cdf_grid || {}).p || [];
+  const dxCdfX = ((dxData || {}).cdf_grid || {}).x || [];
+  const dxQGrid = (dxData || {}).quantile_grid || {};
+  const dxArchP = (dxData || {}).archived_percentiles || [];
+  const dxProv = (dxData || {}).provenance || {};
+
+  // Phase 33 Task 4 (gap G3): printable owner sign-off pack + complete CSV
+  // export coverage for governed read-out tables. Parse the embedded snapshot
+  // owner-decision + governance keys and assert the CSV builders reproduce them
+  // bit-for-bit, plus the print-only sign-off cover is present and neutral.
+  let g3od = {}, g3gov = {}, g3dx = {};
+  try {
+    const rawG3 = (document.getElementById("ui-data").textContent || "")
+      .replace("/*__UI_DATA__*/", "").trim();
+    const pj = JSON.parse(rawG3) || {};
+    g3od = pj.owner_decision_p31 || {};
+    g3gov = pj.governance || {};
+    g3dx = pj.distribution_explorer || {};
+  } catch (e) { /* leave empty; checks fail loudly */ }
+  const uxG3 = dom.window.__uiExport || {};
+  const call = (fn) => (typeof uxG3[fn] === "function" ? uxG3[fn]() : "");
+  const rowsOf = (csv) => (csv ? csv.split("\r\n") : []);
+  const gatesCSV = call("deploymentGatesCSV");
+  const optsCSV = call("ownerOptionsCSV");
+  const evidCSV = call("evidenceCSV");
+  const ladderCSV = call("residualLadderCSV");
+  const histCSV = call("escalationHistoryCSV");
+  const stopCSV = call("stopRuleCSV");
+  const wfCSV = call("signoffWorkflowCSV");
+  const drCSV = call("decisionRecordCSV");
+  const cmpCSV = call("comparatorCSV");
+  const distCSV = call("distGridCSV");
+  const packCSV = call("signoffPackCSV");
+  // Phase 34 Task 4 (gap H3): full evidence bundle + print-all
+  const bundleCSV = call("evidenceBundleCSV");
+  const bundleJSON = call("evidenceBundleJSON");
+  const h3Headers = ["## Inventory","## Risk register","## Change records","## Deployment gates",
+    "## Owner options","## Evidence pack","## Copula-form residual ladder","## Dependence-form escalation history",
+    "## Binding stop-rule record","## Sign-off workflow","## SCR comparator","## Distribution grid","## Decision record"];
+  const h3AllSections = h3Headers.every(h => bundleCSV.indexOf(h) !== -1);
+  let h3JsonObj = null; try { h3JsonObj = JSON.parse(bundleJSON); } catch (e) {}
+  const h3JsonHeadlineNumber = !!h3JsonObj && h3JsonObj.provenance && h3JsonObj.provenance.governed_headline
+    && h3JsonObj.provenance.governed_headline.value === 39975.654628199336;
+  const h3DecRowsBundle = bundleCSV.split("\r\n").filter(r => /BLANK - awaiting owner decision/.test(r));
+  const g3gates = g3gov.deployment_gates || [];
+  const g3order = g3od.owner_option_order || [];
+  const g3drt = g3od.decision_record_template || {};
+  const optsRows = rowsOf(optsCSV);
+  const drRows = rowsOf(drCSV);
+  const gatesRows = rowsOf(gatesCSV);
+  // first data row of options CSV: order=1, option_id=first registry id
+  const optsFirstId = optsRows.length > 1 ? optsRows[1].split(",")[1] : "";
+  // decision record CSV: every field BLANK preserved (none pre-filled in template)
+  const drBlankAll = drRows.slice(1).every(r => /BLANK - awaiting owner decision/.test(r));
+  const drFieldCount = drRows.length - 1;
+  const signoffCoverEl = document.getElementById("signoffcover");
+  const signoffCoverText = (signoffCoverEl && signoffCoverEl.textContent) || "";
+  const printCoverCssPresent = /\.signoffcover\{display:block !important/.test(html)
+    && /\.signoffcover\{display:none\}/.test(html);
+  // Phase 35 Task 4 (gap A3): one-page printable model-card cover.
+  const modelCardEl = document.getElementById("modelcardcover");
+  const modelCardText = (modelCardEl && modelCardEl.textContent) || "";
+  const modelCardLimItems = modelCardEl ? modelCardEl.querySelectorAll("ol.mclims li").length : 0;
+  const modelCardHeadlineExact = (function(){
+    try { return String(uiDataObj.owner_decision_p31.evidence_pack.governed_headline.value); }
+    catch(e){ return null; }
+  })();
+  const a3PrintCssPresent =
+    /\.modelcardcover\{display:block !important;page-break-after:always/.test(html)
+    && /\.modelcardcover\{display:none\}/.test(html)
+    && /html\.printall \.modelcardcover\{display:block !important\}/.test(html);
+  const dxCdfXn = ((g3dx.cdf_grid || {}).x || []).length;
+
+  // Phase 33 Task 5 (gap G4): accessibility & usability pass on the main tab
+  // strip and data tables. Drive keyboard activation, URL-hash persistence, and
+  // verify visually-hidden table captions. No model figures are touched.
+  const KeyboardEvent = dom.window.KeyboardEvent;
+  const Event = dom.window.Event;
+  const mainTabs = [...document.querySelectorAll("#tabs .tab")];
+  const tabById = (id) => mainTabs.find(t => t.getAttribute("data-target") === id);
+  // sr-only caption CSS present in the single-file build
+  const g4SrOnlyCssPresent = /\.sr-only\{position:absolute/.test(html);
+  // tabpanel roles wired for every tab
+  const g4TabpanelRoles = document.querySelectorAll('.panel[role="tabpanel"]').length;
+  const g4TabsAriaControls = document.querySelectorAll('#tabs [role="tab"][aria-controls]').length;
+  // Enter activates a focused (non-active) tab
+  const govTabK = tabById("governance");
+  let g4EnterActivates = false, g4SpaceActivates = false, g4ArrowMoves = false;
+  if (govTabK) {
+    govTabK.focus();
+    govTabK.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    g4EnterActivates = govTabK.getAttribute("aria-selected") === "true" &&
+      document.getElementById("governance").classList.contains("active");
+  }
+  const ovTabK = tabById("overview");
+  if (ovTabK) {
+    ovTabK.focus();
+    ovTabK.dispatchEvent(new KeyboardEvent("keydown", { key: " ", bubbles: true }));
+    g4SpaceActivates = ovTabK.getAttribute("aria-selected") === "true" &&
+      document.getElementById("overview").classList.contains("active");
+    // ArrowRight moves selection to the next tab (roving tabindex)
+    ovTabK.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+    const nextSel = document.querySelector('#tabs [aria-selected="true"]');
+    g4ArrowMoves = !!nextSel && nextSel.getAttribute("data-target") !== "overview";
+  }
+  // URL hash is written when a tab is activated
+  let g4HashWritten = false, g4HashRestores = false, g4ExactlyOneSelectedAfterHash = false;
+  if (govTabK) {
+    govTabK.click();
+    g4HashWritten = (dom.window.location.hash || "") === "#governance";
+  }
+  // Hash drives selection: point hash at a different tab and fire hashchange
+  if (tabById("inventory")) {
+    dom.window.location.hash = "#inventory";
+    dom.window.dispatchEvent(new Event("hashchange"));
+    const invTabK = tabById("inventory");
+    g4HashRestores = invTabK.getAttribute("aria-selected") === "true" &&
+      document.getElementById("inventory").classList.contains("active");
+    g4ExactlyOneSelectedAfterHash =
+      document.querySelectorAll('#tabs [aria-selected="true"]').length === 1;
+  }
+  // No browser storage APIs anywhere in the single-file build (file:// safe)
+  // Phase 34 Task 2 (gap H1): scope the storage-API scan to the executable UI
+  // code, EXCLUDING the embedded data island (governance prose can legitimately
+  // *mention* "localStorage"/"sessionStorage" as text; that is data, not a code
+  // call). Any real storage-API use in the script/markup is still caught.
+  const g4CodeOnlyHtml = html.replace(/<script id="ui-data"[^>]*>[\s\S]*?<\/script>/, "");
+  const g4NoStorageApis = !/\blocalStorage\b/.test(g4CodeOnlyHtml) && !/\bsessionStorage\b/.test(g4CodeOnlyHtml);
+  // Every table carries exactly one visually-hidden caption (accessible name)
+  const allTables = [...document.querySelectorAll("table")];
+  const g4TablesTotal = allTables.length;
+  const g4TablesWithCaption = allTables.filter(t => {
+    const c = t.querySelector("caption");
+    return c && (c.className || "").indexOf("sr-only") !== -1 &&
+      (c.textContent || "").trim().length > 0;
+  }).length;
+  const g4TablesWithoutCaption = g4TablesTotal - g4TablesWithCaption;
+  const g4NoDuplicateCaptions =
+    allTables.every(t => t.querySelectorAll("caption").length <= 1);
+  // restore overview selection so downstream state is neutral
+  if (ovTabK) ovTabK.click();
+
+  // ===== Phase 34 Task 3 (gap H2): global search + deep-linkable read-outs =====
+  // All assertions exercise ONLY already-rendered text; nothing is fetched and no
+  // model figure is recomputed. The governed headline must be findable yet never
+  // re-labelled, and deep links must restore tab + in-tab section via URL hash.
+  const h2Input = document.getElementById("gsearchInput");
+  const h2Box = document.getElementById("gsearchResults");
+  const h2SearchBoxPresent = !!h2Input && !!h2Box;
+  const h2DlIdsAssigned = document.querySelectorAll('[id^="dl-"]').length;
+  let h2HitForGovernedHeadline = false, h2JumpActivatesTab = false,
+      h2HeadlineNeverRelabelled = false, h2HashCarriesSection = false;
+  if (h2Input && h2Box) {
+    const cmpBefore = [...document.querySelectorAll('[data-cmp-point]')]
+      .map(e => e.getAttribute('data-cmp-point'));
+    h2Input.value = "governed component scr headline";
+    h2Input.dispatchEvent(new Event("input", { bubbles: true }));
+    const items = [...h2Box.querySelectorAll(".gsearch-item")];
+    h2HitForGovernedHeadline = items.length >= 1 &&
+      /Governed component SCR headline/.test(items[0].textContent);
+    if (items.length) {
+      items[0].click();
+      const sel = document.querySelector('#tabs [aria-selected="true"]');
+      h2JumpActivatesTab = !!sel &&
+        document.getElementById(sel.getAttribute("data-target")).classList.contains("active");
+      h2HashCarriesSection = /~dl-/.test(dom.window.location.hash || "");
+      const cmpAfter = [...document.querySelectorAll('[data-cmp-point]')]
+        .map(e => e.getAttribute('data-cmp-point'));
+      h2HeadlineNeverRelabelled =
+        JSON.stringify(cmpBefore) === JSON.stringify(cmpAfter) &&
+        cmpBefore.indexOf("39975.654628199336") !== -1;
+    }
+  }
+  // deep link restores BOTH the tab and the in-tab section via the URL hash only
+  let h2DeepLinkTabSection = false, h2DeepLinkPlainTabStillWorks = false;
+  const h2CapAnchorEl = document.querySelector('#capital [id^="dl-"]');
+  if (h2CapAnchorEl) {
+    dom.window.location.hash = "#capital~" + h2CapAnchorEl.id;
+    dom.window.dispatchEvent(new Event("hashchange"));
+    const sel = document.querySelector('#tabs [aria-selected="true"]');
+    h2DeepLinkTabSection = !!sel && sel.getAttribute("data-target") === "capital" &&
+      h2CapAnchorEl.classList.contains("dl-flash");
+  }
+  // a plain "#tab" hash (no section) still restores just the tab (G4 back-compat)
+  dom.window.location.hash = "#governance";
+  dom.window.dispatchEvent(new Event("hashchange"));
+  {
+    const sel = document.querySelector('#tabs [aria-selected="true"]');
+    h2DeepLinkPlainTabStillWorks = !!sel && sel.getAttribute("data-target") === "governance" &&
+      document.getElementById("governance").classList.contains("active");
+  }
+  // the search/deep-link layer introduces no storage APIs (file:// safe)
+  const h2NoStorageApis = g4NoStorageApis;
+  if (ovTabK) ovTabK.click();
+
+  // ===== Phase 34 Task 5 (gap H4): responsive + high-contrast usability pass =====
+  // jsdom does not compute layout, so the narrow-viewport guarantee is asserted
+  // structurally (responsive @media + table overflow-scroll present) plus
+  // behaviourally for the CSS-only high-contrast toggle and the reduced-motion
+  // media query. Nothing is fetched; no model figure is recomputed.
+  const h4Css = (function(){ const m = html.match(/<style[\s\S]*?<\/style>/i); return m ? m[0] : ""; })();
+  const h4ResponsiveMediaPresent = /@media[^\{]*max-width:\s*768px/i.test(h4Css);
+  const h4ResponsiveTableScroll = /@media[^\{]*max-width:\s*768px[\s\S]*?overflow-x:\s*auto/i.test(h4Css);
+  const h4ReducedMotionPresent = /@media[^\{]*prefers-reduced-motion[^\{]*reduce/i.test(h4Css);
+  const h4HighContrastThemePresent = /html\.hc\b/.test(h4Css);
+  const h4Btn = document.getElementById("hcToggle");
+  const h4ToggleButtonPresent = !!h4Btn && h4Btn.tagName === "BUTTON";
+  let h4ToggleAppliesClass=false, h4ToggleWritesHash=false, h4ToggleAriaPressed=false,
+      h4ToggleRemovesClass=false, h4ToggleClearsHash=false, h4RestoreFromHash=false,
+      h4FlagDoesNotBreakTabRouting=false;
+  const hcRaw = () => (dom.window.location.hash||"").replace(/^#/,"");
+  const hcHasFlag = () => hcRaw().split("&").indexOf("hc=1") > -1;
+  if (h4Btn) {
+    dom.window.location.hash = "#overview";
+    dom.window.dispatchEvent(new Event("hashchange"));
+    h4Btn.click(); // ON
+    h4ToggleAppliesClass = document.documentElement.classList.contains("hc");
+    h4ToggleWritesHash = hcHasFlag();
+    h4ToggleAriaPressed = h4Btn.getAttribute("aria-pressed") === "true";
+    h4Btn.click(); // OFF
+    h4ToggleRemovesClass = !document.documentElement.classList.contains("hc");
+    h4ToggleClearsHash = !hcHasFlag();
+    dom.window.location.hash = "#governance&hc=1";
+    dom.window.dispatchEvent(new Event("hashchange"));
+    h4RestoreFromHash = document.documentElement.classList.contains("hc");
+    const selH4 = document.querySelector('#tabs [aria-selected="true"]');
+    h4FlagDoesNotBreakTabRouting = !!selH4 && selH4.getAttribute("data-target") === "governance" &&
+      document.getElementById("governance").classList.contains("active");
+    dom.window.location.hash = "#overview";
+    dom.window.dispatchEvent(new Event("hashchange"));
+    if (document.documentElement.classList.contains("hc")) h4Btn.click();
+  }
+  const h4NoStorageApis = g4NoStorageApis;
+
+  // Phase 35 Task 2 (gap A1): formal WCAG 2.1 AA keyboard + contrast pass.
+  // CSS-only :focus-visible must cover EVERY interactive control type; the
+  // embedded a11y_audit must be a real, fully-passing AA record measured at
+  // build time; and the Integrity panel must render it read-only.
+  const a1Css = h4Css; // the single-file <style> block extracted above
+  const a1FocusVisibleComprehensive = [
+    "button:focus-visible", "input:focus-visible", "select:focus-visible",
+    "textarea:focus-visible", "summary:focus-visible", ".hctoggle:focus-visible",
+    "[tabindex]:focus-visible",
+  ].every(sel => a1Css.indexOf(sel) >= 0);
+  const a1Audit = uiDataObj && uiDataObj.a11y_audit;
+  const a1AuditEmbedded = !!a1Audit && a1Audit.standard === "WCAG 2.1 AA" &&
+    !!a1Audit.themes && !!a1Audit.themes.default && !!a1Audit.themes.high_contrast;
+  const a1PairsBothThemes = a1AuditEmbedded &&
+    Array.isArray(a1Audit.themes.default.pairs) &&
+    a1Audit.themes.default.pairs.length >= 8 &&
+    Array.isArray(a1Audit.themes.high_contrast.pairs) &&
+    a1Audit.themes.high_contrast.pairs.length === a1Audit.themes.default.pairs.length;
+  const a1AllPairsPassAA = a1PairsBothThemes &&
+    ["default", "high_contrast"].every(t =>
+      a1Audit.themes[t].pairs.every(p =>
+        p.pass === true && Number(p.ratio) >= Number(p.required))) &&
+    a1Audit.summary && a1Audit.summary.all_pass === true;
+  const a1KeyboardInventory = !!a1Audit && !!a1Audit.keyboard &&
+    Array.isArray(a1Audit.keyboard.controls) && a1Audit.keyboard.controls.length >= 8 &&
+    a1Audit.keyboard.controls.every(c => c.operable === true);
+  const a1FocusVisibleSelectorsListed = !!a1Audit && !!a1Audit.focus_visible &&
+    a1Audit.focus_visible.css_only === true &&
+    ["button", "summary", ".hctoggle", "[tabindex]"].every(
+      s => (a1Audit.focus_visible.selectors || []).indexOf(s) >= 0);
+  const a1ContrastTableRendered = /WCAG 2\.1 AA conformance/.test(intText) &&
+    /Default theme/.test(intText) && /High-contrast theme/.test(intText);
+  const a1KeyboardTableRendered = /Keyboard operability/.test(intText) &&
+    /High-contrast toggle/.test(intText);
+  const a1DisplayOnlyStated = /recomputes no model figure/.test(intText) &&
+    /contrast ratio is not a model figure/.test(intText);
+  const a1A11yTables = document.querySelectorAll('#integrity table.a11ytbl:not(.intverify)').length;
+
+  // Phase 35 Task 3 (gap A2): per-section SHA-256 content digest + in-browser
+  // tamper-evident verifier. The build embeds a digest of every top-level
+  // section (except contract_manifest); the page RECOMPUTES them in-browser
+  // from the embedded payload and renders a verified/altered table + badge.
+  const a2Manifest = uiDataObj && uiDataObj.contract_manifest;
+  const a2SectionDigests = a2Manifest && a2Manifest.section_digests;
+  const a2TopKeysExclManifest = uiDataObj
+    ? Object.keys(uiDataObj).filter(k => k !== "contract_manifest").sort()
+    : [];
+  const a2DigestsPresent = !!a2SectionDigests && typeof a2SectionDigests === "object" &&
+    typeof a2Manifest.root_digest === "string" && a2Manifest.root_digest.length === 64 &&
+    a2Manifest.digest_algo === "sha256";
+  const a2DigestsHex = a2DigestsPresent &&
+    Object.keys(a2SectionDigests).every(k => /^[0-9a-f]{64}$/.test(a2SectionDigests[k]));
+  const a2DigestsCoverAllSections = a2DigestsPresent &&
+    JSON.stringify(Object.keys(a2SectionDigests).sort()) === JSON.stringify(a2TopKeysExclManifest);
+  const a2VerifierRows = document.querySelectorAll('#integrity table.intverify tbody tr').length;
+  const a2VerifierAltRows = document.querySelectorAll('#integrity table.intverify tbody tr[data-int-verify="alt"]').length;
+  const a2VerifierOkRows = document.querySelectorAll('#integrity table.intverify tbody tr[data-int-verify="ok"]').length;
+  const a2VerifierTableRendered = /Content integrity/.test(intText) &&
+    /per-section SHA-256/.test(intText) && a2VerifierRows === a2TopKeysExclManifest.length &&
+    a2VerifierRows > 0;
+  // The verifier executes the pure-JS SHA-256 under jsdom; if any recomputed
+  // digest diverged from the build digest the badge would read ALTERED. So this
+  // asserts the in-browser recompute genuinely matches the embedded digests.
+  const a2AllSectionsVerified = a2VerifierRows > 0 && a2VerifierAltRows === 0 &&
+    a2VerifierOkRows === a2VerifierRows && /INTEGRITY VERIFIED/.test(intText) &&
+    !/CONTENT ALTERED/.test(intText);
+  const a2RootDigestShown = a2DigestsPresent &&
+    intText.indexOf(a2Manifest.root_digest.slice(0, 24)) >= 0;
+  const a2HelpersEmbedded = /_ciSectionDigests/.test(html) && /_ciSha256/.test(html) &&
+    /renderIntegrityVerifierHtml/.test(html);
+  const a2NoNetworkStated = /no network/.test(intText) &&
+    /recomputes a content digest/.test(intText);
+
+  // ===== Phase 36 Task 2 (gap E1): live-region status announcements (SC 4.1.3) =====
+  // One polite sr-only #srlive region carries dynamic state changes to assistive
+  // tech. All assertions exercise ALREADY-rendered state; nothing is fetched and
+  // no model figure is recomputed (the governed headline stays bit-for-bit).
+  const e1Live = document.getElementById("srlive");
+  const e1LiveRegionPresent = !!e1Live &&
+    (e1Live.className || "").indexOf("sr-only") !== -1 &&
+    e1Live.getAttribute("role") === "status" &&
+    e1Live.getAttribute("aria-live") === "polite";
+  const e1ExactlyOneLiveRegion =
+    document.querySelectorAll('#srlive[aria-live="polite"]').length === 1;
+  const e1NoAssertiveAnywhere = !/aria-live="assertive"/.test(html);
+  const e1AnnounceFnPresent = /function announce\(/.test(html);
+  let e1TabAnnounces = false;
+  const e1GovTab = tabs.find(t => t.getAttribute("data-target") === "governance");
+  if (e1GovTab && e1Live) {
+    e1GovTab.click();
+    e1TabAnnounces = /Showing tab:/.test(e1Live.textContent || "") &&
+      /Governance/.test(e1Live.textContent || "");
+  }
+  let e1SearchAnnounces = false;
+  const e1Search = document.getElementById("gsearchInput");
+  if (e1Search && e1Live) {
+    e1Search.value = "governed";
+    e1Search.dispatchEvent(new Event("input", { bubbles: true }));
+    e1SearchAnnounces = /results? for /.test(e1Live.textContent || "");
+  }
+  let e1SliderAnnounces = false;
+  const e1DxTab = tabs.find(t => t.getAttribute("data-target") === "distexplorer");
+  if (e1DxTab) e1DxTab.click();
+  const e1Slider = document.getElementById("dxslider");
+  if (e1Slider && e1Live) {
+    e1Slider.value = "0";
+    e1Slider.dispatchEvent(new Event("input", { bubbles: true }));
+    e1SliderAnnounces = /Distribution read-out:/.test(e1Live.textContent || "") &&
+      /grid point/.test(e1Live.textContent || "");
+  }
+  let e1IntegrityAnnounces = false;
+  const e1IntTab = tabs.find(t => t.getAttribute("data-target") === "integrity");
+  if (e1IntTab && e1Live) {
+    e1IntTab.click();
+    e1IntegrityAnnounces = /Content integrity verified/.test(e1Live.textContent || "");
+  }
+  const e1HeadlineBitForBit = /39975\.654628199336/.test(html);
+  const e1DxReadoutNotLive = !(document.getElementById("dx-readout") &&
+    document.getElementById("dx-readout").getAttribute("aria-live"));
+  if (ovTabK) ovTabK.click();
+
+  // ===== Phase 36 Task 3 (gap E2): consolidated global glossary & methodology explainer =====
+  const e2Explainer = uiDataObj && uiDataObj.explainer;
+  const e2Od = uiDataObj && uiDataObj.owner_decision_p31;
+  const e2GlossTab = tabs.find(t => t.getAttribute("data-target") === "glossary");
+  if (e2GlossTab) e2GlossTab.click();
+  const e2Panel = document.getElementById("glossary");
+  const e2PanelText = (e2Panel && e2Panel.textContent) || "";
+  const e2GlossTermRows = document.querySelectorAll('#glossary table.glossterms tbody tr').length;
+  const e2GlossCovRows = document.querySelectorAll('#glossary table.glosscov tbody tr').length;
+  const e2KeyPresent = !!e2Explainer && typeof e2Explainer === "object" &&
+    Array.isArray(e2Explainer.terms) && Array.isArray(e2Explainer.tab_coverage);
+  const e2TabPresent = !!e2GlossTab && /Methodology & Glossary/.test(e2GlossTab.textContent || "");
+  const e2PanelRenders = /Methodology & Glossary/.test(e2PanelText) &&
+    /Global glossary/.test(e2PanelText) &&
+    e2GlossTermRows === (e2KeyPresent ? e2Explainer.terms.length : -1) && e2GlossTermRows > 0;
+  const e2TabCoverageComplete = e2KeyPresent &&
+    JSON.stringify(e2Explainer.tab_coverage.map(t => t.tab_id)) ===
+      JSON.stringify(["overview","inventory","calibrations","capital","actions","phase24","phase25","phase26","phase27","phase28","phase29","phase30","comparator","distexplorer","ownerdecision","userrun","governance","integrity"]) &&
+    e2GlossCovRows === 18;
+  const e2BaseDefinitionsVerbatim = e2KeyPresent && !!e2Od && (function(){
+    const g = e2Od.glossary || {};
+    return e2Explainer.terms.filter(t => (t.definition_source||"").indexOf("verbatim") >= 0)
+      .every(t => g[t.term] !== undefined && t.definition === g[t.term]);
+  })();
+  const e2BaseTermsAllCarried = e2KeyPresent && !!e2Od && (function(){
+    const g = e2Od.glossary || {};
+    return Object.keys(g).every(k => e2Explainer.terms.some(t => t.term === k && t.definition === g[k]));
+  })();
+  const e2LimitationsVerbatim = e2KeyPresent && !!e2Od &&
+    JSON.stringify(e2Explainer.limitations) === JSON.stringify(e2Od.limitations) &&
+    JSON.stringify(e2Explainer.provenance.limitations_verbatim) === JSON.stringify(e2Od.limitations);
+  const e2GlossaryProvenanceCarried = e2KeyPresent && !!e2Od &&
+    JSON.stringify(e2Explainer.provenance.glossary_verbatim) === JSON.stringify(e2Od.glossary);
+  const e2LimitationProvenancePerTerm = e2KeyPresent && e2Explainer.terms.every(t =>
+    t.limitation_provenance && Array.isArray(t.limitation_provenance.text));
+  const e2GovernedHeadlineTermPresent = e2KeyPresent && !!e2Od && e2Explainer.terms.some(t =>
+    t.term === "governed headline" && t.definition === e2Od.glossary["governed headline"]);
+  const e2DisplayOnly = e2KeyPresent && e2Explainer.display_only === true &&
+    /no model figure/.test(e2PanelText);
+  const e2ExplainerDigested = !!(uiDataObj && uiDataObj.contract_manifest &&
+    uiDataObj.contract_manifest.section_digests &&
+    /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.section_digests.explainer || ""));
+  const e2ContractIs121 = !!uiDataObj && uiDataObj.contract_version === "1.23.0";
+  const e2HeadlineBitForBit = /39975\.654628199336/.test(html);
+  const e2NoAuthoredFigures = e2KeyPresent && (function(){
+    const authored = e2Explainer.terms.map(t => (t.definition_source||"").indexOf("verbatim")>=0
+        ? (t.method_basis||"") : ((t.definition||"")+(t.method_basis||""))).join(" ") + " " +
+      e2Explainer.tab_coverage.map(t => (t.primary_readout||"")+(t.tab_label||"")).join(" ");
+    return !/39,975|46,638|46638\.9|3,637|39975\.654628199336/.test(authored);
+  })();
+
+  // ===== Phase 36 Task 4 (gap E3): reproducibility evidence-pack export =====
+  const e3Btn = document.getElementById("btnEvidencePack");
+  const e3ButtonPresent = !!e3Btn;
+  const e3ButtonLabelled = !!e3Btn &&
+    /evidence pack/i.test(((e3Btn.textContent || "") + " " + (e3Btn.getAttribute("title") || "")));
+  const e3ExportFnPresent = /function exportEvidencePack\(/.test(html);
+  const e3GetRawFnPresent = /function getEmbeddedRaw\(/.test(html);
+  const e3WiredInToolbar = /\["btnEvidencePack",function\(\)\{ exportEvidencePack\(\); \}\]/.test(html);
+  const e3ExportUsesEmbeddedRaw = /getEmbeddedRaw\(\)/.test(html) &&
+    /downloadText\(name, raw, "application\/json"\)/.test(html);
+  const e3Seg = (function(){
+    const i = html.indexOf("(gap E3): reproducibility evidence-pack export");
+    const j = html.indexOf("function csvCell(");
+    return (i >= 0 && j > i) ? html.slice(i, j) : "";
+  })();
+  const e3NoStorageInExport = e3Seg.length > 100 && !/localStorage|sessionStorage|indexedDB/.test(e3Seg);
+  const e3DisplayOnlyStated = /recomputes NO model figure/.test(e3Seg);
+  const e3VerifierNotePresent = document.querySelectorAll('#integrity p[data-e3-note="1"]').length >= 1;
+  const e3PayloadDigestVerifiable = !!(uiDataObj && uiDataObj.contract_manifest &&
+    /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.root_digest || "") &&
+    uiDataObj.contract_manifest.section_digests &&
+    Object.keys(uiDataObj.contract_manifest.section_digests).length >= 20);
+  const e3FilenameStamped = /reproducibility_evidence_pack_v"\+ver\+tag\+"\.json/.test(html);
+  const e3HeadlineBitForBit = /39975\.654628199336/.test(html);
+
+  // ===== Post-Phase-IGUI Task 5 (MR-VR-1): inner-path variance-reduction efficiency panel =====
+  const vr = uiDataObj && uiDataObj.postigui_vr;
+  const vrTab = tabs.find(t => t.getAttribute("data-target") === "vrpanel");
+  if (vrTab) vrTab.click();
+  const vrPanel = document.getElementById("vrpanel");
+  const vrPanelText = (vrPanel && vrPanel.textContent) || "";
+  const vrKeyPresent = !!vr && typeof vr === "object" &&
+    !!vr.variance_reduction_ratios && !!vr.effective_sample_size &&
+    !!vr.n_star_for_target_se && !!vr.tail_study && !!vr.adoption_materiality;
+  const vrTabPresent = !!vrTab && /Variance Reduction/.test(vrTab.textContent || "");
+  const vrRatioRows = document.querySelectorAll('#vrpanel table.vrratios tbody tr').length;
+  const vrEssRows = document.querySelectorAll('#vrpanel table.vress tbody tr').length;
+  const vrPanelRenders = /Inner-Path Variance Reduction/.test(vrPanelText) &&
+    /Work-normalised variance-reduction ratios/.test(vrPanelText) &&
+    vrRatioRows === 3 && vrEssRows === 4;
+  const vrRatiosHaveCi = vrKeyPresent &&
+    ["antithetic","crn","sobol_qmc"].every(k => {
+      const r = vr.variance_reduction_ratios[k] || {};
+      return typeof r.ratio === "number" && typeof r.ci95_lo === "number" &&
+        typeof r.ci95_hi === "number" && r.ci95_lo <= r.ratio && r.ratio <= r.ci95_hi;
+    });
+  const vrEssPresent = vrKeyPresent &&
+    ["antithetic","sobol_qmc","crn"].every(k => typeof vr.effective_sample_size[k] === "number");
+  const vrNstarPresent = vrKeyPresent &&
+    ["crude","antithetic","sobol_qmc","crn"].every(k => typeof vr.n_star_for_target_se[k] === "number") &&
+    typeof vr.target_se_rel === "number";
+  const vrUnbiasedWithinTol = vrKeyPresent && vr.unbiasedness &&
+    vr.unbiasedness.all_within_tol === true && /no model figure recomputed/.test(vrPanelText);
+  const vrAntitheticTailIneffective = vrKeyPresent &&
+    vr.tail_study.antithetic_ineffective_at_995 === true &&
+    (vr.tail_study.antithetic_work_normalised_ratio || {}).useful_ge_threshold === false &&
+    /INEFFECTIVE/.test(vrPanelText);
+  const vrAdoptionReportedNotApplied = vrKeyPresent &&
+    vr.adoption_materiality.is_material === false &&
+    vr.adoption_materiality.applied === false &&
+    /REPORTED, NOT applied/.test(vrPanelText);
+  const vrHeadlineInvariant = vrKeyPresent && vr.headline_invariance &&
+    vr.headline_invariance.bit_identical === true &&
+    vr.headline_invariance.before.frozen_t_component_scr === 39975.654628199336;
+  const vrHeadlineBitForBit = /39975\.654628199336/.test(html);
+  const vrDigested = !!(uiDataObj && uiDataObj.contract_manifest &&
+    uiDataObj.contract_manifest.section_digests &&
+    /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.section_digests.postigui_vr || ""));
+  const vrClassificationEfficiency = vrKeyPresent && vr.classification === "EFFICIENCY" &&
+    Array.isArray(vr.techniques) && vr.techniques.length === 4;
+  const vrContractIs122 = !!uiDataObj && uiDataObj.contract_version === "1.23.0";
+
+  // ===== Post-Phase-IGUI Task 8 (MR-VR-2): outer-loop variance-reduction efficiency panel =====
+  const vr2 = uiDataObj && uiDataObj.postigui_vr2;
+  const vr2Tab = tabs.find(t => t.getAttribute("data-target") === "vr2panel");
+  if (vr2Tab) vr2Tab.click();
+  const vr2Panel = document.getElementById("vr2panel");
+  const vr2PanelText = (vr2Panel && vr2Panel.textContent) || "";
+  const vr2KeyPresent = !!vr2 && typeof vr2 === "object" &&
+    !!vr2.mean_variance_reduction_ratios && !!vr2.scr_tail_study &&
+    !!vr2.control_variate_fit && !!vr2.adoption_materiality;
+  const vr2TabPresent = !!vr2Tab && /Outer-Loop Variance Reduction/.test(vr2Tab.textContent || "");
+  const vr2ScrRows = document.querySelectorAll('#vr2panel table.vr2ratios tbody tr').length;
+  const vr2MeanRows = document.querySelectorAll('#vr2panel table.vr2mean tbody tr').length;
+  const vr2EssRows = document.querySelectorAll('#vr2panel table.vr2ess tbody tr').length;
+  const vr2PanelRenders = /Outer-Loop Variance Reduction/.test(vr2PanelText) &&
+    /99\.5% SCR tail target/.test(vr2PanelText) &&
+    vr2ScrRows === 4 && vr2MeanRows === 3 && vr2EssRows === 5;
+  const vr2ScrRatiosHaveCi = vr2KeyPresent &&
+    ["sobol_rqmc","control_variate","stratified","rqmc_plus_cv"].every(k => {
+      const r = vr2.scr_tail_study.variance_reduction_ratios[k] || {};
+      return typeof r.ratio === "number" && typeof r.ci95_lo === "number" &&
+        typeof r.ci95_hi === "number" && r.ci95_lo <= r.ratio && r.ratio <= r.ci95_hi;
+    });
+  const vr2ControlVariateTailIneffective = vr2KeyPresent &&
+    vr2.scr_tail_study.variance_reduction_ratios.control_variate.useful_ge_threshold === false &&
+    vr2.scr_tail_study.variance_reduction_ratios.control_variate.ratio < 1.5 &&
+    /INEFFECTIVE/.test(vr2PanelText);
+  const vr2TailLeversUseful = vr2KeyPresent &&
+    vr2.scr_tail_study.variance_reduction_ratios.sobol_rqmc.useful_ge_threshold === true &&
+    vr2.scr_tail_study.variance_reduction_ratios.stratified.useful_ge_threshold === true &&
+    vr2.scr_tail_study.variance_reduction_ratios.rqmc_plus_cv.useful_ge_threshold === true &&
+    vr2.best_tail_technique === "stratified";
+  const vr2ControlFitDisclosed = vr2KeyPresent && vr2.control_variate_fit &&
+    typeof vr2.control_variate_fit.rho === "number" &&
+    typeof vr2.control_variate_fit.one_over_1_minus_rho2 === "number";
+  const vr2UnbiasedWithinTol = vr2KeyPresent && vr2.mean_unbiasedness &&
+    vr2.mean_unbiasedness.all_within_tol === true && /no model figure recomputed/.test(vr2PanelText);
+  const vr2AdoptionReportedNotApplied = vr2KeyPresent &&
+    vr2.adoption_materiality.is_material === false &&
+    vr2.adoption_materiality.applied === false &&
+    /REPORTED, NOT applied/.test(vr2PanelText);
+  const vr2HeadlineInvariant = vr2KeyPresent && vr2.headline_invariance &&
+    vr2.headline_invariance.bit_identical === true &&
+    vr2.headline_invariance.before.frozen_t_component_scr === 39975.654628199336;
+  const vr2Digested = !!(uiDataObj && uiDataObj.contract_manifest &&
+    uiDataObj.contract_manifest.section_digests &&
+    /^[0-9a-f]{64}$/.test(uiDataObj.contract_manifest.section_digests.postigui_vr2 || ""));
+  const vr2ClassificationEfficiency = vr2KeyPresent && vr2.classification === "EFFICIENCY" &&
+    Array.isArray(vr2.techniques) && vr2.techniques.length === 4;
+
   const checks = {
+    // Phase 33 Task 5 (gap G4): accessibility & usability pass
+    g4SrOnlyCssPresent,
+    g4TabpanelRoles,
+    g4TabsAriaControls,
+    g4EnterActivates,
+    g4SpaceActivates,
+    g4ArrowMoves,
+    g4HashWritten,
+    g4HashRestores,
+    g4ExactlyOneSelectedAfterHash,
+    g4NoStorageApis,
+    g4TablesTotal,
+    g4TablesWithCaption,
+    g4TablesWithoutCaption,
+    g4NoDuplicateCaptions,
+    dxTabPresent: !!dxTab,
+    dxTabTextPresent: /Distribution Explorer \(P33\)/.test(bodyText),
+    dxGridEmbedded: !!dxData && dxCdfX.length === 41 && dxCdfP.length === 41,
+    dxCdfMonotoneEnds: dxCdfP.length > 1 && dxCdfP[0] === 0 && dxCdfP[dxCdfP.length - 1] === 1 &&
+      dxCdfP.every((v, i) => i === 0 || v >= dxCdfP[i - 1]),
+    dxProvenanceEmbedded: typeof dxProv.source_sha256 === "string" && dxProv.source_sha256.length === 64 &&
+      /PHASE16_LOSS_DISTRIBUTION\.json$/.test(String(dxProv.source || "")) &&
+      /BUILD TIME ONLY/.test(String(dxProv.computed_by || "")),
+    dxCdfSvgRendered: dxSvg0 === 1,
+    dxCdfGridPointCount: dxPts0 === 41,
+    dxSeedOverlayRendered: dxSeedPaths0 === 4,
+    dxQuantileRows: dxQRows.length === 13 &&
+      dxQRows.every((r, i) => r.getAttribute("data-dx-q-loss") === String((dxQGrid.loss || [])[i])),
+    dxArchivedPercentileRows: dxPRows.length === 8 &&
+      dxPRows.every((r, i) => r.getAttribute("data-dx-loss") === String((dxArchP[i] || {}).loss)),
+    dxP50ExactArchivedKey: !!dxP50Row && dxP50Row.getAttribute("data-dx-loss") === "107159.2854",
+    dxSweepRows: dxSRows === 5,
+    dxSliderReadoutWorks: /grid point 40 of 40/.test(dxReadoutLast) && /F\(loss\) = 1\.0000/.test(dxReadoutLast) &&
+      dxReadoutLast.indexOf(String(dxCdfX[dxCdfX.length - 1])) !== -1 &&
+      /grid point 0 of 40/.test(dxReadoutFirst) && /F\(loss\) = 0\.0000/.test(dxReadoutFirst),
+    dxZoomWorks: dxSvgTail === 1 && dxPtsTail > 0 && dxPtsTail < 41 && dxPtsBack === 41,
+    dxBuildTimeStated: /computed at build time/.test(dxText0) && /recomputes nothing/.test(dxText0),
+    dxInterpolationLabelled: /display interpolation/.test(dxText0) && /NOT new model output/.test(dxText0),
+    dxArchivedBitForBitStated: /carried bit-for-bit/.test(dxText0),
+    dxNoFallbackInFullPayload: !/grids are not embedded in this snapshot/.test(dxText0),
+    // Phase 33 Task 4 (gap G3): sign-off pack + CSV export coverage
+    g3SignoffCoverPresent: !!signoffCoverEl,
+    g3SignoffCoverNeutralBlank: /Owner sign-off pack/.test(signoffCoverText) && /intentionally BLANK/.test(signoffCoverText) && /NO default and NO recommendation/.test(signoffCoverText),
+    g3SignoffCoverHeadline: /39,976/.test(signoffCoverText) && /frozen single-df t/.test(signoffCoverText),
+    g3PrintCoverCssPresent: printCoverCssPresent,
+    g3ExportButtonsPresent: !!document.getElementById('btnCsvGates') && !!document.getElementById('btnCsvSignoff'),
+    g3GatesCsvComplete: gatesRows.length === g3gates.length + 1 && /(^|,)gate_id(,|$)/.test(gatesRows[0] || ''),
+    g3GatesCsvBitForBit: g3gates.length > 0 && gatesRows[1].split(',')[0] === String(g3gates[0].gate_id),
+    g3OwnerOptionsCsvOrder: optsRows.length === g3order.length + 1 && optsFirstId === String(g3order[0] || '') && optsFirstId === 'O1_adopt_disclosed_vine_readout',
+    g3EvidenceCsvHeadlineKey: /39975\.654628199336|39,?975/.test(evidCSV) && rowsOf(evidCSV).length === 7,
+    g3ResidualLadderCsv: rowsOf(ladderCSV).length >= 2,
+    g3EscalationHistoryCsv: rowsOf(histCSV).length >= 2,
+    g3StopRuleCsv: /(^|,)trigger(,|$)/.test((rowsOf(stopCSV)[1] || '')) || rowsOf(stopCSV).length >= 2,
+    g3SignoffWorkflowCsv: rowsOf(wfCSV).length >= 2,
+    g3DecisionRecordBlankPreserved: drFieldCount === 6 && drBlankAll,
+    g3ComparatorCsvComplete: rowsOf(cmpCSV).length === 7 && /39975\.654628199336/.test(cmpCSV),
+    g3DistGridCsvComplete: rowsOf(distCSV).length === dxCdfXn + 1 && dxCdfXn === 41,
+    g3SignoffPackComplete: /OWNER SIGN-OFF PACK/.test(packCSV) && /## Owner options/.test(packCSV) && /## Decision record/.test(packCSV) && /## Deployment gates/.test(packCSV) && /BLANK - awaiting owner decision/.test(packCSV),
+    h3BundleButtonsPresent: !!document.getElementById("btnBundleCsv") && !!document.getElementById("btnBundleJson") && !!document.getElementById("btnPrintAll"),
+    h3BundleCoversAllSections: h3AllSections,
+    h3BundleHeadlineBitForBit: /39975\.654628199336/.test(bundleCSV) && /39975\.654628199336/.test(bundleJSON),
+    h3BundleProvenanceStamped: /# Provenance: contract v/.test(bundleCSV) && /build\/generated/.test(bundleCSV) && /Governed component SCR headline/.test(bundleCSV),
+    h3BundleDecisionBlank: /## Decision record \(BLANK until the owner decides\)/.test(bundleCSV) && h3DecRowsBundle.length >= 1,
+    h3BundleJsonValid: !!h3JsonObj && h3JsonObj.bundle === "full_evidence_bundle" && Array.isArray(h3JsonObj.section_order) && h3JsonObj.section_order.length === 13,
+    h3BundleJsonHeadlineNumberExact: h3JsonHeadlineNumber,
+    h3BundleJsonDecisionBlank: !!h3JsonObj && /BLANK - awaiting owner decision/.test(h3JsonObj.sections_csv.decision_record),
+    h3PrintAllCssPresent: /html\.printall \.panel\{display:block !important\}/.test(html) && /H3 print-all/.test(html),
+    h3PrintAllButtonNoThrow: (function(){ try { var w=document.defaultView; var orig=w.print; w.print=function(){}; var b=document.getElementById("btnPrintAll"); if(b) b.click(); var clean=!document.documentElement.classList.contains("printall"); w.print=orig; return clean; } catch(e){ return false; } })(),
+    cmpTabPresent: !!cmpTab,
+    cmpTabTextPresent: /SCR Comparator \(P33\)/.test(bodyText),
+    cmpRegistryOrder: cmpIds0.join(",") === "frozen_t,grouped_t,skew_t,vine2,tree3,nested",
+    cmpGovernedHeadlineExactKey: cmpPoints0.frozen_t === "39975.654628199336",
+    cmpDefaultBaselineFrozenT: cmpDelta0.frozen_t === "zero" && /Frozen single-df t/.test((cmpRows0[0]||{textContent:""}).textContent) && /BASELINE/.test((cmpRows0[0]||{textContent:""}).textContent),
+    cmpDeltaSignsDefault: cmpDelta0.grouped_t === "neg" && cmpDelta0.skew_t === "pos" && cmpDelta0.vine2 === "pos" && cmpDelta0.tree3 === "pos" && cmpDelta0.nested === "pos",
+    cmpCiOverlayRendered: cmpCiSvg0 === 1 && cmpCiCircles0 >= 6,
+    cmpBaselineSwitchWorks: cmpDelta1.vine2 === "zero" && cmpDelta1.frozen_t === "neg" && cmpDelta1.grouped_t === "neg" && cmpDelta1.nested === "pos" && cmpCiSvg1 === 1,
+    cmpGovernedPersistsNonDefaultBaseline: /GOVERNED HEADLINE/.test(cmpText1) && /governed headline basis remains the frozen single-df t/.test(cmpText1),
+    cmpBaselineRestoreWorks: cmpDelta2.frozen_t === "zero" && cmpDelta2.vine2 === "pos",
+    cmpDisplayArithmeticLabelled: /display arithmetic/.test(cmpText0) && /NOT new model output/.test(cmpText0),
+    cmpNothingRecomputedStated: /nothing is recomputed/.test(cmpText0),
+    cmpNeutralityStated: /registry order/.test(cmpText0) && /neutral/.test(cmpText0) && /rests with the owner/.test(cmpText0),
+    cmpNoSteeringLanguage: !/recommended structure|should adopt|we recommend|best structure/i.test(cmpText0),
+    cmpProvenanceRows: cmpProvRows === 6,
+    cmpNestedPointOnly: /no bootstrap CI embedded/.test(cmpText0),
+
     embeddedParsed: /contract v\d/.test(bodyText),
     tabCount: tabs.length,
     inventoryRows: document.querySelectorAll("#invtable tbody tr").length,
@@ -191,6 +967,19 @@ setTimeout(() => {
     govChangeItems,
     govSignoff,
     govAuditBadge,
+    // Phase 32 Task 4 (gap G3): governance-store completeness sweep.
+    govStoreSyncCards,
+    govStoreSyncPanel: /Governance-store sync \(Phase 32 Task 4/.test(govAuditText),
+    govStoreSyncPresent: !!(g3ss && g3ss.source === ".claude-dev/GOVERNANCE_STORE.json"),
+    govSupplementPresent: g3supp.length >= 1,
+    govSupplementNoOverlap: g3overlap === 0,
+    govSweepTotalsConsistent: g3ss.change_records_store_total === (g3embedded.length + g3supp.length)
+      && g3ss.change_records_supplemented === g3supp.length
+      && g3ss.change_records_embedded === g3embedded.length
+      && g3statusTotal === g3ss.change_records_store_total,
+    govTimelineComplete: govChangeItems === (g3embedded.length + g3supp.length),
+    govSyncBadgesRendered: govSyncBadges >= g3supp.length,
+    govChangesCsvComplete: chgCsvRows >= (g3embedded.length + g3supp.length),
     toolbarPresent: !!toolbar,
     exportBtns,
     invCsvHasHeader: /(^|,)sha256(,|$)/.test((invCSV.split("\r\n")[0]||"")),
@@ -251,6 +1040,220 @@ setTimeout(() => {
     blockDfPresent: /37\.866/.test(bodyText) && /8\.506/.test(bodyText),
     mr016Present: /MR-016/.test(bodyText),
     vineEscalationPresent: /vine \/ pair-copula/.test(bodyText),
+    phase29TabPresent: !!p29Tab,
+    p29Cards, p29GateCrits, p29PairRows, p29GapRows, p29BarRects,
+    vineTailTabTextPresent: /Vine Tail \(P29\)/.test(bodyText),
+    vineScrPresent: /42,459/.test(bodyText) && /41,918/.test(bodyText),
+    vineBootstrapCiPresent: /38,655/.test(bodyText) && /45,284/.test(bodyText),
+    vineNestedOutsidePresent: /OUTSIDE/.test(bodyText) && /46,639/.test(bodyText),
+    vineResidualNarrowingPresent: /-65\.33%/.test(bodyText) && /-40\.52%/.test(bodyText),
+    vineRateLiquidityLiftPresent: /\+0\.8514/.test(bodyText),
+    vineOverfitRatioPresent: /0\.049/.test(bodyText),
+    vineFrozenHeadlinePresent: /39,976/.test(bodyText),
+    mr017Present: /MR-017/.test(bodyText),
+    vineNotAdoptedPresent: /NOT adopted/.test(bodyText),
+    phase30TabPresent: !!p30Tab,
+    p30Cards, p30GateCrits, p30PairRows, p30EdgeRows, p30GapRows, p30BarRects,
+    stopRuleTabTextPresent: /Stop-Rule \(P30\)/.test(bodyText),
+    p30StopRuleAppliedPresent: /STOP-RULE/.test(p30Text) && /escalation ENDS/.test(p30Text),
+    p30Tree3ScrPresent: /42,459/.test(p30Text) && /41,752/.test(p30Text),
+    p30BootstrapCiPresent: /38,594/.test(p30Text) && /44,556/.test(p30Text),
+    p30NestedOutsidePresent: /OUTSIDE/.test(p30Text) && /46,639/.test(p30Text),
+    p30ZeroStrengthPresent: /zero-strength/.test(p30Text),
+    p30Mr016KeepOpenPresent: /MR-016/.test(p30Text) && /KEEP OPEN/.test(p30Text),
+    p30Mr017Present: /MR-017/.test(p30Text),
+    p30Phase31Present: /Phase 31/.test(p30Text) && /OWNER DECISION PACKAGE/i.test(p30Text),
+    p30GovernedHeadlinePresent: /39,976/.test(p30Text) && /0\.0000%/.test(p30Text),
+    p30OverfitRatioPresent: /0\.049/.test(p30Text),
+    ownerDecisionTabPresent: !!odTab,
+    odCards, odOptionCards, odLadderRows, odHistRows, odWfRows, odDrRows,
+    odProvRows, odBarRects,
+    odTabTextPresent: /Owner Decision \(P31\)/.test(bodyText),
+    odGovernedHeadlinePresent: /39,976/.test(odText),
+    odVine2PointPresent: /42,459/.test(odText) && /41,918/.test(odText),
+    odTree3MeanPresent: /41,752/.test(odText),
+    odVine2CiPresent: /38,655/.test(odText) && /45,284/.test(odText),
+    odTree3CiPresent: /38,594/.test(odText) && /44,556/.test(odText),
+    odNestedPresent: /46,639/.test(odText),
+    odResidualPresent: /3,637/.test(odText),
+    odCapitalEffectPresent: /2,483/.test(odText),
+    odOptionsRegistryOrder: odO1 >= 0 && odO2 > odO1 && odO3 > odO2,
+    odNoDefaultPresent: /NO default/.test(odText),
+    odDecisionBlankCount: odBlankChips,
+    odStopRulePresent: /escalation ENDS/.test(odText),
+    odMrOpenPresent: /MR-016/.test(odText) && /MR-017/.test(odText),
+    odSingleRunCaveatPresent: /SINGLE run/.test(odText),
+    userRunTabPresent: !!urTab,
+    urCards, urScrRows, urCiRows, urPlanRows, urPfRows, urProvRows, urBarRects,
+    urTabTextPresent: /User Run \(UIL\)/.test(bodyText),
+    urRunLabelPresent: /WorkedExample_TemplateDemoBook/.test(urText),
+    urNestedScrPresent: /71,112/.test(urText),
+    urCopulaScrPresent: /49,826/.test(urText) && /gaussian/.test(urText),
+    urVarCovarScrPresent: /37,626/.test(urText),
+    urLapseScrPresent: /30,360/.test(urText),
+    urEquityScrPresent: /21,207/.test(urText),
+    urVarCiPresent: /192,141/.test(urText) && /191,055/.test(urText) && /193,042/.test(urText),
+    urEsgUnderstatementPresent: /0\.47%/.test(urText),
+    urVerdictPresent: /REVIEW/.test(urText),
+    urSeedPresent: /20260608/.test(urText),
+    urModelPointCountsPresent: /2 PAR rows \(1 GMMB row/.test(urText),
+    urInputChainPresent: /model_inputs\.json/.test(urText) && /par_model_v2\.user_inputs loader/.test(urText) && /run_model/.test(urText),
+    urCurrencySourceStamped: uiMeta.currency_source ? urText.indexOf(uiMeta.currency_source) >= 0 : false,
+    urOutputLabelStamped: uiMeta.output_label ? urText.indexOf(uiMeta.output_label) >= 0 : false,
+    urDigestPresent: /48bc9c19/.test(urText),
+    urBookScalingDisclosedPresent: /DISCLOSED APPROXIMATION/.test(urText),
+    urFrozenDependencePresent: /never user-settable/.test(urText),
+    urNothingRecomputedPresent: /recomputes NOTHING/.test(urText),
+    currencyMetaStamped: !!(uiMeta.currency && ("currency_source" in uiMeta) && ("output_label" in uiMeta)),
+    fmtMoneyDefined: /function fmtMoney\(/.test(html),
+    moneySymbolRendered: moneyRe ? moneyRe.test(bodyText) : true,
+    currencyBadgePresent: curCfg.code ? (new RegExp("currency " + curCfg.code)).test(bodyText) : true,
+    // Phase 34 Task 2 (gap H1): self-describing data-contract guard.
+    h1IntegrityTabPresent: !!intTab,
+    h1IntegrityTabText: /Data-contract integrity/.test(intText),
+    h1ContractIs121: !!uiDataObj && uiDataObj.contract_version === "1.23.0",
+    // Phase 35 Task 4 (gap A3): one-page printable model-card cover
+    a3ModelCardPresent: !!modelCardEl,
+    a3ModelCardIdentity: /Model card/.test(modelCardText) &&
+      (uiDataObj ? modelCardText.indexOf(uiDataObj.meta.model_name) >= 0 : false) &&
+      /v0\.2\.0/.test(modelCardText) && /EDUCATIONAL ONLY/.test(modelCardText),
+    a3ModelCardScope: /Scope:/.test(modelCardText) && modelCardText.length > 200,
+    a3ModelCardHeadlineBitForBit: !!modelCardHeadlineExact &&
+      modelCardText.indexOf(modelCardHeadlineExact) >= 0 &&
+      /39975\.654628199336/.test(modelCardText),
+    a3ModelCardHeadlineNotRelabelled:
+      /governed component SCR headline \(frozen single-df t\)/.test(modelCardText),
+    a3ModelCardLimitations: modelCardLimItems === 3,
+    a3ModelCardStopRule: /Phase 30/.test(modelCardText) &&
+      /stop-rule/i.test(modelCardText) && /MR-016/.test(modelCardText),
+    a3ModelCardDecisionBlank: /intentionally BLANK/.test(modelCardText) &&
+      /Owner decision \(option id\): _{6,}/.test(modelCardText),
+    a3ModelCardProvenance: /Provenance:/.test(modelCardText) &&
+      /contract v1\.23\.0/.test(modelCardText) && /build stamp/.test(modelCardText),
+    a3PrintCssPresent: a3PrintCssPresent,
+    // Phase 35 Task 3 (gap A2): content-integrity digests + in-browser verifier
+    a2DigestsPresent,
+    a2DigestsHex,
+    a2DigestsCoverAllSections,
+    a2VerifierTableRendered,
+    a2AllSectionsVerified,
+    a2RootDigestShown,
+    a2HelpersEmbedded,
+    a2NoNetworkStated,
+    h1ManifestEmbedded: !!intManifest && intManifest.expected_contract_version === uiDataObj.contract_version &&
+      Array.isArray(intManifest.required_top_level_keys) && intManifest.required_top_level_keys.length >= 20,
+    h1ManifestExcludesItself: !!intManifest && intManifest.required_top_level_keys.indexOf("contract_manifest") === -1,
+    h1ManifestKeysAllPresent: !!intManifest &&
+      intManifest.required_top_level_keys.every(k => Object.prototype.hasOwnProperty.call(uiDataObj, k)),
+    h1IntegrityKeyRows: !!intManifest && intKeyRows === intManifest.required_top_level_keys.length,
+    h1ValidatorPassOnFullPayload: /PASS/.test(intText) && intAbsentRows === 0,
+    h1VersionMatchShown: !!uiDataObj && intText.indexOf(uiDataObj.contract_version) >= 0,
+    h1BannerHiddenOnFullPayload: !intBannerVisible,
+    h1DisplayOnlyStated: /recomputes no model figure/.test(intText) && /[Nn]othing is recomputed in the browser/.test(intText),
+    h2SearchBoxPresent,
+    h2DlIdsAssigned,
+    h2HitForGovernedHeadline,
+    h2JumpActivatesTab,
+    h2HashCarriesSection,
+    h2HeadlineNeverRelabelled,
+    h2DeepLinkTabSection,
+    h2DeepLinkPlainTabStillWorks,
+    h2NoStorageApis,
+    h4ResponsiveMediaPresent,
+    h4ResponsiveTableScroll,
+    h4ReducedMotionPresent,
+    h4HighContrastThemePresent,
+    h4ToggleButtonPresent,
+    h4ToggleAppliesClass,
+    h4ToggleWritesHash,
+    h4ToggleAriaPressed,
+    h4ToggleRemovesClass,
+    h4ToggleClearsHash,
+    h4RestoreFromHash,
+    h4FlagDoesNotBreakTabRouting,
+    h4NoStorageApis,
+    // Phase 35 Task 2 (gap A1): WCAG 2.1 AA keyboard + contrast pass
+    a1FocusVisibleComprehensive,
+    a1AuditEmbedded,
+    a1PairsBothThemes,
+    a1AllPairsPassAA,
+    a1KeyboardInventory,
+    a1FocusVisibleSelectorsListed,
+    a1ContrastTableRendered,
+    a1KeyboardTableRendered,
+    a1DisplayOnlyStated,
+    a1A11yTables,
+    // Phase 36 Task 2 (gap E1): live-region status announcements
+    e1LiveRegionPresent,
+    e1ExactlyOneLiveRegion,
+    e1NoAssertiveAnywhere,
+    e1AnnounceFnPresent,
+    e1TabAnnounces,
+    e1SearchAnnounces,
+    e1SliderAnnounces,
+    e1IntegrityAnnounces,
+    e1HeadlineBitForBit,
+    e1DxReadoutNotLive,
+    // Phase 36 Task 3 (gap E2): consolidated global glossary & methodology explainer
+    e2KeyPresent,
+    e2TabPresent,
+    e2PanelRenders,
+    e2TabCoverageComplete,
+    e2BaseDefinitionsVerbatim,
+    e2BaseTermsAllCarried,
+    e2LimitationsVerbatim,
+    e2GlossaryProvenanceCarried,
+    e2LimitationProvenancePerTerm,
+    e2GovernedHeadlineTermPresent,
+    e2DisplayOnly,
+    e2ExplainerDigested,
+    e2ContractIs121,
+    e2HeadlineBitForBit,
+    e2NoAuthoredFigures,
+    // Phase 36 Task 4 (gap E3): reproducibility evidence-pack export
+    e3ButtonPresent,
+    e3ButtonLabelled,
+    e3ExportFnPresent,
+    e3GetRawFnPresent,
+    e3WiredInToolbar,
+    e3ExportUsesEmbeddedRaw,
+    e3NoStorageInExport,
+    e3DisplayOnlyStated,
+    e3VerifierNotePresent,
+    e3PayloadDigestVerifiable,
+    e3FilenameStamped,
+    e3HeadlineBitForBit,
+    vrKeyPresent,
+    vrTabPresent,
+    vrPanelRenders,
+    vrRatioRows,
+    vrEssRows,
+    vrRatiosHaveCi,
+    vrEssPresent,
+    vrNstarPresent,
+    vrUnbiasedWithinTol,
+    vrAntitheticTailIneffective,
+    vrAdoptionReportedNotApplied,
+    vrHeadlineInvariant,
+    vrHeadlineBitForBit,
+    vrDigested,
+    vrClassificationEfficiency,
+    vrContractIs122,
+    vr2KeyPresent,
+    vr2TabPresent,
+    vr2PanelRenders,
+    vr2ScrRows,
+    vr2MeanRows,
+    vr2EssRows,
+    vr2ScrRatiosHaveCi,
+    vr2ControlVariateTailIneffective,
+    vr2TailLeversUseful,
+    vr2ControlFitDisclosed,
+    vr2UnbiasedWithinTol,
+    vr2AdoptionReportedNotApplied,
+    vr2HeadlineInvariant,
+    vr2Digested,
+    vr2ClassificationEfficiency,
     networkCalls: networkCalls.length,
     jsErrors: errors.length,
   };
@@ -296,6 +1299,15 @@ setTimeout(() => {
     checks.govChangeItems >= 5 &&
     checks.govSignoff >= 1 &&
     checks.govAuditBadge >= 1 &&
+    checks.govStoreSyncCards >= 5 &&
+    checks.govStoreSyncPanel &&
+    checks.govStoreSyncPresent &&
+    checks.govSupplementPresent &&
+    checks.govSupplementNoOverlap &&
+    checks.govSweepTotalsConsistent &&
+    checks.govTimelineComplete &&
+    checks.govSyncBadgesRendered &&
+    checks.govChangesCsvComplete &&
     checks.toolbarPresent &&
     checks.exportBtns === 5 &&
     checks.invCsvHasHeader &&
@@ -386,6 +1398,298 @@ setTimeout(() => {
     checks.blockDfPresent &&
     checks.mr016Present &&
     checks.vineEscalationPresent &&
+    checks.phase29TabPresent &&
+    checks.p29Cards >= 12 &&
+    checks.p29GateCrits >= 19 &&
+    checks.p29PairRows === 14 &&
+    checks.p29GapRows === 4 &&
+    checks.p29BarRects >= 6 &&
+    checks.vineTailTabTextPresent &&
+    checks.vineScrPresent &&
+    checks.vineBootstrapCiPresent &&
+    checks.vineNestedOutsidePresent &&
+    checks.vineResidualNarrowingPresent &&
+    checks.vineRateLiquidityLiftPresent &&
+    checks.vineOverfitRatioPresent &&
+    checks.vineFrozenHeadlinePresent &&
+    checks.mr017Present &&
+    checks.vineNotAdoptedPresent &&
+    checks.phase30TabPresent &&
+    checks.p30Cards >= 10 &&
+    checks.p30GateCrits >= 22 &&
+    checks.p30PairRows === 18 &&
+    checks.p30EdgeRows === 4 &&
+    checks.p30GapRows === 4 &&
+    checks.p30BarRects >= 6 &&
+    checks.stopRuleTabTextPresent &&
+    checks.p30StopRuleAppliedPresent &&
+    checks.p30Tree3ScrPresent &&
+    checks.p30BootstrapCiPresent &&
+    checks.p30NestedOutsidePresent &&
+    checks.p30ZeroStrengthPresent &&
+    checks.p30Mr016KeepOpenPresent &&
+    checks.p30Mr017Present &&
+    checks.p30Phase31Present &&
+    checks.p30GovernedHeadlinePresent &&
+    checks.p30OverfitRatioPresent &&
+    checks.ownerDecisionTabPresent &&
+    checks.odCards >= 12 &&
+    checks.odOptionCards === 3 &&
+    checks.odLadderRows === 4 &&
+    checks.odHistRows === 5 &&
+    checks.odWfRows === 6 &&
+    checks.odDrRows === 6 &&
+    checks.odProvRows >= 7 &&
+    checks.odBarRects >= 5 &&
+    checks.odTabTextPresent &&
+    checks.odGovernedHeadlinePresent &&
+    checks.odVine2PointPresent &&
+    checks.odTree3MeanPresent &&
+    checks.odVine2CiPresent &&
+    checks.odTree3CiPresent &&
+    checks.odNestedPresent &&
+    checks.odResidualPresent &&
+    checks.odCapitalEffectPresent &&
+    checks.odOptionsRegistryOrder &&
+    checks.odNoDefaultPresent &&
+    checks.odDecisionBlankCount === 6 &&
+    checks.odStopRulePresent &&
+    checks.odMrOpenPresent &&
+    checks.odSingleRunCaveatPresent &&
+    checks.userRunTabPresent &&
+    checks.urCards >= 8 &&
+    checks.urScrRows === 7 &&
+    checks.urCiRows === 4 &&
+    checks.urPlanRows === 9 &&
+    checks.urPfRows >= 8 &&
+    checks.urProvRows === 8 &&
+    checks.urBarRects >= 7 &&
+    checks.urTabTextPresent &&
+    checks.urRunLabelPresent &&
+    checks.urNestedScrPresent &&
+    checks.urCopulaScrPresent &&
+    checks.urVarCovarScrPresent &&
+    checks.urLapseScrPresent &&
+    checks.urEquityScrPresent &&
+    checks.urVarCiPresent &&
+    checks.urEsgUnderstatementPresent &&
+    checks.urVerdictPresent &&
+    checks.urSeedPresent &&
+    checks.urModelPointCountsPresent &&
+    checks.urInputChainPresent &&
+    checks.urCurrencySourceStamped &&
+    checks.urOutputLabelStamped &&
+    checks.urDigestPresent &&
+    checks.urBookScalingDisclosedPresent &&
+    checks.urFrozenDependencePresent &&
+    checks.urNothingRecomputedPresent &&
+    checks.currencyMetaStamped &&
+    checks.fmtMoneyDefined &&
+    checks.moneySymbolRendered &&
+    checks.currencyBadgePresent &&
+    checks.cmpTabPresent &&
+    checks.cmpTabTextPresent &&
+    checks.cmpRegistryOrder &&
+    checks.cmpGovernedHeadlineExactKey &&
+    checks.cmpDefaultBaselineFrozenT &&
+    checks.cmpDeltaSignsDefault &&
+    checks.cmpCiOverlayRendered &&
+    checks.cmpBaselineSwitchWorks &&
+    checks.cmpGovernedPersistsNonDefaultBaseline &&
+    checks.cmpBaselineRestoreWorks &&
+    checks.cmpDisplayArithmeticLabelled &&
+    checks.cmpNothingRecomputedStated &&
+    checks.cmpNeutralityStated &&
+    checks.cmpNoSteeringLanguage &&
+    checks.cmpProvenanceRows &&
+    checks.cmpNestedPointOnly &&
+    checks.dxTabPresent &&
+    checks.dxTabTextPresent &&
+    checks.dxGridEmbedded &&
+    checks.dxCdfMonotoneEnds &&
+    checks.dxProvenanceEmbedded &&
+    checks.dxCdfSvgRendered &&
+    checks.dxCdfGridPointCount &&
+    checks.dxSeedOverlayRendered &&
+    checks.dxQuantileRows &&
+    checks.dxArchivedPercentileRows &&
+    checks.dxP50ExactArchivedKey &&
+    checks.dxSweepRows &&
+    checks.dxSliderReadoutWorks &&
+    checks.dxZoomWorks &&
+    checks.dxBuildTimeStated &&
+    checks.dxInterpolationLabelled &&
+    checks.dxArchivedBitForBitStated &&
+    checks.dxNoFallbackInFullPayload &&
+    checks.g3SignoffCoverPresent &&
+    checks.g3SignoffCoverNeutralBlank &&
+    checks.g3SignoffCoverHeadline &&
+    checks.g3PrintCoverCssPresent &&
+    checks.g3ExportButtonsPresent &&
+    checks.g3GatesCsvComplete &&
+    checks.g3GatesCsvBitForBit &&
+    checks.g3OwnerOptionsCsvOrder &&
+    checks.g3EvidenceCsvHeadlineKey &&
+    checks.g3ResidualLadderCsv &&
+    checks.g3EscalationHistoryCsv &&
+    checks.g3StopRuleCsv &&
+    checks.g3SignoffWorkflowCsv &&
+    checks.g3DecisionRecordBlankPreserved &&
+    checks.g3ComparatorCsvComplete &&
+    checks.g3DistGridCsvComplete &&
+    checks.g3SignoffPackComplete &&
+    checks.g4SrOnlyCssPresent &&
+    checks.g4TabpanelRoles >= 5 &&
+    checks.g4TabsAriaControls >= 5 &&
+    checks.g4EnterActivates &&
+    checks.g4SpaceActivates &&
+    checks.g4ArrowMoves &&
+    checks.g4HashWritten &&
+    checks.g4HashRestores &&
+    checks.g4ExactlyOneSelectedAfterHash &&
+    checks.g4NoStorageApis &&
+    checks.g4TablesTotal >= 20 &&
+    checks.g4TablesWithoutCaption === 0 &&
+    checks.g4NoDuplicateCaptions &&
+    checks.h1IntegrityTabPresent &&
+    checks.h1IntegrityTabText &&
+    checks.h1ContractIs121 &&
+    checks.a3ModelCardPresent &&
+    checks.a3ModelCardIdentity &&
+    checks.a3ModelCardScope &&
+    checks.a3ModelCardHeadlineBitForBit &&
+    checks.a3ModelCardHeadlineNotRelabelled &&
+    checks.a3ModelCardLimitations &&
+    checks.a3ModelCardStopRule &&
+    checks.a3ModelCardDecisionBlank &&
+    checks.a3ModelCardProvenance &&
+    checks.a3PrintCssPresent &&
+    checks.a2DigestsPresent &&
+    checks.a2DigestsHex &&
+    checks.a2DigestsCoverAllSections &&
+    checks.a2VerifierTableRendered &&
+    checks.a2AllSectionsVerified &&
+    checks.a2RootDigestShown &&
+    checks.a2HelpersEmbedded &&
+    checks.a2NoNetworkStated &&
+    checks.a1FocusVisibleComprehensive &&
+    checks.a1AuditEmbedded &&
+    checks.a1PairsBothThemes &&
+    checks.a1AllPairsPassAA &&
+    checks.a1KeyboardInventory &&
+    checks.a1FocusVisibleSelectorsListed &&
+    checks.a1ContrastTableRendered &&
+    checks.a1KeyboardTableRendered &&
+    checks.a1DisplayOnlyStated &&
+    checks.a1A11yTables === 2 &&
+    checks.h1ManifestEmbedded &&
+    checks.h1ManifestExcludesItself &&
+    checks.h1ManifestKeysAllPresent &&
+    checks.h1IntegrityKeyRows &&
+    checks.h1ValidatorPassOnFullPayload &&
+    checks.h1VersionMatchShown &&
+    checks.h1BannerHiddenOnFullPayload &&
+    checks.h1DisplayOnlyStated &&
+    checks.h2SearchBoxPresent &&
+    checks.h2DlIdsAssigned >= 50 &&
+    checks.h2HitForGovernedHeadline &&
+    checks.h2JumpActivatesTab &&
+    checks.h2HashCarriesSection &&
+    checks.h2HeadlineNeverRelabelled &&
+    checks.h2DeepLinkTabSection &&
+    checks.h2DeepLinkPlainTabStillWorks &&
+    checks.h2NoStorageApis &&
+    checks.h3BundleButtonsPresent &&
+    checks.h3BundleCoversAllSections &&
+    checks.h3BundleHeadlineBitForBit &&
+    checks.h3BundleProvenanceStamped &&
+    checks.h3BundleDecisionBlank &&
+    checks.h3BundleJsonValid &&
+    checks.h3BundleJsonHeadlineNumberExact &&
+    checks.h3BundleJsonDecisionBlank &&
+    checks.h3PrintAllCssPresent &&
+    checks.h3PrintAllButtonNoThrow &&
+    checks.h4ResponsiveMediaPresent &&
+    checks.h4ResponsiveTableScroll &&
+    checks.h4ReducedMotionPresent &&
+    checks.h4HighContrastThemePresent &&
+    checks.h4ToggleButtonPresent &&
+    checks.h4ToggleAppliesClass &&
+    checks.h4ToggleWritesHash &&
+    checks.h4ToggleAriaPressed &&
+    checks.h4ToggleRemovesClass &&
+    checks.h4ToggleClearsHash &&
+    checks.h4RestoreFromHash &&
+    checks.h4FlagDoesNotBreakTabRouting &&
+    checks.h4NoStorageApis &&
+    checks.e1LiveRegionPresent &&
+    checks.e1ExactlyOneLiveRegion &&
+    checks.e1NoAssertiveAnywhere &&
+    checks.e1AnnounceFnPresent &&
+    checks.e1TabAnnounces &&
+    checks.e1SearchAnnounces &&
+    checks.e1SliderAnnounces &&
+    checks.e1IntegrityAnnounces &&
+    checks.e1HeadlineBitForBit &&
+    checks.e1DxReadoutNotLive &&
+    checks.e2KeyPresent &&
+    checks.e2TabPresent &&
+    checks.e2PanelRenders &&
+    checks.e2TabCoverageComplete &&
+    checks.e2BaseDefinitionsVerbatim &&
+    checks.e2BaseTermsAllCarried &&
+    checks.e2LimitationsVerbatim &&
+    checks.e2GlossaryProvenanceCarried &&
+    checks.e2LimitationProvenancePerTerm &&
+    checks.e2GovernedHeadlineTermPresent &&
+    checks.e2DisplayOnly &&
+    checks.e2ExplainerDigested &&
+    checks.e2ContractIs121 &&
+    checks.e2HeadlineBitForBit &&
+    checks.e2NoAuthoredFigures &&
+    checks.e3ButtonPresent &&
+    checks.e3ButtonLabelled &&
+    checks.e3ExportFnPresent &&
+    checks.e3GetRawFnPresent &&
+    checks.e3WiredInToolbar &&
+    checks.e3ExportUsesEmbeddedRaw &&
+    checks.e3NoStorageInExport &&
+    checks.e3DisplayOnlyStated &&
+    checks.e3VerifierNotePresent &&
+    checks.e3PayloadDigestVerifiable &&
+    checks.e3FilenameStamped &&
+    checks.e3HeadlineBitForBit &&
+    checks.vrKeyPresent &&
+    checks.vrTabPresent &&
+    checks.vrPanelRenders &&
+    checks.vrRatioRows === 3 &&
+    checks.vrEssRows === 4 &&
+    checks.vrRatiosHaveCi &&
+    checks.vrEssPresent &&
+    checks.vrNstarPresent &&
+    checks.vrUnbiasedWithinTol &&
+    checks.vrAntitheticTailIneffective &&
+    checks.vrAdoptionReportedNotApplied &&
+    checks.vrHeadlineInvariant &&
+    checks.vrHeadlineBitForBit &&
+    checks.vrDigested &&
+    checks.vrClassificationEfficiency &&
+    checks.vrContractIs122 &&
+    checks.vr2KeyPresent &&
+    checks.vr2TabPresent &&
+    checks.vr2PanelRenders &&
+    checks.vr2ScrRows === 4 &&
+    checks.vr2MeanRows === 3 &&
+    checks.vr2EssRows === 5 &&
+    checks.vr2ScrRatiosHaveCi &&
+    checks.vr2ControlVariateTailIneffective &&
+    checks.vr2TailLeversUseful &&
+    checks.vr2ControlFitDisclosed &&
+    checks.vr2UnbiasedWithinTol &&
+    checks.vr2AdoptionReportedNotApplied &&
+    checks.vr2HeadlineInvariant &&
+    checks.vr2Digested &&
+    checks.vr2ClassificationEfficiency &&
     checks.networkCalls === 0 &&
     checks.jsErrors === 0;
   done(ok, checks);

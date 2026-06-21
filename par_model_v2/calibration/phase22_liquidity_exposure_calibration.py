@@ -147,6 +147,34 @@ def derive_exposure_notional(spec: Dict[str, Any]) -> Dict[str, float]:
     }
 
 
+def resolve_exposure_spec(spec: Dict[str, Any],
+                          user_inputs: Optional[Dict[str, Any]] = None
+                          ) -> Dict[str, Any]:
+    """Phase UIL Task 2 (B2): overlay user balance-sheet inputs on the fixture.
+
+    Additive and backward-compatible: with ``user_inputs=None`` the returned
+    spec is an unmodified copy of the fixture spec (``exposure_source``
+    ``"fixture"``), so the governed pipeline stays bit-identical.  With user
+    inputs present, ``backing_asset_mv`` / ``illiquid_share`` /
+    ``forced_sale_fraction`` are replaced by the user's balance sheet
+    (``exposure_source`` ``"user_inputs"``).  The exposure-notional derivation
+    (``derive_exposure_notional``) and its gate are unchanged either way.
+    """
+    from par_model_v2.user_inputs import exposure_overrides
+
+    out = dict(spec)
+    out["exposure_inputs"] = dict(spec["exposure_inputs"])
+    ov = exposure_overrides(user_inputs)
+    if ov is None:
+        out["exposure_source"] = "fixture"
+        return out
+    out["exposure_inputs"]["backing_asset_mv"] = ov["backing_asset_mv"]
+    out["exposure_inputs"]["illiquid_share"] = ov["illiquid_share"]
+    out["exposure_inputs"]["forced_sale_fraction"] = ov["forced_sale_fraction"]
+    out["exposure_source"] = "user_inputs"
+    return out
+
+
 # ---------------------------------------------------------------------------
 # 3. Joint synthesis + coupling estimator
 # ---------------------------------------------------------------------------
@@ -737,6 +765,6 @@ __all__ = [
     "LiquidityExposureCheck", "load_exposure_fixture", "derive_exposure_notional",
     "synthesize_joint_panel", "estimate_couplings", "build_calibrated_correlation",
     "var_covar_sensitivity", "check_exposure_calibration", "evaluate_gliqx_gate",
-    "build_exposure_change_record", "submit_to_owner_review",
+    "build_exposure_change_record", "submit_to_owner_review", "resolve_exposure_spec",
     "liquidity_exposure_use_restrictions", "run_phase22_liquidity_exposure_calibration",
 ]

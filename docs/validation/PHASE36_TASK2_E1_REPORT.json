@@ -1,0 +1,65 @@
+{
+  "doc": "PHASE36_TASK2_E1_REPORT",
+  "version": "1.0.0",
+  "phase": "Phase 36: Offline UI Accessibility Completion & Educational Reproducibility",
+  "task": "Task 2 (gap E1) - live-region status announcements (WCAG 2.1 AA SC 4.1.3)",
+  "classification": "educational",
+  "model_parameter_changes": "NONE",
+  "contract_version": "1.20.0 (unchanged - ARIA/JS/presentation only)",
+  "result": "PASS",
+  "change_record_id": "b274a0e0c43d4cd5affd5affbce45ec9",
+  "change_record_status": "OWNER_REVIEW",
+  "governance": {"change_records": "96 -> 97", "audit_entries": "124 -> 125", "risk_register": 17, "audit_integrity_ok": true},
+  "implementation": {
+    "single_live_region": "#srlive (class sr-only, role=status, aria-live=polite, aria-atomic=true)",
+    "announce_helper": "announce(msg) writes textContent to #srlive; guarded; no throw",
+    "wired_surfaces": {
+      "tab_activation": "activateTab announces 'Showing tab: <name>'; on Integrity also appends '. Content integrity verified/check: content altered'",
+      "search_result_count": "search render announces 'N result(s) for <q>'",
+      "distribution_slider_readout": "dxslider input announces 'Distribution read-out: <text>'",
+      "integrity_verify_result": "renderIntegrity announces 'Content integrity verified' / 'check: content altered'"
+    },
+    "dx_readout_aria_live_removed": true,
+    "integritybanner_unchanged": true,
+    "assertive_used": false,
+    "focus_stolen": false
+  },
+  "acceptance_criteria": {
+    "exactly_one_polite_live_region_wired_to_four_surfaces": true,
+    "announce_path_computes_no_model_figure_headline_bit_for_bit": true,
+    "no_focus_steal_no_assertive_sr_only_never_visible": true,
+    "additive_only_payload_byte_identical": true,
+    "self_test_covers_presence_and_four_wiring_points": true,
+    "ui_app_self_test_ok_0_network_0_js_errors": true,
+    "zero_install_0_external_refs_file_safe": true,
+    "no_model_param_changes_stoprule_honoured_owner_decision_not_preempted": true,
+    "all_eight_offline_self_tests_ok": true
+  },
+  "evidence": {
+    "embedded_payload_byte_identical": true,
+    "a2_section_digests_still_verify": true,
+    "governed_headline": "39975.654628199336",
+    "external_references": 0,
+    "self_tests": {
+      "ui_app_self_test": {"ok": true, "checks": 378, "delta": "+10", "network": 0, "js_errors": 0},
+      "offline_viewer_self_test": {"ok": true, "checks": 11},
+      "combined_gui_self_test": {"ok": true, "checks": 27},
+      "ui_app_userrun_fallback_test": {"ok": true, "checks": 9},
+      "ui_app_distribution_fallback_test": {"ok": true, "checks": 9},
+      "ui_app_integrity_fallback_test": {"ok": true, "checks": 10},
+      "ui_app_search_deeplink_test": {"ok": true, "checks": 18},
+      "ui_app_bundle_printall_test": {"ok": true, "checks": 21},
+      "total_checks": 483
+    }
+  },
+  "new_self_test_checks": ["e1LiveRegionPresent","e1ExactlyOneLiveRegion","e1NoAssertiveAnywhere","e1AnnounceFnPresent","e1TabAnnounces","e1SearchAnnounces","e1SliderAnnounces","e1IntegrityAnnounces","e1HeadlineBitForBit","e1DxReadoutNotLive"],
+  "artifacts": {
+    "builder": "scripts/build_phase36_task2_e1_live_regions.py (idempotent)",
+    "governance": "scripts/build_phase36_task2_e1_governance.py",
+    "self_test": "scripts/ui_app_self_test.cjs (+10 checks)",
+    "ui": "ui_app.html (678,921 -> 680,314 bytes)"
+  },
+  "standards": ["WCAG 2.1 AA SC 4.1.3 Status Messages","WAI-ARIA 1.2 role=status / aria-live=polite","SOA ASOP 41"],
+  "invariants": "NO model parameter changes; Phase 30 stop-rule honoured; MR-016/MR-017 owner decision not pre-empted; zero-install file:// single-file preserved; ADDITIVE-only; figures bit-for-bit from embedded payload.",
+  "next": "Phase 36 Task 3 (gap E2) - consolidated glossary & methodology explainer (ADDITIVE contract bump 1.20.0 -> next minor)."
+}

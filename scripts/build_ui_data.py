@@ -32,7 +32,13 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CONTRACT_VERSION = "1.10.0"
+# BASE contract version: what THIS bundler emits when run alone. The PUBLISHED
+# repo artifacts are at a higher contract produced by additive patch layers
+# applied on top of this base build (a11y_audit -> 1.19.0, section_digests ->
+# 1.20.0). To rebuild the PUBLISHED artifacts from clean, run the canonical
+# orchestrator scripts/build_ui_pipeline.py (NOT this file alone, which would
+# regress the published contract). See build_ui_pipeline.py for the full chain.
+CONTRACT_VERSION = "1.18.0"  # base contract; published = build_ui_pipeline.py
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAL = os.path.join(REPO, "docs", "validation")
@@ -42,6 +48,22 @@ STATE_PATH = os.path.join(REPO, ".claude-dev", "MODEL_DEV_STATE.json")
 VIEWER_DATA = os.path.join(REPO, "viewer_data.json")
 OUT_JSON = os.path.join(REPO, "ui_data.json")
 OUT_HTML = os.path.join(REPO, "ui_app.html")
+RUN_SUMMARY_PATH = os.path.join(VAL, "RUN_MODEL_SUMMARY.json")
+AGG_REPORT_PATH = os.path.join(VAL, "RUN_MODEL_AGGREGATION_REPORT.json")
+# Phase 33 Task 3 (gap G2): archived loss-distribution artifact -- the ONLY
+# source for the precomputed distribution-explorer grids (build time only).
+LOSS_DIST_PATH = os.path.join(VAL, "PHASE16_LOSS_DISTRIBUTION.json")
+
+# Neutral display default (Phase UIL Task 4 / plan A1): with no user inputs
+# and no run_model evidence, money renders exactly as before -- bare numbers,
+# no symbol, comma thousands. Backward-compatible by construction.
+NEUTRAL_CURRENCY: Dict[str, Any] = {
+    "code": None,
+    "symbol": "",
+    "decimals": 0,
+    "scale": "units",
+    "thousands": "comma",
+}
 
 DATA_TOKEN = "/*__UI_DATA__*/null"
 
@@ -1911,6 +1933,704 @@ def _build_phase28() -> Dict[str, Any]:
     return out
 
 
+def _build_phase29() -> Dict[str, Any]:
+    """Phase 29 (contract 1.11.0, additive): vine / pair-copula dependence
+    upgrade. Normalises the already-produced Task 2 truncated credit-root
+    C-vine prototype read-out, Task 3 vine margin bootstrap, and Task 4
+    pair-level tail diagnostics + fit-vs-holdout overfit check + MR-016/MR-017
+    decision for the offline UI. Display-layer only - no model calculation."""
+    out: Dict[str, Any] = {}
+    drivers: List[str] = []
+
+    def _pname(idx):
+        try:
+            return drivers[int(idx)]
+        except (TypeError, ValueError, IndexError):
+            return str(idx)
+
+    t2 = _load(os.path.join(VAL, "PHASE29_TASK2_VINE_COPULA_REPORT.json"))
+    if isinstance(t2, dict) and isinstance(t2.get("result"), dict):
+        r = t2["result"]
+        drivers = list(t2.get("drivers") or [])
+        fit = r.get("fit", {}) or {}
+        vine = r.get("vine_pair_candidate_readout", {}) or {}
+        frz = r.get("frozen_t_component_reference_readout", {}) or {}
+        bnd = r.get("frozen_t_boundary_readout", {}) or {}
+        grp = r.get("grouped_t_comparison_readout", {}) or {}
+        out["copula"] = {
+            "drivers": drivers,
+            "df_frozen": t2.get("df_frozen"),
+            "df_rematched": t2.get("df_rematched"),
+            "rho_max_abs_diff": t2.get("rho_max_abs_diff"),
+            "structure": fit.get("structure"),
+            "max_vine_trees": fit.get("max_vine_trees"),
+            "root_driver_name": fit.get("root_driver_name"),
+            "fit_fraction": fit.get("fit_fraction"),
+            "tail_level_p": fit.get("tail_level_p"),
+            "family_counts": fit.get("family_counts", {}),
+            "fit_indices_digest": fit.get("fit_indices_digest"),
+            "holdout_indices_digest": fit.get("holdout_indices_digest"),
+            "vine_candidate_readout": {
+                "scr_component": vine.get("scr_component"),
+                "scr_without": vine.get("scr_without"),
+                "var_component": vine.get("var_component"),
+                "es_component": vine.get("es_component"),
+            },
+            "frozen_t_reference_scr_component": frz.get("scr_component"),
+            "frozen_t_boundary_scr_component": bnd.get("scr_component"),
+            "grouped_t_comparison_scr_component": grp.get("scr_component"),
+            "boundary_recovery_dev": r.get("boundary_recovery_dev"),
+            "candidate_vs_frozen_t_rel": r.get("candidate_vs_frozen_t_rel"),
+            "candidate_vs_grouped_t_rel": r.get("candidate_vs_grouped_t_rel"),
+            "candidate_gap_to_nested_rel":
+                r.get("candidate_gap_to_nested_rel"),
+            "material_finding": r.get("material_finding"),
+            "gates": r.get("gates", {}),
+            "verdict": t2.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE29_TASK2_VINE_COPULA_REPORT.json"),
+            "change_record_id": t2.get("change_record_id"),
+        }
+    t3 = _load(os.path.join(
+        VAL, "PHASE29_TASK3_VINE_MARGIN_BOOTSTRAP_REPORT.json"))
+    if isinstance(t3, dict) and isinstance(t3.get("result"), dict):
+        r = t3["result"]
+        out["bootstrap"] = {
+            "config": r.get("config", {}),
+            "vine_component_scr_ci": r.get("vine_component_scr_ci", {}),
+            "frozen_t_component_scr_ci":
+                r.get("frozen_t_component_scr_ci", {}),
+            "without_vine_scr_ci": r.get("without_vine_scr_ci", {}),
+            "vine_minus_frozen_mean": r.get("vine_minus_frozen_mean"),
+            "vine_minus_frozen_min": r.get("vine_minus_frozen_min"),
+            "vine_minus_frozen_max": r.get("vine_minus_frozen_max"),
+            "vine_minus_frozen_pos_share":
+                r.get("vine_minus_frozen_pos_share"),
+            "directional_disclosed_direction":
+                r.get("directional_disclosed_direction"),
+            "nested_pathwise_reference": r.get("nested_pathwise_reference"),
+            "task2_frozen_t_component_point":
+                r.get("task2_frozen_t_component_point"),
+            "task2_vine_candidate_component_point":
+                r.get("task2_vine_candidate_component_point"),
+            "headline_nested_inside_95ci":
+                r.get("headline_nested_inside_95ci"),
+            "se_frac_of_mean": r.get("se_frac_of_mean"),
+            "se_gate_pass": r.get("se_gate_pass"),
+            "residual_gap_redecomposition_point":
+                r.get("residual_gap_redecomposition_point", {}),
+            "residual_gap_redecomposition_bootstrap_mean":
+                r.get("residual_gap_redecomposition_bootstrap_mean", {}),
+            "grouped_t_copula_form_residual_ref":
+                r.get("grouped_t_copula_form_residual_ref"),
+            "skewt_reconfirmed_copula_form_residual_ref":
+                r.get("skewt_reconfirmed_copula_form_residual_ref"),
+            "gates": r.get("gates", {}),
+            "digest": r.get("digest"),
+            "verdict": t3.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE29_TASK3_VINE_MARGIN_BOOTSTRAP_REPORT.json"),
+            "change_record_id": t3.get("change_record_id"),
+        }
+    t4 = _load(os.path.join(
+        VAL, "PHASE29_TASK4_VINE_TAIL_DIAGNOSTICS_REPORT.json"))
+    if isinstance(t4, dict) and isinstance(t4.get("result"), dict):
+        r = t4["result"]
+        if not drivers:
+            drivers = list(t4.get("drivers") or [])
+        pts = r.get("pair_tail_summary", {}) or {}
+
+        def _m(blk):
+            v = blk or {}
+            return {"mean": v.get("mean"), "ci_lo": v.get("ci_lo"),
+                    "ci_hi": v.get("ci_hi")}
+
+        levels: Dict[str, Any] = {}
+        for pk in sorted(pts.keys()):
+            blk = pts[pk] or {}
+            try:
+                p_val = float(pk) / 100.0
+            except ValueError:
+                p_val = None
+            rows = []
+            for tree, label in (("first_tree", "first"),
+                                ("second_tree", "second"),
+                                ("holdout", "holdout")):
+                for e in (blk.get(tree) or []):
+                    pr = e.get("pair") or [None, None]
+                    cond = e.get("condition_on")
+                    rows.append({
+                        "tree": label,
+                        "pair": pr,
+                        "pair_label": "%s-%s" % (_pname(pr[0]),
+                                                 _pname(pr[1])),
+                        "cond_label": (None if cond is None
+                                       else _pname(cond)),
+                        "cand_upper": _m(e.get("cand_upper")),
+                        "cand_lower": _m(e.get("cand_lower")),
+                        "frz_upper": _m(e.get("frz_upper")),
+                        "frz_lower": _m(e.get("frz_lower")),
+                        "lift_upper": _m(e.get("lift_upper")),
+                        "lift_lower": _m(e.get("lift_lower")),
+                    })
+            levels[pk] = {"p": p_val, "rows": rows}
+        cfg = r.get("config", {}) or {}
+        out["tail"] = {
+            "drivers": drivers,
+            "df_frozen": t4.get("df_frozen"),
+            "p_grid": cfg.get("p_grid", []),
+            "canonical_p": cfg.get("canonical_p"),
+            "fit_structure": cfg.get("fit_structure"),
+            "levels": levels,
+            "overfit_check": r.get("overfit_check", {}),
+            "mr_remediation_decision":
+                r.get("mr_remediation_decision", {}),
+            "archive_crosscheck": r.get("archive_crosscheck", {}),
+            "gates": r.get("gates", {}),
+            "verdict": t4.get("verdict"),
+            "digest": r.get("digest"),
+            "source": ("docs/validation/"
+                       "PHASE29_TASK4_VINE_TAIL_DIAGNOSTICS_REPORT.json"),
+            "change_record_id": t4.get("change_record_id"),
+        }
+    if out:
+        out["narrative"] = (
+            "Phase 29 escalated beyond a single copula on standalone margins "
+            "to a truncated credit-root C-vine / pair-copula candidate (Aas "
+            "et al. 2009): first-tree links anchored on credit, second-tree "
+            "links conditioned on credit, max two trees, capped family set, "
+            "frozen standalone margins / Sigma / df 2.9451 with EXACT "
+            "frozen-t boundary recovery (dev 0.0). MATERIAL FINDING: the vine "
+            "candidate is the FIRST dependence candidate to move TOWARD the "
+            "nested path-wise reference 46,638.9 - component SCR 42,458.6 "
+            "point / 41,917.6 bootstrap mean (+6.21% vs frozen-t), gap to "
+            "nested narrowed to -8.96%, and the copula-form residual NARROWS "
+            "to 3,637.3 (-65.33% vs grouped-t 10,491.5, -40.52% vs skew-t "
+            "6,114.9). At p=0.90 the candidate RAISES upper-tail "
+            "co-dependence on ALL 11 fitted links (largest: rate-liquidity "
+            "given credit +0.8514) while the largest holdout-pair lift is "
+            "0.0414 (holdout/fit ratio 0.049 - overfit gate PASS). The "
+            "nested truth nevertheless remains OUTSIDE the vine 95% CI "
+            "[38,654.7, 45,284.3], so the pre-registered close criteria are "
+            "NOT met: MR-016 stays OPEN with the narrowing DISCLOSED and "
+            "MR-017 is opened for the residual vine-FORM limitations "
+            "(2-tree truncation, capped families, educational tilt "
+            "simulator, nested inner-path dynamics). The governed headline "
+            "remains the frozen single-df t 39,975.7 (recovered "
+            "bit-identically, move 0.0000%; MR-010/MR-014 unchanged); the "
+            "vine is DISCLOSED, not adopted, pending owner sign-off. Copula "
+            "and margins remain frozen per SII Art. 234; production sign-off "
+            "withheld (educational).")
+    return out
+
+
+def _build_owner_decision_p31() -> Dict[str, Any]:
+    """Phase 32 Task 2 / gap G1 (contract 1.14.0, additive): browsable
+    owner-decision-pack surface. Copies the Phase 31 Task 2 owner decision
+    pack VERBATIM (bit-for-bit; nothing recomputed, nothing re-derived) so
+    the offline UI can render the evidence pack, the three owner options in
+    registry order (NO default), the sign-off workflow position and the
+    decision record - which stays BLANK until the model owner decides at
+    workflow step 4. Display-layer only - no model calculation."""
+    out: Dict[str, Any] = {}
+    doc = _load(os.path.join(VAL, "PHASE31_TASK2_OWNER_DECISION_PACK.json"))
+    if not isinstance(doc, dict) or not isinstance(doc.get("pack"), dict):
+        return out
+    pack = doc["pack"]
+    for key in ("metadata", "purpose", "how_to_read", "evidence_pack",
+                "figure_provenance", "owner_options", "owner_option_order",
+                "escalation_option_id", "signoff_workflow",
+                "decision_record_template", "glossary", "limitations",
+                "standard_references"):
+        if key in pack:
+            out[key] = pack[key]
+    gate = doc.get("assembly_gate") or {}
+    out["assembly_gate"] = {"ok": gate.get("ok"),
+                            "n_checks": gate.get("n_checks")}
+    out["source"] = "docs/validation/PHASE31_TASK2_OWNER_DECISION_PACK.json"
+    out["one_page_summary_source"] = (
+        "docs/validation/PHASE31_TASK3_OWNER_SUMMARY.{json,md}")
+    out["narrative"] = (
+        "The Phase 31 owner decision pack is surfaced VERBATIM for "
+        "browsing: every figure is carried bit-for-bit from the assembled "
+        "pack (itself gated bit-for-bit against the frozen archived "
+        "references); the three options appear in registry order with NO "
+        "default and no steering language; the decision record stays BLANK "
+        "until the model owner completes workflow step 4. The display "
+        "layer performs no calculation and the governed headline (frozen "
+        "single-df t component basis) is unchanged."
+    )
+    return out
+
+
+def _build_user_run(meta: Dict[str, Any]) -> Dict[str, Any]:
+    """Phase 32 Task 3 / gap G2 (contract 1.15.0, additive): user-input
+    run-result surface. Carries the latest ``scripts/run_model.py`` evidence
+    VERBATIM (bit-for-bit; nothing recomputed, nothing re-derived) so the
+    offline UI can render the user-input run: headline read-outs and
+    bootstrap CIs from ``RUN_MODEL_SUMMARY.json``, plus the run
+    configuration, model-point counts and input provenance
+    (``model_inputs.json`` -> ``par_model_v2.user_inputs`` loader ->
+    ``run_model``) from the pinned evidence report
+    ``RUN_MODEL_AGGREGATION_REPORT.json``. The currency / output_label
+    display provenance is copied from the ALREADY-STAMPED ``meta`` block
+    (single source of truth: :func:`_resolve_currency_meta`), so the panel
+    discloses exactly what build_ui_data.py stamped -- by construction.
+    Returns ``{}`` when no user run is embedded; the GUI then renders a
+    graceful neutral fallback (no JS errors, no blank tab). Display-layer
+    only -- no model calculation."""
+    out: Dict[str, Any] = {}
+    summ = _load(RUN_SUMMARY_PATH)
+    if not isinstance(summ, dict) or not isinstance(summ.get("headline"),
+                                                    dict):
+        return out  # graceful fallback: no user-input run embedded
+    for key in ("run_timestamp", "output_label", "currency", "inputs",
+                "headline", "bootstrap_ci", "verdict", "duration_seconds",
+                "evidence", "wall_clock_seconds"):
+        if key in summ:
+            out[key] = summ[key]
+    rep = _load(AGG_REPORT_PATH)
+    if isinstance(rep, dict):
+        for key in ("run_plan", "inputs_provenance", "use_restrictions"):
+            if isinstance(rep.get(key), dict):
+                out[key] = rep[key]
+    out["display_provenance"] = {
+        "currency": meta.get("currency"),
+        "currency_source": meta.get("currency_source"),
+        "output_label": meta.get("output_label"),
+        "note": ("copied verbatim from meta.currency / meta.currency_source"
+                 " / meta.output_label as stamped by scripts/build_ui_data"
+                 ".py _resolve_currency_meta() -- single source of truth "
+                 "for every monetary label in this GUI"),
+    }
+    out["source"] = "docs/validation/RUN_MODEL_SUMMARY.json"
+    out["evidence_source"] = (
+        "docs/validation/RUN_MODEL_AGGREGATION_REPORT.json")
+    out["narrative"] = (
+        "The latest user-input run (scripts/run_model.py) is surfaced "
+        "VERBATIM for browsing: every figure is carried bit-for-bit from "
+        "the run summary and its pinned aggregation-report evidence -- "
+        "nothing is recomputed by the display layer. The run prices the "
+        "user portfolio via the validated model_inputs.json contract "
+        "(input provenance model_inputs.json -> par_model_v2.user_inputs "
+        "loader -> run_model) on bit-identical governed parameters; the "
+        "frozen seven-driver dependence is never user-settable. The "
+        "governed capital read-outs in the other tabs are UNCHANGED by "
+        "this surface, and the book-scaling figure is a DISCLOSED "
+        "APPROXIMATION, not a governed result."
+    )
+    return out
+
+
+def _build_phase30() -> Dict[str, Any]:
+    """Phase 30 (contract 1.13.0, additive): post-vine dependence roadmap
+    decision - tree-3 vine deepening + BINDING stop-rule. Normalises the
+    Task 1 roadmap design note, the Task 2 tree-3 vine candidate (zero
+    incremental strength - bit-identical to the 2-tree vine), the Task 3
+    margin bootstrap and the Task 4 tail diagnostics + stop-rule / MR
+    decision for the offline UI. Display-layer only - no model calculation."""
+    out: Dict[str, Any] = {}
+    drivers: List[str] = []
+
+    def _pname(idx):
+        try:
+            return drivers[int(idx)]
+        except (TypeError, ValueError, IndexError):
+            return str(idx)
+
+    def _cond_label(cond):
+        if cond is None:
+            return None
+        if isinstance(cond, (list, tuple)):
+            return ",".join(_pname(c) for c in cond)
+        return _pname(cond)
+
+    t1 = _load(os.path.join(VAL, "PHASE30_TASK1_DESIGN_NOTE.json"))
+    if isinstance(t1, dict):
+        out["roadmap"] = {
+            "selected_option": t1.get("selected_option"),
+            "stop_rule": t1.get("stop_rule"),
+            "post_phase30_commitment": t1.get("post_phase30_commitment"),
+            "verdict": t1.get("verdict"),
+            "source": "docs/validation/PHASE30_TASK1_DESIGN_NOTE.json",
+        }
+    t2 = _load(os.path.join(VAL, "PHASE30_TASK2_TREE3_VINE_REPORT.json"))
+    if isinstance(t2, dict) and isinstance(t2.get("result"), dict):
+        r = t2["result"]
+        drivers = list(t2.get("drivers") or [])
+        fit = r.get("fit", {}) or {}
+        cand = r.get("tree3_candidate_readout", {}) or {}
+        frz = r.get("frozen_t_component_reference_readout", {}) or {}
+        v2 = r.get("vine2_boundary_readout", {}) or {}
+        grp = r.get("grouped_t_comparison_readout", {}) or {}
+        edges = [{"pair": e.get("pair"),
+                  "condition_on": e.get("condition_on"),
+                  "names": e.get("names")}
+                 for e in (t2.get("third_tree_edges") or [])]
+        out["tree3"] = {
+            "drivers": drivers,
+            "df_frozen": t2.get("df_frozen"),
+            "df_rematched": t2.get("df_rematched"),
+            "rho_max_abs_diff": t2.get("rho_max_abs_diff"),
+            "structure": fit.get("structure"),
+            "max_vine_trees": fit.get("max_vine_trees"),
+            "frozen_tree12_digest": fit.get("frozen_tree12_digest"),
+            "tree3_family_counts": fit.get("tree3_family_counts", {}),
+            "third_tree_edges": edges,
+            "tree3_candidate_scr_component": cand.get("scr_component"),
+            "frozen_t_reference_scr_component": frz.get("scr_component"),
+            "vine2_boundary_scr_component": v2.get("scr_component"),
+            "grouped_t_comparison_scr_component": grp.get("scr_component"),
+            "boundary_t_recovery_dev": r.get("boundary_t_recovery_dev"),
+            "boundary_vine2_recovery_dev":
+                r.get("boundary_vine2_recovery_dev"),
+            "candidate_vs_frozen_t_rel": r.get("candidate_vs_frozen_t_rel"),
+            "candidate_vs_vine2_rel": r.get("candidate_vs_vine2_rel"),
+            "candidate_vs_grouped_t_rel":
+                r.get("candidate_vs_grouped_t_rel"),
+            "candidate_gap_to_nested_rel":
+                r.get("candidate_gap_to_nested_rel"),
+            "candidate_residual_abs": r.get("candidate_residual_abs"),
+            "material_finding": r.get("material_finding"),
+            "gates": r.get("gates", {}),
+            "verdict": t2.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE30_TASK2_TREE3_VINE_REPORT.json"),
+            "change_record_id": t2.get("change_record_id"),
+        }
+    t3 = _load(os.path.join(
+        VAL, "PHASE30_TASK3_TREE3_MARGIN_BOOTSTRAP_REPORT.json"))
+    if isinstance(t3, dict) and isinstance(t3.get("result"), dict):
+        r = t3["result"]
+        out["bootstrap"] = {
+            "config": r.get("config", {}),
+            "tree3_component_scr_ci": r.get("tree3_component_scr_ci", {}),
+            "vine2_component_scr_ci": r.get("vine2_component_scr_ci", {}),
+            "frozen_t_component_scr_ci":
+                r.get("frozen_t_component_scr_ci", {}),
+            "tree3_minus_vine2_max_abs": r.get("tree3_minus_vine2_max_abs"),
+            "tree3_minus_vine2_all_exactly_zero":
+                r.get("tree3_minus_vine2_all_exactly_zero"),
+            "tree3_minus_frozen_mean": r.get("tree3_minus_frozen_mean"),
+            "tree3_minus_frozen_pos_share":
+                r.get("tree3_minus_frozen_pos_share"),
+            "nested_pathwise_reference": r.get("nested_pathwise_reference"),
+            "task2_frozen_t_component_point":
+                r.get("task2_frozen_t_component_point"),
+            "task2_vine2_component_point":
+                r.get("task2_vine2_component_point"),
+            "task2_tree3_candidate_component_point":
+                r.get("task2_tree3_candidate_component_point"),
+            "p29t3_vine2_bootstrap_mean_reference":
+                r.get("p29t3_vine2_bootstrap_mean_reference"),
+            "headline_nested_inside_95ci":
+                r.get("headline_nested_inside_95ci"),
+            "stop_rule_assessment": r.get("stop_rule_assessment", {}),
+            "se_frac_of_mean": r.get("se_frac_of_mean"),
+            "se_gate_pass": r.get("se_gate_pass"),
+            "residual_gap_redecomposition_point":
+                r.get("residual_gap_redecomposition_point", {}),
+            "gates": r.get("gates", {}),
+            "digest": r.get("digest"),
+            "verdict": t3.get("verdict"),
+            "source": ("docs/validation/"
+                       "PHASE30_TASK3_TREE3_MARGIN_BOOTSTRAP_REPORT.json"),
+            "change_record_id": t3.get("change_record_id"),
+        }
+    t4 = _load(os.path.join(
+        VAL, "PHASE30_TASK4_TREE3_TAIL_DIAGNOSTICS_REPORT.json"))
+    if isinstance(t4, dict) and isinstance(t4.get("result"), dict):
+        r = t4["result"]
+        if not drivers:
+            drivers = list(t4.get("drivers") or [])
+        pts = r.get("pair_tail_summary", {}) or {}
+
+        def _m(blk):
+            v = blk or {}
+            return {"mean": v.get("mean"), "ci_lo": v.get("ci_lo"),
+                    "ci_hi": v.get("ci_hi")}
+
+        levels: Dict[str, Any] = {}
+        for pk in sorted(pts.keys()):
+            blk = pts[pk] or {}
+            try:
+                p_val = float(pk) / 100.0
+            except ValueError:
+                p_val = None
+            rows = []
+            for tree, label in (("first_tree", "first"),
+                                ("second_tree", "second"),
+                                ("third_tree", "third"),
+                                ("holdout", "holdout")):
+                for e in (blk.get(tree) or []):
+                    pr = e.get("pair") or [None, None]
+                    rows.append({
+                        "tree": label,
+                        "pair": pr,
+                        "pair_label": "%s-%s" % (_pname(pr[0]),
+                                                 _pname(pr[1])),
+                        "cond_label": _cond_label(e.get("condition_on")),
+                        "cand_upper": _m(e.get("cand_upper")),
+                        "cand_lower": _m(e.get("cand_lower")),
+                        "frz_upper": _m(e.get("frz_upper")),
+                        "frz_lower": _m(e.get("frz_lower")),
+                        "lift_upper": _m(e.get("lift_upper")),
+                        "lift_lower": _m(e.get("lift_lower")),
+                    })
+            levels[pk] = {"p": p_val, "rows": rows}
+        cfg = r.get("config", {}) or {}
+        out["tail"] = {
+            "drivers": drivers,
+            "df_frozen": t4.get("df_frozen"),
+            "p_grid": cfg.get("p_grid", []),
+            "canonical_p": cfg.get("canonical_p"),
+            "fit_structure": cfg.get("tree3_structure"),
+            "levels": levels,
+            "overfit_check": r.get("overfit_check", {}),
+            "archive_crosscheck": r.get("archive_crosscheck", {}),
+            "gates": r.get("gates", {}),
+            "verdict": t4.get("verdict"),
+            "digest": r.get("digest"),
+            "source": ("docs/validation/"
+                       "PHASE30_TASK4_TREE3_TAIL_DIAGNOSTICS_REPORT.json"),
+            "change_record_id": t4.get("change_record_id"),
+        }
+        out["stop_rule"] = dict(r.get("stop_rule_mr_decision", {}) or {})
+        out["stop_rule"]["source"] = out["tail"]["source"]
+        out["stop_rule"]["change_record_id"] = t4.get("change_record_id")
+    if out:
+        out["narrative"] = (
+            "Phase 30 closed the post-vine dependence roadmap. Option A "
+            "(tree-3 deepening of the FROZEN P29 credit-root C-vine) was "
+            "selected design-note-first with a pre-registered BINDING "
+            "stop-rule (option D embedded) and executed as Tasks 2-4 on "
+            "frozen margins / Sigma / df 2.9451 with DUAL boundary recovery "
+            "bit-identical FIRST (frozen-t 39,975.7 AND 2-tree vine "
+            "42,458.6, both dev 0.0). MATERIAL FINDING: the four "
+            "pre-registered joint-conditional third-tree pairs have "
+            "empirically EMPTY calibration support (n_fit {3,3,3,1} of 112 "
+            "fit rows under the both-conditioners > 0.90 mask), so the "
+            "selections degenerate to zero-strength gaussian and the tree-3 "
+            "candidate is BIT-IDENTICAL to the 2-tree vine: component SCR "
+            "42,458.6 point / 41,751.9 bootstrap mean, 95% CI [38,593.7, "
+            "44,556.4], SE 3.81% (gate PASS); per-replicate tree-3 minus "
+            "2-tree vine EXACTLY ZERO in all 200 replicates. The nested "
+            "path-wise reference 46,638.9 remains OUTSIDE the CI and the "
+            "copula-form residual 3,637.3 is UNCHANGED vs the 2-tree vine "
+            "(still -65.33% vs grouped-t and -40.52% vs skew-t), so the "
+            "pre-registered close criteria are NOT met: MR-016 and MR-017 "
+            "KEEP OPEN and the STOP-RULE IS APPLIED - dependence-FORM "
+            "escalation under MR-016 ENDS; no further copula-structure "
+            "candidates may be opened without owner sign-off. Phase 31 is "
+            "the owner decision package (option C): governed frozen-t "
+            "headline 39,975.7 vs the disclosed vine read-out 42,458.6 vs "
+            "nested 46,638.9 with the quantified residual 3,637.3, for an "
+            "adopt / accept-residual / fund-option-B decision. The governed "
+            "headline remains the frozen single-df t (recovered "
+            "bit-identically, move 0.0000%; MR-010/MR-014 unchanged); the "
+            "fit-vs-holdout overfit gate PASSES (holdout/fit ratio 0.049 = "
+            "P29 reference). The tree-3 vine is DISCLOSED, not adopted. "
+            "Copula and margins remain frozen per SII Art. 234; production "
+            "sign-off withheld (educational).")
+    return out
+
+
+
+# --------------------------------------------------------------------------- #
+# Phase 33 Task 3 (gap G2): embedded-distribution drill-down grids.
+# Grids are PRECOMPUTED here, at BUILD TIME ONLY, from the archived
+# loss-distribution model output (docs/validation/PHASE16_LOSS_DISTRIBUTION
+# .json, Phase 16 Task 2). The display layer renders the grids and recomputes
+# NOTHING beyond labelled display interpolation. Archived percentiles, the
+# confidence sweep, the histogram and headline figures are carried
+# bit-for-bit. ADDITIVE contract key (1.16.0 -> 1.17.0); NO model parameter
+# changes.
+# --------------------------------------------------------------------------- #
+DX_PROB_GRID = [0.005, 0.01, 0.025, 0.05, 0.10, 0.25, 0.50,
+                0.75, 0.90, 0.95, 0.975, 0.99, 0.995]
+
+
+def _dx_cdf_from_hist(counts: List[Any], n_outer: float) -> List[float]:
+    """Empirical CDF of the archived outer-loss histogram, evaluated at the
+    archived bin edges (0 at the first edge, 1 at the last)."""
+    cum = 0.0
+    p = [0.0]
+    for c in counts:
+        cum += float(c)
+        p.append(cum / float(n_outer))
+    return p
+
+
+def _dx_quantiles_from_hist(edges: List[Any], cdf_p: List[float],
+                            probs: List[float]) -> List[float]:
+    """Inverse of the empirical histogram CDF on a FIXED probability grid.
+    Linear within a bin -- i.e. build-time interpolation at the archived
+    histogram's resolution. Clamped to [first_edge, last_edge]."""
+    out: List[float] = []
+    for pr in probs:
+        if pr <= cdf_p[0]:
+            out.append(float(edges[0]))
+            continue
+        if pr >= cdf_p[-1]:
+            out.append(float(edges[-1]))
+            continue
+        j = 1
+        while j < len(cdf_p) and cdf_p[j] < pr:
+            j += 1
+        j = min(j, len(cdf_p) - 1)
+        p0, p1 = cdf_p[j - 1], cdf_p[j]
+        x0, x1 = float(edges[j - 1]), float(edges[j])
+        out.append(x0 if p1 <= p0 else x0 + (pr - p0) / (p1 - p0) * (x1 - x0))
+    return out
+
+
+def _build_distribution_explorer() -> Dict[str, Any]:
+    src = _load(LOSS_DIST_PATH)
+    if not src:
+        return {}
+    hist = src.get("histogram") or {}
+    edges = list(hist.get("bin_edges") or [])
+    counts = list(hist.get("counts") or [])
+    meta = src.get("meta") or {}
+    n_outer = hist.get("n_outer") or meta.get("n_outer")
+    if not edges or not counts or len(edges) != len(counts) + 1 \
+            or not n_outer:
+        return {}
+    cdf_p = _dx_cdf_from_hist(counts, n_outer)
+    q_loss = _dx_quantiles_from_hist(edges, cdf_p, DX_PROB_GRID)
+    seeds: List[Dict[str, Any]] = []
+    for s in (src.get("seeds") or []):
+        sh = s.get("histogram") or {}
+        se = list(sh.get("bin_edges") or [])
+        sc = list(sh.get("counts") or [])
+        sn = sh.get("n_outer") or n_outer
+        if se and sc and len(se) == len(sc) + 1 and sn:
+            seeds.append({
+                "seed": s.get("seed"),
+                "var995": s.get("var995"),
+                "es995": s.get("es995"),
+                "scr995": s.get("scr995"),
+                "mean_liability": s.get("mean_liability"),
+                "cdf_grid": {"x": se, "p": _dx_cdf_from_hist(sc, sn)},
+            })
+    return {
+        "title": "Loss-distribution drill-down (precomputed grids)",
+        "provenance": {
+            "source": os.path.relpath(LOSS_DIST_PATH, REPO).replace(
+                os.sep, "/"),
+            "source_sha256": _sha256_file(LOSS_DIST_PATH),
+            "source_generated_utc": meta.get("generated_utc"),
+            "source_module": meta.get("module"),
+            "reproducibility_digest": meta.get("reproducibility_digest"),
+            "n_outer": n_outer,
+            "n_bins": hist.get("n_bins"),
+            "seed_base": meta.get("seed_base"),
+            "measure": meta.get("measure"),
+            "confidence_level": meta.get("confidence_level"),
+            "horizon_months": meta.get("horizon_months"),
+            "computed_by": ("scripts/build_ui_data.py at BUILD TIME ONLY "
+                            "(Phase 33 Task 3 / gap G2); the display layer "
+                            "recomputes nothing"),
+            "method": ("cdf_grid = empirical CDF of the archived outer-loss "
+                       "histogram at its archived bin edges; quantile_grid = "
+                       "inverse of that CDF on a fixed probability grid, "
+                       "linear within a bin (build-time interpolation at "
+                       "histogram resolution); archived percentiles, "
+                       "confidence sweep, histogram and headline figures "
+                       "carried bit-for-bit"),
+        },
+        "cdf_grid": {
+            "x": edges,
+            "p": cdf_p,
+            "n_points": len(edges),
+            "note": ("empirical CDF of the archived outer-loss histogram; "
+                     "grid points are exact, the connecting curve is "
+                     "display interpolation"),
+        },
+        "quantile_grid": {
+            "prob": list(DX_PROB_GRID),
+            "loss": q_loss,
+            "method": ("build-time inverse of the archived histogram CDF "
+                       "(linear within a bin; histogram resolution)"),
+        },
+        "archived_percentiles": src.get("percentiles"),
+        "archived_confidence_sweep": src.get("confidence_sweep"),
+        "archived_headline": {
+            "mean_liability": src.get("mean_liability"),
+            "var995": src.get("var995"),
+            "es995": src.get("es995"),
+            "scr995": src.get("scr995"),
+        },
+        "histogram": {"bin_edges": edges, "counts": counts,
+                      "n_outer": n_outer},
+        "seeds": seeds,
+    }
+
+
+def _resolve_currency_meta() -> Dict[str, Any]:
+    """Phase UIL Task 4 (B4+A1): resolve the reporting-currency block and the
+    user-run ``output_label`` for ``meta`` -- single source of truth for every
+    monetary label in the GUI.
+
+    Priority (most-specific first):
+      1. ``model_inputs.json`` via :func:`par_model_v2.user_inputs.find_model_inputs`
+         (explicit path -> $PAR_MODEL_INPUTS -> repo root -> production_run/) --
+         the validated user contract is authoritative for display currency.
+      2. ``docs/validation/RUN_MODEL_SUMMARY.json`` -- the currency stamped on
+         the latest scripts/run_model.py evidence (covers a repo that has run
+         evidence but no longer carries the inputs file).
+      3. ``NEUTRAL_CURRENCY`` -- no symbol; money renders bit-identically to
+         the pre-1.12.0 contract (bare numbers).
+
+    Returns a dict with keys ``currency``, ``currency_source``, ``output_label``
+    (output_label may be None). Never raises -- a broken inputs file degrades
+    to the next source and the degradation is DISCLOSED in currency_source.
+    """
+    currency = None
+    source = "NEUTRAL_DEFAULT (no user inputs; bare-number display)"
+    output_label = None
+
+    run_summary = _load(RUN_SUMMARY_PATH) or {}
+    if isinstance(run_summary.get("output_label"), str):
+        output_label = run_summary["output_label"]
+
+    try:
+        import sys as _sys
+        if REPO not in _sys.path:
+            _sys.path.insert(0, REPO)
+        from par_model_v2.user_inputs import find_model_inputs, UserInputsError
+        try:
+            inputs = find_model_inputs()
+        except UserInputsError:
+            inputs = None  # broken file: fail soft for DISPLAY metadata only
+        if isinstance(inputs, dict) and isinstance(inputs.get("currency"), dict):
+            currency = dict(inputs["currency"])
+            source = "model_inputs.json (validated user contract)"
+            rs = inputs.get("run_settings") or {}
+            if output_label is None and isinstance(rs.get("output_label"), str):
+                output_label = rs["output_label"]
+    except Exception:  # pragma: no cover -- import failure degrades softly
+        pass
+
+    if currency is None and isinstance(run_summary.get("currency"), dict):
+        currency = dict(run_summary["currency"])
+        source = ("docs/validation/RUN_MODEL_SUMMARY.json "
+                  "(latest run_model.py evidence)")
+
+    if currency is None:
+        currency = dict(NEUTRAL_CURRENCY)
+
+    # Defensive defaults so the GUI formatter never sees a partial block.
+    for k, v in NEUTRAL_CURRENCY.items():
+        currency.setdefault(k, v)
+
+    return {
+        "currency": currency,
+        "currency_source": source,
+        "output_label": output_label,
+    }
+
+
 def build_ui_data() -> Dict[str, Any]:
     base = _load(VIEWER_DATA) or {}
     state = _load(STATE_PATH) or {}
@@ -1923,6 +2643,13 @@ def build_ui_data() -> Dict[str, Any]:
     meta.setdefault("model_version", gov.get("model_version", state.get("model_version", "")))
     meta["generated_utc"] = now
     meta["classification"] = meta.get("classification", "EDUCATIONAL -- not for production capital reporting")
+    # Phase UIL Task 4 (B4+A1): currency + output_label stamped into meta
+    # (additive contract 1.12.0; absent inputs -> neutral default, display
+    # unchanged vs 1.11.0).
+    _cur = _resolve_currency_meta()
+    meta["currency"] = _cur["currency"]
+    meta["currency_source"] = _cur["currency_source"]
+    meta["output_label"] = _cur["output_label"]
 
     inventory = _build_inventory()
     calibrations = _build_calibrations()
@@ -1999,6 +2726,42 @@ def build_ui_data() -> Dict[str, Any]:
         capital["grouped_t_copula_scr_component_point"] = (
             _p28_cp.get("scr_component"))
 
+    phase29 = _build_phase29()
+    _p29_bt = (phase29.get("bootstrap") or {})
+    _p29_ci = _p29_bt.get("vine_component_scr_ci") or {}
+    if _p29_ci.get("mean") is not None:
+        # Additive capital read-out: vine / pair-copula candidate bootstrap
+        # mean SCR on the component basis (Phase 29 Task 3 - DISCLOSED, not
+        # adopted into the governed headline).
+        capital["vine_copula_scr_component_bootstrap_mean"] = (
+            _p29_ci.get("mean"))
+    if _p29_bt.get("task2_vine_candidate_component_point") is not None:
+        # Additive capital read-out: vine candidate point SCR (Phase 29
+        # Task 2 - DISCLOSED alternative read-out).
+        capital["vine_copula_scr_component_point"] = (
+            _p29_bt.get("task2_vine_candidate_component_point"))
+
+    phase30 = _build_phase30()
+    _p30_bt = (phase30.get("bootstrap") or {})
+    _p30_ci = _p30_bt.get("tree3_component_scr_ci") or {}
+    if _p30_ci.get("mean") is not None:
+        # Additive capital read-out: tree-3 vine candidate bootstrap mean SCR
+        # (Phase 30 Task 3 - DISCLOSED; bit-identical to the 2-tree vine,
+        # stop-rule applied at Task 4).
+        capital["tree3_vine_scr_component_bootstrap_mean"] = (
+            _p30_ci.get("mean"))
+    if _p30_bt.get("task2_tree3_candidate_component_point") is not None:
+        # Additive capital read-out: tree-3 vine candidate point SCR (Phase 30
+        # Task 2 - DISCLOSED alternative read-out, not adopted).
+        capital["tree3_vine_scr_component_point"] = (
+            _p30_bt.get("task2_tree3_candidate_component_point"))
+
+    owner_decision_p31 = _build_owner_decision_p31()
+    user_run = _build_user_run(meta)
+    # Phase 33 Task 3 (gap G2): ADDITIVE key only -- precomputed at
+    # build time from the archived artifact; nothing else changes.
+    distribution_explorer = _build_distribution_explorer()
+
     governance = dict(base.get("governance", {}))
     _base_risks = list(governance.get("risk_register", []) or [])
     _have = {str(x.get("risk_id")) for x in _base_risks}
@@ -2025,6 +2788,60 @@ def build_ui_data() -> Dict[str, Any]:
     if _base_risks:
         governance["risk_register"] = _base_risks
 
+    # ----------------------------------------------------------------- #
+    # Phase 32 Task 4 (gap G3): governed read-out completeness sweep.
+    # Inventory-driven diff of the governance store against the embedded
+    # governance section. Missing ChangeRecords are surfaced ADDITIVELY
+    # via NEW keys only (change_records_supplement + store_sync); every
+    # pre-existing governance key stays bit-identical. All figures are
+    # carried bit-for-bit from .claude-dev/GOVERNANCE_STORE.json --
+    # nothing is recomputed by the display layer.
+    _embedded_cr = list(governance.get("change_records", []) or [])
+    _embedded_cr_ids = {str(c.get("record_id")) for c in _embedded_cr}
+    _store_cr = (gov.get("change_records") or []) if isinstance(gov, dict) \
+        else []
+    _cr_supplement: List[Dict[str, Any]] = []
+    for _c in _store_cr:
+        _cid = str(_c.get("record_id"))
+        if _cid and _cid not in _embedded_cr_ids:
+            _cr_supplement.append({
+                "record_id": _c.get("record_id"),
+                "title": _c.get("title"),
+                "status": _c.get("status"),
+                "change_type": _c.get("change_type"),
+                "created_at": _c.get("created_at"),
+                "author": _c.get("author"),
+                "phase": _c.get("phase"),
+                "peer_reviewer": _c.get("peer_reviewer"),
+                "standard_references": _c.get("standard_references"),
+                "sign_off_history": _c.get("sign_off_history"),
+                "store_synced": True,
+            })
+    if _cr_supplement:
+        governance["change_records_supplement"] = _cr_supplement
+    _cr_status_counts: Dict[str, int] = {}
+    for _c in _store_cr:
+        _s = str(_c.get("status"))
+        _cr_status_counts[_s] = _cr_status_counts.get(_s, 0) + 1
+    _store_audit = (gov.get("audit_trail") or []) if isinstance(gov, dict) \
+        else []
+    governance["store_sync"] = {
+        "source": ".claude-dev/GOVERNANCE_STORE.json",
+        "swept_by": ("Phase 32 Task 4 (gap G3) governed read-out "
+                     "completeness sweep"),
+        "change_records_store_total": len(_store_cr),
+        "change_records_embedded": len(_embedded_cr),
+        "change_records_supplemented": len(_cr_supplement),
+        "change_record_status_counts": _cr_status_counts,
+        "audit_trail_store_entries": len(_store_audit),
+        "audit_entries_embedded": governance.get("audit_entries"),
+        "risk_register_store_total": len(_store_risks),
+        "risk_register_embedded": len(governance.get("risk_register", [])
+                                      or []),
+        "sweep_report": ("docs/validation/"
+                         "PHASE32_TASK4_GOVERNANCE_SWEEP_REPORT.json"),
+    }
+
     summary = dict(base.get("summary", {}))
     summary["contract_artifacts"] = len(inventory)
     summary["calibrated_drivers"] = len(calibrations)
@@ -2045,8 +2862,32 @@ def build_ui_data() -> Dict[str, Any]:
         "phase26": phase26,
         "phase27": phase27,
         "phase28": phase28,
+        "phase29": phase29,
+        "phase30": phase30,
+        "distribution_explorer": distribution_explorer,
+        "owner_decision_p31": owner_decision_p31,
+        "user_run": user_run,
         "governance": governance,
         "verdicts": _build_verdicts(base.get("verdicts", [])),
+    }
+    # Phase 34 Task 2 (gap H1): self-describing data-contract manifest.
+    # ADDITIVE bump 1.17.0 -> 1.18.0 (new contract_manifest key ONLY; every
+    # pre-existing key is unchanged and renders bit-identically). Written ONLY
+    # here at build time. The offline UI reads it to validate the embedded
+    # payload at load time and recomputes NO model figure.
+    _required_keys = list(data.keys())  # substantive sections present at build
+    data["contract_manifest"] = {
+        "expected_contract_version": CONTRACT_VERSION,
+        "required_top_level_keys": _required_keys,
+        "key_count": len(_required_keys),
+        "generated_by": "scripts/build_ui_data.py (Phase 34 Task 2, gap H1)",
+        "note": (
+            "Build-time data-contract guard. The offline UI validates the "
+            "embedded payload against this manifest at load time and shows a "
+            "neutral degraded-mode banner if a required section is missing or "
+            "the contract version is unexpected. The display layer recomputes "
+            "no model figure."
+        ),
     }
     return data
 
@@ -2164,6 +3005,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .tbtn:hover{border-color:var(--accent);color:var(--accent)}
   .tab,.segbtn{font-family:inherit}
   .tab:focus-visible,.tbtn:focus-visible,.segbtn:focus-visible,.rrow:focus-visible,.crow:focus-visible,.panel:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  /* Phase 33 Task 5 (gap G4): visually-hidden table captions for screen readers
+     (kept off-screen; no layout or rendered-figure impact). */
+  .sr-only{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .integritybanner{margin:10px 0 14px;padding:10px 14px;border:1px solid var(--warn);border-radius:8px;background:rgba(94,74,31,0.12);color:var(--ink);font-size:13px;line-height:1.5}
+  .integritybanner .ibannerlabel{font-weight:700;color:var(--warn);margin-right:6px;text-transform:uppercase;letter-spacing:.03em;font-size:11.5px}
+  .signoffcover{display:none}
   @media print{
     :root{--bg:#fff;--panel:#fff;--panel2:#fff;--ink:#111;--muted:#444;--line:#bbb;--chip:#eee;--accent:#15489c}
     body{background:#fff;color:#111}
@@ -2175,6 +3022,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     svg.chart text{fill:#111} svg.chart text.val{fill:#000}
     .card,.gate,.chartwrap{border-color:#bbb}
     a{color:#111}
+    .signoffcover{display:block !important;page-break-after:always;margin:0 0 18px}
+    .signoffcover h2{font-size:20px;margin:0 0 6px;color:#111;border-bottom:2px solid #111;padding-bottom:4px}
+    .signoffcover .sigmeta{font-size:12.5px;color:#222;margin:2px 0}
+    .signoffcover .signeutral{margin:10px 0;padding:8px;border:1px solid #888;font-size:12px;color:#111}
+    .signoffcover .sigrow{display:flex;gap:24px;margin-top:14px}
+    .signoffcover .sigbox{flex:1;border-top:1px solid #111;padding-top:4px;font-size:12px;color:#111}
   }
 </style>
 </head>
@@ -2187,10 +3040,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     <button type="button" class="tbtn" id="btnCsvInv">CSV: Inventory</button>
     <button type="button" class="tbtn" id="btnCsvRisk">CSV: Risk register</button>
     <button type="button" class="tbtn" id="btnCsvChg">CSV: Change records</button>
+    <button type="button" class="tbtn" id="btnCsvGates" title="Export the deployment-gates table as CSV">CSV: Deployment gates</button>
+    <button type="button" class="tbtn" id="btnCsvSignoff" title="Export the full owner sign-off pack (all governed read-out tables) as CSV">CSV: Owner sign-off pack</button>
     <button type="button" class="tbtn" id="btnPrint" title="Open the browser print dialog (Save as PDF)">Print / Save PDF</button>
   </div>
 </div></header>
 <div class="wrap">
+  <div id="signoffcover" class="signoffcover" aria-hidden="true"></div>
+  <div id="integritybanner" class="integritybanner" role="status" aria-live="polite" aria-hidden="true" style="display:none"></div>
   <div class="tabs" id="tabs"></div>
   <div id="overview" class="panel" data-title="Overview"></div>
   <div id="inventory" class="panel" data-title="Inventory &amp; Contract"></div>
@@ -2202,7 +3059,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div id="phase26" class="panel" data-title="Full Re-Agg (P26)"></div>
   <div id="phase27" class="panel" data-title="Skew-t Tail (P27)"></div>
   <div id="phase28" class="panel" data-title="Grouped-t Tail (P28)"></div>
+  <div id="phase29" class="panel" data-title="Vine Tail (P29)"></div>
+  <div id="phase30" class="panel" data-title="Stop-Rule (P30)"></div>
+  <div id="comparator" class="panel" data-title="SCR Comparator (P33)"></div>
+  <div id="distexplorer" class="panel" data-title="Distribution Explorer (P33)"></div>
+  <div id="ownerdecision" class="panel" data-title="Owner Decision (P31)"></div>
+  <div id="userrun" class="panel" data-title="User Run (UIL)"></div>
   <div id="governance" class="panel" data-title="Governance"></div>
+  <div id="integrity" class="panel" data-title="Integrity (H1)"></div>
 </div>
 
 <script id="ui-data" type="application/json">/*__UI_DATA__*/null</script>
@@ -2223,6 +3087,19 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function num(x,d){ if(x==null||isNaN(x)) return "--";
     return Number(x).toLocaleString(undefined,{maximumFractionDigits:(d==null?0:d)}); }
+  // Phase UIL Task 4 (B4+A1): single money formatter driven by meta.currency.
+  // Neutral default (no symbol, comma thousands, 0 dp) renders bit-identically
+  // to the old bare-number display, so contract 1.12.0 stays additive.
+  function curMeta(){ return (DATA && DATA.meta && DATA.meta.currency) || null; }
+  function fmtMoney(x){
+    if(x==null||isNaN(x)) return "--";
+    var c = curMeta()||{}, d = (c.decimals!=null?c.decimals:0);
+    var neg = Number(x)<0, v = Math.abs(Number(x));
+    var parts = v.toFixed(d).split(".");
+    var sep = (c.thousands==="space")?" ":(c.thousands==="none")?"":",";
+    var ip = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+    return (neg?"-":"")+(c.symbol||"")+ip+(parts.length>1?("."+parts[1]):"");
+  }
   function chipClass(s){ s=String(s||"").toUpperCase();
     if(/PASS|CLEAR|MITIGAT|APPROV|OK/.test(s)) return "pass";
     if(/WARN|REVIEW|PLACEHOLD|OPEN|DRAFT/.test(s)) return "warn";
@@ -2240,7 +3117,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ["phase26","Full Re-Agg (P26)"],
     ["phase27","Skew-t Tail (P27)"],
     ["phase28","Grouped-t Tail (P28)"],
-    ["governance","Governance"]
+    ["phase29","Vine Tail (P29)"],
+    ["phase30","Stop-Rule (P30)"],
+    ["comparator","SCR Comparator (P33)"],
+    ["distexplorer","Distribution Explorer (P33)"],
+    ["ownerdecision","Owner Decision (P31)"],
+    ["userrun","User Run (UIL)"],
+    ["governance","Governance"],
+    ["integrity","Integrity (H1)"]
   ];
 
   function renderTabs(){
@@ -2261,6 +3145,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       b.setAttribute("tabindex", i===0?"0":"-1");
       b.onclick = function(){ activateTab(p[0]); };
       b.addEventListener("keydown", function(e){
+        // Phase 33 Task 5 (gap G4): Enter/Space activate the focused tab
+        // (explicit handling so keyboard activation is robust across engines).
+        if(e.key==="Enter"||e.key===" "||e.key==="Spacebar"){
+          e.preventDefault(); activateTab(p[0]); b.focus(); return;
+        }
         if(e.key==="ArrowRight"||e.key==="ArrowLeft"||e.key==="Home"||e.key==="End"){
           e.preventDefault();
           var els=[].slice.call(document.querySelectorAll("#tabs .tab"));
@@ -2277,7 +3166,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     });
     document.getElementById("overview").classList.add("active");
   }
-  function activateTab(target){
+  var _hashApplying=false;
+  function activateTab(target, fromHash){
     [].forEach.call(document.querySelectorAll("#tabs .tab"),function(x){
       var on=x.getAttribute("data-target")===target;
       x.classList.toggle("active",on);
@@ -2286,6 +3176,48 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     });
     [].forEach.call(document.querySelectorAll(".panel"),function(x){ x.classList.remove("active"); });
     var pl=document.getElementById(target); if(pl) pl.classList.add("active");
+    // Phase 33 Task 5 (gap G4): persist the selected tab in the URL hash so it
+    // survives a reload. Uses the URL hash ONLY (no browser web-storage),
+    // which is file:// safe for the offline zero-install build. The _hashApplying
+    // guard avoids a hashchange feedback loop when we are reacting to one.
+    if(!fromHash){
+      _hashApplying=true;
+      try{
+        if(window.history&&typeof history.replaceState==="function"){
+          history.replaceState(null,"","#"+target);
+        } else { location.hash=target; }
+      }catch(_e){ try{ location.hash=target; }catch(_e2){} }
+      _hashApplying=false;
+    }
+  }
+  // Phase 33 Task 5 (gap G4): on load / hashchange, restore the tab named in the
+  // URL hash if it is a real tab. No storage APIs; safe under file://.
+  function tabFromHash(){
+    if(_hashApplying) return;
+    var h=(location.hash||"").replace(/^#/,"");
+    if(h && document.getElementById("tab-"+h) && document.getElementById(h)){
+      activateTab(h, true);
+    }
+  }
+  // Phase 33 Task 5 (gap G4): give every data table an accessible name via a
+  // visually-hidden <caption>, derived from the owning panel's data-title or the
+  // nearest preceding heading. Idempotent; adds NO visible content and changes
+  // no rendered figure (tbody rows untouched).
+  function captionTables(root){
+    var scope=root||document;
+    [].forEach.call(scope.querySelectorAll("table"),function(tb){
+      if(tb.querySelector("caption")) return;
+      var lbl="";
+      var panel=tb.closest?tb.closest(".panel"):null;
+      if(panel&&panel.getAttribute("data-title")) lbl=panel.getAttribute("data-title")+" table";
+      if(!lbl){ var h=tb.previousElementSibling;
+        while(h&&!/^H[1-6]$/.test(h.tagName)) h=h.previousElementSibling;
+        if(h) lbl=(h.textContent||"").trim(); }
+      if(!lbl) lbl="Data table";
+      var cap=document.createElement("caption");
+      cap.className="sr-only"; cap.textContent=lbl;
+      tb.insertBefore(cap, tb.firstChild);
+    });
   }
 
   function renderHeader(){
@@ -2296,7 +3228,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     document.getElementById("subtitle").innerHTML =
       esc(m.classification||"") +
       ' <span class="badge">contract v'+esc(DATA.contract_version||"?")+'</span>'+
-      ' <span class="badge">generated '+esc((m.generated_utc||"").slice(0,19))+'Z</span>';
+      ' <span class="badge">generated '+esc((m.generated_utc||"").slice(0,19))+'Z</span>'+
+      ((m.currency&&m.currency.code)?(' <span class="badge">currency '+esc(m.currency.code)+
+        (m.currency.symbol?(' ('+esc(m.currency.symbol)+')'):'')+'</span>'):'')+
+      (m.output_label?(' <span class="badge">run '+esc(m.output_label)+'</span>'):'');
   }
 
   function renderOverview(){
@@ -2309,7 +3244,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       ["Risks mitigated",(s.risks_mitigated!=null? s.risks_mitigated:"--")+" / open "+(s.risks_open!=null?s.risks_open:"--")],
       ["Artifacts catalogued", (DATA.inventory||[]).length],
       ["Calibrated drivers", (DATA.calibrations||[]).length],
-      ["Nested 99.5% SCR", num(cap.nested_scr)],
+      ["Nested 99.5% SCR", fmtMoney(cap.nested_scr)],
       ["Production status", s.production_status||"educational"]
     ];
     var html = '<div class="cards">';
@@ -2579,9 +3514,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var cop=cap.copula||{}, cands=cop.candidates||[], nested=cap.nested_scr, sel=cap.selected_copula;
     var D=[
       {label:"Standalone sum", value:cap.standalone_sum, color:"#5a6b7d",
-        tip:"<b>Standalone sum</b><br>Naive add-up (no diversification): "+num(cap.standalone_sum)},
+        tip:"<b>Standalone sum</b><br>Naive add-up (no diversification): "+fmtMoney(cap.standalone_sum)},
       {label:"Var-covar", value:cap.var_covar_scr, color:"#ffb454",
-        tip:"<b>Var-covar (formula)</b><br>SCR: "+num(cap.var_covar_scr)+
+        tip:"<b>Var-covar (formula)</b><br>SCR: "+fmtMoney(cap.var_covar_scr)+
           "<br>Rel err vs nested: "+(cap.formula_vs_nested_rel_error!=null?(cap.formula_vs_nested_rel_error*100).toFixed(1)+"%":"--")+
           "<br>Gaussian-correlation closed form; understates the tail."}
     ];
@@ -2589,14 +3524,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       var is=(c.name===sel);
       D.push({label:String(c.name).replace(/_/g,"-"), value:c.aggregated_scr,
         color:is?"#4f9cff":"#33506e", stroke:is?"var(--ink)":null,
-        tip:"<b>"+c.name+(is?" (selected)":"")+"</b><br>Aggregated SCR: "+num(c.aggregated_scr)+
+        tip:"<b>"+c.name+(is?" (selected)":"")+"</b><br>Aggregated SCR: "+fmtMoney(c.aggregated_scr)+
           "<br>Rel err vs nested: "+(c.scr_rel_error_vs_nested*100).toFixed(1)+"%"+
-          "<br>Diversification benefit: "+num(c.diversification_benefit)+
+          "<br>Diversification benefit: "+fmtMoney(c.diversification_benefit)+
           "<br>Upper-tail dependence: "+Number(c.upper_tail_dependence).toFixed(3)+
           "<br>AIC: "+Number(c.aic).toFixed(1)});
     });
     var reflines=(nested!=null)?[{label:"Nested benchmark", value:nested, color:"var(--pass)",
-      tip:"<b>Nested-simulation benchmark</b><br>SCR: "+num(nested)+"<br>The capital figure all aggregators are judged against."}]:[];
+      tip:"<b>Nested-simulation benchmark</b><br>SCR: "+fmtMoney(nested)+"<br>The capital figure all aggregators are judged against."}]:[];
     var note="";
     if(cap.esg_understatement_pct!=null)
       note='<p class="cap" style="margin-top:8px">Var-covar understates the nested benchmark by <b>'+
@@ -2613,11 +3548,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var vci=tail.var_ci||[null,null], eci=tail.es_ci||[null,null];
     var rows=[
       {label:"VaR 99.5%", point:tail.final_var, lo:vci[0], hi:vci[1], color:"#4f9cff",
-        tip:"<b>99.5% VaR</b><br>Point estimate: "+num(tail.final_var)+
-          "<br>95% bootstrap CI: ["+num(vci[0])+", "+num(vci[1])+"]<br>Std error: "+num(tail.var_se)},
+        tip:"<b>99.5% VaR</b><br>Point estimate: "+fmtMoney(tail.final_var)+
+          "<br>95% bootstrap CI: ["+fmtMoney(vci[0])+", "+fmtMoney(vci[1])+"]<br>Std error: "+fmtMoney(tail.var_se)},
       {label:"ES 99.5%", point:tail.final_es, lo:eci[0], hi:eci[1], color:"#39d98a",
-        tip:"<b>99.5% Expected Shortfall</b><br>Point estimate: "+num(tail.final_es)+
-          "<br>95% bootstrap CI: ["+num(eci[0])+", "+num(eci[1])+"]<br>Std error: "+num(tail.es_se)}
+        tip:"<b>99.5% Expected Shortfall</b><br>Point estimate: "+fmtMoney(tail.final_es)+
+          "<br>95% bootstrap CI: ["+fmtMoney(eci[0])+", "+fmtMoney(eci[1])+"]<br>Std error: "+fmtMoney(tail.es_se)}
     ];
     var ratios='<p class="cap" style="margin-top:8px">Variance-reduction efficiency &mdash; Sobol vs MC: <b>'+
       esc(num(tail.sobol_ratio,2))+'x</b>'+
@@ -2625,7 +3560,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       '. Both point and CI are bounded, so the metric is reproducible within sampling noise.</p>';
     if(tail.nested_disclosure){
       ratios+='<p class="cap">Honest small-sample disclosure (nested, n_outer='+esc(num(tail.nested_n_outer))+
-        '): 95% CI ['+esc(num((tail.nested_var_ci||[])[0]))+', '+esc(num((tail.nested_var_ci||[])[1]))+
+        '): 95% CI ['+esc(fmtMoney((tail.nested_var_ci||[])[0]))+', '+esc(fmtMoney((tail.nested_var_ci||[])[1]))+
         ']. '+esc(tail.nested_disclosure)+'</p>';
     }
     return '<div class="chartwrap"><h4>99.5% VaR &amp; ES with 95% bootstrap confidence intervals</h4>'+
@@ -2662,7 +3597,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     ];
     var html = '<div class="cards">';
     cardRows.forEach(function(r){ if(r[1]!=null) html += '<div class="card"><div class="k">'+esc(r[0])+
-      '</div><div class="v">'+num(r[1])+'</div></div>'; });
+      '</div><div class="v">'+fmtMoney(r[1])+'</div></div>'; });
     html += '</div>';
     var nd = cap.n_drivers||5;
     var ndWord = (nd===7?"Seven":nd===6?"Six":"Five");
@@ -2716,10 +3651,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var ncw=ma.nested_capital_without||{}, ncwa=ma.nested_capital_with||{};
     var html='<div class="cards">';
     [
-      ["Nested SCR without actions",num(a.nested_scr_without)],
-      ["Nested SCR with actions",num(a.nested_scr_with)],
-      ["Nested VaR 99.5 without",num(ncw.var_liability)],
-      ["Nested VaR 99.5 with",num(ncwa.var_liability)],
+      ["Nested SCR without actions",fmtMoney(a.nested_scr_without)],
+      ["Nested SCR with actions",fmtMoney(a.nested_scr_with)],
+      ["Nested VaR 99.5 without",fmtMoney(ncw.var_liability)],
+      ["Nested VaR 99.5 with",fmtMoney(ncwa.var_liability)],
       ["Action active (outer nodes)",a.active_share_full!=null?(100*a.active_share_full).toFixed(1)+"%":"--"],
       ["At max-relief floor",a.floor_share_full!=null?(100*a.floor_share_full).toFixed(1)+"%":"--"],
       ["OOS R2 with actions",ma.oos_r2_with_actions!=null?Number(ma.oos_r2_with_actions).toFixed(4):"--"],
@@ -2749,10 +3684,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
      ["Var-covar w/o",a.var_covar_scr_without,"#ffb454"],
      ["Var-covar WITH",a.var_covar_scr_with,"#a8762f"]
     ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
     if(D.length){
       html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; with vs without management actions</h4>'+
-        '<p class="cap">Nested (with-actions '+num(a.nested_scr_with)+') is the capital reference. '+
+        '<p class="cap">Nested (with-actions '+fmtMoney(a.nested_scr_with)+') is the capital reference. '+
         'Copula and var-covar read-outs on the with-actions basis are diagnostics &mdash; see the '+
         'saturation finding below. Matched t df '+esc(a.df_matched)+' is identical with/without actions '+
         '(rank invariance: the action is a monotone marginal transform).</p>'+
@@ -2768,7 +3703,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       ts.forEach(function(t){
         html+='<tr><td>'+esc(num(t.cr_trigger,2))+'</td><td>'+esc(num(t.cr_floor,2))+'</td>'+
           '<td>'+(t.active_share_nested!=null?(100*t.active_share_nested).toFixed(1)+"%":"--")+'</td>'+
-          '<td>'+num(t.nested_scr_reduction)+'</td>'+
+          '<td>'+fmtMoney(t.nested_scr_reduction)+'</td>'+
           '<td>'+(t.oos_r2_with_actions!=null?Number(t.oos_r2_with_actions).toFixed(4):"--")+'</td>'+
           '<td>'+chip(t.verdict)+'</td></tr>';
       });
@@ -2780,8 +3715,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         '<table class="matable"><thead><tr><th>Driver</th><th>Without</th><th>With</th>'+
         '<th>Delta</th></tr></thead><tbody>';
       drv.forEach(function(d,i){
-        html+='<tr><td>'+esc(d)+'</td><td>'+num(swo[i])+'</td><td>'+num(sw[i])+'</td>'+
-          '<td>'+num(sw[i]-swo[i])+'</td></tr>';
+        html+='<tr><td>'+esc(d)+'</td><td>'+fmtMoney(swo[i])+'</td><td>'+fmtMoney(sw[i])+'</td>'+
+          '<td>'+fmtMoney(sw[i]-swo[i])+'</td></tr>';
       });
       html+='</tbody></table>';
       if(a.anchoring_convention)
@@ -2809,11 +3744,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var ipd=ip.outer_vs_inner_path_delta||{};
     var html='<div class="cards">';
     [
-      ["Nested SCR with actions (reference)",num(ja.nested_scr_with)],
-      ["Joint-action t-SCR",num(ja.t_scr_joint)],
+      ["Nested SCR with actions (reference)",fmtMoney(ja.nested_scr_with)],
+      ["Joint-action t-SCR",fmtMoney(ja.t_scr_joint)],
       ["t rel err - joint action",ja.t_rel_error_joint!=null?(100*ja.t_rel_error_joint).toFixed(2)+"%":"--"],
       ["t rel err - standalone action",ja.t_rel_error_standalone_baseline!=null?(100*ja.t_rel_error_standalone_baseline).toFixed(2)+"%":"--"],
-      ["Inner-path SCR delta (vs outer-node)",ipd.nested_scr_delta!=null?"+"+num(ipd.nested_scr_delta)+" (+4.0%)":"--"],
+      ["Inner-path SCR delta (vs outer-node)",ipd.nested_scr_delta!=null?"+"+fmtMoney(ipd.nested_scr_delta)+" (+4.0%)":"--"],
       ["99.5% tail saturation share",fnd.tail_saturation_share_at_995!=null?(100*fnd.tail_saturation_share_at_995).toFixed(1)+"%":"--"],
       ["Bootstrap SCR SE (% of mean)",fnd.bootstrap_scr_se_pct_of_mean!=null?(100*fnd.bootstrap_scr_se_pct_of_mean).toFixed(1)+"%":"--"],
       ["Matched t df (rank-invariant)",ja.df_matched!=null?String(ja.df_matched):"--"]
@@ -2832,8 +3767,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       rows.forEach(function(r){
         var w=dmc(r[1],"without"), s=dmc(r[1],"standalone_action"), j=dmc(r[1],"joint_action");
         var d=(dm[r[1]]||{}).joint_minus_standalone_scr;
-        html+='<tr><td>'+esc(r[0])+'</td><td>'+num(w)+'</td><td>'+num(s)+'</td><td>'+num(j)+'</td>'+
-          '<td>'+(d!=null?num(d):"--")+'</td></tr>';
+        html+='<tr><td>'+esc(r[0])+'</td><td>'+fmtMoney(w)+'</td><td>'+fmtMoney(s)+'</td><td>'+fmtMoney(j)+'</td>'+
+          '<td>'+(d!=null?fmtMoney(d):"--")+'</td></tr>';
       });
       html+='</tbody></table>';
       var D=[];
@@ -2845,11 +3780,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
        ["Gauss JOINT",dmc("gaussian","joint_action"),"#9a7bff"],
        ["Var-covar WITH",dmc("var_covar","standalone_action"),"#ffb454"]
       ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-        tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+        tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
       if(D.length){
         html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; joint-action vs standalone-action basis</h4>'+
           '<p class="cap">The joint-action basis (rule applied ONCE to the aggregated liability) sits '+
-          num(ja.t_scr_joint)+' vs nested-with '+num(ja.nested_scr_with)+' &mdash; rel err '+
+          fmtMoney(ja.t_scr_joint)+' vs nested-with '+fmtMoney(ja.nested_scr_with)+' &mdash; rel err '+
           (ja.t_rel_error_joint!=null?(100*ja.t_rel_error_joint).toFixed(2)+"%":"--")+
           ' against 22.54% on the standalone-action basis. Var-covar understates nested-with by 56.4% (MR-010 refresh).</p>'+
           barChart(D,{w:760,h:300,mB:64})+'</div>';
@@ -2861,10 +3796,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         '<table class="swtable"><thead><tr><th>Confidence</th><th>SCR without</th><th>SCR with (joint)</th>'+
         '<th>Tail saturation share</th><th>Mean residual cut factor</th><th>Relief at VaR</th></tr></thead><tbody>';
       sw.forEach(function(s){
-        html+='<tr><td>'+(100*s.confidence).toFixed(1)+'%</td><td>'+num(s.scr_without)+'</td>'+
-          '<td>'+num(s.scr_with)+'</td><td>'+(100*s.tail_saturation_share).toFixed(1)+'%</td>'+
+        html+='<tr><td>'+(100*s.confidence).toFixed(1)+'%</td><td>'+fmtMoney(s.scr_without)+'</td>'+
+          '<td>'+fmtMoney(s.scr_with)+'</td><td>'+(100*s.tail_saturation_share).toFixed(1)+'%</td>'+
           '<td>'+(s.tail_mean_cut_factor!=null?Number(s.tail_mean_cut_factor).toFixed(4):"--")+'</td>'+
-          '<td>'+num(s.relief_at_var)+'</td></tr>';
+          '<td>'+fmtMoney(s.relief_at_var)+'</td></tr>';
       });
       html+='</tbody></table>'+
         '<p class="note">At 99.5% the joint tail is 100.0% saturated &mdash; the action delivers max relief (12%) '+
@@ -2873,9 +3808,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     if(bt.mean!=null){
       html+='<div class="subh">Margin bootstrap (copula FROZEN per SII Art. 234; 200 &times; 20k; n_obs=160)</div>'+
         '<div class="cards">'+
-        '<div class="card"><div class="k">Bootstrap SCR mean</div><div class="v">'+num(bt.mean)+'</div></div>'+
-        '<div class="card"><div class="k">SCR SE</div><div class="v">'+num(bt.se)+'</div></div>'+
-        '<div class="card"><div class="k">95% CI</div><div class="v">['+num(bt.ci_lo_95)+', '+num(bt.ci_hi_95)+']</div></div>'+
+        '<div class="card"><div class="k">Bootstrap SCR mean</div><div class="v">'+fmtMoney(bt.mean)+'</div></div>'+
+        '<div class="card"><div class="k">SCR SE</div><div class="v">'+fmtMoney(bt.se)+'</div></div>'+
+        '<div class="card"><div class="k">95% CI</div><div class="v">['+fmtMoney(bt.ci_lo_95)+', '+fmtMoney(bt.ci_hi_95)+']</div></div>'+
         '<div class="card"><div class="k">Nested-with inside CI</div><div class="v">'+(fnd.nested_with_inside_bootstrap_ci?"✓ yes":"✗ no")+'</div></div>'+
         '</div>'+
         '<p class="note">Prefix-convergence SCR delta '+(fnd.scr_prefix_final_rel_delta!=null?(100*fnd.scr_prefix_final_rel_delta).toFixed(2)+"%":"--")+
@@ -2886,10 +3821,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       html+='<div class="subh">Inner-path action dynamics (Task 3) &mdash; outer-node vs inner-path basis</div>'+
         '<table class="ptable iptable"><thead><tr><th>Read-out (nested, 500 outer nodes)</th>'+
         '<th>Outer-node transform</th><th>Inner-path basis</th><th>Delta</th></tr></thead><tbody>'+
-        '<tr><td>VaR 99.5</td><td>'+num(ipd.nested_var_99_5_outer_node)+'</td><td>'+num(ipd.nested_var_99_5_inner_path)+'</td>'+
-        '<td>+'+num(ipd.nested_var_99_5_delta)+'</td></tr>'+
-        '<tr><td>SCR</td><td>'+num(ipd.nested_scr_outer_node)+'</td><td>'+num(ipd.nested_scr_inner_path)+'</td>'+
-        '<td>+'+num(ipd.nested_scr_delta)+' (+4.0%)</td></tr>'+
+        '<tr><td>VaR 99.5</td><td>'+fmtMoney(ipd.nested_var_99_5_outer_node)+'</td><td>'+fmtMoney(ipd.nested_var_99_5_inner_path)+'</td>'+
+        '<td>+'+fmtMoney(ipd.nested_var_99_5_delta)+'</td></tr>'+
+        '<tr><td>SCR</td><td>'+fmtMoney(ipd.nested_scr_outer_node)+'</td><td>'+fmtMoney(ipd.nested_scr_inner_path)+'</td>'+
+        '<td>+'+fmtMoney(ipd.nested_scr_delta)+' (+4.0%)</td></tr>'+
         '</tbody></table>'+
         '<p class="note">The bonus cut applies to the INNER-PATH policyholder-benefit cashflows only (guaranteed + '+
         'equity-guarantee PV); the asset-side credit loss and analytic FX/liquidity offsets are non-cuttable. The '+
@@ -2925,10 +3860,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var ncp=(dc.nested_capital_with_pathwise||{}).scr_proxy;
     var html='<div class="cards">';
     [
-      ["Nested SCR without actions",num(ncw)],
-      ["Nested SCR with (horizon basis)",num(nch)],
-      ["Nested SCR with (PATH-WISE) - reference",num(ncp)],
-      ["Path-wise &minus; horizon SCR",dl.scr_delta!=null?"+"+num(dl.scr_delta)+" (+"+(100*dl.scr_delta_rel_to_horizon).toFixed(2)+"%)":"--"],
+      ["Nested SCR without actions",fmtMoney(ncw)],
+      ["Nested SCR with (horizon basis)",fmtMoney(nch)],
+      ["Nested SCR with (PATH-WISE) - reference",fmtMoney(ncp)],
+      ["Path-wise &minus; horizon SCR",dl.scr_delta!=null?"+"+fmtMoney(dl.scr_delta)+" (+"+(100*dl.scr_delta_rel_to_horizon).toFixed(2)+"%)":"--"],
       ["Path-wise action share",dc.pathwise_action_share!=null?(100*dc.pathwise_action_share).toFixed(1)+"%":"--"],
       ["Cut-then-restore share",dc.pathwise_restoration_share!=null?(100*dc.pathwise_restoration_share).toFixed(1)+"%":"--"],
       ["Proxy OOS R2 (path-wise basis)",px.oos_r2_with_actions!=null?Number(px.oos_r2_with_actions).toFixed(4):"--"],
@@ -2949,9 +3884,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       rows.forEach(function(r){
         var w=dmc(r[1],"without"), h=dmc(r[1],"with_horizon"), q=dmc(r[1],"with_pathwise");
         var d=dmp(r[1]).scr_delta, dp=dmp(r[1]).scr_delta_pct;
-        html+='<tr><td>'+esc(r[0])+'</td><td>'+num(w)+'</td><td>'+num(h)+'</td>'+
-          '<td>'+(q!=null?num(q):"-- (no path-wise analogue, DISCLOSED)")+'</td>'+
-          '<td>'+(d!=null?"+"+num(d)+" (+"+(100*dp).toFixed(1)+"%)":"--")+'</td></tr>';
+        html+='<tr><td>'+esc(r[0])+'</td><td>'+fmtMoney(w)+'</td><td>'+fmtMoney(h)+'</td>'+
+          '<td>'+(q!=null?fmtMoney(q):"-- (no path-wise analogue, DISCLOSED)")+'</td>'+
+          '<td>'+(d!=null?"+"+fmtMoney(d)+" (+"+(100*dp).toFixed(1)+"%)":"--")+'</td></tr>';
       });
       html+='</tbody></table>';
       var D=[];
@@ -2964,7 +3899,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
        ["Gauss PATH-WISE",dmc("gaussian","with_pathwise"),"#9a7bff"],
        ["Var-covar horizon",dmc("var_covar","with_horizon"),"#ffb454"]
       ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-        tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+        tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
       if(D.length){
         html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; path-wise vs horizon declaration basis</h4>'+
           '<p class="cap">The path-wise basis relieves LESS at every level and confidence &mdash; the horizon basis '+
@@ -2981,11 +3916,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         '<th>SCR with (path-wise)</th><th>Tail saturation share</th><th>Mean smoothed relief fraction</th>'+
         '<th>Path-wise &minus; horizon</th></tr></thead><tbody>';
       sw.forEach(function(s){
-        html+='<tr><td>'+(100*s.confidence).toFixed(1)+'%</td><td>'+num(s.scr_without)+'</td>'+
-          '<td>'+num(s.scr_horizon)+'</td><td>'+num(s.scr_pathwise)+'</td>'+
+        html+='<tr><td>'+(100*s.confidence).toFixed(1)+'%</td><td>'+fmtMoney(s.scr_without)+'</td>'+
+          '<td>'+fmtMoney(s.scr_horizon)+'</td><td>'+fmtMoney(s.scr_pathwise)+'</td>'+
           '<td>'+(100*s.tail_saturation_share).toFixed(1)+'%</td>'+
           '<td>'+(s.tail_mean_smoothed_relief_fraction!=null?Number(s.tail_mean_smoothed_relief_fraction).toFixed(4):"--")+'</td>'+
-          '<td>+'+num(s.pathwise_minus_horizon_scr)+'</td></tr>';
+          '<td>+'+fmtMoney(s.pathwise_minus_horizon_scr)+'</td></tr>';
       });
       html+='</tbody></table>'+
         '<p class="note">At 99.5% the raw governed cut saturates 100.0% of the tail, but the mean smoothed relief '+
@@ -2996,12 +3931,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     if(bt.mean!=null){
       html+='<div class="subh">Margin bootstrap (copula FROZEN per SII Art. 234; 200 &times; 20k; n_obs=160)</div>'+
         '<div class="cards">'+
-        '<div class="card"><div class="k">Bootstrap SCR mean (t path-wise)</div><div class="v">'+num(bt.mean)+'</div></div>'+
-        '<div class="card"><div class="k">SCR SE</div><div class="v">'+num(bt.se)+'</div></div>'+
-        '<div class="card"><div class="k">95% CI</div><div class="v">['+num(bt.ci_lo_95)+', '+num(bt.ci_hi_95)+']</div></div>'+
+        '<div class="card"><div class="k">Bootstrap SCR mean (t path-wise)</div><div class="v">'+fmtMoney(bt.mean)+'</div></div>'+
+        '<div class="card"><div class="k">SCR SE</div><div class="v">'+fmtMoney(bt.se)+'</div></div>'+
+        '<div class="card"><div class="k">95% CI</div><div class="v">['+fmtMoney(bt.ci_lo_95)+', '+fmtMoney(bt.ci_hi_95)+']</div></div>'+
         '<div class="card"><div class="k">Nested path-wise inside CI</div><div class="v">'+(fnd.nested_pathwise_inside_bootstrap_ci?"✓ yes":"✗ no (OUTSIDE)")+'</div></div>'+
         '</div>'+
-        '<p class="note">The nested path-wise reference '+num(ncp)+' sits OUTSIDE the 95% CI &mdash; the analytic '+
+        '<p class="note">The nested path-wise reference '+fmtMoney(ncp)+' sits OUTSIDE the 95% CI &mdash; the analytic '+
         're-anchoring understates the nested path-wise SCR by '+
         (fnd.t_pathwise_vs_nested_pathwise_rel_err!=null?(100*fnd.t_pathwise_vs_nested_pathwise_rel_err).toFixed(1)+"%":"--")+
         ' beyond margin noise: the quantified, DISCLOSED motivation for the next-phase full path-wise copula '+
@@ -3055,12 +3990,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var gapRel=co.gap_to_nested_component_t_rel;
     var html='<div class="cards">';
     [
-      ["Nested SCR (path-wise) - reference",num(nestedRef)],
-      ["Component (FULL re-agg) t SCR",num(ct.scr_component)],
-      ["Re-anchored (LEVEL) t SCR",num(ct.scr_level)],
-      ["Composition correction (full &minus; re-anchored)",cc.mean!=null?"+"+num(cc.mean)+" (+"+(100*compRel).toFixed(2)+"%)":"--"],
-      ["Bootstrap mean t SCR (component)",num(ci.mean)],
-      ["Bootstrap 95% CI (component t)",ci.ci_lo!=null?"["+num(ci.ci_lo)+", "+num(ci.ci_hi)+"]":"--"],
+      ["Nested SCR (path-wise) - reference",fmtMoney(nestedRef)],
+      ["Component (FULL re-agg) t SCR",fmtMoney(ct.scr_component)],
+      ["Re-anchored (LEVEL) t SCR",fmtMoney(ct.scr_level)],
+      ["Composition correction (full &minus; re-anchored)",cc.mean!=null?"+"+fmtMoney(cc.mean)+" (+"+(100*compRel).toFixed(2)+"%)":"--"],
+      ["Bootstrap mean t SCR (component)",fmtMoney(ci.mean)],
+      ["Bootstrap 95% CI (component t)",ci.ci_lo!=null?"["+fmtMoney(ci.ci_lo)+", "+fmtMoney(ci.ci_hi)+"]":"--"],
       ["Bootstrap SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
       ["Nested inside 95% CI?",bo.headline_nested_inside_95ci?"✓ yes":"✗ no (OUTSIDE)"],
       ["Gap to nested (component, t)",gapRel!=null?(100*gapRel).toFixed(2)+"%":"--"],
@@ -3078,14 +4013,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       '(below the 1% MR trigger - MR-015 stays free). Copula FROZEN per SII Art. 234.</p>';
     // ---- point matrix: bases x {t, gaussian} with component-basis 95% CI ----
     function pmc(b,k){ return (pm[b]||{})[k]; }
-    function mci(b,k){ var r=(mc[b]||{})[k]; return (r&&r.ci_lo!=null)?("["+num(r.ci_lo)+", "+num(r.ci_hi)+"]"):"--"; }
+    function mci(b,k){ var r=(mc[b]||{})[k]; return (r&&r.ci_lo!=null)?("["+fmtMoney(r.ci_lo)+", "+fmtMoney(r.ci_hi)+"]"):"--"; }
     var brows=[["Without actions","without"],["Re-anchored (LEVEL)","level"],["Component (FULL re-agg)","component"]];
     html+='<div class="subh">Re-aggregation basis matrix (99.5% / 1y SCR) &mdash; without &rarr; re-anchored &rarr; full component (Task 2 point, Task 3 frozen-copula CI)</div>'+
       '<table class="ptable p26matrix"><thead><tr><th>Basis</th><th>t-copula SCR</th><th>t 95% CI (bootstrap)</th>'+
       '<th>Gaussian SCR</th></tr></thead><tbody>';
     brows.forEach(function(r){
-      html+='<tr><td>'+esc(r[0])+'</td><td>'+num(pmc(r[1],"t"))+'</td><td>'+mci(r[1],"t")+'</td>'+
-        '<td>'+num(pmc(r[1],"g"))+'</td></tr>';
+      html+='<tr><td>'+esc(r[0])+'</td><td>'+fmtMoney(pmc(r[1],"t"))+'</td><td>'+mci(r[1],"t")+'</td>'+
+        '<td>'+fmtMoney(pmc(r[1],"g"))+'</td></tr>';
     });
     html+='</tbody></table>';
     // ---- SCR bar chart ----
@@ -3097,11 +4032,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
      ["Nested PATH-WISE ref",nestedRef,"#ffb454"],
      ["Component (gauss)",pmc("component","g"),"#9a7bff"]
     ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
     if(D.length){
       html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; full re-aggregation vs re-anchored vs nested reference</h4>'+
         '<p class="cap">The full component basis and the re-anchored level basis are economically interchangeable on the '+
-        'frozen copula; both sit well below the nested path-wise reference '+num(nestedRef)+' &mdash; a COPULA-FORM gap, not a basis choice.</p>'+
+        'frozen copula; both sit well below the nested path-wise reference '+fmtMoney(nestedRef)+' &mdash; a COPULA-FORM gap, not a basis choice.</p>'+
         barChart(D,{w:760,h:300,mB:64})+'</div>';
     }
     // ---- paired delta decomposition (common-random-number) ----
@@ -3117,32 +4052,32 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       '<table class="ptable p26dtable"><thead><tr><th>Effect</th><th>Mean</th><th>95% CI</th><th>Excludes zero?</th></tr></thead><tbody>';
     drows.forEach(function(r){
       var d=pd(r[1]);
-      html+='<tr><td>'+r[0]+'</td><td>'+(d.mean!=null?"+"+num(d.mean):"--")+'</td>'+
-        '<td>'+(d.ci_lo!=null?"[+"+num(d.ci_lo)+", +"+num(d.ci_hi)+"]":"--")+'</td>'+
+      html+='<tr><td>'+r[0]+'</td><td>'+(d.mean!=null?"+"+fmtMoney(d.mean):"--")+'</td>'+
+        '<td>'+(d.ci_lo!=null?"[+"+fmtMoney(d.ci_lo)+", +"+fmtMoney(d.ci_hi)+"]":"--")+'</td>'+
         '<td>'+(d.excludes_zero?"✓ yes (significant)":"no")+'</td></tr>';
     });
     html+='</tbody></table>'+
       '<p class="note">Every effect is statistically significant on the paired bootstrap, but the composition correction is the '+
-      'smallest by two orders of magnitude: management-action relief (+'+num((pd("management_relief_t").mean))+') dominates the capital picture.</p>';
+      'smallest by two orders of magnitude: management-action relief (+'+fmtMoney((pd("management_relief_t").mean))+') dominates the capital picture.</p>';
     // ---- residual gap decomposition ----
     if(Object.keys(gd).length){
       html+='<div class="subh">Residual gap to nested truth (Task 3) &mdash; copula-form vs relief-surface</div>'+
         '<table class="ptable p26gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share of gap</th><th>Basis</th></tr></thead><tbody>'+
-        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+        '<tr><td>Relief-surface error</td><td>'+fmtMoney(gd.relief_surface_part_abs)+'</td><td>'+
           (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
           '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
-        '<tr><td>Copula-form residual</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+        '<tr><td>Copula-form residual</td><td>'+fmtMoney(gd.copula_form_residual_abs)+'</td><td>'+
           (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"%":"--")+
           '</td><td>nested joint tail heavier than frozen t copula</td></tr>'+
-        '<tr><td>Total gap (nested &minus; component)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+        '<tr><td>Total gap (nested &minus; component)</td><td>'+fmtMoney(gd.gap_total_abs)+'</td><td>'+
           (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"%":"--")+
           '</td><td>nested with-actions reference</td></tr>'+
         '</tbody></table>'+
         '<p class="note">The residual is COPULA-FORM DOMINATED ('+
         (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1):"--")+
-        '% of the gap): the copula-form residual '+num(gd.copula_form_residual_abs)+' EXCEEDS the entire gaussian&rarr;t '+
-        'dependence-form sensitivity ('+num(gd.dependence_form_sensitivity_t_minus_g)+'). The governed relief surface mis-prices SCR by only 1.16% of nested. '+
-        'The nested path-wise reference '+num(nestedRef)+' lies OUTSIDE the component-basis 95% CI ['+num(ci.ci_lo)+', '+num(ci.ci_hi)+'] '+
+        '% of the gap): the copula-form residual '+fmtMoney(gd.copula_form_residual_abs)+' EXCEEDS the entire gaussian&rarr;t '+
+        'dependence-form sensitivity ('+fmtMoney(gd.dependence_form_sensitivity_t_minus_g)+'). The governed relief surface mis-prices SCR by only 1.16% of nested. '+
+        'The nested path-wise reference '+fmtMoney(nestedRef)+' lies OUTSIDE the component-basis 95% CI ['+fmtMoney(ci.ci_lo)+', '+fmtMoney(ci.ci_hi)+'] '+
         '&mdash; the gap is a copula-FORM limitation, NOT a basis-choice effect. DISCLOSED.</p>';
     }
     html+=maGateGrid(co.gates,"Task 2 pre-registered gates (per-driver composition transform on the frozen copula)");
@@ -3172,10 +4107,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var html='<div class="cards">';
     [
       ["gamma_hat (fitted upper-tail skew)",gh!=null?Number(gh).toExponential(2):"--"],
-      ["Skew-t component SCR (bootstrap mean)",num(sk.mean)],
-      ["Symmetric-t component SCR (mean)",num(sy.mean)],
-      ["Nested SCR (path-wise) - reference",num(nestedRef)],
-      ["Skew-t 95% CI",sk.ci_lo!=null?"["+num(sk.ci_lo)+", "+num(sk.ci_hi)+"]":"--"],
+      ["Skew-t component SCR (bootstrap mean)",fmtMoney(sk.mean)],
+      ["Symmetric-t component SCR (mean)",fmtMoney(sy.mean)],
+      ["Nested SCR (path-wise) - reference",fmtMoney(nestedRef)],
+      ["Skew-t 95% CI",sk.ci_lo!=null?"["+fmtMoney(sk.ci_lo)+", "+fmtMoney(sk.ci_hi)+"]":"--"],
       ["Skew-t SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
       ["Nested inside 95% CI?",bo.headline_nested_inside_95ci?"✓ yes":"✗ no (OUTSIDE)"],
       ["Radial asymmetry (mean, p=0.90)",bo.radial_asymmetry_mean!=null?Number(bo.radial_asymmetry_mean).toExponential(2):"--"],
@@ -3197,11 +4132,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
      ["Skew-t CI hi",sk.ci_hi,"#2fd0a8"],
      ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
     ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
     if(D.length){
       html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; skew-t vs symmetric-t vs nested reference</h4>'+
         '<p class="cap">With gamma_hat &asymp; 0 the skew-t and symmetric-t bases coincide; both sit well below the nested path-wise reference '+
-        num(nestedRef)+' &mdash; a COPULA-FORM gap unaffected by the upper-tail-asymmetry scalar.</p>'+
+        fmtMoney(nestedRef)+' &mdash; a COPULA-FORM gap unaffected by the upper-tail-asymmetry scalar.</p>'+
         barChart(D,{w:760,h:300,mB:64})+'</div>';
     }
     var rows=td.rows||[];
@@ -3231,18 +4166,18 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     if(Object.keys(gd).length){
       html+='<div class="subh">Residual gap to nested truth &mdash; copula-form vs relief-surface (skew-t re-decomposition)</div>'+
         '<table class="ptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share of gap</th><th>Basis</th></tr></thead><tbody>'+
-        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+        '<tr><td>Relief-surface error</td><td>'+fmtMoney(gd.relief_surface_part_abs)+'</td><td>'+
           (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
           '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
-        '<tr><td>Copula-form residual (skew-t)</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+        '<tr><td>Copula-form residual (skew-t)</td><td>'+fmtMoney(gd.copula_form_residual_abs)+'</td><td>'+
           (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"%":"--")+
-          '</td><td>frozen-t '+num(gd.copula_form_residual_frozen_t)+' &rarr; skew-t '+num(gd.copula_form_residual_abs)+'</td></tr>'+
-        '<tr><td>Total gap (nested &minus; skew-t)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+          '</td><td>frozen-t '+fmtMoney(gd.copula_form_residual_frozen_t)+' &rarr; skew-t '+fmtMoney(gd.copula_form_residual_abs)+'</td></tr>'+
+        '<tr><td>Total gap (nested &minus; skew-t)</td><td>'+fmtMoney(gd.gap_total_abs)+'</td><td>'+
           (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"%":"--")+
           '</td><td>nested with-actions reference</td></tr>'+
         '</tbody></table>'+
-        '<p class="note">The skew-t scalar lifts the frozen-t component SCR by only '+num(gd.skewt_minus_sym_lift)+' on common random numbers; '+
-        'the copula-form residual moves '+num(gd.copula_form_residual_frozen_t)+' &rarr; '+num(gd.copula_form_residual_abs)+' ('+
+        '<p class="note">The skew-t scalar lifts the frozen-t component SCR by only '+fmtMoney(gd.skewt_minus_sym_lift)+' on common random numbers; '+
+        'the copula-form residual moves '+fmtMoney(gd.copula_form_residual_frozen_t)+' &rarr; '+fmtMoney(gd.copula_form_residual_abs)+' ('+
         (gd.copula_form_residual_reduction_rel!=null?(100*gd.copula_form_residual_reduction_rel).toFixed(2):"--")+'% reduction) &mdash; '+
         'RE-CONFIRMED as NOT closed by a single upper-tail-asymmetry scalar. Mitigation: grouped-t / vine escalation (Phase 28). Tracked by MR-015. DISCLOSED.</p>';
     }
@@ -3277,15 +4212,15 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     var html='<div class="cards">';
     [
       ["df_NONFIN / df_FIN",dfs.length>1?(Number(dfs[0]).toFixed(3)+" / "+Number(dfs[1]).toFixed(3)):"--"],
-      ["Grouped-t component SCR (bootstrap mean)",num(gr.mean)],
-      ["Grouped-t component SCR (point)",num(grpPoint)],
-      ["Single-df t component SCR (mean)",num(sg.mean)],
-      ["Single-df t component SCR (point)",num(sngPoint)],
-      ["Nested SCR (path-wise) - reference",num(nestedRef)],
-      ["Grouped-t 95% CI",gr.ci_lo!=null?"["+num(gr.ci_lo)+", "+num(gr.ci_hi)+"]":"--"],
+      ["Grouped-t component SCR (bootstrap mean)",fmtMoney(gr.mean)],
+      ["Grouped-t component SCR (point)",fmtMoney(grpPoint)],
+      ["Single-df t component SCR (mean)",fmtMoney(sg.mean)],
+      ["Single-df t component SCR (point)",fmtMoney(sngPoint)],
+      ["Nested SCR (path-wise) - reference",fmtMoney(nestedRef)],
+      ["Grouped-t 95% CI",gr.ci_lo!=null?"["+fmtMoney(gr.ci_lo)+", "+fmtMoney(gr.ci_hi)+"]":"--"],
       ["Grouped-t SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
       ["Nested inside grouped 95% CI?",bo.headline_nested_inside_95ci?"yes":"no (OUTSIDE)"],
-      ["Grouped minus single (CRN mean)",num(bo.grouped_minus_single_mean)],
+      ["Grouped minus single (CRN mean)",fmtMoney(bo.grouped_minus_single_mean)],
       ["Cross-block dilution at p=0.90",mean(p90.grp_minus_sng_cross_upper,4)+" "+ci(p90.grp_minus_sng_cross_upper,4)],
       ["MR-016",td.mr016_opened?"OPEN (tracked)":"--"]
     ].forEach(function(c){ html+='<div class="card"><div class="k">'+c[0]+
@@ -3301,10 +4236,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
      ["Single-df t point",sngPoint,"#2b5d99"],
      ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
     ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
-      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+num(b[1])}); });
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
     if(D.length){
       html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; grouped-t vs single-df t vs nested reference</h4>'+
-        '<p class="cap">The grouped-t component sits below the single-df t boundary and farther below the nested path-wise reference '+num(nestedRef)+
+        '<p class="cap">The grouped-t component sits below the single-df t boundary and farther below the nested path-wise reference '+fmtMoney(nestedRef)+
         '; the widening is informative model-form evidence, not a failed recalibration.</p>'+barChart(D,{w:760,h:300,mB:72})+'</div>';
     }
     var rows=td.rows||[];
@@ -3338,21 +4273,21 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     if(Object.keys(gd).length){
       html+='<div class="subh">Residual gap to nested truth &mdash; grouped-t re-decomposition and widening</div>'+
         '<table class="ptable p28gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share / move</th><th>Basis</th></tr></thead><tbody>'+
-        '<tr><td>Relief-surface error</td><td>'+num(gd.relief_surface_part_abs)+'</td><td>'+
+        '<tr><td>Relief-surface error</td><td>'+fmtMoney(gd.relief_surface_part_abs)+'</td><td>'+
           (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
           '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
-        '<tr><td>Copula-form residual (grouped-t)</td><td>'+num(gd.copula_form_residual_abs)+'</td><td>'+
+        '<tr><td>Copula-form residual (grouped-t)</td><td>'+fmtMoney(gd.copula_form_residual_abs)+'</td><td>'+
           (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"% of gap":"--")+
-          '</td><td>skew-t reconfirmed '+num(gd.copula_form_residual_skewt_reconfirmed)+' &rarr; grouped-t '+num(gd.copula_form_residual_abs)+'</td></tr>'+
-        '<tr><td>Residual widening vs skew-t</td><td>'+num(gd.copula_form_residual_change_vs_skewt_abs)+'</td><td>'+
+          '</td><td>skew-t reconfirmed '+fmtMoney(gd.copula_form_residual_skewt_reconfirmed)+' &rarr; grouped-t '+fmtMoney(gd.copula_form_residual_abs)+'</td></tr>'+
+        '<tr><td>Residual widening vs skew-t</td><td>'+fmtMoney(gd.copula_form_residual_change_vs_skewt_abs)+'</td><td>'+
           (gd.copula_form_residual_change_vs_skewt_rel!=null?("+"+(100*gd.copula_form_residual_change_vs_skewt_rel).toFixed(2)+"%"):"--")+
           '</td><td>informative negative super-set result; vine escalation</td></tr>'+
-        '<tr><td>Total gap (nested &minus; grouped-t)</td><td>'+num(gd.gap_total_abs)+'</td><td>'+
+        '<tr><td>Total gap (nested &minus; grouped-t)</td><td>'+fmtMoney(gd.gap_total_abs)+'</td><td>'+
           (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"% of nested":"--")+
           '</td><td>nested with-actions reference</td></tr>'+
         '</tbody></table>'+
-        '<p class="note">The nested reference '+num(nestedRef)+' is OUTSIDE the grouped-t CI ['+num(gr.ci_lo)+', '+num(gr.ci_hi)+']; '+
-        'the copula-form residual WIDENS from '+num(gd.copula_form_residual_skewt_reconfirmed)+' to '+num(gd.copula_form_residual_abs)+
+        '<p class="note">The nested reference '+fmtMoney(nestedRef)+' is OUTSIDE the grouped-t CI ['+fmtMoney(gr.ci_lo)+', '+fmtMoney(gr.ci_hi)+']; '+
+        'the copula-form residual WIDENS from '+fmtMoney(gd.copula_form_residual_skewt_reconfirmed)+' to '+fmtMoney(gd.copula_form_residual_abs)+
         '. This confirms the residual is nested inner-path joint structure that a copula on standalone margins cannot represent. DISCLOSED; Phase 29 vine / pair-copula is the fallback.</p>';
     }
     html+='<div class="subh">MR refresh and governance decision</div>'+
@@ -3366,6 +4301,523 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     html+=maGateGrid(co.gates,"Task 2 pre-registered gates (grouped-t copula re-aggregation)");
     html+=maGateGrid(bo.gates,"Task 3 pre-registered gates (grouped-t bootstrap + residual re-decomposition)");
     html+=maGateGrid(td.gates,"Task 4 pre-registered gates (tail diagnostics + MR-016)");
+    html+='<p class="note">'+esc(p.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(co.source||"")+' &middot; '+esc(bo.source||"")+' &middot; '+esc(td.source||"")+
+      ' &middot; ChangeRecords '+esc(co.change_record_id||"")+' / '+esc(bo.change_record_id||"")+' / '+esc(td.change_record_id||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
+  function renderPhase30(){
+    var el=document.getElementById("phase30"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var p=DATA.phase30||{};
+    var rm=p.roadmap||{}, t3=p.tree3||{}, bo=p.bootstrap||{}, sr=p.stop_rule||{}, td=p.tail||{};
+    if(!Object.keys(t3).length&&!Object.keys(bo).length&&!Object.keys(sr).length){
+      el.innerHTML='<p class="muted">No Phase 30 tree-3 / stop-rule data in this snapshot (requires contract v1.13.0+).</p>';
+      return;
+    }
+    var ci=bo.tree3_component_scr_ci||{};
+    var gd=bo.residual_gap_redecomposition_point||{};
+    var oc=td.overfit_check||{};
+    var t3Point=bo.task2_tree3_candidate_component_point!=null?bo.task2_tree3_candidate_component_point:t3.tree3_candidate_scr_component;
+    var v2Point=bo.task2_vine2_component_point!=null?bo.task2_vine2_component_point:t3.vine2_boundary_scr_component;
+    var frzPoint=bo.task2_frozen_t_component_point!=null?bo.task2_frozen_t_component_point:t3.frozen_t_reference_scr_component;
+    var grpPoint=t3.grouped_t_comparison_scr_component;
+    var nestedRef=sr.nested_scr!=null?sr.nested_scr:bo.nested_pathwise_reference;
+    var canon=String(td.canonical_p!=null?Math.round(100*td.canonical_p):"90");
+    var lv=(td.levels||{})[canon]||{}; var rows=lv.rows||[];
+    function mean(m,d){ return (m&&m.mean!=null)?Number(m.mean).toFixed(d==null?4:d):"--"; }
+    function ci95(m,d){ return (m&&m.ci_lo!=null)?"["+Number(m.ci_lo).toFixed(d==null?4:d)+", "+Number(m.ci_hi).toFixed(d==null?4:d)+"]":"--"; }
+    var html='<div class="cards">';
+    [
+      ["Roadmap decision (T1)",String(rm.selected_option||"--")],
+      ["Tree-3 candidate SCR (point)",fmtMoney(t3Point)],
+      ["Tree-3 SCR (bootstrap mean)",fmtMoney(ci.mean)],
+      ["Tree-3 95% CI",ci.ci_lo!=null?"["+fmtMoney(ci.ci_lo)+", "+fmtMoney(ci.ci_hi)+"]":"--"],
+      ["2-tree vine SCR (P29 ref)",fmtMoney(v2Point)],
+      ["Frozen single-df t (GOVERNED)",fmtMoney(frzPoint)],
+      ["Nested SCR (path-wise) - reference",fmtMoney(nestedRef)],
+      ["SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
+      ["Nested inside tree-3 95% CI?",sr.nested_inside_ci===true?"yes":"no (OUTSIDE)"],
+      ["STOP-RULE applied?",sr.stop_rule_applied?"YES - dependence-FORM escalation ENDS":"no"],
+      ["MR-016 / MR-017",(sr.mr016_decision==="KEEP_OPEN"?"KEEP OPEN":String(sr.mr016_decision||"--"))+" / "+(sr.mr017_decision==="KEEP_OPEN"?"KEEP OPEN":String(sr.mr017_decision||"--"))],
+      ["Governed headline move",sr.governed_headline_relative_move!=null?(100*sr.governed_headline_relative_move).toFixed(4)+"%":"--"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+esc(c[0])+
+      '</div><div class="v">'+esc(c[1])+'</div></div>'; });
+    html+='</div>';
+    html+='<p class="note"><b>BINDING STOP-RULE (pre-registered at Task 1, applied at Task 4).</b> '+esc(sr.rationale||rm.stop_rule||"")+'</p>';
+    var D=[];
+    [["Tree-3 candidate mean",ci.mean,"#4f9cff"],
+     ["Tree-3 candidate point",t3Point,"#2fd0a8"],
+     ["2-tree vine point (P29)",v2Point,"#9a7bff"],
+     ["Single-df t (GOVERNED)",frzPoint,"#2b5d99"],
+     ["Grouped-t point (P28)",grpPoint,"#7a8aa0"],
+     ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
+    ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; tree-3 vs 2-tree vine vs single-df t vs nested reference</h4>'+
+        '<p class="cap">The tree-3 candidate is BIT-IDENTICAL to the 2-tree vine (all four pre-registered third-tree pairs zero-strength); nested '+fmtMoney(nestedRef)+
+        ' remains OUTSIDE the tree-3 95% CI ['+fmtMoney(ci.ci_lo)+', '+fmtMoney(ci.ci_hi)+'], so the pre-registered stop-rule binds.</p>'+
+        barChart(D,{w:760,h:300,mB:84})+'</div>';
+    }
+    var edges=t3.third_tree_edges||[];
+    if(edges.length){
+      var fc=t3.tree3_family_counts||{};
+      var fcs=Object.keys(fc).map(function(k){ return fc[k]+" "+k; }).join(", ");
+      var sup=(oc.tree3_fit_support_n_fit||[]).join(", ");
+      html+='<div class="subh">Pre-registered third-tree conditional pairs (joint-conditional on both conditioners)</div>'+
+        '<table class="ptable p30edges"><thead><tr><th>#</th><th>Pair | conditioners</th></tr></thead><tbody>';
+      edges.forEach(function(e,i){ html+='<tr><td>'+(i+1)+'</td><td>'+esc(e.names||"")+'</td></tr>'; });
+      html+='</tbody></table>'+
+        '<p class="note"><b>Data-support DISCLOSURE.</b> Joint-conditional fit support n_fit = {'+esc(sup)+'} of 112 fit rows (both-conditioners &gt; 0.90 mask); tree-3 calibration is empirically EMPTY: selections degenerate to zero-strength gaussian ('+esc(fcs)+
+        ') and the candidate tail field is exactly the 2-tree vine&#39;s (max |tree-3 &minus; 2-tree| = '+esc(bo.tree3_minus_vine2_max_abs)+', exactly zero in all replicates: '+esc(bo.tree3_minus_vine2_all_exactly_zero)+').</p>';
+    }
+    if(rows.length){
+      html+='<div class="subh">Pair-level tail dependence at canonical p=0.'+canon+' (200&times;20k CRN bootstrap, 95% CI) &mdash; fitted tree 1/2/3 + never-fitted holdout</div>'+
+        '<table class="ptable p30pairs"><thead><tr><th>Pair</th><th>Tree</th><th>Candidate U</th><th>Frozen-t U</th>'+
+        '<th>Lift U (cand &minus; frz)</th><th>Lift L</th></tr></thead><tbody>';
+      rows.forEach(function(rw){
+        var tl=rw.tree==="second"?("2nd | "+(rw.cond_label||"?")):(rw.tree==="third"?("3rd | "+(rw.cond_label||"?")):(rw.tree==="holdout"?"holdout":"1st"));
+        html+='<tr><td>'+esc(rw.pair_label)+'</td><td>'+esc(tl)+'</td>'+
+          '<td>'+mean(rw.cand_upper,4)+' '+ci95(rw.cand_upper,4)+'</td>'+
+          '<td>'+mean(rw.frz_upper,4)+' '+ci95(rw.frz_upper,4)+'</td>'+
+          '<td>'+mean(rw.lift_upper,4)+' '+ci95(rw.lift_upper,4)+'</td>'+
+          '<td>'+mean(rw.lift_lower,4)+' '+ci95(rw.lift_lower,4)+'</td></tr>';
+      });
+      html+='</tbody></table>';
+      var TD=[];
+      rows.forEach(function(rw){
+        if(rw.lift_upper&&rw.lift_upper.mean!=null){
+          var col=rw.tree==="holdout"?"#7a8aa0":(rw.tree==="third"?"#ffd166":(rw.tree==="second"?"#2fd0a8":"#4f9cff"));
+          TD.push({label:rw.pair_label+(rw.cond_label?" | "+rw.cond_label:"")+(rw.tree==="holdout"?" (holdout)":""),
+            value:rw.lift_upper.mean,color:col,
+            tip:"<b>"+rw.pair_label+"</b> ("+rw.tree+")<br>upper-tail lift at p=0."+canon+": "+rw.lift_upper.mean.toFixed(4)});
+        }
+      });
+      if(TD.length){
+        html+='<div class="chartwrap"><h4>Candidate-vs-frozen upper-tail lift profile at p=0.'+canon+' (tree-3 links carry ZERO incremental tilt)</h4>'+
+          '<p class="cap">Max fitted-pair |mean lift| '+(oc.max_fit_pair_abs_mean_lift!=null?Number(oc.max_fit_pair_abs_mean_lift).toFixed(4):"--")+
+          ' vs max holdout '+(oc.max_holdout_pair_abs_mean_lift!=null?Number(oc.max_holdout_pair_abs_mean_lift).toFixed(4):"--")+
+          ' (holdout/fit ratio '+(oc.holdout_to_fit_max_lift_ratio!=null?Number(oc.holdout_to_fit_max_lift_ratio).toFixed(3):"--")+' = P29 reference &mdash; overfit gate PASS).</p>'+
+          barChart(TD,{w:760,h:320,mB:110})+'</div>';
+      }
+    }
+    if(Object.keys(gd).length){
+      html+='<div class="subh">Residual gap to nested truth &mdash; tree-3 re-decomposition (UNCHANGED vs the 2-tree vine)</div>'+
+        '<table class="ptable p30gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share / move</th><th>Basis</th></tr></thead><tbody>'+
+        '<tr><td>Relief-surface error</td><td>'+fmtMoney(gd.relief_surface_part_abs)+'</td><td>'+
+          (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
+          '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
+        '<tr><td>Copula-form residual (tree-3)</td><td>'+fmtMoney(gd.copula_form_residual_abs)+'</td><td>'+
+          (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"% of gap":"--")+
+          '</td><td>UNCHANGED vs 2-tree vine '+fmtMoney(sr.tree3_copula_form_residual)+' (zero-strength tree 3)</td></tr>'+
+        '<tr><td>Residual vs earlier baselines</td><td>&mdash;</td><td>'+
+          (sr.residual_change_vs_grouped_t_rel!=null?((100*sr.residual_change_vs_grouped_t_rel).toFixed(2)+"% vs grouped-t"):"--")+
+          '</td><td>still -65.33% vs grouped-t / '+
+          (sr.residual_change_vs_skewt_rel!=null?((100*sr.residual_change_vs_skewt_rel).toFixed(2)+"%"):"--")+' vs skew-t (inherited from the 2-tree vine)</td></tr>'+
+        '<tr><td>Total gap (nested &minus; candidate)</td><td>'+fmtMoney(gd.gap_total_abs)+'</td><td>'+
+          (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"% of nested":"--")+
+          '</td><td>nested with-actions reference</td></tr>'+
+        '</tbody></table>';
+    }
+    html+='<div class="subh">Binding stop-rule and MR decision (Task 4)</div>'+
+      '<table class="ptable"><thead><tr><th>Decision</th><th>Value</th><th>Rationale</th></tr></thead><tbody>'+
+      '<tr><td>Stop-rule trigger (nested outside tree-3 CI)</td><td>'+(sr.stop_rule_trigger_met?"MET":"not met")+
+      '</td><td>nested '+fmtMoney(nestedRef)+' vs tree-3 95% CI ['+fmtMoney(ci.ci_lo)+', '+fmtMoney(ci.ci_hi)+'].</td></tr>'+
+      '<tr><td>Dependence-FORM escalation (MR-016)</td><td>'+(sr.dependence_form_escalation_ends?"ENDS":"continues")+
+      '</td><td>No further copula-structure candidates without owner sign-off.</td></tr>'+
+      '<tr><td>MR-016</td><td>'+(sr.mr016_decision==="KEEP_OPEN"?"KEEP OPEN":esc(sr.mr016_decision||"--"))+
+      '</td><td>Close criteria require inside-CI AND strict residual shrink; neither holds (residual unchanged, zero-strength tree 3).</td></tr>'+
+      '<tr><td>MR-017</td><td>'+(sr.mr017_decision==="KEEP_OPEN"?"KEEP OPEN":esc(sr.mr017_decision||"--"))+
+      '</td><td>Residual vine-FORM limitations remain tracked.</td></tr>'+
+      '<tr><td>Governed headline move</td><td>'+(sr.governed_headline_relative_move!=null?(100*sr.governed_headline_relative_move).toFixed(4)+"%":"--")+
+      '</td><td>Frozen single-df t boundary '+fmtMoney(sr.governed_headline_reference)+' recovered bit-identically; MR-010/MR-014 no refresh.</td></tr>'+
+      '<tr><td>Tree-3 / vine adoption</td><td>DISCLOSED only</td><td>NOT adopted into the governed headline without owner sign-off.</td></tr>'+
+      '</tbody></table>';
+    html+='<div class="subh">Phase 31 directive (owner decision package)</div>'+
+      '<p class="note">'+esc(sr.phase31_directive||rm.post_phase30_commitment||"")+'</p>';
+    html+=maGateGrid(t3.gates,"Task 2 pre-registered gates (tree-3 vine deepening, dual boundary)");
+    html+=maGateGrid(bo.gates,"Task 3 pre-registered gates (tree-3 margin bootstrap; C1_raw is the DISCLOSED stop-rule branch)");
+    html+=maGateGrid(td.gates,"Task 4 pre-registered gates (tail diagnostics + binding stop-rule / MR decision)");
+    html+='<p class="note">'+esc(p.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(rm.source||"")+' &middot; '+esc(t3.source||"")+' &middot; '+esc(bo.source||"")+' &middot; '+esc(td.source||"")+
+      ' &middot; ChangeRecords '+esc(t3.change_record_id||"")+' / '+esc(bo.change_record_id||"")+' / '+esc(td.change_record_id||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
+  function renderOwnerDecision(){
+    var el=document.getElementById("ownerdecision"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var od=DATA.owner_decision_p31||{};
+    var ev=od.evidence_pack||{};
+    if(!Object.keys(ev).length){
+      el.innerHTML='<p class="muted">No Phase 31 owner-decision-pack data in this snapshot (requires contract v1.14.0+).</p>';
+      return;
+    }
+    var gh=ev.governed_headline||{};
+    var dc=ev.disclosed_candidates||{}; var v2=dc.vine2||{}; var t3=dc.tree3||{};
+    var nr=ev.nested_reference||{};
+    var rl=ev.residual_ladder||[];
+    var gd=ev.gap_decomposition||{};
+    var rr=ev.risk_register_status||{}; var srr=rr.stop_rule_record||{};
+    var hist=ev.escalation_history||[];
+    var opts=od.owner_options||{}; var order=od.owner_option_order||[];
+    var wf=od.signoff_workflow||[];
+    var drt=od.decision_record_template||{};
+    var prov=od.figure_provenance||{};
+    var lim=od.limitations||[];
+    var stds=od.standard_references||[];
+    function ci2(a){ return (a&&a.length===2)?"["+fmtMoney(a[0])+", "+fmtMoney(a[1])+"]":"--"; }
+    var html='<p class="note"><b>Phase 31 owner decision package - browsable surface (read-only).</b> '+
+      esc(od.purpose||"")+'</p>';
+    html+='<div class="cards">';
+    [
+      ["Governed component SCR headline (frozen single-df t)",fmtMoney(gh.value)],
+      ["Headline status",esc(String(gh.status||"--"))],
+      ["Headline move through P27-P30",gh.move_pct_through_p27_p30!=null?(100*gh.move_pct_through_p27_p30).toFixed(4)+"%":"--"],
+      ["2-tree vine (P29) - point / bootstrap mean",fmtMoney(v2.component_scr_point)+" / "+fmtMoney(v2.bootstrap_mean)],
+      ["2-tree vine 95% CI",ci2(v2.bootstrap_ci95)],
+      ["Tree-3 vine (P30) - point / bootstrap mean",fmtMoney(t3.component_scr_point)+" / "+fmtMoney(t3.bootstrap_mean)],
+      ["Tree-3 95% CI",ci2(t3.bootstrap_ci95)],
+      ["Nested path-wise reference (single run)",fmtMoney(nr.value)],
+      ["Nested inside vine2 / tree3 95% CI?",(nr.inside_vine2_ci95?"yes":"no")+" / "+(nr.inside_tree3_ci95?"yes":"no")],
+      ["Copula-form part of gap",fmtMoney(gd.copula_form_part)+" of "+fmtMoney(gd.total_gap_point)],
+      ["MR-016 / MR-017",esc(String(rr["MR-016"]||"--").split(" - ")[0])+" / "+esc(String(rr["MR-017"]||"--").split(" - ")[0])],
+      ["Stop-rule applied?",srr.applied?"YES - dependence-FORM escalation ENDS":"no"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+esc(c[0])+
+      '</div><div class="v">'+c[1]+'</div></div>'; });
+    html+='</div>';
+    var D=[];
+    [["Single-df t (GOVERNED)",gh.value,"#2b5d99"],
+     ["2-tree vine point (P29)",v2.component_scr_point,"#9a7bff"],
+     ["2-tree vine bootstrap mean",v2.bootstrap_mean,"#4f9cff"],
+     ["Tree-3 bootstrap mean (P30)",t3.bootstrap_mean,"#2fd0a8"],
+     ["Nested PATH-WISE ref",nr.value,"#ffb454"]
+    ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y component SCR: "+fmtMoney(b[1])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>Evidence pack - component SCR read-outs (every figure bit-for-bit from the assembled pack)</h4>'+
+        '<p class="cap">Governed headline '+fmtMoney(gh.value)+' (unchanged through P27-P30); disclosed candidates NOT adopted; nested reference '+fmtMoney(nr.value)+' is a SINGLE run.</p>'+
+        barChart(D,{w:760,h:300,mB:84})+'</div>';
+    }
+    if(rl.length){
+      html+='<div class="subh">Copula-form residual ladder (absolute residual vs the nested reference)</div>'+
+        '<table class="ptable odladder"><thead><tr><th>Dependence form</th><th>Copula-form residual (abs)</th></tr></thead><tbody>';
+      rl.forEach(function(r){ html+='<tr><td>'+esc(r.form)+'</td><td>'+fmtMoney(r.copula_form_residual_abs)+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    if(hist.length){
+      html+='<div class="subh">Dependence-form escalation history (P26-P30)</div>'+
+        '<table class="ptable odhist"><thead><tr><th>Phase</th><th>Form</th><th>Residual (abs)</th><th>Outcome</th></tr></thead><tbody>';
+      hist.forEach(function(h){ html+='<tr><td>'+esc(h.phase)+'</td><td>'+esc(h.form)+'</td><td>'+fmtMoney(h.copula_form_residual_abs)+'</td><td>'+esc(h.outcome)+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    if(Object.keys(srr).length){
+      html+='<div class="subh">Binding stop-rule record (applied at Phase 30 Task 4)</div>'+
+        '<table class="ptable"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>'+
+        '<tr><td>Trigger</td><td>'+esc(srr.trigger||"--")+'</td></tr>'+
+        '<tr><td>Trigger met / applied</td><td>'+(srr.trigger_met?"MET":"not met")+' / '+(srr.applied?"APPLIED":"not applied")+'</td></tr>'+
+        '<tr><td>Effect</td><td>'+esc(srr.effect||"--")+'</td></tr>'+
+        '<tr><td>MR-016 disposition</td><td>'+esc(srr.mr016_disposition||"--")+'</td></tr>'+
+        '<tr><td>MR-017 disposition</td><td>'+esc(srr.mr017_disposition||"--")+'</td></tr>'+
+        '<tr><td>Governed headline move</td><td>'+(srr.governed_headline_move_pct!=null?(100*srr.governed_headline_move_pct).toFixed(4)+"%":"--")+'</td></tr>'+
+        '</tbody></table>';
+    }
+    html+='<div class="subh">Owner options - registry order, NO default, decision rests with the model owner</div>';
+    order.forEach(function(oid,i){
+      var o=opts[oid]||{};
+      html+='<div class="card odoption" style="display:block;margin:10px 0">'+
+        '<div class="k">Option '+(i+1)+' &mdash; '+esc(oid)+(oid===od.escalation_option_id?' (escalation path)':'')+'</div>'+
+        '<div class="v" style="font-size:13.5px;font-weight:400">'+esc(o.what||"")+'</div>'+
+        '<p class="note">Capital effect (abs vs governed headline): <b>'+fmtMoney(o.capital_effect_abs)+'</b>'+
+        ' &middot; escalation path open: '+(o.escalation_path_open?"yes":"no")+
+        ' &middot; governance risk: '+esc(o.governance_risk||"--")+'</p>';
+      var ac=o.acceptance_criteria||[];
+      if(ac.length){
+        html+='<p class="cap">Pre-registered acceptance criteria:</p><ul class="cap">';
+        ac.forEach(function(a){ html+='<li>'+esc(a)+'</li>'; });
+        html+='</ul>';
+      }
+      html+='</div>';
+    });
+    if(wf.length){
+      html+='<div class="subh">Sign-off workflow (decision sits at step 4 - the model owner)</div>'+
+        '<table class="ptable odwf"><thead><tr><th>Step</th><th>Actor</th><th>Action</th><th>Standards</th></tr></thead><tbody>';
+      wf.forEach(function(s){ html+='<tr><td>'+esc(s.step)+'</td><td>'+esc(s.actor)+'</td><td>'+esc(s.action)+'</td><td>'+esc((s.standards||[]).join("; "))+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    html+='<div class="subh">Decision record - BLANK until the owner decides</div>'+
+      '<table class="ptable oddr"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>';
+    ["decision_option_id","rationale","decided_by","decided_at","peer_reviewer","follow_up_change_record_id"].forEach(function(f){
+      var v=drt[f];
+      html+='<tr><td class="mono">'+esc(f)+'</td><td>'+(String(v==null?"":v).trim()? esc(v) : '<span class="chip warn">BLANK - awaiting owner decision</span>')+'</td></tr>';
+    });
+    html+='</tbody></table>'+
+      '<p class="cap">'+esc(drt.instructions||"")+'</p>';
+    if(Object.keys(prov).length){
+      html+='<div class="subh">Figure provenance (frozen archived references; nothing recomputed)</div>'+
+        '<table class="ptable odprov"><thead><tr><th>Figure</th><th>Frozen source</th></tr></thead><tbody>';
+      Object.keys(prov).forEach(function(k){ html+='<tr><td class="mono">'+esc(k)+'</td><td class="mono">'+esc(prov[k])+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    if(lim.length){
+      html+='<div class="subh">Limitations</div><ul class="cap">';
+      lim.forEach(function(l){ html+='<li>'+esc(l)+'</li>'; });
+      html+='</ul>';
+    }
+    html+='<p class="note">'+esc(od.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(od.source||"")+' &middot; '+esc(od.one_page_summary_source||"")+
+      ' &middot; assembly gate ok='+esc(String((od.assembly_gate||{}).ok))+' ('+esc(String((od.assembly_gate||{}).n_checks))+' checks)'+
+      (stds.length?' &middot; Standards: '+esc(stds.join(" | ")):'')+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
+  function renderUserRun(){
+    var el=document.getElementById("userrun"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var ur=DATA.user_run||{};
+    var hl=ur.headline||{};
+    if(!Object.keys(hl).length){
+      el.innerHTML='<p class="muted">No user-input run is embedded in this snapshot (requires contract v1.15.0+ and a scripts/run_model.py run present at build time). '+
+        'To embed one: fill production_run/MODEL_INPUTS_TEMPLATE.xlsx, export model_inputs.json, run scripts/run_model.py, then rebuild this GUI with scripts/build_ui_data.py. '+
+        'The governed read-outs in the other tabs are unaffected.</p>';
+      return;
+    }
+    var bc=ur.bootstrap_ci||{};
+    var rp=ur.run_plan||{}; var rpv=rp.provenance||{};
+    var ip=ur.inputs_provenance||{};
+    var rprod=(ip.representative_product||{});
+    var rep=rprod.representative_product||{};
+    var pf=rprod.portfolio_summary||{};
+    var bs=rprod.book_scaling||{};
+    var liq=(ip.liquidity_exposure||{});
+    var dp=ur.display_provenance||{};
+    var dpc=dp.currency||{};
+    var sa=hl.standalone_scr||{};
+    var usr=ur.use_restrictions||{};
+    function pct(x,d){ return x!=null?(Number(x)).toFixed(d==null?2:d)+"%":"--"; }
+    function ci2(a){ return (a&&a.length===2)?"["+fmtMoney(a[0])+", "+fmtMoney(a[1])+"]":"--"; }
+    var html='<p class="note"><b>User-input run results (Phase UIL) - read-only surface.</b> '+
+      'Every figure is carried bit-for-bit from the embedded run evidence; the display layer recomputes NOTHING. '+
+      'Input provenance: <span class="mono">model_inputs.json &rarr; par_model_v2.user_inputs loader &rarr; scripts/run_model.py</span>.</p>';
+    html+='<div class="cards">';
+    [
+      ["Run label",esc(ur.output_label||"--")],
+      ["Run timestamp (UTC)",esc(String(ur.run_timestamp||"--").slice(0,19))],
+      ["Run verdict",chip(ur.verdict)],
+      ["Nested SCR (99.5% / 1y)",fmtMoney(hl.nested_scr)],
+      ["Selected copula SCR",fmtMoney(hl.copula_scr)+" ("+esc(hl.copula_selected||"--")+")"],
+      ["Var-covar SCR",fmtMoney(hl.var_covar_scr)],
+      ["ESG understatement",hl.esg_understatement_pct!=null?pct(hl.esg_understatement_pct):"--"],
+      ["Model points priced",pf.n_policies!=null?String(pf.n_policies)+" PAR rows ("+String(rprod.gmmb_rows_disclosed!=null?rprod.gmmb_rows_disclosed:"--")+" GMMB row(s) disclosed, out of engine scope)":"--"],
+      ["Run wall clock",ur.wall_clock_seconds!=null?Number(ur.wall_clock_seconds).toFixed(1)+" s":"--"]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+c[0]+
+      '</div><div class="v">'+c[1]+'</div></div>'; });
+    html+='</div>';
+    var D=[]; var names={rate:"Rate",equity:"Equity",credit:"Credit",lapse:"Lapse",mortality:"Mortality",fx:"FX",liquidity:"Liquidity"};
+    var cols={rate:"#4f9cff",equity:"#9a7bff",credit:"#2fd0a8",lapse:"#ffb454",mortality:"#7a8aa0",fx:"#ff6b6b",liquidity:"#2b5d99"};
+    Object.keys(names).forEach(function(k){ if(sa[k]!=null) D.push({label:names[k],value:sa[k],color:cols[k],
+      tip:"<b>"+names[k]+" standalone SCR</b><br>"+fmtMoney(sa[k])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>Standalone SCR by driver - user-input run (bit-for-bit from RUN_MODEL_SUMMARY.json)</h4>'+
+        '<p class="cap">Nested SCR '+fmtMoney(hl.nested_scr)+' &middot; '+esc(hl.copula_selected||"--")+' copula '+fmtMoney(hl.copula_scr)+' &middot; var-covar '+fmtMoney(hl.var_covar_scr)+'</p>'+
+        barChart(D,{w:760,h:300,mB:84})+'</div>';
+    }
+    if(Object.keys(sa).length){
+      html+='<div class="subh">Standalone SCR per driver</div>'+
+        '<table class="ptable urscr"><thead><tr><th>Driver</th><th>Standalone SCR</th></tr></thead><tbody>';
+      Object.keys(names).forEach(function(k){ if(sa[k]!=null) html+='<tr><td>'+names[k]+'</td><td>'+fmtMoney(sa[k])+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    if(Object.keys(bc).length){
+      html+='<div class="subh">Tail bootstrap confidence intervals (n='+esc(String(bc.n_bootstrap!=null?bc.n_bootstrap:"--"))+')</div>'+
+        '<table class="ptable urci"><thead><tr><th>Read-out</th><th>Value</th></tr></thead><tbody>'+
+        '<tr><td>VaR 99.5% (point)</td><td>'+fmtMoney(bc.var_point)+'</td></tr>'+
+        '<tr><td>VaR 95% CI</td><td>'+ci2(bc.var_ci)+'</td></tr>'+
+        '<tr><td>ES 95% CI</td><td>'+ci2(bc.es_ci)+'</td></tr>'+
+        '<tr><td>VaR CI relative half-width</td><td>'+(bc.var_ci_rel_halfwidth!=null?pct(100*bc.var_ci_rel_halfwidth):"--")+'</td></tr>'+
+        '</tbody></table>';
+    }
+    if(Object.keys(rp).length){
+      html+='<div class="subh">Run configuration (with per-setting provenance)</div>'+
+        '<table class="ptable urplan"><thead><tr><th>Setting</th><th>Value</th><th>Provenance</th></tr></thead><tbody>';
+      [["n_outer",rp.n_outer],["n_inner",rp.n_inner],["n_sim",rp.n_sim],["seed",rp.seed],
+       ["bootstrap_replicates",rp.bootstrap_replicates],["horizon_months",rp.horizon_months],
+       ["confidence",rp.confidence],["run_tail",rp.run_tail],["output_label",rp.output_label]
+      ].forEach(function(r){ html+='<tr><td class="mono">'+r[0]+'</td><td>'+esc(String(r[1]==null?"--":r[1]))+'</td><td class="mono">'+esc(String(rpv[r[0]]||"--"))+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    if(Object.keys(pf).length||Object.keys(rep).length){
+      html+='<div class="subh">Model points &amp; portfolio (validated user contract)</div>'+
+        '<table class="ptable urpf"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>';
+      [["PAR model points (n_policies)",pf.n_policies],
+       ["&nbsp;&nbsp;cash-dividend / reversionary-bonus",pf.n_cash_dividend!=null?String(pf.n_cash_dividend)+" / "+String(pf.n_reversionary_bonus):null],
+       ["GMMB rows disclosed (out of engine scope)",rprod.gmmb_rows_disclosed],
+       ["Total sum assured (model points)",pf.total_sum_assured!=null?fmtMoney(pf.total_sum_assured):null],
+       ["Total annual premium (model points)",pf.total_annual_premium!=null?fmtMoney(pf.total_annual_premium):null],
+       ["Representative product (inforce-weighted)",Object.keys(rep).length?("age "+rep.issue_age+" "+esc(rep.gender||"")+", SA "+fmtMoney(rep.sum_assured)+", premium "+fmtMoney(rep.annual_premium)+", term "+rep.term_years+"y"):null],
+       ["Term snap note",rep.term_snap_note],
+       ["Portfolio digest (sha256)",rprod.portfolio_digest],
+       ["Book scaling (DISCLOSED APPROXIMATION)",bs.linear_scale_factor!=null?("&times;"+num(bs.linear_scale_factor)+" to "+num(bs.policy_count_total)+" policies / "+fmtMoney(bs.sum_assured_total)+" book SA - "+esc(bs.note||"")):null],
+       ["Liquidity exposure notional",((liq.derivation||{}).exposure_notional!=null)?fmtMoney(liq.derivation.exposure_notional)+" ("+esc(liq.source||"--")+")":null]
+      ].forEach(function(r){ if(r[1]!=null) html+='<tr><td>'+r[0]+'</td><td class="mono">'+(typeof r[1]==="string"?r[1]:esc(String(r[1])))+'</td></tr>'; });
+      html+='</tbody></table>';
+    }
+    html+='<div class="subh">Input &amp; display provenance (exactly as stamped by build_ui_data.py)</div>'+
+      '<table class="ptable urprov"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>'+
+      '<tr><td>Inputs file</td><td class="mono">'+esc(ur.inputs||String(ip.model_inputs||"ABSENT (governed default)"))+'</td></tr>'+
+      '<tr><td>Input chain</td><td class="mono">model_inputs.json &rarr; par_model_v2.user_inputs loader &rarr; scripts/run_model.py</td></tr>'+
+      '<tr><td>Run evidence</td><td class="mono">'+esc(ur.evidence_source||"")+'</td></tr>'+
+      '<tr><td>Run summary</td><td class="mono">'+esc(ur.source||"")+'</td></tr>'+
+      '<tr><td>Display currency (stamped)</td><td>'+esc(String(dpc.code||"--"))+(dpc.symbol?(' ('+esc(dpc.symbol)+')'):'')+', '+esc(String(dpc.decimals!=null?dpc.decimals:"--"))+' dp, '+esc(String(dpc.thousands||"--"))+' thousands</td></tr>'+
+      '<tr><td>Currency source (stamped)</td><td class="mono">'+esc(dp.currency_source||"--")+'</td></tr>'+
+      '<tr><td>Output label (stamped)</td><td class="mono">'+esc(String(dp.output_label||"--"))+'</td></tr>'+
+      '<tr><td>Frozen dependence</td><td>'+esc(String(ip.frozen_dependence||"--"))+'</td></tr>'+
+      '</tbody></table>';
+    if((usr.permitted_uses||[]).length||(usr.prohibited_uses||[]).length){
+      html+='<div class="subh">Use restrictions ('+esc(String(usr.status||"--"))+')</div><ul class="cap">';
+      (usr.permitted_uses||[]).forEach(function(u){ html+='<li>PERMITTED: '+esc(u)+'</li>'; });
+      (usr.prohibited_uses||[]).forEach(function(u){ html+='<li>PROHIBITED: '+esc(u)+'</li>'; });
+      html+='</ul>';
+    }
+    html+='<p class="note">'+esc(ur.narrative||"")+'</p>';
+    html+='<p class="note mono">Sources: '+esc(ur.source||"")+' &middot; '+esc(ur.evidence_source||"")+'</p>';
+    el.innerHTML=html;
+    wireTips(el);
+  }
+
+  function renderPhase29(){
+    var el=document.getElementById("phase29"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var p=DATA.phase29||{};
+    var co=p.copula||{}, bo=p.bootstrap||{}, td=p.tail||{};
+    if(!Object.keys(co).length&&!Object.keys(bo).length&&!Object.keys(td).length){
+      el.innerHTML='<p class="muted">No Phase 29 vine / pair-copula tail-dependence data in this snapshot (requires contract v1.11.0+).</p>';
+      return;
+    }
+    var vi=bo.vine_component_scr_ci||{}, fz=bo.frozen_t_component_scr_ci||{};
+    var vinePoint=bo.task2_vine_candidate_component_point!=null?bo.task2_vine_candidate_component_point:(co.vine_candidate_readout||{}).scr_component;
+    var frzPoint=bo.task2_frozen_t_component_point!=null?bo.task2_frozen_t_component_point:co.frozen_t_reference_scr_component;
+    var grpPoint=co.grouped_t_comparison_scr_component;
+    var nestedRef=bo.nested_pathwise_reference;
+    var gd=bo.residual_gap_redecomposition_point||{};
+    var mr=td.mr_remediation_decision||{};
+    var oc=td.overfit_check||{};
+    var fc=co.family_counts||{};
+    var fcs=Object.keys(fc).map(function(k){ return fc[k]+" "+k; }).join(", ");
+    var canon=String(td.canonical_p!=null?Math.round(100*td.canonical_p):"90");
+    var lv=(td.levels||{})[canon]||{};
+    var rows=lv.rows||[];
+    function mean(m,d){ return (m&&m.mean!=null)?Number(m.mean).toFixed(d==null?4:d):"--"; }
+    function ci(m,d){ return (m&&m.ci_lo!=null)?"["+Number(m.ci_lo).toFixed(d==null?4:d)+", "+Number(m.ci_hi).toFixed(d==null?4:d)+"]":"--"; }
+    var html='<div class="cards">';
+    [
+      ["Structure",(co.structure||"--")+(co.max_vine_trees!=null?" ("+co.max_vine_trees+" trees, root "+(co.root_driver_name||"?")+")":"")],
+      ["Vine candidate SCR (point)",fmtMoney(vinePoint)],
+      ["Vine candidate SCR (bootstrap mean)",fmtMoney(vi.mean)],
+      ["Frozen single-df t SCR (point)",fmtMoney(frzPoint)],
+      ["Frozen single-df t SCR (mean)",fmtMoney(fz.mean)],
+      ["Grouped-t SCR (point) - P28 ref",fmtMoney(grpPoint)],
+      ["Nested SCR (path-wise) - reference",fmtMoney(nestedRef)],
+      ["Vine 95% CI",vi.ci_lo!=null?"["+fmtMoney(vi.ci_lo)+", "+fmtMoney(vi.ci_hi)+"]":"--"],
+      ["Vine SE (% of mean)",bo.se_frac_of_mean!=null?(100*bo.se_frac_of_mean).toFixed(2)+"%":"--"],
+      ["Nested inside vine 95% CI?",bo.headline_nested_inside_95ci?"yes":"no (OUTSIDE)"],
+      ["Holdout/fit max-lift ratio",oc.holdout_to_fit_max_lift_ratio!=null?Number(oc.holdout_to_fit_max_lift_ratio).toFixed(3):"--"],
+      ["MR-016 / MR-017",(mr.mr016_decision==="KEEP_OPEN"?"KEEP OPEN":"--")+" / "+(mr.open_mr017?"OPENED":"--")]
+    ].forEach(function(c){ html+='<div class="card"><div class="k">'+c[0]+
+      '</div><div class="v">'+esc(c[1])+'</div></div>'; });
+    html+='</div>';
+    html+='<p class="note"><b>MATERIAL FINDING.</b> The truncated credit-root C-vine is the FIRST dependence candidate to move TOWARD the nested path-wise reference: '+
+      'it RAISES upper-tail co-dependence on ALL fitted links and NARROWS the copula-form residual to '+fmtMoney(gd.copula_form_residual_abs)+
+      ' (-65.33% vs grouped-t '+fmtMoney(bo.grouped_t_copula_form_residual_ref)+', -40.52% vs skew-t '+fmtMoney(bo.skewt_reconfirmed_copula_form_residual_ref)+'). '+
+      'The nested truth remains OUTSIDE the vine 95% CI, so MR-016 stays OPEN (narrowing DISCLOSED) and MR-017 tracks the residual vine-FORM limitations. '+
+      'The vine is DISCLOSED, not adopted into the governed headline.</p>';
+    var D=[];
+    [["Vine candidate mean",vi.mean,"#4f9cff"],
+     ["Vine candidate point",vinePoint,"#2fd0a8"],
+     ["Single-df t mean",fz.mean,"#9a7bff"],
+     ["Single-df t point",frzPoint,"#2b5d99"],
+     ["Grouped-t point (P28)",grpPoint,"#7a8aa0"],
+     ["Nested PATH-WISE ref",nestedRef,"#ffb454"]
+    ].forEach(function(b){ if(b[1]!=null) D.push({label:b[0],value:b[1],color:b[2],
+      tip:"<b>"+b[0]+"</b><br>99.5% / 1y SCR: "+fmtMoney(b[1])}); });
+    if(D.length){
+      html+='<div class="chartwrap"><h4>99.5% / 1y SCR &mdash; vine vs grouped-t vs single-df t vs nested reference</h4>'+
+        '<p class="cap">The vine candidate sits ABOVE the single-df t boundary and is the first candidate to narrow the gap to the nested path-wise reference '+fmtMoney(nestedRef)+
+        ' (-8.96%); the move is disclosed, not gated.</p>'+barChart(D,{w:760,h:300,mB:84})+'</div>';
+    }
+    if(rows.length){
+      html+='<div class="subh">Pair-level tail dependence at canonical p=0.'+canon+' (200&times;20k CRN bootstrap, 95% CI) &mdash; fitted first/second tree + never-fitted holdout</div>'+
+        '<table class="ptable p29pairs"><thead><tr><th>Pair</th><th>Tree</th><th>Candidate U</th><th>Frozen-t U</th>'+
+        '<th>Lift U (cand &minus; frz)</th><th>Lift L</th></tr></thead><tbody>';
+      rows.forEach(function(rw){
+        var tl=rw.tree==="second"?("2nd | "+(rw.cond_label||"?")):(rw.tree==="holdout"?"holdout":"1st");
+        html+='<tr><td>'+esc(rw.pair_label)+'</td><td>'+esc(tl)+'</td>'+
+          '<td>'+mean(rw.cand_upper,4)+' '+ci(rw.cand_upper,4)+'</td>'+
+          '<td>'+mean(rw.frz_upper,4)+' '+ci(rw.frz_upper,4)+'</td>'+
+          '<td>'+mean(rw.lift_upper,4)+' '+ci(rw.lift_upper,4)+'</td>'+
+          '<td>'+mean(rw.lift_lower,4)+' '+ci(rw.lift_lower,4)+'</td></tr>';
+      });
+      html+='</tbody></table>';
+      var TD=[];
+      rows.forEach(function(rw){
+        if(rw.lift_upper&&rw.lift_upper.mean!=null){
+          var hold=rw.tree==="holdout";
+          TD.push({label:rw.pair_label+(rw.tree==="second"?" | "+(rw.cond_label||""):"")+(hold?" (holdout)":""),
+            value:rw.lift_upper.mean,color:hold?"#7a8aa0":(rw.tree==="second"?"#2fd0a8":"#4f9cff"),
+            tip:"<b>"+rw.pair_label+"</b> ("+rw.tree+")<br>upper-tail lift at p=0."+canon+": "+rw.lift_upper.mean.toFixed(4)});
+        }
+      });
+      if(TD.length){
+        html+='<div class="chartwrap"><h4>Candidate-vs-frozen upper-tail lift profile at p=0.'+canon+'</h4>'+
+          '<p class="cap">The tilt concentrates on the fitted links (largest: rate-liquidity given credit +0.8514); the largest holdout lift is '+
+          (oc.max_holdout_pair_abs_mean_lift!=null?Number(oc.max_holdout_pair_abs_mean_lift).toFixed(4):"--")+
+          ' (holdout/fit ratio '+(oc.holdout_to_fit_max_lift_ratio!=null?Number(oc.holdout_to_fit_max_lift_ratio).toFixed(3):"--")+' &mdash; overfit gate PASS).</p>'+
+          barChart(TD,{w:760,h:320,mB:110})+'</div>';
+      }
+    }
+    if(Object.keys(gd).length){
+      html+='<div class="subh">Residual gap to nested truth &mdash; vine re-decomposition and narrowing</div>'+
+        '<table class="ptable p29gaptable"><thead><tr><th>Component</th><th>Absolute</th><th>Share / move</th><th>Basis</th></tr></thead><tbody>'+
+        '<tr><td>Relief-surface error</td><td>'+fmtMoney(gd.relief_surface_part_abs)+'</td><td>'+
+          (gd.relief_surface_share_of_gap!=null?(100*gd.relief_surface_share_of_gap).toFixed(1)+"%":"--")+
+          '</td><td>bounded by governed 1.16% OOS error</td></tr>'+
+        '<tr><td>Copula-form residual (vine)</td><td>'+fmtMoney(gd.copula_form_residual_abs)+'</td><td>'+
+          (gd.copula_form_share_of_gap!=null?(100*gd.copula_form_share_of_gap).toFixed(1)+"% of gap":"--")+
+          '</td><td>grouped-t '+fmtMoney(bo.grouped_t_copula_form_residual_ref)+' / skew-t '+fmtMoney(bo.skewt_reconfirmed_copula_form_residual_ref)+' &rarr; vine '+fmtMoney(gd.copula_form_residual_abs)+'</td></tr>'+
+        '<tr><td>Residual narrowing vs grouped-t</td><td>'+fmtMoney((bo.grouped_t_copula_form_residual_ref||0)-(gd.copula_form_residual_abs||0))+'</td><td>'+
+          (mr.residual_change_vs_grouped_t_rel!=null?((100*mr.residual_change_vs_grouped_t_rel).toFixed(2)+"%"):"--")+
+          '</td><td>first candidate to NARROW below BOTH baselines (vs skew-t '+
+          (mr.residual_change_vs_skewt_rel!=null?((100*mr.residual_change_vs_skewt_rel).toFixed(2)+"%"):"--")+')</td></tr>'+
+        '<tr><td>Total gap (nested &minus; vine)</td><td>'+fmtMoney(gd.gap_total_abs)+'</td><td>'+
+          (gd.gap_total_rel_to_nested!=null?(100*gd.gap_total_rel_to_nested).toFixed(2)+"% of nested":"--")+
+          '</td><td>nested with-actions reference</td></tr>'+
+        '</tbody></table>'+
+        '<p class="note">The nested reference '+fmtMoney(nestedRef)+' is OUTSIDE the vine CI ['+fmtMoney(vi.ci_lo)+', '+fmtMoney(vi.ci_hi)+']; '+
+        'the pre-registered close criteria (inside-CI AND material shrink) are NOT met, so MR-016 stays OPEN with the narrowing DISCLOSED; '+
+        'MR-017 tracks the residual vine-FORM limitations (2-tree truncation, capped families, educational tilt simulator, nested inner-path dynamics).</p>';
+    }
+    html+='<div class="subh">MR remediation and governance decision</div>'+
+      '<table class="ptable"><thead><tr><th>Decision</th><th>Value</th><th>Rationale</th></tr></thead><tbody>'+
+      '<tr><td>Governed headline move</td><td>'+(mr.governed_headline_relative_move!=null?(100*mr.governed_headline_relative_move).toFixed(4)+"%":"--")+
+      '</td><td>Frozen single-df t boundary '+fmtMoney(mr.governed_headline_reference)+' recovered bit-identically; MR-010/MR-014 no-refresh.</td></tr>'+
+      '<tr><td>MR-016</td><td>'+(mr.mr016_decision==="KEEP_OPEN"?"KEEP OPEN":esc(mr.mr016_decision||"--"))+
+      '</td><td>Nested NOT inside the vine 95% CI; residual narrowing ('+
+      (mr.residual_materially_shrinks?"material":"--")+') DISCLOSED, close criteria not met.</td></tr>'+
+      '<tr><td>MR-017</td><td>'+(mr.open_mr017?"OPENED":"--")+'</td><td>Residual vine-FORM limitation tracked (truncation / family cap / tilt simulator / inner-path dynamics).</td></tr>'+
+      '<tr><td>Vine adoption</td><td>DISCLOSED only</td><td>NOT adopted into the governed headline without owner sign-off.</td></tr>'+
+      '</tbody></table>';
+    if(fcs){
+      html+='<p class="note">Leakage-free family selection (fit digest '+esc(co.fit_indices_digest||"--")+' / holdout digest '+esc(co.holdout_indices_digest||"--")+
+        '): '+esc(fcs)+'. Boundary recovery dev '+esc(co.boundary_recovery_dev)+'; df '+esc(co.df_rematched)+' / rho max|diff| '+esc(co.rho_max_abs_diff)+' FROZEN.</p>';
+    }
+    html+=maGateGrid(co.gates,"Task 2 pre-registered gates (vine / pair-copula prototype)");
+    html+=maGateGrid(bo.gates,"Task 3 pre-registered gates (vine margin bootstrap + residual re-decomposition)");
+    html+=maGateGrid(td.gates,"Task 4 pre-registered gates (pair-level tail diagnostics + overfit check + MR-016/MR-017)");
     html+='<p class="note">'+esc(p.narrative||"")+'</p>';
     html+='<p class="note mono">Sources: '+esc(co.source||"")+' &middot; '+esc(bo.source||"")+' &middot; '+esc(td.source||"")+
       ' &middot; ChangeRecords '+esc(co.change_record_id||"")+' / '+esc(bo.change_record_id||"")+' / '+esc(td.change_record_id||"")+'</p>';
@@ -3478,18 +4930,24 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   function govChangesBlock(g){
     var recs=(g.change_records||[]).slice();
+    var supp=(g.change_records_supplement||[]);
+    recs=recs.concat(supp);
     if(!recs.length) return '<div class="chartwrap"><p class="muted">No change records in snapshot.</p></div>';
     recs.sort(function(a,b){ return String(b.created_at||'').localeCompare(String(a.created_at||'')); });
+    var suppNote=supp.length?('<p class="cap">Completeness sweep (Phase 32 Task 4): '+supp.length+' record(s) synced '+
+      'bit-for-bit from the governance store and marked <span class="badge">store-sync</span>; '+
+      'the snapshot export carried '+((g.change_records||[]).length)+' of '+recs.length+' governed records.</p>'):'';
     var h='<div class="chartwrap"><h4>ChangeRecord approval timeline</h4>'+
       '<p class="cap">Newest first. Each record carries its standards basis and a full peer-review &rarr; owner-review &rarr; '+
-      'approval sign-off chain. Click a record to expand its sign-off history.</p><div class="timeline">';
+      'approval sign-off chain. Click a record to expand its sign-off history.</p>'+suppNote+'<div class="timeline">';
     recs.forEach(function(c,i){
       var refs=(c.standard_references||[]).map(function(x){return '<span class="badge">'+esc(x)+'</span>';}).join(' ');
       var soh=(c.sign_off_history||[]).map(function(x){
         return '<div class="tl-soh"><span class="mono">'+esc(String(x.timestamp||'').slice(0,19).replace('T',' '))+'</span> '+
           chip(x.status)+' <b>'+esc(x.actor||'')+'</b><div class="params">'+esc(x.comments||'')+'</div></div>'; }).join('');
+      var syncBadge=c.store_synced?' <span class="badge">store-sync</span>':'';
       h+='<div class="tl-item"><div class="tl-dot '+chipClass(c.status)+'"></div><div class="tl-body">'+
-        '<div class="tl-head crow" data-i="'+i+'" style="cursor:pointer">'+chip(c.status)+' <b>'+esc(c.title||'')+'</b> '+chip(c.change_type)+'</div>'+
+        '<div class="tl-head crow" data-i="'+i+'" style="cursor:pointer">'+chip(c.status)+' <b>'+esc(c.title||'')+'</b> '+chip(c.change_type)+syncBadge+'</div>'+
         '<div class="params">'+esc(String(c.created_at||'').slice(0,10))+' &middot; '+esc(c.phase||'')+' &middot; '+
         esc(c.author||'')+' &rarr; '+esc(c.peer_reviewer||'')+' &middot; <span class="mono">'+esc(String(c.record_id||'').slice(0,8))+'</span></div>'+
         '<div class="cdet" data-i="'+i+'" style="display:none"><div class="subh">Standards basis</div>'+(refs||'<span class="muted">none</span>')+
@@ -3500,10 +4958,25 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   function govAuditBlock(g){
     var it=govIntegrity(g), statusDist={}, typeDist={};
-    (g.change_records||[]).forEach(function(c){ statusDist[c.status]=(statusDist[c.status]||0)+1;
+    var allRecs=(g.change_records||[]).concat(g.change_records_supplement||[]);
+    allRecs.forEach(function(c){ statusDist[c.status]=(statusDist[c.status]||0)+1;
       typeDist[c.change_type]=(typeDist[c.change_type]||0)+1; });
     function dist(o){ return Object.keys(o).map(function(k){ return '<tr><td>'+chip(k)+'</td><td>'+o[k]+'</td></tr>'; }).join(''); }
     var badge='<div class="auditbadge '+(it.ok?'ok':'bad')+'">'+(it.ok?'✓ AUDIT TRAIL VERIFIED':'✗ AUDIT TRAIL INTEGRITY FAILURE')+'</div>';
+    var ss=g.store_sync, ssHtml='';
+    if(ss){
+      ssHtml='<div class="storesync"><h4 style="margin-top:18px">Governance-store sync (Phase 32 Task 4 completeness sweep)</h4>'+
+        '<p class="cap">Inventory-driven diff of the full governance store against this embedded export. Counts are carried '+
+        'bit-for-bit from <span class="mono">'+esc(ss.source||'')+'</span>; the display layer recomputes nothing.</p>'+
+        '<div class="cards">'+
+        '<div class="card"><div class="k">ChangeRecords in store</div><div class="v">'+ss.change_records_store_total+'</div></div>'+
+        '<div class="card"><div class="k">In snapshot export</div><div class="v">'+ss.change_records_embedded+'</div></div>'+
+        '<div class="card"><div class="k">Synced by sweep</div><div class="v">'+ss.change_records_supplemented+'</div></div>'+
+        '<div class="card"><div class="k">Audit entries in store</div><div class="v">'+ss.audit_trail_store_entries+'</div></div>'+
+        '<div class="card"><div class="k">Risk register (store / shown)</div><div class="v">'+ss.risk_register_store_total+
+          ' / '+ss.risk_register_embedded+'</div></div>'+
+        '</div><p class="cap">Sweep evidence: <span class="mono">'+esc(ss.sweep_report||'')+'</span></p></div>';
+    }
     return '<div class="chartwrap"><h4>Audit-trail integrity (recomputed offline)</h4>'+
       '<p class="cap">Recomputed from the embedded governance export: integrity holds when every audit entry is verified '+
       'and none failed. Sign-off steps are the human-review evidence behind each approved change.</p>'+badge+
@@ -3513,9 +4986,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       '<div class="card"><div class="k">Failed</div><div class="v" style="color:'+(it.failed?'var(--fail)':'var(--pass)')+'">'+it.failed+'</div></div>'+
       '<div class="card"><div class="k">Sign-off steps</div><div class="v">'+it.signoff_steps+'</div></div></div>'+
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px">'+
-      '<div><div class="subh">Change records by status</div><table><tbody>'+dist(statusDist)+'</tbody></table></div>'+
-      '<div><div class="subh">Change records by type</div><table><tbody>'+dist(typeDist)+'</tbody></table></div>'+
-      '</div></div>';
+      '<div><div class="subh">Change records by status (incl. store-synced)</div><table><tbody>'+dist(statusDist)+'</tbody></table></div>'+
+      '<div><div class="subh">Change records by type (incl. store-synced)</div><table><tbody>'+dist(typeDist)+'</tbody></table></div>'+
+      '</div>'+ssHtml+'</div>';
   }
 
   function renderGovernance(){
@@ -3579,7 +5052,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       "ui_data.json -- stable offline UI contract (v"+(DATA&&DATA.contract_version||"1.0.0")+")",
       "{",
       "  contract_version : string   // bump on breaking schema change",
-      "  meta         : {model_name, model_version, generated_utc, classification}",
+      "  meta         : {model_name, model_version, generated_utc, classification,",
+      "                  currency:{code,symbol,decimals,scale,thousands},  // v1.12.0+",
+      "                  currency_source, output_label}                    // v1.12.0+",
       "  summary      : {tasks_completed, tasks_total, phases_completed, gates_cleared,",
       "                  gates_total, risks_open, risks_mitigated, production_status, ...}",
       "  inventory    : [{id, path, category, bytes, sha256, mtime_utc, headline}]",
@@ -3593,7 +5068,16 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       "  calibrations : [{driver, gate_id, market, params, gate_status, gate_evidence,",
       "                   is_placeholder, source, lineage_id,",
       "                   diagnostics:{method,n_obs,fit_r2,converged,criteria[],fit_bars}}]",
+      "  owner_decision_p31 : {evidence_pack, owner_options, owner_option_order,",
+      "                  signoff_workflow, decision_record_template, ...}  // v1.14.0+",
+      "  user_run     : {run_timestamp, output_label, currency, inputs, headline,",
+      "                  bootstrap_ci, verdict, run_plan, inputs_provenance,",
+      "                  display_provenance, use_restrictions, ...}        // v1.15.0+",
+      "  distribution_explorer : {provenance, cdf_grid, quantile_grid,",
+      "                  archived_percentiles, archived_confidence_sweep,",
+      "                  archived_headline, histogram, seeds}    // v1.17.0+",
       "  governance   : {audit_entries, audit_integrity_ok, change_records,",
+      "                  change_records_supplement, store_sync,   // v1.16.0+",
       "                  deployment_gates, risk_register}",
       "  verdicts     : [{name, verdict}]",
       "}"
@@ -3633,10 +5117,77 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   function buildRiskCSV(){ var rr=(DATA&&DATA.governance&&DATA.governance.risk_register)||[];
     return rowsToCSV(["risk_id","title","overall_rating","mitigation_status","category","likelihood","impact","owner","related_standard","updated_at","description","mitigation"],
       rr.map(function(r){ return [r.risk_id,r.title,r.overall_rating,r.mitigation_status,r.category,r.likelihood,r.impact,r.owner,r.related_standard,r.updated_at,r.description,r.mitigation]; })); }
-  function buildChangesCSV(){ var cr=(DATA&&DATA.governance&&DATA.governance.change_records)||[];
+  function buildChangesCSV(){ var gg=(DATA&&DATA.governance)||{};
+    var cr=(gg.change_records||[]).concat(gg.change_records_supplement||[]);
     return rowsToCSV(["record_id","title","status","change_type","phase","author","peer_reviewer","created_at","standard_references","signoff_steps"],
       cr.map(function(c){ return [c.record_id,c.title,c.status,c.change_type,c.phase,c.author,c.peer_reviewer,c.created_at,(c.standard_references||[]).join("; "),(c.sign_off_history||[]).length]; })); }
-  window.__uiExport={ inventoryCSV:buildInventoryCSV, riskCSV:buildRiskCSV, changesCSV:buildChangesCSV };
+  // ---- Phase 33 Task 4 (gap G3): CSV export coverage for every governed
+  // owner-decision / governance read-out table. Each builder reads the SAME
+  // embedded snapshot keys the on-screen tables render, so exported values are
+  // bit-for-bit equal to the rendered figures. NOTHING is recomputed; the
+  // decision record stays BLANK and options stay in registry order (neutral).
+  function buildDeploymentGatesCSV(){ var g=(DATA&&DATA.governance)||{}; var gates=g.deployment_gates||[];
+    return rowsToCSV(["gate_id","description","status","level","blocking","cleared"],
+      gates.map(function(x){ return [x.gate_id,x.description,x.status,x.level,x.blocking,x.cleared]; })); }
+  function buildOwnerOptionsCSV(){ var od=(DATA&&DATA.owner_decision_p31)||{}; var opts=od.owner_options||{}; var order=od.owner_option_order||[];
+    return rowsToCSV(["order","option_id","is_escalation_path","what","capital_effect_abs","escalation_path_open","governance_risk","acceptance_criteria"],
+      order.map(function(oid,i){ var o=opts[oid]||{}; return [i+1,oid,(oid===od.escalation_option_id),o.what,o.capital_effect_abs,o.escalation_path_open,o.governance_risk,(o.acceptance_criteria||[]).join(" | ")]; })); }
+  function buildEvidenceCSV(){ var ev=((DATA&&DATA.owner_decision_p31)||{}).evidence_pack||{};
+    var gh=ev.governed_headline||{}, dc=ev.disclosed_candidates||{}, v2=dc.vine2||{}, t3=dc.tree3||{}, nr=ev.nested_reference||{};
+    function ci(a){ return (a&&a.length===2)?(a[0]+" .. "+a[1]):""; }
+    var rows=[
+      ["governed_headline_frozen_single_df_t", gh.value, "", String(gh.status||"")],
+      ["vine2_point_P29", v2.component_scr_point, "", ""],
+      ["vine2_bootstrap_mean_P29", v2.bootstrap_mean, ci(v2.bootstrap_ci95), ""],
+      ["tree3_point_P30", t3.component_scr_point, "", ""],
+      ["tree3_bootstrap_mean_P30", t3.bootstrap_mean, ci(t3.bootstrap_ci95), ""],
+      ["nested_pathwise_reference_single_run", nr.value, "", "inside vine2 CI="+(nr.inside_vine2_ci95?"yes":"no")+"; inside tree3 CI="+(nr.inside_tree3_ci95?"yes":"no")]
+    ];
+    return rowsToCSV(["read_out","value","ci95","note"], rows); }
+  function buildResidualLadderCSV(){ var ev=((DATA&&DATA.owner_decision_p31)||{}).evidence_pack||{}; var rl=ev.residual_ladder||[];
+    return rowsToCSV(["dependence_form","copula_form_residual_abs"], rl.map(function(r){ return [r.form,r.copula_form_residual_abs]; })); }
+  function buildEscalationHistoryCSV(){ var ev=((DATA&&DATA.owner_decision_p31)||{}).evidence_pack||{}; var h=ev.escalation_history||[];
+    return rowsToCSV(["phase","form","copula_form_residual_abs","outcome"], h.map(function(x){ return [x.phase,x.form,x.copula_form_residual_abs,x.outcome]; })); }
+  function buildStopRuleCSV(){ var ev=((DATA&&DATA.owner_decision_p31)||{}).evidence_pack||{}; var sr=(ev.risk_register_status||{}).stop_rule_record||{};
+    var rows=[["trigger",sr.trigger],["trigger_met",sr.trigger_met],["applied",sr.applied],["effect",sr.effect],["mr016_disposition",sr.mr016_disposition],["mr017_disposition",sr.mr017_disposition],["governed_headline_move_pct",sr.governed_headline_move_pct]];
+    return rowsToCSV(["field","value"], rows); }
+  function buildSignoffWorkflowCSV(){ var wf=((DATA&&DATA.owner_decision_p31)||{}).signoff_workflow||[];
+    return rowsToCSV(["step","actor","action","standards"], wf.map(function(sw){ return [sw.step,sw.actor,sw.action,(sw.standards||[]).join("; ")]; })); }
+  function buildDecisionRecordCSV(){ var drt=((DATA&&DATA.owner_decision_p31)||{}).decision_record_template||{};
+    return rowsToCSV(["field","value"], ["decision_option_id","rationale","decided_by","decided_at","peer_reviewer","follow_up_change_record_id"].map(function(fld){ var v=drt[fld]; return [fld, (String(v==null?"":v).trim()? v : "BLANK - awaiting owner decision")]; })); }
+  function buildComparatorCSV(){ var rows=(typeof cmpRegistry==="function")?cmpRegistry():[];
+    return rowsToCSV(["id","label","phase","governed","component_scr_point","ci95_low","ci95_high","src_point","src_ci"],
+      rows.map(function(r){ var c=r.ci||[]; return [r.id,r.label,r.phase,!!r.governed,r.point,(c[0]==null?"":c[0]),(c[1]==null?"":c[1]),r.srcPoint,r.srcCi]; })); }
+  function buildDistGridCSV(){ var dx=(DATA&&DATA.distribution_explorer)||{}; var cg=dx.cdf_grid||{}; var x=cg.x||[], p=cg.p||[];
+    return rowsToCSV(["grid_index","loss","cdf"], x.map(function(xv,i){ return [i,xv,p[i]]; })); }
+  function buildSignoffPackCSV(){ var nl="\r\n";
+    return [
+      "# OWNER SIGN-OFF PACK -- governed read-outs (bit-for-bit from the embedded snapshot)",
+      "# Options are in registry order with NO default; nothing is recommended.",
+      "# The decision record is BLANK until the model owner decides (MR-016 / MR-017).",
+      "",
+      "## Evidence pack -- component SCR read-outs",
+      buildEvidenceCSV(), "",
+      "## Owner options (registry order)",
+      buildOwnerOptionsCSV(), "",
+      "## Copula-form residual ladder",
+      buildResidualLadderCSV(), "",
+      "## Dependence-form escalation history",
+      buildEscalationHistoryCSV(), "",
+      "## Binding stop-rule record",
+      buildStopRuleCSV(), "",
+      "## Sign-off workflow",
+      buildSignoffWorkflowCSV(), "",
+      "## Decision record (BLANK until the owner decides)",
+      buildDecisionRecordCSV(), "",
+      "## Deployment gates",
+      buildDeploymentGatesCSV()
+    ].join(nl); }
+  window.__uiExport={ inventoryCSV:buildInventoryCSV, riskCSV:buildRiskCSV, changesCSV:buildChangesCSV,
+    deploymentGatesCSV:buildDeploymentGatesCSV, ownerOptionsCSV:buildOwnerOptionsCSV, evidenceCSV:buildEvidenceCSV,
+    residualLadderCSV:buildResidualLadderCSV, escalationHistoryCSV:buildEscalationHistoryCSV, stopRuleCSV:buildStopRuleCSV,
+    signoffWorkflowCSV:buildSignoffWorkflowCSV, decisionRecordCSV:buildDecisionRecordCSV, comparatorCSV:buildComparatorCSV,
+    distGridCSV:buildDistGridCSV, signoffPackCSV:buildSignoffPackCSV };
   function isVisible(el){ return !!(el&&(el.offsetWidth||el.offsetHeight||(el.getClientRects&&el.getClientRects().length))); }
   function dataURLtoBlob(du){ var p=du.split(","),b=atob(p[1]),n=b.length,u=new Uint8Array(n); while(n--) u[n]=b.charCodeAt(n); return new Blob([u],{type:"image/png"}); }
   function svgToPng(svg,filename){
@@ -3676,6 +5227,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       ["btnCsvInv",function(){ downloadText("inventory.csv",buildInventoryCSV(),"text/csv"); }],
       ["btnCsvRisk",function(){ downloadText("risk_register.csv",buildRiskCSV(),"text/csv"); }],
       ["btnCsvChg",function(){ downloadText("change_records.csv",buildChangesCSV(),"text/csv"); }],
+      ["btnCsvGates",function(){ downloadText("deployment_gates.csv",buildDeploymentGatesCSV(),"text/csv"); }],
+      ["btnCsvSignoff",function(){ downloadText("owner_signoff_pack.csv",buildSignoffPackCSV(),"text/csv"); }],
       ["btnPrint",function(){ try{ window.print(); }catch(e){} }]
     ];
     map.forEach(function(m){ var b=document.getElementById(m[0]); if(b) b.onclick=m[1]; });
@@ -3702,6 +5255,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     Object.keys(lbl).forEach(function(id){ var el=document.getElementById(id); if(el&&!el.getAttribute("aria-label")) el.setAttribute("aria-label",lbl[id]); });
     [].forEach.call(document.querySelectorAll(".filter input,.filter select"),function(el){ if(!el.getAttribute("aria-label")) el.setAttribute("aria-label", el.id||"filter control"); });
     [].forEach.call(document.querySelectorAll(".rrow,.crow"),function(el){ if(!el.hasAttribute("tabindex")){ el.setAttribute("tabindex","0"); el.setAttribute("role","button"); } });
+    captionTables();
   }
   var _a11yWired=false;
   function wireGlobalA11y(){
@@ -3715,21 +5269,372 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
           b.setAttribute("aria-selected", on?"true":"false");
           b.setAttribute("tabindex", on?"0":"-1");
         }); }
+        // Phase 33 Task 5 (gap G4): sub-views re-render their tables on click;
+        // re-apply captions so re-rendered tables keep their accessible name.
+        captionTables();
       }
     });
+    // Phase 33 Task 5 (gap G4): restore the tab named in the URL hash on
+    // back/forward navigation or manual hash edits.
+    window.addEventListener("hashchange", tabFromHash);
     document.addEventListener("keydown",function(e){
       var t=e.target; if(!t||!t.classList) return;
       if((e.key==="Enter"||e.key===" "||e.key==="Spacebar")&&(t.classList.contains("rrow")||t.classList.contains("crow"))){ e.preventDefault(); t.click(); }
     });
   }
+
+  // ---- Phase 33 Task 2 (gap G1): interactive cross-phase SCR comparator ----
+  // DISPLAY LAYER ONLY over the embedded ui_data snapshot: every point and CI
+  // figure below is read bit-for-bit from keys ALREADY embedded by earlier
+  // phases (P26-P30 bootstrap blocks); nothing is recomputed. The ONLY
+  // arithmetic performed here is the signed subtraction in the delta column,
+  // which is display arithmetic - NOT new model output. The comparator is
+  // neutral: structures appear in registry order and nothing is recommended;
+  // the MR-016/MR-017 dependence decision rests entirely with the owner.
+  var CMP_BASELINE_DEFAULT = "frozen_t";
+  var CMP_BASELINE = CMP_BASELINE_DEFAULT;
+  function cmpRegistry(){
+    if(!DATA) return [];
+    var p27=(DATA.phase27||{}).bootstrap||{}, p28=(DATA.phase28||{}).bootstrap||{},
+        p29=(DATA.phase29||{}).bootstrap||{}, p30=(DATA.phase30||{}).bootstrap||{};
+    var R=[
+      {id:"frozen_t", short:"frozen-t", label:"Frozen single-df t", phase:"P26 (frozen)", governed:true, color:"#4f9cff",
+       point:p29.task2_frozen_t_component_point, ci:p29.frozen_t_component_scr_ci,
+       srcPoint:"phase29.bootstrap.task2_frozen_t_component_point",
+       srcCi:"phase29.bootstrap.frozen_t_component_scr_ci"},
+      {id:"grouped_t", short:"grouped-t", label:"Grouped-t", phase:"P28", color:"#39d98a",
+       point:p28.task2_grouped_t_component_point, ci:p28.grouped_t_component_scr_ci,
+       srcPoint:"phase28.bootstrap.task2_grouped_t_component_point",
+       srcCi:"phase28.bootstrap.grouped_t_component_scr_ci"},
+      {id:"skew_t", short:"skew-t", label:"Skew-t", phase:"P27", color:"#ffb454",
+       point:p27.task2_skewt_component_point, ci:p27.skewt_component_scr_ci,
+       srcPoint:"phase27.bootstrap.task2_skewt_component_point",
+       srcCi:"phase27.bootstrap.skewt_component_scr_ci"},
+      {id:"vine2", short:"vine 2-tree", label:"Vine copula (2-tree)", phase:"P29", color:"#b98cff",
+       point:p29.task2_vine_candidate_component_point, ci:p29.vine_component_scr_ci,
+       srcPoint:"phase29.bootstrap.task2_vine_candidate_component_point",
+       srcCi:"phase29.bootstrap.vine_component_scr_ci"},
+      {id:"tree3", short:"vine 3-tree", label:"Vine copula (3-tree)", phase:"P30", color:"#ff6b6b",
+       point:p30.task2_tree3_candidate_component_point, ci:p30.tree3_component_scr_ci,
+       srcPoint:"phase30.bootstrap.task2_tree3_candidate_component_point",
+       srcCi:"phase30.bootstrap.tree3_component_scr_ci"},
+      {id:"nested", short:"nested ref", label:"Nested path-wise reference", phase:"P24 (reference)", color:"#5ad7e0",
+       point:p29.nested_pathwise_reference, ci:null,
+       srcPoint:"phase29.bootstrap.nested_pathwise_reference",
+       srcCi:"(single reference run; no bootstrap CI embedded)"}
+    ];
+    return R.filter(function(r){ return r.point!=null; });
+  }
+  function renderComparator(){
+    var el=document.getElementById("comparator"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var rows=cmpRegistry();
+    if(!rows.length){ el.innerHTML='<p class="muted">No dependence-structure SCR figures in this snapshot.</p>'; return; }
+    if(!rows.some(function(r){return r.id===CMP_BASELINE;})) CMP_BASELINE=rows[0].id;
+    var base=rows.filter(function(r){return r.id===CMP_BASELINE;})[0];
+    var gov=rows.filter(function(r){return r.governed;})[0];
+    var html='<h3 style="margin:8px 0 6px">Cross-phase SCR comparator (display layer)</h3>'+
+      '<p class="note">Component 99.5% SCR per dependence structure, rendered bit-for-bit from figures already embedded in this snapshot (contract v'+esc(DATA.contract_version||"?")+'); nothing is recomputed. '+
+      'The signed &Delta; column is <b>display arithmetic</b> (subtraction vs the selected baseline, for display only) and is NOT new model output. '+
+      'Structures are listed in registry order; the comparator is neutral and recommends nothing - the MR-016/MR-017 dependence decision rests with the owner. '+
+      (gov?('The governed headline basis remains the frozen single-df t at '+fmtMoney(gov.point)+' regardless of the baseline selected here.'):'')+'</p>';
+    html+='<div class="subnav" id="cmpnav" role="group" aria-label="Comparator baseline structure">'+
+      rows.map(function(r){ return '<button type="button" class="segbtn'+(r.id===CMP_BASELINE?" active":"")+
+        '" data-base="'+r.id+'">baseline: '+esc(r.short)+'</button>'; }).join("")+'</div>';
+    html+='<table class="ptable cmptable"><thead><tr><th>Structure (registry order)</th><th>Phase</th>'+
+      '<th>Component SCR point</th><th>95% CI low</th><th>95% CI high</th><th>Bootstrap mean (n)</th>'+
+      '<th>&Delta; vs baseline (display arithmetic)</th></tr></thead><tbody>';
+    rows.forEach(function(r){
+      var d=r.point-base.point;
+      var ds=(d===0)?"0 (baseline)":((d>0?"+":"")+num(d,2));
+      html+='<tr data-cmp-id="'+r.id+'" data-cmp-point="'+ta(String(r.point))+'">'+
+        '<td>'+esc(r.label)+(r.governed?' '+chip("GOVERNED HEADLINE"):'')+(r.id===CMP_BASELINE?' '+chip("BASELINE"):'')+'</td>'+
+        '<td>'+esc(r.phase)+'</td>'+
+        '<td><span data-tip="'+ta("embedded value (full precision): "+String(r.point)+"<br>source: "+r.srcPoint)+'">'+num(r.point,2)+'</span></td>'+
+        '<td>'+(r.ci?num(r.ci.ci_lo,2):"--")+'</td><td>'+(r.ci?num(r.ci.ci_hi,2):"--")+'</td>'+
+        '<td>'+(r.ci?(num(r.ci.mean,2)+' ('+num(r.ci.n)+')'):"--")+'</td>'+
+        '<td class="cmpdelta" data-cmp-delta="'+(d>0?"pos":(d<0?"neg":"zero"))+'">'+ds+'</td></tr>';
+    });
+    html+='</tbody></table>';
+    var crows=rows.map(function(r){
+      return {label:r.short+(r.id===CMP_BASELINE?" *":""), lo:r.ci?r.ci.ci_lo:r.point, hi:r.ci?r.ci.ci_hi:r.point,
+        point:r.point, color:r.color,
+        tip:"<b>"+r.label+"</b><br>point = "+num(r.point,2)+(r.ci?("<br>95% CI ["+num(r.ci.ci_lo,2)+", "+num(r.ci.ci_hi,2)+"]<br>bootstrap mean = "+num(r.ci.mean,2)+" (n="+num(r.ci.n)+")"):"<br>single reference run - no bootstrap CI embedded")};
+    });
+    html+='<div class="chartwrap" id="cmpchart"><h4>95% bootstrap CI overlay by dependence structure</h4>'+
+      '<p class="cap">Whiskers = embedded 95% bootstrap CI; dot = embedded component-SCR point; * marks the selected baseline. The nested reference is a point-only single run (no CI embedded).</p>'+
+      ciChart(crows)+'</div>';
+    html+='<details><summary>Figure provenance (embedded ui_data keys)</summary><table class="ptable cmpprov"><thead><tr><th>Structure</th><th>Point key</th><th>CI key</th></tr></thead><tbody>'+
+      rows.map(function(r){ return '<tr><td>'+esc(r.label)+'</td><td>'+esc(r.srcPoint)+'</td><td>'+esc(r.srcCi)+'</td></tr>'; }).join("")+
+      '</tbody></table></details>';
+    el.innerHTML=html;
+    [].forEach.call(el.querySelectorAll("#cmpnav .segbtn"),function(b){
+      b.onclick=function(){ CMP_BASELINE=b.getAttribute("data-base"); renderComparator(); };
+    });
+    wireTips(el);
+  }
+
+  // ---- Phase 33 Task 3 (gap G2): embedded-distribution drill-down ----
+  // DISPLAY LAYER ONLY over grids PRECOMPUTED at build time by
+  // scripts/build_ui_data.py from the archived loss-distribution model
+  // output (provenance disclosed below). The explorer recomputes NOTHING:
+  // every readout is an embedded grid point rendered bit-for-bit; the
+  // connecting CDF curve and any positioning between grid points is
+  // labelled display interpolation. Older payloads without the grids get a
+  // neutral fallback (no JS errors, no blank panel). NO model parameter
+  // changes; nothing here is new model output.
+  var DX_ZOOM="full";
+  function dxCdfChart(dx){
+    var g=dx.cdf_grid||{}, xs=g.x||[], ps=g.p||[];
+    if(xs.length<2||ps.length!==xs.length) return "";
+    var lo=0, hi=xs.length-1;
+    if(DX_ZOOM==="tail"){ for(var z=0;z<ps.length;z++){ if(ps[z]>=0.9){ lo=Math.max(0,z-1); break; } } }
+    var W=680,H=320,mL=64,mR=20,mT=18,mB=40,iw=W-mL-mR,ih=H-mT-mB;
+    var xmin=xs[lo],xmax=xs[hi],pmin=ps[lo],pmax=ps[hi];
+    if(xmax===xmin||pmax===pmin) return "";
+    var X=function(v){ return mL+(v-xmin)/(xmax-xmin)*iw; };
+    var Y=function(v){ return mT+ih-(v-pmin)/(pmax-pmin)*ih; };
+    var s=svgOpen(W,H);
+    for(var gI=0;gI<=4;gI++){ var gv=pmin+(pmax-pmin)*gI/4, gy=Y(gv);
+      s+='<line class="grid" x1="'+mL+'" y1="'+gy+'" x2="'+(W-mR)+'" y2="'+gy+'"/>';
+      s+='<text x="'+(mL-6)+'" y="'+(gy+3)+'" text-anchor="end">'+gv.toFixed(3)+'</text>'; }
+    s+='<line class="axis" x1="'+mL+'" y1="'+(mT+ih)+'" x2="'+(W-mR)+'" y2="'+(mT+ih)+'"/>';
+    for(var tI=0;tI<=4;tI++){ var tv=xmin+(xmax-xmin)*tI/4;
+      s+='<text x="'+X(tv)+'" y="'+(mT+ih+16)+'" text-anchor="middle">'+fmtK(tv)+'</text>'; }
+    (dx.seeds||[]).forEach(function(sd,si){
+      var sg=sd.cdf_grid||{}, sx=sg.x||[], sp=sg.p||[];
+      if(sx.length<2||sp.length!==sx.length) return;
+      var d="",first=true;
+      for(var i=0;i<sx.length;i++){ if(sx[i]<xmin||sx[i]>xmax) continue;
+        d+=(first?"M":"L")+X(sx[i])+" "+Y(Math.max(pmin,Math.min(pmax,sp[i])))+" "; first=false; }
+      if(d) s+='<path class="dxseed" d="'+d+'" fill="none" stroke="#5ad7e0" stroke-width="1" opacity="0.45" data-tip="'+
+        ta("<b>seed "+sd.seed+"</b> embedded CDF grid (display overlay)")+'"/>';
+    });
+    var d2="";
+    for(var j=lo;j<=hi;j++){ d2+=(j===lo?"M":"L")+X(xs[j])+" "+Y(ps[j])+" "; }
+    s+='<path d="'+d2+'" fill="none" stroke="var(--accent)" stroke-width="2.2"/>';
+    for(var k=lo;k<=hi;k++){
+      s+='<circle class="dxpt" cx="'+X(xs[k])+'" cy="'+Y(ps[k])+'" r="3.6" fill="var(--accent)" data-dx-i="'+k+'" data-tip="'+
+        ta("<b>embedded grid point "+k+"</b><br>loss = "+String(xs[k])+"<br>F(loss) = "+String(ps[k])+"<br>(exact embedded values; curve between points is display interpolation)")+'"/>';
+    }
+    return s+'</svg>';
+  }
+  function dxReadoutAt(dx,i){
+    var g=dx.cdf_grid||{}, xs=g.x||[], ps=g.p||[];
+    if(!xs.length) return "";
+    i=Math.max(0,Math.min(xs.length-1,i|0));
+    return 'Embedded grid point '+i+' of '+(xs.length-1)+': loss = <b>'+fmtMoney(xs[i])+
+      '</b> (full precision '+esc(String(xs[i]))+'), F(loss) = <b>'+Number(ps[i]).toFixed(4)+
+      '</b> (full precision '+esc(String(ps[i]))+'). Exact embedded values; nothing recomputed.';
+  }
+  function renderDistExplorer(){
+    var el=document.getElementById("distexplorer"); if(!el) return;
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var dx=DATA.distribution_explorer;
+    if(!dx||!dx.cdf_grid||!(dx.cdf_grid.x||[]).length){
+      el.innerHTML='<h3 style="margin:8px 0 6px">Distribution drill-down</h3>'+
+        '<p class="muted" id="dx-fallback">Distribution drill-down grids are not embedded in this snapshot '+
+        '(pre-1.17.0 ui_data payload). This view needs the precomputed <span class="mono">distribution_explorer</span> grids '+
+        'written at build time by <span class="mono">scripts/build_ui_data.py</span>; nothing is recomputed in the browser, '+
+        'so no figures can be shown here. The governed read-outs in the other tabs are unaffected.</p>';
+      return;
+    }
+    var hl=dx.archived_headline||{}, prov=dx.provenance||{};
+    var html='<h3 style="margin:8px 0 6px">'+esc(dx.title||"Loss-distribution drill-down")+'</h3>'+
+      '<p class="note">All grids on this tab were <b>computed at build time</b> by <span class="mono">scripts/build_ui_data.py</span> from the archived '+
+      'loss-distribution model output '+esc(prov.source||"")+' and embedded in this snapshot; the display layer '+
+      'recomputes nothing and renders embedded values bit-for-bit. The CDF curve between embedded grid points and the hover positioning are '+
+      '<b>display interpolation</b> only - NOT new model output. NO model parameter changes.</p>';
+    html+='<div class="cards">'+
+      '<div class="card"><div class="k">Mean liability (archived)</div><div class="v"><span data-tip="'+ta("full precision: "+String(hl.mean_liability))+'">'+fmtMoney(hl.mean_liability)+'</span></div></div>'+
+      '<div class="card"><div class="k">99.5% VaR (archived)</div><div class="v"><span data-tip="'+ta("full precision: "+String(hl.var995))+'">'+fmtMoney(hl.var995)+'</span></div></div>'+
+      '<div class="card"><div class="k">99.5% ES (archived)</div><div class="v"><span data-tip="'+ta("full precision: "+String(hl.es995))+'">'+fmtMoney(hl.es995)+'</span></div></div>'+
+      '<div class="card"><div class="k">99.5% SCR (archived)</div><div class="v"><span data-tip="'+ta("full precision: "+String(hl.scr995))+'">'+fmtMoney(hl.scr995)+'</span></div></div>'+
+      '<div class="card"><div class="k">Outer sims / bins</div><div class="v">'+num(prov.n_outer)+' / '+num(prov.n_bins)+'</div></div></div>';
+    html+='<div class="subnav" id="dxnav" role="group" aria-label="Distribution explorer zoom">'+
+      '<button type="button" class="segbtn'+(DX_ZOOM==="full"?" active":"")+'" data-zoom="full">full distribution</button>'+
+      '<button type="button" class="segbtn'+(DX_ZOOM==="tail"?" active":"")+'" data-zoom="tail">tail zoom (F &ge; 0.90)</button></div>';
+    html+='<div class="chartwrap" id="dxcdf"><h4>Empirical CDF of the archived outer-loss distribution (precomputed grid)</h4>'+
+      '<p class="cap">Dots = exact embedded grid points (hover for full-precision readout); the connecting curve is display interpolation. '+
+      'Thin overlays = per-seed embedded CDF grids ('+num((dx.seeds||[]).length)+' archived seeds).</p>'+
+      dxCdfChart(dx)+'</div>';
+    var xs=(dx.cdf_grid.x||[]);
+    html+='<div class="chartwrap"><h4>Grid-point readout</h4>'+
+      '<p class="cap">Slide to read any embedded CDF grid point (exact values; nothing recomputed).</p>'+
+      '<input type="range" id="dxslider" min="0" max="'+(xs.length-1)+'" value="'+Math.floor((xs.length-1)/2)+'" style="width:100%"/>'+
+      '<p id="dx-readout" class="note" aria-live="polite">'+dxReadoutAt(dx,Math.floor((xs.length-1)/2))+'</p></div>';
+    var qg=dx.quantile_grid||{}, qp=qg.prob||[], ql=qg.loss||[];
+    html+='<div class="subh">Quantile grid (build-time; '+esc(qg.method||"")+')</div>'+
+      '<table class="ptable dxqtable"><thead><tr><th>Probability</th><th>Loss quantile (build-time grid)</th></tr></thead><tbody>'+
+      qp.map(function(p,i){ return '<tr data-dx-q-p="'+ta(String(p))+'" data-dx-q-loss="'+ta(String(ql[i]))+'"><td>'+Number(p).toFixed(3)+'</td>'+
+        '<td><span data-tip="'+ta("full precision: "+String(ql[i]))+'">'+fmtMoney(ql[i])+'</span></td></tr>'; }).join("")+
+      '</tbody></table>';
+    var ap=dx.archived_percentiles||[];
+    html+='<div class="subh">Archived percentiles (model output, carried bit-for-bit)</div>'+
+      '<table class="ptable dxptable"><thead><tr><th>Percentile p</th><th>Loss (archived)</th></tr></thead><tbody>'+
+      ap.map(function(r){ return '<tr data-dx-p="'+ta(String(r.p))+'" data-dx-loss="'+ta(String(r.loss))+'"><td>'+Number(r.p).toFixed(3)+'</td>'+
+        '<td><span data-tip="'+ta("archived full precision: "+String(r.loss))+'">'+fmtMoney(r.loss)+'</span></td></tr>'; }).join("")+
+      '</tbody></table>';
+    var sw=dx.archived_confidence_sweep||[];
+    html+='<div class="subh">Archived confidence sweep (model output, carried bit-for-bit)</div>'+
+      '<table class="ptable dxstable"><thead><tr><th>Confidence level</th><th>VaR</th><th>ES</th><th>SCR</th></tr></thead><tbody>'+
+      sw.map(function(r){ return '<tr><td>'+Number(r.cl).toFixed(3)+'</td><td>'+fmtMoney(r.var)+'</td><td>'+fmtMoney(r.es)+'</td><td>'+fmtMoney(r.scr)+'</td></tr>'; }).join("")+
+      '</tbody></table>';
+    html+='<details><summary>Grid provenance (build-time computation; archived source)</summary>'+
+      '<table class="ptable dxprov"><tbody>'+
+      '<tr><td>Source artifact</td><td class="mono">'+esc(prov.source||"--")+'</td></tr>'+
+      '<tr><td>Source sha256</td><td class="mono">'+esc(prov.source_sha256||"--")+'</td></tr>'+
+      '<tr><td>Source generated (UTC)</td><td class="mono">'+esc(prov.source_generated_utc||"--")+'</td></tr>'+
+      '<tr><td>Reproducibility digest</td><td class="mono">'+esc(prov.reproducibility_digest||"--")+'</td></tr>'+
+      '<tr><td>Computed by</td><td>'+esc(prov.computed_by||"--")+'</td></tr>'+
+      '<tr><td>Method</td><td>'+esc(prov.method||"--")+'</td></tr>'+
+      '<tr><td>n_outer / n_bins / seed_base</td><td>'+num(prov.n_outer)+' / '+num(prov.n_bins)+' / '+num(prov.seed_base)+'</td></tr>'+
+      '<tr><td>Measure / CL / horizon</td><td>'+esc(prov.measure||"--")+' / '+num(prov.confidence_level,3)+' / '+num(prov.horizon_months)+'m</td></tr>'+
+      '</tbody></table></details>';
+    el.innerHTML=html;
+    var slider=el.querySelector("#dxslider"), ro=el.querySelector("#dx-readout");
+    if(slider&&ro){ slider.addEventListener("input",function(){ ro.innerHTML=dxReadoutAt(dx,Number(slider.value)); }); }
+    [].forEach.call(el.querySelectorAll("#dxnav .segbtn"),function(b){
+      b.onclick=function(){ DX_ZOOM=b.getAttribute("data-zoom"); renderDistExplorer(); };
+    });
+    wireTips(el);
+  }
+
+  // ---- Phase 33 Task 4 (gap G3): print-only owner sign-off cover. Screen-hidden
+  // (.signoffcover{display:none}); shown only in @media print. Figures are read
+  // bit-for-bit from the embedded snapshot; the decision stays NEUTRAL/BLANK. ----
+  function renderSignoffCover(){
+    var el=document.getElementById("signoffcover"); if(!el) return;
+    if(!DATA){ el.innerHTML=""; return; }
+    var m=DATA.meta||{};
+    var ev=((DATA.owner_decision_p31)||{}).evidence_pack||{};
+    var gh=ev.governed_headline||{};
+    var gen=String(m.generated_utc||"").slice(0,19);
+    el.innerHTML=''
+      +'<h2>Owner sign-off pack &mdash; '+esc(m.model_name||"Actuarial Stochastic Model")+'</h2>'
+      +'<div class="sigmeta">Model version: '+esc(m.model_version||"--")+' &middot; Contract v'+esc(DATA.contract_version||"?")+' &middot; Generated '+esc(gen)+'Z</div>'
+      +'<div class="sigmeta">Classification: '+esc(m.classification||"--")+'</div>'
+      +'<div class="sigmeta">Governed component SCR headline (frozen single-df t): <b>'+fmtMoney(gh.value)+'</b>'+(gh.status?(' &middot; '+esc(gh.status)):'')+'</div>'
+      +'<div class="signeutral">This pack is presented for owner review only. Dependence-structure options appear in registry order with NO default and NO recommendation; the MR-016 / MR-017 decision rests entirely with the model owner. The decision record in this pack is intentionally BLANK until the owner decides.</div>'
+      +'<div class="sigrow">'
+      +'<div class="sigbox">Owner decision (option id): _______________________</div>'
+      +'<div class="sigbox">Signature: _______________________</div>'
+      +'<div class="sigbox">Date: ________________</div>'
+      +'</div>'
+      +'<div class="sigrow">'
+      +'<div class="sigbox">Peer reviewer: _______________________</div>'
+      +'<div class="sigbox">Signature: _______________________</div>'
+      +'<div class="sigbox">Date: ________________</div>'
+      +'</div>';
+  }
+  // Phase 34 Task 2 (gap H1): self-describing data-contract guard. Reads the
+  // build-time contract_manifest embedded in the payload and validates the
+  // embedded snapshot against it at LOAD time. Inspects ONLY the embedded
+  // payload; recomputes NO model figure. Returns a plain status object.
+  function validateContract(){
+    var res={ dataPresent:!!DATA, manifestPresent:false, expected:null,
+              actual:null, versionMatch:false, keys:[], missing:[],
+              allPresent:false, status:"DEGRADED", reason:"" };
+    if(!DATA){ res.reason="no embedded payload"; return res; }
+    res.actual = (DATA.contract_version!=null)?String(DATA.contract_version):null;
+    var man = DATA.contract_manifest;
+    if(!man || typeof man!=="object"){
+      res.reason="contract_manifest absent (pre-1.18.0 payload)";
+      return res;
+    }
+    res.manifestPresent=true;
+    res.expected = (man.expected_contract_version!=null)?String(man.expected_contract_version):null;
+    res.versionMatch = (res.expected!=null && res.actual!=null && res.expected===res.actual);
+    var req = (man.required_top_level_keys||[]).slice();
+    res.keys = req.map(function(k){
+      return { key:k, present: Object.prototype.hasOwnProperty.call(DATA,k) };
+    });
+    res.missing = res.keys.filter(function(x){return !x.present;})
+                          .map(function(x){return x.key;});
+    res.allPresent = (res.missing.length===0);
+    res.status = (res.versionMatch && res.allPresent) ? "PASS" : "DEGRADED";
+    if(res.status==="PASS") res.reason="contract verified";
+    else if(!res.versionMatch && !res.allPresent) res.reason="version mismatch + missing sections";
+    else if(!res.versionMatch) res.reason="contract version mismatch";
+    else res.reason="missing required sections";
+    return res;
+  }
+  // Phase 34 Task 2 (gap H1): neutral degraded-mode banner. Shown ONLY when the
+  // guard does not PASS. Factual, non-steering language; no blank panel.
+  function renderIntegrityBanner(v){
+    var el=document.getElementById("integritybanner"); if(!el) return;
+    if(!v) v=validateContract();
+    if(v.status==="PASS"){
+      el.style.display="none"; el.setAttribute("aria-hidden","true"); el.innerHTML="";
+      return;
+    }
+    var msg;
+    if(!v.dataPresent){
+      msg="No data payload is embedded in this file, so the result tabs cannot be populated.";
+    } else if(!v.manifestPresent){
+      msg="This snapshot predates the data-contract manifest (pre-1.18.0). The integrity guard cannot verify the payload; the tabs render the embedded values as-is.";
+    } else {
+      var bits=[];
+      if(!v.versionMatch) bits.push("the embedded contract version ("+esc(v.actual||"none")+") differs from the version this build expects ("+esc(v.expected||"none")+")");
+      if(!v.allPresent){
+        var n=v.missing.length;
+        bits.push(n+" required data section"+(n===1?"":"s")+" "+(n===1?"is":"are")+" missing ("+esc(v.missing.join(", "))+")");
+      }
+      msg="Data-contract check reported a mismatch: "+bits.join("; ")+". Affected tabs may be incomplete; open the Integrity (H1) tab for the per-section detail. No figures are recomputed.";
+    }
+    el.style.display="block"; el.setAttribute("aria-hidden","false");
+    el.innerHTML='<span class="ibannerlabel">Data-contract notice</span> '+msg;
+  }
+  // Phase 34 Task 2 (gap H1): in-UI schema/integrity panel. Renders the contract
+  // version match and a per-section present/absent table from the embedded
+  // manifest. Display only; recomputes nothing.
+  function renderIntegrity(){
+    var el=document.getElementById("integrity"); if(!el) return;
+    var v=validateContract();
+    if(!DATA){ el.innerHTML=dz(); return; }
+    var stbadge = (v.status==="PASS")
+      ? '<span class="chip pass">PASS</span>'
+      : '<span class="chip warn">DEGRADED</span>';
+    var html='<h3 style="margin:8px 0 6px">Data-contract integrity</h3>'+
+      '<p class="note">This panel validates the <b>embedded</b> data snapshot against the build-time '+
+      '<span class="mono">contract_manifest</span> written by <span class="mono">scripts/build_ui_data.py</span>. '+
+      'It inspects only the embedded payload and <b>recomputes no model figure</b>: it reports whether the contract '+
+      'version matches the value this build expects and whether every required top-level data section is present. '+
+      'A neutral notice banner appears at the top of the page if either check does not pass.</p>';
+    html+='<div class="cards">'+
+      '<div class="card"><div class="k">Overall</div><div class="v">'+stbadge+'</div></div>'+
+      '<div class="card"><div class="k">Contract version (embedded)</div><div class="v">'+esc(v.actual||"--")+'</div></div>'+
+      '<div class="card"><div class="k">Contract version (expected)</div><div class="v">'+esc(v.expected||"--")+'</div></div>'+
+      '<div class="card"><div class="k">Version match</div><div class="v">'+(v.versionMatch?'<span class="chip pass">yes</span>':'<span class="chip warn">no</span>')+'</div></div>'+
+      '<div class="card"><div class="k">Required sections present</div><div class="v">'+(v.keys.length-v.missing.length)+' / '+v.keys.length+'</div></div>'+
+      '<div class="card"><div class="k">Manifest embedded</div><div class="v">'+(v.manifestPresent?'<span class="chip pass">yes</span>':'<span class="chip warn">no</span>')+'</div></div>'+
+      '</div>';
+    var rows=v.keys.map(function(x){
+      return '<tr data-int-key="'+esc(x.key)+'" data-int-present="'+(x.present?"1":"0")+'">'+
+        '<td class="mono">'+esc(x.key)+'</td><td>'+
+        (x.present?'<span class="chip pass">present</span>':'<span class="chip warn">absent</span>')+
+        '</td></tr>';
+    }).join("");
+    html+='<table class="ptable inttable"><caption class="sr-only">Per-section presence in the embedded data contract</caption>'+
+      '<thead><tr><th>Required top-level section</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    if(v.status==="PASS"){
+      html+='<p class="muted">All required data sections are present and the contract version matches; the result tabs render the embedded values bit-for-bit. Nothing is recomputed in the browser.</p>';
+    } else {
+      html+='<p class="muted">The notice banner above summarises the mismatch ('+esc(v.reason)+'). Tabs that depend on a missing section already show their own neutral fallback message; nothing is recomputed in the browser.</p>';
+    }
+    el.innerHTML=html;
+  }
   function renderAll(){
     renderHeader(); renderOverview(); renderInventory();
-    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderGovernance(); wireDropLoader();
+    renderCalibrations(); renderCapital(); renderActions(); renderPhase24(); renderPhase25(); renderPhase26(); renderPhase27(); renderPhase28(); renderPhase29(); renderPhase30(); renderComparator(); renderDistExplorer(); renderOwnerDecision(); renderUserRun(); renderGovernance(); renderIntegrity(); renderIntegrityBanner(); renderSignoffCover(); wireDropLoader();
     wireToolbar(); a11yEnhance(); wireGlobalA11y();
   }
 
   renderTabs();
   renderAll();
+  // Phase 33 Task 5 (gap G4): if the URL carries a tab hash (e.g. after a
+  // reload), restore that selection now that all panels exist.
+  tabFromHash();
 })();
 </script>
 </body>

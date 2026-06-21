@@ -1,0 +1,403 @@
+#!/usr/bin/env python3
+"""Env-independent (stdlib) structural gate for offline_home.html.
+
+Mirrors scripts/offline_home_self_test.cjs but needs no jsdom/node, so it runs in
+constrained CI/sandboxes where the 744KB ui_app self-test cannot. Asserts the
+landing page is self-contained (zero external refs), links every offline view, and
+renders the GOVERNED figures verbatim from ui_data.json (recomputes nothing).
+"""
+from __future__ import annotations
+import json, re, sys
+from html.parser import HTMLParser
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+HTML = (ROOT / "offline_home.html")
+UI_DATA = ROOT / "ui_data.json"
+EXPECT_LINKS = ["ui_app.html", "model_result_viewer.html", "combined_model_app.html",
+                "par_projection_gui.html", "launchers/README.md"]
+
+class _P(HTMLParser):
+    def __init__(self): super().__init__(); self.links=[]; self.figs=0
+    def handle_starttag(self, t, attrs):
+        a = dict(attrs)
+        if t == "a" and "card" in (a.get("class") or ""): self.links.append(a.get("href"))
+        if t == "div" and a.get("class") == "fig": self.figs += 1
+
+def main() -> int:
+    html = HTML.read_text(encoding="utf-8")
+    d = json.loads(UI_DATA.read_text(encoding="utf-8"))
+    p = _P(); p.feed(html)
+    checks = []
+    def ok(n, c): checks.append((n, bool(c)))
+    for v in EXPECT_LINKS: ok(f"link {v}", v in p.links)
+    # Link-existence regression gate (offline-UI option f): promote the build-time
+    # assertion from build_offline_home.build() into this standing, rebuild-independent
+    # gate. Every card href in the SHIPPED offline_home.html MUST resolve to a file that
+    # exists on disk under ROOT, so a shipped landing page can never link to a missing
+    # view. Cards ARE the VIEWS, and chooser hrefs are asserted (at build time) to be a
+    # subset of VIEWS, so verifying every card target also covers every chooser target.
+    # Static check: reads no network, derives/changes no governed figure.
+    _missing_on_disk = sorted({
+        _rel for _rel in (
+            (h or "").split("#", 1)[0].split("?", 1)[0] for h in p.links
+        ) if _rel and not (ROOT / _rel).exists()
+    })
+    ok("every card link target exists on disk"
+       + (f" (missing: {', '.join(_missing_on_disk)})" if _missing_on_disk else ""),
+       not _missing_on_disk)
+    ok("title", "Offline Home" in html)
+    ok(">=8 figure rows", p.figs >= 8)
+    ok("classification banner", "EDUCATIONAL ONLY" in html)
+    hl = d["owner_decision_p31"]["evidence_pack"]["governed_headline"]["value"]
+    ok("governed headline verbatim", hl == 39975.654628199336 and f"{hl:,.2f}" in html)
+    ok("nested_scr verbatim", f"{d['capital']['nested_scr']:,.0f}" in html)
+    ok("correlated_scr verbatim", f"{d['capital']['correlated_scr']:,.0f}" in html)
+    ok("standalone_sum verbatim", f"{d['capital']['standalone_sum']:,.0f}" in html)
+    ok("zero external refs", not re.search(r"https?://|//cdn|googleapis|unpkg|jsdelivr", html))
+    ok("self-contained (no <link>/<script src)", "<link" not in html and "script src" not in html)
+    # "which view do I want?" chooser (additive, static, zero JS) presence
+    ok("which-view chooser heading", "Which view do I want?" in html)
+    ok("chooser has >=6 goal rows", html.count('class="crow"') >= 6)
+    ok("chooser recommends summary card", re.search(r'crow.*?model_summary_card\.html', html, re.S) is not None)
+    # snapshot-loader (additive, zero-network) presence
+    ok("loader drop zone", 'id="drop"' in html)
+    ok("loader file input", 'type="file"' in html and 'id="file"' in html)
+    ok("loader reset button", 'id="reset"' in html)
+    ok("loader reads locally (FileReader)", "FileReader" in html)
+    ok("loader updatable header ids", 'id="hv"' in html and 'id="hc"' in html and 'id="hs"' in html)
+    # accessibility / quick-start pass (additive, static, zero JS) presence
+    ok("skip-to-content link", 'class="skip"' in html and 'href="#main"' in html)
+    ok("main landmark target", 'id="main"' in html and "<main" in html)
+    ok("keyboard focus-visible ring", ":focus-visible" in html)
+    ok("reduced-motion fallback", "prefers-reduced-motion" in html)
+    ok("start-here guidance", 'class="start"' in html and "New here?" in html)
+    # capital-at-a-glance graphic (additive, inline-SVG, zero JS dep, zero network) presence
+    ok("capital bridge heading", "Capital at a glance" in html)
+    ok("capital bridge svg", 'id="capbridge"' in html)
+    ok("capital bridge 3 bars", html.count('class="cbar ') == 3)
+    ok("capital bridge 3 value texts", html.count('class="cbval"') == 3)
+    ok("capital bridge keys (governed)",
+       all('data-key="%s"' % k in html for k in ("standalone_sum", "correlated_scr", "nested_scr")))
+    ok("capital bridge derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower() and "d3" not in html.lower())
+    # standalone-SCR-by-driver mini bars (additive, inline-SVG, zero JS dep, zero network)
+    _dkeys = ("rate_scr", "equity_scr", "credit_scr", "lapse_scr",
+              "mortality_scr", "fx_scr", "liquidity_scr")
+    ok("driver bars heading", "Standalone SCR by risk driver" in html)
+    ok("driver bars svg", 'id="driverbars"' in html)
+    ok("driver bars 7 bars", html.count('class="dbar"') == 7)
+    ok("driver bars 7 value texts", html.count('class="dbval"') == 7)
+    ok("driver bars keys (governed)",
+       all('data-key="%s"' % k in html for k in _dkeys))
+    ok("driver bars values verbatim",
+       all(f"{d['capital'][k]:,.0f}" in html for k in _dkeys))
+    _dsum = sum(float(d['capital'][k]) for k in _dkeys)
+    ok("driver bars sum == standalone_sum (governed consistency)",
+       abs(_dsum - float(d['capital']['standalone_sum'])) < 1e-6)
+    ok("driver bars derive nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    # tail-convergence sparkline (additive, inline-SVG, zero JS dep, zero network) presence
+    t = d.get("tail", {}) or {}
+    _grid = t.get("outer_grid") or []
+    ok("tail spark heading", "Tail convergence" in html)
+    ok("tail spark svg", 'id="tailspark"' in html)
+    ok("tail spark two series polylines",
+       'data-key="var_path"' in html and 'data-key="es_path"' in html)
+    ok("tail spark var dots == grid len",
+       html.count('data-series="var"') == len(_grid) and len(_grid) > 0)
+    ok("tail spark es dots == grid len",
+       html.count('data-series="es"') == len(_grid) and len(_grid) > 0)
+    ok("tail spark n* marker (governed recommended_n_outer)",
+       'data-key="recommended_n_outer"' in html
+       and f"{t.get('recommended_n_outer'):,.0f}" in html)
+    ok("tail spark final VaR/ES verbatim",
+       f"{t.get('final_var'):,.0f}" in html and f"{t.get('final_es'):,.0f}" in html)
+    ok("tail spark grid endpoints verbatim",
+       (not _grid) or (f"{_grid[0]:,.0f}" in html and f"{_grid[-1]:,.0f}" in html))
+    ok("tail spark converged flag (governed) shown",
+       (t.get("converged") is True) and "converged" in html)
+    ok("tail spark derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower() and "d3.min" not in html.lower())
+    # VaR/ES point-vs-CI band strip (additive, inline-SVG, zero JS dep, zero network)
+    _vci = t.get("var_ci") or []
+    _eci = t.get("es_ci") or []
+    ok("tail CI heading", "confidence interval" in html.lower())
+    ok("tail CI svg", 'id="tailci"' in html)
+    ok("tail CI two bands (var+es)",
+       html.count('class="ciband var"') == 1 and html.count('class="ciband es"') == 1)
+    ok("tail CI two point markers (var+es)",
+       html.count('class="cipt var"') == 1 and html.count('class="cipt es"') == 1)
+    ok("tail CI var_ci endpoints verbatim",
+       (len(_vci) >= 2) and f"{_vci[0]:,.0f}" in html and f"{_vci[1]:,.0f}" in html)
+    ok("tail CI es_ci endpoints verbatim",
+       (len(_eci) >= 2) and f"{_eci[0]:,.0f}" in html and f"{_eci[1]:,.0f}" in html)
+    ok("tail CI point estimates verbatim",
+       f"{t.get('final_var'):,.0f}" in html and f"{t.get('final_es'):,.0f}" in html)
+    ok("tail CI point inside its CI band (governed consistency)",
+       (len(_vci) >= 2 and _vci[0] <= float(t.get('final_var')) <= _vci[1]) and
+       (len(_eci) >= 2 and _eci[0] <= float(t.get('final_es')) <= _eci[1]))
+    ok("tail CI derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    # Nested-vs-copula VaR CI comparison (W37, additive, inline-SVG, zero JS dep, zero net)
+    _nci = t.get("nested_var_ci") or []
+    _no = t.get("nested_n_outer")
+    ok("nested CI heading", "nested vs copula" in html.lower())
+    ok("nested CI svg", 'id="nestedci"' in html)
+    ok("nested CI two bands (copula+nested)",
+       html.count('class="nciband copula"') == 1 and html.count('class="nciband nested"') == 1)
+    ok("nested CI two point markers (copula+nested)",
+       html.count('class="ncipt copula"') == 1 and html.count('class="ncipt nested"') == 1)
+    ok("nested CI nested_var_ci endpoints verbatim",
+       (len(_nci) >= 2) and f"{_nci[0]:,.0f}" in html and f"{_nci[1]:,.0f}" in html)
+    ok("nested CI copula var_ci endpoints verbatim",
+       (len(_vci) >= 2) and f"{_vci[0]:,.0f}" in html and f"{_vci[1]:,.0f}" in html)
+    ok("nested CI governed point (final_var) verbatim",
+       f"{t.get('final_var'):,.0f}" in html)
+    ok("nested CI point inside BOTH bands (governed consistency)",
+       (len(_vci) >= 2 and _vci[0] <= float(t.get('final_var')) <= _vci[1]) and
+       (len(_nci) >= 2 and _nci[0] <= float(t.get('final_var')) <= _nci[1]))
+    ok("nested CI nested band wider than copula band (estimator-noise ordering)",
+       (len(_vci) >= 2 and len(_nci) >= 2) and
+       (float(_nci[1]) - float(_nci[0])) > (float(_vci[1]) - float(_vci[0])))
+    ok("nested CI outer-count label present",
+       (_no is not None) and (f"n={_no:,.0f}" in html or f"n={_no}" in html))
+    ok("nested CI derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    # ES-vs-VaR tail-thickness margin strip (W38, additive, inline-SVG, zero JS dep, zero net)
+    ok("esvar margin heading", "tail-thickness margin" in html.lower())
+    ok("esvar margin svg", 'id="esvarmargin"' in html)
+    ok("esvar margin two point markers (var+es)",
+       html.count('class="evmpt var"') == 1 and html.count('class="evmpt es"') == 1)
+    ok("esvar margin gap region present", html.count('class="evmgap"') == 1)
+    ok("esvar margin final_var/final_es verbatim",
+       f"{t.get('final_var'):,.0f}" in html and f"{t.get('final_es'):,.0f}" in html)
+    ok("esvar margin ordering (ES >= VaR, governed)",
+       float(t.get('final_es')) >= float(t.get('final_var')))
+    ok("esvar margin derives nothing (no numeric diff label, svg inline, no chart lib)",
+       "chart.js" not in html.lower()
+       and f"{(float(t.get('final_es')) - float(t.get('final_var'))):,.0f}" not in html)
+    ok("esvar margin loader-parity hook", "redrawEsVarMargin" in html)
+    # Copula-family candidate comparison (W39, additive, inline-SVG, zero JS dep, zero net)
+    _cap = d.get("capital", {})
+    _cf_keys = ["single_t_copula_scr_component_bootstrap_mean",
+                "grouped_t_copula_scr_component_bootstrap_mean",
+                "vine_copula_scr_component_bootstrap_mean"]
+    ok("copula family heading", "copula-family candidate comparison" in html.lower())
+    ok("copula family svg", 'id="copulafamily"' in html)
+    ok("copula family 3 bars", html.count('class="cfcbar"') == 3)
+    ok("copula family 3 value texts", html.count('class="cfcval"') == 3)
+    ok("copula family three governed means verbatim",
+       all((_cap.get(k) is not None) and (f"{float(_cap.get(k)):,.0f}" in html)
+           for k in _cf_keys))
+    ok("copula family neutral note (selected copula = gaussian, no pick implied)",
+       (str(_cap.get("selected_copula")).lower() == "gaussian")
+       and ("gaussian" in html.lower()) and ("neutrally" in html.lower()))
+    ok("copula family derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("copula family loader-parity hook", "redrawCopulaFamily" in html)
+    # With-actions SCR ladder (W40, additive, inline-SVG, zero JS dep, zero net)
+    _wal_keys = ["nested_scr", "nested_scr_with_actions",
+                 "nested_scr_with_inner_path", "nested_scr_with_pathwise"]
+    ok("actions ladder heading", "with-actions scr ladder" in html.lower())
+    ok("actions ladder svg", 'id="actionsladder"' in html)
+    ok("actions ladder 4 bars", html.count('class="walbar"') == 4)
+    ok("actions ladder 4 value texts", html.count('class="walval"') == 4)
+    ok("actions ladder four governed levels verbatim",
+       all((_cap.get(k) is not None) and (f"{float(_cap.get(k)):,.0f}" in html)
+           for k in _wal_keys))
+    ok("actions ladder keys (governed)",
+       all('data-key="%s"' % k in html for k in _wal_keys))
+    ok("actions ladder neutral note (no basis selected)",
+       "neutrally" in html.lower())
+    ok("actions ladder derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("actions ladder loader-parity hook", "redrawActionsLadder" in html)
+    # Management-action relief strip (W41, additive, inline-SVG, zero JS dep, zero net)
+    _none_v = _cap.get("nested_scr")
+    _wa_v = _cap.get("nested_scr_with_actions")
+    ok("relief strip heading", "management-action relief strip" in html.lower())
+    ok("relief strip svg", 'id="reliefstrip"' in html)
+    ok("relief strip two point markers (no-actions + with-actions)",
+       html.count('class="relpt none"') == 1 and html.count('class="relpt withact"') == 1)
+    ok("relief strip gap region present", html.count('class="relgap"') == 1)
+    ok("relief strip both governed values verbatim",
+       (_none_v is not None) and (_wa_v is not None)
+       and (f"{float(_none_v):,.0f}" in html) and (f"{float(_wa_v):,.0f}" in html))
+    ok("relief strip ordering (with-actions <= no-actions, governed)",
+       float(_wa_v) <= float(_none_v))
+    ok("relief strip neutral note", "neutrally" in html.lower())
+    ok("relief strip derives nothing (no numeric diff label, svg inline, no chart lib)",
+       "chart.js" not in html.lower()
+       and f"{(float(_none_v) - float(_wa_v)):,.0f}" not in html)
+    ok("relief strip loader-parity hook", "redrawReliefStrip" in html)
+    # Var-covar vs nested aggregation-method margin strip (W42, additive, inline-SVG, zero net)
+    _vc_v = _cap.get("correlated_scr")
+    _ns_v = _cap.get("nested_scr")
+    ok("aggmethod heading", "aggregation-method margin" in html.lower())
+    ok("aggmethod svg", 'id="aggmethod"' in html)
+    ok("aggmethod two point markers (var-covar + nested)",
+       html.count('class="agmpt varcov"') == 1 and html.count('class="agmpt nested"') == 1)
+    ok("aggmethod gap region present", html.count('class="agmgap"') == 1)
+    ok("aggmethod both governed values verbatim",
+       (_vc_v is not None) and (_ns_v is not None)
+       and (f"{float(_vc_v):,.0f}" in html) and (f"{float(_ns_v):,.0f}" in html))
+    ok("aggmethod ordering (var-covar <= nested, governed)",
+       float(_vc_v) <= float(_ns_v))
+    ok("aggmethod neutral note", "neutrally" in html.lower())
+    ok("aggmethod derives nothing (no numeric diff label, svg inline, no chart lib)",
+       "chart.js" not in html.lower()
+       and f"{abs(float(_ns_v) - float(_vc_v)):,.0f}" not in html)
+    ok("aggmethod loader-parity hook", "redrawAggMethod" in html)
+    # Standalone-vs-diversified per-driver overlay (W43, additive, inline-SVG, zero JS dep, zero net)
+    _dc_order = ["lapse_scr", "equity_scr", "rate_scr", "credit_scr",
+                 "fx_scr", "mortality_scr", "liquidity_scr"]
+    _ss_v = _cap.get("standalone_sum")
+    _ne_v = _cap.get("nested_scr")
+    ok("divcredit heading", "standalone vs diversified" in html.lower())
+    ok("divcredit svg", 'id="divcredit"' in html)
+    ok("divcredit 7 stacked segments", html.count('class="dcseg"') == 7)
+    ok("divcredit segment keys (governed)",
+       all('data-key="%s"' % k in html for k in _dc_order))
+    ok("divcredit nested reference line present", html.count('class="dcnest"') == 1)
+    ok("divcredit credit region present", html.count('class="dccredit"') == 1)
+    ok("divcredit both governed endpoints verbatim",
+       (_ss_v is not None) and (_ne_v is not None)
+       and (f"{float(_ss_v):,.0f}" in html) and (f"{float(_ne_v):,.0f}" in html))
+    ok("divcredit ordering (nested <= standalone_sum, governed)",
+       float(_ne_v) <= float(_ss_v))
+    ok("divcredit segments sum == standalone_sum (governed consistency)",
+       abs(sum(float(_cap[k]) for k in _dc_order) - float(_ss_v)) < 1e-6)
+    ok("divcredit derives nothing (no numeric credit label, svg inline, no chart lib)",
+       "chart.js" not in html.lower()
+       and f"{(float(_ss_v) - float(_ne_v)):,.0f}" not in html)
+    ok("divcredit loader-parity hook", "redrawDivCredit" in html)
+    # Copula model-selection strip (W44, additive, inline-SVG, zero JS dep, zero net)
+    _cop = (_cap.get("copula") or {})
+    _cs_list = _cop.get("copulas") or _cop.get("candidates") or []
+    _cs_cands = [(str(c.get("name")), float(c.get("aggregated_scr")))
+                 for c in _cs_list
+                 if isinstance(c, dict) and isinstance(c.get("aggregated_scr"), (int, float))
+                 and c.get("name") is not None]
+    _cs_sel = str(_cap.get("selected_copula") or "").lower()
+    ok("copulaselect heading", "copula model-selection" in html.lower())
+    ok("copulaselect svg", 'id="copulaselect"' in html)
+    ok("copulaselect >=2 fitted candidates", len(_cs_cands) >= 2)
+    ok("copulaselect bars == candidate count",
+       html.count('class="csbar"') + html.count('class="csbar sel"') == len(_cs_cands))
+    ok("copulaselect value texts == candidate count",
+       html.count('class="csval"') == len(_cs_cands))
+    ok("copulaselect candidate SCRs verbatim",
+       all(f"{v:,.0f}" in html for _, v in _cs_cands) and len(_cs_cands) > 0)
+    ok("copulaselect candidate keys present",
+       all(('data-key="%s"' % n) in html for n, _ in _cs_cands))
+    ok("copulaselect AIC-selected copula is governed & marked",
+       (_cs_sel in [n.lower() for n, _ in _cs_cands])
+       and ('class="csbar sel"' in html) and ("AIC-selected" in html))
+    ok("copulaselect selected SCR matches selected_copula (governed consistency)",
+       any(n.lower() == _cs_sel and f"{v:,.0f}" in html for n, v in _cs_cands))
+    ok("copulaselect derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("copulaselect loader-parity hook", "redrawCopulaSelect" in html)
+    # Copula upper-tail-dependence strip (W45, additive, inline-SVG, zero JS dep, zero net)
+    _cu_cands = [(str(c.get("name")), float(c.get("upper_tail_dependence")))
+                 for c in _cs_list
+                 if isinstance(c, dict)
+                 and isinstance(c.get("upper_tail_dependence"), (int, float))
+                 and c.get("name") is not None]
+    ok("copulautd heading", "copula tail dependence" in html.lower())
+    ok("copulautd svg", 'id="copulautd"' in html)
+    ok("copulautd >=2 fitted candidates", len(_cu_cands) >= 2)
+    ok("copulautd bars == candidate count",
+       html.count('class="cubar"') == len(_cu_cands))
+    ok("copulautd value texts == candidate count",
+       html.count('class="cuval"') == len(_cu_cands))
+    ok("copulautd coefficients verbatim (4dp)",
+       all(f"{v:,.4f}" in html for _, v in _cu_cands) and len(_cu_cands) > 0)
+    ok("copulautd candidate keys present",
+       all(('data-key="%s"' % n) in html for n, _ in _cu_cands))
+    ok("copulautd decision-neutral (selected by AIC, not this metric)",
+       "not\n    by this metric" in html.lower() or "not by this metric" in html.lower())
+    ok("copulautd derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("copulautd loader-parity hook", "redrawCopulaUtd" in html)
+    # Copula AIC strip (W46, additive, inline-SVG, zero JS dep, zero net)
+    _ca_cands = [(str(c.get("name")), float(c.get("aic")))
+                 for c in _cs_list
+                 if isinstance(c, dict) and isinstance(c.get("aic"), (int, float))
+                 and c.get("name") is not None]
+    ok("copulaaic heading", "copula model-selection criterion" in html.lower())
+    ok("copulaaic svg", 'id="copulaaic"' in html)
+    ok("copulaaic >=2 fitted candidates", len(_ca_cands) >= 2)
+    ok("copulaaic bars == candidate count",
+       html.count('class="cabar"') + html.count('class="cabar sel"') == len(_ca_cands))
+    ok("copulaaic value texts == candidate count",
+       html.count('class="caval"') == len(_ca_cands))
+    ok("copulaaic AIC values verbatim (4dp signed)",
+       all(f"{v:,.4f}" in html for _, v in _ca_cands) and len(_ca_cands) > 0)
+    ok("copulaaic candidate keys present",
+       all(('data-key="%s"' % n) in html for n, _ in _ca_cands))
+    ok("copulaaic AIC-selected copula is governed, minimum-AIC & marked",
+       (_cs_sel in [n.lower() for n, _ in _ca_cands])
+       and (_cs_sel == min(_ca_cands, key=lambda t: t[1])[0].lower())
+       and ('class="cabar sel"' in html) and ("AIC-selected" in html))
+    ok("copulaaic selected AIC matches selected_copula (governed consistency)",
+       any(n.lower() == _cs_sel and f"{v:,.4f}" in html for n, v in _ca_cands))
+    ok("copulaaic derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("copulaaic loader-parity hook", "redrawCopulaAic" in html)
+    # Copula log-likelihood strip (W47, additive, inline-SVG, zero JS dep, zero net)
+    _cll_cands = [(str(c.get("name")), float(c.get("loglik")))
+                  for c in _cs_list
+                  if isinstance(c, dict) and isinstance(c.get("loglik"), (int, float))
+                  and c.get("name") is not None]
+    ok("copulall heading", "copula goodness-of-fit" in html.lower())
+    ok("copulall svg", 'id="copulall"' in html)
+    ok("copulall >=2 fitted candidates", len(_cll_cands) >= 2)
+    ok("copulall bars == candidate count",
+       html.count('class="cllbar"') == len(_cll_cands))
+    ok("copulall value texts == candidate count",
+       html.count('class="cllval"') == len(_cll_cands))
+    ok("copulall log-likelihood values verbatim (4dp)",
+       all(f"{v:,.4f}" in html for _, v in _cll_cands) and len(_cll_cands) > 0)
+    ok("copulall candidate keys present",
+       all(('data-key="%s"' % n) in html for n, _ in _cll_cands))
+    ok("copulall decision-neutral (selected by AIC, not raw log-likelihood; no bar marked)",
+       ("not by raw log-likelihood" in html.lower()
+        or "not\n    by raw log-likelihood" in html.lower())
+       and ('class="cllbar sel"' not in html))
+    ok("copulall companion to AIC (penalty relation noted)",
+       "before" in html.lower() and "aic" in html.lower() and 'id="copulall"' in html)
+    ok("copulall derives nothing (svg inline, no chart lib)",
+       "chart.js" not in html.lower())
+    ok("copulall loader-parity hook", "redrawCopulaLogLik" in html)
+    # Graphic navigation index ("Jump to a chart", W48, additive, static, zero JS, zero net).
+    # NOT another data graphic -- a keyboard/pointer navigator that links each governed chart
+    # already on the page to its existing <svg id>. Derives/changes no figure; targets are the
+    # unchanged svg ids so loader/Reset parity is untouched.
+    _gnav_ids = ["capbridge", "driverbars", "tailspark", "tailci", "nestedci", "esvarmargin",
+                 "copulafamily", "actionsladder", "reliefstrip", "aggmethod", "divcredit",
+                 "copulaselect", "copulautd", "copulaaic", "copulall"]
+    ok("gnav present (Jump to a chart)", 'class="gnav"' in html and "Jump to a chart" in html)
+    ok("gnav is an accessible landmark (nav + aria-label)",
+       "<nav" in html and 'aria-label="Jump to a chart"' in html)
+    ok("gnav uses a list", '<ul class="gnav-list">' in html)
+    ok("gnav links == graphic count",
+       html.count('class="gnav-link"') == len(_gnav_ids))
+    ok("gnav links every graphic svg id",
+       all(('href="#%s"' % g) in html for g in _gnav_ids))
+    ok("gnav targets all resolve to a real svg id on the page",
+       all((('href="#%s"' % g) in html) and (('id="%s"' % g) in html) for g in _gnav_ids))
+    ok("gnav placed before the first chart",
+       (lambda a, b: a != -1 and b != -1 and a < b)(html.find('class="gnav"'),
+                                                    html.find('id="capbridge"')))
+    ok("gnav derives nothing (navigation only, no chart lib)",
+       'class="gnav-cap"' in html and "nothing is computed or changed" in html.lower()
+       and "chart.js" not in html.lower())
+    failed = [n for n, c in checks if not c]
+    print(json.dumps({"ok": not failed, "checks": len(checks),
+                      "passed": len(checks) - len(failed), "failed": failed}, indent=2))
+    return 1 if failed else 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())

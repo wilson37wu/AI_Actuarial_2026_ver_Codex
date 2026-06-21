@@ -74,7 +74,7 @@ git push origin HEAD:main
 git fetch origin && git rebase origin/main && git push origin HEAD:main   # retry (up to 3x)
 ```
 
-Because each cycle does **one** task and rebases first, conflicts on code are rare. The shared **state files** (`.claude-dev/MODEL_DEV_STATE.json`, `GOVERNANCE_STORE.json`, `MODEL_DEV_LOG.md`, `MODEL_DEV_TASK_PROMPT.md`) are only ever edited by the **lock holder**, so they never conflict in practice. Per-cycle status files use unique names (`LATEST_CYCLE_STATUS_<date>_<task>.md`) and never collide.
+Because each cycle does **one** task and rebases first, conflicts on code are rare. The shared **state files** (`.claude-dev/MODEL_DEV_STATE.json`, `GOVERNANCE_STORE.json`, `MODEL_DEV_LOG.md`, `MODEL_DEV_TASK_PROMPT.md`) are only ever edited by the **lock holder**, so they never conflict in practice. Per-cycle status files use unique names (`docs/cycle_status/LATEST_CYCLE_STATUS_<date>_<task>.md` - NOTE: they live in `docs/cycle_status/`, NOT the repo root, since the 2026-06-11 restructure) and never collide.
 
 ---
 
@@ -103,6 +103,8 @@ cd /tmp/cycle_clone
 ```
 Write/verify source + state files on the mount (or off-mount), then **copy** them into the clone (`cp` preserves integrity; the in-place editor has corrupted files mid-write before — always re-parse JSON after writing). Never run `git add/commit` in the mounted worktree.
 
+> **Git identity in the throwaway clone.** A fresh clone inherits no `user.name`/`user.email`, so `git commit` fails with *"Author identity unknown"*. `scripts/agent_lock.py` now **self-heals** this (`_ensure_identity`): it sets a repo-local fallback identity (`<owner>-cowork-agent` / `<owner>-agent@actuarial-bot.local`) when none is configured, and **refuses to report a false `ACQUIRED`/`RELEASED`** if a commit silently fails (it verifies HEAD actually advanced and carries the intended owner before pushing, else exits 2). Previously an unset identity made the lock commit a no-op while the push of a stale HEAD returned 0 — a silent clobbering hazard. Regression-tested in `tests/test_agent_lock_identity.py`.
+
 ### Codex (normal Linux checkout)
 Operate in your checkout directly. Still: fetch-rebase before push, honour the lock, and never force-push `main`.
 
@@ -121,7 +123,7 @@ Operate in your checkout directly. Still: fetch-rebase before push, honour the l
 > 1. `git fetch origin && git checkout main && git rebase origin/main`.
 > 2. Run `python scripts/agent_lock.py preflight --owner codex`. If it exits non-zero ("locked by claude"), **stop this run** — do no work, make no commits.
 > 3. Else `python scripts/agent_lock.py acquire --owner codex --task "<the in_progress task>"` (this commits + pushes the lock; if it reports a lost race, stop).
-> 4. Do **one** task (the `in_progress` item in `.claude-dev/MODEL_DEV_STATE.json`). Update state, log, and a uniquely-named `LATEST_CYCLE_STATUS_<date>_<task>.md`.
+> 4. Do **one** task (the `in_progress` item in `.claude-dev/MODEL_DEV_STATE.json`). Update state, log, and a uniquely-named `docs/cycle_status/LATEST_CYCLE_STATUS_<date>_<task>.md` (in `docs/cycle_status/`, not the repo root).
 > 5. `git fetch origin && git rebase origin/main && git push origin HEAD:main` (retry up to 3× on rejection).
 > 6. `python scripts/agent_lock.py release --owner codex` (commits + pushes the release).
 > 7. Run on the **00:00 / 12:00 UTC** schedule (Claude runs 06:00 / 18:00). Never force-push `main`.

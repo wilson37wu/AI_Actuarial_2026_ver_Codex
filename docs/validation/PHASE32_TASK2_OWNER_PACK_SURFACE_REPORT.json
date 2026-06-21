@@ -1,0 +1,111 @@
+{
+  "task": "Phase 32 Task 2 - owner-decision-pack surface (gap G1)",
+  "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+  "generated_utc": "2026-06-11T14:22:09.288508+00:00",
+  "verdict": "PASS",
+  "gap_closed": "G1",
+  "next": "Task 3 (gap G2): user-input run-result surface (contract 1.14.0 -> 1.15.0 additive)",
+  "ui_contract_checks": {
+    "contract_version": "1.14.0",
+    "contract_is_1_14_0": true,
+    "owner_decision_section_present": true,
+    "pack_bit_for_bit_all_keys": true,
+    "pack_bit_for_bit_detail": {
+      "metadata": true,
+      "purpose": true,
+      "how_to_read": true,
+      "evidence_pack": true,
+      "figure_provenance": true,
+      "owner_options": true,
+      "owner_option_order": true,
+      "escalation_option_id": true,
+      "signoff_workflow": true,
+      "decision_record_template": true,
+      "glossary": true,
+      "limitations": true,
+      "standard_references": true
+    },
+    "governed_headline_39976": true,
+    "assembly_gate_carried_ok": true,
+    "source_pinned": true,
+    "options_registry_order": true,
+    "no_recommended_key": true,
+    "decision_fields_blank": true,
+    "narrative_states_blank_and_no_default": true,
+    "panel_div_in_html": true,
+    "tab_title_in_html": true,
+    "renderer_in_html": true,
+    "zero_external_refs": true,
+    "single_file_bytes": 513579,
+    "all_passed": true,
+    "headline_readouts": {
+      "governed_headline": 39975.654628199336,
+      "vine2_point": 42458.5527095696,
+      "tree3_bootstrap_mean": 41751.92733111887,
+      "nested_reference": 46638.9,
+      "option_order": [
+        "O1_adopt_disclosed_vine_readout",
+        "O2_accept_residual_with_monitoring",
+        "O3_fund_second_independent_nested_run"
+      ],
+      "escalation_option": "O3_fund_second_independent_nested_run"
+    }
+  },
+  "self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 196,
+    "failed_checks": [],
+    "od_checks": {
+      "ownerDecisionTabPresent": true,
+      "odCards": 15,
+      "odOptionCards": 3,
+      "odLadderRows": 4,
+      "odHistRows": 5,
+      "odWfRows": 6,
+      "odDrRows": 6,
+      "odProvRows": 7,
+      "odBarRects": 5,
+      "odTabTextPresent": true,
+      "odGovernedHeadlinePresent": true,
+      "odVine2PointPresent": true,
+      "odTree3MeanPresent": true,
+      "odVine2CiPresent": true,
+      "odTree3CiPresent": true,
+      "odNestedPresent": true,
+      "odResidualPresent": true,
+      "odCapitalEffectPresent": true,
+      "odOptionsRegistryOrder": true,
+      "odNoDefaultPresent": true,
+      "odDecisionBlankCount": 6,
+      "odStopRulePresent": true,
+      "odMrOpenPresent": true,
+      "odSingleRunCaveatPresent": true
+    }
+  },
+  "offline_viewer_self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 11,
+    "failed_checks": [],
+    "od_checks": {}
+  },
+  "combined_gui_self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 27,
+    "failed_checks": [],
+    "od_checks": {}
+  },
+  "governance": {
+    "added_change_record": true,
+    "change_record_id": "63b701f440eb4cfb9c83f7c34ce9f009",
+    "change_record_status": "OWNER_REVIEW",
+    "audit_entries": "108->109",
+    "change_records": "80->81",
+    "audit_integrity_verify_all": true
+  }
+}

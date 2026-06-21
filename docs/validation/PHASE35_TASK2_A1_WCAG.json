@@ -1,0 +1,233 @@
+{
+ "task": "Phase 35 Task 2 (gap A1) - WCAG 2.1 AA keyboard + contrast conformance pass",
+ "phase": "Phase 35: Offline UI Accessibility & Evidence-Integrity Deepening",
+ "generated_utc": "2026-06-14T06:28:56.297389+00:00",
+ "verdict": "PASS",
+ "gap_closed": "A1",
+ "contract": "1.18.0 -> 1.19.0 (ADDITIVE; a11y_audit only)",
+ "a11y_audit_summary": {
+  "themes": 2,
+  "pairs_checked": 10,
+  "controls_checked": 9,
+  "all_pass": true,
+  "min_ratio": 4.84
+ },
+ "contrast_pairs": {
+  "default": [
+   {
+    "surface": "Body text on page background",
+    "ratio": 15.69,
+    "required": 4.5,
+    "pass": true
+   },
+   {
+    "surface": "Body text on panel",
+    "ratio": 12.82,
+    "required": 4.5,
+    "pass": true
+   },
+   {
+    "surface": "Secondary / muted text on panel",
+    "ratio": 5.75,
+    "required": 4.5,
+    "pass": true
+   },
+   {
+    "surface": "Secondary / muted text on page",
+    "ratio": 7.03,
+    "required": 4.5,
+    "pass": true
+   },
+   {
+    "surface": "Link / accent text on page",
+    "ratio": 6.63,
+    "required": 4.5,
+    "pass": true
+   },
+   {
+    "surface": "Pass-chip text on chip",
+    "ratio": 7.34,
+    "required": 3.0,
+    "pass": true
+   },
+   {
+    "surface": "Warn-chip text on chip",
+    "ratio": 7.62,
+    "required": 3.0,
+    "pass": true
+   },
+   {
+    "surface": "Fail-chip text on chip",
+    "ratio": 4.84,
+    "required": 3.0,
+    "pass": true
+   },
+   {
+    "surface": "Focus outline vs page background",
+    "ratio": 6.63,
+    "required": 3.0,
+    "pass": true
+   },
+   {
+    "surface": "Focus outline vs panel",
+    "ratio": 5.42,
+    "required": 3.0,
+    "pass": true
+   }
+  ],
+  "high_contrast": [
+   {
+    "surface": "Body text on page background",
+    "ratio": 21.0,
+    "required": 4.5,
+    "pass": true
+   },
+   {
+    "surface": "Body text on panel",
+    "ratio": 21.0,
+    "required": 4.5,
+    "pass": true
+   },
+   {
+    "surface": "Secondary / muted text on panel",
+    "ratio": 16.83,
+    "required": 4.5,
+    "pass": true
+   },
+   {
+    "surface": "Secondary / muted text on page",
+    "ratio": 16.83,
+    "required": 4.5,
+    "pass": true
+   },
+   {
+    "surface": "Link / accent text on page",
+    "ratio": 11.47,
+    "required": 4.5,
+    "pass": true
+   },
+   {
+    "surface": "Pass-chip text on chip",
+    "ratio": 15.82,
+    "required": 3.0,
+    "pass": true
+   },
+   {
+    "surface": "Warn-chip text on chip",
+    "ratio": 19.56,
+    "required": 3.0,
+    "pass": true
+   },
+   {
+    "surface": "Fail-chip text on chip",
+    "ratio": 7.34,
+    "required": 3.0,
+    "pass": true
+   },
+   {
+    "surface": "Focus outline vs page background",
+    "ratio": 11.47,
+    "required": 3.0,
+    "pass": true
+   },
+   {
+    "surface": "Focus outline vs panel",
+    "ratio": 11.47,
+    "required": 3.0,
+    "pass": true
+   }
+  ]
+ },
+ "keyboard_controls": [
+  "Main tab strip",
+  "Sub-view segmented buttons",
+  "Global search box + result rows",
+  "Inventory / register filters",
+  "Distribution-explorer slider",
+  "Toolbar export / CSV / print buttons",
+  "Print-all (sign-off) button",
+  "High-contrast toggle",
+  "Expandable disclosures"
+ ],
+ "focus_visible_selectors": [
+  ".tab",
+  ".tbtn",
+  ".segbtn",
+  ".rrow",
+  ".crow",
+  ".panel",
+  ".hctoggle",
+  "a",
+  "button",
+  "input",
+  "select",
+  "textarea",
+  "summary",
+  "[tabindex]"
+ ],
+ "self_tests": {
+  "ui_app": {
+   "ok": true,
+   "checks": 350,
+   "network": 0,
+   "js_errors": 0
+  },
+  "offline_viewer": {
+   "ok": true
+  },
+  "combined_gui": {
+   "ok": true
+  },
+  "userrun_fallback": {
+   "ok": true,
+   "network": 0,
+   "js_errors": 0
+  },
+  "distribution_fallback": {
+   "ok": true,
+   "network": 0,
+   "js_errors": 0
+  },
+  "integrity_fallback": {
+   "ok": true,
+   "network": 0,
+   "js_errors": 0
+  },
+  "search_deeplink": {
+   "ok": true,
+   "network": 0,
+   "js_errors": 0
+  },
+  "bundle_printall": {
+   "ok": true,
+   "network": 0,
+   "js_errors": 0
+  }
+ },
+ "invariants": {
+  "external_refs": 0,
+  "single_file": true,
+  "additive_only": true,
+  "added_keys": [
+   "a11y_audit"
+  ],
+  "changed_preexisting_keys": [
+   "contract_version",
+   "contract_manifest"
+  ],
+  "other_html_unchanged": [
+   "model_result_viewer.html",
+   "combined_model_app.html",
+   "viewer_data.json"
+  ]
+ },
+ "governance": {
+  "change_record_id": "9402b3867247401b84cbbb05f7045839",
+  "status": "OWNER_REVIEW",
+  "change_records": "93->94",
+  "audit_entries": "121->122",
+  "audit_integrity_ok": true
+ },
+ "no_model_parameter_changes": true,
+ "next": "Task 3 = A2 (per-section SHA-256 digest in H1 integrity panel)"
+}

@@ -1,0 +1,99 @@
+{
+  "task": "Phase 33 Task 4 - printable owner sign-off / report pack + complete CSV export coverage (gap G3)",
+  "phase": "Phase 33: Offline UI Interactive Analytics & Usability",
+  "generated_utc": "2026-06-13T20:35:07.424964+00:00",
+  "verdict": "PASS",
+  "gap_closed": "G3",
+  "contract": "1.17.0 (UNCHANGED; presentation-only)",
+  "next": "Task 5 (gap G4): accessibility & usability pass",
+  "contract_surface_checks": {
+    "contract_version": "1.17.0",
+    "contract_unchanged_1_17_0": true,
+    "no_new_top_level_key": true,
+    "distribution_explorer_bit_identical": true,
+    "governed_model_figures_bit_identical": true,
+    "changed_top_keys_store_sync_refresh_only": true,
+    "meta_change_is_build_stamp_only": true,
+    "embedded_snapshot_equals_ui_data_json": true,
+    "signoff_cover_div_in_html": true,
+    "signoff_cover_renderer_in_html": true,
+    "print_cover_css_present": true,
+    "print_media_block_present": true,
+    "decision_record_blank": true,
+    "neutrality_text_in_cover": true,
+    "csv_builders_all_present": true,
+    "csv_export_buttons_present": true,
+    "signoff_pack_sections_in_html": true,
+    "zero_external_refs": true,
+    "single_file_bytes": 616602,
+    "all_passed": true,
+    "surface_readouts": {
+      "changed_top_keys": [
+        "governance",
+        "inventory",
+        "meta",
+        "summary"
+      ],
+      "meta_changed": [
+        "generated_utc"
+      ],
+      "n_required_csv_builders": 11,
+      "single_file_bytes": 616602,
+      "decision_record_fields_blank": [
+        "decision_option_id",
+        "rationale",
+        "decided_by",
+        "decided_at",
+        "peer_reviewer",
+        "follow_up_change_record_id"
+      ]
+    }
+  },
+  "self_tests": {
+    "ui_app": {
+      "ok": true,
+      "n_checks": 283,
+      "network_calls": 0,
+      "js_errors": 0,
+      "failed_checks": []
+    },
+    "distribution_fallback": {
+      "ok": true,
+      "n_checks": 9,
+      "network_calls": 0,
+      "js_errors": 0,
+      "failed_checks": []
+    },
+    "userrun_fallback": {
+      "ok": true,
+      "n_checks": 9,
+      "network_calls": 0,
+      "js_errors": 0,
+      "failed_checks": []
+    },
+    "offline_viewer": {
+      "ok": true,
+      "n_checks": 11,
+      "network_calls": 0,
+      "js_errors": 0,
+      "failed_checks": []
+    },
+    "combined_gui": {
+      "ok": true,
+      "n_checks": 27,
+      "network_calls": 0,
+      "js_errors": 0,
+      "failed_checks": []
+    }
+  },
+  "governance": {
+    "added_change_record": true,
+    "change_record_id": "d7932f58d9794b09b40121ae9ae4ee1c",
+    "change_record_status": "OWNER_REVIEW",
+    "audit_entries_before": 115,
+    "audit_entries_after": 116,
+    "change_records_before": 87,
+    "change_records_after": 88,
+    "audit_integrity_ok": true
+  }
+}

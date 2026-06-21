@@ -1,5 +1,6 @@
 {
   "owner": null,
-  "note": "initialized; see AGENT_COORDINATION.md",
+  "released_at": "2026-06-21T06:17:58Z",
+  "released_by": "claude",
   "ttl_minutes": 120
 }

@@ -1,0 +1,122 @@
+# >>> INSTALL: copy this file to .github/workflows/release.yml in a checkout
+# >>> whose token has the GitHub 'workflow' scope, then commit. It is shipped
+# >>> here as packaging/release.workflow.yml because the automated dev token
+# >>> intentionally lacks 'workflow' scope (cannot write under .github/workflows/).
+# >>> One-liner:  mkdir -p .github/workflows && cp packaging/release.workflow.yml .github/workflows/release.yml
+#
+# Phase PKG Task 1 - Option A frozen-binary release matrix (owner-decision card).
+#
+# AUTHORING ONLY / DECISION-NEUTRAL: this workflow is gated to manual dispatch and
+# version tags. It NEVER runs on a normal push to main, so adding it changes no
+# day-to-day behaviour and does not auto-publish anything; the owner's A/B/C
+# packaging choice is not pre-empted. Building a frozen binary needs build tooling
+# + network that the dev sandbox lacks; this matrix runs that build on real
+# GitHub runners (one per OS) only when the owner triggers it.
+#
+# Offline guarantee is unchanged: the produced binary binds 127.0.0.1 only and
+# makes no outbound call. No model parameter is set here. The pinned engine
+# (requirements-engine-lock.txt: numpy 1.26.4 / pandas 2.2.3 / scipy 1.13.1) is
+# frozen into each artifact, so the governed headline SCR 39975.654628199336 is a
+# property of model + pinned stack.
+
+name: package-release
+
+on:
+  workflow_dispatch:        # manual: owner triggers from the Actions tab
+    inputs:
+      reason:
+        description: "Why this build is being produced (audit note)"
+        required: false
+        default: "manual frozen-binary build"
+  push:
+    tags:
+      - "v*"                # version tag push produces a release with assets
+
+permissions:
+  contents: write           # needed only to attach assets to a tag release
+
+concurrency:
+  group: package-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pinned engine + PyInstaller
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-engine-lock.txt
+          python -m pip install pyinstaller==6.11.1
+
+      - name: Structural pre-build gate
+        run: python scripts/build_phase_pkg_task1_validate.py
+
+      - name: Build frozen binary
+        run: pyinstaller --clean --noconfirm packaging/actuarial_gui.spec
+
+      - name: Smoke test the frozen binary (engine + offline plan, no server)
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            BIN="dist/Launch_Actuarial_GUI.exe"
+          else
+            BIN="dist/Launch_Actuarial_GUI"
+          fi
+          "$BIN" --self-test --no-browser > selftest_${{ matrix.os }}.json
+          cat selftest_${{ matrix.os }}.json
+          python - "$PWD/selftest_${{ matrix.os }}.json" <<'PY'
+          import json, sys
+          d = json.load(open(sys.argv[1]))
+          assert d.get("self_test_ok") is True, "launcher self-test failed"
+          assert d.get("host") == "127.0.0.1", "binary is not localhost-only"
+          assert d["engine"]["engine_ready"] is True, "engine not bundled"
+          print("smoke OK: localhost-only, engine ready, self_test_ok")
+          PY
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Launch_Actuarial_GUI-${{ matrix.os }}
+          path: |
+            dist/Launch_Actuarial_GUI*
+            selftest_${{ matrix.os }}.json
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: attach assets to tag release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release_assets
+      - name: Publish release with binaries
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release_assets/**/*
+          fail_on_unmatched_files: true
+          body: |
+            Frozen-binary build (Option A) of the Actuarial Input & Run GUI.
+            Each asset is a self-contained executable for its OS - no Python or
+            pip required. Localhost-only, fully offline. Pinned engine:
+            numpy 1.26.4 / pandas 2.2.3 / scipy 1.13.1. Governed headline SCR
+            39975.654628199336 is frozen with this stack.

@@ -1,0 +1,166 @@
+{
+  "task": "Phase 32 Task 4 - governed read-out completeness sweep (gap G3)",
+  "phase": "Phase 32: Zero-Install Offline UI Consolidation",
+  "generated_utc": "2026-06-11T16:20:56.723615+00:00",
+  "verdict": "PASS",
+  "gap_closed": "G3",
+  "next": "Task 5: phase summary + final consolidated re-audit; PHASE 32 COMPLETE",
+  "inventory_diff": {
+    "contract_version": "1.16.0",
+    "what_was_missing": {
+      "change_records_absent_from_embedded_snapshot": [
+        "00f05366af9349d5ba1f4609a239f51b",
+        "0988ea9f865a49c3b938d22dc37af498",
+        "0dbc8cd110044a8186fe0f0bd8a50df3",
+        "242342e615a146c1a1fdedc6381a9fc9",
+        "2b34607c654d4f01b1dc88b70914fa3a",
+        "2d572dbcb6a44e96bc012fe2f73b511e",
+        "2e7ef53d089a42a2943dc06cf1204269",
+        "32bae3c32f0040a08a9696c23e02a062",
+        "391700530a174ec1bc3b99a0c16e808d",
+        "3a063680d2724e83813241a6b04a81e4",
+        "3ea0836fc67f405dbef26e5f954e680d",
+        "46c3318c27ae469daf7c0e40f8d99a41",
+        "5038d450f9694bb884fcd73cf0bb0bbd",
+        "63b701f440eb4cfb9c83f7c34ce9f009",
+        "655dae827a644dc0bbb8a87b74e34ddf",
+        "6bb5db0a06734369a0eb6d5ff48e84bc",
+        "736029a064514f8681fd0af592ddab97",
+        "85a6b858662c42f095b62e4719e04836",
+        "92142116880240d2828d9eaac365f696",
+        "94c904819c4c4cb0938d23db922f603b",
+        "b1c2649394b747388aaa432560039587",
+        "b29f48e784984b7aae3189decae92f44",
+        "b92691ef320f4109b818520b0365beab",
+        "dc8595e9baed4e3dafa0d7927d2cbf39",
+        "dcbc94cdcc474cb9951d762bfeb358b2",
+        "f20b5a1b0b6f4432841f9d8ee4a3acd8",
+        "f5c26bca4c964309b6afe13650023b46",
+        "fcdac39175ea472f8edadd9dd8aa3249"
+      ],
+      "n_change_records_missing": 28,
+      "audit_trail": {
+        "store_entries": 110,
+        "embedded_snapshot_entries": 81,
+        "note": "The embedded audit block is a verified-integrity SNAPSHOT export; the store total is now disclosed additively via store_sync."
+      },
+      "risk_register_missing_ids": [],
+      "validation_registry_missing_from_inventory": []
+    },
+    "what_was_added": {
+      "new_keys": [
+        "governance.change_records_supplement",
+        "governance.store_sync"
+      ],
+      "change_records_supplemented": 28,
+      "store_sync": {
+        "source": ".claude-dev/GOVERNANCE_STORE.json",
+        "swept_by": "Phase 32 Task 4 (gap G3) governed read-out completeness sweep",
+        "change_records_store_total": 82,
+        "change_records_embedded": 54,
+        "change_records_supplemented": 28,
+        "change_record_status_counts": {
+          "APPROVED": 8,
+          "IMPLEMENTED": 2,
+          "OWNER_REVIEW": 70,
+          "SUPERSEDED": 1,
+          "DRAFT": 1
+        },
+        "audit_trail_store_entries": 110,
+        "audit_entries_embedded": 81,
+        "risk_register_store_total": 17,
+        "risk_register_embedded": 17,
+        "sweep_report": "docs/validation/PHASE32_TASK4_GOVERNANCE_SWEEP_REPORT.json"
+      }
+    },
+    "checks": {
+      "contract_is_1_16_0": true,
+      "all_missing_records_supplemented": true,
+      "supplement_bit_for_bit_vs_store": true,
+      "no_overlap_embedded_vs_supplement": true,
+      "store_total_equals_embedded_plus_supplement": true,
+      "status_counts_bit_for_bit": true,
+      "audit_store_count_bit_for_bit": true,
+      "risk_register_complete": true,
+      "validation_registry_complete": true
+    }
+  },
+  "additive_contract_checks": {
+    "sweep_panel_in_html": true,
+    "store_sync_badge_in_html": true,
+    "zero_external_refs": true,
+    "single_file_bytes": 572915,
+    "additive_check": {
+      "previous": "/tmp/prev_ui_data.json",
+      "top_level_keys_differing": [
+        "meta",
+        "governance"
+      ],
+      "meta_diffs": [
+        "generated_utc"
+      ],
+      "governance_pre_existing_diffs": [],
+      "governance_new_keys": [
+        "change_records_supplement",
+        "store_sync"
+      ]
+    },
+    "additive_ok": true
+  },
+  "self_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 232,
+    "failed_checks": [],
+    "g3_checks": {
+      "govStoreSyncCards": 5,
+      "govStoreSyncPanel": true,
+      "govStoreSyncPresent": true,
+      "govSupplementPresent": true,
+      "govSupplementNoOverlap": true,
+      "govSweepTotalsConsistent": true,
+      "govTimelineComplete": true,
+      "govSyncBadgesRendered": true,
+      "govChangesCsvComplete": true
+    },
+    "cached": true
+  },
+  "fallback_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 9,
+    "failed_checks": [],
+    "g3_checks": {},
+    "cached": true
+  },
+  "offline_viewer_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 11,
+    "failed_checks": [],
+    "g3_checks": {},
+    "cached": true
+  },
+  "combined_gui_test": {
+    "ok": true,
+    "network_calls": 0,
+    "js_errors": 0,
+    "n_checks": 27,
+    "failed_checks": [],
+    "g3_checks": {},
+    "cached": true
+  },
+  "governance": {
+    "added_change_record": true,
+    "change_record_id": "cc4aa0251c384357a753a40949c6eda0",
+    "change_record_status": "OWNER_REVIEW",
+    "audit_entries_before": 110,
+    "audit_entries_after": 111,
+    "change_records_before": 82,
+    "change_records_after": 83,
+    "audit_integrity_ok": true
+  }
+}

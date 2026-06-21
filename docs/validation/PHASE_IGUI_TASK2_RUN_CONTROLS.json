@@ -1,0 +1,83 @@
+{
+ "doc_id": "PHASE_IGUI_TASK2_RUN_CONTROLS",
+ "doc_version": "1.0.0",
+ "generated_at": "2026-06-15T00:20:36.983349+00:00",
+ "task": "Phase IGUI Task 2 - run controls + stdlib local-runner scaffolding",
+ "architecture": "L2_stdlib_local_runner",
+ "governed_headline": "39,975.654628199336",
+ "schema_version": "1.0.0",
+ "ui_app_sha256_frozen": "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65",
+ "run_controls_fields": [
+  "valuation_date",
+  "currency_code",
+  "currency_symbol",
+  "scale",
+  "thousands",
+  "market_label",
+  "n_outer",
+  "n_inner",
+  "n_sim",
+  "bootstrap_replicates",
+  "horizon_months",
+  "step_months",
+  "seed",
+  "output_label"
+ ],
+ "example_model_inputs_fragment": {
+  "schema_version": "1.0.0",
+  "generated_at": "1970-01-01T00:00:00+00:00",
+  "source": "igui_run_gui (Phase IGUI Task 2 run controls)",
+  "currency": {
+   "code": "HKD",
+   "symbol": "HK$",
+   "scale": "units",
+   "thousands": "comma",
+   "market_label": "HK_2026_baseline",
+   "valuation_date": "2026-06-30"
+  },
+  "run_settings": {
+   "n_outer": 160,
+   "n_inner": 24,
+   "n_sim": 200000,
+   "bootstrap_replicates": 1000,
+   "horizon_months": 12,
+   "step_months": 1,
+   "seed": 42,
+   "output_label": "igui_run",
+   "reproducibility_digest": "sha256:b4947eed5ac052754f66bc74ad1b1766c8d2c178c039a7b6a56ddefc4d286f7a"
+  }
+ },
+ "normalisation_errors": [],
+ "loader_validation_errors": [],
+ "localhost_self_test_ok": true,
+ "task2_gate": {
+  "ok": true,
+  "n_checks": 21,
+  "checks": {
+   "run_gui_present": true,
+   "core_module_present": true,
+   "loader_present": true,
+   "orchestrator_present": true,
+   "run_gui_stdlib_only": true,
+   "core_module_stdlib_only": true,
+   "run_gui_binds_localhost": true,
+   "loader_has_dict_validator": true,
+   "schema_version_lockstep": true,
+   "loader_scale_enum_lockstep": true,
+   "loader_thousands_enum_lockstep": true,
+   "defaults_normalise_clean": true,
+   "digest_deterministic": true,
+   "model_inputs_has_run_settings": true,
+   "form_carries_headline": true,
+   "form_has_all_fields": true,
+   "form_zero_external_refs": true,
+   "ui_app_byte_unchanged": true,
+   "live_zero_external_refs": true,
+   "governance_risk_register_frozen": true,
+   "governance_change_records_floor": true
+  }
+ },
+ "new_third_party_runtime_deps": 0,
+ "outbound_network_calls": 0,
+ "results_ui_byte_unchanged": true
+}

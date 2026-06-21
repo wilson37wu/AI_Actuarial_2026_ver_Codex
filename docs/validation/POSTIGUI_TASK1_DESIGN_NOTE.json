@@ -1,0 +1,110 @@
+{
+ "title": "Post-Phase-IGUI Task 1 - Design Note: Credentialled-Data Calibration-Residual Diagnostics (frozen margins)",
+ "candidate_id": "MR-CAL-1",
+ "candidate_title": "Credentialled-data calibration-residual diagnostics on the frozen margins",
+ "classification": "EDUCATIONAL",
+ "change_type": "governance_change",
+ "no_model_parameter_changes": true,
+ "touches_copula_structure": false,
+ "implementation_deferred": true,
+ "frozen_driver_margins": [
+  "rate",
+  "equity",
+  "credit",
+  "lapse",
+  "mortality",
+  "fx",
+  "liquidity"
+ ],
+ "frozen_references": {
+  "frozen_t_component_scr": 39975.654628199336,
+  "nested_pathwise_scr": 46638.9,
+  "copula_form_residual_ladder": {
+   "grouped_t": 10491.5,
+   "frozen_t": 6120.196568775231,
+   "skew_t": 6114.9,
+   "vine2": 3637.298487404965
+  }
+ },
+ "context": "Phase 30 applied the BINDING STOP-RULE: dependence-FORM escalation under MR-016 ENDS; MR-016/MR-017 stay OPEN owner decisions; candidates are DISCLOSED, not adopted. The standing roadmap names the credentialled-data calibration priority as the live next priority. The seven standalone risk-driver margins are FROZEN, but the calibration residual of those frozen margins against a credentialled reference has never been quantified. Diagnostics-first (exactly as the dependence work was diagnostics-first): MEASURE the calibration residual before any recalibration could ever be contemplated.",
+ "scope_deferred_next_cycle": [
+  "Diagnostics-only module computing each frozen driver margin's calibration residual against a credentialled reference (credibility framing: the credentialled dataset is the reference, the model margin is the prior).",
+  "Distributional GoF on the frozen margins: PIT/Rosenblatt uniformity, QQ, KS, Anderson-Darling with bootstrap CIs; SCR-relevant tail quantiles.",
+  "Residual decomposition separating margin-calibration residual from the already-quantified copula-FORM residual, reconciled to the gap vs nested.",
+  "A DISCLOSED report + optional ADDITIVE offline-UI surface; frozen margins stay bit-identical (NOT a recalibration)."
+ ],
+ "acceptance_gates": [
+  {
+   "id": "G1",
+   "name": "Frozen-margin + headline invariance",
+   "criterion": "Every frozen marginal calibration parameter AND the governed frozen-t component SCR 39,975.654628199336 recovered BIT-IDENTICAL (dev <= 1e-09) BEFORE and AFTER the diagnostics run. Diagnostics must not perturb any margin or output."
+  },
+  {
+   "id": "G2",
+   "name": "Credentialled-reference provenance",
+   "criterion": "The credentialled reference dataset is documented (source, vintage, n, credential/licence basis) and version-pinned. If no external credentialled dataset is available in-sandbox, a clearly-labelled SYNTHETIC credentialled-reference stub with the same interface is used and the report is marked EDUCATIONAL/illustrative (GBM ESG-stub precedent)."
+  },
+  {
+   "id": "G3",
+   "name": "Leakage-free goodness-of-fit",
+   "criterion": "PIT/Rosenblatt uniformity, QQ, KS and Anderson-Darling on a documented fit/holdout split; GoF statistics computed on holdout, >= 200 bootstrap replicates, SE <= 5% of the mean, SCR-relevant tail quantiles reported with CIs."
+  },
+  {
+   "id": "G4",
+   "name": "Residual decomposition reconciliation",
+   "criterion": "calibration-residual + copula-FORM residual reconcile to the total gap vs nested 46,638.9 within a pre-stated tolerance; decomposition DISCLOSED; the governed headline does NOT move."
+  },
+  {
+   "id": "G5",
+   "name": "Credibility quantification - report not apply",
+   "criterion": "Partial-credibility Z (Buhlmann-Straub / limited-fluctuation) and the credibility-weighted indicated margin shift are REPORTED as an information item but NOT applied. Any indicated |dSCR| > 1% of the governed headline OPENS a new model-risk entry (OPEN) rather than triggering recalibration."
+  },
+  {
+   "id": "G6",
+   "name": "Governance + offline-UI discipline",
+   "criterion": "Idempotent run digest; governance_change / methodology_change ChangeRecord left OWNER_REVIEW; unit tests added; if an offline-UI surface is added it is an ADDITIVE contract bump only, self-tests ok:true 0 network / 0 JS errors, 0 external refs, every pre-existing key bit-identical."
+  }
+ ],
+ "candidate_sequencing": {
+  "selected_now": "MR-CAL-1",
+  "next_candidate": "MR-VR-1",
+  "deferred_candidate": "MR-LONGEV-1",
+  "rationale": "(b) credentialled-data calibration is the live roadmap priority after the dependence stop-rule, is diagnostics-only (cleanest stop-rule compliance, no parameter change). (c) inner-path antithetic/CRN variance reduction is the recorded NEXT candidate. (a) longevity 5th-driver is a parameter-adding model-FORM change deferred to a dedicated owner-sign-off cycle."
+ },
+ "stop_rule_compliance": "No copula structure and no model parameter touched; MR-016/MR-017 untouched; governed headline frozen. Admissible under the Phase 30 binding stop-rule (bars new copula-structure candidates only).",
+ "standard_references": [
+  "SOA ASOP 25 (Credibility Procedures)",
+  "SOA ASOP 56 sections 3.1.3, 3.4, 3.5, 3.6 (model risk, reliance, documentation)",
+  "IFoA Model Practice Note (MPN) section 4 (documentation, independent review)",
+  "Solvency II Delegated Regulation Article 124 (validation standards)",
+  "Buhlmann & Straub (1970) credibility; limited-fluctuation (Mowbray) credibility",
+  "Rosenblatt (1952) PIT; Anderson-Darling / Kolmogorov-Smirnov goodness-of-fit"
+ ],
+ "affected_components": [
+  "par_model_v2/calibration/credentialled_residual_design.py (NEW, this scaffold)",
+  "tests/test_postigui_task1_design_note.py",
+  "scripts/build_postigui_task1_design_note.py",
+  "docs/validation/POSTIGUI_TASK1_DESIGN_NOTE.{json,md}",
+  "docs/POSTIGUI_CREDENTIALLED_CALIBRATION_DESIGN_CARD.md"
+ ],
+ "validation_gate": {
+  "ok": true,
+  "n_checks": 14,
+  "checks": {
+   "candidate_id": true,
+   "no_param_change": true,
+   "stop_rule_no_copula": true,
+   "implementation_deferred": true,
+   "change_type_governance": true,
+   "seven_frozen_margins": true,
+   "headline_frozen": true,
+   "nested_ref": true,
+   "residual_ladder_4": true,
+   "six_gates": true,
+   "gate_ids": true,
+   "g1_invariance": true,
+   "sequencing_present": true,
+   "standards_cited": true
+  }
+ }
+}

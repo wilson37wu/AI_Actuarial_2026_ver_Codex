@@ -110,17 +110,59 @@ def _is_held(lock: dict) -> bool:
     return _now() < started + timedelta(minutes=ttl)
 
 
+def _ensure_identity(owner: str) -> None:
+    """Guarantee a git author identity exists in THIS checkout.
+
+    A fresh ``/tmp`` clone inherits no ``user.name``/``user.email``, so
+    ``git commit`` fails with "Author identity unknown". Historically that
+    failure was swallowed: the lock file was written but never committed, the
+    subsequent ``git push HEAD:main`` was a no-op that returned 0, and the
+    helper falsely reported ``ACQUIRED``/``RELEASED`` while the lock never
+    reached ``origin`` -- defeating the whole compare-and-set. We self-heal by
+    setting a repo-local fallback identity when none is configured (an existing
+    identity is never overwritten)."""
+    name = _git("config", "user.name", check=False).stdout.strip()
+    email = _git("config", "user.email", check=False).stdout.strip()
+    if not name:
+        _git("config", "user.name", f"{owner}-cowork-agent", check=False)
+    if not email:
+        _git("config", "user.email", f"{owner}-agent@actuarial-bot.local",
+             check=False)
+
+
 def _write_commit_push(root: Path, lock: dict, message: str) -> bool:
     """Write the lock, commit, and push to main. Return True on success,
-    False if the push was rejected (lost the CAS race)."""
+    False if the push was rejected (lost the CAS race).
+
+    A genuine LOCAL commit failure (e.g. unset identity, a rejecting hook) is
+    fatal (exit 2) -- it must NOT be mistaken for the "nothing to commit"
+    no-op, because a no-op push of a stale HEAD returns 0 and would otherwise
+    masquerade as a successful acquire/release. We verify the commit actually
+    captured our intended lock before pushing."""
     (root / LOCK_FILE).write_text(
         json.dumps(lock, indent=2) + "\n", encoding="utf-8")
     _git("add", LOCK_FILE)
-    # commit may be a no-op if nothing changed; tolerate that.
+    before = _git("rev-parse", "HEAD", check=False).stdout.strip()
     c = _git("commit", "-m", message, check=False)
-    if c.returncode != 0 and "nothing to commit" not in (c.stdout + c.stderr):
-        # still try to push whatever HEAD is
-        pass
+    after = _git("rev-parse", "HEAD", check=False).stdout.strip()
+    combined = (c.stdout or "") + (c.stderr or "")
+    committed = bool(after) and after != before
+    if not committed and "nothing to commit" not in combined:
+        # Real local failure -- do not let a no-op push look like success.
+        print("ERROR: git commit failed; lock NOT committed (refusing to "
+              "report a false success):\n" + combined.strip(), file=sys.stderr)
+        sys.exit(2)
+    # Defensive: whatever HEAD now points at MUST carry our intended owner.
+    head_lock = _git("show", "HEAD:" + LOCK_FILE, check=False).stdout
+    try:
+        if json.loads(head_lock).get("owner") != lock.get("owner"):
+            print("ERROR: committed lock owner does not match intended owner; "
+                  "refusing to push", file=sys.stderr)
+            sys.exit(2)
+    except ValueError:
+        print("ERROR: committed lock is not valid JSON; refusing to push",
+              file=sys.stderr)
+        sys.exit(2)
     p = _git("push", "origin", "HEAD:main", check=False)
     if p.returncode == 0:
         return True
@@ -149,6 +191,7 @@ def cmd_preflight(root: Path, owner: str) -> int:
 
 
 def cmd_acquire(root: Path, owner: str, task: str, ttl: int, note: str) -> int:
+    _ensure_identity(owner)
     _integrate()
     lock = _read_lock(root)
     if _is_held(lock) and lock.get("owner") != owner:
@@ -179,6 +222,7 @@ def cmd_acquire(root: Path, owner: str, task: str, ttl: int, note: str) -> int:
 
 
 def cmd_release(root: Path, owner: str) -> int:
+    _ensure_identity(owner)
     _integrate()
     lock = _read_lock(root)
     if lock.get("owner") not in (owner, None, "", "null"):

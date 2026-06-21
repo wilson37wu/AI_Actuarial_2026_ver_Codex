@@ -1,0 +1,65 @@
+{
+  "ui_app_self_test": {
+    "ok": true,
+    "n_checks": 405,
+    "failed_checks": [],
+    "network_calls": 0,
+    "js_errors": 0
+  },
+  "ui_app_evidence_pack_fallback_test": {
+    "ok": true,
+    "n_checks": 12,
+    "failed_checks": [],
+    "network_calls": 0,
+    "js_errors": 0
+  },
+  "ui_app_integrity_fallback_test": {
+    "ok": true,
+    "n_checks": 10,
+    "failed_checks": [],
+    "network_calls": 0,
+    "js_errors": 0
+  },
+  "ui_app_distribution_fallback_test": {
+    "ok": true,
+    "n_checks": 9,
+    "failed_checks": [],
+    "network_calls": 0,
+    "js_errors": 0
+  },
+  "ui_app_userrun_fallback_test": {
+    "ok": true,
+    "n_checks": 9,
+    "failed_checks": [],
+    "network_calls": 0,
+    "js_errors": 0
+  },
+  "ui_app_search_deeplink_test": {
+    "ok": true,
+    "n_checks": 18,
+    "failed_checks": [],
+    "network_calls": 0,
+    "js_errors": 0
+  },
+  "ui_app_bundle_printall_test": {
+    "ok": true,
+    "n_checks": 21,
+    "failed_checks": [],
+    "network_calls": 0,
+    "js_errors": 0
+  },
+  "offline_viewer_self_test": {
+    "ok": true,
+    "n_checks": 11,
+    "failed_checks": [],
+    "network_calls": 0,
+    "js_errors": 0
+  },
+  "combined_gui_self_test": {
+    "ok": true,
+    "n_checks": 27,
+    "failed_checks": [],
+    "network_calls": 0,
+    "js_errors": 0
+  }
+}
