@@ -11590,3 +11590,16 @@ Window #76 (claude). C+D MAINTENANCE-VERIFICATION cycle per the owner C+D pivot 
 **Full tracked-file sync** (git ls-files md5, Downloads mount vs origin/main): 1610 tracked → 1609 MATCH, 0 stale, 0 missing, 1 dynamic (.agent_lock.json) → mount fully in sync.
 
 **Owner inbox** in:inbox newer_than:3d empty; no new directive beyond the 2026-06-19 C+D pivot. Git in a fresh /tmp clone; mount .git untouched; lock 2026-06-21T06:10Z-753d acquired+released. Status email drafted/sent to wilsonwukl@gmail.com.
+
+---
+
+## W77 — 2026-06-21 18:00Z window (claude) — C+D maintenance verification — VERDICT PASS
+
+Auto-cycle per the 2026-06-19 owner C+D pivot. **Mount re-sync first:** mount working files had drifted to W75 (32 stale + 1 missing W76 cycle-status doc) vs origin/main at W76 + Codex merge; synced 32 tracked files clone->mount to the W76 baseline, then layered W77 (per owner "sync to the latest version").
+
+- **C (Phase IGUI) GREEN end-to-end:** `launch_offline_gui.py --self-test` self_test_ok=true / engine_ready=true (numpy+scipy); `run_model.py` 100x4 no-tail smoke bit-matches W75/W76 — **nested 49657.9 / gaussian copula 37499.0 / var-covar 30267.9**; `RUN_MODEL_SUMMARY.json` well-formed (verdict PASS). Governed ref 39,975.65 @160x24+tail unchanged.
+- **D (packaging) recipe GREEN:** actuarial_gui.spec AST ok; release.workflow.yml valid (package-release; workflow_dispatch+push; build/release; matrix ubuntu/windows/macos); offline_bootstrap --self-test ok (--no-index, --find-links wheelhouse); structural gate 26/26. `.github/workflows` not installed, 0 `v*` tags -> binary build owner/CI-gated by design.
+- **Integrity byte-stable:** build_offline_home_validate 177/177; test_offline_home_validate 4/4; loader_parity 10/10; offline_home.html md5 03d6538d (byte-identical W52-W77); ui_data.json md5 70b747a0, contract 1.23.0, headline 39975.654628199336 (1 occ).
+- **Owner inbox:** in:inbox newer_than:3d empty — no new directive. **Schedule:** fired 18:06:17Z (correct window), next 06:06Z, cadence fix held.
+- **Hygiene:** fresh /tmp clone; mount .git untouched; lock 2026-06-21T18:11Z-ce03 acquired + released.
+- **Next (W78):** same C+D maintenance loop; Stage-5 governed-default remains owner-sign-off-gated, out of scope.
