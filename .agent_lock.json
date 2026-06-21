@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-21T18:11Z-ce03",
-  "started_at": "2026-06-21T18:11:08Z",
-  "ttl_minutes": 120,
-  "task": "W77 maintain+verify C (Phase IGUI) + assist D (packaging) per owner C+D pivot; sync mount to origin/main",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-21T18:18:28Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
