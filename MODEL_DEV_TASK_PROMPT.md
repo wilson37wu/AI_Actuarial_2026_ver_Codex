@@ -3342,3 +3342,23 @@ Phase IGUI is **COMPLETE** (input+run GUI MVP + one-click packaging + own-run re
 **Open OWNER decisions (do not pre-empt):** (1) no-prerequisite COMPUTE packaging path - Option A (PyInstaller frozen binary, recommended) / B (vendored wheels) / C (status quo) per `docs/PHASE_IGUI_PACKAGING_OPTIONS_CARD.md`, requiring a build/release environment not available in the dev sandbox; (2) the standing MR-016/MR-017 dependence decision.
 
 **Standing env limitation:** the dev sandbox has no scipy (`/sessions` 100% full, `pip` ENOSPC), so the Task-7 LIVE end-to-end run gate cannot execute here; it is validated by structure an
+---
+
+## NEXT EXECUTION POINTER (updated 2026-06-22 after W79 — C+D maintenance + MLMC frontier-completeness audit)
+
+**Project is at its terminal AUTO-RUNNABLE state.** The single authoritative `in_progress` driver remains `.claude-dev/MODEL_DEV_STATE.json`; the standing mode (per the 2026-06-19 owner C+D pivot, "NO A-E heartbeat") is **C+D maintenance verification**. W79 verdict PASS; governed artifacts byte-unchanged (offline_home `03d6538d`, ui_data `70b747a0`, contract `1.23.0`).
+
+**Confirmed complete this cycle (do NOT redo):**
+- MLMC quantile/ES tail efficiency frontier — **complete through Stage 4** (W63 design → W64 prototype → W65 G0–G2 validation → W66 variance-reduction; SCR variance reduction 2.39× at matched cost; 25/25 frontier tests green).
+- Auto-runnable model-improvement backlog **EXHAUSTED**: MR-CAL-1 (calibration-residual diagnostics, postigui-task2) and MR-VR-1 (inner-path variance reduction, MLMC track) both done.
+- Phase IGUI (input+run GUI) complete + verified (C); Packaging recipe complete, binary build owner/CI-gated (D).
+- Offline RESULTS UI meets the owner's terminal spec (zero-install, model-output-only, graphical + interactive).
+
+**Next cycle (W80) default = same light C+D maintenance loop:** verify C (`launch_offline_gui.py --self-test` + `run_model.py` 100×4 no-tail bit-match nested 49657.9 / 37499.0 / 30267.9); keep D green (PKG gate 26/26) + owner-action checklist current; confirm governed artifacts byte-unchanged (177/177, 4/4); full tracked-file mount sync; owner-reply check; end-of-run status email. **No new model-research workstream, no duplicate owner brief, no model-form change** (owner directed "NO A-E heartbeat").
+
+**Forward motion requires an explicit OWNER decision (do not pre-empt; surface in the status email, do not re-litigate every cycle):**
+1. **Tail-MLMC Stage 5** — authorise making the quantile/ES tail-MLMC estimator the governed SCR default (re-baseline + fresh frozen reference). Evidence: Stage-4 SCR variance reduction 2.39× at matched inner-path cost.
+2. **MR-LONGEV-1** — authorise the longevity / mortality-trend 5th driver (model-form change; re-baselines the headline).
+3. **D packaging CI activation** — install `packaging/release.workflow.yml` → `.github/workflows/release.yml` with a `workflow`-scope GitHub token, then tag `v*` / dispatch to build ubuntu/windows/macos binaries (sandbox token lacks `workflow` scope; cross-OS binaries can't be built from Linux).
+
+**Standing env limitation:** `/sessions` sandbox mount is 100% full — engine venv (`/tmp/eng_venv`, pinned numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3) and all cycle authoring stay off-mount; new files commit to origin/main only and reach the Downloads mount on the owner's next `git pull`. Owner housekeeping recommended.
