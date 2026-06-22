@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-22T06:10Z-3de7",
-  "started_at": "2026-06-22T06:10:38Z",
-  "ttl_minutes": 120,
-  "task": "W78 C+D maintenance-verification (Phase IGUI self-test + run_model smoke, packaging gates, governed byte-stability, full tracked-file sync, owner-reply check)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-22T06:17:03Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
