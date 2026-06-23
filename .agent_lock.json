@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-23T06:10Z-9980",
-  "started_at": "2026-06-23T06:10:35Z",
-  "ttl_minutes": 120,
-  "task": "W80 (2026-06-23 06:00Z): C+D maintenance-verification + auto-admissible research note (model frontier owner-gated at stage5/longevity)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-23T06:23:27Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
