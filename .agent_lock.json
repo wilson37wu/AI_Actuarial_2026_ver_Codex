@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-23T06:23:27Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-23T18:10Z-4a1a",
+  "started_at": "2026-06-23T18:10:52Z",
+  "ttl_minutes": 120,
+  "task": "W81 C+D maintenance-verification cycle (2026-06-23 18:00Z)",
+  "note": ""
 }
