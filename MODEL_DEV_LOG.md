@@ -11720,3 +11720,20 @@ Owner-directed interactive session; executed **Phase 37 Task 1 (consolidate the 
 **Verification GREEN + governed byte-stable:** `index.html` stdlib-parsed, 0 external refs / 0 script tags; `ui_app.html` sha256 `d82c65ec…` and `offline_home.html` md5 `03d6538d…` **byte-unchanged**; `ui_data.json` contract `1.23.0`; `build_offline_home_validate` **177/177**; `offline_home_loader_parity` **10/10**; PKG structural gate **26/26** (`ui_app_byte_unchanged` True). No file deleted/renamed (offline_home links still resolve).
 
 Phase 37 Task 1 → completed; **Task 2 (Interactive Scenario Explorer)** now in_progress. Git in a refreshed clone of origin/main; mount `.git` untouched; lock `2026-06-29T18:27Z-61cd`.
+
+---
+
+## 2026-06-29T19:45:00Z — INTERACTIVE (claude) — Phase 38 Task 1: Asset/Liability/Net Cash-Flow & Products UI — VERDICT PASS
+
+Owner-directed interactive session. Owner: "I also want to see cash-flow projection from asset and liability separately, add a net cash-flow projection, and show tabs with the products being modelled and tested — add these to the UI."
+
+**Finding:** the engine already computes these (`par_model_v2/projection/monthly_projection.py`): liability CF (premium/expenses/death guar+non-guar/maturity/surrender + net `ncf`), asset CF (Govt/Credit/Equity/Cash income + FMV), asset-share roll-forward; governed reference run persisted at `docs/validation/PROJECTION_REFERENCE_RUN.json` (20yr PAR endowment). Products: ParEndowment 5/10/20yr + HK participating (RB + cash-dividend). Gap: none of it was in the UI (`ui_data.json` was SCR-only).
+
+**Shipped (additive; display-only; no model-form change):**
+- `scripts/build_cashflow_products_view.py` — no-calculation bundler.
+- `cashflow_products.html` — self-contained, **0 external refs**, fully offline. **Cash Flows** tab → Asset (income by class + FMV) / Liability (premium, benefits, expenses, net + guaranteed-vs-non-guaranteed split) / **Net** (BOTH: underwriting = prem−exp−benefits, and ALM = underwriting + asset investment income; monthly + cumulative), inline-SVG charts + PV KPIs. **Products** tab → ParEndowment 20yr (reference, charted) + 5/10yr + HK RB + HK cash-dividend, with mechanics, parameters, tested status, model-point schema.
+- `index.html` — added a "Cash Flows & Products" entry card.
+
+**Verification:** node `--check` clean; HTML stdlib-parsed; **DOM-shim render-smoke PASS** (cf-asset/cf-liab/cf-net/pr all populate; charts emit `<svg>`); **data traceability PASS** (months, liability net, premium, asset totals, ALM net, cumulative, PV summary all == `PROJECTION_REFERENCE_RUN.json`). Governed artifacts byte-unchanged: `ui_app.html` sha256 `d82c65ec…`, `offline_home.html` md5 `03d6538d…`, `ui_data.json` contract `1.23.0`.
+
+**Deferred (with reason):** folding these as native tabs INSIDE `ui_app.html` → Phase 38 Task 3 (gated cutover). `build_ui_pipeline.py` does not reproduce the frozen `ui_app.html` sha (embeds a build timestamp → `82940e58…` ≠ governed `d82c65ec…`), so a rebuild forces a sha re-baseline across ~10 gate scripts; and `ui_app_self_test.cjs` needs jsdom (absent here). The companion page delivers the feature now, fully verified. Phase 37 Scenario Explorer paused → folded into the same cutover. Phase 38 Task 2 (5yr/10yr runs + product/term selector) is the next auto-admissible step. Lock `2026-06-29T19:30Z-05b7`.

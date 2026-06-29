@@ -1,11 +1,11 @@
 {
     "session_id": "actuarial-model-auto-dev",
     "created_at": "2026-05-17T00:00:00Z",
-    "last_run": "2026-06-29T18:35:00Z",
+    "last_run": "2026-06-29T19:45:00Z",
     "last_run_duration_minutes": null,
-    "last_run_note": "2026-06-29 (claude, INTERACTIVE, owner-directed): EXECUTED Phase 37 Task 1 (offline-UI consolidation). Shipped index.html (single canonical entry point; 0 external refs, 0 <script>, fully offline), docs/UI_CONSOLIDATION_MAP.md (disposition of all 6 HTML surfaces), and a UI_README entry note naming ui_app.html canonical. Additive-only: NO existing HTML modified; governed artifacts BYTE-UNCHANGED (ui_app sha256 d82c65ec, offline_home md5 03d6538d, ui_data contract 1.23.0, headline 39975.65). Gates GREEN: build_offline_home_validate 177/177, offline_home_loader_parity 10/10, PKG 26/26 (ui_app_byte_unchanged True). In-page deprecation banners on the 4 archived viewers DEFERRED to Task 1b (their combined_gui/offline_viewer jsdom self-tests are env-unrunnable in-sandbox). Task 1 -> completed; Task 2 (Scenario Explorer) now in_progress. Lock 2026-06-29T18:27Z-61cd.",
-    "current_phase": "Phase 37 (Offline UI: viewer -> interactive decision tool), owner-directed 2026-06-29. Task 1 (consolidate to one app) COMPLETE: index.html single entry + UI_CONSOLIDATION_MAP + UI_README; governed byte-unchanged; gates green. ACTIVE in_progress = Phase 37 Task 2 (Interactive Scenario Explorer in ui_app.html: lookup over the pre-computed {aggregation,copula,action-set,confidence,n} grid -> matching SCR/VaR/ES + diversification; A/B compare; NO re-calculation). Then Task 3 Executive one-screen, Task 4 tour+glossary+provenance, Task 5 responsive+theme+cutover (+ Task 1b: in-page banners on archived views at the governed cutover). Constraints: zero-install, display-only/lookup-no-recalc, jsdom 0-network gate + ui_data contract bump per task. Design note: docs/research/PHASE37_OFFLINE_UI_DECISION_TOOL_DESIGN_NOTE_20260629.md.",
-    "overall_status": "PHASE_37_TASK1_COMPLETE_OFFLINE_UI_CONSOLIDATED_INDEX_HTML_SINGLE_ENTRY_0_EXTREFS_UI_CONSOLIDATION_MAP_README_UPDATED_ADDITIVE_ONLY_GOVERNED_BYTE_UNCHANGED_uiapp_d82c65ec_offlinehome_03d6538d_CONTRACT_1.23.0_HEADLINE_39975p65_GATES_GREEN_177of177_LOADER_10of10_PKG_26of26_TASK2_SCENARIO_EXPLORER_IN_PROGRESS_BANNERS_DEFERRED_TASK1b_MODEL_FRONTIER_FROZEN_OWNER_GATED",
+    "last_run_note": "2026-06-29 (claude, INTERACTIVE, owner-directed): EXECUTED Phase 38 Task 1 - asset/liability/net cash-flow + products UI. Built cashflow_products.html (self-contained, 0 external refs) from PROJECTION_REFERENCE_RUN.json via no-calc bundler build_cashflow_products_view.py: Cash Flows tab (Asset by class; Liability premium/benefits/expenses + guar-vs-nonguar; Net = underwriting AND ALM, monthly + cumulative) + Products tab (ParEndowment 5/10/20yr, HK RB + cash-dividend, model-point schema). Linked from index.html. Verified: node --check, HTML parse, DOM-shim render-smoke PASS, data traceability PASS (every value == source). Governed artifacts byte-unchanged (ui_app d82c65ec, offline_home 03d6538d, ui_data 1.23.0). In-app ui_app.html fold deferred to Phase 38 Task 3 (gated cutover): pipeline does not reproduce the frozen ui_app sha (timestamp), and jsdom self-test is env-unrunnable in-sandbox. Phase 37 Scenario Explorer paused -> folded into the same cutover. Lock 2026-06-29T19:30Z-05b7.",
+    "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Task 1 COMPLETE: cashflow_products.html (Cash Flows {Asset/Liability/Net both views} + Products tabs), offline, traceable, linked from index.html; governed bytes unchanged. ACTIVE in_progress = Phase 38 Task 2 (add 5yr & 10yr reference runs + product/term selector to cashflow_products.html; auto-admissible, display-only). Task 3 = gated ui_app.html cutover (fold CF + Products + Phase 37 Scenario Explorer as native tabs; needs jsdom env + sha re-baseline). Design note: docs/research/PHASE38_CASHFLOW_PRODUCTS_UI_DESIGN_NOTE_20260629.md. Model frontier remains frozen/owner-gated.",
+    "overall_status": "PHASE_38_TASK1_COMPLETE_CASHFLOW_PRODUCTS_OFFLINE_VIEW_SHIPPED_cashflow_products_html_ASSET_LIABILITY_NET_BOTH_VIEWS_PLUS_PRODUCTS_TABS_NO_CALC_BUNDLER_0_EXTREFS_RENDER_SMOKE_AND_TRACEABILITY_PASS_LINKED_FROM_INDEX_GOVERNED_BYTE_UNCHANGED_uiapp_d82c65ec_offlinehome_03d6538d_CONTRACT_1.23.0_TASK2_5yr_10yr_RUNS_PLUS_SELECTOR_IN_PROGRESS_TASK3_UIAPP_CUTOVER_GATED_jsdom_PHASE37_SCENARIO_EXPLORER_FOLDED_INTO_CUTOVER_MODEL_FRONTIER_FROZEN",
     "phases": {
         "Phase 1: Model Review & Documentation": {
             "status": "completed",
@@ -784,13 +784,26 @@
                 "Task 4: Guided tour + glossary tooltips (SCR/VaR/ES/TVOG/copula) + provenance badge (run ts, git SHA, contract, n_outer x n_inner).",
                 "Task 5: Responsive + light/dark theme + a11y/offline gate re-run + ui_data contract bump + governed re-baseline cutover + UI_README refresh."
             ],
-            "in_progress": [
-                "Task 2: Interactive Scenario Explorer - controls over the pre-computed {aggregation,copula,action-set,confidence,n} grid show matching SCR/VaR/ES + diversification by lookup; A/B compare. No re-calculation."
-            ],
+            "in_progress": [],
             "completed": [
                 "Task 1 (LEAD): consolidate 6 overlapping HTML surfaces to ONE canonical zero-install app (ui_app.html) + top-level entry pointer + static deprecation banners on combined_model_app/model_result_viewer/par_projection_gui/model_summary_card + docs/UI_CONSOLIDATION_MAP.md. jsdom self-test stays 0-network/0-error; governed artifacts byte-stable (or validator baseline updated in-commit). -> DONE 2026-06-29: shipped index.html (single entry, 0 ext-refs, 0 script tags), docs/UI_CONSOLIDATION_MAP.md, UI_README entry note. Governed byte-unchanged (ui_app d82c65ec, offline_home 03d6538d, ui_data 1.23.0); gates 177/177 + loader 10/10 + PKG 26/26. In-page banners on the 4 archived views DEFERRED to Task 1b (jsdom self-tests env-unrunnable here)."
             ],
-            "next": "Task 3: Executive one-screen view (headline + standalone->nested waterfall + top-5 risks + plain-language toggle)"
+            "next": "(Scenario Explorer + tab folds executed together at the Phase 38 Task 3 gated ui_app cutover)",
+            "notes": [
+                "Task 1 DONE (index.html consolidation). Task 2 (Scenario Explorer) PAUSED -> folded into the Phase 38 Task 3 gated ui_app cutover (rebuild needs jsdom + sha re-baseline)."
+            ]
+        },
+        "Phase 38: Asset/Liability/Net Cash-Flow & Products in the UI": {
+            "status": "in_progress",
+            "description": "Owner-directed (2026-06-29) UI workstream: surface the engine's asset, liability and net (underwriting + ALM) cash-flow projections and the product catalogue. Display-only over governed model output (PROJECTION_REFERENCE_RUN.json); no model-form change.",
+            "design_note": "docs/research/PHASE38_CASHFLOW_PRODUCTS_UI_DESIGN_NOTE_20260629.md",
+            "completed": [
+                "Task 1 (DONE 2026-06-29): cashflow_products.html offline view - Cash Flows tab (Asset/Liability/Net, both net views, inline-SVG, guar vs non-guar) + Products tab (ParEndowment 5/10/20yr, HK RB + cash-dividend, model points); no-calc bundler build_cashflow_products_view.py; 0 external refs; render-smoke + traceability PASS; governed bytes unchanged; linked from index.html."
+            ],
+            "in_progress": [
+                "Task 2 (next, auto-admissible): generate 5yr & 10yr PAR-endowment reference runs via run_full_projection (persist governed CF JSON) + add a product/term selector to cashflow_products.html. Display-only + traceable."
+            ],
+            "next": "Task 3 (gated cutover, jsdom env): fold Cash Flows + Products + Phase 37 Scenario Explorer into ui_app.html as native tabs via a build_ui_pipeline.py layer; re-baseline pinned sha256 + contract bump; jsdom self-test 0-network/0-error."
         }
     },
     "repository_info": {
