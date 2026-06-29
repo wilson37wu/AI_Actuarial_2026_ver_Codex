@@ -11687,3 +11687,19 @@ Window #81 (claude), off-cadence manual fire ~13:5xZ (lastRun 13:47:40Z; not the
 **Mount sync:** full git ls-files md5 diff mount vs origin/main at cycle start = 1615 tracked -> 1614 MATCH, 0 STALE, 0 MISSING, 1 dynamic (.agent_lock.json) — cleanest drift of the W76-W81 series (the interrupted W81 only touched the lock). Re-synced clone->mount after the W81 writes (state/log/task-prompt/cycle-status); origin/main = source of truth; mount .git untouched.
 
 **Schedule + operational flag:** scheduled task auto_actuarial_stochastic_model cron 0 2,14 * * * (06:00/18:00 UTC), enabled, jitter 361s, nextRun 2026-06-29T18:06:01Z. This run fired off-cadence (manual) at 13:47:40Z. FLAG: ~6-day gap in COMPLETED cycles (2026-06-23 18:00Z W81 acquire -> 2026-06-29 13:47Z). Cron config healthy; gap most consistent with the host being asleep/offline (Windows scheduled tasks do not fire while the machine is off), which also explains why the interrupted W81 stale lock sat unreclaimed for 6 days. No cron change made. Git in a fresh /tmp clone; mount .git untouched; lock 2026-06-29T13:52Z-1a3b acquired+released. Status email/draft produced for wilsonwukl@gmail.com.
+
+---
+
+## 2026-06-29T18:14:10Z — INTERACTIVE (claude) — Phase 37 OPENED: Offline UI → interactive decision tool — VERDICT PASS
+
+Owner-directed interactive session (not a scheduled cycle). Owner asked to review the latest GitHub, re-confirm model status, and devise the next enhancement phase focusing on the user interface; owner then selected **Task 1 (consolidate to one app)** as the lead and approved wiring Phase 37 into the repo.
+
+**Review:** origin/main reviewed — only **W81** (C+D maintenance-verification, 2026-06-29) landed since W80; no model-form change. Model remains complete + frozen (5-driver G2++, nested 99.5% SCR headline 39,975.65, MLMC frontier complete thru stage 4; stage-5 / MR-LONGEV-1 / LSMC owner-gated). Offline UI is a mature zero-install viewer (`ui_app.html`: 5 core tabs + P24–P28 deep-dives, PNG/CSV/PDF export, ARIA a11y, jsdom 0-network) but display-only, and six overlapping HTML surfaces lack a single declared entry point.
+
+**Action (planning + state only; NO model-form change; governed artifacts byte-unchanged):**
+- Shipped executable spec `docs/research/PHASE37_OFFLINE_UI_DECISION_TOOL_DESIGN_NOTE_20260629.md` (5 tasks; hard constraints: zero-install, display-only/lookup-no-recalc, jsdom 0-network gate + contract bump per task).
+- `MODEL_DEV_STATE.json`: added Phase 37 (status in_progress), set **Task 1 (consolidate to one canonical app = ui_app.html)** in_progress, next = Task 2 (Scenario Explorer); updated current_phase + overall_status.
+- `MODEL_DEV_TASK_PROMPT.md`: prepended Phase 37 kickoff + a detailed NEXT-EXECUTION POINTER for Task 1 (supersedes the W76–W81 maintenance-only loop as the active track).
+- Separately, repointed the `auto_actuarial_stochastic_model` scheduled task to a refined SKILL.md (same schedule/description).
+
+Governed byte-state unchanged: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json` contract `1.23.0`; headline `39975.654628199336`. Git in a refreshed clone of origin/main; mount `.git` untouched; lock `2026-06-29T18:14Z-0bd2` acquired+released.
