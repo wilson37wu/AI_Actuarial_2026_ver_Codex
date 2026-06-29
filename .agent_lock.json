@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-29T18:27Z-61cd",
-  "started_at": "2026-06-29T18:27:45Z",
-  "ttl_minutes": 120,
-  "task": "Phase 37 Task 1: offline-UI consolidation (canonical entry + map + banners)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-29T18:34:48Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
