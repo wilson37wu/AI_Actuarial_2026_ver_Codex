@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-29T20:00:43Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-29T20:05Z-919f",
+  "started_at": "2026-06-29T20:05:48Z",
+  "ttl_minutes": 120,
+  "task": "Phase 38 backlog-exhausted: verification + mount-sync + research refresh (Task 3 owner-gated/jsdom-blocked)",
+  "note": ""
 }
