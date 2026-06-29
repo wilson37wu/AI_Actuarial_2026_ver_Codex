@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-29T18:14Z-0bd2",
-  "started_at": "2026-06-29T18:14:10Z",
-  "ttl_minutes": 120,
-  "task": "Phase 37 kickoff (offline-UI consolidation->interactive decision tool); owner-directed interactive 2026-06-29",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-29T18:18:37Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
