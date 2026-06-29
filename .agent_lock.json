@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-29T18:34:48Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-29T19:30Z-05b7",
+  "started_at": "2026-06-29T19:30:38Z",
+  "ttl_minutes": 120,
+  "task": "Phase 38 Task 1: Cash Flow (asset/liability/net) + Products offline view",
+  "note": ""
 }
