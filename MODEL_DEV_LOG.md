@@ -11803,3 +11803,25 @@ Autonomous 12h cycle (Claude 18:00 UTC window). Lock `2026-06-29T19:43Z-ae4f`. O
 **Git:** fresh `/tmp` clone of origin/main; mount `.git` untouched; lock `2026-06-29T21:09Z-1bc8` acquired + released; mount synced to origin/main (`.agent_lock.json` dynamic, ignored).
 
 **Next:** Phase 38 Task 3 stays **owner-gated** (sha256 re-baseline + `ui_data` contract bump). If still gated next auto-run, the next auto-admissible step (registered in `MODEL_DEV_TASK_PROMPT.md`) is a thin pytest wrapper `tests/test_ui_app_selftest_nojsdom.py` that shells `node scripts/ui_app_selftest_nojsdom.cjs` and asserts `ok:true` — so the new guard runs in CI beside the 4/4 + 10/10 gates; else verification + sync.
+
+
+---
+
+## W84 — Phase 38 (claude, AUTO) — 2026-06-29 ~22:18Z — collect the jsdom-free `ui_app` guard into pytest
+
+**Verdict: PASS.** Implemented the W83-registered auto-admissible improvement: **`tests/test_ui_app_selftest_nojsdom.py`**, a thin pytest wrapper that shells `node scripts/ui_app_selftest_nojsdom.cjs`, parses its JSON report, and asserts it is green. `origin/main` delta = **+1 new test file only**; no model-FORM / governed-artifact / contract change. The single `in_progress` item, **Phase 38 Task 3** (`ui_app.html` native-tab cutover), stays **OWNER-GATED** (sha256 re-baseline across ~10 gate scripts + `ui_data.json` contract bump) and was **not** executed.
+
+**What the wrapper does.** Mirrors `tests/test_offline_home_validate.py` (suite collection) + `tests/test_offline_viewer.py` (node-subprocess, skip-when-`node`-absent). It asserts: the guard script + `ui_app.html` are present; `node scripts/ui_app_selftest_nojsdom.cjs` exits 0; `report.ok is True`, `report.failed==[]`, `report.file=='ui_app.html'`; `report.passed==report.checks` and `report.checks>=40` (governed baseline — catches a silently gutted guard). It **SKIPS** (not fails) when `node` is unavailable; because the guard is **jsdom-FREE** (node-stdlib only) it needs **no `node_modules`**, so it runs in the offline auto-cycle sandbox. **Result: `4 passed`.**
+
+**Teeth re-verified (gate is not vacuous):** injecting a remote `<link href="https://…">` into a COPY of `ui_app.html` drives the guard to exit 1 (`ok:false`, 39/40 — external-ref check fails), so the wrapper's `assert returncode==0` fails as intended.
+
+**Gates (pinned engine lock: numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3 / pytest 9.1.1, `/tmp/eng_venv`):**
+- **C** — `launch_offline_gui.py --self-test` → `self_test_ok:true`, `engine_ready:true`; `run_model.py --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid YAML (3-OS matrix); `offline_bootstrap.py --self-test` `ok:true`; **PKG structural gate 26/26** (incl. `ui_app_byte_unchanged`); `.github/workflows` absent + 0 `v*` tags (owner/CI-gated, correct).
+- **Integrity** — `build_offline_home_validate` **177/177**; `tests/test_offline_home_validate` **4/4**; `offline_home_loader_parity.cjs` **10/10**; `ui_app_selftest_nojsdom.cjs` **40/40**; **`tests/test_ui_app_selftest_nojsdom.py` 4/4 (NEW)**; MLMC suite **53 passed / 0 failed** (inner 8, stage3_wiring 8, tail_estimator 11, tail_stage3 4, tail_stage4 10, tail_stage4b 12).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_app.html` sha256 `d82c65ec…`; `ui_data.json` md5 `70b747a05c00d29bd6e286a7ee4cf42c` contract `1.23.0`; headline `39975.654628199336` — byte-identical to W81/W82/W83. (The Gate-C smoke re-wrote `docs/validation/RUN_MODEL_{AGGREGATION_REPORT,SUMMARY}.json` in the clone; reverted, not committed.)
+
+**Git:** fresh `/tmp` clone of `origin/main`; mount `.git` untouched; lock `2026-06-29T22:09Z-1ebb` acquired + released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
+
+**Next:** Phase 38 Task 3 stays **owner-gated**. Registered W85 auto-admissible step (in `MODEL_DEV_TASK_PROMPT.md`): a SYMMETRIC pytest wrapper `tests/test_offline_home_loader_parity.py` that shells `node scripts/offline_home_loader_parity.cjs` and asserts `ok:true` / `passed==checks` (10/10) — collecting the last proven jsdom-free guard that still runs only on demand; else verification + sync.
