@@ -11737,3 +11737,25 @@ Owner-directed interactive session. Owner: "I also want to see cash-flow project
 **Verification:** node `--check` clean; HTML stdlib-parsed; **DOM-shim render-smoke PASS** (cf-asset/cf-liab/cf-net/pr all populate; charts emit `<svg>`); **data traceability PASS** (months, liability net, premium, asset totals, ALM net, cumulative, PV summary all == `PROJECTION_REFERENCE_RUN.json`). Governed artifacts byte-unchanged: `ui_app.html` sha256 `d82c65ec…`, `offline_home.html` md5 `03d6538d…`, `ui_data.json` contract `1.23.0`.
 
 **Deferred (with reason):** folding these as native tabs INSIDE `ui_app.html` → Phase 38 Task 3 (gated cutover). `build_ui_pipeline.py` does not reproduce the frozen `ui_app.html` sha (embeds a build timestamp → `82940e58…` ≠ governed `d82c65ec…`), so a rebuild forces a sha re-baseline across ~10 gate scripts; and `ui_app_self_test.cjs` needs jsdom (absent here). The companion page delivers the feature now, fully verified. Phase 37 Scenario Explorer paused → folded into the same cutover. Phase 38 Task 2 (5yr/10yr runs + product/term selector) is the next auto-admissible step. Lock `2026-06-29T19:30Z-05b7`.
+
+---
+
+## 2026-06-29T19:58:18Z — AUTO (claude) — Phase 38 Task 2: 5yr/10yr reference runs + product/term selector — VERDICT PASS
+
+Autonomous 12h cycle (Claude 18:00 UTC window). Lock `2026-06-29T19:43Z-ae4f`. One task, per protocol.
+
+**Task (auto-admissible, display-only):** generate 5yr & 10yr PAR-endowment reference runs via the governed projection and add a product/term selector to `cashflow_products.html` so the user can switch the charted term. No model-form change.
+
+**Shipped:**
+- `scripts/build_projection_reference.py` — refactored: extracted `build_product(term_years)`, `assemble_reference_run(term_years, disc)` and `write_reference(term_years, out_path)`; `main()` now calls `write_reference(20, OUT)`. The 20yr output is **byte-for-byte identical** to the governed `PROJECTION_REFERENCE_RUN.json` (verified by regenerating to a temp path and diffing modulo `generated_utc`).
+- `scripts/build_projection_reference_terms.py` (new) — reuses `write_reference` to emit `docs/validation/PROJECTION_REFERENCE_RUN_5YR.json` (60 months) and `…_10YR.json` (120 months). Same product/fund presets + governed `run_full_projection`; only `term_years` differs. The 20yr governed file is **not touched**.
+- `scripts/build_cashflow_products_view.py` — now reads all three runs (`build_one` per term), embeds them keyed `5/10/20`, and renders a **product/term selector** (pills; default **20yr (reference)**) that re-renders Asset / Liability / Net + the Products note. Still a no-calculation bundler; still 0 external refs.
+- `cashflow_products.html` — regenerated (89,701 bytes; embeds 5/10/20yr; 0 external references).
+
+**Reference-run numbers (governed engine, single-policy fund preset):** 5yr — PV prem 224,336 / PV guar 590,269 / net liab 476,189 / AS@mat 207,375. 10yr — PV prem 375,205 / PV guar 440,432 / net liab 238,539 / AS@mat 387,881. 20yr (unchanged) — PV prem 579,170 / PV guar 288,852 / net liab −41,079 / AS@mat 754,361.
+
+**Verification (all GREEN):** refactor reproduces 20yr byte-for-byte (modulo timestamp); `node --check` clean; HTML stdlib-parsed; **DOM-shim render-smoke + term-switch PASS** (cf-asset/cf-liab/cf-net/pr populate; charts emit `<svg>`; switching 5/10/20 re-renders with 60/120/240 months); **data traceability 96/96 PASS** across all three terms (every asset/liability/net series + PV strip == its source JSON; benefit aggregates = sum of the displayed rounded components); 0 external refs. JSON re-parsed after write (no corruption).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d…`, `ui_app.html` sha256 `d82c65ec…`, `ui_data.json` contract `1.23.0`, headline `39975.654628199336`. Gate C: `launch_offline_gui --self-test` `self_test_ok:true`/`engine_ready:true` + `run_model` smoke bit-match **49657.9 / 37499.0 / 30267.9**. Integrity: `build_offline_home_validate` **177/177**, `test_offline_home_validate` **4/4**, `offline_home_loader_parity` **10/10**, MLMC **53/53**. Gate D: `actuarial_gui.spec` AST, `release.workflow.yml` YAML, `offline_bootstrap --self-test`, `build_phase_pkg_task1_validate` all **ok**.
+
+**Next:** Phase 38 Task 3 (fold Cash Flows + Products + Phase 37 Scenario Explorer into `ui_app.html` as native tabs) remains **OWNER-GATED** — needs a ui_data contract bump + sha256 re-baseline across the gate scripts and a jsdom-equipped env for `ui_app_self_test.cjs` (absent in-sandbox). All auto-admissible Phase 38 UI work is now complete.

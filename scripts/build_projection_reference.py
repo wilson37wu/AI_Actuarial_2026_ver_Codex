@@ -5,13 +5,20 @@ build_projection_reference.py — run the GOVERNED Python projection model
 the exact schema the Projection-mode GUI consumes, so the GUI can display the
 governed model's numbers instead of (or alongside) its in-browser engine.
 
-Output: docs/validation/PROJECTION_REFERENCE_RUN.json
+Output: docs/validation/PROJECTION_REFERENCE_RUN.json  (20yr governed reference)
 
 The schema mirrors the GUI's runEngine() result:
   { params:{...}, L:[{month,py,inF,qm,lm,prem,acq,ren,dG,dN,mG,mN,sv,ncf,df,pvNcf,rb,asp}],
     A:[{month,gC,gM,cC,cM,eD,eG,ci,ti,fmv,df,pv}],
     S:[{month,py,asBom,p,ac,re,inv,ir,dg,dn,sv,dist,sh,ph,asEom}],
     pvP,pvG,pvN,pvSv,pvE,pvNL,pvAI,totSh,totPh,asAtMat }
+
+Phase 38 Task 2: the per-run assembly is now factored into
+``assemble_reference_run(term_years)`` / ``write_reference(term_years, out_path)``
+so term variants (5yr / 10yr) can be produced in the IDENTICAL schema by
+``build_projection_reference_terms.py``. The default ``main()`` is byte-equivalent
+to the prior behaviour (20yr -> docs/validation/PROJECTION_REFERENCE_RUN.json),
+modulo the ``generated_utc`` timestamp.
 """
 from __future__ import annotations
 import json
@@ -30,9 +37,9 @@ OUT = os.path.join(ROOT, "docs", "validation", "PROJECTION_REFERENCE_RUN.json")
 
 
 # --- scenario: mirrors the GUI's default CNY balanced participating endowment -
-def build_product() -> ParEndowmentProduct:
+def build_product(term_years: int = 20) -> ParEndowmentProduct:
     return ParEndowmentProduct(
-        term_years=20,
+        term_years=term_years,
         issue_age=40,
         gender="M",
         sum_assured=1_000_000.0,
@@ -69,9 +76,14 @@ def _rows(df, mapping):
     return out
 
 
-def main() -> int:
-    disc = 0.03  # CBIRC educational reserving cap (MR-001)
-    product = build_product()
+def assemble_reference_run(term_years: int = 20, disc: float = 0.03) -> dict:
+    """Run the governed projection for ``term_years`` and return the reference_run dict.
+
+    The 20yr call reproduces the governed PROJECTION_REFERENCE_RUN.json exactly
+    (modulo ``generated_utc``). Term variants reuse the identical product/fund
+    presets, engine call and output schema — only ``term_years`` differs.
+    """
+    product = build_product(term_years)
     fund = build_fund()
     res = run_full_projection(
         product, fund,
@@ -81,7 +93,8 @@ def main() -> int:
         renewal_expense_fixed_monthly=12.50,
         policyholder_share=0.90,
         shareholder_share=0.10,
-        run_label="combined-gui-reference",
+        run_label=("combined-gui-reference" if term_years == 20
+                   else "combined-gui-reference-%dyr" % term_years),
     )
     lib, ass, ash = res.liability, res.assets, res.asset_share
 
@@ -150,18 +163,27 @@ def main() -> int:
         "totPh": round(ash.total_policyholder_dist, 4),
         "asAtMat": round(ash.asset_share_at_maturity, 4),
     }
+    return reference_run
 
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    with open(OUT, "w", encoding="utf-8") as f:
+
+def write_reference(term_years: int, out_path: str, disc: float = 0.03) -> int:
+    reference_run = assemble_reference_run(term_years, disc)
+    L, A, S = reference_run["L"], reference_run["A"], reference_run["S"]
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    with open(out_path, "w", encoding="utf-8") as f:
         json.dump(reference_run, f, ensure_ascii=False, indent=2)
 
-    print("PROJECTION_REFERENCE_RUN.json written:", os.path.getsize(OUT), "bytes")
-    print("  months L/A/S:", len(L), len(A), len(S))
+    print("%s written:" % os.path.basename(out_path), os.path.getsize(out_path), "bytes")
+    print("  term:", term_years, "yr | months L/A/S:", len(L), len(A), len(S))
     print("  PV prem %.0f | PV guar %.0f | PV ng %.0f | net liab %.0f | AS@mat %.0f"
-          % (lib.pv_premiums, lib.pv_guaranteed_benefits,
-             lib.pv_non_guaranteed_benefits, lib.pv_net_liability,
-             ash.asset_share_at_maturity))
+          % (reference_run["pvP"], reference_run["pvG"],
+             reference_run["pvN"], reference_run["pvNL"],
+             reference_run["asAtMat"]))
     return 0
+
+
+def main() -> int:
+    return write_reference(20, OUT)
 
 
 if __name__ == "__main__":

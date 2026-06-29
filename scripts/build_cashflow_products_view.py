@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
-"""Phase 38 Task 1 - Cash-Flow & Products offline view (no-calc bundler).
+"""Phase 38 Task 1+2 - Cash-Flow & Products offline view (no-calc bundler).
 
-Reads ALREADY-PRODUCED model output (docs/validation/PROJECTION_REFERENCE_RUN.json,
-the governed 20yr PAR-endowment reference run from
-par_model_v2.projection.monthly_projection.run_full_projection) plus the product
-catalogue, and emits a single self-contained, zero-install, fully-offline
-``cashflow_products.html`` (no external refs, no network, no build step for the
-user). It performs NO model calculation - it only re-shapes embedded output for
-display, exactly like build_ui_data.py.
+Reads ALREADY-PRODUCED governed model output (the PAR-endowment reference runs
+under docs/validation/) plus the product catalogue, and emits a single
+self-contained, zero-install, fully-offline ``cashflow_products.html`` (no
+external refs, no network, no build step for the user). It performs NO model
+calculation - it only re-shapes embedded output for display, exactly like
+build_ui_data.py.
+
+Task 2 (this revision): embeds the 5yr / 10yr / 20yr reference runs and adds a
+product/term selector so the user can switch the charted term. The 20yr run is
+the default and is byte-for-byte the prior reference; 5/10yr are governed term
+variants (build_projection_reference_terms.py). Still display-only + traceable.
 
 Run:  python3 scripts/build_cashflow_products_view.py
 Out:  cashflow_products.html  (repo root)
@@ -16,8 +20,16 @@ from __future__ import annotations
 import json, os, re
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(REPO, "docs", "validation", "PROJECTION_REFERENCE_RUN.json")
+VALDIR = os.path.join(REPO, "docs", "validation")
 OUT = os.path.join(REPO, "cashflow_products.html")
+
+# (key, source filename, selector label) - 20yr is the governed default.
+TERMS = [
+    ("5",  "PROJECTION_REFERENCE_RUN_5YR.json",  "5-year"),
+    ("10", "PROJECTION_REFERENCE_RUN_10YR.json", "10-year"),
+    ("20", "PROJECTION_REFERENCE_RUN.json",      "20-year"),
+]
+DEFAULT_TERM = "20"
 
 
 def _r(x, n=2):
@@ -27,8 +39,9 @@ def _r(x, n=2):
         return 0.0
 
 
-def build_data():
-    d = json.load(open(SRC, encoding="utf-8"))
+def build_one(src_path):
+    """Re-shape ONE governed reference run into the per-term display payload."""
+    d = json.load(open(src_path, encoding="utf-8"))
     L = d["L"]; A = d["A"]; S = d["S"]
     months = [int(r["month"]) for r in L]
 
@@ -93,42 +106,37 @@ def build_data():
         "generated_utc": d.get("generated_utc"),
         "classification": d.get("classification"),
         "term_months": len(L),
+        "src_file": os.path.basename(src_path),
         "params": params,
     }
+    return {"meta": meta, "months": months, "asset": asset,
+            "liability": liability, "net": net, "pv": pv}
 
+
+def build_catalogue():
     # ---- Product catalogue (modelled + tested) -------------------------------
     products = [
         {
-            "name": "PAR Endowment (20-year)",
+            "name": "PAR Endowment (5 / 10 / 20-year)",
             "type": "Participating endowment - reversionary bonus",
             "engine": "par_model_v2.projection.monthly_projection.ParEndowmentProduct",
-            "terms": "20yr (this reference run); 5 / 10 / 20yr supported",
+            "terms": "5 / 10 / 20yr - all governed reference runs (selectable in Cash Flows)",
             "params": {
-                "Issue age / gender": "%s / %s" % (params.get("age"), params.get("gender")),
-                "Sum assured": "{:,.0f}".format(params.get("sa", 0)),
-                "Annual premium": "{:,.0f}".format(params.get("annPrem", 0)),
-                "Reversionary bonus rate": "{:.1%}".format(params.get("rbRate", 0)),
-                "Terminal bonus %": "{:.0%}".format(params.get("tbPct", 0)),
-                "Surrender value %": "{:.0%}".format(params.get("svPct", 0)),
-                "PH share": "{:.0%}".format(params.get("phShare", 0)),
-                "Reserving discount": "{:.1%}".format(params.get("disc", 0)),
+                "Issue age / gender": "40 / M",
+                "Sum assured": "1,000,000",
+                "Annual premium": "60,000",
+                "Reversionary bonus rate": "3.0%",
+                "Terminal bonus %": "50%",
+                "Surrender value %": "90%",
+                "PH share": "90%",
+                "Reserving discount": "3.0%",
             },
             "mechanics": ("Death in term: sum assured (guar) + accumulated reversionary bonus (non-guar). "
                           "Survival to term: sum assured (guar) + terminal bonus (non-guar). "
-                          "Surrender: surrender_value_pct x asset share. Asset share rolls monthly with 70/30 profit sharing."),
-            "tested": "tests/test_hk_participating_products.py; monthly-projection unit tests; this reference run (governed output).",
-            "status": "Reference run (charted in Cash Flows)",
-        },
-        {
-            "name": "PAR Endowment (5 & 10-year)",
-            "type": "Participating endowment - reversionary bonus",
-            "engine": "par_model_v2.projection.monthly_projection.ParEndowmentProduct (VALID_TERMS 5/10/20)",
-            "terms": "5yr, 10yr",
-            "params": {"Bonus / TB / SV": "3.0% RB / 50% TB / 90% SV (defaults)",
-                       "Benefit structure": "Same as 20yr; shorter horizon"},
-            "mechanics": "Identical participating mechanics to the 20yr; shorter term changes premium-paying / accumulation horizon.",
-            "tested": "Term validation (VALID_TERMS) + monthly-projection tests.",
-            "status": "Modelled (term variants)",
+                          "Surrender: surrender_value_pct x asset share. Asset share rolls monthly with 70/30 profit sharing. "
+                          "The 5/10/20yr runs use identical product/fund presets; only the term (60/120/240 months) differs."),
+            "tested": "tests/test_hk_participating_products.py; monthly-projection unit tests; three governed reference runs (PROJECTION_REFERENCE_RUN*.json).",
+            "status": "Reference runs (5/10/20yr, charted)",
         },
         {
             "name": "HK Reversionary-Bonus PAR",
@@ -155,11 +163,24 @@ def build_data():
     ]
     model_point_schema = ["product_type", "issue_age", "gender", "term_years",
                           "sum_assured", "annual_premium", "policy_count", "vested_bonus"]
+    return {"products": products, "model_point_schema": model_point_schema}
 
+
+def build_payload():
+    terms = {}
+    order = []
+    for key, fname, label in TERMS:
+        one = build_one(os.path.join(VALDIR, fname))
+        one["label"] = label
+        terms[key] = one
+        order.append(key)
+    cat = build_catalogue()
     return {
-        "meta": meta, "months": months, "asset": asset, "liability": liability,
-        "net": net, "pv": pv, "products": products,
-        "model_point_schema": model_point_schema,
+        "default": DEFAULT_TERM,
+        "order": order,
+        "terms": terms,
+        "products": cat["products"],
+        "model_point_schema": cat["model_point_schema"],
     }
 
 
@@ -188,6 +209,14 @@ HTML = r"""<!DOCTYPE html>
   .tab[aria-selected=true]{color:var(--ink);background:var(--panel);border-color:var(--line)}
   .panel{display:none;background:var(--panel);border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:20px}
   .panel.on{display:block}
+  .termsel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 16px;
+    padding:11px 13px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}
+  .tslabel{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .tspills{display:flex;gap:6px;flex-wrap:wrap}
+  .tpill{padding:6px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);
+    background:var(--panel);border:1px solid var(--line);border-radius:999px}
+  .tpill[aria-selected=true]{color:#06121d;background:var(--accent2);border-color:var(--accent2)}
+  .tsnote{font-size:12px;color:var(--muted);margin-left:auto}
   .subtabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
   .stab{padding:6px 13px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);
     background:var(--panel2);border:1px solid var(--line);border-radius:999px}
@@ -239,6 +268,11 @@ HTML = r"""<!DOCTYPE html>
   </div>
 
   <div class="panel on" id="cf">
+    <div class="termsel">
+      <span class="tslabel">Product / term</span>
+      <div class="tspills" id="tspills" role="tablist"></div>
+      <span class="tsnote" id="tsnote"></span>
+    </div>
     <div class="subtabs">
       <div class="stab" data-view="cf-asset" aria-selected="true">Asset</div>
       <div class="stab" data-view="cf-liab" aria-selected="false">Liability</div>
@@ -253,7 +287,7 @@ HTML = r"""<!DOCTYPE html>
   <div class="panel" id="pr"></div>
 
   <footer>
-    Source: <code>docs/validation/PROJECTION_REFERENCE_RUN.json</code> ·
+    Source: <code>docs/validation/PROJECTION_REFERENCE_RUN*.json</code> (5 / 10 / 20yr) ·
     <span id="cls"></span><br>
     Display-only over frozen model output (EDUCATIONAL). Built by
     <code>scripts/build_cashflow_products_view.py</code> - a no-calculation bundler. 0 external references.
@@ -263,13 +297,14 @@ HTML = r"""<!DOCTYPE html>
 <script>
 (function(){
   var DATA = JSON.parse(document.getElementById("cfp-data").textContent);
+  var cur = DATA.default;
+  function td(){return DATA.terms[cur];}
   function esc(s){return String(s==null?"":s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
   function fmt(x){var n=Number(x); if(!isFinite(n))return "-";
     return n.toLocaleString(undefined,{maximumFractionDigits:0});}
-  var M = DATA.months, N = M.length;
 
   // ---- generic multi-series line chart (inline SVG, no libs) ----
-  function chart(series, opts){
+  function chart(series, N, opts){
     opts=opts||{}; var W=980,H=300,pl=64,pr=16,pt=14,pb=26;
     var all=[]; series.forEach(function(s){all=all.concat(s.data);});
     var mn=Math.min.apply(null,all.concat(opts.zero?[0]:[]));
@@ -304,7 +339,7 @@ HTML = r"""<!DOCTYPE html>
 
   // ---- Asset view ----
   function renderAsset(){
-    var a=DATA.asset;
+    var D=td(), a=D.asset, N=D.months.length;
     var series=[
       {label:"Govt (coupon+maturity)",data:a.govt,color:"#3da5ff"},
       {label:"Credit",data:a.credit,color:"#2bd4a7"},
@@ -312,20 +347,20 @@ HTML = r"""<!DOCTYPE html>
       {label:"Cash interest",data:a.cash,color:"#9b8cff"},
       {label:"Total income",data:a.total,color:"#e8eef5",w:2.4}
     ];
-    var pvAI=DATA.pv.filter(function(r){return r[0].indexOf("asset")>-1;})[0];
+    var pvAI=D.pv.filter(function(r){return r[0].indexOf("asset")>-1;})[0];
     var html='<h2>Asset cash flows - monthly income by class</h2>'+
       kpis([["PV asset investment income",fmt(pvAI?pvAI[1]:0),"in"],
             ["Final fund value (FMV)",fmt(a.fmv[a.fmv.length-1]),""],
             ["Peak monthly income",fmt(Math.max.apply(null,a.total)),"in"],
             ["Months projected",N,""]])+
-      legend(series)+'<div class="chartbox">'+chart(series)+'</div>'+
+      legend(series)+'<div class="chartbox">'+chart(series,N)+'</div>'+
       '<p class="note">Govt/Credit show coupon + maturity proceeds; Equity shows dividends + capital growth; Cash is short-rate interest. '+
       'Fund market value rolls forward to '+fmt(a.fmv[a.fmv.length-1])+'.</p>';
     document.getElementById("cf-asset").innerHTML=html;
   }
   // ---- Liability view ----
   function renderLiab(){
-    var l=DATA.liability;
+    var D=td(), l=D.liability, N=D.months.length;
     var series=[
       {label:"Premium (in)",data:l.premium,color:"#2bd4a7",fill:true},
       {label:"Benefits (out)",data:l.benefits,color:"#ff6b6b"},
@@ -337,22 +372,22 @@ HTML = r"""<!DOCTYPE html>
       {label:"Non-guaranteed benefits",data:l.nonguar,color:"#caa14a"},
       {label:"Surrender value",data:l.surrender,color:"#9b8cff"}
     ];
-    function pvrow(k){return DATA.pv.filter(function(r){return r[0].indexOf(k)>-1;})[0];}
+    function pvrow(k){return D.pv.filter(function(r){return r[0].indexOf(k)>-1;})[0];}
     var html='<h2>Liability cash flows - premium, benefits, expenses</h2>'+
       kpis([["PV premiums",fmt(pvrow("premiums")[1]),"in"],
             ["PV guaranteed",fmt(pvrow("guaranteed")[1]),"out"],
             ["PV non-guaranteed",fmt(pvrow("non-guaranteed")[1]),"out"],
             ["PV net liability",fmt(pvrow("net liability")[1]),"net"]])+
-      legend(series)+'<div class="chartbox">'+chart(series,{zero:true})+'</div>'+
+      legend(series)+'<div class="chartbox">'+chart(series,N,{zero:true})+'</div>'+
       '<h3>Guaranteed vs non-guaranteed benefit split</h3>'+
-      legend(gn)+'<div class="chartbox">'+chart(gn)+'</div>'+
+      legend(gn)+'<div class="chartbox">'+chart(gn,N)+'</div>'+
       '<p class="note">Net (ncf) = premium &minus; expenses &minus; benefits. Guaranteed = death/maturity sum assured; '+
       'non-guaranteed = accumulated reversionary + terminal bonus.</p>';
     document.getElementById("cf-liab").innerHTML=html;
   }
   // ---- Net view (BOTH) ----
   function renderNet(){
-    var n=DATA.net;
+    var D=td(), n=D.net, N=D.months.length;
     var flow=[
       {label:"Net underwriting (prem - exp - benefits)",data:n.underwriting,color:"#3da5ff",w:2},
       {label:"Net incl. investment income (ALM)",data:n.alm,color:"#2bd4a7",w:2}
@@ -366,8 +401,8 @@ HTML = r"""<!DOCTYPE html>
             ["Final cum. ALM",fmt(n.cum_alm[N-1]),"net"],
             ["Min monthly underwriting",fmt(Math.min.apply(null,n.underwriting)),"out"],
             ["Max monthly ALM",fmt(Math.max.apply(null,n.alm)),"in"]])+
-      '<h3>Monthly net</h3>'+legend(flow)+'<div class="chartbox">'+chart(flow,{zero:true})+'</div>'+
-      '<h3>Cumulative net</h3>'+legend(cumv)+'<div class="chartbox">'+chart(cumv,{zero:true})+'</div>'+
+      '<h3>Monthly net</h3>'+legend(flow)+'<div class="chartbox">'+chart(flow,N,{zero:true})+'</div>'+
+      '<h3>Cumulative net</h3>'+legend(cumv)+'<div class="chartbox">'+chart(cumv,N,{zero:true})+'</div>'+
       '<p class="note"><b>Underwriting net</b> = premium &minus; expenses &minus; benefits (liability side). '+
       '<b>ALM net</b> = underwriting net + asset investment income, i.e. the net cash position once the asset book’s '+
       'income is included - the asset-vs-liability liquidity view you asked for.</p>';
@@ -375,9 +410,10 @@ HTML = r"""<!DOCTYPE html>
   }
   // ---- Products ----
   function renderProducts(){
+    var p0=td().meta.params;
     var html='<h2>Products modelled &amp; tested</h2>'+
-      '<p class="muted">The stochastic engine projects participating (PAR) products. The 20-year endowment below is the '+
-      'reference run charted in Cash Flows; the others are modelled term/market variants.</p><div class="cards">';
+      '<p class="muted">The stochastic engine projects participating (PAR) products. The PAR endowment is run at '+
+      '5 / 10 / 20-year terms as governed reference runs - switch the charted term with the selector in the Cash Flows tab.</p><div class="cards">';
     DATA.products.forEach(function(p){
       var dl=Object.keys(p.params).map(function(k){
         return '<dt>'+esc(k)+'</dt><dd>'+esc(p.params[k])+'</dd>';}).join("");
@@ -391,15 +427,40 @@ HTML = r"""<!DOCTYPE html>
     html+='</div><h3>Model-point schema (input fields)</h3><p class="muted">'+
       DATA.model_point_schema.map(function(f){return '<code>'+esc(f)+'</code>';}).join(" ")+'</p>'+
       '<p class="note">Model points drive the in-force book; PAR + GMMB rows supported. '+
-      'Reference run parameters: age '+esc(DATA.meta.params.age)+', sum assured '+fmt(DATA.meta.params.sa)+
-      ', annual premium '+fmt(DATA.meta.params.annPrem)+', '+esc(DATA.meta.params.termYrs)+'yr term.</p>';
+      'Currently charted reference run: age '+esc(p0.age)+', sum assured '+fmt(p0.sa)+
+      ', annual premium '+fmt(p0.annPrem)+', '+esc(p0.termYrs)+'yr term.</p>';
     document.getElementById("pr").innerHTML=html;
   }
 
-  renderAsset();renderLiab();renderNet();renderProducts();
-  document.getElementById("cls").textContent=DATA.meta.classification||"";
-  document.getElementById("cfsrc").textContent=
-    "Reference run generated "+(DATA.meta.generated_utc||"")+" · "+N+" months · "+(DATA.meta.source||"");
+  function renderAll(){renderAsset();renderLiab();renderNet();renderProducts();
+    var D=td();
+    document.getElementById("cfsrc").textContent=
+      "Reference run ("+esc(D.label)+") generated "+(D.meta.generated_utc||"")+" · "+D.months.length+
+      " months · "+(D.meta.src_file||"")+" · "+(D.meta.source||"");
+    document.getElementById("tsnote").textContent=
+      D.months.length+" months · "+D.meta.src_file;
+  }
+
+  // ---- term selector ----
+  function buildPills(){
+    var box=document.getElementById("tspills");
+    box.innerHTML=DATA.order.map(function(k){
+      var lbl=DATA.terms[k].label+(k===DATA.default?" (reference)":"");
+      return '<div class="tpill" role="tab" data-term="'+k+'" aria-selected="'+(k===cur)+'">'+esc(lbl)+'</div>';
+    }).join("");
+    [].slice.call(box.querySelectorAll(".tpill")).forEach(function(el){
+      el.addEventListener("click",function(){
+        cur=el.getAttribute("data-term");
+        [].slice.call(box.querySelectorAll(".tpill")).forEach(function(n){
+          n.setAttribute("aria-selected", n===el?"true":"false");});
+        renderAll();
+      });
+    });
+  }
+
+  buildPills();
+  renderAll();
+  document.getElementById("cls").textContent=td().meta.classification||"";
 
   // tab + subtab wiring
   function sel(nodes,on){nodes.forEach(function(n){n.setAttribute("aria-selected", n===on?"true":"false");});}
@@ -421,7 +482,7 @@ HTML = r"""<!DOCTYPE html>
 
 
 def main():
-    data = build_data()
+    data = build_payload()
     blob = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
     html = HTML.replace("__DATA__", blob)
     # offline guarantee: no external references
@@ -430,9 +491,10 @@ def main():
         raise SystemExit("external refs present: %r" % bad[:5])
     with open(OUT, "w", encoding="utf-8") as fh:
         fh.write(html)
-    print("wrote %s (%d bytes), 0 external refs, %d months" % (OUT, len(html), data["meta"]["term_months"]))
+    nterms = len(data["terms"])
+    print("wrote %s (%d bytes), 0 external refs, %d terms (%s)"
+          % (OUT, len(html), nterms, ",".join(data["order"])))
 
 
 if __name__ == "__main__":
     main()
-                                                                                
