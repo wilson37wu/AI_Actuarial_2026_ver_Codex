@@ -11825,3 +11825,32 @@ Autonomous 12h cycle (Claude 18:00 UTC window). Lock `2026-06-29T19:43Z-ae4f`. O
 **Git:** fresh `/tmp` clone of `origin/main`; mount `.git` untouched; lock `2026-06-29T22:09Z-1ebb` acquired + released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
 
 **Next:** Phase 38 Task 3 stays **owner-gated**. Registered W85 auto-admissible step (in `MODEL_DEV_TASK_PROMPT.md`): a SYMMETRIC pytest wrapper `tests/test_offline_home_loader_parity.py` that shells `node scripts/offline_home_loader_parity.cjs` and asserts `ok:true` / `passed==checks` (10/10) — collecting the last proven jsdom-free guard that still runs only on demand; else verification + sync.
+
+---
+## 2026-06-29T23:18:42Z — AUTO W85 (claude): collect jsdom-free offline_home loader-parity guard into pytest
+
+**Cycle:** 2026-06-29T23:09Z-dc46 (lock acquired+released; fresh /tmp clone; mount .git untouched)
+**Task (one):** Authored `tests/test_offline_home_loader_parity.py` — a thin pytest wrapper that shells
+`node scripts/offline_home_loader_parity.cjs`, parses its JSON report and asserts `ok:true` / `failed==[]` /
+`passed==checks` / `checks>=10`, plus script + `offline_home.html` + `ui_data.json` presence. SKIPS (not fails)
+when node is absent; the guard is jsdom-FREE (node-stdlib only) so no `node_modules` is needed. This is the
+**symmetric counterpart to W84** (which collected the ui_app guard) — both jsdom-free node guards are now
+pytest-collected. **5 passed.**
+**Teeth:** mutating the first baked `.fv` span in an ISOLATED copy of `offline_home.html` drives the guard to
+`ok:false` / 9-of-10 / exit 1, so the wrapper's `assert returncode==0` fails as intended (gate not vacuous).
+Governed `offline_home.html` never touched (md5 `03d6538d` re-confirmed).
+**Backlog note:** jsdom-free-guard wrapping backlog now EXHAUSTED — `offline_home_self_test.cjs` and
+`render_test.cjs` both `require('jsdom')` → owner/CI-gated.
+**Verification (all GREEN):** Gate C self_test_ok:true + engine_ready:true; run_model smoke bit-match
+49657.9 / 37499.0 / 30267.9 (seed 42, 100×4 no-tail). Gate D actuarial_gui.spec AST-parse, release.workflow.yml
+valid YAML, offline_bootstrap --self-test ok, build_phase_pkg_task1_validate pass (incl ui_app_byte_unchanged).
+Integrity build_offline_home_validate 177/177; test_offline_home_validate 4/4; offline_home_loader_parity.cjs
+node 10/10; W84 sibling 4 passed; MLMC 53/53.
+**Governed bytes byte-UNCHANGED:** offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_app.html
+sha256[:16] d82c65ec; ui_data contract 1.23.0; headline 39975.654628199336. (Gate-C smoke-rewritten
+docs/validation/RUN_MODEL_*.json reverted via git checkout, not committed → origin/main delta = +1 test file.)
+**Phase 38 Task 3** (ui_app native-tab cutover) remains OWNER-GATED (sha256 re-baseline + ui_data contract bump);
+left in_progress. Model frontier frozen/owner-gated.
+**Registered W86:** `tests/test_nojsdom_guards_are_collected.py` — pure-Python meta-gate asserting every
+jsdom-FREE `scripts/*.cjs` guard is collected by a pytest wrapper (backstop vs CI-coverage drift; no node,
+no governed bytes, no model-form change).
