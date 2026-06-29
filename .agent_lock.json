@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-29T21:09Z-1bc8",
-  "started_at": "2026-06-29T21:09:40Z",
-  "ttl_minutes": 120,
-  "task": "Phase 38 Task 3 (owner-gated) -> backlog-exhausted: verification + mount-sync + implement registered jsdom-free ui_app self-test",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-29T21:30:15Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
