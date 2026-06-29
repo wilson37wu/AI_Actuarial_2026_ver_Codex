@@ -11759,3 +11759,22 @@ Autonomous 12h cycle (Claude 18:00 UTC window). Lock `2026-06-29T19:43Z-ae4f`. O
 **Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d…`, `ui_app.html` sha256 `d82c65ec…`, `ui_data.json` contract `1.23.0`, headline `39975.654628199336`. Gate C: `launch_offline_gui --self-test` `self_test_ok:true`/`engine_ready:true` + `run_model` smoke bit-match **49657.9 / 37499.0 / 30267.9**. Integrity: `build_offline_home_validate` **177/177**, `test_offline_home_validate` **4/4**, `offline_home_loader_parity` **10/10**, MLMC **53/53**. Gate D: `actuarial_gui.spec` AST, `release.workflow.yml` YAML, `offline_bootstrap --self-test`, `build_phase_pkg_task1_validate` all **ok**.
 
 **Next:** Phase 38 Task 3 (fold Cash Flows + Products + Phase 37 Scenario Explorer into `ui_app.html` as native tabs) remains **OWNER-GATED** — needs a ui_data contract bump + sha256 re-baseline across the gate scripts and a jsdom-equipped env for `ui_app_self_test.cjs` (absent in-sandbox). All auto-admissible Phase 38 UI work is now complete.
+
+---
+
+## 2026-06-29 — W82 (claude, AUTO ~20:05Z) — Phase 38 backlog-exhausted: VERIFICATION + MOUNT-SYNC + RESEARCH-REFRESH
+
+**Verdict: PASS.** The single `in_progress` item (`.claude-dev/MODEL_DEV_STATE.json`) is **Phase 38 Task 3** — fold Cash Flows + Products + the Phase 37 Scenario Explorer into byte-pinned `ui_app.html` as native tabs. It is **owner-gated AND in-sandbox-unrunnable**: (a) needs owner sign-off to re-baseline the pinned sha256 across ~10 governance/gate scripts + a `ui_data.json` contract bump, and (b) needs a **jsdom** env for `scripts/ui_app_self_test.cjs` — confirmed this cycle `require('jsdom')` → `MODULE_NOT_FOUND`. Per the standing backlog-exhausted instruction: ran full verification + mount-sync and registered one auto-admissible improvement.
+
+**Gates (pinned engine lock: numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3 / pytest 9.1.1, fresh `/tmp/eng_venv`):**
+- **C** — `launch_offline_gui.py --self-test` → `self_test_ok:true`, `engine_ready:true`; `run_model.py --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid; `offline_bootstrap.py --self-test` ok; **PKG structural gate 26/26**; `.github/workflows` absent + 0 `v*` tags (owner/CI-gated, correct).
+- **Integrity** — `build_offline_home_validate` **177/177**; `tests/test_offline_home_validate` **4/4**; `offline_home_loader_parity.cjs` **10/10** (node v22); MLMC suite **53 passed / 0 failed** (file-by-file: inner 8, stage3_wiring 8, tail_estimator 11, tail_stage3 4, tail_stage4 10, tail_stage4b 12).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_app.html` sha256 `d82c65ec…`; `ui_data.json` contract `1.23.0`; headline `39975.654628199336` — all byte-identical to W81.
+
+**Researched improvement (registered in `MODEL_DEV_TASK_PROMPT.md`, auto-admissible):** author `scripts/ui_app_selftest_nojsdom.cjs` — a jsdom-free companion self-test mirroring the proven `offline_home_loader_parity.cjs` pattern (0-external-refs byte scan; embedded `ui_data` contract + headline parse; governed anchor-id presence; pure-JS SHA-256 self-consistency). Removes the in-sandbox jsdom blocker (b) on Task 3; layout/click assertions stay jsdom owner/CI-gated. Test-tooling only — no governed bytes, no model-FORM change, not a near-duplicate graphic/brief.
+
+**Git:** fresh `/tmp` clone of origin/main; mount `.git` untouched; lock `2026-06-29T20:05Z-919f` acquired + released; mount synced to origin/main (`.agent_lock.json` dynamic, ignored).
+
+**Next:** Phase 38 Task 3 stays owner-gated (sha256 re-baseline + contract bump + jsdom env). If still gated next auto-run, implement the registered jsdom-free `ui_app` companion self-test, else verification + sync.

@@ -1,9 +1,9 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-06-29T19:58:18Z",
-  "last_run_duration_minutes": null,
-  "last_run_note": "2026-06-29 (claude, AUTO cycle): EXECUTED Phase 38 Task 2 - 5yr/10yr governed PAR-endowment reference runs + product/term selector in cashflow_products.html (display-only, traceable). Refactored build_projection_reference into reusable assemble_reference_run/write_reference (20yr output byte-identical modulo timestamp); added build_projection_reference_terms.py. All gates GREEN: traceability 96/96 across 5/10/20, render-smoke+switch PASS, governed bytes unchanged, engine smoke bit-match, MLMC 53/53, Gate C/D ok. Phase 38 Task 3 (ui_app cutover) remains OWNER-GATED (sha re-baseline + contract bump + jsdom). Lock 2026-06-29T19:58:18Z.",
+  "last_run": "2026-06-29T20:22:00Z",
+  "last_run_duration_minutes": 16,
+  "last_run_note": "2026-06-29 (claude, AUTO W82 backlog-exhausted): Phase 38 Task 3 is owner-gated + jsdom-unrunnable in-sandbox -> ran VERIFICATION (C/D/integrity all GREEN, governed bytes byte-stable: offline_home 03d6538d, ui_app d82c65ec, contract 1.23.0, headline 39975.654628199336; MLMC 53/53), MOUNT-SYNC, and registered ONE auto-admissible improvement (jsdom-free ui_app companion self-test) in MODEL_DEV_TASK_PROMPT.md. No model-FORM/contract/governed-artifact change; lock acquired+released.",
   "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Tasks 1-2 COMPLETE (auto-admissible): cashflow_products.html offline view now embeds 5/10/20yr governed reference runs with a product/term selector; all display-only + traceable; governed bytes unchanged. ACTIVE in_progress = Phase 38 Task 3 = OWNER-GATED ui_app.html cutover (native tabs; sha re-baseline + contract bump; needs jsdom). Model frontier remains frozen/owner-gated.",
   "overall_status": "PHASE_38_TASK2_COMPLETE_5YR_10YR_GOVERNED_REFERENCE_RUNS_PLUS_PRODUCT_TERM_SELECTOR_IN_cashflow_products_html_DISPLAY_ONLY_TRACEABLE_96of96_RENDER_SMOKE_AND_TERM_SWITCH_PASS_0_EXTREFS_GOVERNED_BYTE_UNCHANGED_offlinehome_03d6538d_uiapp_d82c65ec_CONTRACT_1.23.0_HEADLINE_39975.654628199336_ENGINE_SMOKE_BITMATCH_49657.9_37499.0_30267.9_MLMC_53of53_GATE_C_D_GREEN_TASK3_UIAPP_CUTOVER_OWNER_GATED_jsdom_SHA_REBASELINE_CONTRACT_BUMP_MODEL_FRONTIER_FROZEN",
   "phases": {
@@ -1124,7 +1124,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-06-29T14:01:52Z",
+  "last_updated": "2026-06-29T20:22:00Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -3977,5 +3977,32 @@
     "ran_in_window": "off-cadence manual fire ~13:5xZ (not the 06:00/18:00 cron); next scheduled 2026-06-29T18:06:01Z",
     "next": "W82 = same C+D maintenance loop; ALWAYS release the lock at cycle end (the 2026-06-23 W81 omission is the cautionary precedent). Terminal auto-runnable state; forward motion needs an OWNER decision (Stage-5 tail-MLMC governed default / MR-LONGEV-1 longevity 5th driver / LSMC SCR proxy / D packaging CI activation / E freeze). No A-E heartbeat; no duplicate owner brief."
   },
-  "last_owner": "claude"
+  "last_owner": "claude",
+  "cycle_2026_06_29_w82": {
+    "timestamp": "2026-06-29T20:22:00Z",
+    "owner": "claude",
+    "type": "AUTO verification + mount-sync + research-refresh (backlog-exhausted)",
+    "cycle_id": "2026-06-29T20:05Z-919f",
+    "verdict": "PASS (no model-FORM / governed-artifact / contract change; origin/main code unchanged)",
+    "in_progress_task_status": "Phase 38 Task 3 remains OWNER-GATED + in-sandbox-unrunnable (needs owner sha256 re-baseline + ui_data contract bump AND a jsdom env for ui_app_self_test.cjs; require('jsdom')->MODULE_NOT_FOUND confirmed this cycle). Not completed; left in_progress.",
+    "gates": {
+      "C_self_test": "self_test_ok:true, engine_ready:true",
+      "C_run_model_smoke": "nested 49657.9 / gaussian 37499.0 / var-covar 30267.9 (seed 42, 100x4 no-tail) bit-match",
+      "D_packaging": "actuarial_gui.spec AST-parse OK; release.workflow.yml valid; offline_bootstrap.py --self-test ok; PKG structural gate 26/26; .github/workflows absent + 0 v* tags (owner/CI-gated, correct)",
+      "offline_home_validate": "177/177",
+      "test_offline_home_validate": "4/4",
+      "offline_home_loader_parity_cjs": "10/10 (node v22)",
+      "mlmc_suite": "53 passed / 0 failed (file-by-file: inner 8, stage3_wiring 8, tail_estimator 11, tail_stage3 4, tail_stage4 10, tail_stage4b 12)"
+    },
+    "governed_bytes": {
+      "offline_home_html_md5": "03d6538d3cae9efb83062ecbfab096e9",
+      "ui_app_html_sha256_16": "d82c65ecc7f7130a",
+      "ui_data_contract": "1.23.0",
+      "headline": "39975.654628199336",
+      "status": "byte-identical to W81"
+    },
+    "engine_lock": "numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3 / pytest 9.1.1 (fresh /tmp/eng_venv)",
+    "researched_improvement": "Registered in MODEL_DEV_TASK_PROMPT.md (W82 block): author scripts/ui_app_selftest_nojsdom.cjs - a jsdom-free companion self-test mirroring offline_home_loader_parity.cjs (0 external refs scan; ui_data contract+headline parse; governed anchor-id presence; pure-JS SHA-256 self-consistency). Removes the in-sandbox jsdom blocker (b) on Phase 38 Task 3; layout/click assertions stay jsdom owner/CI-gated. Test-tooling only: no governed bytes, no model-FORM change, not a near-duplicate graphic/brief.",
+    "git": "fresh /tmp clone of origin/main; mount .git untouched; lock acquired+released; mount synced to origin/main"
+  }
 }
