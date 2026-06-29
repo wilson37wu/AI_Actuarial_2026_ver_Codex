@@ -1,8 +1,8 @@
 {
   "owner": "claude",
-  "cycle_id": "2026-06-23T18:10Z-4a1a",
-  "started_at": "2026-06-23T18:10:52Z",
+  "cycle_id": "2026-06-29T13:52Z-1a3b",
+  "started_at": "2026-06-29T13:52:41Z",
   "ttl_minutes": 120,
-  "task": "W81 C+D maintenance-verification cycle (2026-06-23 18:00Z)",
+  "task": "W81 C+D maintenance-verification (resumes interrupted 2026-06-23 18:00Z acquire; running 2026-06-29)",
   "note": ""
 }
