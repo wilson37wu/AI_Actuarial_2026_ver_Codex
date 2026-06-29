@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Actuarial Stochastic Capital Model — Offline Report</title>
+<style>
+  :root{
+    --bg:#0f1822; --panel:#172433; --panel2:#1d2f42; --ink:#e8eef5; --muted:#9fb2c6;
+    --line:#2a3f57; --accent:#3da5ff; --accent2:#2bd4a7; --warn:#caa14a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(160deg,#0f1822,#13202e);color:var(--ink);
+    font:16px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px;margin:0 auto;padding:40px 22px 64px}
+  header{margin-bottom:26px}
+  .eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--accent2);font-weight:700}
+  h1{font-size:30px;margin:.25em 0 .15em;line-height:1.15}
+  .sub{color:var(--muted);max-width:62ch}
+  .grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:26px}
+  @media(min-width:760px){.grid{grid-template-columns:1.3fr 1fr}}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--panel);
+    border:1px solid var(--line);border-radius:14px;padding:22px 22px;transition:.15s}
+  a.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .card .tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+  .primary{background:linear-gradient(150deg,#16324a,#173a52);border-color:#27506f}
+  .primary .tag{color:var(--accent)}
+  .card h2{margin:.5em 0 .2em;font-size:21px}
+  .card p{margin:.2em 0 0;color:var(--muted);font-size:14.5px}
+  .cta{display:inline-block;margin-top:14px;font-weight:700;color:var(--accent)}
+  .secondary .tag{color:var(--accent2)}
+  .note{margin-top:14px;font-size:13px;color:var(--muted)}
+  h3{margin:34px 0 8px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+  th{background:var(--panel2);color:var(--muted);font-weight:600;letter-spacing:.04em}
+  tr:last-child td{border-bottom:0}
+  td a{color:var(--accent);text-decoration:none}
+  td a:hover{text-decoration:underline}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.03em}
+  .pill.keep{background:rgba(43,212,167,.14);color:#5fe6c2;border:1px solid rgba(43,212,167,.35)}
+  .pill.arch{background:rgba(202,161,74,.13);color:#e0bd72;border:1px solid rgba(202,161,74,.35)}
+  footer{margin-top:34px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:16px}
+  code{background:#0d1620;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:13px}
+  .offline{display:inline-flex;align-items:center;gap:7px;background:rgba(61,165,255,.1);
+    border:1px solid rgba(61,165,255,.3);color:#9fcdfb;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Actuarial Stochastic Capital Model</div>
+    <h1>Offline Report — start here</h1>
+    <p class="sub">A zero-install, fully offline view of the completed stochastic capital model.
+      Everything is pre-computed by the model; these pages only display the results. No Python,
+      server, internet, or install required.</p>
+    <p style="margin-top:14px"><span class="offline">● Works offline — open in any modern browser</span></p>
+  </header>
+
+  <div class="grid">
+    <a class="card primary" href="ui_app.html">
+      <div class="tag">Recommended · canonical app</div>
+      <h2>Interactive Report →</h2>
+      <p>The full interactive viewer: Overview, Inventory &amp; Contract, Calibrations, Capital &amp; Tail,
+         Governance, plus per-phase tail-dependence deep-dives. Chart/CSV/PDF export and keyboard accessibility built in.</p>
+      <span class="cta">Open ui_app.html →</span>
+    </a>
+    <a class="card secondary" href="offline_home.html">
+      <div class="tag">Visual dashboard</div>
+      <h2>Graphic Home →</h2>
+      <p>The at-a-glance inline-SVG dashboard (capital waterfall, VaR/ES tail margin,
+         convergence, risk heatmap) with a card chooser.</p>
+      <span class="cta">Open offline_home.html →</span>
+    </a>
+  </div>
+  <p class="note">New here? Open the <strong>Interactive Report</strong>. It is the single canonical
+     application going forward; the pages below are kept for reference only.</p>
+
+  <h3>Archived / superseded views</h3>
+  <table>
+    <thead><tr><th>File</th><th>What it was</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><a href="combined_model_app.html">combined_model_app.html</a></td>
+          <td>Earlier combined model + GUI single-file app.</td>
+          <td><span class="pill arch">Superseded → ui_app.html</span></td></tr>
+      <tr><td><a href="model_result_viewer.html">model_result_viewer.html</a></td>
+          <td>Standalone result viewer (pre-dates the tabbed app).</td>
+          <td><span class="pill arch">Superseded → ui_app.html</span></td></tr>
+      <tr><td><a href="par_projection_gui.html">par_projection_gui.html</a></td>
+          <td>PAR projection GUI prototype.</td>
+          <td><span class="pill arch">Superseded → ui_app.html</span></td></tr>
+      <tr><td><a href="model_summary_card.html">model_summary_card.html</a></td>
+          <td>One-card headline summary.</td>
+          <td><span class="pill arch">Superseded → ui_app.html</span></td></tr>
+    </tbody>
+  </table>
+  <p class="note">Why keep them? The graphic home links to these for continuity, and they remain
+     valid offline snapshots. They will carry an in-page “superseded” banner at the Phase&nbsp;37
+     governed cutover (deferred so their frozen self-test gates are re-baselined deliberately).
+     Disposition detail: <code>docs/UI_CONSOLIDATION_MAP.md</code>.</p>
+
+  <footer>
+    Canonical app: <code>ui_app.html</code> · Visual dashboard: <code>offline_home.html</code> ·
+    Single entry point: <code>index.html</code> (this page).<br>
+    Display-only over frozen model output — these pages never re-run the model. Governed headline
+    99.5% SCR is embedded in the report’s data snapshot.
+  </footer>
+</div>
+</body>
+</html>

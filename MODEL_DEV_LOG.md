@@ -11703,3 +11703,20 @@ Owner-directed interactive session (not a scheduled cycle). Owner asked to revie
 - Separately, repointed the `auto_actuarial_stochastic_model` scheduled task to a refined SKILL.md (same schedule/description).
 
 Governed byte-state unchanged: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json` contract `1.23.0`; headline `39975.654628199336`. Git in a refreshed clone of origin/main; mount `.git` untouched; lock `2026-06-29T18:14Z-0bd2` acquired+released.
+
+---
+
+## 2026-06-29T18:35:00Z — INTERACTIVE (claude) — Phase 37 Task 1 EXECUTED: offline-UI consolidation — VERDICT PASS
+
+Owner-directed interactive session; executed **Phase 37 Task 1 (consolidate the six overlapping HTML surfaces to one canonical app)** end-to-end.
+
+**Shipped (additive-only; NO existing HTML modified):**
+- `index.html` — the single canonical **entry point** (zero `<script>`, **0 external refs**, fully offline). Routes to the canonical app `ui_app.html` and the visual dashboard `offline_home.html`; lists the four archived views with "superseded → ui_app.html".
+- `docs/UI_CONSOLIDATION_MAP.md` — disposition of all six surfaces (keep/dashboard/archive) + rationale for deferring in-page banners.
+- `UI_README.md` — entry-point note naming `index.html` (front door) and `ui_app.html` (canonical).
+
+**Decision:** canonical = `ui_app.html`; dashboard = `offline_home.html`; archive (→ ui_app.html) = combined_model_app / model_result_viewer / par_projection_gui / model_summary_card. In-page "superseded" banners on those four are **DEFERRED to Task 1b** because (a) combined_model_app/model_result_viewer carry jsdom self-tests (`combined_gui_self_test`/`offline_viewer_self_test`) that are env-unrunnable in-sandbox, and (b) the byte-frozen `offline_home.html` links to them, so the banner wording lands with the governed cutover — re-baseline deliberately, never as a side effect.
+
+**Verification GREEN + governed byte-stable:** `index.html` stdlib-parsed, 0 external refs / 0 script tags; `ui_app.html` sha256 `d82c65ec…` and `offline_home.html` md5 `03d6538d…` **byte-unchanged**; `ui_data.json` contract `1.23.0`; `build_offline_home_validate` **177/177**; `offline_home_loader_parity` **10/10**; PKG structural gate **26/26** (`ui_app_byte_unchanged` True). No file deleted/renamed (offline_home links still resolve).
+
+Phase 37 Task 1 → completed; **Task 2 (Interactive Scenario Explorer)** now in_progress. Git in a refreshed clone of origin/main; mount `.git` untouched; lock `2026-06-29T18:27Z-61cd`.

@@ -1,11 +1,11 @@
 {
     "session_id": "actuarial-model-auto-dev",
     "created_at": "2026-05-17T00:00:00Z",
-    "last_run": "2026-06-29T18:14:10Z",
+    "last_run": "2026-06-29T18:35:00Z",
     "last_run_duration_minutes": null,
-    "last_run_note": "2026-06-29 (claude, INTERACTIVE, owner-directed): opened Phase 37 (Offline UI -> interactive decision tool). Reviewed origin/main (only W81 maintenance landed since W80; model unchanged/frozen). Owner selected Task 1 (consolidate to one app) as lead and approved wiring Phase 37 into the repo. Wrote design note docs/research/PHASE37_OFFLINE_UI_DECISION_TOOL_DESIGN_NOTE_20260629.md; set Phase 37 Task 1 in_progress. No model-form change; governed artifacts (offline_home 03d6538d, ui_data 1.23.0, headline 39975.65) BYTE-UNCHANGED this commit. Also repointed the scheduled task to the refined SKILL.md. Lock 2026-06-29T18:14Z-0bd2.",
-    "current_phase": "Phase 37 (Offline UI: viewer -> interactive decision tool), owner-directed 2026-06-29. ACTIVE in_progress = Phase 37 Task 1 (consolidate the 6 overlapping HTML surfaces to ONE canonical app = ui_app.html, declare entry point, add deprecation banners, write UI_CONSOLIDATION_MAP). Display-only / zero-install / lookup-no-recalc; jsdom 0-network gate + ui_data contract bump per task. Then Task 2 Scenario Explorer, Task 3 Executive one-screen, Task 4 tour+glossary+provenance, Task 5 responsive+theme+cutover. Design note: docs/research/PHASE37_OFFLINE_UI_DECISION_TOOL_DESIGN_NOTE_20260629.md. Model frontier remains owner-gated (stage5/longevity/LSMC) and is NOT part of Phase 37.",
-    "overall_status": "PHASE_37_OFFLINE_UI_DECISION_TOOL_OPENED_OWNER_DIRECTED_20260629_TASK1_CONSOLIDATE_TO_ONE_CANONICAL_APP_IN_PROGRESS_DESIGN_NOTE_SHIPPED_DISPLAY_ONLY_ZERO_INSTALL_LOOKUP_NO_RECALC_JSDOM_0NETWORK_GATE_PER_TASK_GOVERNED_ARTIFACTS_BYTE_UNCHANGED_03d6538d_CONTRACT_1.23.0_HEADLINE_39975p65_MODEL_FRONTIER_FROZEN_OWNER_GATED_STAGE5_LONGEV_LSMC_SCHEDULED_TASK_REPOINTED_TO_REFINED_SKILL",
+    "last_run_note": "2026-06-29 (claude, INTERACTIVE, owner-directed): EXECUTED Phase 37 Task 1 (offline-UI consolidation). Shipped index.html (single canonical entry point; 0 external refs, 0 <script>, fully offline), docs/UI_CONSOLIDATION_MAP.md (disposition of all 6 HTML surfaces), and a UI_README entry note naming ui_app.html canonical. Additive-only: NO existing HTML modified; governed artifacts BYTE-UNCHANGED (ui_app sha256 d82c65ec, offline_home md5 03d6538d, ui_data contract 1.23.0, headline 39975.65). Gates GREEN: build_offline_home_validate 177/177, offline_home_loader_parity 10/10, PKG 26/26 (ui_app_byte_unchanged True). In-page deprecation banners on the 4 archived viewers DEFERRED to Task 1b (their combined_gui/offline_viewer jsdom self-tests are env-unrunnable in-sandbox). Task 1 -> completed; Task 2 (Scenario Explorer) now in_progress. Lock 2026-06-29T18:27Z-61cd.",
+    "current_phase": "Phase 37 (Offline UI: viewer -> interactive decision tool), owner-directed 2026-06-29. Task 1 (consolidate to one app) COMPLETE: index.html single entry + UI_CONSOLIDATION_MAP + UI_README; governed byte-unchanged; gates green. ACTIVE in_progress = Phase 37 Task 2 (Interactive Scenario Explorer in ui_app.html: lookup over the pre-computed {aggregation,copula,action-set,confidence,n} grid -> matching SCR/VaR/ES + diversification; A/B compare; NO re-calculation). Then Task 3 Executive one-screen, Task 4 tour+glossary+provenance, Task 5 responsive+theme+cutover (+ Task 1b: in-page banners on archived views at the governed cutover). Constraints: zero-install, display-only/lookup-no-recalc, jsdom 0-network gate + ui_data contract bump per task. Design note: docs/research/PHASE37_OFFLINE_UI_DECISION_TOOL_DESIGN_NOTE_20260629.md.",
+    "overall_status": "PHASE_37_TASK1_COMPLETE_OFFLINE_UI_CONSOLIDATED_INDEX_HTML_SINGLE_ENTRY_0_EXTREFS_UI_CONSOLIDATION_MAP_README_UPDATED_ADDITIVE_ONLY_GOVERNED_BYTE_UNCHANGED_uiapp_d82c65ec_offlinehome_03d6538d_CONTRACT_1.23.0_HEADLINE_39975p65_GATES_GREEN_177of177_LOADER_10of10_PKG_26of26_TASK2_SCENARIO_EXPLORER_IN_PROGRESS_BANNERS_DEFERRED_TASK1b_MODEL_FRONTIER_FROZEN_OWNER_GATED",
     "phases": {
         "Phase 1: Model Review & Documentation": {
             "status": "completed",
@@ -785,10 +785,12 @@
                 "Task 5: Responsive + light/dark theme + a11y/offline gate re-run + ui_data contract bump + governed re-baseline cutover + UI_README refresh."
             ],
             "in_progress": [
-                "Task 1 (LEAD): consolidate 6 overlapping HTML surfaces to ONE canonical zero-install app (ui_app.html) + top-level entry pointer + static deprecation banners on combined_model_app/model_result_viewer/par_projection_gui/model_summary_card + docs/UI_CONSOLIDATION_MAP.md. jsdom self-test stays 0-network/0-error; governed artifacts byte-stable (or validator baseline updated in-commit)."
+                "Task 2: Interactive Scenario Explorer - controls over the pre-computed {aggregation,copula,action-set,confidence,n} grid show matching SCR/VaR/ES + diversification by lookup; A/B compare. No re-calculation."
             ],
-            "completed": [],
-            "next": "Task 2: Interactive Scenario Explorer (lookup, no re-calc)"
+            "completed": [
+                "Task 1 (LEAD): consolidate 6 overlapping HTML surfaces to ONE canonical zero-install app (ui_app.html) + top-level entry pointer + static deprecation banners on combined_model_app/model_result_viewer/par_projection_gui/model_summary_card + docs/UI_CONSOLIDATION_MAP.md. jsdom self-test stays 0-network/0-error; governed artifacts byte-stable (or validator baseline updated in-commit). -> DONE 2026-06-29: shipped index.html (single entry, 0 ext-refs, 0 script tags), docs/UI_CONSOLIDATION_MAP.md, UI_README entry note. Governed byte-unchanged (ui_app d82c65ec, offline_home 03d6538d, ui_data 1.23.0); gates 177/177 + loader 10/10 + PKG 26/26. In-page banners on the 4 archived views DEFERRED to Task 1b (jsdom self-tests env-unrunnable here)."
+            ],
+            "next": "Task 3: Executive one-screen view (headline + standalone->nested waterfall + top-5 risks + plain-language toggle)"
         }
     },
     "repository_info": {

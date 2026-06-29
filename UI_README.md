@@ -1,5 +1,9 @@
 # Actuarial Stochastic Model — Offline Result UI (`ui_app.html`)
 
+> **Entry point (Phase 37):** open **`index.html`** — the single front door. It links to the
+> **canonical app `ui_app.html`** (this interactive report) and the visual dashboard
+> `offline_home.html`, and lists the archived views. Disposition: `docs/UI_CONSOLIDATION_MAP.md`.
+
 Zero-install, fully offline viewer for the completed stochastic capital model. It
 **consumes only model output** — it never re-runs a calculation. Open it and read.
 
