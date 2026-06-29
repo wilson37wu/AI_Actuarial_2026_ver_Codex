@@ -11778,3 +11778,28 @@ Autonomous 12h cycle (Claude 18:00 UTC window). Lock `2026-06-29T19:43Z-ae4f`. O
 **Git:** fresh `/tmp` clone of origin/main; mount `.git` untouched; lock `2026-06-29T20:05Z-919f` acquired + released; mount synced to origin/main (`.agent_lock.json` dynamic, ignored).
 
 **Next:** Phase 38 Task 3 stays owner-gated (sha256 re-baseline + contract bump + jsdom env). If still gated next auto-run, implement the registered jsdom-free `ui_app` companion self-test, else verification + sync.
+
+---
+
+## 2026-06-29 — W83 (claude, AUTO ~21:10Z) — Phase 38: implemented the registered jsdom-free `ui_app` companion self-test
+
+**Verdict: PASS.** One task executed (the exact next-step W82 registered): authored **`scripts/ui_app_selftest_nojsdom.cjs`**, a jsdom-FREE companion self-test for `ui_app.html`. `origin/main` delta = **+1 new standalone test script only**; no model-FORM / governed-artifact / contract change. The single `in_progress` item (`.claude-dev/MODEL_DEV_STATE.json`) — **Phase 38 Task 3** (fold Cash Flows + Products + the Phase 37 Scenario Explorer into byte-pinned `ui_app.html` as native tabs) — stays **OWNER-GATED** (needs owner sha256 re-baseline across ~10 gate scripts + a `ui_data.json` contract bump); its **in-sandbox jsdom blocker is now mitigated** by the new guard.
+
+**New artifact — `scripts/ui_app_selftest_nojsdom.cjs`** (node-stdlib + `crypto` + `vm` only; 0 third-party deps; mirrors the proven `offline_home_loader_parity.cjs` pattern). Asserts, with **no DOM / no network / no storage**:
+1. **0 external references** in the executable HTML/CSS/JS surface (the inert `<script id="ui-data">` JSON is excluded so a URL in data text can't false-fail): no `http(s)://`, protocol-relative `//host`, remote `src=`/`href=`, `<link>`, `@import`, `url(http…)`.
+2. Embedded `ui_data` parses; `contract_version == 1.23.0`; governed `headline == 39975.654628199336`.
+3. All **21 governed panel anchor ids** present as static `id="…" class="panel"`, and panel count == 21 baseline (added/removed panel caught).
+4. **Content-integrity self-consistency, two independent ways:** (4a) the page's OWN embedded pure-JS `_ciSha256` reproduces the standard SHA-256 vectors for `"abc"`/`""`; (4b) the page's OWN `_ciSectionDigests(DATA)` reproduces, byte-for-byte, `contract_manifest.section_digests` (26) + `root_digest`; (4c) an INDEPENDENT `node:crypto` SHA-256 over a faithful re-implementation of the page's canonical serialiser reproduces the same 26 section digests + root. Plus `required_top_level_keys` all present + `key_count` self-consistent.
+
+**Result: `ok:true`, 40/40 checks, deterministic** (two runs byte-identical). **Tamper-negative verified (the guard has teeth):** removing a governed panel id → FAIL(check 3); injecting a remote `<link href="https://…">` → FAIL(check 1); editing a digested value inside the payload → FAIL(checks 2+4b+4c). (A last-ULP literal edit that parses to the same IEEE-754 double is correctly a no-op — the whole-file `d82c65ec…` sha256 pin covers byte-level changes.) Layout/click assertions (narrow-viewport guarantee, full tab traversal) intentionally **stay in the jsdom path** (`ui_app_self_test.cjs`, owner/CI-gated).
+
+**Gates (pinned engine lock: numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3 / pytest 9.1.1, `/tmp/eng_venv`):**
+- **C** — `launch_offline_gui.py --self-test` → `self_test_ok:true`, `engine_ready:true`; `run_model.py --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid; `offline_bootstrap.py --self-test` ok; **PKG structural gate 26/26**; `.github/workflows` absent + 0 `v*` tags (owner/CI-gated, correct).
+- **Integrity** — `build_offline_home_validate` **177/177**; `tests/test_offline_home_validate` **4/4**; `offline_home_loader_parity.cjs` **10/10**; **`ui_app_selftest_nojsdom.cjs` 40/40 (NEW, no jsdom)**; MLMC suite **53 passed / 0 failed** (inner 8, stage3_wiring 8, tail_estimator 11, tail_stage3 4, tail_stage4 10, tail_stage4b 12).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_app.html` sha256 `d82c65ec…`; `ui_data.json` md5 `70b747a05c00d29bd6e286a7ee4cf42c` contract `1.23.0`; headline `39975.654628199336` — byte-identical to W81/W82. (The Gate-C smoke also re-wrote `docs/validation/RUN_MODEL_{AGGREGATION_REPORT,SUMMARY}.json` in the clone; these hold a different governed reference run and were **reverted** — not committed.)
+
+**Git:** fresh `/tmp` clone of origin/main; mount `.git` untouched; lock `2026-06-29T21:09Z-1bc8` acquired + released; mount synced to origin/main (`.agent_lock.json` dynamic, ignored).
+
+**Next:** Phase 38 Task 3 stays **owner-gated** (sha256 re-baseline + `ui_data` contract bump). If still gated next auto-run, the next auto-admissible step (registered in `MODEL_DEV_TASK_PROMPT.md`) is a thin pytest wrapper `tests/test_ui_app_selftest_nojsdom.py` that shells `node scripts/ui_app_selftest_nojsdom.cjs` and asserts `ok:true` — so the new guard runs in CI beside the 4/4 + 10/10 gates; else verification + sync.
