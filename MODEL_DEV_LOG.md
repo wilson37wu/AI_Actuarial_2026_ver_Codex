@@ -12037,3 +12037,65 @@ top-level section cannot be silently added/removed without a contract bump: `exp
 (== top-level `contract_version`); `key_count == 26`; `set(section_digests) == set(top-level keys except
 contract_manifest)`; every section-digest value a well-formed 64-char lowercase-hex sha256. Complements W89 (digest
 **values**) by pinning the manifest **shape**. Test-tooling only; no governed bytes; no model-form change.
+
+---
+
+## 2026-06-30 — W90 (Claude, AUTO) — ui_data `contract_manifest` STRUCTURAL-completeness pytest gate
+
+**Conclusion: PASS.** Implemented the W89-registered auto-admissible improvement —
+`tests/test_ui_data_contract_manifest_structure.py`, a pure-Python (stdlib `json`/`os`/`re`; no node, no
+subprocess, no network, never SKIPs) pytest gate that pins the `ui_data.json` `contract_manifest` **structural
+completeness** so the manifest stays internally self-consistent and faithfully describes the real payload.
+**9 passed.** No model-FORM / governed-artifact / contract change → `origin/main` delta = **+1 new test file**.
+Phase 38 Task 3 (ui_app native-tab cutover) remains **OWNER-GATED**, left in_progress.
+
+**What it pins (beyond W88 bytes/semver/headline and W89 digest VALUES):** (1) `key_count == 26` literal;
+(2) `expected_contract_version == "1.23.0"` **and** `== ui_data.contract_version`; (3) size agreement
+`key_count == len(required_top_level_keys) == len(section_digests) == 26`; (4) `set(required_top_level_keys) ==
+set(section_digests)` exact coverage; (5) no duplicate `required_top_level_keys`; (6) all 26 `section_digests`
+values well-formed 64-char lowercase-hex sha256 (W89 only checked the 2 it pins by value); (7) the contract
+describes the REAL payload: `set(ui_data top-level) == required ∪ {contract_manifest}`, `contract_manifest` not
+self-listed.
+
+**Closes a real gap:** `root_digest = sha256(canonical(section_digests))`, so it only moves when the section-digest
+**map** moves. A drift in `key_count` (a plain int), in `required_top_level_keys` (a sibling list), in
+`expected_contract_version`, or a new undigested top-level ui_data section, leaves `section_digests` — and therefore
+`root_digest` — byte-identical: W88/W89 stay green while the manifest is silently self-inconsistent. W90 is the
+structural backstop.
+
+**Teeth re-verified** in isolated scratch copies (`/tmp/w90_teeth*`, `/tmp/w90b_teeth*`: real `ui_data.json` + the
+test): baseline 9 passed; `key_count` 26→27 → `test_key_count_pinned` + `test_count_fields_mutually_agree` RED; drop
+a `section_digest` → `test_count_fields_mutually_agree` + `test_required_keys_match_section_digest_keys` RED; add an
+undigested top-level section → `test_required_keys_describe_real_payload` RED; malform a section digest (non-hex) →
+`test_all_section_digests_well_formed_hex` RED; duplicate a required key → `test_count_fields_mutually_agree` +
+`test_required_keys_have_no_duplicates` RED; `expected_contract_version` 1.23.0→9.9.9 →
+`test_expected_contract_version_agrees` RED. Governed clone `ui_data.json` md5
+(`70b747a05c00d29bd6e286a7ee4cf42c`) **unchanged** throughout (copy-out only).
+
+**Verification (all GREEN):**
+- **C** — `launch_offline_gui --self-test` `self_test_ok:true`, `engine_ready:true`; `run_model --n-outer 100
+  --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid YAML; `offline_bootstrap.py --self-test`
+  `ok`; **PKG structural gate 26 checks** all pass (incl. `ui_app_byte_unchanged` + `governed_headline_present`).
+- **Integrity** — `build_offline_home_validate` **177/177**; `offline_home_loader_parity.cjs` node **10/10**;
+  `ui_app_selftest_nojsdom.cjs` node **40/40**; governed-UI pytest cluster **25 passed** (`test_offline_home_validate`
+  4 + W88 5 + W89 7 + **new W90 9**); MLMC suite **53/53**; repo-wide `pytest --collect-only` = **3749 tests, 0
+  collection errors**.
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json`
+md5 `70b747a05c00d29bd6e286a7ee4cf42c` / contract `1.23.0` / `root_digest 456f7721…`; headline
+`39975.654628199336` — byte-identical to W81–W89. (Gate-C smoke re-wrote `docs/validation/RUN_MODEL_*.json` in the
+clone — reverted via `git checkout`, not committed.)
+
+**Git:** fresh `/tmp` clone of `origin/main`; mount `.git` untouched; lock `2026-06-30T04:09Z-6b7d` acquired +
+released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
+
+**Next:** Phase 38 Task 3 stays **owner-gated** (sha256 re-baseline + ui_data contract bump). Registered **W91** = a
+**Node** (stdlib-only, jsdom-free) gate that recomputes ALL 26 `section_digests` directly from the **standalone**
+`ui_data.json` payload via the page's embedded `_ciCanon`/`_ciSha256` serialiser (a pure-Python recompute is
+**infeasible** — the recipe uses JS-native `String(Number)` formatting; this cycle empirically found **19/26** sections
+diverge under Python `json.dumps`), asserting parity with `section_digests` + `root_digest`. Closes the gap that the
+existing all-26 recompute (`ui_app_selftest_nojsdom.cjs`, 40/40) runs on `ui_app.html`'s **embedded** payload while no
+gate recomputes the standalone governed `ui_data.json` `offline_home.html` consumes. **Next cycle must confirm the gap
+is real first**; if covered transitively, redirect to a `MODEL_DEV_TASK_PROMPT.md` documentation refresh rather than a
+near-duplicate. Backlog thinning — auto-admissible candidates trending toward near-duplicates.
