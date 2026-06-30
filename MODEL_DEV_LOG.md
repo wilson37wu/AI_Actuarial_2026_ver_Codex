@@ -11984,3 +11984,56 @@ released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
 section digest `contract_manifest.section_digests.contract_version == dd89545194911b5b0e3ddbc7285adf096b7196163c2fbf42e2a382cab8fc6c23`)
 in pytest. Complements W88's semver/md5/headline pins with the **machine content digest** — catches silent
 `ui_data` content drift even if the semver stays `1.23.0`. Test-tooling only; no governed bytes; no model-form change.
+
+---
+
+## 2026-06-30 — W89 (claude, AUTO): ui_data contract-manifest content-integrity digest pytest gate
+
+**One task (auto-admissible):** Implemented the W88-registered improvement —
+`tests/test_ui_data_contract_manifest_digest.py`, a pure-Python (stdlib `hashlib`/`json`/`os`; no node, no
+subprocess, no network, never SKIPs) pytest gate that **pins `ui_data.json`'s machine content-integrity digests** so
+silent payload drift is caught even when the human-readable `contract_version` semver stays `1.23.0`:
+(1) `contract_manifest.digest_algo == "sha256"`; (2) `contract_manifest.root_digest ==
+456f772166a1198363e16c7ccc68f87175ab4e4fa289cc0e798a009f1b257d01` (literal pin); (3)
+`contract_manifest.section_digests.contract_version == dd89545194911b5b0e3ddbc7285adf096b7196163c2fbf42e2a382cab8fc6c23`
+(literal pin). **TEETH:** both digests are also **re-derived** from the live payload via the recipe documented in
+`contract_manifest.digest_scope` (canonical = compact key-sorted JSON — verified to reproduce **both** the root over
+`canonical(section_digests)` **and** the `contract_version` section digest), so a drift in the section-digest map or
+in the `contract_version` payload turns the gate RED. **7 passed.**
+
+**Closes a real gap:** `grep -rl 456f7721 tests/ scripts/` and `grep -rl dd89545194911b5b tests/ scripts/` both
+returned nothing. W88 pins `offline_home.html` md5 + the semver string + the headline, but **not** the machine
+content digest the offline UI recomputes in-browser. This is the machine counterpart.
+
+**Teeth re-verified** in an isolated scratch copy (`/tmp/w89_teeth`: real `ui_data.json` + the test): baseline 7
+passed; mutating `root_digest` → `test_root_digest_pinned` RED; mutating `section_digests.contract_version` →
+`test_contract_version_section_digest_pinned` + `test_root_digest_matches_section_map` RED (2); mutating the
+`contract_version` **payload** to `9.9.9` with the digest left stale → `test_contract_version_section_digest_matches_payload`
+RED (the content-drift catch that differentiates W89 from W88); mutating `digest_algo` → `test_digest_algo_pinned`
+RED. Governed clone `ui_data.json` md5 (`70b747a05c00d29bd6e286a7ee4cf42c`) **unchanged** throughout (copy-out only).
+
+**Verification (all GREEN):**
+- **C** — `launch_offline_gui --self-test` `self_test_ok:true`, `engine_ready:true`; `run_model --n-outer 100
+  --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid YAML; `offline_bootstrap.py --self-test`
+  `ok:true`×8; **PKG structural gate 26 checks** all pass; `.github/workflows` absent + 0 `v*` tags (owner/CI-gated).
+- **Integrity** — `build_offline_home_validate` **177/177**; `tests/test_offline_home_validate` **4/4**;
+  `offline_home_loader_parity.cjs` node **10/10**; offline_home_validate 4 + W88 5 + **new W89 7** = **16 passed**;
+  MLMC suite **53 passed / 0 failed** (inner 8 + stage3_wiring 8 + tail_estimator 11 + tail_stage3 4 + tail_stage4 10
+  + tail_stage4b 12).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json`
+md5 `70b747a05c00d29bd6e286a7ee4cf42c` / contract `1.23.0` / `root_digest 456f7721…`; headline
+`39975.654628199336` — byte-identical to W81–W88. (The Gate-C smoke re-wrote
+`docs/validation/RUN_MODEL_{AGGREGATION_REPORT,SUMMARY}.json` in the clone — WorkedExample run, not the governed
+default — reverted via `git checkout`, not committed → origin/main delta = **+1 new test file only**.)
+
+**Git:** fresh `/tmp` clone of `origin/main`; mount `.git` untouched; lock `2026-06-30T03:09Z-851f` acquired +
+released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
+
+**Next:** Phase 38 Task 3 stays **owner-gated** (sha256 re-baseline + ui_data contract bump). Registered **W90** =
+`tests/test_ui_data_contract_manifest_structure.py` — pin the `contract_manifest` **structural completeness** so a
+top-level section cannot be silently added/removed without a contract bump: `expected_contract_version == 1.23.0`
+(== top-level `contract_version`); `key_count == 26`; `set(section_digests) == set(top-level keys except
+contract_manifest)`; every section-digest value a well-formed 64-char lowercase-hex sha256. Complements W89 (digest
+**values**) by pinning the manifest **shape**. Test-tooling only; no governed bytes; no model-form change.
