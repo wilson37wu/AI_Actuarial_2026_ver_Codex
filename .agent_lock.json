@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-30T08:10Z-a91b",
-  "started_at": "2026-06-30T08:10:31Z",
-  "ttl_minutes": 120,
-  "task": "W94 verification+mount-sync (Phase 38 Task 3 owner-gated; gate surface saturated; refresh task-prompt hand-off)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-30T08:20:14Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
