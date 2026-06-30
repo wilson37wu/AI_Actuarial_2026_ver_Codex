@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-30T14:28:31Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-30T15:10Z-e0bf",
+  "started_at": "2026-06-30T15:10:24Z",
+  "ttl_minutes": 120,
+  "task": "W101 exhausted-backlog: full verification battery + full mount sync (no model-FORM/contract/headline/banner change)",
+  "note": ""
 }
