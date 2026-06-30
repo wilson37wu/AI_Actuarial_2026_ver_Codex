@@ -12316,3 +12316,22 @@ All three options resolved to **no-new-artifact**, so this cycle is the SKILL's 
 **Researched next improvement (registered W96 LEAD).** With the stage-5 allocation question closed and the governance-gate surface saturated, W96 = a **non-duplicate docs/runbook refresh consolidating the stage-1..5 tail-MLMC efficiency map** (no new gate), ELSE the SKILL's sanctioned exhausted-backlog **verification + full mount-sync pass**. A "stage-6" estimator would be over-engineering and is **not** registered.
 
 **Next:** Phase 38 Task 3 stays **owner-gated**. Registered **W96 behind the same hard near-duplicate guard** — no new near-duplicate governance gate, no model-FORM/contract/headline change. Owner-gated: Phase 38 Task 3, governed re-baseline, MLMC-default stage 5.
+
+---
+
+## 2026-06-30 — W96 (claude, AUTO): consolidated stage-1..5 tail-MLMC efficiency map (documentation-only, no new gate)
+
+**Cycle.** `2026-06-30T10:09Z-6f46`. Coordination per `AGENT_COORDINATION.md`: fresh `/tmp` clone of `origin/main` (mount `.git` untouched); `agent_lock.py preflight --owner claude` → `PROCEED` (owner null, prior release 09:28:44Z); `acquire` → lock taken + pushed; one task; push; full mount sync; `release`.
+
+**One task (W96 LEAD, auto-admissible).** Shipped the registered **non-duplicate docs consolidation** `docs/MLMC_TAIL_EFFICIENCY_MAP.md` (NEW, 116 lines). It maps the tail-functional MLMC programme — **stage 1** design (W63 RU representation) → **stage 2** prototype (W64) → **stage 3** validation (W65 CONDITIONAL/variance-limited) → **stage 4** variance reduction (W66) → **stage 4b** wiring (W67) → **stage 5** Neyman allocation (W95) — into a single reference: a ladder-at-a-glance table, a **matched-cost variance-reduction table** (stage-4 **2.39× SCR**, stage-4b **2.46× SCR**, stage-5 Neyman per-budget 1.66–1.91× SCR), the **stage-5 near-unbiased-SCR bias differentiator**, a pre-registered gate rollup (G4 identity / G3 ≥2× / G5 no-spillover), the operating recommendation, and a provenance list pointing back to the per-stage cards.
+
+**Non-duplicate check (done first).** Repo survey found only the per-stage validation cards (`MLMC_TAIL_STAGE2..5`) and forward-looking design cards (`POSTIGUI_OUTER_LOOP_EFFICIENCY_DESIGN_CARD.md`, etc.) — **no existing stage-1..5 results-consolidation / efficiency map**. The new card **summarises, does not supersede** the gated per-stage evidence and adds **no governance gate**, so it does not breach the gate-saturation guard.
+
+**Verification (all GREEN):**
+- **C** — `launch_offline_gui --self-test` `self_test_ok:true`, `engine_ready:true`; `run_model --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid YAML; `offline_bootstrap.py --self-test` all `ok`; `build_phase_pkg_task1_validate.py` all pass.
+- **Integrity** — `build_offline_home_validate` **177/177** (failed:[]); pytest `test_offline_home_validate` **4 passed**; `offline_home_loader_parity.cjs` node **10/10**; **MLMC suite 66/66** (27 · 14 · 25, 3 batches).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json` md5 `70b747a05c00d29bd6e286a7ee4cf42c` / contract `1.23.0` / `root_digest 456f7721…`; `ui_app.html` sha256 `d82c65ec…`; headline `39975.654628199336` — byte-identical to W81–W95. (Gate-C smoke re-wrote `docs/validation/RUN_MODEL_*.json` in the clone — reverted via `git checkout`, not committed.)
+
+**Next:** auto-admissible backlog essentially exhausted (gate surface saturated; tail-MLMC track complete + now consolidated; governed UI byte-stable). **W97 registered behind the same hard near-duplicate guard**: default to the exhausted-backlog verification + full mount-sync pass unless a genuinely NEW non-duplicate gap is demonstrated. Owner-gated and untouched: Phase 38 Task 3, governed re-baseline, MLMC-default stage 5.
