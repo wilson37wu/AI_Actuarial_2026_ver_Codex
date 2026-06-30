@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-30T01:30:07Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-30T02:09Z-3337",
+  "started_at": "2026-06-30T02:09:38Z",
+  "ttl_minutes": 120,
+  "task": "W88 governed offline-UI byte-anchor pytest gate (auto-admissible; Phase 38 Task 3 owner-gated)",
+  "note": ""
 }
