@@ -12211,3 +12211,54 @@ Registered **W93 behind the same hard near-duplicate guard**: next cycle does a 
 embedded==standalone payload-equality candidate is **closed/implied** — do not re-propose it), else opt-in
 **headline-neutral** estimator/efficiency work, else a further *non-duplicate* doc/runbook refresh — **no further
 near-duplicate governance gate, no model-FORM/contract/headline change**.
+
+---
+
+## 2026-06-30 — W93 (claude, AUTO one-task) — full verification battery + mount sync + docs/VERIFICATION_RUNBOOK.md
+
+**Verdict:** ✅ PASS — documentation only; `origin/main` delta = **+1 new doc** (`docs/VERIFICATION_RUNBOOK.md`);
+no model-FORM / governed-artifact / contract / headline change.
+
+**Cycle:** `2026-06-30T07:09Z-40cd`. Fresh `/tmp` clone of `origin/main`; mount `.git` untouched; preflight
+PROCEED (owner null); lock acquired + released; mount synced to `origin/main`.
+
+**One task.** The single `in_progress` item, **Phase 38 Task 3** (native-tab `ui_app.html` cutover), stays
+**OWNER-GATED** (sha256 re-baseline across the gate scripts + a `ui_data.json` contract bump) and is **not**
+executed. W92 registered W93 behind the hard near-duplicate guard with a priority order, worked here:
+
+1. **Distinct gate (only if a new gap is shown) → NOT AVAILABLE.** The embedded==standalone payload-equality
+   candidate is **closed/transitively implied** (W92) and the governance-gate surface is **saturated**
+   (`docs/INTEGRITY_GATE_MAP.md`). Any payload/digest gate would be a disallowed near-duplicate.
+2. **Opt-in headline-neutral estimator/efficiency work → DEFERRED** (model-adjacent, higher single-cycle
+   regression risk; deprioritised at W92).
+3. **Non-duplicate doc/runbook refresh → DONE.** `grep` over `git ls-files`
+   (`runbook|verif|how_to_run|reproduce|gate`) confirmed **no end-to-end verification runbook exists** — the
+   only neighbour, `INTEGRITY_GATE_MAP.md`, covers ONLY the 8 offline-UI integrity gates (not Gate C engine
+   bit-match, not Gate D packaging, not MLMC) and is a coverage matrix, not a run procedure.
+
+**Deliverable — `docs/VERIFICATION_RUNBOOK.md`** (new, 165 lines): the single reproducible procedure to run
+EVERY gate from a clean clone — pinned engine venv (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3); coordination
+preflight; **Gate C** (self-test + frozen bit-match + the `RUN_MODEL_*.json` doc-only-revert gotcha); **Gate D**
+(spec AST / workflow YAML / bootstrap self-test / pkg 26/26; build stays owner-CI-gated); the **five integrity
+gates**; the **MLMC 53/53** run-in-3-batches timeout gotcha; the **governed byte-stability anchor table**; and a
+one-glance expected-GREEN summary.
+
+**Verification (all GREEN):**
+- **C** — `launch_offline_gui --self-test` `self_test_ok:true`, `engine_ready:true`; `run_model --n-outer 100
+  --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid YAML; `offline_bootstrap.py --self-test`
+  all `ok`; `build_phase_pkg_task1_validate.py` **26/26**.
+- **Integrity** — `build_offline_home_validate` **177/177** (failed:[]); pytest `test_offline_home_validate`
+  **4 passed**; `offline_home_loader_parity.cjs` node **10/10**; `ui_app_selftest_nojsdom.cjs` node **40/40**;
+  `ui_data_section_digest_recompute_parity.cjs` node **22/22**; MLMC suite **53/53** (16 · 15 · 22).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json`
+md5 `70b747a05c00d29bd6e286a7ee4cf42c` / contract `1.23.0` / `root_digest 456f7721…`; `ui_app.html` sha256
+`d82c65ec…`; headline `39975.654628199336` — byte-identical to W81–W92. (Gate-C smoke re-wrote
+`docs/validation/RUN_MODEL_*.json` in the clone — reverted via `git checkout`, not committed.)
+
+**Next:** Phase 38 Task 3 stays **owner-gated**. Governance-gate accretion remains **saturated and mapped**, and
+the full battery is now **runbooked**. Registered **W94 behind the same hard near-duplicate guard**: a
+distinct-gap-confirmed gate (payload-equality candidate is **closed** — do not re-propose), else opt-in
+**headline-neutral** estimator/efficiency work, else a further **non-duplicate** doc/runbook refresh — **no
+further near-duplicate governance gate, no model-FORM/contract/headline change**.
