@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-30T01:10Z-c0a2",
-  "started_at": "2026-06-30T01:10:08Z",
-  "ttl_minutes": 120,
-  "task": "W87 gitignore junk meta-gate: tests/test_gitignore_covers_junk_probes.py (auto-admissible; Phase 38 Task 3 remains owner-gated)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-30T01:30:07Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
