@@ -12099,3 +12099,63 @@ existing all-26 recompute (`ui_app_selftest_nojsdom.cjs`, 40/40) runs on `ui_app
 gate recomputes the standalone governed `ui_data.json` `offline_home.html` consumes. **Next cycle must confirm the gap
 is real first**; if covered transitively, redirect to a `MODEL_DEV_TASK_PROMPT.md` documentation refresh rather than a
 near-duplicate. Backlog thinning — auto-admissible candidates trending toward near-duplicates.
+
+---
+
+## 2026-06-30 — W91 (Claude, AUTO) — standalone `ui_data.json` section-digest recompute-parity gate (Node)
+
+**Conclusion:** PASS. Implemented the W90-registered auto-admissible improvement **after confirming the gap is
+real** — `scripts/ui_data_section_digest_recompute_parity.cjs` (Node, stdlib-only: `fs`/`path`/`crypto`/`vm`;
+jsdom-free) + `tests/test_ui_data_section_digest_recompute_parity.py` (pytest wrapper). The gate recomputes ALL 26
+`section_digests` **+** `root_digest` **directly from the standalone `ui_data.json`** (the file `offline_home.html`
+consumes) two independent ways and asserts parity with that file's own `contract_manifest` + the governed
+`root_digest` pin. **22/22 GREEN**; 6 pytest cases. No model-FORM / governed-artifact / contract change —
+`origin/main` delta is **+2 new files**. Phase 38 Task 3 (ui_app native-tab cutover) remains **OWNER-GATED**, left
+in_progress.
+
+**Confirm-gap-first (required by the W90 registration, done before building):** no existing gate recomputes the 26
+section payloads of the *standalone* `ui_data.json`. `ui_app_selftest_nojsdom.cjs` (40/40) recomputes the **embedded**
+payload inside `ui_app.html`; W89/W90 pin the manifest's digest **values**/**structure** without recomputing a section
+payload→digest; the `test_embedded_payload_matches_standalone` tests (phase35-a2, postigui task5/task8) compare only
+the `contract_manifest` sub-object (+ at most one section); `build_offline_home_validate.py` "recomputes nothing"
+(renders figures) and `offline_home_loader_parity.cjs` compares rendered **figures**. So a standalone payload drift
+with a byte-identical manifest passed every prior gate. Gap **real**, not transitively covered. Built the gate.
+
+**What it asserts (22 checks):** (A) AUTHORITATIVE — extracts the page's OWN `_ciCanon`/`_ciSha256`/`_ciSectionDigests`
+from `ui_app.html` (recipe source only; the inert `<script id="ui-data">` block is stripped first so the embedded
+payload is never read) and runs `_ciSectionDigests(STANDALONE_DATA)`; 0 mismatch / 0 missing / 0 extra vs the standalone
+manifest; recomputed `root_digest` == manifest == governed `456f7721…`. (B) INDEPENDENT — `node:crypto` SHA-256 over a
+faithful re-impl of the canonical serialiser, same parity + governed-root pin. Plus exact key coverage, `key_count==26`
+self-consistency, NIST SHA-256 vectors for both hashers. A pure-Python recompute is **infeasible** (JS-native
+`String(Number)` recipe; 19/26 sections diverge under `json.dumps`), hence the borrowed page JS.
+
+**Teeth (isolated `/tmp` scratch; clone `ui_data.json` md5 `70b747a0` UNCHANGED):** T1 mutate a section payload with the
+manifest untouched → AUTH+INDEP `section_digests` **and** `root_digest` mismatch RED — **this is the gap class**,
+invisible to W88/W89/W90; T2 drop a section → missing/coverage/`key_count` RED; T3 add an undigested section →
+extra/coverage RED; T4 tamper a manifest digest → AUTH+INDEP mismatch RED; T5 nested numeric mutation → RED.
+
+**Verification (all GREEN):**
+- **C** — `launch_offline_gui --self-test` `self_test_ok:true`, `engine_ready:true`; `run_model --n-outer 100
+  --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid YAML; `offline_bootstrap.py --self-test`
+  `ok` (7/7); **PKG structural gate 26 checks** all pass (incl. `ui_app_byte_unchanged` + `governed_headline_present`).
+- **Integrity** — `build_offline_home_validate` **177/177**; `offline_home_loader_parity.cjs` node **10/10**;
+  `ui_app_selftest_nojsdom.cjs` node **40/40**; **new `ui_data_section_digest_recompute_parity.cjs` node 22/22**;
+  governed-UI pytest cluster **+ W91 = 34 passed** (`test_offline_home_validate` 4 + W88 5 + W89 7 + W90 9 +
+  nojsdom-wrapper 3 + **new W91-wrapper 6**); MLMC suite **53/53**; repo-wide `pytest --collect-only` = **3755 tests,
+  0 collection errors**.
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json`
+md5 `70b747a05c00d29bd6e286a7ee4cf42c` / contract `1.23.0` / `root_digest 456f7721…`; headline
+`39975.654628199336` — byte-identical to W81–W90. (Gate-C smoke re-wrote `docs/validation/RUN_MODEL_*.json` in the
+clone — reverted via `git checkout`, not committed.)
+
+**Git:** fresh `/tmp` clone of `origin/main`; mount `.git` untouched; lock `2026-06-30T05:09Z-179f` acquired +
+released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
+
+**Next:** Phase 38 Task 3 stays **owner-gated**. **Saturation reached** — the offline-UI digest-integrity surface is now
+fully pinned for BOTH the embedded (`ui_app.html`) and standalone (`ui_data.json`) payloads by **value** (W88/W89),
+**structure** (W90), and **recompute** (nojsdom embedded 40/40 + W91 standalone 22/22). Registered **W92 behind a hard
+near-duplicate guard**: next cycle does a *distinct-gap-confirmed* gate, else a `MODEL_DEV_TASK_PROMPT.md`/docs
+refresh consolidating the W84–W91 integrity-gate map, else opt-in **headline-neutral** estimator-efficiency work — **no
+further near-duplicate governance gate, no model-FORM/contract change**.
