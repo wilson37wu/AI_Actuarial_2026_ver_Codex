@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-30T17:18:25Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-30T18:09Z-0f74",
+  "started_at": "2026-06-30T18:09:17Z",
+  "ttl_minutes": 120,
+  "task": "W104 exhausted-backlog: full verification battery + full mount sync (Phase 38 Task 3 owner-gated; no model-FORM/contract/headline/banner change)",
+  "note": ""
 }
