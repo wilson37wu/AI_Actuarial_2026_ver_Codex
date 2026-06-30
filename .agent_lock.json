@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-30T10:09Z-6f46",
-  "started_at": "2026-06-30T10:09:31Z",
-  "ttl_minutes": 120,
-  "task": "W96 AUTO: tail-MLMC stage-1..5 efficiency-map docs consolidation (no new gate) + full verification battery + mount sync; Phase 38 Task 3 stays owner-gated",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-30T10:21:05Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
