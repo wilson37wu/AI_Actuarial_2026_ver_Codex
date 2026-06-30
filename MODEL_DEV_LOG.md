@@ -11898,3 +11898,45 @@ released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
 git absent) to assert the documented junk/probe patterns from `AGENT_COORDINATION.md` §6 (`*.tmp`, `_probe*`,
 `.w*_probe*`, `__pycache__/`, `.~lock.*`, phase stage dirs) are git-ignored — enforcing "junk never gets
 committed" in CI rather than by convention. Test-tooling only; no governed bytes; no model-form change.
+
+## 2026-06-30T01:27:10Z — AUTO W87 (claude): repo-hygiene meta-gate — documented junk/probe patterns stay git-ignored
+
+**Cycle:** 2026-06-30T01:10Z-c0a2 (lock acquired+released; fresh /tmp clone; mount .git untouched)
+**Task (one):** Authored `tests/test_gitignore_covers_junk_probes.py` — a pure-Python meta-gate that shells
+`git check-ignore -q` (SKIP when git absent / not a work tree) to assert that a representative path from **every**
+documented junk/probe family in `AGENT_COORDINATION.md` §6 is git-ignored: `*.tmp` (root + subdir), `_*probe*`,
+`_sync_probe*.txt`, `.w<n>_*.tmp`, `_perm_test*`, `_wtest*`, `_writeprobe*`, `__pycache__/`, `*.py[cod]`,
+`.pytest_cache/`, `node_modules/`, `.~lock.*#`, `.phase*_stage/`, `C:/`, `*.bak`, `model_inputs.json`. Enforces the
+protocol's "junk never gets committed" in CI rather than by convention. **5 passed.** Distinct from W84/W85 (jsdom
+guard wrappers) and W86 (guard-coverage): this polices repo hygiene, not the offline-UI guard surface.
+**Why git check-ignore:** it operates on the path string alone (file need not exist → no fixtures, no mutation)
+and uses git's own matcher, so it cannot drift from real commit behaviour the way a hand-rolled `fnmatch` would.
+**Teeth (gate not vacuous):** (1) both-ways discrimination — junk samples return 0 (ignored) AND tracked source
+files (`README.md`, `scripts/run_model.py`, `offline_home.html`, `ui_data.json`,
+`tests/test_nojsdom_guards_are_collected.py`) return 1 (not ignored); (2) in an ISOLATED throwaway git repo
+(copied `.gitignore` + the test), deleting the `*.tmp` and `_*probe*` rules drove 3 of 5 tests RED — clone never
+mutated; (3) pure-structural backstop asserts the core hygiene pattern lines literally exist in `.gitignore` (no
+git needed).
+**Gates (pinned engine lock: numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3 / pytest 9.1.1, fresh /tmp venv):**
+- **C** — `launch_offline_gui.py --self-test` → `self_test_ok:true`, `engine_ready:true`; `run_model.py
+  --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid YAML (3-OS ubuntu/windows/macos matrix;
+  jobs build+release); `offline_bootstrap.py --self-test` `ok:true`×3; **PKG structural gate 26/26** (incl.
+  `ui_app_byte_unchanged` + `governed_headline_present`); `.github/workflows` absent + 0 `v*` tags (owner/CI-gated, correct).
+- **Integrity** — `build_offline_home_validate` **177/177**; `tests/test_offline_home_validate` **4/4**;
+  `offline_home_loader_parity.cjs` node **10/10**; W84+W85+W86 siblings + **new W87** = **23 passed** together;
+  MLMC suite **53 passed / 0 failed** (8 + 19 + 4 + 22).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json`
+contract `1.23.0`; headline `39975.654628199336` — byte-identical to W81–W86. (The Gate-C smoke re-wrote
+`docs/validation/RUN_MODEL_{AGGREGATION_REPORT,SUMMARY}.json` in the clone — they hold the WorkedExample run, not
+the governed default — reverted via `git checkout`, not committed → origin/main delta = **+1 new test file only**.)
+
+**Git:** fresh `/tmp` clone of `origin/main`; mount `.git` untouched; lock `2026-06-30T01:10Z-c0a2` acquired +
+released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
+
+**Next:** Phase 38 Task 3 stays **owner-gated** (sha256 re-baseline + ui_data contract bump). Registered **W88** =
+`tests/test_governed_offline_ui_byte_anchors.py` — a pure-Python pytest meta-gate pinning the governed offline-UI
+byte anchors (`offline_home.html` md5 `03d6538d…`, `ui_data.json` contract `1.23.0`, headline `39975.654628199336`)
+so the manual per-cycle byte-stability check becomes an automatic CI guard. Test-tooling only; no governed bytes;
+no model-form change.
