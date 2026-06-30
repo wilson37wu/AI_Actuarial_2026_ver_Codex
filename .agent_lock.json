@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-30T07:09Z-40cd",
-  "started_at": "2026-06-30T07:09:50Z",
-  "ttl_minutes": 120,
-  "task": "W93 auto cycle: verification + mount sync + one non-duplicate improvement (Phase 38 Task 3 remains OWNER-GATED, not auto-admissible)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-30T07:25:19Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
