@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-30T03:09Z-851f",
-  "started_at": "2026-06-30T03:09:59Z",
-  "ttl_minutes": 120,
-  "task": "W89 ui_data contract-manifest digest pytest gate (auto-admissible; Phase 38 Task 3 owner-gated)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-30T03:29:47Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
