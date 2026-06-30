@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-30T12:09Z-9323",
-  "started_at": "2026-06-30T12:09:22Z",
-  "ttl_minutes": 120,
-  "task": "W98 AUTO: exhausted-backlog verification battery + full mount sync (Phase 38 Task 3 owner-gated; no model-FORM/contract/headline change)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-30T12:18:32Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
