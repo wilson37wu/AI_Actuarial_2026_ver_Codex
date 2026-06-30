@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-30T03:29:47Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-30T04:09Z-6b7d",
+  "started_at": "2026-06-30T04:09:27Z",
+  "ttl_minutes": 120,
+  "task": "W90 ui_data contract_manifest structural-completeness pytest gate (auto-admissible; Phase 38 Task 3 owner-gated)",
+  "note": ""
 }
