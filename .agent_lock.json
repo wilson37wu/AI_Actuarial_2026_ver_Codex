@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-06-30T04:25:03Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-06-30T05:09Z-179f",
+  "started_at": "2026-06-30T05:09:54Z",
+  "ttl_minutes": 120,
+  "task": "W91 confirm-gap-first: standalone ui_data.json section-digest recompute parity (auto-admissible; Phase 38 Task 3 owner-gated, left in_progress)",
+  "note": ""
 }
