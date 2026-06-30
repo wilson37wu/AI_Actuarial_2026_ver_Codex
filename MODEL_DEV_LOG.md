@@ -12159,3 +12159,55 @@ fully pinned for BOTH the embedded (`ui_app.html`) and standalone (`ui_data.json
 near-duplicate guard**: next cycle does a *distinct-gap-confirmed* gate, else a `MODEL_DEV_TASK_PROMPT.md`/docs
 refresh consolidating the W84–W91 integrity-gate map, else opt-in **headline-neutral** estimator-efficiency work — **no
 further near-duplicate governance gate, no model-FORM/contract change**.
+
+---
+
+## 2026-06-30 — W92 (Claude, AUTO) — consolidating documentation: `docs/INTEGRITY_GATE_MAP.md` (W84–W91 gate map)
+
+**Conclusion:** PASS. Did the W91-registered **priority-2** action — a documentation refresh consolidating the
+W84–W91 offline-UI integrity-gate map into a single new reference, **after confirming the priority-1 candidate gate
+is transitively implied** (so it was skipped, not built). No model-FORM / governed-artifact / contract change;
+`origin/main` delta = **+1 new doc only** (`docs/INTEGRITY_GATE_MAP.md`). Phase 38 Task 3 stays **owner-gated**, left
+`in_progress`.
+
+**Gap-confirm-first (required by the W91 hand-off):** the registered candidate was a *full 26-section
+EMBEDDED == STANDALONE payload-equality* gate. It is **already transitively implied** and therefore **skipped**:
+`ui_app_selftest_nojsdom.cjs` (40/40) recomputes the **embedded** `ui_app.html` payload → embedded manifest;
+W91 `ui_data_section_digest_recompute_parity.cjs` (22/22) recomputes the **standalone** `ui_data.json` payload →
+standalone manifest (two independent recipes); both manifests are pinned to the **same** governed
+`root_digest 456f7721…` (W88 embedded anchors + W89 standalone value-pin). Since `root_digest = sha256(canonical(
+section_digests))`, equal roots ⟹ equal 26-section digest maps (collision resistance) ⟹ equal canonical section
+payloads (preimage resistance). A dedicated payload-equality gate would be a **near-duplicate**, disallowed by the
+owner directive — so per the W91 instruction (*"confirm not already transitively implied … else skip"*) it was
+skipped and the documentation refresh was done instead.
+
+**Deliverable — `docs/INTEGRITY_GATE_MAP.md`** (new; `grep` confirmed no pre-existing gate-map/index doc, so it is
+additive, not a near-duplicate brief): a per-gate table (file · kind · payload/surface · what it pins · teeth) for all
+eight W84–W91 gates; a coverage-by-axis matrix (recompute / manifest values / structure / figure parity / byte anchor
+/ meta) across the **embedded** (`ui_app.html`) and **standalone** (`ui_data.json`) payloads; the transitive-closure
+argument that establishes **saturation**; the still-open owner-gated Phase 38 Task 3; and a governed-anchor
+quick-reference table.
+
+**Verification (all GREEN):**
+- **C** — `launch_offline_gui --self-test` `self_test_ok:true`, `engine_ready:true`; `run_model --n-outer 100
+  --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid YAML; `offline_bootstrap.py --self-test` `ok`;
+  PKG structural gate passes.
+- **Integrity** — `build_offline_home_validate` **177/177**; `offline_home_loader_parity.cjs` node **10/10**;
+  `ui_app_selftest_nojsdom.cjs` node **40/40**; `ui_data_section_digest_recompute_parity.cjs` node **22/22**;
+  governed-UI pytest cluster **29 passed** (`test_offline_home_validate` 4 + W89 7 + W90 9 + W91-wrapper 6 +
+  nojsdom-wrapper 3); MLMC suite **53/53** (inner+wiring 16 · tail_estimator+stage3 15 · stage4+stage4b 22).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json`
+md5 `70b747a05c00d29bd6e286a7ee4cf42c` / contract `1.23.0` / `root_digest 456f7721…`; `ui_app.html` sha256
+`d82c65ec…`; headline `39975.654628199336` — byte-identical to W81–W91. (Gate-C smoke re-wrote
+`docs/validation/RUN_MODEL_*.json` in the clone — reverted via `git checkout`, not committed.)
+
+**Git:** fresh `/tmp` clone of `origin/main`; mount `.git` untouched; lock `2026-06-30T06:10Z-f2db` acquired +
+released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
+
+**Next:** Phase 38 Task 3 stays **owner-gated**. Governance-gate accretion remains **saturated and now mapped**.
+Registered **W93 behind the same hard near-duplicate guard**: next cycle does a *distinct-gap-confirmed* gate (the
+embedded==standalone payload-equality candidate is **closed/implied** — do not re-propose it), else opt-in
+**headline-neutral** estimator/efficiency work, else a further *non-duplicate* doc/runbook refresh — **no further
+near-duplicate governance gate, no model-FORM/contract/headline change**.
