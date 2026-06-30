@@ -11940,3 +11940,47 @@ released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
 byte anchors (`offline_home.html` md5 `03d6538d…`, `ui_data.json` contract `1.23.0`, headline `39975.654628199336`)
 so the manual per-cycle byte-stability check becomes an automatic CI guard. Test-tooling only; no governed bytes;
 no model-form change.
+
+## 2026-06-30T02:19:20Z — AUTO W88 (claude): governed offline-UI byte-anchor pytest gate — byte-stability CI-enforced
+
+**Cycle:** 2026-06-30T02:09Z-3337 (lock acquired+released; fresh /tmp clone; mount .git untouched)
+**Task (one):** Authored `tests/test_governed_offline_ui_byte_anchors.py` — a **pure-Python** (stdlib
+`hashlib`/`json`/`os`; no node, no subprocess, no network, never SKIPs) pytest meta-gate that **pins the three
+governed offline-UI byte anchors** so the owner directive *"keep governed UI artifacts byte-stable"* is enforced
+in CI rather than eyeballed each cycle: (1) `md5(offline_home.html)==03d6538d3cae9efb83062ecbfab096e9`;
+(2) `ui_data.json` **top-level** `contract_version=='1.23.0'` (not the `contract_manifest` digest field);
+(3) governed headline `39975.654628199336` at `capital.t_copula_scr_pathwise_component`, matched by float
+equality, by `repr`-exactness (precision-drift guard), and as a verbatim literal in the file. **5 passed.**
+**Closes a real gap:** `grep -rl 03d6538d tests/ scripts/` previously returned nothing — `build_phase_pkg` pins
+`ui_app.html`, a *different* file; `offline_home.html`'s exact md5 was unguarded in pytest. Distinct from W84/W85
+(jsdom-free guard wrappers), W86 (guard-coverage), W87 (gitignore hygiene): this pins the governed offline-UI
+bytes/scalars.
+**Teeth (gate not vacuous):** in an ISOLATED scratch copy (`/tmp/w88_teeth`: real `offline_home.html` +
+`ui_data.json` + the test) baseline was 5 passed; appending 1 byte to `offline_home.html` drove
+`test_offline_home_md5_pinned` + `test_md5_anchor_has_teeth` RED (2 failed); `contract_version='9.9.9'` drove
+`test_ui_data_contract_version_pinned` RED; headline `12345.0` drove `test_ui_data_headline_pinned` RED. The
+governed clone was never mutated (copy-out only). Plus an in-test discrimination check: `md5(raw+\x00) != governed`.
+**Gates (pinned engine lock: numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3 / pytest 9.1.1, /tmp venv):**
+- **C** — `launch_offline_gui.py --self-test` → `self_test_ok:true`, `engine_ready:true`; `run_model.py
+  --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid YAML; `offline_bootstrap.py --self-test`
+  `ok:true`×3; **PKG structural gate 26/26** (incl. `ui_app_byte_unchanged` + `governed_headline_present`);
+  `.github/workflows` absent + 0 `v*` tags (owner/CI-gated, correct).
+- **Integrity** — `build_offline_home_validate` **177/177**; `tests/test_offline_home_validate` **4/4**;
+  `offline_home_loader_parity.cjs` node **10/10**; W86 + W87 siblings + **new W88** = **19 passed** together;
+  MLMC suite **53 passed / 0 failed** (27 + 26).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json`
+contract `1.23.0`; headline `39975.654628199336` — byte-identical to W81–W87. (The Gate-C smoke re-wrote
+`docs/validation/RUN_MODEL_{AGGREGATION_REPORT,SUMMARY}.json` in the clone — they hold the WorkedExample run, not
+the governed default — reverted via `git checkout`, not committed → origin/main delta = **+1 new test file only**.)
+
+**Git:** fresh `/tmp` clone of `origin/main`; mount `.git` untouched; lock `2026-06-30T02:09Z-3337` acquired +
+released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
+
+**Next:** Phase 38 Task 3 stays **owner-gated** (sha256 re-baseline + ui_data contract bump). Registered **W89** =
+`tests/test_ui_data_contract_manifest_digest.py` — pin the `ui_data.json` content-integrity digest
+(`contract_manifest.root_digest == 456f772166a1198363e16c7ccc68f87175ab4e4fa289cc0e798a009f1b257d01`, plus the
+section digest `contract_manifest.section_digests.contract_version == dd89545194911b5b0e3ddbc7285adf096b7196163c2fbf42e2a382cab8fc6c23`)
+in pytest. Complements W88's semver/md5/headline pins with the **machine content digest** — catches silent
+`ui_data` content drift even if the semver stays `1.23.0`. Test-tooling only; no governed bytes; no model-form change.
