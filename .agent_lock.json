@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-30T00:09Z-de2f",
-  "started_at": "2026-06-30T00:09:05Z",
-  "ttl_minutes": 120,
-  "task": "W86 meta-gate: tests/test_nojsdom_guards_are_collected.py (auto-admissible; Phase 38 Task 3 remains owner-gated)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-30T00:22:52Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
