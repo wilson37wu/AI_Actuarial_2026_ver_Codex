@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-30T06:10Z-f2db",
-  "started_at": "2026-06-30T06:10:37Z",
-  "ttl_minutes": 120,
-  "task": "W92 integrity-gate-map consolidation + verification + mount sync (gap-confirm: standalone==embedded payload-equality transitively implied by W91+nojsdom+manifest-equality; NO new near-dup gate)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-30T06:26:53Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
