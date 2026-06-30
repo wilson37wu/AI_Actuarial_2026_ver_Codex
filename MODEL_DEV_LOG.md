@@ -11854,3 +11854,47 @@ left in_progress. Model frontier frozen/owner-gated.
 **Registered W86:** `tests/test_nojsdom_guards_are_collected.py` — pure-Python meta-gate asserting every
 jsdom-FREE `scripts/*.cjs` guard is collected by a pytest wrapper (backstop vs CI-coverage drift; no node,
 no governed bytes, no model-form change).
+
+---
+## 2026-06-30T00:20:06Z — AUTO W86 (claude): pure-Python meta-gate — every jsdom-free guard is pytest-collected
+
+**Cycle:** 2026-06-30T00:09Z-de2f (lock acquired+released; fresh /tmp clone; mount .git untouched)
+**Task (one):** Authored `tests/test_nojsdom_guards_are_collected.py` — a pure-Python (stdlib `os`/`re`/`glob`;
+**no node, no subprocess, never SKIPs**) meta-gate. It enumerates `scripts/*.cjs`, classifies each as jsdom-FREE
+vs jsdom-DEPENDENT by stripping `//` line and `/* */` block comments **before** matching an executable
+`require('jsdom')` call, and asserts every jsdom-FREE guard basename is referenced by a pytest wrapper under
+`tests/` (excluding this file). A backstop against CI-coverage drift — a future jsdom-free guard added (runnable
+in the offline sandbox) but left uncollected now fails CI. This closes the W84/W85 loop (which collected the only
+two jsdom-FREE guards). **5 passed.**
+**Why static, not grep:** the jsdom-FREE companion guards deliberately MENTION `require('jsdom')` in their header
+comments to explain why they avoid it; a naive substring/grep misclassifies them as dependent. The comment-strip
+classifier ships unit "teeth" proving the comment-vs-code distinction.
+**Teeth (gate not vacuous):** in an ISOLATED minimal copy (`scripts/` + the 2 real wrappers + this gate),
+injecting an UNCOLLECTED jsdom-free `scripts/orphan_nojsdom_guard.cjs` drove
+`test_every_jsdom_free_guard_has_a_pytest_wrapper` to FAIL (`not referenced by any tests/*.py wrapper:
+['orphan_nojsdom_guard.cjs']`); the clone was never mutated (copy-out only). Plus embedded classifier
+comment-vs-code unit-teeth and FREE/DEPENDENT regression anchors.
+**Gates (pinned engine lock: numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3 / pytest 9.1.1, `/tmp/eng_venv`):**
+- **C** — `launch_offline_gui.py --self-test` → `self_test_ok:true`, `engine_ready:true`; `run_model.py
+  --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-matches **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- **D** — `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid YAML (3-OS ubuntu/windows/macos matrix);
+  `offline_bootstrap.py --self-test` `ok:true`; **PKG structural gate 26/26** (incl. `ui_app_byte_unchanged` +
+  `governed_headline_present`); `.github/workflows` absent + 0 `v*` tags (owner/CI-gated, correct).
+- **Integrity** — `build_offline_home_validate` **177/177**; `tests/test_offline_home_validate` **4/4**;
+  `offline_home_loader_parity.cjs` node **10/10**; W84+W85 sibling wrappers **4+5** (regression); **new W86
+  meta-gate 5 passed**; MLMC suite **53 passed / 0 failed** (27 + 26).
+
+**Governed artifacts byte-UNCHANGED:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_app.html`
+sha256 `d82c65ec…`; `ui_data.json` md5 `70b747a05c00d29bd6e286a7ee4cf42c` contract `1.23.0`; headline
+`39975.654628199336` — byte-identical to W81–W85. (The Gate-C smoke re-wrote
+`docs/validation/RUN_MODEL_{AGGREGATION_REPORT,SUMMARY}.json` in the clone; reverted via `git checkout`, not
+committed → origin/main delta = **+1 new test file only**.)
+
+**Git:** fresh `/tmp` clone of `origin/main`; mount `.git` untouched; lock `2026-06-30T00:09Z-de2f` acquired +
+released; mount synced to `origin/main` (`.agent_lock.json` dynamic, ignored).
+
+**Next:** Phase 38 Task 3 stays **owner-gated** (sha256 re-baseline + ui_data contract bump). Registered **W87** =
+`tests/test_gitignore_covers_junk_probes.py` — a pure-Python meta-gate that shells `git check-ignore` (SKIP when
+git absent) to assert the documented junk/probe patterns from `AGENT_COORDINATION.md` §6 (`*.tmp`, `_probe*`,
+`.w*_probe*`, `__pycache__/`, `.~lock.*`, phase stage dirs) are git-ignored — enforcing "junk never gets
+committed" in CI rather than by convention. Test-tooling only; no governed bytes; no model-form change.
