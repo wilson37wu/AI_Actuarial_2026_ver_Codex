@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-06-30T09:10Z-3bb3",
-  "started_at": "2026-06-30T09:10:17Z",
-  "ttl_minutes": 120,
-  "task": "W95 AUTO: OFF-default MLMC stage-5 tail-efficiency study (measurement-only, headline byte-identical) + full verification battery + mount sync; Phase 38 Task 3 stays owner-gated",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-06-30T09:28:44Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
