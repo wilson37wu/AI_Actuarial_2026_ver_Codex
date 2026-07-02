@@ -33,6 +33,24 @@ Each improvement is judged against these standards (traceable in `docs/SOA_ASSUM
 
 ## 4. Prioritised Backlog
 
+### 4.0 OWNER-DIRECTED GUI Run-Console Track (directive 2026-07-03, KCW)
+
+Owner directive (2026-07-03, interactive session): build a comprehensive GUI so users configure and trigger calculation runs and view outputs entirely in the GUI — eliminate any need to open .py files. Owner-selected architecture: **local Python web server** (Flask/FastAPI, launched via `python -m par_model_v2.gui` + a Windows launcher script); browser GUI posts run requests, shows progress, renders results in-page.
+
+**This track takes priority over items 2–12 below until GUI-4 is DONE.** One phase per cycle. It does NOT constitute sign-off for the separately owner-gated Phase 38 Task 3 (`ui_app.html` native-tab cutover / sha256 re-baseline), which stays gated.
+
+| # | Item | Definition of done | Status |
+|---|------|--------------------|--------|
+| GUI-1 | Run-console server skeleton + core stochastic run: FastAPI/Flask app, run-request schema (scenario count, seed, product set, curve/fixture choice), background job execution with progress endpoint, results (TVOG/ALM summary tables + charts) rendered in GUI; launcher script; tests for API contract + a smoke run | User can launch, configure, run, and read results with zero .py editing | OPEN |
+| GUI-2 | Sensitivities & stress in GUI: predefined stress suite + parameter sensitivity toggles, results compared against base run | Stress results in GUI with base-vs-stress deltas | OPEN |
+| GUI-3 | Calibration runs in GUI: trigger HW1F/GBM calibration via live market-data pipeline (roadmap #1), fit diagnostics (SSE, convergence, parameter card) displayed; UNSIGNED flag surfaced | Calibration runnable + diagnosable from GUI | OPEN |
+| GUI-4 | Run history & compare: persisted run registry (id, timestamp, inputs hash, seed, headline outputs), list/open past runs, side-by-side diff of two runs | Reproducible run registry browsable in GUI | OPEN |
+
+Standing constraints: runs executed through the GUI must keep the existing governance trail (seed policy, parameter snapshots, SHA-256 audit) — the GUI is a front-end to the governed engine, never a bypass. Governed headline figures remain untouched except where an item explicitly covers them.
+
+### 4.1 General backlog
+
+
 Priority = (regulatory gate) > (model-risk register CRITICAL) > (accuracy) > (capability expansion). Status values: `OPEN`, `IN_PROGRESS`, `BLOCKED(reason)`, `DONE(date, commit)`.
 
 | # | Item | Maps to | Definition of done | Status |
@@ -56,6 +74,7 @@ Items requiring human sign-off (owner approval, regulator deviation): implement 
 
 | Date | Item | Outcome | Commit |
 |------|------|---------|--------|
+| 2026-07-03 | Owner directive registered: GUI run-console track (GUI-1..GUI-4) prioritised above general backlog; architecture = local web server | Directive cycle (no code) | (this commit) |
 | 2026-07-03 | Roadmap created; sync tooling (`scripts/cowork_sync_push.sh`) added; scheduled task registered | Setup cycle | — |
 | 2026-07-03 | #1 Live market-data pipeline: `live_market_data_pipeline.py` (CNYYieldCurveLoader, CSI300IndexLoader, SnapshotCache), 2 fixtures, 12 tests GREEN; live tier UNSIGNED pending owner source approval | DONE | (this cycle's AUTO commit) |
 
