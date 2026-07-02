@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-02T19:20:40Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-02T19:27Z-5a16",
+  "started_at": "2026-07-02T19:27:38Z",
+  "ttl_minutes": 120,
+  "task": "cowork sync push",
+  "note": ""
 }
