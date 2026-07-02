@@ -1,97 +1,50 @@
 {
- "run_timestamp": "2026-06-11T06:24:24.113908+00:00",
+ "run_timestamp": "2026-07-02T15:10:32.972406+00:00",
  "phase": "Phase UIL: User-Input Loader + Run Orchestrator",
  "task": "Task 3 (B3): scripts/run_model.py orchestrator",
  "generator": "scripts/run_model.py",
- "output_label": "WorkedExample_TemplateDemoBook",
- "currency": {
-  "code": "USD",
-  "symbol": "$",
-  "decimals": 0,
-  "scale": "units",
-  "thousands": "comma",
-  "market_label": "Local market",
-  "valuation_date": "2026-01-01"
- },
+ "output_label": "governed_default_run",
+ "currency": null,
  "run_plan": {
   "n_outer": 100,
   "n_inner": 4,
-  "seed": 20260608,
-  "n_sim": 20000,
-  "bootstrap_replicates": 50,
+  "seed": 42,
+  "n_sim": 200000,
+  "bootstrap_replicates": 200,
   "horizon_months": 12,
   "confidence": 0.995,
-  "output_label": "WorkedExample_TemplateDemoBook",
-  "run_tail": true,
-  "inputs_source": "production_run/model_inputs.json",
+  "output_label": "governed_default_run",
+  "run_tail": false,
+  "inputs_source": null,
   "provenance": {
    "n_outer": "cli",
    "n_inner": "cli",
-   "seed": "run_settings",
-   "n_sim": "run_settings",
-   "bootstrap_replicates": "cli",
-   "horizon_months": "run_settings",
-   "confidence": "user_inputs",
-   "output_label": "cli"
+   "seed": "cli",
+   "n_sim": "governed_default",
+   "bootstrap_replicates": "governed_default",
+   "horizon_months": "governed_default",
+   "confidence": "governed_defaults",
+   "output_label": "governed_default"
   }
  },
  "inputs_provenance": {
-  "model_inputs": "production_run/model_inputs.json",
+  "model_inputs": "ABSENT (governed default run)",
   "representative_product": {
-   "source": "user_portfolio_inforce_weighted_mean",
+   "source": "governed_default",
    "representative_product": {
-    "issue_age": 47,
+    "issue_age": 45,
     "gender": "M",
-    "sum_assured": 120000.0,
-    "annual_premium": 5600.0,
-    "term_years": 20,
-    "term_years_weighted_mean": 22.0,
-    "term_snap_note": "weighted-mean term 22.00 snapped to nearest supported product term 20 (VALID_TERMS=(5, 10, 20))"
+    "sum_assured": 100000.0,
+    "annual_premium": 5000.0,
+    "term_years": 20
    },
-   "portfolio_summary": {
-    "n_policies": 2,
-    "n_cash_dividend": 1,
-    "n_reversionary_bonus": 1,
-    "total_sum_assured": 250000.0,
-    "total_annual_premium": 11500.0,
-    "total_initial_vested_bonus": 12000.0,
-    "mean_sum_assured": 125000.0,
-    "mean_annual_premium": 5750.0,
-    "mean_issue_age": 47.5,
-    "issue_age_min": 45,
-    "issue_age_max": 50,
-    "sum_assured_min": 100000.0,
-    "sum_assured_max": 150000.0,
-    "term_mix": {
-     "20": 1,
-     "25": 1
-    },
-    "gender_mix": {
-     "M": 1,
-     "F": 1
-    },
-    "channel_mix": {
-     "DIRECT": 2
-    }
-   },
-   "portfolio_digest": "48bc9c19f5a544f29be87e672858e426b9b9ee9e5cb1b8a4c27d3d9772dee877",
-   "gmmb_rows_disclosed": 1,
-   "book_scaling": {
-    "policy_count_total": 2000.0,
-    "sum_assured_total": 240000000.0,
-    "representative_sum_assured": 120000.0,
-    "linear_scale_factor": 2000.0,
-    "note": "DISCLOSED APPROXIMATION, not a governed result: the engine prices one representative model point; multiplying per-point capital by linear_scale_factor assumes homogeneous-book linear scaling."
-   }
+   "portfolio_summary": null,
+   "gmmb_rows_disclosed": 0,
+   "book_scaling": null
   },
   "liquidity_exposure": {
-   "source": "user_inputs",
-   "derivation": {
-    "backing_asset_mv": 100000.0,
-    "illiquid_share": 0.45,
-    "forced_sale_fraction": 0.4,
-    "exposure_notional": 18000.0
-   }
+   "source": "archived_g_liqx_calibration",
+   "report": "docs/validation/PHASE22_TASK3_LIQUIDITY_EXPOSURE_REPORT.json"
   },
   "frozen_dependence": "calibrated seven-driver correlation (governed, never user-settable)"
  },
@@ -99,12 +52,12 @@
   "config": {
    "n_outer": 100,
    "n_inner": 4,
-   "seed": 20260608,
+   "seed": 42,
    "confidence_level": 0.995,
    "capital_horizon_months": 12,
    "outer_measure": "P",
    "aggregation_gap_tolerance": 0.35,
-   "n_sim_copula": 20000
+   "n_sim_copula": 200000
   },
   "drivers": [
    "rate",
@@ -116,15 +69,15 @@
    "liquidity"
   ],
   "standalone_scr": {
-   "rate": 15740.704656600166,
-   "equity": 21206.773662311054,
-   "credit": 7709.873580639818,
-   "lapse": 30360.362242001695,
-   "mortality": 381.1154575620555,
-   "fx": 3414.427260991953,
-   "liquidity": 52.71822416481139
+   "rate": 11114.187038138509,
+   "equity": 19182.367722367053,
+   "credit": 5366.4756065688525,
+   "lapse": 23573.468048683444,
+   "mortality": 269.207509518847,
+   "fx": 4201.026177115242,
+   "liquidity": 59.71822245063743
   },
-  "standalone_scr_sum": 78865.97508427156,
+  "standalone_scr_sum": 63766.45032484259,
   "esg_correlation_matrix": [
    [
     1.0,
@@ -191,15 +144,15 @@
    ]
   ],
   "correlation_matrix_passed": true,
-  "var_covar_scr": 37625.87169423637,
-  "nested_scr": 71112.05935353745,
-  "var_covar_vs_nested_rel_error": 0.47089323475815387,
-  "esg_understatement_pct": 0.47089323475815387,
+  "var_covar_scr": 30267.857802080332,
+  "nested_scr": 49657.89865474327,
+  "var_covar_vs_nested_rel_error": 0.39047243999340725,
+  "esg_understatement_pct": 0.39047243999340725,
   "copula_selected": "gaussian",
-  "copula_scr": 49825.854878830345,
-  "copula_vs_nested_rel_error": 0.2993332589185976,
+  "copula_scr": 37498.981263276786,
+  "copula_vs_nested_rel_error": 0.2448536430428491,
   "copula_report": {
-   "run_id": "copula-agg-4f08931c",
+   "run_id": "copula-agg-e3011edd",
    "verdict": "PARTIAL - copula aggregation evidence generated with review items",
    "drivers": [
     "rate",
@@ -210,81 +163,81 @@
     "fx",
     "liquidity"
    ],
-   "nested_scr": 71112.0594,
-   "var_covar_scr": 37625.8717,
-   "var_covar_rel_error_vs_nested": 0.470893,
+   "nested_scr": 49657.8987,
+   "var_covar_scr": 30267.8578,
+   "var_covar_rel_error_vs_nested": 0.390472,
    "standalone_scr": [
-    15740.7047,
-    21206.7737,
-    7709.8736,
-    30360.3622,
-    381.1155,
-    3414.4273,
-    52.7182
+    11114.187,
+    19182.3677,
+    5366.4756,
+    23573.468,
+    269.2075,
+    4201.0262,
+    59.7182
    ],
-   "standalone_scr_sum": 78865.9751,
+   "standalone_scr_sum": 63766.4503,
    "realised_loss_correlation": [
     [
-     1.0,
-     0.25630872755011763,
-     0.8068689791985557,
-     0.05699181773661329,
-     -0.191631270229777,
-     0.044408060268124695,
-     -0.05451652777562546
-    ],
-    [
-     0.25630872755011763,
-     1.0,
-     0.32219286499474054,
-     0.1607554166143502,
-     0.08838555899135943,
-     -0.08178504855152309,
-     0.17589248617011924
-    ],
-    [
-     0.8068689791985556,
-     0.32219286499474054,
      0.9999999999999999,
-     0.07027618260854139,
-     -0.07950662544795008,
-     0.06588493466861216,
-     0.10341114230763979
+     0.35055919633315485,
+     0.7651827068292043,
+     0.018624907617742655,
+     -0.17800260961028977,
+     -0.3440152168884549,
+     0.15845497159899763
     ],
     [
-     0.05699181773661329,
-     0.1607554166143502,
-     0.0702761826085414,
+     0.35055919633315485,
      1.0,
-     0.3867723993300337,
-     -0.1489817663274323,
-     -0.19155676250035855
+     0.4756890746871752,
+     -0.04801071507911581,
+     -0.07458164144626558,
+     -0.36967881416622506,
+     0.2835114138358451
     ],
     [
-     -0.191631270229777,
-     0.08838555899135944,
-     -0.07950662544795008,
-     0.38677239933003366,
+     0.7651827068292043,
+     0.47568907468717525,
      1.0,
-     -0.1548216055459914,
-     0.036583305530285944
+     -0.011199832388797492,
+     -0.2121236543298403,
+     -0.39900566700205825,
+     0.20151508719518507
     ],
     [
-     0.044408060268124695,
-     -0.08178504855152309,
-     0.06588493466861216,
-     -0.1489817663274323,
-     -0.1548216055459914,
+     0.018624907617742655,
+     -0.0480107150791158,
+     -0.011199832388797492,
      1.0,
-     -0.10016766123784822
+     0.1850954365953849,
+     -0.030904108537947027,
+     -0.07562115720727576
     ],
     [
-     -0.054516527775625455,
-     0.17589248617011924,
-     0.10341114230763977,
-     -0.19155676250035855,
-     0.03658330553028594,
-     -0.10016766123784822,
+     -0.17800260961028977,
+     -0.07458164144626558,
+     -0.2121236543298403,
+     0.1850954365953849,
+     1.0,
+     0.04459809267181966,
+     -0.1364385435915961
+    ],
+    [
+     -0.3440152168884549,
+     -0.3696788141662251,
+     -0.39900566700205825,
+     -0.030904108537947027,
+     0.04459809267181967,
+     1.0,
+     -0.40125861035472116
+    ],
+    [
+     0.1584549715989976,
+     0.2835114138358451,
+     0.20151508719518507,
+     -0.07562115720727577,
+     -0.13643854359159607,
+     -0.40125861035472116,
      1.0
     ]
    ],
@@ -293,158 +246,158 @@
     {
      "name": "gaussian",
      "n_params": 21,
-     "loglik": 85.53,
-     "aic": -129.0599,
+     "loglik": 87.4953,
+     "aic": -132.9906,
      "upper_tail_dependence": 0.0,
      "params": {
       "correlation": [
        [
         1.0,
-        0.2542015344223935,
-        0.8173185915481882,
-        0.02417127798956221,
-        -0.1486691348036187,
-        0.06790907869151175,
-        -0.05708076828010803
+        0.37002818940192056,
+        0.7609554679021248,
+        0.005369778928315348,
+        -0.1584859093888676,
+        -0.34531071846143935,
+        0.1496613539836976
        ],
        [
-        0.25420153442239346,
+        0.3700281894019205,
         1.0,
-        0.3194633238496323,
-        0.15441033878254318,
-        0.0948333388076958,
-        -0.09802033870260586,
-        0.19727337387387633
+        0.49975120171480525,
+        -0.05409560232291725,
+        -0.08035537105048296,
+        -0.3817153558425677,
+        0.29365149054430445
        ],
        [
-        0.8173185915481881,
-        0.3194633238496323,
+        0.7609554679021248,
+        0.49975120171480536,
         1.0,
-        0.07858369939622939,
-        -0.03287469988812672,
-        0.06578596142510879,
-        0.0757523544297874
+        -0.011050008738265884,
+        -0.20681339291163517,
+        -0.4032294489119093,
+        0.1890459443252812
        ],
        [
-        0.024171277989562208,
-        0.15441033878254315,
-        0.07858369939622938,
+        0.0053697789283153686,
+        -0.05409560232291725,
+        -0.01105000873826587,
         1.0,
-        0.396442920568999,
-        -0.1606264495827564,
-        -0.2130667032454568
+        0.20428093881139053,
+        -0.04504198764373938,
+        -0.09525526325752516
        ],
        [
-        -0.1486691348036187,
-        0.09483333880769577,
-        -0.0328746998881267,
-        0.396442920568999,
+        -0.15848590938886759,
+        -0.08035537105048295,
+        -0.20681339291163514,
+        0.20428093881139042,
         1.0,
-        -0.13658966229503514,
-        0.005388437058163259
+        0.0324915478137033,
+        -0.1514667759707909
        ],
        [
-        0.06790907869151173,
-        -0.09802033870260586,
-        0.06578596142510879,
-        -0.16062644958275643,
-        -0.1365896622950351,
+        -0.34531071846143935,
+        -0.3817153558425677,
+        -0.4032294489119092,
+        -0.04504198764373938,
+        0.0324915478137033,
         1.0,
-        -0.15676838856191613
+        -0.42892298403030676
        ],
        [
-        -0.05708076828010807,
-        0.1972733738738763,
-        0.0757523544297874,
-        -0.21306670324545676,
-        0.005388437058163264,
-        -0.15676838856191608,
+        0.14966135398369754,
+        0.2936514905443045,
+        0.18904594432528116,
+        -0.09525526325752515,
+        -0.15146677597079092,
+        -0.4289229840303067,
         1.0
        ]
       ]
      },
      "aggregated_capital": {
       "confidence_level": 0.995,
-      "mean_liability": 140886.8391,
-      "var_liability": 190712.694,
-      "es_liability": 196439.3787,
-      "scr_proxy": 49825.8549,
-      "n_outer": 20000,
+      "mean_liability": 116230.4619,
+      "var_liability": 153729.4431,
+      "es_liability": 157387.4209,
+      "scr_proxy": 37498.9813,
+      "n_outer": 200000,
       "capital_horizon_months": 12
      },
-     "aggregated_scr": 49825.8549,
-     "scr_rel_error_vs_nested": 0.299333,
-     "diversification_benefit": 29040.1202
+     "aggregated_scr": 37498.9813,
+     "scr_rel_error_vs_nested": 0.244854,
+     "diversification_benefit": 26267.4691
     },
     {
      "name": "student_t",
      "n_params": 22,
-     "loglik": 83.3757,
-     "aic": -122.7513,
-     "upper_tail_dependence": 0.002326,
+     "loglik": 85.4658,
+     "aic": -126.9315,
+     "upper_tail_dependence": 0.000815,
      "params": {
       "correlation": [
        [
         1.0,
-        0.2695310521600675,
-        0.8520593181936309,
-        0.04187565372920002,
-        -0.16050765646758153,
-        -0.003807981892116832,
-        -0.07038957882272942
+        0.39452517340978305,
+        0.7856606124722493,
+        -0.020942419883357096,
+        -0.16676874671610264,
+        -0.38048352246492334,
+        0.19361173406024454
        ],
        [
-        0.26953105216006745,
+        0.39452517340978316,
         1.0,
-        0.36930444933301676,
-        0.16614293581604225,
-        0.0640572942366682,
-        -0.09063258019778009,
-        0.18925124436041033
+        0.5544483553699414,
+        -0.11588278692768833,
+        -0.08114781911666923,
+        -0.4015118767615617,
+        0.3270679633174221
        ],
        [
-        0.8520593181936309,
-        0.3693044493330168,
+        0.7856606124722493,
+        0.5544483553699414,
         1.0,
-        0.05962314461587547,
-        -0.0760862180510952,
-        0.04948366739419789,
-        0.047581915823742146
+        -0.08747186339901894,
+        -0.24438436504226876,
+        -0.4044161529212549,
+        0.21039420307868972
        ],
        [
-        0.041875653729200026,
-        0.16614293581604225,
-        0.05962314461587547,
+        -0.02094241988335707,
+        -0.11588278692768834,
+        -0.08747186339901894,
         1.0,
-        0.374606593415911,
-        -0.19859046664574476,
-        -0.2658620430037861
+        0.29510170861308843,
+        -0.08431026575956353,
+        -0.09821451624303718
        ],
        [
-        -0.16050765646758153,
-        0.06405729423666823,
-        -0.07608621805109521,
-        0.374606593415911,
+        -0.16676874671610267,
+        -0.08114781911666923,
+        -0.24438436504226876,
+        0.29510170861308854,
         1.0,
-        -0.10326600255801152,
-        -0.038070708469389924
+        -0.019038805103346323,
+        -0.13791601185057073
        ],
        [
-        -0.0038079818921168337,
-        -0.09063258019778012,
-        0.04948366739419789,
-        -0.19859046664574478,
-        -0.10326600255801148,
+        -0.38048352246492345,
+        -0.4015118767615618,
+        -0.40441615292125477,
+        -0.08431026575956353,
+        -0.019038805103346323,
         1.0,
-        -0.1580013959733497
+        -0.4349453769745436
        ],
        [
-        -0.07038957882272945,
-        0.18925124436041038,
-        0.04758191582374214,
-        -0.2658620430037861,
-        -0.038070708469389904,
-        -0.15800139597334978,
+        0.19361173406024454,
+        0.32706796331742216,
+        0.21039420307868972,
+        -0.09821451624303715,
+        -0.13791601185057073,
+        -0.4349453769745436,
         1.0
        ]
       ],
@@ -452,46 +405,46 @@
      },
      "aggregated_capital": {
       "confidence_level": 0.995,
-      "mean_liability": 140852.6542,
-      "var_liability": 193525.9877,
-      "es_liability": 199531.6336,
-      "scr_proxy": 52673.3335,
-      "n_outer": 20000,
+      "mean_liability": 116193.1574,
+      "var_liability": 152928.982,
+      "es_liability": 156768.6942,
+      "scr_proxy": 36735.8246,
+      "n_outer": 200000,
       "capital_horizon_months": 12
      },
-     "aggregated_scr": 52673.3335,
-     "scr_rel_error_vs_nested": 0.259291,
-     "diversification_benefit": 26192.6416
+     "aggregated_scr": 36735.8246,
+     "scr_rel_error_vs_nested": 0.260222,
+     "diversification_benefit": 27030.6257
     },
     {
      "name": "survival_clayton",
      "n_params": 1,
-     "loglik": 4.4696,
-     "aic": -6.9392,
-     "upper_tail_dependence": 0.000705,
+     "loglik": 0.0722,
+     "aic": 1.8556,
+     "upper_tail_dependence": 0.0,
      "params": {
-      "theta": 0.09551263960004841,
-      "tau_bar": 0.045579605579605595
+      "theta": 0.012584704743465652,
+      "tau_bar": 0.006253006253006262
      },
      "aggregated_capital": {
       "confidence_level": 0.995,
-      "mean_liability": 140936.3534,
-      "var_liability": 191554.5955,
-      "es_liability": 197566.2229,
-      "scr_proxy": 50618.242,
-      "n_outer": 20000,
+      "mean_liability": 116180.8143,
+      "var_liability": 151639.7791,
+      "es_liability": 155370.4658,
+      "scr_proxy": 35458.9648,
+      "n_outer": 200000,
       "capital_horizon_months": 12
      },
-     "aggregated_scr": 50618.242,
-     "scr_rel_error_vs_nested": 0.28819,
-     "diversification_benefit": 28247.733
+     "aggregated_scr": 35458.9648,
+     "scr_rel_error_vs_nested": 0.285935,
+     "diversification_benefit": 28307.4855
     }
    ],
-   "reproducibility_digest": "40a45cb8e5aa98c5dd18c25f25809afd0d362b132aea2878461b25114a37054e",
-   "duration_seconds": 0.3929,
+   "reproducibility_digest": "7c8a1a1bd8c10a055994516c40ef508d24377df0b92dbffe7591e0252bfa7ba6",
+   "duration_seconds": 3.2734,
    "config": {
-    "n_sim": 20000,
-    "seed": 20260621,
+    "n_sim": 200000,
+    "seed": 55,
     "confidence_level": 0.995,
     "capital_horizon_months": 12,
     "rel_error_tolerance": 0.1,
@@ -511,7 +464,7 @@
     "Marginals are the empirical loss distributions; the copula supplies only the dependence structure.",
     "Copula correlation/df/theta are fitted to the REALISED standalone capital-loss vectors, not the ESG factor matrix.",
     "Best copula selected by AIC on the pseudo-observations (empirical justification per Solvency II Art. 234).",
-    "var-covar (ESG factor) SCR understates nested capital by 47.1% (MR-010); copula aggregation closes most of that gap.",
+    "var-covar (ESG factor) SCR understates nested capital by 39.0% (MR-010); copula aggregation closes most of that gap.",
     "AIC-selected copula SCR rel. error exceeds tolerance; review marginal/copula fit."
    ],
    "audit_entry_id": null,
@@ -524,8 +477,8 @@
     "Demarta-McNeil 2005 (t-copula)"
    ]
   },
-  "interaction_residual_rel": -0.1845345779338132,
-  "liquidity_exposure_notional": 18000.0,
+  "interaction_residual_rel": -0.21523906906184528,
+  "liquidity_exposure_notional": 22000.000000000004,
   "liquidity_params": {
    "kappa": 0.9345477332289048,
    "sigma": 0.02129008914879804,
@@ -536,88 +489,18 @@
    "tau_years": 19.0
   },
   "tail_diagnostics": {
-   "skipped": false,
-   "confidence_level": 0.995,
-   "n_sim_grid": [
-    2500,
-    5000,
-    10000,
-    20000
-   ],
-   "var_convergence_path": [
-    190821.54760345144,
-    192242.5836911305,
-    191821.54969168434,
-    192141.08016533384
-   ],
-   "es_convergence_path": [
-    194075.6769761342,
-    198658.03310440003,
-    197769.69018468235,
-    198331.98272008594
-   ],
-   "successive_var_rel_deltas": [
-    0.007391890289833988,
-    0.0021949254404570197,
-    0.0016629992574963759
-   ],
-   "convergence_tolerance": 0.01,
-   "converged": true,
-   "simulated_bootstrap": {
-    "var_point": 192141.08016533384,
-    "es_point": 198331.98272008594,
-    "var_ci": [
-     191055.21527037953,
-     193042.3760191425
-    ],
-    "es_ci": [
-     196768.30428082845,
-     200043.5408869306
-    ],
-    "var_se": 622.7862127774591,
-    "es_se": 941.0602710558313,
-    "n_sim": 20000,
-    "n_bootstrap": 50,
-    "var_ci_rel_halfwidth": 0.005171098098993369
-   },
-   "nested_bootstrap": {
-    "var_point": 211202.5587701791,
-    "es_point": 229125.09578733472,
-    "var_ci": [
-     179498.08213570822,
-     229125.09578733472
-    ],
-    "es_ci": [
-     179914.96796318042,
-     229125.09578733472
-    ],
-    "var_se": 16242.591895752897,
-    "es_se": 18522.31006008362,
-    "n_outer": 100,
-    "n_bootstrap": 2000,
-    "disclosure": "n_outer=100 is SMALL for a 99.5% quantile; the nested CI is wide by construction and is disclosed, not hidden \u2014 the copula-simulated study above carries the convergence evidence (IA TAS M 3.6.4).",
-    "var_ci_rel_halfwidth": 0.11748677180002429
-   },
-   "variance_reduction": {
-    "n_per_replication": 4096,
-    "replications": 15,
-    "crude_var_of_var": 2647517.373390082,
-    "sobol_var_of_var": 201425.18821123693,
-    "qmc_variance_reduction_ratio": 13.143924039001515,
-    "note": "Scrambled Sobol RQMC vs crude MC through the SAME fitted gaussian-copula surrogate + empirical margins; ratio > 1 means RQMC is more efficient at equal budget (L'Ecuyer 2018)."
-   },
-   "seed": 20260625
+   "skipped": true
   },
-  "run_id": "liq-7d-riskagg-c13fc375",
-  "duration_seconds": 7.784018701997411,
-  "verdict": "REVIEW",
-  "reproducibility_digest": "1a8efb1259b5a5f56bb93ff921e170cff53e5db48daff274efca49bf69ac5691",
+  "run_id": "liq-7d-riskagg-210da2da",
+  "duration_seconds": 21.51507151900023,
+  "verdict": "PASS",
+  "reproducibility_digest": "c9d24bc1199175f73d533ebf81d1a450fc01a7a93846f4af3a2016b44f405171",
   "notes": [
-   "SEVENTH DRIVER = CIR++ liquidity/funding-spread premium with the Phase 21 Task 3 G-LIQ-calibrated parameters (kappa=0.9345/yr, long-run 63bp, sigma=0.0213, lambda_l=2.00); the EXPOSURE notional (18000) and 7x7 liquidity couplings are educational placeholders.",
+   "SEVENTH DRIVER = CIR++ liquidity/funding-spread premium with the Phase 21 Task 3 G-LIQ-calibrated parameters (kappa=0.9345/yr, long-run 63bp, sigma=0.0213, lambda_l=2.00); the EXPOSURE notional (22000) and 7x7 liquidity couplings are the Phase 22 Task 3 G-LIQX-CALIBRATED values (reproducible balance-sheet notional; CIR transition-residual coupling recovery, PSD-validated) - no longer placeholders; residual is credentialled-data quality + APS X2 review.",
    "Inner Q-nest liquidity conditioning is ANALYTIC and CIR-AFFINE-EXACT: haircut(l_H) = 1 - exp(-phi tau) A(tau) exp(-B(tau) x_H) under the Q-re-anchored long-run level; liability impact is baseline-centred, liq_l = notional (haircut(l_H) - haircut(l_0)).",
    "First six drivers and the five-driver CRN component liabilities are reproduced bit-for-bit from the Phase 21 Task 1 six-driver engine (liquidity shock drawn last; regression-tested).",
-   "Var-covar (7x7 ESG) understates nested by 47.1%; copula (gaussian) reconciles within 29.9% (MR-010 refresh under seven drivers).",
-   "Liquidity standalone SCR 52.7 is SMALL relative to rate 15740.7 / equity 21206.8: the calibrated mean reversion (half-life 0.74y) pulls the premium back over the 19y workout horizon, so 1-in-200 one-year liquidity translation risk on a hold-to-maturity book is modest \u2014 an honest, documented finding, not a wiring defect (the haircut mapping is verified affine-exact).",
+   "Var-covar (7x7 ESG) understates nested by 39.0%; copula (gaussian) reconciles within 24.5% (MR-010 refresh under seven drivers).",
+   "Liquidity standalone SCR 59.7 is SMALL relative to rate 11114.2 / equity 19182.4: the calibrated mean reversion (half-life 0.74y) pulls the premium back over the 19y workout horizon, so 1-in-200 one-year liquidity translation risk on a hold-to-maturity book is modest \u2014 an honest, documented finding, not a wiring defect (the haircut mapping is verified affine-exact).",
    "MR-012 driver-omission residual is CLOSED at the aggregation level: all seven documented drivers (rate, equity, credit, lapse, mortality, fx, liquidity) now enter the correlated capital aggregation."
   ]
  },
