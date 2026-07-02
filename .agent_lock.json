@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-02T19:53Z-5c97",
-  "started_at": "2026-07-02T19:53:40Z",
-  "ttl_minutes": 120,
-  "task": "Owner directive: register GUI run-console track in roadmap",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-02T19:54:17Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
