@@ -1,5 +1,5 @@
 {
- "run_timestamp": "2026-07-02T15:10:32.972406+00:00",
+ "run_timestamp": "2026-07-02T17:09:10.762078+00:00",
  "output_label": "governed_default_run",
  "currency": null,
  "inputs": "ABSENT (governed default run)",
@@ -27,7 +27,7 @@
   "n_bootstrap": null
  },
  "verdict": "PASS",
- "duration_seconds": 21.51507151900023,
+ "duration_seconds": 25.069545930999084,
  "evidence": "RUN_MODEL_AGGREGATION_REPORT.json",
- "wall_clock_seconds": 21.55
+ "wall_clock_seconds": 25.09
 }
