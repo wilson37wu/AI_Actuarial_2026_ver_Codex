@@ -114,3 +114,40 @@ measure guardrails, ALM return proxies, and audit metadata propagation for
 TVOG, VaR/ES, DynamicALMEngine, and reporting consumers. The next Phase 6 task
 should add design documentation and acceptance tests for schema compatibility
 across all Phase 6 contracts.
+
+
+## 10. Live Market-Data Pipeline (Roadmap #1, MR-006 — added 2026-07-03)
+
+`par_model_v2/calibration/live_market_data_pipeline.py` implements the first
+governed ingestion path from raw market data into the Section-2 contracts:
+
+| Loader | Contract | Fixture (offline default) |
+| --- | --- | --- |
+| `CNYYieldCurveLoader` (`cny_yield_curve`) | `CalibrationDataInterface.risk_free_curve("CN","CNY")` | `fixtures/cny_yield_curve_20260101.json` (11 tenors, all ≤ 3.0% CBIRC cap) |
+| `CSI300IndexLoader` (`csi300_index`) | `CalibrationDataInterface.equity_index("CN","CNY")` | `fixtures/csi300_index_history_20260101.json` (522 seeded-proxy daily closes) |
+
+**Provenance tiers** resolved by `load(as_of, refresh)`, in order:
+
+1. `live_fetch` — injected `fetcher(as_of) -> list[dict]` vendor adapter
+   (Wind / ChinaBond / Bloomberg). Payloads are schema-validated **before**
+   caching; failed validation is never cached. Lineage `approved_by` is
+   `UNSIGNED_PENDING_OWNER_APPROVAL` — live sources are never self-approved.
+2. `cached_snapshot` — SHA-256-sealed JSON snapshots (`SnapshotCache`);
+   integrity re-verified on every read, tamper raises
+   `SnapshotIntegrityError` and the loader falls through to the fixture tier.
+3. `file_fixture` — versioned educational fixtures (CI/offline default).
+
+Every load returns a `MarketDataResult` (validated DataFrame + snapshot path
++ payload SHA-256 + `DataLineageRecord`), keeping the
+`CalibrationDataInterface → CalibrationSource → ParameterSnapshot` chain
+traceable per IA TAS M §3.6. Structural checks beyond the field contract:
+single as-of date, ≥4 strictly-increasing unique tenors (curve); monotonic
+unique dates, strictly positive levels, ≥252 observations (equity).
+
+Tests: `tests/test_live_market_data_pipeline.py` (12 cases: three tiers,
+tamper detection, refresh semantics, schema/structural rejection paths).
+
+**Production restriction:** no credentialled vendor adapter ships in-repo;
+fixtures remain educational proxies until the Model Owner approves a live
+source (then item #2 swaption calibration and #6 backtesting consume this
+pipeline).

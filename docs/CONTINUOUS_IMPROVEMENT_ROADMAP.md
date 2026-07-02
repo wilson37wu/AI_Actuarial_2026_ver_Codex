@@ -37,7 +37,7 @@ Priority = (regulatory gate) > (model-risk register CRITICAL) > (accuracy) > (ca
 
 | # | Item | Maps to | Definition of done | Status |
 |---|------|---------|--------------------|--------|
-| 1 | Live market-data pipeline: CNY yield curve + CSI 300 loaders with schema validation and cached snapshots | MR-006 | Loader module + fixtures + tests; `docs/ESG_CALIBRATION_DATA_INTERFACES.md` updated | OPEN |
+| 1 | Live market-data pipeline: CNY yield curve + CSI 300 loaders with schema validation and cached snapshots | MR-006 | Loader module + fixtures + tests; `docs/ESG_CALIBRATION_DATA_INTERFACES.md` updated | DONE(2026-07-03, see §5) |
 | 2 | Execute HW1F swaption calibration on live/proxy quote set; parameter card with fit diagnostics | MR-001, MR-008 | `calibrate()` runs end-to-end; SSE/convergence report; params flagged UNSIGNED pending owner approval | OPEN |
 | 3 | CBIRC 3.0% discount-cap remediation: config default ≤3.0% + deviation record for any override | MR-002 | Validator ERROR (not WARNING) above cap without an approved ChangeRecord | OPEN |
 | 4 | Dynamic lapse: rate-differential lapse response function with bounded elasticity + sensitivity tests | MR-003 | Model + tests + `PHASE13_DYNAMIC_LAPSE_REPORT.md` refresh; TVOG delta quantified | OPEN |
@@ -57,6 +57,7 @@ Items requiring human sign-off (owner approval, regulator deviation): implement 
 | Date | Item | Outcome | Commit |
 |------|------|---------|--------|
 | 2026-07-03 | Roadmap created; sync tooling (`scripts/cowork_sync_push.sh`) added; scheduled task registered | Setup cycle | — |
+| 2026-07-03 | #1 Live market-data pipeline: `live_market_data_pipeline.py` (CNYYieldCurveLoader, CSI300IndexLoader, SnapshotCache), 2 fixtures, 12 tests GREEN; live tier UNSIGNED pending owner source approval | DONE | (this cycle's AUTO commit) |
 
 ## 6. Standing Rules
 

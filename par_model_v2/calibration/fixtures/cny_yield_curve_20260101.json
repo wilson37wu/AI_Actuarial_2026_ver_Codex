@@ -1,0 +1,72 @@
+{
+ "fixture_id": "CNY_YIELD_CURVE_20260101",
+ "dataset": "cny_yield_curve",
+ "market": "CN",
+ "currency": "CNY",
+ "as_of_date": "2026-01-01",
+ "records": [
+  {
+   "date": "2026-01-01",
+   "tenor_years": 0.25,
+   "zero_rate": 0.0115
+  },
+  {
+   "date": "2026-01-01",
+   "tenor_years": 0.5,
+   "zero_rate": 0.0122
+  },
+  {
+   "date": "2026-01-01",
+   "tenor_years": 1,
+   "zero_rate": 0.013
+  },
+  {
+   "date": "2026-01-01",
+   "tenor_years": 2,
+   "zero_rate": 0.0142
+  },
+  {
+   "date": "2026-01-01",
+   "tenor_years": 3,
+   "zero_rate": 0.0152
+  },
+  {
+   "date": "2026-01-01",
+   "tenor_years": 5,
+   "zero_rate": 0.0165
+  },
+  {
+   "date": "2026-01-01",
+   "tenor_years": 7,
+   "zero_rate": 0.0178
+  },
+  {
+   "date": "2026-01-01",
+   "tenor_years": 10,
+   "zero_rate": 0.0188
+  },
+  {
+   "date": "2026-01-01",
+   "tenor_years": 15,
+   "zero_rate": 0.0205
+  },
+  {
+   "date": "2026-01-01",
+   "tenor_years": 20,
+   "zero_rate": 0.0215
+  },
+  {
+   "date": "2026-01-01",
+   "tenor_years": 30,
+   "zero_rate": 0.0228
+  }
+ ],
+ "data_lineage": {
+  "version": "v1.0",
+  "provenance": "educational_fixture",
+  "approved_by": "model_owner_KCW_pending",
+  "approval_timestamp": "2026-07-03T00:00:00Z",
+  "source_note": "ChinaBond-style sovereign zero-curve proxy; all tenors below CBIRC 3.0% cap. Replace with credentialled ChinaBond/Wind fetch before regulatory use."
+ },
+ "notes": "Educational proxy for Roadmap item #1 (MR-006). Schema: CalibrationDataInterface.risk_free_curve('CN','CNY')."
+}
