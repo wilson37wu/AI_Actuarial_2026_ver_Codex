@@ -81,6 +81,12 @@ Governance isolation: a GUI calibration run uses a **fresh in-memory GovernanceS
 
 Durability: the shared `run_output/` artifacts are overwritten by later runs, so on first sight of a finished job the registry extracts the run plan (seed, scenario budget) from the run's aggregation report while it still exists and persists it back into the job record (additive `registry` block, atomic rewrite, re-parse guard). After that the entry no longer depends on the artifacts. The registry is read-only otherwise: it never deletes records, never touches the governance store, never changes a governed figure. Compare annotates honestly: smoke runs, kind mismatches, and identical-inputs-digest (sampling-only differences) are called out.
 
+## GUI-5 (2026-07-03, owner request): one-click Save & RUN on the Run Controls page
+
+The owner reported that the Run Controls page only wrote `model_inputs.json` — the Run button lived pages away. GUI-5 adds a green **Save & RUN model** button directly on `/` with two checkboxes: *fast smoke run* (default on) and *auto-fill missing sections with governed defaults* (default on).
+
+`POST /save-run` orchestrates the existing governed steps server-side, bypassing nothing: (1) validate + save the posted run controls (same as `/save`); (2) auto-fill ONLY absent domains (model points + balance sheet / assumptions / ESG) through the same builders and validators the dedicated pages use; (3) re-run the Task-6 gate over the assembled file — a BLOCKED gate refuses the run and the page lists every blocking issue with links to the relevant input pages; (4) submit the run as a GUI-1 async job. The page polls `/jobs/<id>`, streams progress, and on success shows the headline with links to `/my-results` and `/history`. The engine re-verifies the gate before spawning, so `/save-run` cannot sidestep governance.
+
 ## Roadmap
 
 **GUI track COMPLETE:** GUI-1 → GUI-4 all DONE(2026-07-03). The general backlog (roadmap §4.1) resumes next cycle.

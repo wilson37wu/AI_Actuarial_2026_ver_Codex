@@ -391,6 +391,86 @@ def build_run_gate_response(out_path, *, do_write=False):
     return result
 
 
+def build_save_run_response(payload, out_path, job_manager,
+                            run_output_dir=RUN_OUTPUT_DIR):
+    """GUI-5 (owner request 2026-07-03): ONE-CLICK 'Save & run' from the Run
+    Controls page. Orchestrates the existing governed steps server-side -
+    nothing is bypassed:
+
+      1. validate + SAVE the posted run controls (same as POST /save);
+      2. optionally AUTO-FILL any missing input domain (model points /
+         assumptions / ESG) with the documented governed defaults, through
+         the SAME builders/validators the dedicated pages use;
+      3. re-run the Task-6 RUN GATE over the assembled file (digest bound to
+         the exact bytes); a BLOCKED gate refuses the run and reports every
+         blocking issue;
+      4. submit the run as a GUI-1 async job -> the page polls /jobs/<id>.
+
+    The gate is never skipped: /execute-async -> execute_run re-verifies it
+    before spawning the engine."""
+    payload = payload or {}
+    smoke = bool(payload.get("smoke", True))
+    autofill = bool(payload.get("autofill", True))
+    # (1) save the run controls exactly as POST /save does
+    saved = build_response(payload, out_path=out_path, do_write=True)
+    if not saved.get("ok"):
+        saved["stage"] = "save_failed"
+        return saved
+    # (2) governed-default auto-fill for ABSENT domains only
+    autofilled = []
+    if autofill:
+        mi = _read_model_inputs(out_path)
+        if not mi.get("portfolio") or not mi.get("balance_sheet"):
+            from par_model_v2.viewer.igui_model_points import (
+                default_balance_sheet, default_model_points)
+            r = build_portfolio_response(
+                {"portfolio": default_model_points(),
+                 "balance_sheet": default_balance_sheet()},
+                out_path=out_path, do_write=True)
+            if r.get("ok"):
+                autofilled.append("model_points+balance_sheet")
+        mi = _read_model_inputs(out_path)
+        if not mi.get("assumptions"):
+            from par_model_v2.viewer.igui_assumptions import default_assumptions
+            r = build_assumptions_response(
+                {"assumptions": default_assumptions()},
+                out_path=out_path, do_write=True)
+            if r.get("ok"):
+                autofilled.append("assumptions")
+        mi = _read_model_inputs(out_path)
+        if not mi.get("esg"):
+            from par_model_v2.viewer.igui_esg import default_esg
+            r = build_esg_response({"esg": default_esg()},
+                                   out_path=out_path, do_write=True)
+            if r.get("ok"):
+                autofilled.append("esg")
+    # (3) the Task-6 run gate (writes the gate + digest only when CLEARED)
+    gate_res = build_run_gate_response(out_path, do_write=True)
+    if not gate_res.get("ok"):
+        gate = gate_res.get("run_gate") or {}
+        return {"ok": False, "stage": "run_gate_blocked",
+                "autofilled": autofilled,
+                "blocking_issues": gate.get("blocking_issues") or [],
+                "domains": gate.get("domains") or {},
+                "hint": ("complete the listed sections (Model Points / "
+                         "Assumptions / ESG pages) or enable auto-fill, "
+                         "then press Run again")}
+    # (4) submit the async run (GUI-1 job; engine re-verifies the gate)
+    if job_manager is None:
+        return {"ok": False, "stage": "no_job_manager",
+                "errors": ["no job manager bound"]}
+    sub = job_manager.submit(smoke=smoke)
+    if not sub.get("ok"):
+        sub["stage"] = "job_refused"
+        sub["autofilled"] = autofilled
+        return sub
+    return {"ok": True, "stage": "run_submitted", "job_id": sub["job_id"],
+            "smoke": smoke, "autofilled": autofilled,
+            "gate": {"decision": (gate_res.get("run_gate") or {}).get("decision"),
+                     "reproducibility_digest":
+                         (gate_res.get("run_gate") or {}).get("reproducibility_digest")}}
+
+
 def build_execute_response(out_path, *, payload=None, run_output_dir=RUN_OUTPUT_DIR):
     """The Task-7 END-TO-END RUN: verify the assembled model_inputs.json carries a
     CLEARED Task-6 run gate, then drive scripts/run_model.py from it, capture the
@@ -559,7 +639,7 @@ class _Handler(BaseHTTPRequestHandler):
     _POST_ROUTES = ("/validate", "/save", "/validate_portfolio", "/save_portfolio",
                     "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions",
                     "/validate_esg", "/save_esg", "/preflight", "/run", "/execute",
-                    "/execute-async", "/run-stress", "/run-calibration")
+                    "/execute-async", "/run-stress", "/run-calibration", "/save-run")
 
     def do_POST(self):
         if self.path not in self._POST_ROUTES:
@@ -609,6 +689,9 @@ class _Handler(BaseHTTPRequestHandler):
                                         _inp, _sid, _root, smoke=smk,
                                         repo_root=_REPO)),
                             meta={"kind": "stress", "stress_id": stress_id})
+            elif self.path == "/save-run":
+                res = build_save_run_response(payload, self.out_path,
+                                              self.job_manager)
             elif self.path == "/run-calibration":
                 if self.job_manager is None:
                     res = {"ok": False, "errors": ["no job manager bound"]}

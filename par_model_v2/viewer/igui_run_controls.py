@@ -287,6 +287,8 @@ def render_form_html(values: Dict[str, Any] = None) -> str:
  .actions{display:flex;gap:12px;margin-top:8px}
  button{background:#2563eb;color:#fff;border:0;border-radius:6px;padding:9px 16px;font-size:14px;cursor:pointer}
  button.secondary{background:#33445c}
+ button.run{background:#059669}
+ button:disabled{background:#33445c;opacity:.6;cursor:not-allowed}
  #out{white-space:pre-wrap;background:#0b1320;border:1px solid #24405e;border-radius:8px;padding:12px;margin-top:14px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
  .ok{color:#36d399}.bad{color:#f87272}
  footer{color:#6c8099;font-size:12px;padding:12px 22px;border-top:1px solid #24405e}
@@ -297,7 +299,14 @@ def render_form_html(values: Dict[str, Any] = None) -> str:
  <form id="rc">%s
   <div class="actions">
    <button type="button" id="btn-validate" class="secondary">Validate</button>
-   <button type="button" id="btn-save">Validate &amp; write model_inputs.json</button>
+   <button type="button" id="btn-save" class="secondary">Validate &amp; write model_inputs.json</button>
+   <button type="button" id="btn-run" class="run">Save &amp; RUN model</button>
+  </div>
+  <div class="actions" style="margin-top:6px">
+   <label class="help" style="display:flex;gap:6px;align-items:center">
+    <input type="checkbox" id="run-smoke" checked> Fast smoke run (diagnostic scenario budget)</label>
+   <label class="help" style="display:flex;gap:6px;align-items:center">
+    <input type="checkbox" id="run-autofill" checked> Auto-fill missing sections (model points / assumptions / ESG) with governed defaults</label>
   </div>
  </form>
  <div id="out">Ready. Validation runs through the real loader (fail-loud) before any write.</div>
@@ -317,6 +326,58 @@ async function post(path){
 }
 document.getElementById('btn-validate').onclick=()=>post('/validate');
 document.getElementById('btn-save').onclick=()=>post('/save');
+/* GUI-5 (owner request): one-click save -> auto-fill -> gate -> async run */
+const btnRun=document.getElementById('btn-run');
+function setRunning(b){btnRun.disabled=b;
+  document.getElementById('btn-validate').disabled=b;
+  document.getElementById('btn-save').disabled=b;}
+function pollJob(id){
+  fetch('/jobs/'+id).then(r=>r.json()).then(j=>{
+    if(j&&j.progress){out.textContent='RUNNING (job '+id+')\n'+j.progress.join('\n');}
+    if(j&&(j.state==='succeeded'||j.state==='failed')){
+      setRunning(false);
+      if(j.state==='succeeded'){
+        const h=(j.result&&j.result.headline)||{};
+        out.innerHTML='<span class="ok">RUN COMPLETE</span>\n'
+          +'nested_scr: '+(h.nested_scr==null?'--':Number(h.nested_scr).toLocaleString())+'\n'
+          +'copula_scr: '+(h.copula_scr==null?'--':Number(h.copula_scr).toLocaleString())+'\n'
+          +'var_covar_scr: '+(h.var_covar_scr==null?'--':Number(h.var_covar_scr).toLocaleString())+'\n\n'
+          +'<a href="/my-results" style="color:#8fb6e6">Open YOUR results &rarr;</a>   '
+          +'<a href="/history" style="color:#8fb6e6">Run history &amp; compare &rarr;</a>';
+      }else{
+        out.innerHTML='<span class="bad">RUN FAILED</span>\n'
+          +((j.result&&(j.result.errors||[]).join('\n'))||j.error||'')+'\n'
+          +((j.progress||[]).join('\n'));
+      }
+    }else{setTimeout(()=>pollJob(id),2000);}
+  }).catch(()=>setTimeout(()=>pollJob(id),4000));}
+btnRun.onclick=async()=>{
+  setRunning(true);out.textContent='Saving inputs, checking the run gate...';
+  try{
+    const body=payload();
+    body.smoke=document.getElementById('run-smoke').checked;
+    body.autofill=document.getElementById('run-autofill').checked;
+    const r=await fetch('/save-run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const j=await r.json();
+    if(j.ok&&j.job_id){
+      out.textContent='Run submitted (job '+j.job_id+')'
+        +(j.autofilled&&j.autofilled.length?'\nauto-filled with governed defaults: '+j.autofilled.join(', '):'')
+        +'\ninputs digest: '+((j.gate&&j.gate.reproducibility_digest)||'');
+      pollJob(j.job_id);
+    }else if(j.stage==='run_gate_blocked'){
+      setRunning(false);
+      out.innerHTML='<span class="bad">RUN GATE BLOCKED ('+(j.blocking_issues||[]).length+' issue(s))</span>\n'
+        +(j.blocking_issues||[]).join('\n')+'\n\n'+(j.hint||'')+'\n'
+        +'<a href="/model-points" style="color:#8fb6e6">Model Points</a>  '
+        +'<a href="/assumptions" style="color:#8fb6e6">Assumptions</a>  '
+        +'<a href="/esg" style="color:#8fb6e6">ESG</a>  '
+        +'<a href="/run-gate" style="color:#8fb6e6">Run Gate</a>';
+    }else{
+      setRunning(false);
+      out.innerHTML='<span class="bad">'+(j.stage||'refused')+'</span>\n'+((j.errors||[]).join('\n'));
+    }
+  }catch(e){setRunning(false);out.innerHTML='<span class="bad">runner error</span>\n'+e;}
+};
 </script>
 </body></html>""" % (body, _html.escape(GOVERNED_HEADLINE))
 
