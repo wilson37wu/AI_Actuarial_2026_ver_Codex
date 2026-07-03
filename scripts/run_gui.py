@@ -91,6 +91,12 @@ from par_model_v2.viewer.igui_calibration import (  # noqa: E402  (GUI-3)
     render_calibration_html,
     run_calibration,
 )
+from par_model_v2.viewer.igui_run_history import (  # noqa: E402  (GUI-4)
+    compare_runs,
+    get_run,
+    load_registry,
+    render_history_html,
+)
 from par_model_v2.viewer.igui_results_refresh import (  # noqa: E402  (Task 8)
     refresh_user_results,
     DEFAULT_USER_RESULTS_DIR,
@@ -472,6 +478,29 @@ class _Handler(BaseHTTPRequestHandler):
                 "ok": True, "catalogue": calibration_catalogue()}))
         elif self.path == "/market-data-status":
             self._send(200, json.dumps(market_data_status(), default=str))
+        elif self.path in ("/history", "/history.html"):
+            self._send(200, render_history_html(), "text/html")
+        elif self.path == "/runs":
+            self._send(200, json.dumps(
+                load_registry(self._jobs_dir()), default=str))
+        elif self.path.startswith("/runs/"):
+            rid = self.path.split("/runs/", 1)[1].split("?")[0]
+            import urllib.parse as _up
+            got = get_run(self._jobs_dir(), _up.unquote(rid))
+            self._send(200 if got.get("ok") else 404,
+                       json.dumps(got, default=str))
+        elif self.path.startswith("/compare-runs"):
+            import urllib.parse as _up
+            q = _up.parse_qs(_up.urlparse(self.path).query)
+            a = (q.get("a") or [None])[0]
+            b = (q.get("b") or [None])[0]
+            if not a or not b:
+                self._send(422, json.dumps(
+                    {"ok": False, "error": "query params a and b required"}))
+            else:
+                got = compare_runs(self._jobs_dir(), a, b)
+                self._send(200 if got.get("ok") else 404,
+                           json.dumps(got, default=str))
         elif self.path == "/jobs":
             if self.job_manager is None:
                 self._send(503, json.dumps({"ok": False, "error": "no job manager"}))
@@ -495,6 +524,9 @@ class _Handler(BaseHTTPRequestHandler):
                                         "task": "Phase IGUI Task 6 validation gating"}))
         else:
             self._send(404, json.dumps({"ok": False, "error": "not found"}))
+
+    def _jobs_dir(self):
+        return os.path.join(_REPO, RUN_OUTPUT_DIR, "jobs")
 
     def _user_results_path(self, name):
         return os.path.join(_REPO, USER_RESULTS_DIR, name)

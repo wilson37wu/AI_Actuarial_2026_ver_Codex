@@ -37,14 +37,14 @@ Each improvement is judged against these standards (traceable in `docs/SOA_ASSUM
 
 Owner directive (2026-07-03, interactive session): build a comprehensive GUI so users configure and trigger calculation runs and view outputs entirely in the GUI — eliminate any need to open .py files. Owner-selected architecture: **local Python web server** (Flask/FastAPI, launched via `python -m par_model_v2.gui` + a Windows launcher script); browser GUI posts run requests, shows progress, renders results in-page.
 
-**This track takes priority over items 2–12 below until GUI-4 is DONE.** One phase per cycle. It does NOT constitute sign-off for the separately owner-gated Phase 38 Task 3 (`ui_app.html` native-tab cutover / sha256 re-baseline), which stays gated.
+**This track is COMPLETE (GUI-1..GUI-4 all DONE 2026-07-03); priority reverts to the general backlog (§4.1).** One phase per cycle. It does NOT constitute sign-off for the separately owner-gated Phase 38 Task 3 (`ui_app.html` native-tab cutover / sha256 re-baseline), which stays gated.
 
 | # | Item | Definition of done | Status |
 |---|------|--------------------|--------|
 | GUI-1 | Run-console server skeleton + core stochastic run: background job execution with progress endpoint, results rendered in GUI. Discovery: the Phase IGUI stack already provided input pages, validation gate, launchers, and a synchronous run; GUI-1 delivered the missing async layer (JobManager, /execute-async, /jobs/<id>, /jobs, polling run page) on the existing stdlib-only server (kept over Flask/FastAPI: zero new deps, same architecture class - local web server) | User can launch, configure, run, watch progress, and read results with zero .py editing | DONE(2026-07-03, see §5) |
 | GUI-2 | Sensitivities & stress in GUI: /stress console, 7-item input-level catalogue (re-validated + re-gated per stress, isolated output dirs), base-vs-stress delta table, deterministic Phase 9 asset-stress panel | Stress results in GUI with base-vs-stress deltas | DONE(2026-07-03, see §5) |
 | GUI-3 | Calibration runs in GUI: trigger HW1F/GBM calibration via live market-data pipeline (roadmap #1), fit diagnostics (SSE, convergence, parameter card) displayed; UNSIGNED flag surfaced | Calibration runnable + diagnosable from GUI | DONE(2026-07-03, see §5) |
-| GUI-4 | Run history & compare: persisted run registry (id, timestamp, inputs hash, seed, headline outputs), list/open past runs, side-by-side diff of two runs | Reproducible run registry browsable in GUI | OPEN |
+| GUI-4 | Run history & compare: persisted run registry (id, timestamp, inputs hash, seed, headline outputs), list/open past runs, side-by-side diff of two runs | Reproducible run registry browsable in GUI | DONE(2026-07-03, see §5) |
 
 Standing constraints: runs executed through the GUI must keep the existing governance trail (seed policy, parameter snapshots, SHA-256 audit) — the GUI is a front-end to the governed engine, never a bypass. Governed headline figures remain untouched except where an item explicitly covers them.
 
@@ -74,6 +74,7 @@ Items requiring human sign-off (owner approval, regulator deviation): implement 
 
 | Date | Item | Outcome | Commit |
 |------|------|---------|--------|
+| 2026-07-03 | GUI-4 run history & compare: igui_run_history.py + /history /runs /runs/<id> /compare-runs; registry from persisted GUI-1 job records (id, timestamps, inputs digest, seed, headline); durable run-plan enrichment (survives artifact overwrite); side-by-side metadata + headline-delta compare with smoke/kind/same-digest notes; 14 new tests GREEN (53 across GUI-1..4); GUI TRACK COMPLETE | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | GUI-3 calibration console: igui_calibration.py + /calibration /calibration-catalogue /market-data-status /run-calibration; HW1F + GBM pipelines async via JobManager; per-market parameter card + fit diagnostics (RMSE/SSE-proxy, convergence, gates G-02/G-12/G-03); market-data provenance panel (roadmap #1); UNSIGNED surfaced everywhere; repo governance store untouched (byte-tested); new tests GREEN | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | GUI-2 stress console: igui_stress.py + /stress /stress-catalogue /run-stress /asset-stress; JobManager per-job runner+meta; 13 new tests GREEN (25 with GUI-1 suite); live base-vs-stress e2e verified (conf 99.0 → SCR −13.9%); no new regressions vs main baseline | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | GUI-1 async run console: igui_job_manager.py + /execute-async + /jobs endpoints + polling run page; 9 new tests GREEN; live async end-to-end smoke succeeded (real engine headline, /my-results refreshed); 7 pre-existing ui_app sha-baseline failures on main documented (owner-gated Phase 38) | DONE | (this cycle's AUTO commit) |

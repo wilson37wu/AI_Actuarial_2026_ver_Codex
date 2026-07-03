@@ -68,6 +68,19 @@ Catalogue: `CAL_HW1F_SWAPTION` (Phase 13 — L-BFGS-B fit of (a, σ_r) per marke
 
 Governance isolation: a GUI calibration run uses a **fresh in-memory GovernanceStore** — the repository `.claude-dev/GOVERNANCE_STORE.json` is never loaded, mutated, or persisted (regression-tested byte-for-byte). Production ESG parameters and governed headline figures are untouched; adopting calibrated parameters requires the owner's signed ChangeRecord outside this console.
 
+## GUI-4 (2026-07-03): run history & compare
+
+`/history` page + `par_model_v2/viewer/igui_run_history.py`. Every GUI-triggered run (model / stress / calibration) is registered from the GUI-1 persisted job records with the reproducibility tuple the roadmap names: run id, timestamps, **inputs digest** (Task-6 reproducibility digest), **seed** + run plan, and **headline outputs**.
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/history` | GET | Run-history console (registry table, per-run detail, pick-two compare) |
+| `/runs` | GET | The persisted run registry, newest first |
+| `/runs/<id>` | GET | Open one past run (registry entry + full persisted record) |
+| `/compare-runs?a=<id>&b=<id>` | GET | Side-by-side diff: metadata rows + headline deltas (B − A, GUI-2 delta shape) |
+
+Durability: the shared `run_output/` artifacts are overwritten by later runs, so on first sight of a finished job the registry extracts the run plan (seed, scenario budget) from the run's aggregation report while it still exists and persists it back into the job record (additive `registry` block, atomic rewrite, re-parse guard). After that the entry no longer depends on the artifacts. The registry is read-only otherwise: it never deletes records, never touches the governance store, never changes a governed figure. Compare annotates honestly: smoke runs, kind mismatches, and identical-inputs-digest (sampling-only differences) are called out.
+
 ## Roadmap
 
-GUI-3 DONE(2026-07-03) → GUI-4 run history & compare (the `/jobs` registry is the seed).
+**GUI track COMPLETE:** GUI-1 → GUI-4 all DONE(2026-07-03). The general backlog (roadmap §4.1) resumes next cycle.
