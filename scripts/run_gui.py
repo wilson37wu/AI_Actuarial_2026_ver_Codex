@@ -101,6 +101,11 @@ from par_model_v2.viewer.igui_cashflows import (  # noqa: E402  (CF-3)
     build_cashflow_response,
     render_cashflows_html,
 )
+from par_model_v2.viewer.igui_portfolio_builder import (  # noqa: E402  (PC-1)
+    build_construction_defaults,
+    build_construction_response,
+    render_portfolio_html,
+)
 from par_model_v2.viewer.igui_results_refresh import (  # noqa: E402  (Task 8)
     refresh_user_results,
     DEFAULT_USER_RESULTS_DIR,
@@ -562,6 +567,11 @@ class _Handler(BaseHTTPRequestHandler):
                 "ok": True, "catalogue": calibration_catalogue()}))
         elif self.path == "/market-data-status":
             self._send(200, json.dumps(market_data_status(), default=str))
+        elif self.path in ("/portfolio", "/portfolio.html"):
+            self._send(200, render_portfolio_html(), "text/html")
+        elif self.path == "/portfolio-defaults":
+            self._send(200, json.dumps(
+                build_construction_defaults(self.out_path), default=str))
         elif self.path in ("/cashflows", "/cashflows.html"):
             self._send(200, render_cashflows_html(), "text/html")
         elif self.path == "/cashflow-data":
@@ -650,7 +660,8 @@ class _Handler(BaseHTTPRequestHandler):
     _POST_ROUTES = ("/validate", "/save", "/validate_portfolio", "/save_portfolio",
                     "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions",
                     "/validate_esg", "/save_esg", "/preflight", "/run", "/execute",
-                    "/execute-async", "/run-stress", "/run-calibration", "/save-run")
+                    "/execute-async", "/run-stress", "/run-calibration", "/save-run",
+                    "/validate_construction", "/save_construction")
 
     def do_POST(self):
         if self.path not in self._POST_ROUTES:
@@ -700,6 +711,10 @@ class _Handler(BaseHTTPRequestHandler):
                                         _inp, _sid, _root, smoke=smk,
                                         repo_root=_REPO)),
                             meta={"kind": "stress", "stress_id": stress_id})
+            elif self.path in ("/validate_construction", "/save_construction"):
+                res = build_construction_response(
+                    payload, self.out_path,
+                    do_write=(self.path == "/save_construction"))
             elif self.path == "/save-run":
                 res = build_save_run_response(payload, self.out_path,
                                               self.job_manager)

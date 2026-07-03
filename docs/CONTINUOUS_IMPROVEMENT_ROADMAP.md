@@ -59,6 +59,15 @@ Owner directive (2026-07-03, interactive): a NEW OUTPUT SET with liability cash 
 | CF-2 | Run integration: /save-run & execute_run attach the CF set to run_output + run registry; stale-set guard (inputs digest match) | CF set produced with every GUI run | OPEN |
 | CF-3 | GUI tab: yearly view + monthly drill-down per product class / asset class, CSV downloads, UNSIGNED banner | CF set browsable in GUI | DONE(2026-07-03, see §5) |
 
+### 4.0d OWNER-DIRECTED Portfolio Construction Track (directive 2026-07-03, KCW)
+
+Owner directive: flexible input construction - asset classes by type with mix/SAA, and liability product templates (e.g. short vs long term par) composable into the portfolio.
+
+| # | Item | Definition of done | Status |
+|---|------|--------------------|--------|
+| PC-1 | Construction layer + GUI: `portfolio_construction.py` (asset strategy with SAA weights deriving the balance sheet + fund mechanics; product catalogue parameterised over the three mechanic families; composer validation incl. term ranges and the illiquid-share engine rule), CF-engine integration (per-product output classes, catalogue rates, SAA mechanics), `/portfolio` GUI page, loader-revalidated save | Construct + save + gate + run + cashflows end-to-end from composed inputs | DONE(2026-07-03, see §5) |
+| PC-2 | Extend mechanic families (whole-life par, term assurance, annuity) + per-product expense/decrement overrides | New families runnable end-to-end | OPEN |
+
 ### 4.1 General backlog
 
 
@@ -85,6 +94,7 @@ Items requiring human sign-off (owner approval, regulator deviation): implement 
 
 | Date | Item | Outcome | Commit |
 |------|------|---------|--------|
+| 2026-07-03 | PC-1 portfolio construction (owner directive): asset SAA (type/mix/weights -> derived balance sheet incl. run-engine fields backing_asset_mv/illiquid_share + CF fund mechanics), product catalogue over 3 mechanic families (short/long par etc.), composer + /portfolio GUI page; saves loader-revalidated, gate reset on save; CF outputs split per catalogue product; 17 new tests, 130 GREEN across suites; LIVE e2e construct->run->cashflows verified (2 pre-existing sha-baseline failures unchanged) | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | CF-3 (owner request): /cashflows GUI page - inline-SVG charts (liability CF components; stacked asset balances), yearly tables per class with monthly drill-down per year, digest-cached /cashflow-data endpoint (refreshes the six CSVs), UNSIGNED banner, run-off/shortfall callouts; page added to node JS-syntax guard; 6 new tests, 85 GREEN across CF+GUI suites | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | CF-1c (owner correction: asset balances were level): asset fund now COUPLED to liability net CF - income reinvested, benefits funded by sales, monthly constant-mix rebalancing, zero-floor + shortfall reporting, book_runoff_month marker; verified grow-then-run-off (peak y14 524M, -146.6M y20 maturities); 22/22 tests GREEN incl. accounting identity | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | CF-1b (owner request): wide-format CF artifacts - rows = time only, classes horizontal (<class>__<measure> headers; balances use plain class labels); JSON preview follows; 2 new pivot tests + updated artifact tests, 18/18 GREEN | DONE | (this cycle's AUTO commit) |

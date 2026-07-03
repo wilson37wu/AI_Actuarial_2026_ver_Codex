@@ -178,6 +178,7 @@ def _asset_share_proxy(prem_monthly: float, prem_annual: float,
 def _project_rb_row(row: Dict[str, Any], out: _RowBuckets) -> None:
     mech = default_hk_reversionary_bonus_mechanics()
     decl = default_hk_declaration_assumption()
+    ov = row.get("mechanics") or {}  # PC-1 catalogue overrides
     sa = float(row["sum_assured"])
     initial_vb = float(row.get("vested_bonus") or 0.0)
     T = min(int(row["term_years"]) * 12, HORIZON_MONTHS)
@@ -188,9 +189,10 @@ def _project_rb_row(row: Dict[str, Any], out: _RowBuckets) -> None:
     _premium_expense(prem_m, prem_a, count, in_force, T, out)
     acc = _asset_share_proxy(prem_m, prem_a, T,
                              DEFAULT_RESERVING_DISCOUNT_RATE)
-    rb_rate = float(decl.declared_reversionary_bonus_rate(mech))
-    tb_pct = mech.terminal_bonus_pct
-    svp = mech.surrender_value_pct
+    rb_rate = float(ov.get("rb_rate",
+                            decl.declared_reversionary_bonus_rate(mech)))
+    tb_pct = float(ov.get("terminal_bonus_pct", mech.terminal_bonus_pct))
+    svp = float(ov.get("surrender_value_pct", mech.surrender_value_pct))
     future_rb = 0.0
     for m in range(T):
         if m > 0 and m % 12 == 0:  # anniversary vesting of FUTURE declarations
@@ -225,8 +227,10 @@ def _project_cd_row(row: Dict[str, Any], out: _RowBuckets) -> None:
     _premium_expense(prem_m, prem_a, count, in_force, T, out)
     acc = _asset_share_proxy(prem_m, prem_a, T,
                              DEFAULT_RESERVING_DISCOUNT_RATE)
-    div_rate = float(decl.declared_cash_dividend_rate(mech))
-    svp = mech.surrender_value_pct
+    ov = row.get("mechanics") or {}  # PC-1 catalogue overrides
+    div_rate = float(ov.get("cash_dividend_rate",
+                            decl.declared_cash_dividend_rate(mech)))
+    svp = float(ov.get("surrender_value_pct", mech.surrender_value_pct))
     for m in range(T):
         prob_bom = in_force[m]
         deaths = prob_bom * q[m]
@@ -260,7 +264,9 @@ def _project_gmmb_row(row: Dict[str, Any], out: _RowBuckets) -> None:
         # guarantee floor = SA; account excess over SA is non-guaranteed
         out.arrays["death_guaranteed"][m] += count * sa * deaths
         out.arrays["death_non_guaranteed"][m] += count * max(a - sa, 0.0) * deaths
-        out.arrays["surrender_non_guaranteed"][m] += count * 0.90 * a * lapses
+        out.arrays["surrender_non_guaranteed"][m] += (
+            count * float((row.get("mechanics") or {})
+                          .get("surrender_value_pct", 0.90)) * a * lapses)
     a_T = acct[T]
     out.arrays["maturity_guaranteed"][T - 1] += count * in_force[T] * sa
     out.arrays["maturity_non_guaranteed"][T - 1] += (
@@ -287,7 +293,10 @@ def project_liability_set(portfolio: List[Dict[str, Any]]) -> pd.DataFrame:
         ptype = str(row.get("product_type"))
         if ptype not in _PRODUCT_PROJECTORS:
             raise ValueError("unknown product_type: %r" % ptype)
-        out = by_class.setdefault(ptype, _RowBuckets())
+        # PC-1: report per catalogue product when composed (short/long par
+        # split out); legacy rows keep the family as their class
+        class_key = str(row.get("product_id") or ptype)
+        out = by_class.setdefault(class_key, _RowBuckets())
         _PRODUCT_PROJECTORS[ptype](row, out)
     months = np.arange(1, HORIZON_MONTHS + 1)
     for ptype, out in sorted(by_class.items()):
@@ -306,7 +315,11 @@ def project_liability_set(portfolio: List[Dict[str, Any]]) -> pd.DataFrame:
 # Asset projection - by asset class, cash flows + balances
 # ---------------------------------------------------------------------------
 
-def _mechanics_for(label: str) -> Dict[str, Any]:
+def _mechanics_for(label: str,
+                   overrides: Optional[Dict[str, Dict[str, Any]]] = None
+                   ) -> Dict[str, Any]:
+    if overrides and str(label) in overrides:
+        return overrides[str(label)]
     key = str(label).strip().lower()
     for prefix, mech in ASSET_CLASS_MECHANICS.items():
         if key.startswith(prefix):
@@ -315,7 +328,8 @@ def _mechanics_for(label: str) -> Dict[str, Any]:
 
 
 def project_asset_set(balance_sheet: Dict[str, Any],
-                      net_liability_cf: Optional[np.ndarray] = None):
+                      net_liability_cf: Optional[np.ndarray] = None,
+                      mechanics: Optional[Dict[str, Dict[str, Any]]] = None):
     """Monthly asset cash flows AND balances by asset class, months 1..1200,
     COUPLED to the liability book (owner correction 2026-07-03: balances must
     grow with premium accumulation and run off with the liabilities, not sit
@@ -358,7 +372,7 @@ def project_asset_set(balance_sheet: Dict[str, Any],
     if mv0.sum() <= 0:
         raise ValueError("total backing asset market value must be positive")
     weights = mv0 / mv0.sum()
-    mechs = [_mechanics_for(lbl) for lbl in labels]
+    mechs = [_mechanics_for(lbl, mechanics) for lbl in labels]
     inc_rate = np.array([
         (m.get("annual_yield") if m["kind"] != "equity"
          else m["annual_dividend_yield"]) / 12.0 for m in mechs])
@@ -480,13 +494,25 @@ def build_cashflow_projection_set(model_inputs: Dict[str, Any],
             "annual_premium": float(r.get("annual_premium")),
             "policy_count": float(r.get("policy_count")),
             "vested_bonus": float(r.get("vested_bonus") or 0.0),
+            **({"product_id": str(r["product_id"])} if r.get("product_id") else {}),
+            **({"mechanics": r["mechanics"]}
+               if isinstance(r.get("mechanics"), dict) else {}),
         })
-    liab_m = project_liability_set(portfolio)
+    from par_model_v2.projection.portfolio_construction import (
+        asset_mechanics_from_strategy, resolve_portfolio)
+    catalogue = model_inputs.get("product_catalogue")
+    resolved = resolve_portfolio(portfolio, catalogue)
+    strategy = model_inputs.get("asset_strategy")
+    asset_mech = (asset_mechanics_from_strategy(strategy)
+                  if isinstance(strategy, dict) and strategy.get("saa")
+                  else None)
+    liab_m = project_liability_set(resolved)
     net_liab = (liab_m.groupby("month")["net_cashflow"].sum()
                 .reindex(range(1, HORIZON_MONTHS + 1), fill_value=0.0)
                 .to_numpy())
     asset_cf_m, asset_bal_m = project_asset_set(
-        model_inputs.get("balance_sheet") or {}, net_liability_cf=net_liab)
+        model_inputs.get("balance_sheet") or {}, net_liability_cf=net_liab,
+        mechanics=asset_mech)
     liab_y = yearly_rollup(liab_m, "product_class")
     asset_cf_y = yearly_rollup(asset_cf_m, "asset_class")
     asset_bal_y = yearly_rollup(asset_bal_m, "asset_class", balance=True)

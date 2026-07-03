@@ -29,6 +29,7 @@ for p in (_REPO, os.path.join(_REPO, "scripts")):
 from par_model_v2.viewer.igui_assumptions import render_assumptions_html
 from par_model_v2.viewer.igui_calibration import render_calibration_html
 from par_model_v2.viewer.igui_cashflows import render_cashflows_html
+from par_model_v2.viewer.igui_portfolio_builder import render_portfolio_html
 from par_model_v2.viewer.igui_esg import render_esg_html
 from par_model_v2.viewer.igui_model_points import render_model_points_html
 from par_model_v2.viewer.igui_run_controls import render_form_html
@@ -48,6 +49,7 @@ PAGES = {
     "calibration": render_calibration_html,
     "history": render_history_html,
     "cashflows": render_cashflows_html,
+    "portfolio": render_portfolio_html,
 }
 
 _SCRIPT_RE = re.compile(r"<script>(.*?)</script>", re.S)

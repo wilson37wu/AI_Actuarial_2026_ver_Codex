@@ -95,6 +95,10 @@ Owner reported the button silently did nothing. Root cause: a collapsed backslas
 
 `/cashflows` + `par_model_v2/viewer/igui_cashflows.py`. Renders the CF-track projection set (roadmap §4.0c) as inline-SVG charts (liability premium/expense/benefit/net by year; asset balances stacked by class) and tables (yearly 1–100 per class, or monthly drill-down into any chosen year), with the UNSIGNED banner, book-run-off marker and fund-shortfall callout. `GET /cashflow-data` computes from the SAVED `model_inputs.json`, caches by the CF inputs digest (no re-run while portfolio/balance sheet unchanged) and refreshes the six wide CSVs in `run_output/cashflow_set/`. Zero external references — charts are hand-drawn SVG, no CDN.
 
+## PC-1 (2026-07-03, owner directive): portfolio construction page
+
+`/portfolio` + `par_model_v2/viewer/igui_portfolio_builder.py` + `par_model_v2/projection/portfolio_construction.py`. Three editable blocks: **Asset strategy** (asset classes with a type — bond/equity/cash — per-type parameters, SAA weights that must sum to 100%, illiquid flags; derives the balance sheet including the run-engine fields and drives the liability-coupled fund's mechanics and rebalancing target), **Product catalogue** (templates over the governed mechanic families, e.g. short-term vs long-term cash-dividend par with different dividend scales, term ranges, surrender values), **Portfolio composer** (model points referencing catalogue products; term ranges and family rules enforced). Save re-validates everything through the governed loader, merge-writes `model_inputs.json`, and RESETS the run gate (inputs changed). Cash-flow outputs report per catalogue product (short/long par separate). Catalogue rates and SAA parameters are UNSIGNED scenario inputs.
+
 ## Roadmap
 
 **GUI track COMPLETE:** GUI-1 → GUI-4 all DONE(2026-07-03). The general backlog (roadmap §4.1) resumes next cycle.
