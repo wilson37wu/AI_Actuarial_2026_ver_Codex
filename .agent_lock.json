@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-03T18:12:01Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-03T18:51Z-c7cc",
+  "started_at": "2026-07-03T18:51:09Z",
+  "ttl_minutes": 120,
+  "task": "PC-1b (owner request): GUI navigation tabs + tabbed portfolio-construction page",
+  "note": ""
 }
