@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-03T05:16Z-c9bb",
-  "started_at": "2026-07-03T05:16:19Z",
-  "ttl_minutes": 120,
-  "task": "W122: exhausted-backlog verification + mount sync (sibling GUI-1 just completed; next pointer owner-gated)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-03T05:22:50Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
