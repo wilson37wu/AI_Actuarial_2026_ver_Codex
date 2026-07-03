@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-03T07:23:54Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-03T08:41Z-0bf8",
+  "started_at": "2026-07-03T08:41:51Z",
+  "ttl_minutes": 120,
+  "task": "CF-1 (owner directive): liability/asset cash-flow projection set engine, monthly+yearly to 100y",
+  "note": ""
 }
