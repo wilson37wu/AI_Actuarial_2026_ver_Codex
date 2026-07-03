@@ -431,16 +431,26 @@ function renderHeadline(h,digest){var t=$("headline");t.innerHTML="";
     rows.forEach(function(r){var tr=document.createElement("tr");
       tr.innerHTML="<th>"+r[0]+"</th><td class='mono'>"+(r[1]==null?"--":r[1])+"</td>";t.appendChild(tr);});}
   $("digest").textContent=digest||"--";$("result-card").style.display="block";}
-function run(){$("btn-run").disabled=true;$("run-status").textContent="running...";
+function finish(j){var r=(j&&j.result)||{};
+  $("progress").textContent=((j&&j.progress)||[]).join("\\n")||"(no output)";
+  if(j&&j.state==="succeeded"&&r.ok){$("run-status").innerHTML="<span class='ok'>complete</span>";
+    renderHeadline(r.headline,r.reproducibility_digest);}
+  else{$("run-status").innerHTML="<span class='bad'>"+((j&&j.error)||(r&&r.stage)||"failed")+"</span>";}
+  return preflight();}
+function poll(id){fetch("/jobs/"+id).then(function(r){return r.json();}).then(function(j){
+  if(j&&j.progress){$("progress").textContent=j.progress.join("\\n");}
+  if(j&&(j.state==="succeeded"||j.state==="failed")){finish(j);}
+  else{setTimeout(function(){poll(id);},2000);}
+}).catch(function(){setTimeout(function(){poll(id);},4000);});}
+function run(){$("btn-run").disabled=true;$("run-status").textContent="submitting...";
   $("progress").textContent="(starting)";
-  post("/execute",{smoke:$("smoke").checked}).then(function(j){
-    $("progress").textContent=((j&&j.progress)||[]).join("\\n")||"(no output)";
-    if(j&&j.ok){$("run-status").innerHTML="<span class='ok'>complete</span>";
-      renderHeadline(j.headline,j.reproducibility_digest);}
-    else{$("run-status").innerHTML="<span class='bad'>"+((j&&j.stage)||"failed")+"</span>";}
-    return preflight();
+  post("/execute-async",{smoke:$("smoke").checked}).then(function(j){
+    if(j&&j.ok&&j.job_id){$("run-status").textContent="job "+j.job_id+" running (page stays live; progress refreshes every 2s)";
+      poll(j.job_id);}
+    else{$("run-status").innerHTML="<span class='bad'>"+((j&&j.error)||"submit failed")+"</span>";
+      $("btn-run").disabled=false;}
   }).catch(function(e){$("run-status").innerHTML="<span class='bad'>error</span>";
-    $("progress").textContent=String(e);});}
+    $("progress").textContent=String(e);$("btn-run").disabled=false;});}
 $("btn-preflight").addEventListener("click",preflight);
 $("btn-run").addEventListener("click",run);
 preflight();

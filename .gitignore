@@ -59,3 +59,6 @@ docs/G05_STATIC_GUARD_REPORT_*
 !docs/G05_RUN_SUMMARY_2026-05-28T180400Z.json
 !docs/G05_STATIC_GUARD_REPORT_2026-05-28T180400Z.json
 outputs/_igui_*selftest*.json
+# GUI run-console artifacts (GUI-1): per-user run output + job records + user results copy
+run_output/
+user_results/

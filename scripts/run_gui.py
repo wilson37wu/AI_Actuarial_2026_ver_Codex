@@ -77,6 +77,7 @@ from par_model_v2.viewer.igui_run_execution import (  # noqa: E402  (Task 7)
     render_run_html,
     execute_run,
 )
+from par_model_v2.viewer.igui_job_manager import JobManager  # noqa: E402  (GUI-1)
 from par_model_v2.viewer.igui_results_refresh import (  # noqa: E402  (Task 8)
     refresh_user_results,
     DEFAULT_USER_RESULTS_DIR,
@@ -413,6 +414,7 @@ def build_execute_response(out_path, *, payload=None, run_output_dir=RUN_OUTPUT_
 class _Handler(BaseHTTPRequestHandler):
     server_version = "IGUIRunGui/1.0"
     out_path = "model_inputs.json"
+    job_manager = None  # bound per-server in make_server (GUI-1)
 
     def _send(self, code, body, ctype="application/json"):
         data = body.encode("utf-8") if isinstance(body, str) else body
@@ -434,6 +436,18 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(200, render_esg_html(), "text/html")
         elif self.path in ("/run-gate", "/run-gate.html"):
             self._send(200, render_gate_html(), "text/html")
+        elif self.path == "/jobs":
+            if self.job_manager is None:
+                self._send(503, json.dumps({"ok": False, "error": "no job manager"}))
+            else:
+                self._send(200, json.dumps(self.job_manager.list_jobs()))
+        elif self.path.startswith("/jobs/"):
+            if self.job_manager is None:
+                self._send(503, json.dumps({"ok": False, "error": "no job manager"}))
+            else:
+                jid = self.path.split("/jobs/", 1)[1].split("?")[0]
+                st = self.job_manager.status(jid)
+                self._send(200 if st.get("ok") else 404, json.dumps(st))
         elif self.path in ("/run-execution", "/run-execution.html"):
             self._send(200, render_run_html(), "text/html")
         elif self.path in ("/my-results", "/my-results.html"):
@@ -476,7 +490,8 @@ class _Handler(BaseHTTPRequestHandler):
 
     _POST_ROUTES = ("/validate", "/save", "/validate_portfolio", "/save_portfolio",
                     "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions",
-                    "/validate_esg", "/save_esg", "/preflight", "/run", "/execute")
+                    "/validate_esg", "/save_esg", "/preflight", "/run", "/execute",
+                    "/execute-async")
 
     def do_POST(self):
         if self.path not in self._POST_ROUTES:
@@ -508,6 +523,14 @@ class _Handler(BaseHTTPRequestHandler):
                 res = build_run_gate_response(self.out_path, do_write=True)
             elif self.path == "/execute":
                 res = build_execute_response(self.out_path, payload=payload)
+            elif self.path == "/execute-async":
+                if self.job_manager is None:
+                    res = {"ok": False, "errors": ["no job manager bound"]}
+                else:
+                    smoke = True
+                    if isinstance(payload, dict) and "smoke" in payload:
+                        smoke = bool(payload["smoke"])
+                    res = self.job_manager.submit(smoke=smoke)
             elif self.path == "/reconcile":
                 res = build_reconcile_response(payload)
             else:  # /ingest
@@ -523,7 +546,13 @@ class _Handler(BaseHTTPRequestHandler):
 
 
 def make_server(port=0, out_path="model_inputs.json"):
-    handler = type("_BoundHandler", (_Handler,), {"out_path": out_path})
+    manager = JobManager(
+        runner=lambda smoke: build_execute_response(out_path,
+                                                    payload={"smoke": smoke}),
+        persist_dir=os.path.join(_REPO, RUN_OUTPUT_DIR, "jobs"),
+    )
+    handler = type("_BoundHandler", (_Handler,),
+                   {"out_path": out_path, "job_manager": manager})
     return ThreadingHTTPServer((HOST, port), handler)
 
 
