@@ -389,6 +389,28 @@ def yearly_rollup(monthly: pd.DataFrame, group_col: str,
     return out
 
 
+def to_wide(frame: pd.DataFrame, group_col: str, time_col: str) -> pd.DataFrame:
+    """Owner-requested output shape (2026-07-03): ONLY the time dimension in
+    rows; classes spread horizontally as column headers.
+
+    Value columns are pivoted per class and flattened to
+    ``<class>__<measure>`` (single-measure frames like balances keep just
+    ``<class>``).  Row order = time ascending; column order = class then
+    measure, classes sorted."""
+    value_cols = [c for c in frame.columns
+                  if c not in (time_col, group_col)]
+    wide = frame.pivot(index=time_col, columns=group_col,
+                       values=value_cols)
+    if len(value_cols) == 1:
+        wide.columns = [str(cls) for _, cls in wide.columns]
+    else:
+        wide = wide.swaplevel(axis=1)
+        wide.columns = ["{}__{}".format(cls, measure)
+                        for cls, measure in wide.columns]
+    wide = wide[sorted(wide.columns)]
+    return wide.reset_index()
+
+
 # ---------------------------------------------------------------------------
 # The output set (JSON + CSV artifacts)
 # ---------------------------------------------------------------------------
@@ -430,6 +452,7 @@ def build_cashflow_projection_set(model_inputs: Dict[str, Any],
     result: Dict[str, Any] = {
         "ok": True,
         "schema": SCHEMA_VERSION,
+        "csv_orientation": "rows=time only; classes horizontal (<class>__<measure>)",
         "basis": "deterministic_central",
         "horizon": {"months": HORIZON_MONTHS, "years": HORIZON_YEARS},
         "unsigned_note": UNSIGNED_NOTE,
@@ -448,12 +471,18 @@ def build_cashflow_projection_set(model_inputs: Dict[str, Any],
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
         tables = {
-            "liability_cashflows_monthly.csv": liab_m,
-            "liability_cashflows_yearly.csv": liab_y,
-            "asset_cashflows_monthly.csv": asset_cf_m,
-            "asset_cashflows_yearly.csv": asset_cf_y,
-            "asset_balances_monthly.csv": asset_bal_m,
-            "asset_balances_yearly.csv": asset_bal_y,
+            "liability_cashflows_monthly.csv":
+                to_wide(liab_m, "product_class", "month"),
+            "liability_cashflows_yearly.csv":
+                to_wide(liab_y, "product_class", "year"),
+            "asset_cashflows_monthly.csv":
+                to_wide(asset_cf_m, "asset_class", "month"),
+            "asset_cashflows_yearly.csv":
+                to_wide(asset_cf_y, "asset_class", "year"),
+            "asset_balances_monthly.csv":
+                to_wide(asset_bal_m, "asset_class", "month"),
+            "asset_balances_yearly.csv":
+                to_wide(asset_bal_y, "asset_class", "year"),
         }
         paths = {}
         for name, df in tables.items():
@@ -463,11 +492,16 @@ def build_cashflow_projection_set(model_inputs: Dict[str, Any],
         result["csv_paths"] = paths
         json_path = os.path.join(out_dir, "CASHFLOW_PROJECTION_SET.json")
         payload = dict(result)
+        wide_liab_y = to_wide(liab_y, "product_class", "year")
+        wide_acf_y = to_wide(asset_cf_y, "asset_class", "year")
+        wide_abal_y = to_wide(asset_bal_y, "asset_class", "year")
         payload["yearly_preview"] = {
-            "liability": liab_y[liab_y["year"] <= 5].to_dict(orient="records"),
-            "asset_cashflows": asset_cf_y[asset_cf_y["year"] <= 5]
+            "orientation": "rows=time, columns=<class>__<measure>",
+            "liability": wide_liab_y[wide_liab_y["year"] <= 5]
                 .to_dict(orient="records"),
-            "asset_balances": asset_bal_y[asset_bal_y["year"] <= 5]
+            "asset_cashflows": wide_acf_y[wide_acf_y["year"] <= 5]
+                .to_dict(orient="records"),
+            "asset_balances": wide_abal_y[wide_abal_y["year"] <= 5]
                 .to_dict(orient="records"),
         }
         with open(json_path, "w", encoding="utf-8") as fh:

@@ -41,6 +41,14 @@ cash flow); equity pays dividends and compounds; cash rolls at the short
 rate. Class mechanics are documented defaults keyed on the loader's asset
 labels.
 
+## Output orientation (owner request 2026-07-03)
+
+CSVs carry ONLY the time dimension in rows (`month` or `year`); classes run
+horizontally. Multi-measure tables flatten headers to `<class>__<measure>`
+(e.g. `HKCD_PAR_2026__cash_dividend`); single-measure tables (balances) use
+the plain class label as the header. Tidy (long) frames remain available
+in-process via `result["frames"]` and `to_wide()` is the documented pivot.
+
 ## Governance
 
 Diagnostic cash-flow view — governed headline figures untouched; declaration

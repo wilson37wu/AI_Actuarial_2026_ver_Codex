@@ -188,6 +188,34 @@ class TestYearlyRollup(unittest.TestCase):
         self.assertAlmostEqual(eq_y3, eq_m36)
 
 
+class TestWideOrientation(unittest.TestCase):
+    def test_liability_wide_matches_tidy(self):
+        tidy = CF.project_liability_set(_portfolio())
+        wide = CF.to_wide(tidy, "product_class", "month")
+        self.assertEqual(len(wide), CF.HORIZON_MONTHS)
+        n_classes = tidy["product_class"].nunique()
+        n_measures = len([c for c in tidy.columns
+                          if c not in ("month", "product_class")])
+        self.assertEqual(len(wide.columns), 1 + n_classes * n_measures)
+        # spot equality: month 24 CD premium identical in both shapes
+        t = float(tidy[(tidy["product_class"] == "HKCD_PAR_2026")
+                       & (tidy["month"] == 24)]["premium"].iloc[0])
+        w = float(wide[wide["month"] == 24]
+                  ["HKCD_PAR_2026__premium"].iloc[0])
+        self.assertAlmostEqual(t, w)
+
+    def test_single_measure_frame_uses_plain_class_headers(self):
+        _, bal_m = CF.project_asset_set(_balance_sheet())
+        wide = CF.to_wide(bal_m, "asset_class", "month")
+        self.assertIn("Equity", wide.columns)
+        self.assertNotIn("Equity__market_value", wide.columns)
+        eq_m36_tidy = float(bal_m[(bal_m["asset_class"] == "Equity")
+                                  & (bal_m["month"] == 36)]
+                            ["market_value"].iloc[0])
+        eq_m36_wide = float(wide[wide["month"] == 36]["Equity"].iloc[0])
+        self.assertAlmostEqual(eq_m36_tidy, eq_m36_wide)
+
+
 class TestBuildArtifacts(unittest.TestCase):
     def test_full_set_written_and_reparseable(self):
         mi = {"portfolio": [{k: str(v) for k, v in r.items()}
@@ -214,6 +242,20 @@ class TestBuildArtifacts(unittest.TestCase):
             liab_m = res["frames"]["liability_monthly"]
             self.assertAlmostEqual(res["totals"]["liability"]["premium"],
                                    float(liab_m["premium"].sum()), places=4)
+            # owner-requested orientation: time-only rows, classes horizontal
+            import pandas as pd
+            wide = pd.read_csv(res["csv_paths"]
+                               ["liability_cashflows_monthly.csv"])
+            self.assertEqual(len(wide), CF.HORIZON_MONTHS)
+            self.assertEqual(wide.columns[0], "month")
+            self.assertNotIn("product_class", wide.columns)
+            self.assertIn("HKCD_PAR_2026__premium", wide.columns)
+            self.assertIn("HKCD_PAR_2026__cash_dividend", wide.columns)
+            bal = pd.read_csv(res["csv_paths"]["asset_balances_yearly.csv"])
+            self.assertEqual(len(bal), CF.HORIZON_YEARS)
+            self.assertEqual(bal.columns[0], "year")
+            self.assertIn("Government bonds", bal.columns)
+            self.assertNotIn("asset_class", bal.columns)
 
     def test_digest_is_deterministic_and_input_sensitive(self):
         mi = {"portfolio": _portfolio(), "balance_sheet": _balance_sheet()}
