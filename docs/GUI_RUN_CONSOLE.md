@@ -37,6 +37,22 @@ Job records persist to `run_output/jobs/job_<id>.json` (git-ignored) so a server
 - Governed headline figures are untouched by this track.
 - Known pre-existing issue (NOT caused by GUI-1): the `ui_app.html` SHA-256 baseline family of tests (7 tests across task2/6/7 suites) fails on `main` pending the owner-gated Phase 38 re-baseline.
 
+
+## GUI-2 (2026-07-03): sensitivities & stress console
+
+`/stress` page + `par_model_v2/viewer/igui_stress.py`. Each stress deep-copies the gated inputs, applies ONE predefined change, **re-validates and re-gates** the stressed set (the Task-6 gate binds its digest to exact input bytes — it is refreshed, never bypassed), runs the same governed engine into an isolated `run_output/stress_<id>/` directory, and diffs the headline (nested/copula/var-covar SCR + per-driver standalone) against the base run.
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/stress` | GET | Stress console page |
+| `/stress-catalogue` | GET | Predefined stresses + per-input availability + base-run presence |
+| `/run-stress` | POST | `{"stress_id", "smoke"}` → async job (same JobManager, `meta.kind="stress"`) |
+| `/asset-stress` | GET | Deterministic Phase 9 asset-class stress suite (instant, display-only) |
+
+Catalogue (all input-level, verifiably consumed by `run_model.py`): confidence 99.5→99.0/99.9, sum assured +20%, premium −20%, backing assets +50% (liquidity exposure), seed +1000 (Monte-Carlo sampling error), capital horizon 12→24m. Assumption blocks that do NOT flow into the capital path (lapse/mortality tables feed the liability stage) are deliberately excluded — a zero-delta toggle would mislead; they join with GUI-3+.
+
+Verified live: base 76,988.8 → confidence-99.0 stress 66,297.6 (−13.9%), base artifacts and `/my-results` untouched.
+
 ## Roadmap
 
-GUI-2 sensitivities/stress → GUI-3 calibration runs → GUI-4 run history & compare (the `/jobs` registry is the seed).
+GUI-2 DONE(2026-07-03) → GUI-3 calibration runs → GUI-4 run history & compare (the `/jobs` registry is the seed).

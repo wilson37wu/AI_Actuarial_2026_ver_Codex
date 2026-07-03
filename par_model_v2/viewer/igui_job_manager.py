@@ -56,7 +56,12 @@ class JobManager:
 
     # -- submission ----------------------------------------------------------
 
-    def submit(self, smoke: bool = True) -> Dict[str, Any]:
+    def submit(self, smoke: bool = True,
+               runner: Optional[Callable[[bool], Dict[str, Any]]] = None,
+               meta: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Queue one run. ``runner`` overrides the default engine runner for
+        this job only (GUI-2: stress runs); ``meta`` is a JSON-safe tag block
+        (e.g. ``{"kind": "stress", "stress_id": ...}``) carried on the record."""
         with self._lock:
             active = self._active_job_id_locked()
             if active is not None:
@@ -71,6 +76,7 @@ class JobManager:
                 "job_id": job_id,
                 "state": "queued",
                 "smoke": bool(smoke),
+                "meta": dict(meta) if meta else {},
                 "submitted_at": _utc_now(),
                 "started_at": None,
                 "finished_at": None,
@@ -82,7 +88,8 @@ class JobManager:
             }
             self._order.append(job_id)
             self._trim_locked()
-        worker = threading.Thread(target=self._work, args=(job_id, bool(smoke)),
+        worker = threading.Thread(target=self._work,
+                                  args=(job_id, bool(smoke), runner or self._runner),
                                   name="igui-job-{}".format(job_id), daemon=True)
         worker.start()
         return {"ok": True, "job_id": job_id, "state": "queued"}
@@ -103,7 +110,8 @@ class JobManager:
 
     # -- worker ---------------------------------------------------------------
 
-    def _work(self, job_id: str, smoke: bool) -> None:
+    def _work(self, job_id: str, smoke: bool,
+              runner: Optional[Callable[[bool], Dict[str, Any]]] = None) -> None:
         with self._lock:
             job = self._jobs.get(job_id)
             if job is None:  # evicted before start (should not happen)
@@ -113,7 +121,7 @@ class JobManager:
             job["started_monotonic"] = time.monotonic()
             job["progress"].append("engine run started (smoke={})".format(smoke))
         try:
-            result = self._runner(smoke)
+            result = (runner or self._runner)(smoke)
             ok = bool(isinstance(result, dict) and result.get("ok"))
             with self._lock:
                 job["result"] = result
@@ -153,7 +161,7 @@ class JobManager:
             for jid in reversed(self._order):
                 s = self._snapshot_locked(jid)
                 summaries.append({k: s.get(k) for k in (
-                    "job_id", "state", "smoke", "submitted_at", "started_at",
+                    "job_id", "state", "smoke", "meta", "submitted_at", "started_at",
                     "finished_at", "elapsed_seconds", "error")})
         return {"ok": True, "jobs": summaries}
 
@@ -182,9 +190,11 @@ class JobManager:
             os.makedirs(self._persist_dir, exist_ok=True)
             path = os.path.join(self._persist_dir,
                                 "job_{}.json".format(snapshot["job_id"]))
-            with open(path, "w", encoding="utf-8") as fh:
+            tmp_path = path + ".tmp"
+            with open(tmp_path, "w", encoding="utf-8") as fh:
                 json.dump(snapshot, fh, indent=1, default=str)
-            with open(path, "r", encoding="utf-8") as fh:
+            with open(tmp_path, "r", encoding="utf-8") as fh:
                 json.load(fh)  # re-parse guard (house rule: never ship corrupt JSON)
+            os.replace(tmp_path, path)  # atomic: readers never see a half-written file
         except OSError:
             pass  # persistence is best-effort; the in-memory record remains

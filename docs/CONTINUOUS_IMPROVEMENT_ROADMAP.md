@@ -42,7 +42,7 @@ Owner directive (2026-07-03, interactive session): build a comprehensive GUI so 
 | # | Item | Definition of done | Status |
 |---|------|--------------------|--------|
 | GUI-1 | Run-console server skeleton + core stochastic run: background job execution with progress endpoint, results rendered in GUI. Discovery: the Phase IGUI stack already provided input pages, validation gate, launchers, and a synchronous run; GUI-1 delivered the missing async layer (JobManager, /execute-async, /jobs/<id>, /jobs, polling run page) on the existing stdlib-only server (kept over Flask/FastAPI: zero new deps, same architecture class - local web server) | User can launch, configure, run, watch progress, and read results with zero .py editing | DONE(2026-07-03, see §5) |
-| GUI-2 | Sensitivities & stress in GUI: predefined stress suite + parameter sensitivity toggles, results compared against base run | Stress results in GUI with base-vs-stress deltas | OPEN |
+| GUI-2 | Sensitivities & stress in GUI: /stress console, 7-item input-level catalogue (re-validated + re-gated per stress, isolated output dirs), base-vs-stress delta table, deterministic Phase 9 asset-stress panel | Stress results in GUI with base-vs-stress deltas | DONE(2026-07-03, see §5) |
 | GUI-3 | Calibration runs in GUI: trigger HW1F/GBM calibration via live market-data pipeline (roadmap #1), fit diagnostics (SSE, convergence, parameter card) displayed; UNSIGNED flag surfaced | Calibration runnable + diagnosable from GUI | OPEN |
 | GUI-4 | Run history & compare: persisted run registry (id, timestamp, inputs hash, seed, headline outputs), list/open past runs, side-by-side diff of two runs | Reproducible run registry browsable in GUI | OPEN |
 
@@ -74,6 +74,7 @@ Items requiring human sign-off (owner approval, regulator deviation): implement 
 
 | Date | Item | Outcome | Commit |
 |------|------|---------|--------|
+| 2026-07-03 | GUI-2 stress console: igui_stress.py + /stress /stress-catalogue /run-stress /asset-stress; JobManager per-job runner+meta; 13 new tests GREEN (25 with GUI-1 suite); live base-vs-stress e2e verified (conf 99.0 → SCR −13.9%); no new regressions vs main baseline | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | GUI-1 async run console: igui_job_manager.py + /execute-async + /jobs endpoints + polling run page; 9 new tests GREEN; live async end-to-end smoke succeeded (real engine headline, /my-results refreshed); 7 pre-existing ui_app sha-baseline failures on main documented (owner-gated Phase 38) | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | Owner directive registered: GUI run-console track (GUI-1..GUI-4) prioritised above general backlog; architecture = local web server | Directive cycle (no code) | (this commit) |
 | 2026-07-03 | Roadmap created; sync tooling (`scripts/cowork_sync_push.sh`) added; scheduled task registered | Setup cycle | — |

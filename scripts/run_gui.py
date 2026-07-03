@@ -78,6 +78,13 @@ from par_model_v2.viewer.igui_run_execution import (  # noqa: E402  (Task 7)
     execute_run,
 )
 from par_model_v2.viewer.igui_job_manager import JobManager  # noqa: E402  (GUI-1)
+from par_model_v2.viewer.igui_stress import (  # noqa: E402  (GUI-2)
+    asset_stress_report,
+    catalogue_for,
+    read_base_headline,
+    render_stress_html,
+    run_stress,
+)
 from par_model_v2.viewer.igui_results_refresh import (  # noqa: E402  (Task 8)
     refresh_user_results,
     DEFAULT_USER_RESULTS_DIR,
@@ -436,6 +443,22 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(200, render_esg_html(), "text/html")
         elif self.path in ("/run-gate", "/run-gate.html"):
             self._send(200, render_gate_html(), "text/html")
+        elif self.path in ("/stress", "/stress.html"):
+            self._send(200, render_stress_html(), ctype="text/html")
+        elif self.path == "/stress-catalogue":
+            mi = None
+            try:
+                if os.path.exists(self.out_path):
+                    with open(self.out_path, encoding="utf-8") as fh:
+                        mi = json.load(fh)
+            except (OSError, json.JSONDecodeError):
+                mi = None
+            out_root = os.path.join(_REPO, RUN_OUTPUT_DIR)
+            self._send(200, json.dumps({
+                "ok": True, "catalogue": catalogue_for(mi),
+                "base_available": read_base_headline(out_root) is not None}))
+        elif self.path == "/asset-stress":
+            self._send(200, json.dumps(asset_stress_report()))
         elif self.path == "/jobs":
             if self.job_manager is None:
                 self._send(503, json.dumps({"ok": False, "error": "no job manager"}))
@@ -491,7 +514,7 @@ class _Handler(BaseHTTPRequestHandler):
     _POST_ROUTES = ("/validate", "/save", "/validate_portfolio", "/save_portfolio",
                     "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions",
                     "/validate_esg", "/save_esg", "/preflight", "/run", "/execute",
-                    "/execute-async")
+                    "/execute-async", "/run-stress")
 
     def do_POST(self):
         if self.path not in self._POST_ROUTES:
@@ -523,6 +546,24 @@ class _Handler(BaseHTTPRequestHandler):
                 res = build_run_gate_response(self.out_path, do_write=True)
             elif self.path == "/execute":
                 res = build_execute_response(self.out_path, payload=payload)
+            elif self.path == "/run-stress":
+                if self.job_manager is None:
+                    res = {"ok": False, "errors": ["no job manager bound"]}
+                else:
+                    stress_id = (payload or {}).get("stress_id")
+                    smoke = bool((payload or {}).get("smoke", True))
+                    if not stress_id:
+                        res = {"ok": False, "errors": ["stress_id required"]}
+                    else:
+                        inputs_path = self.out_path
+                        out_root = os.path.join(_REPO, RUN_OUTPUT_DIR)
+                        res = self.job_manager.submit(
+                            smoke=smoke,
+                            runner=(lambda smk, _sid=stress_id, _inp=inputs_path,
+                                    _root=out_root: run_stress(
+                                        _inp, _sid, _root, smoke=smk,
+                                        repo_root=_REPO)),
+                            meta={"kind": "stress", "stress_id": stress_id})
             elif self.path == "/execute-async":
                 if self.job_manager is None:
                     res = {"ok": False, "errors": ["no job manager bound"]}

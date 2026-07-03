@@ -382,6 +382,7 @@ def render_run_html() -> str:
  label.cb{display:flex;gap:8px;align-items:center;margin:8px 0}
 </style></head><body><main>
  <h1>Run the model end-to-end</h1>
+ <div class="muted"><a href="/stress" style="color:#9fb4ff">Stress &amp; sensitivities console &rarr;</a></div>
  <div class="muted">Phase IGUI Task 7 - the input+run GUI MVP. Inputs &rarr; <span class="mono">model_inputs.json</span>
   &rarr; <span class="mono">scripts/run_model.py</span> &rarr; offline RESULTS UI (<span class="mono">ui_app.html</span>, byte-unchanged).</div>
 
