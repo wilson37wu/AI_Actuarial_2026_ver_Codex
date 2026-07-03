@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-03T07:21Z-c03b",
-  "started_at": "2026-07-03T07:21:38Z",
-  "ttl_minutes": 120,
-  "task": "HOTFIX GUI-5: run-button JS escaping bug + page-script syntax guard",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-03T07:23:54Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
