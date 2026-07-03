@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-03T05:38:50Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-03T06:06Z-d609",
+  "started_at": "2026-07-03T06:06:07Z",
+  "ttl_minutes": 120,
+  "task": "GUI-3: calibration runs in GUI (HW1F/GBM via live market-data pipeline, fit diagnostics, UNSIGNED flag)",
+  "note": ""
 }
