@@ -156,6 +156,30 @@ def build_construction_response(payload: Dict[str, Any], out_path: str,
     return result
 
 
+NAV_LINKS = [
+    ("/", "Run Controls"), ("/portfolio", "Portfolio construction"),
+    ("/model-points", "Model Points"), ("/assumptions", "Assumptions"),
+    ("/esg", "ESG"), ("/run-gate", "Run Gate"),
+    ("/run-execution", "Run"), ("/cashflows", "Cash flows"),
+    ("/stress", "Stress"), ("/calibration", "Calibration"),
+    ("/history", "History"), ("/my-results", "My results"),
+]
+
+
+def nav_html(active: str) -> str:
+    """Shared top navigation bar (inline styles; zero external refs)."""
+    links = []
+    for href, label in NAV_LINKS:
+        style = ("background:#2b6cff;color:#fff"
+                 if href == active else "color:#9fb4ff")
+        links.append('<a href="%s" style="text-decoration:none;padding:5px '
+                     '11px;border-radius:7px;font-size:13px;%s">%s</a>'
+                     % (href, style, label))
+    return ('<nav style="display:flex;gap:4px;flex-wrap:wrap;padding:10px '
+            '18px;background:#12151c;border-bottom:1px solid #262b36">'
+            + "".join(links) + "</nav>")
+
+
 def render_portfolio_html() -> str:
     """Self-contained portfolio construction page."""
     return """<!doctype html><html lang="en"><head><meta charset="utf-8">
@@ -181,7 +205,8 @@ def render_portfolio_html() -> str:
  pre{background:#0b0d12;border:1px solid #20242e;border-radius:8px;padding:12px;white-space:pre-wrap;max-height:240px;overflow:auto}
  .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;border:1px solid #394150}
  .unsigned{background:#3a2b12;border:1px solid #8a6d1a;color:#ffd166;border-radius:10px;padding:10px 14px;margin:10px 0;font-weight:600}
-</style></head><body><main>
+ .tabbar button.on{background:#2b6cff;border-color:#2b6cff}
+</style></head><body>""" + nav_html("/portfolio") + """<main>
  <h1>Portfolio construction</h1>
  <div class="muted">PC-1 - construct the inputs freely: asset classes + SAA (derives the balance sheet
   and drives the fund mechanics), a product catalogue (e.g. short vs long term par products), and the
@@ -190,8 +215,14 @@ def render_portfolio_html() -> str:
   <a href="/cashflows" style="color:#9fb4ff">Cash-flow projections</a></div>
  <div class="unsigned">UNSIGNED &mdash; catalogue rates and SAA parameters are scenario inputs pending Model Owner approval.</div>
 
- <div class="card">
-  <h2>1 &middot; Asset strategy (SAA) <span class="pill" id="wsum">weights: &hellip;</span></h2>
+ <div class="tabbar" style="display:flex;gap:8px;margin:10px 0">
+  <button class="sec on" data-sect="sect-saa">1 &middot; Asset strategy (SAA)</button>
+  <button class="sec" data-sect="sect-cat">2 &middot; Product catalogue</button>
+  <button class="sec" data-sect="sect-pf">3 &middot; Portfolio composer</button>
+ </div>
+
+ <div class="card sect" id="sect-saa">
+  <h2>Asset strategy (SAA) <span class="pill" id="wsum">weights: &hellip;</span></h2>
   <label class="muted">Total book market value
    <input id="total-mv" value="200000000"></label>
   <table id="saa"><thead><tr><th>Asset class</th><th>Type</th><th>Weight %</th>
@@ -200,16 +231,16 @@ def render_portfolio_html() -> str:
   <button class="sec" id="add-saa">+ add asset class</button>
  </div>
 
- <div class="card">
-  <h2>2 &middot; Product catalogue</h2>
+ <div class="card sect" id="sect-cat" style="display:none">
+  <h2>Product catalogue</h2>
   <table id="cat"><thead><tr><th>Product id</th><th>Family</th><th>Label</th>
    <th>Term min</th><th>Term max</th><th>CD rate %</th><th>RB rate %</th>
    <th>TB %</th><th>SV %</th><th></th></tr></thead><tbody></tbody></table>
   <button class="sec" id="add-cat">+ add product</button>
  </div>
 
- <div class="card">
-  <h2>3 &middot; Portfolio composer</h2>
+ <div class="card sect" id="sect-pf" style="display:none">
+  <h2>Portfolio composer</h2>
   <table id="pf"><thead><tr><th>Product</th><th>Issue age</th><th>Gender</th>
    <th>Term (y)</th><th>Sum assured</th><th>Annual premium</th><th>Policies</th>
    <th>Vested bonus</th><th></th></tr></thead><tbody></tbody></table>
@@ -334,6 +365,12 @@ function post(path){
     else{$("out").innerHTML="<span class=bad>INVALID ("+(j.errors||[]).length+
       " issue(s))</span>"+String.fromCharCode(10)+(j.errors||[]).join(String.fromCharCode(10));}
   }).catch(function(e){$("out").innerHTML="<span class=bad>error</span> "+e;});}
+document.querySelectorAll(".tabbar button[data-sect]").forEach(function(b){
+  b.addEventListener("click",function(){
+    document.querySelectorAll(".sect").forEach(function(c){c.style.display="none";});
+    document.querySelectorAll(".tabbar button[data-sect]").forEach(function(x){x.className="sec";});
+    $(b.getAttribute("data-sect")).style.display="block";
+    b.className="sec on";});});
 $("btn-validate").addEventListener("click",function(){post("/validate_construction");});
 $("btn-save").addEventListener("click",function(){post("/save_construction");});
 $("add-saa").addEventListener("click",function(){addSaaRow();});

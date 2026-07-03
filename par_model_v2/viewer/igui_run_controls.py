@@ -295,6 +295,8 @@ def render_form_html(values: Dict[str, Any] = None) -> str:
 </style></head>
 <body>
 <header><h1>Actuarial Input &amp; Run GUI &mdash; Run Controls</h1></header>
+""" + __import__("par_model_v2.viewer.igui_portfolio_builder",
+                 fromlist=["nav_html"]).nav_html("/") + """
 <main>
  <form id="rc">%s
   <div class="actions">
