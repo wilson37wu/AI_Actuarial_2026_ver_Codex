@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-03T06:24Z-ae32",
-  "started_at": "2026-07-03T06:24:06Z",
-  "ttl_minutes": 120,
-  "task": "GUI-4: run history & compare (persisted run registry, side-by-side diff)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-03T06:29:02Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
