@@ -130,8 +130,15 @@ class TestLiabilityBuckets(unittest.TestCase):
 
 
 class TestAssetSet(unittest.TestCase):
+    """Owner correction 2026-07-03: the fund must be COUPLED to the
+    liability book - grow with premium accumulation, run off with claims."""
+
     def setUp(self):
-        self.cf, self.bal = CF.project_asset_set(_balance_sheet())
+        self.liab = CF.project_liability_set(_portfolio())
+        self.net = (self.liab.groupby("month")["net_cashflow"].sum()
+                    .reindex(range(1, CF.HORIZON_MONTHS + 1), fill_value=0.0)
+                    .to_numpy())
+        self.cf, self.bal = CF.project_asset_set(_balance_sheet(), self.net)
 
     def test_grid_and_classes(self):
         classes = {"Government bonds", "Corporate bonds", "Private credit",
@@ -141,25 +148,67 @@ class TestAssetSet(unittest.TestCase):
         for _, g in self.bal.groupby("asset_class"):
             self.assertEqual(len(g), CF.HORIZON_MONTHS)
 
-    def test_bond_book_level_and_equity_compounds(self):
-        govt = self.bal[self.bal["asset_class"] == "Government bonds"]
-        self.assertAlmostEqual(float(govt["market_value"].min()), 120e6)
-        self.assertAlmostEqual(float(govt["market_value"].max()), 120e6)
-        eq = self.bal[self.bal["asset_class"] == "Equity"]
-        self.assertGreater(float(eq["market_value"].iloc[-1]), 30e6)
-        mv = eq["market_value"].to_numpy()
-        self.assertTrue((np.diff(mv) > 0).all())
+    def test_balances_are_not_level(self):
+        for _, g in self.bal.groupby("asset_class"):
+            mv = g["market_value"].to_numpy()
+            self.assertGreater(mv.max() - mv.min(), 1e-6 * max(mv.max(), 1.0))
 
-    def test_income_positive_and_reinvestment_nets_principal(self):
-        self.assertGreater(float(self.cf["income"].min()), 0.0)
-        bonds = self.cf[self.cf["asset_class"] == "Corporate bonds"]
-        np.testing.assert_allclose(
-            bonds["principal_repaid"].to_numpy(),
-            -bonds["reinvestment"].to_numpy(), rtol=1e-12)
+    def test_fund_responds_to_liability_runoff(self):
+        # total fund moves month-on-month by exactly income+growth+net flow
+        tot = self.bal.groupby("month")["market_value"].sum().to_numpy()
+        inc = self.cf.groupby("month")["investment_income"].sum().to_numpy()
+        grw = self.cf.groupby("month")["capital_growth"].sum().to_numpy()
+        opening = np.concatenate([[sum(a["market_value"]
+                                       for a in _balance_sheet()["assets"])],
+                                  tot[:-1]])
+        np.testing.assert_allclose(tot, opening + inc + grw + self.net,
+                                   rtol=1e-9)
+        # heavy maturity months (net liability CF strongly negative) shrink
+        # the fund relative to the prior month
+        worst = int(np.argmin(self.net))
+        if self.net[worst] + inc[worst] + grw[worst] < 0:
+            self.assertLess(tot[worst], opening[worst])
 
-    def test_empty_refused(self):
+    def test_accounting_identity_per_class(self):
+        for label, g in self.cf.groupby("asset_class"):
+            b = self.bal[self.bal["asset_class"] == label]
+            mv = b["market_value"].to_numpy()
+            mv0 = float([a["market_value"] for a in _balance_sheet()["assets"]
+                         if a["asset_class"] == label][0])
+            opening = np.concatenate([[mv0], mv[:-1]])
+            np.testing.assert_allclose(
+                mv, opening + g["investment_income"].to_numpy()
+                + g["capital_growth"].to_numpy()
+                + g["net_investment"].to_numpy(), rtol=1e-9)
+
+    def test_constant_mix_weights_hold(self):
+        assets = _balance_sheet()["assets"]
+        total0 = sum(a["market_value"] for a in assets)
+        tot = self.bal.groupby("month")["market_value"].sum()
+        for a in assets:
+            w = a["market_value"] / total0
+            cls = self.bal[self.bal["asset_class"] == a["asset_class"]]
+            share = (cls.set_index("month")["market_value"] / tot)
+            np.testing.assert_allclose(share.to_numpy(), w, rtol=1e-9)
+
+    def test_exhaustion_floors_at_zero_with_shortfall(self):
+        tiny = {"assets": [
+            {"asset_class": "Cash", "market_value": 1000.0, "illiquid": "no"}]}
+        drain = np.zeros(CF.HORIZON_MONTHS)
+        drain[0] = -5000.0
+        cf, bal = CF.project_asset_set(tiny, drain)
+        self.assertGreaterEqual(float(bal["market_value"].min()), 0.0)
+        self.assertGreater(cf.attrs["shortfall_total"], 0.0)
+
+    def test_standalone_view_none_liability(self):
+        cf, bal = CF.project_asset_set(_balance_sheet())
+        self.assertEqual(len(bal), 5 * CF.HORIZON_MONTHS)
+
+    def test_bad_inputs_refused(self):
         with self.assertRaises(ValueError):
             CF.project_asset_set({"assets": []})
+        with self.assertRaises(ValueError):
+            CF.project_asset_set(_balance_sheet(), np.zeros(10))
 
 
 class TestYearlyRollup(unittest.TestCase):

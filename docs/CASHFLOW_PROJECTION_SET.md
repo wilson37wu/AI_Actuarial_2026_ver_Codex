@@ -32,14 +32,24 @@ Premium timing, expense loadings (8% acq yr-0 / 4%+fixed renewal) and
 decrements are IDENTICAL to `monthly_projection.project_liability_cashflows`
 (regression-tested), so the set is consistent with the legacy engine.
 
-## Asset set — by asset class
+## Asset set — by asset class (liability-coupled fund)
 
-Per class: cash flows (`income`, `principal_repaid`, `reinvestment`,
-`net_cashflow`) and balance (`market_value`). Bonds amortise over class
-average maturity and reinvest in-class (level book; income = distributable
-cash flow); equity pays dividends and compounds; cash rolls at the short
-rate. Class mechanics are documented defaults keyed on the loader's asset
-labels.
+Owner correction 2026-07-03: the asset fund is COUPLED to the liability
+book. Monthly recursion: investment income (coupons/dividends/interest) is
+retained and reinvested; equity additionally compounds at the capital-growth
+rate; the month's net liability cash flow (premiums − expenses − benefits)
+is invested when positive and funded by asset sales when negative; the fund
+rebalances monthly to the opening balance-sheet class weights
+(constant-mix). Balances therefore GROW during premium accumulation and RUN
+OFF at maturities/claims; any post-runoff residual is surplus compounding at
+investment return (`totals.book_runoff_month` marks where the book ends).
+If outflows exhaust the fund, balances floor at zero and the unfunded amount
+is reported (`totals.asset_shortfall`).
+
+Per class: cash flows (`investment_income`, `capital_growth`,
+`net_investment` purchase+/sale−, `net_cashflow`) and balance
+(`market_value`). Accounting identity regression-tested:
+MV[m] = MV[m−1] + income + growth + net_investment.
 
 ## Output orientation (owner request 2026-07-03)
 

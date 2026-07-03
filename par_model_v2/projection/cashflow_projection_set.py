@@ -314,56 +314,95 @@ def _mechanics_for(label: str) -> Dict[str, Any]:
     return _DEFAULT_ASSET_MECHANICS
 
 
-def project_asset_set(balance_sheet: Dict[str, Any]):
-    """Monthly asset cash flows AND balances by asset class, months 1..1200.
+def project_asset_set(balance_sheet: Dict[str, Any],
+                      net_liability_cf: Optional[np.ndarray] = None):
+    """Monthly asset cash flows AND balances by asset class, months 1..1200,
+    COUPLED to the liability book (owner correction 2026-07-03: balances must
+    grow with premium accumulation and run off with the liabilities, not sit
+    level).
 
-    Bond classes: monthly income = yield/12 x MV; principal amortises over
-    the class's average maturity and is REINVESTED IN-CLASS (level book -
-    the income stream is the distributable cash flow).  Equity: dividend
-    income paid out, capital growth compounds the balance.  Cash: interest
-    paid out, balance level.
+    Fund recursion (documented ALM policy):
+      * investment income (bond coupons / equity dividends / cash interest)
+        is RETAINED and reinvested in the fund;
+      * equity balances additionally compound at the capital-growth rate;
+      * the liability NET cash flow of the month (premiums - expenses -
+        benefits, from the liability set) is INVESTED when positive and
+        FUNDED BY SELLING assets when negative;
+      * the fund is rebalanced monthly to the OPENING balance-sheet class
+        weights (constant-mix; bond principal roll is internal and has no
+        balance effect under constant mix);
+      * if outflows exhaust the fund, balances floor at zero and the
+        unfunded amount is reported in the ``shortfall`` column.
 
-    Returns ``(cf_frame, balance_frame)`` - tidy frames keyed by
-    [month, asset_class]."""
+    Per class cash-flow columns: ``investment_income``, ``capital_growth``,
+    ``net_investment`` (purchase + / sale -), and per class balance column
+    ``market_value``.  Accounting identity, tested:
+    MV_c[m] = MV_c[m-1] + income_c + growth_c + net_investment_c.
+
+    ``net_liability_cf`` is the length-1200 monthly net liability cash flow;
+    omitted (None) means a standalone asset view with zero liability flows.
+    """
     assets = (balance_sheet or {}).get("assets") or []
     if not assets:
         raise ValueError("balance_sheet.assets is empty - nothing to project")
+    if net_liability_cf is None:
+        net = np.zeros(HORIZON_MONTHS)
+    else:
+        net = np.asarray(net_liability_cf, dtype=float)
+        if net.shape != (HORIZON_MONTHS,):
+            raise ValueError("net_liability_cf must have length %d"
+                             % HORIZON_MONTHS)
+
+    labels = [str(a.get("asset_class")) for a in assets]
+    mv0 = np.array([float(a.get("market_value")) for a in assets])
+    if mv0.sum() <= 0:
+        raise ValueError("total backing asset market value must be positive")
+    weights = mv0 / mv0.sum()
+    mechs = [_mechanics_for(lbl) for lbl in labels]
+    inc_rate = np.array([
+        (m.get("annual_yield") if m["kind"] != "equity"
+         else m["annual_dividend_yield"]) / 12.0 for m in mechs])
+    grw_rate = np.array([
+        ((1.0 + m["annual_capital_growth"]) ** (1.0 / 12.0) - 1.0)
+        if m["kind"] == "equity" else 0.0 for m in mechs])
+
+    n = len(labels)
+    income = np.zeros((HORIZON_MONTHS, n))
+    growth = np.zeros((HORIZON_MONTHS, n))
+    net_inv = np.zeros((HORIZON_MONTHS, n))
+    mv = np.zeros((HORIZON_MONTHS, n))
+    shortfall = np.zeros(HORIZON_MONTHS)
+
+    bal = mv0.copy()
+    for i in range(HORIZON_MONTHS):
+        income[i] = inc_rate * bal
+        growth[i] = grw_rate * bal
+        total_new = bal.sum() + income[i].sum() + growth[i].sum() + net[i]
+        if total_new < 0.0:
+            shortfall[i] = -total_new
+            total_new = 0.0
+        new_bal = weights * total_new  # constant-mix rebalancing
+        net_inv[i] = new_bal - bal - income[i] - growth[i]
+        bal = new_bal
+        mv[i] = bal
+
     months = np.arange(1, HORIZON_MONTHS + 1)
     cf_frames, bal_frames = [], []
-    for a in assets:
-        label = str(a.get("asset_class"))
-        mv0 = float(a.get("market_value"))
-        mech = _mechanics_for(label)
-        income = np.zeros(HORIZON_MONTHS)
-        principal = np.zeros(HORIZON_MONTHS)
-        reinvest = np.zeros(HORIZON_MONTHS)
-        mv = np.zeros(HORIZON_MONTHS)
-        bal = mv0
-        if mech["kind"] == "bond":
-            amort_m = mv0 / (float(mech["avg_maturity_years"]) * 12.0)
-            for i in range(HORIZON_MONTHS):
-                income[i] = mech["annual_yield"] / 12.0 * bal
-                principal[i] = amort_m
-                reinvest[i] = -amort_m  # rolled back into the class
-                mv[i] = bal  # level book by construction
-        elif mech["kind"] == "equity":
-            g_m = (1.0 + mech["annual_capital_growth"]) ** (1.0 / 12.0) - 1.0
-            for i in range(HORIZON_MONTHS):
-                income[i] = mech["annual_dividend_yield"] / 12.0 * bal
-                bal = bal * (1.0 + g_m)
-                mv[i] = bal
-        else:  # cash
-            for i in range(HORIZON_MONTHS):
-                income[i] = mech["annual_yield"] / 12.0 * bal
-                mv[i] = bal
+    for j, label in enumerate(labels):
         cf_frames.append(pd.DataFrame({
-            "month": months, "asset_class": label, "income": income,
-            "principal_repaid": principal, "reinvestment": reinvest,
-            "net_cashflow": income + principal + reinvest}))
+            "month": months, "asset_class": label,
+            "investment_income": income[:, j],
+            "capital_growth": growth[:, j],
+            "net_investment": net_inv[:, j],
+            "net_cashflow": income[:, j] + growth[:, j] + net_inv[:, j]}))
         bal_frames.append(pd.DataFrame({
-            "month": months, "asset_class": label, "market_value": mv}))
-    return (pd.concat(cf_frames, ignore_index=True),
-            pd.concat(bal_frames, ignore_index=True))
+            "month": months, "asset_class": label,
+            "market_value": mv[:, j]}))
+    cf = pd.concat(cf_frames, ignore_index=True)
+    balf = pd.concat(bal_frames, ignore_index=True)
+    cf.attrs["shortfall_total"] = float(shortfall.sum())
+    balf.attrs["shortfall_total"] = float(shortfall.sum())
+    return cf, balf
 
 
 # ---------------------------------------------------------------------------
@@ -443,8 +482,11 @@ def build_cashflow_projection_set(model_inputs: Dict[str, Any],
             "vested_bonus": float(r.get("vested_bonus") or 0.0),
         })
     liab_m = project_liability_set(portfolio)
+    net_liab = (liab_m.groupby("month")["net_cashflow"].sum()
+                .reindex(range(1, HORIZON_MONTHS + 1), fill_value=0.0)
+                .to_numpy())
     asset_cf_m, asset_bal_m = project_asset_set(
-        model_inputs.get("balance_sheet") or {})
+        model_inputs.get("balance_sheet") or {}, net_liability_cf=net_liab)
     liab_y = yearly_rollup(liab_m, "product_class")
     asset_cf_y = yearly_rollup(asset_cf_m, "asset_class")
     asset_bal_y = yearly_rollup(asset_bal_m, "asset_class", balance=True)
@@ -462,7 +504,10 @@ def build_cashflow_projection_set(model_inputs: Dict[str, Any],
         "asset_classes": sorted(asset_cf_m["asset_class"].unique().tolist()),
         "totals": {
             "liability": {b: float(liab_m[b].sum()) for b in LIABILITY_BUCKETS},
-            "asset_income": float(asset_cf_m["income"].sum()),
+            "asset_income": float(asset_cf_m["investment_income"].sum()),
+            "asset_shortfall": float(asset_cf_m.attrs.get("shortfall_total", 0.0)),
+            "book_runoff_month": int(np.max(np.nonzero(net_liab)[0]) + 1
+                                     if np.any(net_liab) else 0),
             "asset_final_mv": float(
                 asset_bal_m[asset_bal_m["month"] == HORIZON_MONTHS]
                 ["market_value"].sum()),
