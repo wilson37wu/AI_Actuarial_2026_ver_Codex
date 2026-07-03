@@ -85,6 +85,12 @@ from par_model_v2.viewer.igui_stress import (  # noqa: E402  (GUI-2)
     render_stress_html,
     run_stress,
 )
+from par_model_v2.viewer.igui_calibration import (  # noqa: E402  (GUI-3)
+    calibration_catalogue,
+    market_data_status,
+    render_calibration_html,
+    run_calibration,
+)
 from par_model_v2.viewer.igui_results_refresh import (  # noqa: E402  (Task 8)
     refresh_user_results,
     DEFAULT_USER_RESULTS_DIR,
@@ -459,6 +465,13 @@ class _Handler(BaseHTTPRequestHandler):
                 "base_available": read_base_headline(out_root) is not None}))
         elif self.path == "/asset-stress":
             self._send(200, json.dumps(asset_stress_report()))
+        elif self.path in ("/calibration", "/calibration.html"):
+            self._send(200, render_calibration_html(), "text/html")
+        elif self.path == "/calibration-catalogue":
+            self._send(200, json.dumps({
+                "ok": True, "catalogue": calibration_catalogue()}))
+        elif self.path == "/market-data-status":
+            self._send(200, json.dumps(market_data_status(), default=str))
         elif self.path == "/jobs":
             if self.job_manager is None:
                 self._send(503, json.dumps({"ok": False, "error": "no job manager"}))
@@ -514,7 +527,7 @@ class _Handler(BaseHTTPRequestHandler):
     _POST_ROUTES = ("/validate", "/save", "/validate_portfolio", "/save_portfolio",
                     "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions",
                     "/validate_esg", "/save_esg", "/preflight", "/run", "/execute",
-                    "/execute-async", "/run-stress")
+                    "/execute-async", "/run-stress", "/run-calibration")
 
     def do_POST(self):
         if self.path not in self._POST_ROUTES:
@@ -564,6 +577,21 @@ class _Handler(BaseHTTPRequestHandler):
                                         _inp, _sid, _root, smoke=smk,
                                         repo_root=_REPO)),
                             meta={"kind": "stress", "stress_id": stress_id})
+            elif self.path == "/run-calibration":
+                if self.job_manager is None:
+                    res = {"ok": False, "errors": ["no job manager bound"]}
+                else:
+                    cal_id = (payload or {}).get("calibration_id")
+                    if not cal_id:
+                        res = {"ok": False, "errors": ["calibration_id required"]}
+                    else:
+                        out_root = os.path.join(_REPO, RUN_OUTPUT_DIR)
+                        res = self.job_manager.submit(
+                            smoke=True,
+                            runner=(lambda smk, _cid=cal_id, _root=out_root:
+                                    run_calibration(_cid, _root)),
+                            meta={"kind": "calibration",
+                                  "calibration_id": cal_id})
             elif self.path == "/execute-async":
                 if self.job_manager is None:
                     res = {"ok": False, "errors": ["no job manager bound"]}

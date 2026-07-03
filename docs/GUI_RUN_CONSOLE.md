@@ -53,6 +53,21 @@ Catalogue (all input-level, verifiably consumed by `run_model.py`): confidence 9
 
 Verified live: base 76,988.8 → confidence-99.0 stress 66,297.6 (−13.9%), base artifacts and `/my-results` untouched.
 
+## GUI-3 (2026-07-03): calibration console
+
+`/calibration` page + `par_model_v2/viewer/igui_calibration.py`. Triggers the governed calibration pipelines against the roadmap-#1 live market-data pipeline and renders fit diagnostics in-page. **Every result is UNSIGNED by construction** (roadmap #2: parameters pend Model Owner approval; roadmap #1: no owner-approved live vendor source is configured — data resolves through the sealed snapshot/fixture tier). The banner and per-result flag are always shown.
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/calibration` | GET | Calibration console page (market-data panel, run buttons, parameter card, UNSIGNED banner) |
+| `/calibration-catalogue` | GET | The two pipelines + engine availability |
+| `/market-data-status` | GET | CNY zero curve + CSI 300 via the governed pipeline: as-of, provenance tier, rows, SHA-256, lineage approver, UNSIGNED flag |
+| `/run-calibration` | POST | `{"calibration_id"}` → async job (same JobManager, `meta.kind="calibration"`) |
+
+Catalogue: `CAL_HW1F_SWAPTION` (Phase 13 — L-BFGS-B fit of (a, σ_r) per market; RMSE/SSE-proxy/max-error in bps, convergence, gates G-02/G-12) and `CAL_GBM_EQUITY` (Phase 14 — (σ_S, ERP, dividend yield, ρ) per market; observation counts, gate G-03). Diagnostics and the pipeline markdown report persist to an isolated `run_output/calibration_<id>/` directory.
+
+Governance isolation: a GUI calibration run uses a **fresh in-memory GovernanceStore** — the repository `.claude-dev/GOVERNANCE_STORE.json` is never loaded, mutated, or persisted (regression-tested byte-for-byte). Production ESG parameters and governed headline figures are untouched; adopting calibrated parameters requires the owner's signed ChangeRecord outside this console.
+
 ## Roadmap
 
-GUI-2 DONE(2026-07-03) → GUI-3 calibration runs → GUI-4 run history & compare (the `/jobs` registry is the seed).
+GUI-3 DONE(2026-07-03) → GUI-4 run history & compare (the `/jobs` registry is the seed).
