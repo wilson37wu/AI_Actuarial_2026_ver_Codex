@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-03T08:54Z-74f6",
-  "started_at": "2026-07-03T08:54:23Z",
-  "ttl_minutes": 120,
-  "task": "CF-1b (owner request): wide-format CF outputs - time in rows, classes as column headers",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-03T08:55:32Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
