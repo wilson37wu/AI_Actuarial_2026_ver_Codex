@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-03T08:55:32Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-03T09:03Z-604b",
+  "started_at": "2026-07-03T09:03:12Z",
+  "ttl_minutes": 120,
+  "task": "CF-1c (owner correction): liability-coupled asset fund projection - balances grow and run off with the book",
+  "note": ""
 }
