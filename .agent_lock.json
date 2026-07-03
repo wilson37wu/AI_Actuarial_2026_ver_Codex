@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-03T17:35Z-4c77",
-  "started_at": "2026-07-03T17:35:39Z",
-  "ttl_minutes": 120,
-  "task": "CF-3 (owner request): cash-flow projection GUI page - tables + charts + monthly drill-down",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-03T17:38:57Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
