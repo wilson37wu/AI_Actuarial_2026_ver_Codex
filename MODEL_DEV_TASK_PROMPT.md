@@ -3422,3 +3422,15 @@ Phase IGUI is **COMPLETE** (input+run GUI MVP + one-click packaging + own-run re
 3. **D packaging CI activation** — install `packaging/release.workflow.yml` → `.github/workflows/release.yml` with a `workflow`-scope GitHub token, then tag `v*` / dispatch to build ubuntu/windows/macos binaries (sandbox token lacks `workflow` scope; cross-OS binaries can't be built from Linux).
 
 **Standing env limitation:** `/sessions` sandbox mount is 100% full — engine venv (`/tmp/eng_venv`, pinned numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3) and all cycle authoring stay off-mount; new files commit to origin/main only and reach the Downloads mount on the owner's next `git pull`. Owner housekeeping recommended.
+
+---
+
+## NEXT EXECUTION POINTER (updated 2026-07-03 after W119 — exhausted-backlog verification + mount sync)
+
+**Terminal auto-runnable state holds.** W119 verdict PASS; governed artifacts byte-unchanged (offline_home `03d6538d`, ui_data contract `1.23.0`, headline `39975.654628199336`). Full battery GREEN (C bit-match 49657.9/37499.0/30267.9; D pkg-gate 26/26; integrity 177/177 + 4/4 + node 10/10 + MLMC 66/66). The single authoritative `in_progress` driver remains `.claude-dev/MODEL_DEV_STATE.json` = **Phase 38 Task 3 (owner-gated `ui_app.html` native-tab cutover)** — held, not auto-admissible.
+
+**Next cycle (W120) default = same light exhausted-backlog verification loop:** rebuild the pinned engine venv off-mount; re-run C (`launch_offline_gui.py --self-test` + `run_model.py 100×4 --no-tail --seed 42` bit-match) and D (pkg-gate 26/26); confirm integrity 177/177 + 4/4 + node 10/10 + MLMC 66/66 and byte anchors unchanged; full tracked-file md5 mount sync; owner-reply check; status email. **No new model-research workstream, no duplicate owner brief, no model-form change.**
+
+**Forward motion requires an explicit OWNER decision (surfaced in status email; do not pre-empt, do not re-litigate every cycle):** (1) Phase 38 Task 3 native-tab cutover (contract bump + gate sha256 re-baseline); (2) Tail-MLMC Stage-5 governed-default re-baseline; (3) MR-LONGEV-1 longevity 5th driver (model-form change); (4) D packaging CI activation (`workflow`-scope token + per-OS build env, unavailable in sandbox).
+
+**Standing env note:** dev sandbox is ephemeral — engine venv and all cycle authoring stay off-mount in a throwaway clone; new files commit to origin/main and reach the Downloads mount on the owner's next `git pull` (the mount `.git` is stale by design under virtiofs).
