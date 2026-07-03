@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-03T19:02Z-205f",
-  "started_at": "2026-07-03T19:02:47Z",
-  "ttl_minutes": 120,
-  "task": "PC-1c (owner report): navigation on EVERY console page via central injection",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-03T19:04:30Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
