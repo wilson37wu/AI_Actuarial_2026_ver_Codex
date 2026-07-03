@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-03T05:29Z-bf1e",
-  "started_at": "2026-07-03T05:29:30Z",
-  "ttl_minutes": 120,
-  "task": "GUI-2: sensitivities & stress in GUI with base-vs-stress deltas",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-03T05:38:50Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
