@@ -87,6 +87,10 @@ The owner reported that the Run Controls page only wrote `model_inputs.json` —
 
 `POST /save-run` orchestrates the existing governed steps server-side, bypassing nothing: (1) validate + save the posted run controls (same as `/save`); (2) auto-fill ONLY absent domains (model points + balance sheet / assumptions / ESG) through the same builders and validators the dedicated pages use; (3) re-run the Task-6 gate over the assembled file — a BLOCKED gate refuses the run and the page lists every blocking issue with links to the relevant input pages; (4) submit the run as a GUI-1 async job. The page polls `/jobs/<id>`, streams progress, and on success shows the headline with links to `/my-results` and `/history`. The engine re-verifies the gate before spawning, so `/save-run` cannot sidestep governance.
 
+### GUI-5 hotfix (2026-07-03, same day)
+
+Owner reported the button silently did nothing. Root cause: a collapsed backslash escape put RAW newlines inside JS string literals, so the page's whole inline script failed to parse and no click handler was ever attached — the page looked right but was inert. Fixed, and a permanent guard added: `tests/test_igui_page_scripts_syntax.py` runs `node --check` over every inline script of all nine GUI pages, so an unparseable page script can never ship again.
+
 ## Roadmap
 
 **GUI track COMPLETE:** GUI-1 → GUI-4 all DONE(2026-07-03). The general backlog (roadmap §4.1) resumes next cycle.
