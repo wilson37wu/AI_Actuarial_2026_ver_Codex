@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-03T06:29:02Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-03T06:34Z-9ff4",
+  "started_at": "2026-07-03T06:34:23Z",
+  "ttl_minutes": 120,
+  "task": "GUI-5 (owner request): one-click Save & run on the Run Controls page",
+  "note": ""
 }
