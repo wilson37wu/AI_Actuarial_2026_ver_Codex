@@ -49,6 +49,16 @@ Owner directive (2026-07-03, interactive session): build a comprehensive GUI so 
 
 Standing constraints: runs executed through the GUI must keep the existing governance trail (seed policy, parameter snapshots, SHA-256 audit) — the GUI is a front-end to the governed engine, never a bypass. Governed headline figures remain untouched except where an item explicitly covers them.
 
+### 4.0c OWNER-DIRECTED Cash-Flow Projection Set Track (directive 2026-07-03, KCW)
+
+Owner directive (2026-07-03, interactive): a NEW OUTPUT SET with liability cash flows by product class x type (premium, expense, benefits split guaranteed/non-guaranteed across death/surrender/maturity + cash dividend; >=6 buckets for CD products) and asset cash flows AND balances by asset class, monthly + yearly to 100 years. Owner-selected basis: deterministic central. Owner-selected delivery: JSON + CSV + GUI tab.
+
+| # | Item | Definition of done | Status |
+|---|------|--------------------|--------|
+| CF-1 | Projection engine + artifacts: `cashflow_projection_set.py` (3 product classes, 9 liability buckets, asset CF+balances, monthly 1..1200 + yearly 1..100, JSON+6 CSVs, inputs digest, UNSIGNED declaration-scale note); conventions regression-tested against the legacy per-product engine | Engine + files + tests GREEN | DONE(2026-07-03, see §5) |
+| CF-2 | Run integration: /save-run & execute_run attach the CF set to run_output + run registry; stale-set guard (inputs digest match) | CF set produced with every GUI run | OPEN |
+| CF-3 | GUI tab: yearly view + monthly drill-down per product class / asset class, CSV downloads, UNSIGNED banner | CF set browsable in GUI | OPEN |
+
 ### 4.1 General backlog
 
 
@@ -75,6 +85,7 @@ Items requiring human sign-off (owner approval, regulator deviation): implement 
 
 | Date | Item | Outcome | Commit |
 |------|------|---------|--------|
+| 2026-07-03 | CF-1 cash-flow projection set (owner directive): par_model_v2/projection/cashflow_projection_set.py - liability by product class x 9 buckets (gtd/non-gtd x death/maturity/surrender + cash dividend; CD product = 6 populated buckets), asset CF + balances by class, monthly+yearly to 100y, JSON+6 CSV artifacts with inputs digest; premium/expense/decrement conventions regression-tested vs legacy engine; 16 new tests GREEN, 98 legacy projection tests GREEN | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | HOTFIX GUI-5 (owner report: button did nothing): collapsed backslash escape put raw newlines inside JS string literals -> whole page script failed to parse -> no click handler; 21 escapes fixed; NEW GUARD tests/test_igui_page_scripts_syntax.py (node --check over every inline script of all 9 GUI pages); live e2e re-verified (seed 45 smoke run succeeded, headline rendered) | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | GUI-5 (owner request): Save & RUN button on Run Controls page; /save-run orchestration (save → autofill missing domains with governed defaults → gate → GUI-1 async job); gate never bypassed (engine re-verifies); 8 new tests GREEN; live e2e: one click → smoke run succeeded, headline rendered, /my-results refreshed; pre-existing sha-baseline failures unchanged | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | GUI-4 run history & compare: igui_run_history.py + /history /runs /runs/<id> /compare-runs; registry from persisted GUI-1 job records (id, timestamps, inputs digest, seed, headline); durable run-plan enrichment (survives artifact overwrite); side-by-side metadata + headline-delta compare with smoke/kind/same-digest notes; 14 new tests GREEN (53 across GUI-1..4); GUI TRACK COMPLETE | DONE | (this cycle's AUTO commit) |
