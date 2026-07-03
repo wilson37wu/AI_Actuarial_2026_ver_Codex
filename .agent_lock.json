@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-03T18:03Z-3f28",
-  "started_at": "2026-07-03T18:03:07Z",
-  "ttl_minutes": 120,
-  "task": "PC-1 (owner directive): flexible portfolio construction - asset SAA + product catalogue + GUI composer",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-03T18:12:01Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
