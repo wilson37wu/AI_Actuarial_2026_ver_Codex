@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-03T04:19:21Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-03T05:03Z-548e",
+  "started_at": "2026-07-03T05:03:30Z",
+  "ttl_minutes": 120,
+  "task": "GUI-1: run-console server skeleton + core stochastic run",
+  "note": ""
 }
