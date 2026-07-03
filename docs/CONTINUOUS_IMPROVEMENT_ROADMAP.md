@@ -57,7 +57,7 @@ Owner directive (2026-07-03, interactive): a NEW OUTPUT SET with liability cash 
 |---|------|--------------------|--------|
 | CF-1 | Projection engine + artifacts: `cashflow_projection_set.py` (3 product classes, 9 liability buckets, asset CF+balances, monthly 1..1200 + yearly 1..100, JSON+6 CSVs, inputs digest, UNSIGNED declaration-scale note); conventions regression-tested against the legacy per-product engine | Engine + files + tests GREEN | DONE(2026-07-03, see §5) |
 | CF-2 | Run integration: /save-run & execute_run attach the CF set to run_output + run registry; stale-set guard (inputs digest match) | CF set produced with every GUI run | OPEN |
-| CF-3 | GUI tab: yearly view + monthly drill-down per product class / asset class, CSV downloads, UNSIGNED banner | CF set browsable in GUI | OPEN |
+| CF-3 | GUI tab: yearly view + monthly drill-down per product class / asset class, CSV downloads, UNSIGNED banner | CF set browsable in GUI | DONE(2026-07-03, see §5) |
 
 ### 4.1 General backlog
 
@@ -85,6 +85,7 @@ Items requiring human sign-off (owner approval, regulator deviation): implement 
 
 | Date | Item | Outcome | Commit |
 |------|------|---------|--------|
+| 2026-07-03 | CF-3 (owner request): /cashflows GUI page - inline-SVG charts (liability CF components; stacked asset balances), yearly tables per class with monthly drill-down per year, digest-cached /cashflow-data endpoint (refreshes the six CSVs), UNSIGNED banner, run-off/shortfall callouts; page added to node JS-syntax guard; 6 new tests, 85 GREEN across CF+GUI suites | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | CF-1c (owner correction: asset balances were level): asset fund now COUPLED to liability net CF - income reinvested, benefits funded by sales, monthly constant-mix rebalancing, zero-floor + shortfall reporting, book_runoff_month marker; verified grow-then-run-off (peak y14 524M, -146.6M y20 maturities); 22/22 tests GREEN incl. accounting identity | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | CF-1b (owner request): wide-format CF artifacts - rows = time only, classes horizontal (<class>__<measure> headers; balances use plain class labels); JSON preview follows; 2 new pivot tests + updated artifact tests, 18/18 GREEN | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | CF-1 cash-flow projection set (owner directive): par_model_v2/projection/cashflow_projection_set.py - liability by product class x 9 buckets (gtd/non-gtd x death/maturity/surrender + cash dividend; CD product = 6 populated buckets), asset CF + balances by class, monthly+yearly to 100y, JSON+6 CSV artifacts with inputs digest; premium/expense/decrement conventions regression-tested vs legacy engine; 16 new tests GREEN, 98 legacy projection tests GREEN | DONE | (this cycle's AUTO commit) |

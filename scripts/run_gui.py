@@ -97,6 +97,10 @@ from par_model_v2.viewer.igui_run_history import (  # noqa: E402  (GUI-4)
     load_registry,
     render_history_html,
 )
+from par_model_v2.viewer.igui_cashflows import (  # noqa: E402  (CF-3)
+    build_cashflow_response,
+    render_cashflows_html,
+)
 from par_model_v2.viewer.igui_results_refresh import (  # noqa: E402  (Task 8)
     refresh_user_results,
     DEFAULT_USER_RESULTS_DIR,
@@ -558,6 +562,13 @@ class _Handler(BaseHTTPRequestHandler):
                 "ok": True, "catalogue": calibration_catalogue()}))
         elif self.path == "/market-data-status":
             self._send(200, json.dumps(market_data_status(), default=str))
+        elif self.path in ("/cashflows", "/cashflows.html"):
+            self._send(200, render_cashflows_html(), "text/html")
+        elif self.path == "/cashflow-data":
+            res = build_cashflow_response(
+                self.out_path, os.path.join(_REPO, RUN_OUTPUT_DIR))
+            self._send(200 if res.get("ok") else 422,
+                       json.dumps(res, default=str))
         elif self.path in ("/history", "/history.html"):
             self._send(200, render_history_html(), "text/html")
         elif self.path == "/runs":

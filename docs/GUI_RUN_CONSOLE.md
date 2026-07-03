@@ -91,6 +91,10 @@ The owner reported that the Run Controls page only wrote `model_inputs.json` —
 
 Owner reported the button silently did nothing. Root cause: a collapsed backslash escape put RAW newlines inside JS string literals, so the page's whole inline script failed to parse and no click handler was ever attached — the page looked right but was inert. Fixed, and a permanent guard added: `tests/test_igui_page_scripts_syntax.py` runs `node --check` over every inline script of all nine GUI pages, so an unparseable page script can never ship again.
 
+## CF-3 (2026-07-03, owner request): cash-flow projections page
+
+`/cashflows` + `par_model_v2/viewer/igui_cashflows.py`. Renders the CF-track projection set (roadmap §4.0c) as inline-SVG charts (liability premium/expense/benefit/net by year; asset balances stacked by class) and tables (yearly 1–100 per class, or monthly drill-down into any chosen year), with the UNSIGNED banner, book-run-off marker and fund-shortfall callout. `GET /cashflow-data` computes from the SAVED `model_inputs.json`, caches by the CF inputs digest (no re-run while portfolio/balance sheet unchanged) and refreshes the six wide CSVs in `run_output/cashflow_set/`. Zero external references — charts are hand-drawn SVG, no CDN.
+
 ## Roadmap
 
 **GUI track COMPLETE:** GUI-1 → GUI-4 all DONE(2026-07-03). The general backlog (roadmap §4.1) resumes next cycle.
