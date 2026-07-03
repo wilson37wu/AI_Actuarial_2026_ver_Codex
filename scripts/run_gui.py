@@ -519,6 +519,20 @@ def build_execute_response(out_path, *, payload=None, run_output_dir=RUN_OUTPUT_
     return res
 
 
+def _with_nav(html, active_path):
+    """PC-1c: inject the shared navigation bar right after <body> on every
+    console page (single change point - pages stay individually
+    self-contained; the byte-pinned ui_app.html / my-results copy is NEVER
+    touched by this: it is served through a different handler path)."""
+    from par_model_v2.viewer.igui_portfolio_builder import nav_html
+    marker = "<body>"
+    i = html.find(marker)
+    if i < 0:
+        return html
+    j = i + len(marker)
+    return html[:j] + nav_html(active_path) + html[j:]
+
+
 class _Handler(BaseHTTPRequestHandler):
     server_version = "IGUIRunGui/1.0"
     out_path = "model_inputs.json"
@@ -535,17 +549,17 @@ class _Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path in ("/", "/index.html"):
-            self._send(200, render_form_html(), "text/html")
+            self._send(200, _with_nav(render_form_html(), "/"), "text/html")
         elif self.path in ("/model-points", "/model-points.html"):
-            self._send(200, render_model_points_html(), "text/html")
+            self._send(200, _with_nav(render_model_points_html(), "/model-points"), "text/html")
         elif self.path in ("/assumptions", "/assumptions.html"):
-            self._send(200, render_assumptions_html(), "text/html")
+            self._send(200, _with_nav(render_assumptions_html(), "/assumptions"), "text/html")
         elif self.path in ("/esg", "/esg.html"):
-            self._send(200, render_esg_html(), "text/html")
+            self._send(200, _with_nav(render_esg_html(), "/esg"), "text/html")
         elif self.path in ("/run-gate", "/run-gate.html"):
-            self._send(200, render_gate_html(), "text/html")
+            self._send(200, _with_nav(render_gate_html(), "/run-gate"), "text/html")
         elif self.path in ("/stress", "/stress.html"):
-            self._send(200, render_stress_html(), ctype="text/html")
+            self._send(200, _with_nav(render_stress_html(), "/stress"), ctype="text/html")
         elif self.path == "/stress-catalogue":
             mi = None
             try:
@@ -561,26 +575,26 @@ class _Handler(BaseHTTPRequestHandler):
         elif self.path == "/asset-stress":
             self._send(200, json.dumps(asset_stress_report()))
         elif self.path in ("/calibration", "/calibration.html"):
-            self._send(200, render_calibration_html(), "text/html")
+            self._send(200, _with_nav(render_calibration_html(), "/calibration"), "text/html")
         elif self.path == "/calibration-catalogue":
             self._send(200, json.dumps({
                 "ok": True, "catalogue": calibration_catalogue()}))
         elif self.path == "/market-data-status":
             self._send(200, json.dumps(market_data_status(), default=str))
         elif self.path in ("/portfolio", "/portfolio.html"):
-            self._send(200, render_portfolio_html(), "text/html")
+            self._send(200, _with_nav(render_portfolio_html(), "/portfolio"), "text/html")
         elif self.path == "/portfolio-defaults":
             self._send(200, json.dumps(
                 build_construction_defaults(self.out_path), default=str))
         elif self.path in ("/cashflows", "/cashflows.html"):
-            self._send(200, render_cashflows_html(), "text/html")
+            self._send(200, _with_nav(render_cashflows_html(), "/cashflows"), "text/html")
         elif self.path == "/cashflow-data":
             res = build_cashflow_response(
                 self.out_path, os.path.join(_REPO, RUN_OUTPUT_DIR))
             self._send(200 if res.get("ok") else 422,
                        json.dumps(res, default=str))
         elif self.path in ("/history", "/history.html"):
-            self._send(200, render_history_html(), "text/html")
+            self._send(200, _with_nav(render_history_html(), "/history"), "text/html")
         elif self.path == "/runs":
             self._send(200, json.dumps(
                 load_registry(self._jobs_dir()), default=str))
@@ -615,7 +629,7 @@ class _Handler(BaseHTTPRequestHandler):
                 st = self.job_manager.status(jid)
                 self._send(200 if st.get("ok") else 404, json.dumps(st))
         elif self.path in ("/run-execution", "/run-execution.html"):
-            self._send(200, render_run_html(), "text/html")
+            self._send(200, _with_nav(render_run_html(), "/run-execution"), "text/html")
         elif self.path in ("/my-results", "/my-results.html"):
             self._serve_user_results_html()
         elif self.path == "/my-results.json":

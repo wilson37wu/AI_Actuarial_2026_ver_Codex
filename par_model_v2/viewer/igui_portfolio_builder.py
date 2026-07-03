@@ -206,7 +206,7 @@ def render_portfolio_html() -> str:
  .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;border:1px solid #394150}
  .unsigned{background:#3a2b12;border:1px solid #8a6d1a;color:#ffd166;border-radius:10px;padding:10px 14px;margin:10px 0;font-weight:600}
  .tabbar button.on{background:#2b6cff;border-color:#2b6cff}
-</style></head><body>""" + nav_html("/portfolio") + """<main>
+</style></head><body><main>
  <h1>Portfolio construction</h1>
  <div class="muted">PC-1 - construct the inputs freely: asset classes + SAA (derives the balance sheet
   and drives the fund mechanics), a product catalogue (e.g. short vs long term par products), and the
