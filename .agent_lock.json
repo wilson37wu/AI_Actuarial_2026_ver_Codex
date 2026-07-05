@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-03T19:04:30Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-05T20:08Z-48d3",
+  "started_at": "2026-07-05T20:08:40Z",
+  "ttl_minutes": 120,
+  "task": "AUTO W123 exhausted-backlog verification + mount sync (Phase 38 T3 owner-gated)",
+  "note": ""
 }
