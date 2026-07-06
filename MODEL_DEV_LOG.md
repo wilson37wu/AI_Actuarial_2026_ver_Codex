@@ -12814,3 +12814,15 @@ Exhausted-backlog verification + mount sync (Phase 38 T3 owner-gated). FULL batt
 - Byte-stability: offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data.json contract 1.23.0; headline SCR 39975.654628199336.
 - Env note: pinned venv numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3; sandbox pip proxy served non-canonical wheel hashes intermittently, resolved on retry with clean pip config. No repo change.
 - NO code / model-FORM / contract / headline / banner change. Mount synced to origin/main.
+
+---
+## W130 — 2026-07-06T03:10Z (claude, auto 06:00 UTC window)
+**Type:** exhausted-backlog verification + full mount sync (SKILL-sanctioned branch).
+**Task pointer:** sole in_progress = Phase 38 Task 3 (ui_app.html native-tab cutover) — OWNER-GATED (needs owner sha256 re-baseline + ui_data contract bump). Not auto-executed. Auto-admissible backlog remains SATURATED.
+**Gates (all GREEN):**
+- Gate C: launch_offline_gui --self-test self_test_ok:true / engine_ready:true; run_model --n-outer 100 --n-inner 4 --no-tail --seed 42 bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9.
+- Gate D: actuarial_gui.spec AST-parses; release.workflow.yml valid; offline_bootstrap --self-test exit 0; build_phase_pkg_task1_validate exit 0. (Per-OS binary BUILD stays owner/CI-gated — correct.)
+- Integrity/governance: build_offline_home_validate 177/177; test_offline_home_validate 4/4; offline_home_loader_parity.cjs (node) 10/10; MLMC suite 66/66.
+**Byte-stability:** offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data.json contract 1.23.0; headline 39975.654628199336 — all unchanged.
+**Housekeeping:** reverted non-deterministic run_model evidence churn (run_timestamp/duration/wall_clock only; SCR values identical) per W128 precedent → evidence JSONs byte-stable.
+**Change:** NONE (verification + sync only). No model-FORM / contract / headline / banner change. LSMC proxy, MLMC-default stage-5, MR-LONGEV-1 longevity driver, signed per-OS binaries — all remain OWNER-GATED.
