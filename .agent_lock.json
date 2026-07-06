@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-06T10:14:29Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-06T11:08Z-227d",
+  "started_at": "2026-07-06T11:08:34Z",
+  "ttl_minutes": 120,
+  "task": "Phase 38 Task 3 owner-gated -> exhausted-backlog verification + mount sync",
+  "note": ""
 }
