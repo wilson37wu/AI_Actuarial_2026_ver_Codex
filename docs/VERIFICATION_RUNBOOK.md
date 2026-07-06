@@ -99,16 +99,20 @@ STANDALONE (`ui_data.json`) 26-section digest manifests; together with the share
 `root_digest` they imply embedded == standalone payload equality (see `INTEGRITY_GATE_MAP.md`
 for the transitive-closure argument — that is why no further payload-equality gate is added).
 
-## 5. MLMC suite (53 tests) — run in batches
+## 5. MLMC suite (66 tests) — run per-file, no cache
 
-The full `tests/test_mlmc_*.py` run exceeds a single 45 s sandbox window. Split it (each batch
-< 45 s) — this is an execution gotcha, not a flakiness signal:
+The full `tests/test_mlmc_*.py` run exceeds a single 45 s sandbox window, and under disk
+pressure (sandbox `/` at 100%) the whole-suite run **hangs** on pytest's cache/tmp writes
+rather than failing — it stalls after the first few dots and never returns. Run **per file**
+with the cache plugin disabled (`-p no:cacheprovider`); each file finishes in seconds. This is
+an execution/environment gotcha, not a flakiness signal:
 
 ```bash
-$PY -m pytest tests/test_mlmc_inner_estimator.py tests/test_mlmc_stage3_wiring.py -q   # 16 passed (~28 s)
-$PY -m pytest tests/test_mlmc_tail_estimator.py  tests/test_mlmc_tail_stage3.py  -q   # 15 passed (~30 s)
-$PY -m pytest tests/test_mlmc_tail_stage4.py     tests/test_mlmc_tail_stage4b.py -q   # 22 passed (~18 s)
-# total 53/53
+for F in inner_estimator stage3_wiring tail_estimator tail_stage3 tail_stage4 tail_stage4b tail_stage5; do
+  $PY -m pytest tests/test_mlmc_$F.py -q -p no:cacheprovider --no-header   # runs in <15 s each
+done
+# per-file counts: inner 8 + stage3_wiring 8 + tail_estimator 11 + tail_stage3 4
+#                + tail_stage4 10 + tail_stage4b 12 + tail_stage5 13  =  total 66/66
 ```
 
 ## 6. Governed byte-stability anchors
@@ -159,7 +163,7 @@ python3 scripts/agent_lock.py release --owner claude
 | Integrity parity | `offline_home_loader_parity.cjs` | **10/10** |
 | Integrity embedded | `ui_app_selftest_nojsdom.cjs` | **40/40** |
 | Integrity standalone | `ui_data_section_digest_recompute_parity.cjs` | **22/22** |
-| MLMC | `tests/test_mlmc_*.py` (3 batches) | **53/53** |
+| MLMC | `tests/test_mlmc_*.py` (7 files, per-file `-p no:cacheprovider`) | **66/66** |
 | Byte-stability | md5 / sha256 / contract / headline | all anchors unchanged (§6) |
 
 *Last reproduced end-to-end: W93, 2026-06-30, claude AUTO, all GREEN.*

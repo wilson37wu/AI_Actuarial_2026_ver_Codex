@@ -12976,3 +12976,13 @@ Exhausted-backlog verification + mount sync (auto-admissible). Full battery GREE
 - **Gates (all GREEN):** C self_test_ok/engine_ready true, smoke bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9; D spec-AST + workflow-YAML + bootstrap self-test + pkg-validate pass; integrity 177/177, test_offline_home_validate 4/4, node parity 10/10, MLMC 66/66 (8+8+11+4+10+12+13).
 - **Governed byte-stable:** offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9, ui_data contract 1.23.0, headline 39975.654628199336. No code/model-FORM/contract/headline/banner change.
 - **ENV BLOCKER (recurring):** /sessions disk 100% full (0 avail), root / ~94M; ~25+ ghost cc_* clones + engine venvs owned by `nobody` (virtiofs) undeletable; reused pinned /tmp/venv_engine. Owner sandbox/disk reset needed before any build-heavy cycle.
+
+## W150 — 2026-07-07T07:10Z — exhausted-backlog verification + mount sync (+ runbook S5 fix)
+- **Coordination:** shallow `--depth 1` clone (sandbox `/` at 100%, ghost clones/venvs undeletable). preflight PROCEED; acquire+push ACQUIRED (origin/main at lock commit); pinned /tmp/venv_engine (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3).
+- **Gate C:** self_test_ok+engine_ready true; smoke `--n-outer 100 --n-inner 4 --no-tail --seed 42` → nested **49657.9** / gaussian **37499.0** / var-covar **30267.9** (bit-match).
+- **Gate D:** spec AST OK; release workflow YAML OK; offline_bootstrap --self-test ok; build_phase_pkg_task1_validate 26/26 pass. Per-OS binary build stays owner/CI-gated (correct).
+- **Integrity:** offline_home_validate **177/177**; test_offline_home_validate **4/4**; node loader-parity **10/10**; MLMC **66/66** (inner8+stage3_wiring8+tail_estimator11+tail_stage3_4+stage4_10+stage4b12+stage5_13).
+- **Governed byte-stable:** offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`; ui_data.json contract `1.23.0`; headline `39975.654628199336`.
+- **One task:** Phase 38 Task 3 remains OWNER-GATED (native-tab cutover needs sha256 re-baseline + ui_data contract bump + jsdom env). No model-FORM/contract/headline/banner change.
+- **Non-duplicate improvement (docs-only, auto-admissible):** fixed `docs/VERIFICATION_RUNBOOK.md` §5 + Expected-GREEN table from stale **53/53 (3 batches, stage5 omitted)** to **66/66 (7 files)**, and documented the disk-pressure **MLMC whole-suite HANG** found this run → run per-file with `-p no:cacheprovider` (each <15s).
+- **ENV BLOCKER (persists):** sandbox `/` at 100% (43–51M free); undeletable `nobody`-owned ghost clones/venvs; owner disk reset needed before any build-heavy cycle.
