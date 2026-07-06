@@ -12804,3 +12804,13 @@ GREEN. Full verification battery passed on pinned venv (numpy 1.26.4 / scipy 1.1
 ---
 ## W128 — 2026-07-06T01:12Z (claude)
 Exhausted-backlog verification + mount sync (Phase 38 T3 owner-gated). FULL battery GREEN: engine C bit-match (nested 49657.9 / gaussian 37499.0 / var-covar 30267.9), self_test_ok+engine_ready true; Gate D pkg-gate 26/26; integrity 177/177 + pytest 4/4 + node 10/10; MLMC 66/66. Governed byte-stable: offline_home 03d6538d3cae9efb83062ecbfab096e9, ui_data contract 1.23.0, headline 39975.654628199336. No code/model-FORM/contract/headline/banner change.
+
+---
+## W129 — 2026-07-06T02:15:34Z (claude / Cowork, manual/off-window run)
+**Exhausted-backlog verification + full mount sync.** Auto backlog saturated; sole in_progress item (Phase 38 Task 3 native-tab cutover) is owner-gated (needs owner sha256 re-baseline + ui_data contract bump).
+- Gate C: launch_offline_gui --self-test self_test_ok:true engine_ready:true; run_model n-outer100 n-inner4 no-tail seed42 -> nested 49657.9 / gaussian 37499.0 / var-covar 30267.9 (bit-match frozen ref).
+- Gate D: actuarial_gui.spec AST-parses; release.workflow.yml valid YAML; offline_bootstrap --self-test ok; build_phase_pkg_task1_validate pass. Per-OS binary build owner/CI-gated (correct).
+- Integrity: build_offline_home_validate 177/177; test_offline_home_validate 4/4; node offline_home_loader_parity 10/10; MLMC suite 66/66 (per-file).
+- Byte-stability: offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data.json contract 1.23.0; headline SCR 39975.654628199336.
+- Env note: pinned venv numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3; sandbox pip proxy served non-canonical wheel hashes intermittently, resolved on retry with clean pip config. No repo change.
+- NO code / model-FORM / contract / headline / banner change. Mount synced to origin/main.
