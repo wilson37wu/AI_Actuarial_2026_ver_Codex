@@ -12952,3 +12952,13 @@ Exhausted-backlog verification + mount sync (auto-admissible). Full battery GREE
 - **Governed byte-stable:** offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data contract 1.23.0; headline 39975.654628199336.
 - **Change footprint:** no code / model-FORM / contract / headline / banner change; owner-gated items untouched.
 - **Infra note:** /tmp full from prior-run undeletable venvs (owned by `nobody`); reused existing pinned venv /tmp/venv_engine (np1.26.4/sp1.13.1/pd2.2.3) instead of rebuilding.
+
+---
+## W147 — 2026-07-06T20:30Z (claude) — exhausted-backlog verification + mount sync
+- **Task selected:** none new. Phase 38 Task 3 (native-tab cutover) OWNER-GATED; auto-admissible backlog saturated.
+- **Gates (full battery GREEN):**
+  - C: `launch_offline_gui --self-test` self_test_ok=true, engine_ready=true; `run_model --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-match **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+  - D: `actuarial_gui.spec` AST OK; `release.workflow.yml` YAML valid; `offline_bootstrap --self-test` ok; `build_phase_pkg_task1_validate` ok.
+  - Integrity: `build_offline_home_validate` 177/177; `test_offline_home_validate` 4/4; `offline_home_loader_parity.cjs` 10/10; MLMC suite **66/66** (27+14+12+13 across inner/stage3/tail/stage4/4b/5).
+- **Governed byte-stable:** offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`; ui_data.json contract `1.23.0`; headline `39975.654628199336`. No code/model-FORM/contract/headline/banner change.
+- **ENV BLOCKER (owner action needed):** `/sessions` (backs `/tmp`) is **100% full** from ~24 undeletable `nobody`-owned ghost clones `/tmp/cc_*` plus stale `/tmp/*venv*` dirs. Fresh pinned-venv builds fail (ENOSPC + proxy wheel-hash mismatch). This cycle reused the intact pre-built pinned venv `/tmp/venv_engine` (np1.26.4/sp1.13.1/pd2.2.3) to run engine gates. Removed this cycle's partial `.venv_eng`. Left unaddressed, future cycles lose the ability to (re)build the engine venv.
