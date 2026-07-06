@@ -12905,3 +12905,11 @@ Exhausted-backlog verification + full mount sync. FULL battery GREEN: Gate C bit
 
 ## W139 — 2026-07-06T12:14Z (claude) — exhausted-backlog verification + mount sync
 FULL battery GREEN. Gate C: self_test_ok/engine_ready true; smoke bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9 (seed 42, n-outer 100, n-inner 4, no-tail). Gate D: spec AST OK; release.workflow YAML valid; offline_bootstrap self-test ok; build_phase_pkg gate pass. Integrity: build_offline_home 177/177; test_offline_home 4/4; node parity 10/10; MLMC 66/66. Governed byte-stable: offline_home 03d6538d3cae9efb83062ecbfab096e9; ui_data 1.23.0; headline 39975.654628199336. No code/model-FORM/contract/headline/banner change. Phase 38 T3 + LSMC + MLMC-default + MR-LONGEV-1 + signed binaries OWNER-GATED. Backlog SATURATED.
+
+## W140 — 2026-07-06T13:10Z (claude) — exhausted-backlog verification + mount sync
+- **Coordination:** fresh clone; preflight PROCEED (owner null); lock ACQUIRED (2026-07-06T13:08Z-bb41).
+- **Gate C:** `launch_offline_gui.py --self-test` -> self_test_ok/engine_ready true; `run_model.py --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9.
+- **Gate D:** `actuarial_gui.spec` AST OK; `release.workflow.yml` YAML valid; `offline_bootstrap.py --self-test` ok:true; `build_phase_pkg_task1_validate.py` gate ok (26/26). Per-OS binary BUILD stays owner/CI-gated (correct).
+- **Integrity/governance:** build_offline_home 177/177; test_offline_home 4/4; node parity 10/10; MLMC 66/66. Governed byte-unchanged: offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data.json contract 1.23.0; headline 39975.654628199336.
+- **Mount sync:** full `git ls-files` md5 diff mount-vs-clone; 2 stale tracked files refreshed clone->mount (W139 commits), 0 missing; 0 remaining diffs (excl. dynamic .agent_lock.json).
+- **Changes:** none. No code/model-FORM/contract/headline/banner change. Prompt candidate already pre-registered — no near-dup refresh (standing directive: no duplicate research brief). Phase 38 T3 + LSMC + MLMC-default + MR-LONGEV-1 + signed binaries remain OWNER-GATED.
