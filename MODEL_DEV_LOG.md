@@ -12850,3 +12850,22 @@ Exhausted-backlog verification + mount sync (Phase 38 T3 owner-gated). FULL batt
 **Byte-stability:** offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data.json contract 1.23.0; headline 39975.654628199336 — all unchanged.
 **Housekeeping:** reverted non-deterministic run_model evidence churn (run_timestamp/duration/wall_clock only; SCR values identical) per W128/W130/W131 precedent → evidence JSONs byte-stable. No banner re-churn (near-duplicate guard held).
 **Change:** NONE (verification + sync only). No model-FORM / contract / headline / banner change. LSMC proxy, MLMC-default stage-5, MR-LONGEV-1 longevity driver, signed per-OS binaries — all remain OWNER-GATED.
+
+---
+
+## AUTO W133 (claude) — 2026-07-06T06:09Z — exhausted-backlog verification + mount sync
+
+**Preflight/lock:** fresh throwaway clone; `agent_lock preflight` → PROCEED (owner null, last released by claude 05:16Z); `acquire` cycle `2026-07-06T06:09Z-5338` pushed to main.
+
+**One task:** Auto-admissible backlog SATURATED; Phase 38 Task 3 (ui_app.html native-tab cutover) is OWNER-GATED (needs owner sha256 re-baseline + ui_data contract bump). Per standing instruction, ran the single verification + sync pass.
+
+**Gates — FULL battery GREEN:**
+- **C (engine):** `launch_offline_gui --self-test` → self_test_ok:true, engine_ready:true. `run_model --n-outer 100 --n-inner 4 --no-tail --seed 42` → nested **49657.9** / gaussian **37499.0** / var-covar **30267.9** — bit-match to frozen reference.
+- **D (packaging):** actuarial_gui.spec AST-parses; release.workflow.yml YAML-valid; offline_bootstrap self-test all ok; build_phase_pkg_task1_validate gate ok. (Per-OS binary build stays owner/CI-gated by design.)
+- **Integrity:** build_offline_home_validate **177/177**; test_offline_home_validate **4/4**; node offline_home_loader_parity **10/10**; MLMC suite **66/66**.
+
+**Byte-stability (governed):** offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`; ui_data.json contract `1.23.0`; headline `39975.654628199336` — all unchanged.
+
+**Env note:** the mounted working folder (`/sessions`) was 100% disk-full, truncating binary wheels; rebuilt the pinned engine venv (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3) on the container root fs and `wget -c` resume-downloaded scipy/pandas past the 45s network cap. Reverted transient run_model validation-report churn from the smoke run.
+
+**Result:** no model-form change, no contract bump, no new artifacts. main advanced by lock acquire/record/release only.
