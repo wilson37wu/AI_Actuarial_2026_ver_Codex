@@ -97,8 +97,9 @@ from par_model_v2.viewer.igui_run_history import (  # noqa: E402  (GUI-4)
     load_registry,
     render_history_html,
 )
-from par_model_v2.viewer.igui_path_detail import (  # noqa: E402  (GD-1)
+from par_model_v2.viewer.igui_path_detail import (  # noqa: E402  (GD-1/GD-4)
     build_path_detail_response,
+    load_run_path_detail,
     render_paths_html,
 )
 from par_model_v2.viewer.igui_cashflows import (  # noqa: E402  (CF-3)
@@ -623,9 +624,15 @@ class _Handler(BaseHTTPRequestHandler):
                        json.dumps(res, default=str))
         elif self.path in ("/paths", "/paths.html"):
             self._send(200, _with_nav(render_paths_html(), "/paths"), "text/html")
-        elif self.path == "/path-data":
-            res = build_path_detail_response(
-                self.out_path, os.path.join(_REPO, RUN_OUTPUT_DIR))
+        elif self.path == "/path-data" or self.path.startswith("/path-data?"):
+            import urllib.parse as _up
+            q = _up.parse_qs(_up.urlparse(self.path).query)
+            rid = (q.get("run") or [None])[0]
+            if rid:  # GD-4: the set persisted WITH that executed run
+                res = load_run_path_detail(self._jobs_dir(), rid)
+            else:
+                res = build_path_detail_response(
+                    self.out_path, os.path.join(_REPO, RUN_OUTPUT_DIR))
             self._send(200 if res.get("ok") else 422,
                        json.dumps(res, default=str))
         elif self.path in ("/history", "/history.html"):

@@ -105,6 +105,96 @@ def build_path_detail_response(inputs_path: str, out_root: str) -> Dict[str, Any
     return payload
 
 
+# --------------------------------------------------------------------------
+# GD-4 - per-run persistence (owner directive 2026-07-07)
+# --------------------------------------------------------------------------
+RUN_PATH_SET_DIRNAME = "path_detail_runs"
+PATH_RUN_SCHEMA_VERSION = "gd4-run-paths-1.0"
+
+
+def attach_path_detail_for_run(inputs_path: str, out_root: str) -> Dict[str, Any]:
+    """GD-4: persist the GD-1 scenario-path set WITH an executed run.
+
+    Called (best-effort) by ``execute_run`` right after a successful engine
+    run, with the SAME gated ``model_inputs.json`` the run consumed.  The set
+    is written under ``<out_root>/path_detail_runs/<digest12>/path_detail/``
+    keyed by the GD-1 inputs digest, so runs on identical inputs SHARE one
+    persisted copy (the digest cache makes the repeat attach free) and later
+    runs never overwrite an earlier run's set (unlike the shared
+    ``run_output`` engine artifacts).  Returns a JSON-safe attachment block
+    that the GUI-1 ``JobManager`` persists on the job record; NEVER raises -
+    a path-detail hiccup must not fail the governed run.
+    """
+    try:
+        mi: Dict[str, Any] = {}
+        if os.path.exists(inputs_path):
+            with open(inputs_path, encoding="utf-8") as fh:
+                mi = json.load(fh)
+        from par_model_v2.projection.scenario_path_detail import (
+            _inputs_digest, _resolve_horizon, DEFAULT_N_PATHS)
+        digest = _inputs_digest(mi, DEFAULT_N_PATHS, _resolve_horizon(mi, None))
+        run_root = os.path.join(out_root, RUN_PATH_SET_DIRNAME, digest[:12])
+        res = build_path_detail_response(inputs_path, run_root)
+        if not res.get("ok"):
+            return {"ok": False, "schema": PATH_RUN_SCHEMA_VERSION,
+                    "errors": res.get("errors") or ["path detail unavailable"]}
+        return {"ok": True, "schema": PATH_RUN_SCHEMA_VERSION,
+                "inputs_digest": res.get("inputs_digest"),
+                "seed": res.get("seed"),
+                "n_paths": res.get("n_paths"),
+                "horizon_months": res.get("horizon_months"),
+                "cached": bool(res.get("cached")),
+                "dir": os.path.abspath(os.path.join(run_root, PATH_SET_DIRNAME))}
+    except Exception as exc:  # diagnostic overlay - never fail the run
+        return {"ok": False, "schema": PATH_RUN_SCHEMA_VERSION,
+                "errors": ["path-detail attachment failed: %s" % exc]}
+
+
+def load_run_path_detail(jobs_dir: str, run_id: str) -> Dict[str, Any]:
+    """GD-4: serve the path-detail payload PERSISTED with a past run.
+
+    Reads the GUI-1 job record, follows its ``result.path_detail`` attachment
+    to the digest-keyed directory and returns the persisted page payload with
+    run provenance stamped on it.  The set shown is EXACTLY the one attached
+    when the run executed - the current ``model_inputs.json`` is NOT read.
+    """
+    safe = os.path.basename(str(run_id))  # no path traversal via run_id
+    job_path = os.path.join(jobs_dir, "job_{}.json".format(safe))
+    try:
+        with open(job_path, encoding="utf-8") as fh:
+            record = json.load(fh)
+    except (OSError, json.JSONDecodeError, ValueError):
+        return {"ok": False, "errors": ["unknown run_id: %s" % safe]}
+    att = (record.get("result") or {}).get("path_detail")
+    if not isinstance(att, dict) or not att.get("ok") or not att.get("dir"):
+        return {"ok": False, "errors": [
+            "run %s has no persisted scenario-path set (runs executed "
+            "before GD-4 do not carry one - re-run to attach it)" % safe]}
+    cache_path = os.path.join(att["dir"], "PATH_GUI_CACHE.json")
+    try:
+        with open(cache_path, encoding="utf-8") as fh:
+            payload = json.load(fh)
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        return {"ok": False, "errors": [
+            "persisted path set unreadable (%s): %s" % (cache_path, exc)]}
+    if payload.get("schema") != PATH_GUI_SCHEMA_VERSION:
+        return {"ok": False, "errors": [
+            "persisted path set schema %r does not match the page schema %r"
+            % (payload.get("schema"), PATH_GUI_SCHEMA_VERSION)]}
+    if att.get("inputs_digest") and payload.get(
+            "inputs_digest") != att.get("inputs_digest"):
+        return {"ok": False, "errors": [
+            "persisted path set digest does not match the run attachment"]}
+    payload["ok"] = True
+    payload["cached"] = True
+    payload["run_id"] = record.get("job_id")
+    payload["run_note"] = (
+        "showing the scenario-path set persisted with run %s (finished %s) - "
+        "bound to that run's gated inputs, not the current ones"
+        % (record.get("job_id"), record.get("finished_at") or "n/a"))
+    return payload
+
+
 def render_paths_html() -> str:
     """Self-contained scenario-path page (fan charts + sample overlays)."""
     return """<!doctype html><html lang="en"><head><meta charset="utf-8">
@@ -136,6 +226,7 @@ def render_paths_html() -> str:
   Percentile fan = p5/p25/p50/p75/p95 across all simulated paths; thin lines = raw sample paths.</div>
  <div class="unsigned" id="unsigned" style="display:none"></div>
  <div class="note" id="inputs-note" style="display:none"></div>
+ <div class="note" id="run-note" style="display:none"></div>
 
  <div class="card">
   <button id="btn-load">Simulate / refresh paths</button>
@@ -163,6 +254,7 @@ def render_paths_html() -> str:
 "use strict";
 var $=function(id){return document.getElementById(id);};
 var DATA=null;
+var RUN_ID=(function(){var m=/[?&]run=([^&]+)/.exec(location.search);return m?decodeURIComponent(m[1]):null;})();
 var BAND_OUT="#1d2c4d", BAND_IN="#28406e", MEDIAN="#5b8def", SAMPLE="#9aa3b2";
 function svgEl(name){return document.createElementNS("http://www.w3.org/2000/svg",name);}
 function clearSvg(s){while(s.firstChild){s.removeChild(s.firstChild);}}
@@ -244,6 +336,7 @@ function render(d){
   DATA=d;
   if(d.unsigned_note){$("unsigned").style.display="block";$("unsigned").textContent=d.unsigned_note;}
   if(d.inputs_note){$("inputs-note").style.display="block";$("inputs-note").textContent=d.inputs_note;}
+  if(d.run_note){$("run-note").style.display="block";$("run-note").textContent=d.run_note;}
   var p=d.parameters;
   $("prov").innerHTML="<b>Provenance</b> &mdash; measure "+d.measure
     +" &middot; seed <span class=mono>"+d.seed+"</span>"
@@ -263,7 +356,7 @@ function render(d){
 function load(){
   $("btn-load").disabled=true;
   $("status").textContent="simulating… (cached when inputs unchanged)";
-  fetch("/path-data").then(function(r){return r.json();}).then(function(d){
+  fetch(RUN_ID?("/path-data?run="+encodeURIComponent(RUN_ID)):"/path-data").then(function(r){return r.json();}).then(function(d){
     $("btn-load").disabled=false;
     if(!d.ok){$("status").textContent="ERROR: "+(d.errors||["unknown"]).join("; ");return;}
     $("status").textContent=(d.cached?"served from cache":"freshly simulated")

@@ -289,7 +289,27 @@ def execute_run(inputs_path: str, out_dir: str, *,
     # (5) shape the offline RESULTS-UI handoff
     handoff = build_results_handoff(out_dir, provenance)
     progress.append("results handoff ready for offline RESULTS UI (user_run contract)")
+
+    # (6) GD-4: persist the scenario-path detail set WITH this run so the
+    # /paths view can always show the paths of the run actually executed
+    # (best-effort diagnostic overlay - NEVER fails the governed run).
+    try:
+        from par_model_v2.viewer.igui_path_detail import attach_path_detail_for_run
+        path_att = attach_path_detail_for_run(inputs_path, out_dir)
+    except Exception as exc:  # pragma: no cover - import-level failure only
+        path_att = {"ok": False,
+                    "errors": ["path-detail attachment failed: %s" % exc]}
+    if path_att.get("ok"):
+        progress.append(
+            "scenario-path detail persisted for this run (digest %s%s)"
+            % (str(path_att.get("inputs_digest"))[:12],
+               ", digest-cache hit" if path_att.get("cached") else ""))
+    else:
+        progress.append(
+            "scenario-path detail attachment unavailable (run unaffected): %s"
+            % "; ".join(path_att.get("errors") or ["unknown"]))
     return {"ok": True, "stage": "run_complete", "smoke": bool(smoke),
+            "path_detail": path_att,
             "out_dir": os.path.abspath(out_dir),
             "summary_path": os.path.abspath(summary_path),
             "report_path": os.path.abspath(report_path),

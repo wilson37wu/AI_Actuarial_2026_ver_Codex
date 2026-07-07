@@ -102,6 +102,8 @@ def _entry_from_record(record: Dict[str, Any],
             _persist_registry_block(job_path, record, registry)
     plan = registry.get("run_plan") or {}
     out_dir = result.get("out_dir") or result.get("output_dir")
+    att = result.get("path_detail") if isinstance(
+        result.get("path_detail"), dict) else None
     return {
         "run_id": record.get("job_id"),
         "kind": kind,
@@ -119,6 +121,11 @@ def _entry_from_record(record: Dict[str, Any],
         "headline": result.get("headline"),
         "unsigned": bool(result.get("unsigned")),
         "output_dir": out_dir,
+        "path_detail": {
+            "available": bool(att and att.get("ok") and att.get("dir")),
+            "inputs_digest": (att or {}).get("inputs_digest"),
+            "dir": (att or {}).get("dir"),
+        },
         "error": record.get("error"),
     }
 
@@ -179,6 +186,18 @@ def compare_runs(jobs_dir: str, run_id_a: str, run_id_b: str) -> Dict[str, Any]:
             ea.get("reproducibility_digest") == eb.get("reproducibility_digest")):
         notes.append("identical inputs digest - differences are sampling-only "
                      "(seed / scenario budget)")
+    pa = ea.get("path_detail") or {}
+    pb = eb.get("path_detail") or {}
+    if pa.get("available") and pb.get("available"):
+        if pa.get("inputs_digest") == pb.get("inputs_digest"):
+            notes.append("both runs carry the SAME persisted scenario-path "
+                         "set (identical path digest)")
+        else:
+            notes.append("persisted scenario-path sets DIFFER - open each "
+                         "run's Paths view from the registry table")
+    elif bool(pa.get("available")) != bool(pb.get("available")):
+        notes.append("only one side carries a persisted scenario-path set "
+                     "(runs executed before GD-4 have none)")
     return {"ok": True, "schema": REGISTRY_SCHEMA_VERSION,
             "a": ea, "b": eb, "meta_rows": meta_rows,
             "comparison": comparison, "notes": notes}
@@ -256,10 +275,14 @@ function loadRuns(){fetch("/runs").then(function(r){return r.json();}).then(func
       "<td class=num>"+esc(r.seed==null?"--":r.seed)+"</td>"+
       "<td class=mono>"+esc((r.reproducibility_digest||"--").slice(0,18))+"</td>"+
       "<td class=num>"+headlineOf(r)+"</td>"+
-      "<td><button data-open='"+esc(r.run_id)+"'>Open</button></td>";
+      "<td><button data-open='"+esc(r.run_id)+"'>Open</button>"+
+        ((r.path_detail&&r.path_detail.available)?" <button data-paths='"+esc(r.run_id)+"'>Paths</button>":"")+"</td>";
     tb.appendChild(tr);});
   tb.querySelectorAll("button[data-open]").forEach(function(b){
     b.addEventListener("click",function(){openRun(b.getAttribute("data-open"));});});
+  tb.querySelectorAll("button[data-paths]").forEach(function(b){
+    b.addEventListener("click",function(){
+      location.href="/paths?run="+encodeURIComponent(b.getAttribute("data-paths"));});});
   tb.querySelectorAll("input[type=checkbox]").forEach(function(c){
     c.addEventListener("change",function(){
       var id=c.getAttribute("data-id");
