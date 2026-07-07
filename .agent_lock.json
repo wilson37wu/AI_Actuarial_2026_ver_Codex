@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-07T15:00:34Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-07T15:03Z-f434",
+  "started_at": "2026-07-07T15:03:44Z",
+  "ttl_minutes": 120,
+  "task": "GD-3 stepwise run-result decomposition: TVOG/SCR build-up waterfall in results GUI (owner directive 2026-07-07)",
+  "note": ""
 }
