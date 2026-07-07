@@ -104,6 +104,8 @@ def _entry_from_record(record: Dict[str, Any],
     out_dir = result.get("out_dir") or result.get("output_dir")
     att = result.get("path_detail") if isinstance(
         result.get("path_detail"), dict) else None
+    cf_att = result.get("cashflow_set") if isinstance(
+        result.get("cashflow_set"), dict) else None
     return {
         "run_id": record.get("job_id"),
         "kind": kind,
@@ -125,6 +127,11 @@ def _entry_from_record(record: Dict[str, Any],
             "available": bool(att and att.get("ok") and att.get("dir")),
             "inputs_digest": (att or {}).get("inputs_digest"),
             "dir": (att or {}).get("dir"),
+        },
+        "cashflow_set": {
+            "available": bool(cf_att and cf_att.get("ok") and cf_att.get("dir")),
+            "inputs_digest": (cf_att or {}).get("inputs_digest"),
+            "dir": (cf_att or {}).get("dir"),
         },
         "error": record.get("error"),
     }
@@ -198,6 +205,18 @@ def compare_runs(jobs_dir: str, run_id_a: str, run_id_b: str) -> Dict[str, Any]:
     elif bool(pa.get("available")) != bool(pb.get("available")):
         notes.append("only one side carries a persisted scenario-path set "
                      "(runs executed before GD-4 have none)")
+    ca = ea.get("cashflow_set") or {}
+    cb = eb.get("cashflow_set") or {}
+    if ca.get("available") and cb.get("available"):
+        if ca.get("inputs_digest") == cb.get("inputs_digest"):
+            notes.append("both runs carry the SAME persisted cash-flow set "
+                         "(identical CF digest)")
+        else:
+            notes.append("persisted cash-flow sets DIFFER - open each run's "
+                         "Cash flows view from the registry table")
+    elif bool(ca.get("available")) != bool(cb.get("available")):
+        notes.append("only one side carries a persisted cash-flow set "
+                     "(runs executed before CF-2 have none)")
     return {"ok": True, "schema": REGISTRY_SCHEMA_VERSION,
             "a": ea, "b": eb, "meta_rows": meta_rows,
             "comparison": comparison, "notes": notes}
@@ -276,13 +295,17 @@ function loadRuns(){fetch("/runs").then(function(r){return r.json();}).then(func
       "<td class=mono>"+esc((r.reproducibility_digest||"--").slice(0,18))+"</td>"+
       "<td class=num>"+headlineOf(r)+"</td>"+
       "<td><button data-open='"+esc(r.run_id)+"'>Open</button>"+
-        ((r.path_detail&&r.path_detail.available)?" <button data-paths='"+esc(r.run_id)+"'>Paths</button>":"")+"</td>";
+        ((r.path_detail&&r.path_detail.available)?" <button data-paths='"+esc(r.run_id)+"'>Paths</button>":"")+
+        ((r.cashflow_set&&r.cashflow_set.available)?" <button data-cfs='"+esc(r.run_id)+"'>CFs</button>":"")+"</td>";
     tb.appendChild(tr);});
   tb.querySelectorAll("button[data-open]").forEach(function(b){
     b.addEventListener("click",function(){openRun(b.getAttribute("data-open"));});});
   tb.querySelectorAll("button[data-paths]").forEach(function(b){
     b.addEventListener("click",function(){
       location.href="/paths?run="+encodeURIComponent(b.getAttribute("data-paths"));});});
+  tb.querySelectorAll("button[data-cfs]").forEach(function(b){
+    b.addEventListener("click",function(){
+      location.href="/cashflows?run="+encodeURIComponent(b.getAttribute("data-cfs"));});});
   tb.querySelectorAll("input[type=checkbox]").forEach(function(c){
     c.addEventListener("change",function(){
       var id=c.getAttribute("data-id");

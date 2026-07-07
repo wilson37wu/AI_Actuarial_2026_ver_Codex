@@ -63,5 +63,21 @@ in-process via `result["frames"]` and `to_wide()` is the documented pivot.
 
 Diagnostic cash-flow view — governed headline figures untouched; declaration
 scales UNSIGNED pending owner approval; artifacts carry an inputs SHA-256
-digest for reproducibility. Track: CF-1 DONE; CF-2 run integration; CF-3
-GUI tab (roadmap §4.0c).
+digest for reproducibility. Track: CF-1 DONE; CF-2 run integration DONE
+(2026-07-08); CF-3 GUI tab DONE (roadmap §4.0c — track COMPLETE).
+
+## CF-2 — per-run persistence (2026-07-08)
+
+Every successful engine run now persists its cash-flow set:
+`execute_run` (step 6b, best-effort — never fails the governed run) calls
+`igui_cashflows.attach_cashflow_set_for_run`, which writes the CF-1 set to
+`run_output/cashflow_set_runs/<digest12>/cashflow_set/` keyed by the CF-1
+inputs digest. Identical-input runs share one copy (digest-cache hit);
+later runs never overwrite an earlier run's set. The digest key is the
+stale-set guard, and `load_run_cashflow_set` re-verifies schema + digest
+before serving. Surfaces: attachment block on the GUI-1 job record,
+`cashflow_set` availability + digest in the run registry, a per-run `CFs`
+button on /history, compare notes (same/differing/missing CF sets), and
+`/cashflows?run=<id>` → `/cashflow-data?run=<id>` showing EXACTLY the
+set persisted with that run (run-provenance banner shown). Tests:
+`tests/test_cf2_run_cashflow_attachment.py`.

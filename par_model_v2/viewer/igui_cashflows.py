@@ -152,6 +152,102 @@ def build_cashflow_response(inputs_path: str, out_root: str) -> Dict[str, Any]:
     return payload
 
 
+# --------------------------------------------------------------------------
+# CF-2 - per-run persistence (owner directive 2026-07-03, roadmap 4.0c)
+# --------------------------------------------------------------------------
+RUN_CF_SET_DIRNAME = "cashflow_set_runs"
+CF_RUN_SCHEMA_VERSION = "cf2-run-cashflows-1.0"
+
+
+def attach_cashflow_set_for_run(inputs_path: str, out_root: str) -> Dict[str, Any]:
+    """CF-2: persist the CF-1 cash-flow projection set WITH an executed run.
+
+    Called (best-effort) by ``execute_run`` right after a successful engine
+    run, with the SAME gated ``model_inputs.json`` the run consumed.  The
+    set is written under ``<out_root>/cashflow_set_runs/<digest12>/cashflow_set/``
+    keyed by the CF-1 inputs digest, so runs on identical inputs SHARE one
+    persisted copy (the digest cache makes the repeat attach free) and later
+    runs never overwrite an earlier run's set (unlike the shared
+    ``run_output/cashflow_set`` refreshed by the /cashflows page).  The
+    digest key IS the stale-set guard: the persisted set can never drift
+    from the inputs the run consumed, and the loader below re-verifies the
+    digest before serving.  Returns a JSON-safe attachment block that the
+    GUI-1 ``JobManager`` persists on the job record; NEVER raises - a
+    cash-flow hiccup must not fail the governed run.
+    """
+    try:
+        mi: Dict[str, Any] = {}
+        if os.path.exists(inputs_path):
+            with open(inputs_path, encoding="utf-8") as fh:
+                mi = json.load(fh)
+        from par_model_v2.projection.cashflow_projection_set import (
+            _inputs_digest)
+        digest = _inputs_digest(mi)
+        run_root = os.path.join(out_root, RUN_CF_SET_DIRNAME, digest[:12])
+        res = build_cashflow_response(inputs_path, run_root)
+        if not res.get("ok"):
+            return {"ok": False, "schema": CF_RUN_SCHEMA_VERSION,
+                    "errors": res.get("errors") or ["cash-flow set unavailable"]}
+        return {"ok": True, "schema": CF_RUN_SCHEMA_VERSION,
+                "inputs_digest": res.get("inputs_digest"),
+                "basis": res.get("basis"),
+                "horizon": res.get("horizon"),
+                "cached": bool(res.get("cached")),
+                "dir": os.path.abspath(os.path.join(run_root, CF_SET_DIRNAME))}
+    except Exception as exc:  # diagnostic overlay - never fail the run
+        return {"ok": False, "schema": CF_RUN_SCHEMA_VERSION,
+                "errors": ["cash-flow set attachment failed: %s" % exc]}
+
+
+def load_run_cashflow_set(jobs_dir: str, run_id: str) -> Dict[str, Any]:
+    """CF-2: serve the cash-flow set PERSISTED with a past run.
+
+    Reads the GUI-1 job record, follows its ``result.cashflow_set``
+    attachment to the digest-keyed directory and returns the persisted page
+    payload with run provenance stamped on it.  The set shown is EXACTLY
+    the one attached when the run executed - the current
+    ``model_inputs.json`` is NOT read (stale-set guard: schema + digest
+    re-verified against the attachment before serving).
+    """
+    safe = os.path.basename(str(run_id))  # no path traversal via run_id
+    job_path = os.path.join(jobs_dir, "job_{}.json".format(safe))
+    try:
+        with open(job_path, encoding="utf-8") as fh:
+            record = json.load(fh)
+    except (OSError, json.JSONDecodeError, ValueError):
+        return {"ok": False, "errors": ["unknown run_id: %s" % safe]}
+    att = (record.get("result") or {}).get("cashflow_set")
+    if not isinstance(att, dict) or not att.get("ok") or not att.get("dir"):
+        return {"ok": False, "errors": [
+            "run %s has no persisted cash-flow set (runs executed before "
+            "CF-2 do not carry one - re-run to attach it)" % safe]}
+    cache_path = os.path.join(att["dir"], "CF_GUI_CACHE.json")
+    try:
+        with open(cache_path, encoding="utf-8") as fh:
+            payload = json.load(fh)
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        return {"ok": False, "errors": [
+            "persisted cash-flow set unreadable (%s): %s" % (cache_path, exc)]}
+    if payload.get("schema") != CF_GUI_SCHEMA_VERSION:
+        return {"ok": False, "errors": [
+            "persisted cash-flow set schema %r does not match the page "
+            "schema %r" % (payload.get("schema"), CF_GUI_SCHEMA_VERSION)]}
+    if att.get("inputs_digest") and payload.get(
+            "inputs_digest") != att.get("inputs_digest"):
+        return {"ok": False, "errors": [
+            "persisted cash-flow set digest does not match the run "
+            "attachment (stale-set guard)"]}
+    payload["ok"] = True
+    payload["cached"] = True
+    payload["run_id"] = record.get("job_id")
+    payload["run_note"] = (
+        "showing the cash-flow projection set persisted with run %s "
+        "(finished %s) - bound to that run's gated inputs, not the "
+        "current ones" % (record.get("job_id"),
+                          record.get("finished_at") or "n/a"))
+    return payload
+
+
 def render_cashflows_html() -> str:
     """Self-contained cash-flow projection page (tables + SVG charts)."""
     return """<!doctype html><html lang="en"><head><meta charset="utf-8">
@@ -175,6 +271,7 @@ def render_cashflows_html() -> str:
  th{position:sticky;top:0;background:#171a21;color:#9fb4ff}
  th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:#171a21}
  .unsigned{background:#3a2b12;border:1px solid #8a6d1a;color:#ffd166;border-radius:10px;padding:10px 14px;margin:10px 0;font-weight:600}
+ .note{background:#12233a;border:1px solid #2b6cff;color:#9fb4ff;border-radius:10px;padding:8px 12px;margin:10px 0}
  .legend{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0;font-size:12.5px}
  .legend span{display:inline-flex;align-items:center;gap:5px}
  .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
@@ -188,6 +285,7 @@ def render_cashflows_html() -> str:
   <a href="/run-execution" style="color:#9fb4ff">Run page</a> &middot;
   <a href="/history" style="color:#9fb4ff">Run history</a></div>
  <div class="unsigned" id="unsigned" style="display:none"></div>
+ <div class="note" id="run-note" style="display:none"></div>
 
  <div class="card">
   <button id="btn-load">Compute / refresh projections</button>
@@ -225,6 +323,7 @@ def render_cashflows_html() -> str:
 "use strict";
 var $=function(id){return document.getElementById(id);};
 var DATA=null;
+var RUN_ID=(function(){var m=/[?&]run=([^&]+)/.exec(location.search);return m?decodeURIComponent(m[1]):null;})();
 var PALETTE=["#5b8def","#36d399","#f0b429","#f87272","#a78bfa","#4dd4e8","#f472b6","#9ca3af"];
 var TABS=[["liability","Liability CFs"],["asset_cf","Asset CFs"],["asset_balance","Asset balances"]];
 var curTab="liability";
@@ -311,6 +410,7 @@ function boot(j){
   $("unsigned").style.display="block";
   $("unsigned").textContent="UNSIGNED - "+j.unsigned_note;
   $("csvdir").textContent=j.csv_dir;
+  if(j.run_note){$("run-note").style.display="block";$("run-note").textContent=j.run_note;}
   $("status").innerHTML="loaded <span class=ok>OK</span>"+(j.cached?" (cached)":"")+
     " - inputs digest <span class=mono>"+String(j.inputs_digest).slice(0,23)+"</span>"+
     (j.book_runoff_month?" - book runs off at month "+j.book_runoff_month+
@@ -340,7 +440,7 @@ $("gran").addEventListener("change",function(){
 $("yearpick").addEventListener("change",renderTable);
 $("btn-load").addEventListener("click",function(){
   $("btn-load").disabled=true;$("status").textContent="computing (first run takes a few seconds)...";
-  fetch("/cashflow-data").then(function(r){return r.json();}).then(function(j){
+  fetch(RUN_ID?("/cashflow-data?run="+encodeURIComponent(RUN_ID)):"/cashflow-data").then(function(r){return r.json();}).then(function(j){
     $("btn-load").disabled=false;
     if(j&&j.ok){boot(j);}
     else{$("status").innerHTML="<span class=bad>"+((j&&j.errors)||["failed"]).join("; ")+"</span>";}

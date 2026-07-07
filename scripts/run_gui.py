@@ -102,8 +102,9 @@ from par_model_v2.viewer.igui_path_detail import (  # noqa: E402  (GD-1/GD-4)
     load_run_path_detail,
     render_paths_html,
 )
-from par_model_v2.viewer.igui_cashflows import (  # noqa: E402  (CF-3)
+from par_model_v2.viewer.igui_cashflows import (  # noqa: E402  (CF-2/CF-3)
     build_cashflow_response,
+    load_run_cashflow_set,
     render_cashflows_html,
 )
 from par_model_v2.viewer.igui_drilldown import (  # noqa: E402  (GD-2)
@@ -601,9 +602,15 @@ class _Handler(BaseHTTPRequestHandler):
                 build_construction_defaults(self.out_path), default=str))
         elif self.path in ("/cashflows", "/cashflows.html"):
             self._send(200, _with_nav(render_cashflows_html(), "/cashflows"), "text/html")
-        elif self.path == "/cashflow-data":
-            res = build_cashflow_response(
-                self.out_path, os.path.join(_REPO, RUN_OUTPUT_DIR))
+        elif self.path == "/cashflow-data" or self.path.startswith("/cashflow-data?"):
+            import urllib.parse as _up
+            q = _up.parse_qs(_up.urlparse(self.path).query)
+            rid = (q.get("run") or [None])[0]
+            if rid:  # CF-2: the set persisted WITH that executed run
+                res = load_run_cashflow_set(self._jobs_dir(), rid)
+            else:
+                res = build_cashflow_response(
+                    self.out_path, os.path.join(_REPO, RUN_OUTPUT_DIR))
             self._send(200 if res.get("ok") else 422,
                        json.dumps(res, default=str))
         elif self.path in ("/drilldown", "/drilldown.html"):

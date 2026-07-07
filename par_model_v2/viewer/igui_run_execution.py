@@ -308,8 +308,28 @@ def execute_run(inputs_path: str, out_dir: str, *,
         progress.append(
             "scenario-path detail attachment unavailable (run unaffected): %s"
             % "; ".join(path_att.get("errors") or ["unknown"]))
+    # (6b) CF-2: persist the cash-flow projection set WITH this run so the
+    # /cashflows view can always show the set of the run actually executed
+    # (best-effort diagnostic overlay - NEVER fails the governed run).
+    try:
+        from par_model_v2.viewer.igui_cashflows import (
+            attach_cashflow_set_for_run)
+        cf_att = attach_cashflow_set_for_run(inputs_path, out_dir)
+    except Exception as exc:  # pragma: no cover - import-level failure only
+        cf_att = {"ok": False,
+                  "errors": ["cash-flow set attachment failed: %s" % exc]}
+    if cf_att.get("ok"):
+        progress.append(
+            "cash-flow projection set persisted for this run (digest %s%s)"
+            % (str(cf_att.get("inputs_digest"))[:12],
+               ", digest-cache hit" if cf_att.get("cached") else ""))
+    else:
+        progress.append(
+            "cash-flow set attachment unavailable (run unaffected): %s"
+            % "; ".join(cf_att.get("errors") or ["unknown"]))
     return {"ok": True, "stage": "run_complete", "smoke": bool(smoke),
             "path_detail": path_att,
+            "cashflow_set": cf_att,
             "out_dir": os.path.abspath(out_dir),
             "summary_path": os.path.abspath(summary_path),
             "report_path": os.path.abspath(report_path),
