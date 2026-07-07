@@ -18,7 +18,7 @@ from par_model_v2.viewer.igui_portfolio_builder import NAV_LINKS
 
 PAGES = ["/", "/model-points", "/assumptions", "/esg", "/run-gate",
          "/run-execution", "/cashflows", "/stress", "/calibration",
-         "/history", "/portfolio", "/paths"]
+         "/history", "/portfolio", "/paths", "/drilldown"]
 
 
 class TestNavOnEveryPage(unittest.TestCase):
