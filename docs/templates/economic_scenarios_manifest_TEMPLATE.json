@@ -1,0 +1,13 @@
+{
+  "schema": "esg-user-scenarios-1.0",
+  "n_scenarios": 1000,
+  "projection_years": 100,
+  "basis": "risk_neutral",
+  "rate_convention": {"type": "zero_coupon_spot", "compounding": "annual",
+                      "units": "decimal", "day_count": "ACT/365F"},
+  "equity_convention": {"type": "annual_total_return", "units": "decimal"},
+  "currency": "CNY",
+  "source": "REPLACE: generating ESG name + version + calibration date",
+  "created_utc": "REPLACE: 2026-07-08T00:00:00Z",
+  "csv_sha256": "REPLACE: sha256 hex of economic_scenarios.csv"
+}
