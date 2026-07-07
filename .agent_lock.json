@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-07T20:06Z-67ce",
-  "started_at": "2026-07-07T20:06:41Z",
-  "ttl_minutes": 120,
-  "task": "ES-1 user economic-scenario file validating loader",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-07T20:12:42Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
