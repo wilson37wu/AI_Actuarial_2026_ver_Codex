@@ -1,8 +1,8 @@
 {
   "owner": "claude",
-  "cycle_id": "2026-07-07T01:08Z-87f7",
-  "started_at": "2026-07-07T01:08:07Z",
+  "cycle_id": "2026-07-07T01:12Z-1f39",
+  "started_at": "2026-07-07T01:12:37Z",
   "ttl_minutes": 120,
-  "task": "W152 exhausted-backlog verification + mount sync (Phase 38 T3 owner-gated)",
+  "task": "GD-1 stepwise detail outputs: economic scenario & asset return paths in GUI (owner directive 2026-07-07)",
   "note": ""
 }
