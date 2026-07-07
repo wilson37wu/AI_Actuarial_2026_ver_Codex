@@ -99,6 +99,29 @@ Owner reported the button silently did nothing. Root cause: a collapsed backslas
 
 `/portfolio` + `par_model_v2/viewer/igui_portfolio_builder.py` + `par_model_v2/projection/portfolio_construction.py`. Three editable blocks: **Asset strategy** (asset classes with a type — bond/equity/cash — per-type parameters, SAA weights that must sum to 100%, illiquid flags; derives the balance sheet including the run-engine fields and drives the liability-coupled fund's mechanics and rebalancing target), **Product catalogue** (templates over the governed mechanic families, e.g. short-term vs long-term cash-dividend par with different dividend scales, term ranges, surrender values), **Portfolio composer** (model points referencing catalogue products; term ranges and family rules enforced). Save re-validates everything through the governed loader, merge-writes `model_inputs.json`, and RESETS the run gate (inputs changed). Cash-flow outputs report per catalogue product (short/long par separate). Catalogue rates and SAA parameters are UNSIGNED scenario inputs.
 
+## PC-2 (2026-07-08, owner directive 2026-07-03): extended mechanic families + per-product overrides
+
+The product catalogue now spans SIX mechanic families: the original
+`HKCD_PAR_2026` / `HKRB_PAR_2026` / `GMMB_EQ_2026` plus **`WL_PAR_2026`**
+(whole-life participating - RB mechanics under the documented
+endowment-at-limit convention; runs on the PAR RB line end-to-end),
+**`TERM_2026`** (level term assurance - guaranteed SA on death only, no
+maturity benefit, surrender % default 0) and **`ANNUITY_2026`** (deferred
+life annuity - `sum_assured` = annuity notional, tunables `deferral_years`
+/ `annuity_rate` / `surrender_value_pct`; payments post to the
+`annuity_guaranteed` liability bucket from vesting; post-vesting lock-in).
+`TERM_2026`/`ANNUITY_2026` are NON-PAR scope: the stochastic PAR TVOG/SCR
+run routes them out of the PAR book (disclosed with the GMMB count); their
+cash flows are fully covered by the deterministic CF projection set, the
+/cashflows tab and the /drilldown inspector. Any catalogue product may
+additionally carry OPTIONAL per-product expense/decrement overrides
+(`acq_expense_pct`, `renewal_expense_pct`, `renewal_expense_fixed_monthly`,
+`mortality_multiplier`, `lapse_multiplier` - bounds in
+`portfolio_construction.OVERRIDE_PARAMS`); absent keys fall back to the
+governed defaults (regression-tested bit-identical). Catalogue parameters
+remain UNSIGNED scenario inputs. Tests:
+`tests/test_pc2_mechanic_families.py`.
+
 ## Roadmap
 
 **GUI track COMPLETE:** GUI-1 → GUI-4 all DONE(2026-07-03). The general backlog (roadmap §4.1) resumes next cycle.

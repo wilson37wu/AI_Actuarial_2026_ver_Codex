@@ -29,7 +29,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 SCHEMA_VERSION = "1.0.0"
 
-ALLOWED_PRODUCT_TYPES = ("HKCD_PAR_2026", "HKRB_PAR_2026", "GMMB_EQ_2026")
+ALLOWED_PRODUCT_TYPES = ("HKCD_PAR_2026", "HKRB_PAR_2026", "GMMB_EQ_2026", "WL_PAR_2026", "TERM_2026", "ANNUITY_2026")
 ALLOWED_GENDERS = ("M", "F")
 ALLOWED_SCALES = ("units", "thousands", "millions")
 ALLOWED_THOUSANDS = ("comma", "space", "period", "none")
@@ -542,14 +542,15 @@ def validate_portfolio_dict(payload: Dict[str, Any]) -> List[str]:
             errors.append(_err("Portfolio", rno, "Policy count", "must be a positive integer, got %r" % row.get("policy_count")))
         if vb is None or vb < 0:
             errors.append(_err("Portfolio", rno, "Vested bonus", "must be >= 0, got %r" % row.get("vested_bonus")))
-        if product == "HKCD_PAR_2026" and vb is not None and vb > 0:
+        if product in ("HKCD_PAR_2026", "TERM_2026", "ANNUITY_2026") \
+                and vb is not None and vb > 0:
             errors.append(_err("Portfolio", rno, "Vested bonus",
-                               "cash-dividend PAR cannot carry a vested reversionary bonus, got %r" % vb))
-        if product in ("HKCD_PAR_2026", "HKRB_PAR_2026"):
+                               "cash-dividend / protection / annuity products cannot carry a vested reversionary bonus, got %r" % vb))
+        if product in ("HKCD_PAR_2026", "HKRB_PAR_2026", "WL_PAR_2026"):
             n_par += 1
     if isinstance(rows, list) and len(rows) > 0 and n_par == 0:
         errors.append(_err("Portfolio", "-", "Product type",
-                           "at least one PAR model point is required (only GMMB rows supplied)"))
+                           "at least one PAR model point is required (only non-PAR rows supplied: GMMB / term / annuity)"))
 
     # --- balance sheet (optional block; validated when present) ---
     bs = payload.get("balance_sheet")

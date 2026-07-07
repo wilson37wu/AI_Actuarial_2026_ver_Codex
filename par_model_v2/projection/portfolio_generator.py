@@ -541,20 +541,32 @@ def load_portfolio(path: Path | str) -> pd.DataFrame:
 
 #: Template product types (scripts/load_user_inputs.py) -> PAR product line.
 #: ``GMMB_EQ_2026`` is the equity-guarantee book and is routed by the run
-#: orchestrator (B3), not the PAR portfolio.
+#: orchestrator (B3), not the PAR portfolio.  PC-2 (track 4.0d):
+#: ``WL_PAR_2026`` (whole-life par) joins the RB line under the documented
+#: endowment-at-limit convention; ``TERM_2026`` / ``ANNUITY_2026`` are
+#: NON-PAR protection/annuity books - they carry no participation or
+#: financial-option guarantee in this model form, so the stochastic PAR
+#: TVOG/SCR run routes them OUT of the PAR portfolio (scope note: their
+#: cash flows are covered by the deterministic CF projection set).
 USER_PRODUCT_LINE_MAP: Mapping[str, str] = {
     "HKCD_PAR_2026": PRODUCT_LINE_CASH,
     "HKRB_PAR_2026": PRODUCT_LINE_RB,
+    "WL_PAR_2026": PRODUCT_LINE_RB,
 }
 
 
 def split_model_points(model_points: Sequence[Mapping[str, object]]
                        ) -> Tuple[list, list]:
-    """Split user model points into (PAR rows, GMMB rows)."""
-    par, gmmb = [], []
+    """Split user model points into (PAR rows, non-PAR rows).
+
+    PAR rows are the product types in ``USER_PRODUCT_LINE_MAP``; everything
+    else (GMMB equity-guarantee book + the PC-2 TERM/ANNUITY non-par books)
+    is returned in the second list for the orchestrator to route/disclose."""
+    par, nonpar = [], []
     for p in model_points:
-        (gmmb if str(p.get("product_type")) == "GMMB_EQ_2026" else par).append(dict(p))
-    return par, gmmb
+        (par if str(p.get("product_type")) in USER_PRODUCT_LINE_MAP
+         else nonpar).append(dict(p))
+    return par, nonpar
 
 
 def portfolio_from_model_points(
@@ -679,7 +691,8 @@ def build_portfolio(
         par_pts, _gmmb = split_model_points(pts)
         if not par_pts:
             raise ValueError("user inputs contain no PAR model points "
-                             "(only GMMB rows); nothing to build")
+                             "(only non-PAR rows: GMMB/term/annuity); "
+                             "nothing to build")
         return portfolio_from_model_points(
             par_pts, cash_mechanics=cash_mechanics, rb_mechanics=rb_mechanics)
     return generate_hk_par_portfolio(

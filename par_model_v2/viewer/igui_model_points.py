@@ -72,8 +72,10 @@ SCHEMA_VERSION = "1.0.0"
 UI_APP_SHA256 = "6dca35b3520297263dd06086a1ced18cf831efb3fab6a6e8a9cde744500d7e65"
 
 #: Allowed enumerations - duplicated from the loader and guarded equal by a test.
-ALLOWED_PRODUCT_TYPES = ("HKCD_PAR_2026", "HKRB_PAR_2026", "GMMB_EQ_2026")
+ALLOWED_PRODUCT_TYPES = ("HKCD_PAR_2026", "HKRB_PAR_2026", "GMMB_EQ_2026", "WL_PAR_2026", "TERM_2026", "ANNUITY_2026")
 ALLOWED_GENDERS = ("M", "F")
+#: PC-2 - PAR rows for the book-scaling echo (mirror of USER_PRODUCT_LINE_MAP)
+PAR_PRODUCT_TYPES = ("HKCD_PAR_2026", "HKRB_PAR_2026", "WL_PAR_2026")
 #: PAR product lines (cash-dividend forbids a vested reversionary bonus) - mirror
 #: of par_model_v2.projection.portfolio_generator.USER_PRODUCT_LINE_MAP.
 CASH_DIVIDEND_PRODUCT = "HKCD_PAR_2026"
@@ -94,7 +96,8 @@ HTML_ARTIFACTS = ["ui_app.html", "model_result_viewer.html", "combined_model_app
 MODEL_POINT_FIELDS: List[Dict[str, Any]] = [
     {"id": "product_type", "label": "Product type", "kind": "choice",
      "choices": list(ALLOWED_PRODUCT_TYPES),
-     "help": "PAR cash-dividend / PAR reversionary-bonus / GMMB equity guarantee."},
+     "help": "PAR cash-dividend / PAR reversionary-bonus / GMMB equity guarantee / "
+             "PC-2: whole-life par, term assurance, deferred annuity."},
     {"id": "issue_age", "label": "Issue age", "kind": "int", "min": 0, "max": 120,
      "help": "Integer age at issue, 0-120."},
     {"id": "gender", "label": "Gender", "kind": "choice", "choices": list(ALLOWED_GENDERS),
@@ -411,6 +414,12 @@ def _normalize_product_alias(val: str) -> str:
         return "HKRB_PAR_2026"
     if al in ("gmmb", "equityguarantee", "gmmbeq", "eq"):
         return "GMMB_EQ_2026"
+    if al in ("wl", "wholelife", "wholelifepar", "wlpar"):
+        return "WL_PAR_2026"
+    if al in ("term", "termassurance", "termlife", "protection"):
+        return "TERM_2026"
+    if al in ("annuity", "deferredannuity", "annuitydef", "ann"):
+        return "ANNUITY_2026"
     return v  # leave as-is; loader reports the invalid product fail-loud
 
 
@@ -460,8 +469,8 @@ def book_scaling_disclosure(typed_rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     Pure stdlib arithmetic (no numpy) - this only ECHOES what the orchestrator
     already does; it computes no governed figure and changes no parameter.
     """
-    par = [r for r in typed_rows if r.get("product_type") != GMMB_PRODUCT]
-    gmmb = [r for r in typed_rows if r.get("product_type") == GMMB_PRODUCT]
+    par = [r for r in typed_rows if r.get("product_type") in PAR_PRODUCT_TYPES]
+    gmmb = [r for r in typed_rows if r.get("product_type") not in PAR_PRODUCT_TYPES]
     out: Dict[str, Any] = {
         "n_model_point_rows": len(typed_rows),
         "par_rows": len(par),
@@ -789,7 +798,8 @@ def validate_task3_gate(repo_root: str = ".") -> Dict[str, Any]:
         m = re.search(r'SCHEMA_VERSION\s*=\s*"([^"]+)"', loader_src)
         checks["schema_version_lockstep"] = bool(m) and m.group(1) == SCHEMA_VERSION
         checks["loader_product_enum_lockstep"] = (
-            'ALLOWED_PRODUCT_TYPES = ("HKCD_PAR_2026", "HKRB_PAR_2026", "GMMB_EQ_2026")'
+            'ALLOWED_PRODUCT_TYPES = ("HKCD_PAR_2026", "HKRB_PAR_2026", '
+            '"GMMB_EQ_2026", "WL_PAR_2026", "TERM_2026", "ANNUITY_2026")'
             in loader_src)
         checks["loader_gender_enum_lockstep"] = (
             'ALLOWED_GENDERS = ("M", "F")' in loader_src)

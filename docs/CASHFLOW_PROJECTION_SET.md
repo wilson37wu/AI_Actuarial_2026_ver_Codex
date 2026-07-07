@@ -81,3 +81,18 @@ button on /history, compare notes (same/differing/missing CF sets), and
 `/cashflows?run=<id>` → `/cashflow-data?run=<id>` showing EXACTLY the
 set persisted with that run (run-provenance banner shown). Tests:
 `tests/test_cf2_run_cashflow_attachment.py`.
+
+## PC-2 — extended families + per-product overrides (2026-07-08)
+
+The liability set now projects six product families. New: `WL_PAR_2026`
+(whole-life par; RB mechanics, endowment-at-limit convention), `TERM_2026`
+(term assurance; death benefit only) and `ANNUITY_2026` (deferred annuity;
+guaranteed payout). A TENTH liability bucket `annuity_guaranteed` carries
+the annuity payments; the `_guaranteed` suffix auto-classifies it as
+guaranteed in the CF-3 charts, the GD-2 drilldown and all rollups (JSON
+`liability_buckets` lists the live bucket set; CSV wide headers gain the
+column additively). Per-product expense/decrement overrides
+(`portfolio_construction.OVERRIDE_PARAMS`) thread through `_decrements` /
+`_premium_expense` / `_asset_share_proxy` consistently for ALL families;
+absent keys reproduce the governed defaults bit-identically
+(regression-tested). Tests: `tests/test_pc2_mechanic_families.py`.

@@ -86,6 +86,7 @@ LIABILITY_BUCKETS = [
     "surrender_guaranteed",
     "surrender_non_guaranteed",
     "cash_dividend",
+    "annuity_guaranteed",
 ]
 
 UNSIGNED_NOTE = (
@@ -121,10 +122,17 @@ class _RowBuckets:
         b: np.zeros(HORIZON_MONTHS) for b in LIABILITY_BUCKETS})
 
 
-def _decrements(issue_age: int, gender: str, term_months: int):
+def _decrements(issue_age: int, gender: str, term_months: int,
+                qx_mult: float = 1.0, lapse_mult: float = 1.0,
+                lapse_stop_month: Optional[int] = None):
     """Monthly qx / lapse / in-force arrays - IDENTICAL conventions to
     ``project_liability_cashflows`` (UDD monthly qx, annual lapse / 12,
-    BOM in-force recursion), regression-tested against it."""
+    BOM in-force recursion), regression-tested against it.
+
+    PC-2: optional per-product decrement overrides - ``qx_mult`` /
+    ``lapse_mult`` scale the base tables (capped at 1.0 monthly);
+    ``lapse_stop_month`` zeroes lapse from that month on (annuity
+    post-vesting lock-in).  Defaults reproduce the base tables EXACTLY."""
     T = term_months
     q = np.zeros(T)
     l = np.zeros(T)
@@ -133,46 +141,75 @@ def _decrements(issue_age: int, gender: str, term_months: int):
     for m in range(T):
         age = issue_age + m / 12.0
         policy_year = (m // 12) + 1
-        q[m] = monthly_mortality_qx(_base_annual_qx(int(age), gender))
-        l[m] = _base_annual_lapse(policy_year) / 12.0
+        q[m] = min(1.0, qx_mult * monthly_mortality_qx(
+            _base_annual_qx(int(age), gender)))
+        if lapse_stop_month is not None and m >= lapse_stop_month:
+            l[m] = 0.0
+        else:
+            l[m] = min(1.0, lapse_mult * _base_annual_lapse(policy_year) / 12.0)
         in_force[m + 1] = in_force[m] * (1.0 - q[m]) * (1.0 - l[m])
     return q, l, in_force
 
 
 def _premium_expense(prem_monthly: float, prem_annual: float, count: float,
                      in_force: np.ndarray, term_months: int,
-                     out: _RowBuckets) -> None:
+                     out: _RowBuckets,
+                     acq_pct: float = ACQ_EXPENSE_PCT,
+                     ren_pct: float = RENEWAL_EXPENSE_PCT,
+                     ren_fixed: float = RENEWAL_EXPENSE_FIXED_MONTHLY) -> None:
     """Premium + expense columns - IDENTICAL loadings to the legacy engine:
     acquisition 8% x ANNUAL premium at month 0 only; renewal (4% x monthly
     premium + fixed per policy) per in-force from month 1.  ``prem_*`` are
-    PER-POLICY amounts; ``count`` scales to the model-point row."""
+    PER-POLICY amounts; ``count`` scales to the model-point row.
+
+    PC-2: the three loadings are per-product overridable (catalogue
+    ``acq_expense_pct`` / ``renewal_expense_pct`` /
+    ``renewal_expense_fixed_monthly``); defaults = the governed constants."""
     for m in range(term_months):
         prob_bom = in_force[m]
         out.arrays["premium"][m] += count * prem_monthly * prob_bom
         if m == 0:
             out.arrays["expense"][m] += (
-                count * ACQ_EXPENSE_PCT * prem_annual * prob_bom)
+                count * acq_pct * prem_annual * prob_bom)
         else:
             out.arrays["expense"][m] += count * (
-                RENEWAL_EXPENSE_PCT * prem_monthly
-                + RENEWAL_EXPENSE_FIXED_MONTHLY) * prob_bom
+                ren_pct * prem_monthly + ren_fixed) * prob_bom
 
 
 def _asset_share_proxy(prem_monthly: float, prem_annual: float,
-                       term_months: int, r_annual: float) -> np.ndarray:
+                       term_months: int, r_annual: float,
+                       acq_pct: float = ACQ_EXPENSE_PCT,
+                       ren_pct: float = RENEWAL_EXPENSE_PCT,
+                       ren_fixed: float = RENEWAL_EXPENSE_FIXED_MONTHLY
+                       ) -> np.ndarray:
     """Surrender-value basis proxy per policy - IDENTICAL recursion to the
     legacy engine: NET premium (after the same expense loadings) accumulated
-    monthly at the reserving rate."""
+    monthly at the reserving rate.  PC-2: expense loadings overridable in
+    lock-step with ``_premium_expense`` so the surrender basis stays
+    consistent with the booked expenses."""
     acc = np.zeros(term_months + 1)
     r_m = r_annual / 12.0
     for m in range(term_months):
         if m == 0:
-            net = prem_monthly - ACQ_EXPENSE_PCT * prem_annual
+            net = prem_monthly - acq_pct * prem_annual
         else:
-            net = prem_monthly - (RENEWAL_EXPENSE_PCT * prem_monthly
-                                  + RENEWAL_EXPENSE_FIXED_MONTHLY)
+            net = prem_monthly - (ren_pct * prem_monthly + ren_fixed)
         acc[m + 1] = (acc[m] + net) * (1.0 + r_m)
     return acc
+
+
+def _row_overrides(ov: Dict[str, Any]) -> Dict[str, float]:
+    """PC-2 - per-product expense/decrement overrides from the catalogue
+    (``portfolio_construction.OVERRIDE_PARAMS``); absent keys fall back to
+    the governed defaults so legacy rows project bit-identically."""
+    return {
+        "acq_pct": float(ov.get("acq_expense_pct", ACQ_EXPENSE_PCT)),
+        "ren_pct": float(ov.get("renewal_expense_pct", RENEWAL_EXPENSE_PCT)),
+        "ren_fixed": float(ov.get("renewal_expense_fixed_monthly",
+                                  RENEWAL_EXPENSE_FIXED_MONTHLY)),
+        "qx_mult": float(ov.get("mortality_multiplier", 1.0)),
+        "lapse_mult": float(ov.get("lapse_multiplier", 1.0)),
+    }
 
 
 def _project_rb_row(row: Dict[str, Any], out: _RowBuckets) -> None:
@@ -185,10 +222,17 @@ def _project_rb_row(row: Dict[str, Any], out: _RowBuckets) -> None:
     count = float(row["policy_count"])
     prem_a = float(row["annual_premium"])
     prem_m = prem_a / 12.0
-    q, l, in_force = _decrements(int(row["issue_age"]), row["gender"], T)
-    _premium_expense(prem_m, prem_a, count, in_force, T, out)
+    ex = _row_overrides(ov)
+    q, l, in_force = _decrements(int(row["issue_age"]), row["gender"], T,
+                                 qx_mult=ex["qx_mult"],
+                                 lapse_mult=ex["lapse_mult"])
+    _premium_expense(prem_m, prem_a, count, in_force, T, out,
+                     acq_pct=ex["acq_pct"], ren_pct=ex["ren_pct"],
+                     ren_fixed=ex["ren_fixed"])
     acc = _asset_share_proxy(prem_m, prem_a, T,
-                             DEFAULT_RESERVING_DISCOUNT_RATE)
+                             DEFAULT_RESERVING_DISCOUNT_RATE,
+                             acq_pct=ex["acq_pct"], ren_pct=ex["ren_pct"],
+                             ren_fixed=ex["ren_fixed"])
     rb_rate = float(ov.get("rb_rate",
                             decl.declared_reversionary_bonus_rate(mech)))
     tb_pct = float(ov.get("terminal_bonus_pct", mech.terminal_bonus_pct))
@@ -223,11 +267,18 @@ def _project_cd_row(row: Dict[str, Any], out: _RowBuckets) -> None:
     count = float(row["policy_count"])
     prem_a = float(row["annual_premium"])
     prem_m = prem_a / 12.0
-    q, l, in_force = _decrements(int(row["issue_age"]), row["gender"], T)
-    _premium_expense(prem_m, prem_a, count, in_force, T, out)
+    ov = row.get("mechanics") or {}  # PC-1/PC-2 catalogue overrides
+    ex = _row_overrides(ov)
+    q, l, in_force = _decrements(int(row["issue_age"]), row["gender"], T,
+                                 qx_mult=ex["qx_mult"],
+                                 lapse_mult=ex["lapse_mult"])
+    _premium_expense(prem_m, prem_a, count, in_force, T, out,
+                     acq_pct=ex["acq_pct"], ren_pct=ex["ren_pct"],
+                     ren_fixed=ex["ren_fixed"])
     acc = _asset_share_proxy(prem_m, prem_a, T,
-                             DEFAULT_RESERVING_DISCOUNT_RATE)
-    ov = row.get("mechanics") or {}  # PC-1 catalogue overrides
+                             DEFAULT_RESERVING_DISCOUNT_RATE,
+                             acq_pct=ex["acq_pct"], ren_pct=ex["ren_pct"],
+                             ren_fixed=ex["ren_fixed"])
     div_rate = float(ov.get("cash_dividend_rate",
                             decl.declared_cash_dividend_rate(mech)))
     svp = float(ov.get("surrender_value_pct", mech.surrender_value_pct))
@@ -251,11 +302,19 @@ def _project_gmmb_row(row: Dict[str, Any], out: _RowBuckets) -> None:
     count = float(row["policy_count"])
     prem_a = float(row["annual_premium"])
     prem_m = prem_a / 12.0
-    q, l, in_force = _decrements(int(row["issue_age"]), row["gender"], T)
-    _premium_expense(prem_m, prem_a, count, in_force, T, out)
+    ov = row.get("mechanics") or {}  # PC-1/PC-2 catalogue overrides
+    ex = _row_overrides(ov)
+    q, l, in_force = _decrements(int(row["issue_age"]), row["gender"], T,
+                                 qx_mult=ex["qx_mult"],
+                                 lapse_mult=ex["lapse_mult"])
+    _premium_expense(prem_m, prem_a, count, in_force, T, out,
+                     acq_pct=ex["acq_pct"], ren_pct=ex["ren_pct"],
+                     ren_fixed=ex["ren_fixed"])
     # central-growth account proxy (growth = reserving rate; documented)
     acct = _asset_share_proxy(prem_m, prem_a, T,
-                              DEFAULT_RESERVING_DISCOUNT_RATE)
+                              DEFAULT_RESERVING_DISCOUNT_RATE,
+                              acq_pct=ex["acq_pct"], ren_pct=ex["ren_pct"],
+                              ren_fixed=ex["ren_fixed"])
     for m in range(T):
         prob_bom = in_force[m]
         deaths = prob_bom * q[m]
@@ -265,18 +324,114 @@ def _project_gmmb_row(row: Dict[str, Any], out: _RowBuckets) -> None:
         out.arrays["death_guaranteed"][m] += count * sa * deaths
         out.arrays["death_non_guaranteed"][m] += count * max(a - sa, 0.0) * deaths
         out.arrays["surrender_non_guaranteed"][m] += (
-            count * float((row.get("mechanics") or {})
-                          .get("surrender_value_pct", 0.90)) * a * lapses)
+            count * float(ov.get("surrender_value_pct", 0.90)) * a * lapses)
     a_T = acct[T]
     out.arrays["maturity_guaranteed"][T - 1] += count * in_force[T] * sa
     out.arrays["maturity_non_guaranteed"][T - 1] += (
         count * in_force[T] * max(a_T - sa, 0.0))
 
 
+def _project_wl_row(row: Dict[str, Any], out: _RowBuckets) -> None:
+    """PC-2 WL_PAR_2026 - whole-life participating: identical RB par
+    mechanics with the ENDOWMENT-AT-LIMIT convention (the composed
+    ``term_years`` runs the cover to the product's age limit; survivors at
+    the projection boundary receive SA + vested RB + terminal bonus exactly
+    like an endowment maturing at the limit - standard whole-life
+    tabulation).  Catalogue tunables mirror HKRB (rb_rate /
+    terminal_bonus_pct / surrender_value_pct) + the PC-2 overrides."""
+    _project_rb_row(row, out)
+
+
+def _project_term_row(row: Dict[str, Any], out: _RowBuckets) -> None:
+    """PC-2 TERM_2026 - level term assurance (protection): guaranteed SA on
+    death only; NO maturity benefit; surrender value optional at
+    ``surrender_value_pct`` x asset-share proxy (default 0.0 - standard for
+    protection business, so lapses generate no cash flow)."""
+    ov = row.get("mechanics") or {}
+    ex = _row_overrides(ov)
+    sa = float(row["sum_assured"])
+    T = min(int(row["term_years"]) * 12, HORIZON_MONTHS)
+    count = float(row["policy_count"])
+    prem_a = float(row["annual_premium"])
+    prem_m = prem_a / 12.0
+    q, l, in_force = _decrements(int(row["issue_age"]), row["gender"], T,
+                                 qx_mult=ex["qx_mult"],
+                                 lapse_mult=ex["lapse_mult"])
+    _premium_expense(prem_m, prem_a, count, in_force, T, out,
+                     acq_pct=ex["acq_pct"], ren_pct=ex["ren_pct"],
+                     ren_fixed=ex["ren_fixed"])
+    svp = float(ov.get("surrender_value_pct", 0.0))
+    acc = (_asset_share_proxy(prem_m, prem_a, T,
+                              DEFAULT_RESERVING_DISCOUNT_RATE,
+                              acq_pct=ex["acq_pct"], ren_pct=ex["ren_pct"],
+                              ren_fixed=ex["ren_fixed"])
+           if svp > 0.0 else None)
+    for m in range(T):
+        prob_bom = in_force[m]
+        deaths = prob_bom * q[m]
+        out.arrays["death_guaranteed"][m] += count * sa * deaths
+        if acc is not None:
+            lapses = prob_bom * (1.0 - q[m]) * l[m]
+            out.arrays["surrender_guaranteed"][m] += (
+                count * svp * max(acc[m + 1], 0.0) * lapses)
+
+
+def _project_annuity_row(row: Dict[str, Any], out: _RowBuckets) -> None:
+    """PC-2 ANNUITY_2026 - deferred life annuity (``sum_assured`` = annuity
+    NOTIONAL): premiums during the ``deferral_years`` period accumulate the
+    asset-share proxy; from vesting each survivor receives a GUARANTEED
+    monthly annuity of ``annuity_rate`` x notional / 12 (bucket
+    ``annuity_guaranteed``).  Death in deferral returns the asset-share
+    proxy (guaranteed); surrender is deferral-only at
+    ``surrender_value_pct``; post-vesting the annuity is LOCKED IN (lapse
+    zeroed via ``lapse_stop_month``, no death benefit - payments cease on
+    death).  The per-policy fixed renewal expense continues through the
+    payout phase (payment admin)."""
+    ov = row.get("mechanics") or {}
+    ex = _row_overrides(ov)
+    sa = float(row["sum_assured"])
+    T = min(int(row["term_years"]) * 12, HORIZON_MONTHS)
+    count = float(row["policy_count"])
+    prem_a = float(row["annual_premium"])
+    prem_m = prem_a / 12.0
+    D = min(max(int(round(float(ov.get("deferral_years", 10.0)) * 12)), 0), T)
+    pay_m = float(ov.get("annuity_rate", 0.05)) * sa / 12.0
+    svp = float(ov.get("surrender_value_pct", 0.90))
+    q, l, in_force = _decrements(int(row["issue_age"]), row["gender"], T,
+                                 qx_mult=ex["qx_mult"],
+                                 lapse_mult=ex["lapse_mult"],
+                                 lapse_stop_month=D)
+    # premiums + acquisition/renewal expenses run during the deferral only
+    _premium_expense(prem_m, prem_a, count, in_force, D, out,
+                     acq_pct=ex["acq_pct"], ren_pct=ex["ren_pct"],
+                     ren_fixed=ex["ren_fixed"])
+    acc = _asset_share_proxy(prem_m, prem_a, D,
+                             DEFAULT_RESERVING_DISCOUNT_RATE,
+                             acq_pct=ex["acq_pct"], ren_pct=ex["ren_pct"],
+                             ren_fixed=ex["ren_fixed"]) if D > 0 else None
+    for m in range(T):
+        prob_bom = in_force[m]
+        deaths = prob_bom * q[m]
+        if m < D:
+            basis = max(acc[m + 1], 0.0)
+            lapses = prob_bom * (1.0 - q[m]) * l[m]
+            out.arrays["death_guaranteed"][m] += count * basis * deaths
+            out.arrays["surrender_guaranteed"][m] += (
+                count * svp * basis * lapses)
+        else:
+            out.arrays["annuity_guaranteed"][m] += count * pay_m * prob_bom
+            out.arrays["expense"][m] += count * ex["ren_fixed"] * prob_bom
+    # no maturity benefit: the annuity runs off with survivorship
+
+
 _PRODUCT_PROJECTORS = {
     "HKRB_PAR_2026": _project_rb_row,
     "HKCD_PAR_2026": _project_cd_row,
     "GMMB_EQ_2026": _project_gmmb_row,
+    # PC-2 mechanic families (owner directive 2026-07-03, track 4.0d)
+    "WL_PAR_2026": _project_wl_row,
+    "TERM_2026": _project_term_row,
+    "ANNUITY_2026": _project_annuity_row,
 }
 
 

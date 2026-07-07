@@ -26,7 +26,15 @@ Mechanic families (the calculation bases products map onto):
   * ``HKRB_PAR_2026`` - reversionary-bonus par endowment (tunable: RB rate,
     terminal bonus %, surrender value %);
   * ``GMMB_EQ_2026``  - equity account with guaranteed maturity floor
-    (tunable: surrender value %).
+    (tunable: surrender value %);
+  * ``WL_PAR_2026``   - PC-2: whole-life participating (RB mechanics,
+    endowment-at-limit convention);
+  * ``TERM_2026``     - PC-2: level term assurance (protection);
+  * ``ANNUITY_2026``  - PC-2: deferred life annuity (guaranteed payout).
+
+PC-2 additionally allows OPTIONAL per-product expense/decrement overrides
+(``OVERRIDE_PARAMS``) on any catalogue product; absent keys fall back to
+the governed engine defaults so legacy catalogues project bit-identically.
 """
 from __future__ import annotations
 
@@ -57,6 +65,41 @@ PRODUCT_FAMILIES: Dict[str, Dict[str, Any]] = {
             "surrender_value_pct": {"default": 0.90, "min": 0.0, "max": 1.0},
         },
     },
+    # ---- PC-2 mechanic families (owner directive 2026-07-03, track 4.0d) ----
+    "WL_PAR_2026": {
+        "label": "Whole-life participating (RB mechanics, endowment-at-limit)",
+        "params": {
+            "rb_rate": {"default": 0.02, "min": 0.0, "max": 0.20},
+            "terminal_bonus_pct": {"default": 0.30, "min": 0.0, "max": 1.0},
+            "surrender_value_pct": {"default": 0.85, "min": 0.0, "max": 1.0},
+        },
+    },
+    "TERM_2026": {
+        "label": "Level term assurance (protection)",
+        "params": {
+            "surrender_value_pct": {"default": 0.0, "min": 0.0, "max": 1.0},
+        },
+    },
+    "ANNUITY_2026": {
+        "label": "Deferred life annuity (guaranteed payout)",
+        "params": {
+            "deferral_years": {"default": 10.0, "min": 1.0, "max": 50.0},
+            "annuity_rate": {"default": 0.05, "min": 0.005, "max": 0.25},
+            "surrender_value_pct": {"default": 0.90, "min": 0.0, "max": 1.0},
+        },
+    },
+}
+
+#: PC-2 - OPTIONAL per-product expense/decrement overrides, valid on ANY
+#: catalogue product.  Only validated/applied when PRESENT; absent keys use
+#: the governed engine defaults (cashflow_projection_set constants / base
+#: decrement tables), keeping legacy catalogues bit-identical.
+OVERRIDE_PARAMS: Dict[str, Dict[str, float]] = {
+    "acq_expense_pct": {"min": 0.0, "max": 0.50},
+    "renewal_expense_pct": {"min": 0.0, "max": 0.50},
+    "renewal_expense_fixed_monthly": {"min": 0.0, "max": 1000.0},
+    "mortality_multiplier": {"min": 0.01, "max": 10.0},
+    "lapse_multiplier": {"min": 0.0, "max": 10.0},
 }
 
 ASSET_KINDS: Dict[str, List[str]] = {
@@ -90,6 +133,20 @@ def default_product_catalogue() -> List[Dict[str, Any]]:
         {"product_id": "GMMB_STD", "family": "GMMB_EQ_2026",
          "label": "Equity GMMB (10-20y)",
          "term_years_min": 10, "term_years_max": 20,
+         "surrender_value_pct": 0.90},
+        {"product_id": "WL_PAR_STD", "family": "WL_PAR_2026",
+         "label": "Whole-life par (endowment-at-limit, 30-70y)",
+         "term_years_min": 30, "term_years_max": 70,
+         "rb_rate": 0.02, "terminal_bonus_pct": 0.30,
+         "surrender_value_pct": 0.85},
+        {"product_id": "TERM_STD", "family": "TERM_2026",
+         "label": "Level term assurance (5-30y)",
+         "term_years_min": 5, "term_years_max": 30,
+         "surrender_value_pct": 0.0},
+        {"product_id": "ANNUITY_DEF", "family": "ANNUITY_2026",
+         "label": "Deferred annuity (10y deferral, 15-40y)",
+         "term_years_min": 15, "term_years_max": 40,
+         "deferral_years": 10, "annuity_rate": 0.05,
          "surrender_value_pct": 0.90},
     ]
 
@@ -231,6 +288,14 @@ def validate_product_catalogue(catalogue: Any) -> List[str]:
             if f is None or not (spec["min"] <= f <= spec["max"]):
                 errors.append("[Catalogue] %s: %s must be in [%g, %g], got %r"
                               % (pid or i, pname, spec["min"], spec["max"], v))
+        for pname, spec in OVERRIDE_PARAMS.items():  # PC-2, only if present
+            if pname in p:
+                f = _num(p[pname])
+                if f is None or not (spec["min"] <= f <= spec["max"]):
+                    errors.append("[Catalogue] %s: override %s must be in "
+                                  "[%g, %g], got %r"
+                                  % (pid or i, pname, spec["min"],
+                                     spec["max"], p[pname]))
     return errors
 
 
@@ -266,10 +331,18 @@ def validate_composed_portfolio(rows: Any,
             errors.append("[Portfolio] row %d (%s): term %r outside the "
                           "product's range %g..%g"
                           % (i, pid, row.get("term_years"), tmin, tmax))
-        if prod.get("family") == "HKCD_PAR_2026" \
+        if prod.get("family") in ("HKCD_PAR_2026", "TERM_2026",
+                                  "ANNUITY_2026") \
                 and (_num(row.get("vested_bonus")) or 0.0) > 0:
-            errors.append("[Portfolio] row %d (%s): cash-dividend products "
-                          "cannot carry a vested reversionary bonus" % (i, pid))
+            errors.append("[Portfolio] row %d (%s): cash-dividend / "
+                          "protection / annuity products cannot carry a "
+                          "vested reversionary bonus" % (i, pid))
+        if prod.get("family") == "ANNUITY_2026" and term is not None:
+            dy = _num(prod.get("deferral_years", 10.0)) or 10.0
+            if term <= dy:
+                errors.append("[Portfolio] row %d (%s): annuity term %g must "
+                              "exceed the deferral period %g years"
+                              % (i, pid, term, dy))
     return errors
 
 
@@ -341,6 +414,9 @@ def resolve_portfolio(rows: List[Dict[str, Any]],
             mech: Dict[str, Any] = {}
             for pname, spec in PRODUCT_FAMILIES[family]["params"].items():
                 mech[pname] = float(prod.get(pname, spec["default"]))
+            for pname in OVERRIDE_PARAMS:  # PC-2: only when explicitly set
+                if pname in prod:
+                    mech[pname] = float(prod[pname])
             r["mechanics"] = mech
         out.append(r)
     return out

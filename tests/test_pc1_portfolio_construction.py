@@ -236,8 +236,9 @@ class TestGuiEndpoints(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertTrue(j["ok"])
         self.assertEqual(len(j["asset_strategy"]["saa"]), 5)
-        self.assertEqual(len(j["product_catalogue"]), 4)
+        self.assertEqual(len(j["product_catalogue"]), 7)  # PC-2: +WL/TERM/ANNUITY
         self.assertIn("HKCD_PAR_2026", j["families"])
+        self.assertIn("ANNUITY_2026", j["families"])  # PC-2 families surfaced
 
     def test_validate_save_roundtrip_and_gate_reset(self):
         from par_model_v2.viewer.igui_portfolio_builder import (
