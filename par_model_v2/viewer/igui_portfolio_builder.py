@@ -161,6 +161,7 @@ NAV_LINKS = [
     ("/model-points", "Model Points"), ("/assumptions", "Assumptions"),
     ("/esg", "ESG"), ("/run-gate", "Run Gate"),
     ("/run-execution", "Run"), ("/cashflows", "Cash flows"),
+    ("/paths", "Scenario paths"),
     ("/stress", "Stress"), ("/calibration", "Calibration"),
     ("/history", "History"), ("/my-results", "My results"),
 ]

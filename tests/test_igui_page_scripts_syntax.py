@@ -35,6 +35,7 @@ from par_model_v2.viewer.igui_model_points import render_model_points_html
 from par_model_v2.viewer.igui_run_controls import render_form_html
 from par_model_v2.viewer.igui_run_execution import render_run_html
 from par_model_v2.viewer.igui_run_history import render_history_html
+from par_model_v2.viewer.igui_path_detail import render_paths_html
 from par_model_v2.viewer.igui_stress import render_stress_html
 from par_model_v2.viewer.igui_validation_gating import render_gate_html
 
@@ -50,6 +51,7 @@ PAGES = {
     "history": render_history_html,
     "cashflows": render_cashflows_html,
     "portfolio": render_portfolio_html,
+    "paths": render_paths_html,
 }
 
 _SCRIPT_RE = re.compile(r"<script>(.*?)</script>", re.S)

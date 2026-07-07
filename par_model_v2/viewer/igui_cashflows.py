@@ -24,7 +24,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
-CF_GUI_SCHEMA_VERSION = "cf3-gui-1.0"
+CF_GUI_SCHEMA_VERSION = "cf3-gui-1.1"
 CF_SET_DIRNAME = "cashflow_set"
 
 
@@ -90,6 +90,17 @@ def build_cashflow_response(inputs_path: str, out_root: str) -> Dict[str, Any]:
         "premium": tot["premium"].round(2).tolist(),
         "expense": tot["expense"].round(2).tolist(),
         "benefits": tot[benefit_cols].sum(axis=1).round(2).tolist(),
+        # GD-1 (owner directive 2026-07-07): guaranteed vs non-guaranteed
+        # benefit split surfaced directly in the chart payload. Cash
+        # dividends are non-guaranteed by construction (declared scale).
+        "guaranteed": tot[[b for b in benefit_cols
+                           if b.endswith("_guaranteed")
+                           and not b.endswith("_non_guaranteed")]]
+        .sum(axis=1).round(2).tolist(),
+        "non_guaranteed": tot[[b for b in benefit_cols
+                               if b.endswith("_non_guaranteed")
+                               or b == "cash_dividend"]]
+        .sum(axis=1).round(2).tolist(),
         "net": tot["net_cashflow"].round(2).tolist(),
     }
     bal_y = f["asset_balance_yearly"]
@@ -310,6 +321,8 @@ function boot(j){
     {name:"Premium inflow",values:lc.premium},
     {name:"Expenses",values:lc.expense},
     {name:"Benefit outgo",values:lc.benefits},
+    {name:"Benefits - guaranteed",values:lc.guaranteed||[]},
+    {name:"Benefits - non-guaranteed (incl. cash dividend)",values:lc.non_guaranteed||[]},
     {name:"Net cash flow",values:lc.net}]);
   var bc=j.charts.balances;
   stackedBars("chart-bal","leg-bal",bc.years,bc.classes,bc.series);

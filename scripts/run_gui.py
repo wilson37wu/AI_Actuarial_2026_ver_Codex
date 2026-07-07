@@ -97,6 +97,10 @@ from par_model_v2.viewer.igui_run_history import (  # noqa: E402  (GUI-4)
     load_registry,
     render_history_html,
 )
+from par_model_v2.viewer.igui_path_detail import (  # noqa: E402  (GD-1)
+    build_path_detail_response,
+    render_paths_html,
+)
 from par_model_v2.viewer.igui_cashflows import (  # noqa: E402  (CF-3)
     build_cashflow_response,
     render_cashflows_html,
@@ -590,6 +594,13 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(200, _with_nav(render_cashflows_html(), "/cashflows"), "text/html")
         elif self.path == "/cashflow-data":
             res = build_cashflow_response(
+                self.out_path, os.path.join(_REPO, RUN_OUTPUT_DIR))
+            self._send(200 if res.get("ok") else 422,
+                       json.dumps(res, default=str))
+        elif self.path in ("/paths", "/paths.html"):
+            self._send(200, _with_nav(render_paths_html(), "/paths"), "text/html")
+        elif self.path == "/path-data":
+            res = build_path_detail_response(
                 self.out_path, os.path.join(_REPO, RUN_OUTPUT_DIR))
             self._send(200 if res.get("ok") else 422,
                        json.dumps(res, default=str))

@@ -59,6 +59,17 @@ Owner directive (2026-07-03, interactive): a NEW OUTPUT SET with liability cash 
 | CF-2 | Run integration: /save-run & execute_run attach the CF set to run_output + run registry; stale-set guard (inputs digest match) | CF set produced with every GUI run | OPEN |
 | CF-3 | GUI tab: yearly view + monthly drill-down per product class / asset class, CSV downloads, UNSIGNED banner | CF set browsable in GUI | DONE(2026-07-03, see §5) |
 
+### 4.0e OWNER-DIRECTED GUI Stepwise-Detail Track (directive 2026-07-07, KCW)
+
+Owner directive (2026-07-07, interactive): enrich the GUI to output and display MORE DETAILED STEPWISE CALCULATION in general - economic scenario paths, asset return paths, asset cash flow by asset class, liability cash flow by guaranteed / non-guaranteed, etc. Delivery pattern per item: engine artifact (JSON+CSV, digest-cached, UNSIGNED note) + self-contained GUI page/section (inline-SVG, zero external refs). Diagnostic overlays only - governed headline figures untouched.
+
+| # | Item | Definition of done | Status |
+|---|------|--------------------|--------|
+| GD-1 | Scenario-path detail set + /paths GUI page: real-world (P) HW1F short-rate + correlated GBM equity paths on the SAVED run seed; per-asset-class monthly-return & cumulative-index percentile fans (p5/25/50/75/95) with CF-1 class mechanics; sample-path overlays; JSON+6 CSVs digest-cached; CF-3 liability chart gains guaranteed vs non-guaranteed benefit series | Paths browsable in GUI, artifacts on disk, tests GREEN | DONE(2026-07-07, see §5) |
+| GD-2 | Stepwise liability drill-down: per-model-point / per-product-class bucket-level cash-flow inspector (pick a policy/class, see month-by-month premium/expense/benefit build-up incl. gtd/non-gtd split) | Policy-level stepwise table in GUI | OPEN |
+| GD-3 | Stepwise run-result decomposition: surface per-driver standalone SCR paths / TVOG build-up steps from the run artifacts in the results page (calculation waterfall view) | Waterfall of headline build-up in GUI | OPEN |
+| GD-4 | Scenario-path detail bound to EXECUTED runs: persist the GD-1 set with each run (run registry attachment, like CF-2) so paths shown match the run actually executed, not just current inputs | Per-run path detail in history/compare | OPEN |
+
 ### 4.0d OWNER-DIRECTED Portfolio Construction Track (directive 2026-07-03, KCW)
 
 Owner directive: flexible input construction - asset classes by type with mix/SAA, and liability product templates (e.g. short vs long term par) composable into the portfolio.
@@ -94,6 +105,7 @@ Items requiring human sign-off (owner approval, regulator deviation): implement 
 
 | Date | Item | Outcome | Commit |
 |------|------|---------|--------|
+| 2026-07-07 | GD-1 (owner directive 2026-07-07: stepwise detail in GUI): scenario_path_detail.py engine (P-measure HW1F + correlated GBM on saved seed; per-class return/cumulative fans via CF-1 mechanics: bond carry+duration proxy, equity TR, cash carry; JSON+6 CSVs, digest-cached, UNSIGNED) + igui_path_detail.py /paths page (fan charts p5-p95/p25-p75/median + sample overlays, series picker, provenance card) + /path-data route + nav link; CF-3 liability chart now splits guaranteed vs non-guaranteed benefits (schema cf3-gui-1.1); 13 new tests, 114 GREEN across GD/CF/PC/GUI suites incl. nav + node script-syntax guards; live e2e fresh+cached verified | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | PC-1c (owner report: pages not inter-accessible): shared nav bar now injected CENTRALLY (run_gui._with_nav) on all 11 console pages with active-page highlight; page-embedded duplicates removed; new regression test asserts every page carries exactly one nav with all links; 76 GREEN (4 pre-existing sha-baseline failures unchanged) | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | PC-1b (owner request): GUI navigation bar on the Run Controls landing page + all-console links; /portfolio construction blocks presented as TABS (Asset strategy / Product catalogue / Portfolio composer); node JS guard green; 46 tests GREEN (2 pre-existing sha-baseline failures unchanged) | DONE | (this cycle's AUTO commit) |
 | 2026-07-03 | PC-1 portfolio construction (owner directive): asset SAA (type/mix/weights -> derived balance sheet incl. run-engine fields backing_asset_mv/illiquid_share + CF fund mechanics), product catalogue over 3 mechanic families (short/long par etc.), composer + /portfolio GUI page; saves loader-revalidated, gate reset on save; CF outputs split per catalogue product; 17 new tests, 130 GREEN across suites; LIVE e2e construct->run->cashflows verified (2 pre-existing sha-baseline failures unchanged) | DONE | (this cycle's AUTO commit) |
