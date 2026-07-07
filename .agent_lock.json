@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-07T14:46Z-76a9",
-  "started_at": "2026-07-07T14:46:51Z",
-  "ttl_minutes": 120,
-  "task": "GD-1 stepwise detail outputs: scenario/asset-return paths GUI (owner directive 2026-07-07)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-07T14:49:07Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
