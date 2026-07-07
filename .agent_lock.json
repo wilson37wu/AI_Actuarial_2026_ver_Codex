@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-07T16:07Z-4ab4",
-  "started_at": "2026-07-07T16:07:17Z",
-  "ttl_minutes": 120,
-  "task": "GD-4 scenario-path detail bound to executed runs (owner directive 2026-07-07)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-07T16:32:34Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
