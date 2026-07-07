@@ -118,6 +118,6 @@ enforced at run time (§5).
 
 | Item | Scope | Status |
 |---|---|---|
-| ES-1 | This spec + validating loader (`user_scenarios.py`) + template + tests | spec DONE (this doc); loader OPEN |
+| ES-1 | This spec + validating loader (`par_model_v2/stochastic/user_scenarios.py`) + template + tests | DONE (2026-07-08: spec + loader + 41 tests) |
 | ES-2 | GUI: /scenarios upload page — validate, preview fan chart, persist with digest | OPEN |
 | ES-3 | Engine integration: `scenario_source` selector, measure guard, governance trail | OPEN |
