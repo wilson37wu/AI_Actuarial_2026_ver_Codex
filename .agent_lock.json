@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-07T18:30:17Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-07T19:19Z-a870",
+  "started_at": "2026-07-07T19:19:44Z",
+  "ttl_minutes": 120,
+  "task": "Roadmap 4.1 #2: HW1F swaption calibration execution + parameter card (MR-001, MR-008)",
+  "note": ""
 }
