@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-07T14:49:07Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-07T14:52Z-bfec",
+  "started_at": "2026-07-07T14:52:10Z",
+  "ttl_minutes": 120,
+  "task": "GD-2 stepwise liability drill-down: policy/class bucket-level CF inspector (owner directive 2026-07-07)",
+  "note": ""
 }
