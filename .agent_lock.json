@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-07T21:05Z-083e",
-  "started_at": "2026-07-07T21:05:18Z",
-  "ttl_minutes": 120,
-  "task": "ES-2 GUI scenario file upload page",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-07T21:15:18Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
