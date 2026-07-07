@@ -37,6 +37,7 @@ from par_model_v2.viewer.igui_run_execution import render_run_html
 from par_model_v2.viewer.igui_run_history import render_history_html
 from par_model_v2.viewer.igui_path_detail import render_paths_html
 from par_model_v2.viewer.igui_drilldown import render_drilldown_html
+from par_model_v2.viewer.igui_decomposition import render_decomposition_html
 from par_model_v2.viewer.igui_stress import render_stress_html
 from par_model_v2.viewer.igui_validation_gating import render_gate_html
 
@@ -54,6 +55,7 @@ PAGES = {
     "portfolio": render_portfolio_html,
     "paths": render_paths_html,
     "drilldown": render_drilldown_html,
+    "decomposition": render_decomposition_html,
 }
 
 _SCRIPT_RE = re.compile(r"<script>(.*?)</script>", re.S)

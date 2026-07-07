@@ -109,6 +109,10 @@ from par_model_v2.viewer.igui_drilldown import (  # noqa: E402  (GD-2)
     build_drilldown_response,
     render_drilldown_html,
 )
+from par_model_v2.viewer.igui_decomposition import (  # noqa: E402  (GD-3)
+    build_decomposition_response,
+    render_decomposition_html,
+)
 from par_model_v2.viewer.igui_portfolio_builder import (  # noqa: E402  (PC-1)
     build_construction_defaults,
     build_construction_response,
@@ -607,6 +611,14 @@ class _Handler(BaseHTTPRequestHandler):
         elif self.path == "/drilldown-data":
             res = build_drilldown_response(
                 self.out_path, os.path.join(_REPO, RUN_OUTPUT_DIR))
+            self._send(200 if res.get("ok") else 422,
+                       json.dumps(res, default=str))
+        elif self.path in ("/decomposition", "/decomposition.html"):
+            self._send(200, _with_nav(render_decomposition_html(),
+                                      "/decomposition"), "text/html")
+        elif self.path == "/decomposition-data":
+            res = build_decomposition_response(
+                os.path.join(_REPO, RUN_OUTPUT_DIR))
             self._send(200 if res.get("ok") else 422,
                        json.dumps(res, default=str))
         elif self.path in ("/paths", "/paths.html"):

@@ -162,6 +162,7 @@ NAV_LINKS = [
     ("/esg", "ESG"), ("/run-gate", "Run Gate"),
     ("/run-execution", "Run"), ("/cashflows", "Cash flows"),
     ("/paths", "Scenario paths"), ("/drilldown", "Drill-down"),
+    ("/decomposition", "Waterfall"),
     ("/stress", "Stress"), ("/calibration", "Calibration"),
     ("/history", "History"), ("/my-results", "My results"),
 ]
