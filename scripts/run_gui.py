@@ -120,6 +120,13 @@ from par_model_v2.viewer.igui_portfolio_builder import (  # noqa: E402  (PC-1)
     build_construction_response,
     render_portfolio_html,
 )
+from par_model_v2.viewer.igui_scenarios import (  # noqa: E402  (ES-2)
+    SCENARIO_STORE_DIRNAME,
+    build_scenario_save_response,
+    build_scenario_status_response,
+    build_scenario_validate_response,
+    render_scenarios_html,
+)
 from par_model_v2.viewer.igui_results_refresh import (  # noqa: E402  (Task 8)
     refresh_user_results,
     DEFAULT_USER_RESULTS_DIR,
@@ -642,6 +649,13 @@ class _Handler(BaseHTTPRequestHandler):
                     self.out_path, os.path.join(_REPO, RUN_OUTPUT_DIR))
             self._send(200 if res.get("ok") else 422,
                        json.dumps(res, default=str))
+        elif self.path in ("/scenarios", "/scenarios.html"):
+            self._send(200, _with_nav(render_scenarios_html(), "/scenarios"),
+                       "text/html")
+        elif self.path == "/scenario-status":
+            res = build_scenario_status_response(self.out_path)
+            self._send(200 if res.get("ok") else 422,
+                       json.dumps(res, default=str))
         elif self.path in ("/history", "/history.html"):
             self._send(200, _with_nav(render_history_html(), "/history"), "text/html")
         elif self.path == "/runs":
@@ -724,7 +738,8 @@ class _Handler(BaseHTTPRequestHandler):
                     "/reconcile", "/ingest", "/validate_assumptions", "/save_assumptions",
                     "/validate_esg", "/save_esg", "/preflight", "/run", "/execute",
                     "/execute-async", "/run-stress", "/run-calibration", "/save-run",
-                    "/validate_construction", "/save_construction")
+                    "/validate_construction", "/save_construction",
+                    "/validate-scenarios", "/save-scenarios")
 
     def do_POST(self):
         if self.path not in self._POST_ROUTES:
@@ -778,6 +793,13 @@ class _Handler(BaseHTTPRequestHandler):
                 res = build_construction_response(
                     payload, self.out_path,
                     do_write=(self.path == "/save_construction"))
+            elif self.path == "/validate-scenarios":
+                res = build_scenario_validate_response(payload)
+            elif self.path == "/save-scenarios":
+                res = build_scenario_save_response(
+                    payload, self.out_path,
+                    os.path.join(_REPO, RUN_OUTPUT_DIR,
+                                 SCENARIO_STORE_DIRNAME))
             elif self.path == "/save-run":
                 res = build_save_run_response(payload, self.out_path,
                                               self.job_manager)
