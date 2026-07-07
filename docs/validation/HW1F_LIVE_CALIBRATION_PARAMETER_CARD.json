@@ -1,0 +1,542 @@
+{
+ "schema_version": "hw1f-live-cal-1.0",
+ "generated_utc": "2026-07-07T19:28:55.243032+00:00",
+ "roadmap_item": "4.1 #2 - Execute HW1F swaption calibration on live/proxy quote set",
+ "model_risk_refs": [
+  "MR-001",
+  "MR-008"
+ ],
+ "inputs_digest": "5489d2463424da53dad4094443910e03ff1bc134fc463b89423aa45bc66f871e",
+ "markets": [
+  {
+   "market": "CNY",
+   "as_of_date": "2026-01-01",
+   "provenance": "file_fixture",
+   "source_sha256": "2e15b086f5a3a2f71008d6956cdc98486d76dc9e7d97d24b37624a55a6fe36c3",
+   "snapshot_path": "/tmp/cycle_clone/par_model_v2/calibration/fixtures/cny_swaption_surface_20260101.json",
+   "parameters": {
+    "a": 3.0,
+    "sigma_r": 0.033752651344546414,
+    "lambda_r": 0.0,
+    "r0": 0.0207
+   },
+   "diagnostics": {
+    "sse_weighted_bps_sq": 1511.9446192095666,
+    "params_at_bounds": [
+     "a"
+    ],
+    "rmse_bps": 8.897,
+    "max_abs_error_bps": 18.929,
+    "converged": true,
+    "optimizer": "L-BFGS-B + Nelder-Mead polish",
+    "polish": {
+     "stage1": "L-BFGS-B (ABNORMAL line search)",
+     "stage2": "Nelder-Mead polish converged",
+     "stage2_iterations": 41,
+     "sse_improvement": true
+    },
+    "optimizer_bounds": {
+     "a": [
+      0.001,
+      3.0
+     ],
+     "sigma_r": [
+      0.001,
+      0.2
+     ]
+    },
+    "n_quotes_total": 22,
+    "n_quotes_active": 22,
+    "notes": "L-BFGS-B converged=False; max_error=18.93bps exceeds 1bps threshold"
+   },
+   "fit_table": [
+    {
+     "expiry_years": 1.0,
+     "swap_tenor_years": 1.0,
+     "weight": 1.0,
+     "market_vol_bps": 55.0,
+     "model_vol_bps": 36.071,
+     "error_bps": -18.929,
+     "abs_error_bps": 18.929
+    },
+    {
+     "expiry_years": 1.0,
+     "swap_tenor_years": 2.0,
+     "weight": 1.0,
+     "market_vol_bps": 52.0,
+     "model_vol_bps": 40.671,
+     "error_bps": -11.329,
+     "abs_error_bps": 11.329
+    },
+    {
+     "expiry_years": 1.0,
+     "swap_tenor_years": 5.0,
+     "weight": 1.0,
+     "market_vol_bps": 48.0,
+     "model_vol_bps": 43.705,
+     "error_bps": -4.295,
+     "abs_error_bps": 4.295
+    },
+    {
+     "expiry_years": 1.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.8,
+     "market_vol_bps": 44.0,
+     "model_vol_bps": 44.71,
+     "error_bps": 0.71,
+     "abs_error_bps": 0.71
+    },
+    {
+     "expiry_years": 2.0,
+     "swap_tenor_years": 1.0,
+     "weight": 1.0,
+     "market_vol_bps": 50.0,
+     "model_vol_bps": 36.112,
+     "error_bps": -13.888,
+     "abs_error_bps": 13.888
+    },
+    {
+     "expiry_years": 2.0,
+     "swap_tenor_years": 2.0,
+     "weight": 1.0,
+     "market_vol_bps": 47.0,
+     "model_vol_bps": 40.716,
+     "error_bps": -6.284,
+     "abs_error_bps": 6.284
+    },
+    {
+     "expiry_years": 2.0,
+     "swap_tenor_years": 5.0,
+     "weight": 1.0,
+     "market_vol_bps": 43.0,
+     "model_vol_bps": 43.752,
+     "error_bps": 0.752,
+     "abs_error_bps": 0.752
+    },
+    {
+     "expiry_years": 2.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.8,
+     "market_vol_bps": 39.0,
+     "model_vol_bps": 44.759,
+     "error_bps": 5.759,
+     "abs_error_bps": 5.759
+    },
+    {
+     "expiry_years": 3.0,
+     "swap_tenor_years": 1.0,
+     "weight": 1.0,
+     "market_vol_bps": 46.0,
+     "model_vol_bps": 36.11,
+     "error_bps": -9.89,
+     "abs_error_bps": 9.89
+    },
+    {
+     "expiry_years": 3.0,
+     "swap_tenor_years": 2.0,
+     "weight": 1.0,
+     "market_vol_bps": 43.0,
+     "model_vol_bps": 40.712,
+     "error_bps": -2.288,
+     "abs_error_bps": 2.288
+    },
+    {
+     "expiry_years": 3.0,
+     "swap_tenor_years": 5.0,
+     "weight": 1.0,
+     "market_vol_bps": 40.0,
+     "model_vol_bps": 43.747,
+     "error_bps": 3.747,
+     "abs_error_bps": 3.747
+    },
+    {
+     "expiry_years": 3.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.8,
+     "market_vol_bps": 37.0,
+     "model_vol_bps": 44.755,
+     "error_bps": 7.755,
+     "abs_error_bps": 7.755
+    },
+    {
+     "expiry_years": 5.0,
+     "swap_tenor_years": 1.0,
+     "weight": 1.0,
+     "market_vol_bps": 42.0,
+     "model_vol_bps": 36.104,
+     "error_bps": -5.896,
+     "abs_error_bps": 5.896
+    },
+    {
+     "expiry_years": 5.0,
+     "swap_tenor_years": 2.0,
+     "weight": 1.0,
+     "market_vol_bps": 40.0,
+     "model_vol_bps": 40.702,
+     "error_bps": 0.702,
+     "abs_error_bps": 0.702
+    },
+    {
+     "expiry_years": 5.0,
+     "swap_tenor_years": 5.0,
+     "weight": 1.0,
+     "market_vol_bps": 38.0,
+     "model_vol_bps": 43.737,
+     "error_bps": 5.737,
+     "abs_error_bps": 5.737
+    },
+    {
+     "expiry_years": 5.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.8,
+     "market_vol_bps": 35.0,
+     "model_vol_bps": 44.747,
+     "error_bps": 9.747,
+     "abs_error_bps": 9.747
+    },
+    {
+     "expiry_years": 7.0,
+     "swap_tenor_years": 1.0,
+     "weight": 0.8,
+     "market_vol_bps": 38.0,
+     "model_vol_bps": 36.102,
+     "error_bps": -1.898,
+     "abs_error_bps": 1.898
+    },
+    {
+     "expiry_years": 7.0,
+     "swap_tenor_years": 5.0,
+     "weight": 0.8,
+     "market_vol_bps": 35.0,
+     "model_vol_bps": 43.733,
+     "error_bps": 8.733,
+     "abs_error_bps": 8.733
+    },
+    {
+     "expiry_years": 7.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.6,
+     "market_vol_bps": 32.0,
+     "model_vol_bps": 44.744,
+     "error_bps": 12.744,
+     "abs_error_bps": 12.744
+    },
+    {
+     "expiry_years": 10.0,
+     "swap_tenor_years": 1.0,
+     "weight": 0.6,
+     "market_vol_bps": 33.0,
+     "model_vol_bps": 36.101,
+     "error_bps": 3.101,
+     "abs_error_bps": 3.101
+    },
+    {
+     "expiry_years": 10.0,
+     "swap_tenor_years": 5.0,
+     "weight": 0.6,
+     "market_vol_bps": 30.0,
+     "model_vol_bps": 43.73,
+     "error_bps": 13.73,
+     "abs_error_bps": 13.73
+    },
+    {
+     "expiry_years": 10.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.5,
+     "market_vol_bps": 27.0,
+     "model_vol_bps": 44.743,
+     "error_bps": 17.743,
+     "abs_error_bps": 17.743
+    }
+   ],
+   "lineage": {
+    "lineage_id": "LIN_HW1F_CNY_20260101",
+    "market": "CNY",
+    "as_of_date": "2026-01-01",
+    "source_type": "file_fixture",
+    "source_detail": "/tmp/cycle_clone/par_model_v2/calibration/fixtures/cny_swaption_surface_20260101.json",
+    "fixture_version": "1.0.0",
+    "approved_by": "ModelGovernance_Phase13",
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "sha256_checksum": "2e15b086f5a3a2f71008d6956cdc98486d76dc9e7d97d24b37624a55a6fe36c3",
+    "produced_at": "2026-07-07T19:28:54.787486+00:00"
+   },
+   "is_placeholder": false
+  },
+  {
+   "market": "HKD",
+   "as_of_date": "2026-01-01",
+   "provenance": "file_fixture",
+   "source_sha256": "00cef8b6ac6b7c39a55eb680f25015e3710a850f432882e8c231c1cc2b4462bf",
+   "snapshot_path": "/tmp/cycle_clone/par_model_v2/calibration/fixtures/hkd_swaption_surface_20260101.json",
+   "parameters": {
+    "a": 3.0,
+    "sigma_r": 0.04190188244229688,
+    "lambda_r": 0.0,
+    "r0": 0.045
+   },
+   "diagnostics": {
+    "sse_weighted_bps_sq": 3394.1123607923564,
+    "params_at_bounds": [
+     "a"
+    ],
+    "rmse_bps": 13.331,
+    "max_abs_error_bps": 27.256,
+    "converged": true,
+    "optimizer": "L-BFGS-B",
+    "polish": null,
+    "optimizer_bounds": {
+     "a": [
+      0.001,
+      3.0
+     ],
+     "sigma_r": [
+      0.001,
+      0.2
+     ]
+    },
+    "n_quotes_total": 22,
+    "n_quotes_active": 22,
+    "notes": "L-BFGS-B converged=True; max_error=27.26bps exceeds 1bps threshold"
+   },
+   "fit_table": [
+    {
+     "expiry_years": 1.0,
+     "swap_tenor_years": 1.0,
+     "weight": 1.0,
+     "market_vol_bps": 72.0,
+     "model_vol_bps": 44.744,
+     "error_bps": -27.256,
+     "abs_error_bps": 27.256
+    },
+    {
+     "expiry_years": 1.0,
+     "swap_tenor_years": 2.0,
+     "weight": 1.0,
+     "market_vol_bps": 68.0,
+     "model_vol_bps": 50.437,
+     "error_bps": -17.563,
+     "abs_error_bps": 17.563
+    },
+    {
+     "expiry_years": 1.0,
+     "swap_tenor_years": 5.0,
+     "weight": 1.0,
+     "market_vol_bps": 62.0,
+     "model_vol_bps": 54.2,
+     "error_bps": -7.8,
+     "abs_error_bps": 7.8
+    },
+    {
+     "expiry_years": 1.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.8,
+     "market_vol_bps": 55.0,
+     "model_vol_bps": 55.456,
+     "error_bps": 0.456,
+     "abs_error_bps": 0.456
+    },
+    {
+     "expiry_years": 2.0,
+     "swap_tenor_years": 1.0,
+     "weight": 1.0,
+     "market_vol_bps": 65.0,
+     "model_vol_bps": 44.807,
+     "error_bps": -20.193,
+     "abs_error_bps": 20.193
+    },
+    {
+     "expiry_years": 2.0,
+     "swap_tenor_years": 2.0,
+     "weight": 1.0,
+     "market_vol_bps": 61.0,
+     "model_vol_bps": 50.508,
+     "error_bps": -10.492,
+     "abs_error_bps": 10.492
+    },
+    {
+     "expiry_years": 2.0,
+     "swap_tenor_years": 5.0,
+     "weight": 1.0,
+     "market_vol_bps": 56.0,
+     "model_vol_bps": 54.273,
+     "error_bps": -1.727,
+     "abs_error_bps": 1.727
+    },
+    {
+     "expiry_years": 2.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.8,
+     "market_vol_bps": 50.0,
+     "model_vol_bps": 55.528,
+     "error_bps": 5.528,
+     "abs_error_bps": 5.528
+    },
+    {
+     "expiry_years": 3.0,
+     "swap_tenor_years": 1.0,
+     "weight": 1.0,
+     "market_vol_bps": 59.0,
+     "model_vol_bps": 44.807,
+     "error_bps": -14.193,
+     "abs_error_bps": 14.193
+    },
+    {
+     "expiry_years": 3.0,
+     "swap_tenor_years": 2.0,
+     "weight": 1.0,
+     "market_vol_bps": 55.0,
+     "model_vol_bps": 50.511,
+     "error_bps": -4.489,
+     "abs_error_bps": 4.489
+    },
+    {
+     "expiry_years": 3.0,
+     "swap_tenor_years": 5.0,
+     "weight": 1.0,
+     "market_vol_bps": 50.0,
+     "model_vol_bps": 54.275,
+     "error_bps": 4.275,
+     "abs_error_bps": 4.275
+    },
+    {
+     "expiry_years": 3.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.8,
+     "market_vol_bps": 45.0,
+     "model_vol_bps": 55.528,
+     "error_bps": 10.528,
+     "abs_error_bps": 10.528
+    },
+    {
+     "expiry_years": 5.0,
+     "swap_tenor_years": 1.0,
+     "weight": 1.0,
+     "market_vol_bps": 52.0,
+     "model_vol_bps": 44.807,
+     "error_bps": -7.193,
+     "abs_error_bps": 7.193
+    },
+    {
+     "expiry_years": 5.0,
+     "swap_tenor_years": 2.0,
+     "weight": 1.0,
+     "market_vol_bps": 48.0,
+     "model_vol_bps": 50.509,
+     "error_bps": 2.509,
+     "abs_error_bps": 2.509
+    },
+    {
+     "expiry_years": 5.0,
+     "swap_tenor_years": 5.0,
+     "weight": 1.0,
+     "market_vol_bps": 44.0,
+     "model_vol_bps": 54.273,
+     "error_bps": 10.273,
+     "abs_error_bps": 10.273
+    },
+    {
+     "expiry_years": 5.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.8,
+     "market_vol_bps": 40.0,
+     "model_vol_bps": 55.526,
+     "error_bps": 15.526,
+     "abs_error_bps": 15.526
+    },
+    {
+     "expiry_years": 7.0,
+     "swap_tenor_years": 1.0,
+     "weight": 0.8,
+     "market_vol_bps": 45.0,
+     "model_vol_bps": 44.808,
+     "error_bps": -0.192,
+     "abs_error_bps": 0.192
+    },
+    {
+     "expiry_years": 7.0,
+     "swap_tenor_years": 5.0,
+     "weight": 0.8,
+     "market_vol_bps": 40.0,
+     "model_vol_bps": 54.273,
+     "error_bps": 14.273,
+     "abs_error_bps": 14.273
+    },
+    {
+     "expiry_years": 7.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.6,
+     "market_vol_bps": 36.0,
+     "model_vol_bps": 55.526,
+     "error_bps": 19.526,
+     "abs_error_bps": 19.526
+    },
+    {
+     "expiry_years": 10.0,
+     "swap_tenor_years": 1.0,
+     "weight": 0.6,
+     "market_vol_bps": 37.0,
+     "model_vol_bps": 44.806,
+     "error_bps": 7.806,
+     "abs_error_bps": 7.806
+    },
+    {
+     "expiry_years": 10.0,
+     "swap_tenor_years": 5.0,
+     "weight": 0.6,
+     "market_vol_bps": 33.0,
+     "model_vol_bps": 54.269,
+     "error_bps": 21.269,
+     "abs_error_bps": 21.269
+    },
+    {
+     "expiry_years": 10.0,
+     "swap_tenor_years": 10.0,
+     "weight": 0.5,
+     "market_vol_bps": 29.0,
+     "model_vol_bps": 55.526,
+     "error_bps": 26.526,
+     "abs_error_bps": 26.526
+    }
+   ],
+   "lineage": {
+    "lineage_id": "LIN_HW1F_HKD_20260101",
+    "market": "HKD",
+    "as_of_date": "2026-01-01",
+    "source_type": "file_fixture",
+    "source_detail": "/tmp/cycle_clone/par_model_v2/calibration/fixtures/hkd_swaption_surface_20260101.json",
+    "fixture_version": "1.0.0",
+    "approved_by": "ModelGovernance_Phase13",
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "sha256_checksum": "00cef8b6ac6b7c39a55eb680f25015e3710a850f432882e8c231c1cc2b4462bf",
+    "produced_at": "2026-07-07T19:28:54.787769+00:00"
+   },
+   "is_placeholder": false
+  }
+ ],
+ "gates": [
+  {
+   "gate_id": "G-02",
+   "gate_description": "HW1F parameters calibrated to market swaption data (not placeholders); RMSE <= 25.0 bps for CNY and HKD (25 bps = HW1F one-factor threshold; G2++ upgrade targets 5 bps)",
+   "status": "PASS",
+   "evidence": "CNY: is_placeholder=False; CNY: RMSE=8.90bps <= 25.0bps; HKD: is_placeholder=False; HKD: RMSE=13.33bps <= 25.0bps",
+   "evaluated_at": "2026-07-07T19:28:55.242990+00:00"
+  },
+  {
+   "gate_id": "G-12",
+   "gate_description": "Calibration data lineage documented: source, approval, and SHA-256 recorded for CNY and HKD (IA TAS M \u00a73.6)",
+   "status": "PASS",
+   "evidence": "CNY: source=ration/fixtures/cny_swaption_surface_20260101.json; CNY: sha256=2e15b086f5a3a2f7...; HKD: source=ration/fixtures/hkd_swaption_surface_20260101.json; HKD: sha256=00cef8b6ac6b7c39...",
+   "evaluated_at": "2026-07-07T19:28:55.243017+00:00"
+  }
+ ],
+ "unsigned": true,
+ "unsigned_reason": "Parameters UNSIGNED pending Model Owner approval (roadmap #2, MR-001/MR-008): quote-set provenance file_fixture; no owner-approved credentialled vendor source is configured (roadmap #1). Educational/proxy data - not for regulatory submission.",
+ "standards": [
+  "SOA ASOP 56 3.4",
+  "SOA ASOP 23",
+  "IA TAS M 3.5/3.6",
+  "IFoA APS X2 4.2"
+ ],
+ "cached": false
+}

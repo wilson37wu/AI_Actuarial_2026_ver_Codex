@@ -151,3 +151,33 @@ tamper detection, refresh semantics, schema/structural rejection paths).
 fixtures remain educational proxies until the Model Owner approves a live
 source (then item #2 swaption calibration and #6 backtesting consume this
 pipeline).
+
+## Swaption surface live/proxy path (roadmap 4.1 #2, 2026-07-08)
+
+`par_model_v2/calibration/hw1f_live_calibration.py` extends the three-tier
+provenance design above to the FULL swaption surface payload (ATM normal-vol
+grid + spot curve + r0 + regulatory cap; one document contract shared by all
+tiers, matching the versioned fixture files):
+
+1. `live_fetch` — injected `fetcher(as_of) -> payload` (vendor adapter /
+   proxy quote set). Schema-validated BEFORE caching; a validation failure
+   raises `MarketDataFetchError` — bad live data is never silently replaced
+   by a fixture. Lineage approver = `UNSIGNED_pending_owner_approval`.
+2. `cached_snapshot` — SHA-256-sealed via the same `SnapshotCache`;
+   tamper raises `SnapshotIntegrityError`.
+3. `file_fixture` — `cny/hkd_swaption_surface_20260101.json` (offline default).
+
+`run_hw1f_live_calibration()` executes `HullWhiteCalibrator.calibrate()`
+end-to-end per market on the resolved quote set (via `DictSwaptionSource` →
+the same `LiveSwaptionDataLoader` validation the Phase 13 path uses) and
+emits a PARAMETER CARD (JSON + markdown) with weighted SSE (bps²), RMSE bps,
+max abs error bps, optimizer convergence (incl. a documented Nelder-Mead
+polish stage when scipy's L-BFGS-B line search ends ABNORMAL),
+params-at-bounds flags, per-point fit table, gates G-02/G-12, lineage, an
+inputs digest (idempotent re-runs) and `"unsigned": true`. The repository
+`GovernanceStore` is never touched. Committed evidence:
+`docs/validation/HW1F_LIVE_CALIBRATION_PARAMETER_CARD.{json,md}`.
+
+Tests: `tests/test_hw1f_live_calibration.py` (18 cases: schema rejection
+paths, three tiers, tamper, live fail-loud, end-to-end fixture + live/proxy
+calibration, digest idempotency, markdown card).
