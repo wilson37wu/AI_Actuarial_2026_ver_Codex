@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-07T16:32:34Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-07T17:06Z-ada0",
+  "started_at": "2026-07-07T17:06:56Z",
+  "ttl_minutes": 120,
+  "task": "CF-2 run integration: attach cash-flow projection set to executed runs (owner directive 2026-07-03)",
+  "note": ""
 }
