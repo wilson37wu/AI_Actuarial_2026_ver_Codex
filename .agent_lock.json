@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-08T16:23:39Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-08T17:05Z-164f",
+  "started_at": "2026-07-08T17:05:53Z",
+  "ttl_minutes": 120,
+  "task": "#3 CBIRC 3.0% discount-cap remediation (MR-002)",
+  "note": ""
 }
