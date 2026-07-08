@@ -196,6 +196,21 @@ def _stamp_provenance(path: str, provenance: Dict[str, Any]) -> None:
         json.load(fh)  # re-parse guard
 
 
+def _stamp_scenario_source_provenance(path: str,
+                                      provenance: Dict[str, Any]) -> None:
+    """ES-3: additively record the ``scenario_source`` provenance (file digest,
+    manifest subset, measure-guard decision, monthly-mapping summary) onto a
+    captured RUN_MODEL artifact.  Stamped ONLY for a user-file run, so a
+    default (``scenario_source=model``) run's artifacts stay bit-identical."""
+    with open(path, encoding="utf-8") as fh:
+        obj = json.load(fh)
+    obj["scenario_source_provenance"] = provenance
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(obj, fh, indent=1, default=str)
+    with open(path, encoding="utf-8") as fh:
+        json.load(fh)  # re-parse guard
+
+
 # --------------------------------------------------------------------------
 # (d) the end-to-end driver
 # --------------------------------------------------------------------------
@@ -241,6 +256,27 @@ def execute_run(inputs_path: str, out_dir: str, *,
                 "progress": progress}
     progress.append("run gate CLEARED (digest %s) - authorising run"
                     % (gate_check["reproducibility_digest"] or "")[:23])
+
+    # (2b) ES-3 MEASURE GUARD: if the run opts into a user scenario file, the
+    # file's measure basis MUST match the run intent (valuation->risk_neutral,
+    # p_diagnostic->real_world).  A mismatch is an ERROR carrying a deviation
+    # record - REFUSE and spawn nothing.  A ``model`` source is a no-op.
+    try:
+        from par_model_v2.viewer.igui_scenario_source import (
+            evaluate_measure_guard, SCENARIO_SOURCE_USER_FILE)
+        ss_guard = evaluate_measure_guard(model_inputs)
+    except Exception as exc:  # never fail a governed run on the guard import
+        ss_guard = {"ok": True, "selector": "model",
+                    "note": "measure guard unavailable: %s" % exc}
+    if not ss_guard.get("ok"):
+        progress.append("RUN REFUSED - scenario measure guard failed: %s"
+                        % ss_guard.get("reason"))
+        return {"ok": False, "stage": "scenario_measure_guard",
+                "errors": [ss_guard.get("reason", "scenario measure guard failed")],
+                "scenario_source_guard": ss_guard, "progress": progress}
+    if ss_guard.get("selector") == SCENARIO_SOURCE_USER_FILE:
+        progress.append("scenario_source=user_file: measure guard PASS (%s)"
+                        % ss_guard.get("note"))
 
     # (3) drive run_model.py out of process
     os.makedirs(out_dir, exist_ok=True)
@@ -327,9 +363,42 @@ def execute_run(inputs_path: str, out_dir: str, *,
         progress.append(
             "cash-flow set attachment unavailable (run unaffected): %s"
             % "; ".join(cf_att.get("errors") or ["unknown"]))
+    # (6c) ES-3: record the run's scenario SOURCE into the governance trail
+    # (built-in ESG note, or - for a user file - the re-verified file digest +
+    # manifest + measure-guard decision + monthly-mapping summary).  For a
+    # user-file run the provenance is additively STAMPED onto both artifacts;
+    # a model run leaves the artifacts bit-identical.  Best-effort - the
+    # governed run is never failed by this diagnostic overlay.
+    try:
+        from par_model_v2.viewer.igui_scenario_source import (
+            attach_scenario_source_for_run, SCENARIO_SOURCE_USER_FILE)
+        ss_att = attach_scenario_source_for_run(inputs_path, out_dir)
+    except Exception as exc:  # pragma: no cover - import-level failure only
+        ss_att = {"ok": False,
+                  "errors": ["scenario-source attachment failed: %s" % exc]}
+    if ss_att.get("selector") == SCENARIO_SOURCE_USER_FILE and ss_att.get("ok") \
+            and ss_att.get("provenance"):
+        try:
+            _stamp_scenario_source_provenance(summary_path, ss_att["provenance"])
+            _stamp_scenario_source_provenance(report_path, ss_att["provenance"])
+            progress.append(
+                "scenario-source provenance stamped for this run "
+                "(user_file digest %s%s)"
+                % (str(ss_att.get("csv_sha256"))[:12],
+                   ", digest-cache hit" if ss_att.get("cached") else ""))
+        except (OSError, ValueError) as exc:
+            progress.append(
+                "scenario-source stamp unavailable (run unaffected): %s" % exc)
+    elif ss_att.get("selector") == SCENARIO_SOURCE_USER_FILE:
+        progress.append(
+            "scenario-source attachment unavailable (run unaffected): %s"
+            % "; ".join(ss_att.get("errors") or ["unknown"]))
+    else:
+        progress.append("scenario_source=model (built-in governed ESG)")
     return {"ok": True, "stage": "run_complete", "smoke": bool(smoke),
             "path_detail": path_att,
             "cashflow_set": cf_att,
+            "scenario_source": ss_att,
             "out_dir": os.path.abspath(out_dir),
             "summary_path": os.path.abspath(summary_path),
             "report_path": os.path.abspath(report_path),

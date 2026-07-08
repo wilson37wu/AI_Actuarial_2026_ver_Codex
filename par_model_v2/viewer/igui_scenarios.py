@@ -280,6 +280,15 @@ def build_scenario_save_response(payload: Any, out_path: str,
     # merge into model_inputs.json + GATE RESET (inputs changed)
     mi = _read_model_inputs(out_path)
     mi["user_scenarios"] = block
+    # ES-3: saving a validated set SELECTS it as the run scenario source and
+    # derives the run measure intent from the file's OWN basis (so the ES-3
+    # measure guard is satisfied by construction: risk_neutral->valuation,
+    # real_world->p_diagnostic).  A run can revert to the governed ESG by
+    # setting scenario_source back to "model".
+    mi["scenario_source"] = "user_file"
+    run_intent = ("valuation" if sset.basis == "risk_neutral"
+                  else "p_diagnostic")
+    mi["run_intent"] = run_intent
     gate_reset = mi.pop("run_gate", None) is not None
     try:
         with open(out_path, "w", encoding="utf-8") as fh:
@@ -297,6 +306,8 @@ def build_scenario_save_response(payload: Any, out_path: str,
            "written": os.path.abspath(out_path),
            "store_dir": os.path.abspath(store_dir),
            "user_scenarios": block,
+           "scenario_source": "user_file",
+           "run_intent": run_intent,
            "gate_reset": gate_reset,
            "gate_note": ("run gate reset - inputs changed, re-clear it on the "
                          "Run Gate page" if gate_reset else

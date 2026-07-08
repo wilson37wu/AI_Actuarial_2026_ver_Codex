@@ -103,9 +103,10 @@ enforced at run time (§5).
   (TVOG/SCR inner scenarios); `real_world` files for P-measure diagnostics
   (GD-1 path fans, stress overlays). A mismatch is a validator ERROR;
   override requires an approved deviation record (C-ROSS discipline).
-* Monthly engine mapping (documented at ES-3): curves are interpolated to the
-  monthly grid within each year; the annual equity return is spread
-  geometrically over 12 months: `(1+R)^(1/12)-1`.
+* Monthly engine mapping (implemented at ES-3, schema
+  `es3-scenario-source-1.0`): the year-end curve is held across that
+  projection year (piecewise-annual) and the annual equity return is spread
+  geometrically over 12 months: `(1+R)^(1/12)-1`. Full rule in §7.
 * Governance trail: run artifacts record `csv_sha256`, manifest content and
   the UNSIGNED state — the file is a scenario input, never a governed
   calibration.
@@ -120,4 +121,66 @@ enforced at run time (§5).
 |---|---|---|
 | ES-1 | This spec + validating loader (`par_model_v2/stochastic/user_scenarios.py`) + template + tests | DONE (2026-07-08: spec + loader + 41 tests) |
 | ES-2 | GUI: /scenarios upload page — validate, preview fan chart, persist with digest | DONE (2026-07-08: `igui_scenarios.py`, /scenarios + /scenario-status + validate/save routes, 19 tests) |
-| ES-3 | Engine integration: `scenario_source` selector, measure guard, governance trail | OPEN |
+| ES-3 | Engine integration: `scenario_source` selector, measure guard, monthly mapping, governance trail | DONE (2026-07-09: `scenario_source.py` + `igui_scenario_source.py`, execute_run guard+attach, 29 tests) |
+
+
+## 7. ES-3 engine consumption & monthly interpolation (as implemented)
+
+ES-3 (`par_model_v2/stochastic/scenario_source.py` +
+`par_model_v2/viewer/igui_scenario_source.py`) makes a validated user file a
+first-class, measure-guarded, governance-recorded run input. It is **purely
+additive**: the default `scenario_source` is `model`, so a run that does not
+opt in is bit-identical, and the governed headline (TVOG / aggregation
+report) is never re-based onto user scenarios by ES-3 (that step moves a
+governed figure and stays owner-gated).
+
+### 7.1 Run-config selector
+* `scenario_source`: `"model"` (default, governed HW1F+GBM ESG) or
+  `"user_file"`. An unrecognised value is a fail-loud error (never a silent
+  fallback to the built-in generator).
+* `run_intent`: `"valuation"` (default, Q measure) or `"p_diagnostic"`
+  (P measure). Saving a set on `/scenarios` sets `scenario_source="user_file"`
+  and derives `run_intent` from the file's own basis
+  (`risk_neutral`→`valuation`, `real_world`→`p_diagnostic`) so the guard is
+  satisfied by construction; a run reverts to the governed ESG by setting
+  `scenario_source` back to `"model"`.
+
+### 7.2 Measure guard (ERROR + deviation record)
+Before a `user_file` run is spawned, `execute_run` enforces the guard: a
+`valuation` run requires a `risk_neutral` file; a `p_diagnostic` run requires
+a `real_world` file. A mismatch — or a missing / unknown-basis block — is an
+**ERROR**: the run is **refused** (nothing spawned) and a structured
+`SCENARIO_MEASURE_DEVIATION` record (severity ERROR, required vs file basis,
+file sha256, resolution) is returned and carried into the provenance. No
+silent mis-measurement, no self-approval.
+
+### 7.3 Annual → monthly interpolation (schema `es3-scenario-source-1.0`)
+The file anchors, per scenario and projection year `y` (1..Y): a spot-zero
+curve **at the end of** year `y` (12 tenors) and `EQ_RETURN`, the annual
+equity total return **over** year `y`. The engine grid is monthly,
+`m = 1..12·Y`. The **piecewise-annual** mapping is:
+
+* projection year of month `m`: `y(m) = ceil(m/12)` (months 1..12 → year 1, …);
+* the rate curve applied during month `m` is the year-`y(m)` **year-end**
+  curve, held constant across that year. No cross-year linear interpolation is
+  imposed (the file only anchors year-end points) and the governed pre-year-1
+  curve is **not** overwritten;
+* the monthly **short-rate proxy** is the shortest-tenor (`3M`) spot of the
+  applied curve, held over the month;
+* the monthly **equity return** is the geometric split
+  `(1 + EQ_RETURN[y(m)])^(1/12) − 1`, so the twelve monthly returns compound
+  back to the annual total return **exactly** (unit-tested to < 1e-9).
+
+`interpolate_monthly_paths()` returns `short_rate` (S×M), `equity_return`
+(S×M), the full `rate_cube` (S×M×T) and the 1-based `year_index` (M).
+
+### 7.4 Governance trail
+For a `user_file` run, `execute_run` additively stamps a
+`scenario_source_provenance` block (schema `es3-scenario-source-prov-1.0`)
+onto both RUN_MODEL artifacts and persists it under
+`run_output/scenario_source_runs/<digest12>/` (digest-keyed like CF-2 / GD-4:
+identical files share one copy, the persisted CSV digest is **re-verified**
+on attach, a tampered/missing file reports STALE). The block records the
+selector, run intent, measure-guard decision (and deviation record if any),
+the file `csv_sha256` + manifest subset, the monthly-mapping summary and the
+UNSIGNED banner. A `model` run writes nothing and stays bit-identical.
