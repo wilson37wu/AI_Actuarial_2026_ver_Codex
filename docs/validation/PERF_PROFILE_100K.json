@@ -1,0 +1,150 @@
+{
+  "digest_scheme": {
+    "buffer_hash_ms": 86.586,
+    "note": "buffer-hash is a MEASUREMENT-ONLY alternative; it changes the governed digest value and requires owner sign-off (re-baseline).",
+    "speedup_pct": 77.9,
+    "to_csv_ms": 390.918,
+    "values_differ": true
+  },
+  "finding": "The top hotspot of the 100k-policy batch is the SHA-256 reproducibility digest of the generated portfolio, computed via pandas to_csv (~70% of generation runtime). Its byte output defines the governed reproducibility value, so it cannot be reduced by output-identical means. The available SAFE (byte-identical) optimisation -- skipping the redundant re-sort and column re-subset -- is 11.5% of generation, BELOW the 20% target; it has been applied with the governed digest value regression-locked (unchanged). A >=20% cut IS achievable (78% faster digest via a column-buffer hash) but CHANGES the governed digest value and therefore requires Model Owner sign-off (governed re-baseline). Per the roadmap DoD this is the documented finding that no >=20% cut is available by safe means, plus the sub-20% safe optimisation that is.",
+  "generated_at": "2026-07-09T17:26:24Z",
+  "generation": {
+    "digest_fraction": 0.6963,
+    "digest_ms": 366.211,
+    "modelling_ms": 159.709,
+    "total_ms": 525.92
+  },
+  "hotspots": [
+    {
+      "cumtime_s": 0.28919,
+      "filename": "/usr/local/lib/python3.10/dist-packages/pandas/io/formats/csvs.py",
+      "function": "_save_chunk",
+      "lineno": 315,
+      "ncalls": 16,
+      "tottime_s": 0.16438
+    },
+    {
+      "cumtime_s": 0.089349,
+      "filename": "~",
+      "function": "<method 'astype' of 'numpy.ndarray' objects>",
+      "lineno": 0,
+      "ncalls": 98,
+      "tottime_s": 0.089349
+    },
+    {
+      "cumtime_s": 0.032645,
+      "filename": "~",
+      "function": "<method 'argsort' of 'numpy.ndarray' objects>",
+      "lineno": 0,
+      "ncalls": 12,
+      "tottime_s": 0.032645
+    },
+    {
+      "cumtime_s": 0.022862,
+      "filename": "/usr/local/lib/python3.10/dist-packages/pandas/core/dtypes/missing.py",
+      "function": "_isna_string_dtype",
+      "lineno": 305,
+      "ncalls": 26,
+      "tottime_s": 0.022817
+    },
+    {
+      "cumtime_s": 0.515903,
+      "filename": "/sessions/relaxed-intelligent-sagan/tmp/cycle_clone/par_model_v2/projection/portfolio_generator.py",
+      "function": "generate_hk_par_portfolio",
+      "lineno": 274,
+      "ncalls": 1,
+      "tottime_s": 0.021983
+    },
+    {
+      "cumtime_s": 0.015922,
+      "filename": "~",
+      "function": "<built-in method numpy.asarray>",
+      "lineno": 0,
+      "ncalls": 64,
+      "tottime_s": 0.01587
+    },
+    {
+      "cumtime_s": 0.015307,
+      "filename": "/sessions/relaxed-intelligent-sagan/tmp/cycle_clone/par_model_v2/projection/portfolio_generator.py",
+      "function": "<listcomp>",
+      "lineno": 271,
+      "ncalls": 2,
+      "tottime_s": 0.015307
+    },
+    {
+      "cumtime_s": 0.018148,
+      "filename": "/usr/local/lib/python3.10/dist-packages/pandas/core/internals/managers.py",
+      "function": "_merge_blocks",
+      "lineno": 2295,
+      "ncalls": 3,
+      "tottime_s": 0.010641
+    },
+    {
+      "cumtime_s": 0.010568,
+      "filename": "~",
+      "function": "<built-in method numpy.array>",
+      "lineno": 0,
+      "ncalls": 67,
+      "tottime_s": 0.010568
+    },
+    {
+      "cumtime_s": 0.010273,
+      "filename": "/sessions/relaxed-intelligent-sagan/tmp/cycle_clone/par_model_v2/projection/portfolio_generator.py",
+      "function": "<listcomp>",
+      "lineno": 333,
+      "ncalls": 1,
+      "tottime_s": 0.010273
+    },
+    {
+      "cumtime_s": 0.009683,
+      "filename": "/usr/local/lib/python3.10/dist-packages/pandas/core/algorithms.py",
+      "function": "value_counts_arraylike",
+      "lineno": 963,
+      "ncalls": 4,
+      "tottime_s": 0.009579
+    },
+    {
+      "cumtime_s": 0.009449,
+      "filename": "/sessions/relaxed-intelligent-sagan/tmp/cycle_clone/par_model_v2/projection/portfolio_generator.py",
+      "function": "<listcomp>",
+      "lineno": 235,
+      "ncalls": 1,
+      "tottime_s": 0.009449
+    }
+  ],
+  "inputs_digest": "2f5db6d1c7fa0a0b1e7d55fe63cd71e9f8aa4a2baa4c5349725fc1a33c6f27ce",
+  "meets_20pct_safely": false,
+  "n_policies": 100000,
+  "owner_gated_cut_pct": 77.9,
+  "reps": 5,
+  "safe_cut_pct": 11.52,
+  "safe_optimization": {
+    "digest_byte_identical": true,
+    "generation_ms": 516.514,
+    "redundant_resort_ms": 48.32,
+    "redundant_subset_ms": 11.174,
+    "saving_ms": 59.494,
+    "saving_pct_of_generation": 11.52
+  },
+  "schema_version": "perf-profile-100k-1.0",
+  "seed": 20260604,
+  "stages": [
+    {
+      "mean_ms": 532.041,
+      "median_ms": 528.579,
+      "min_ms": 519.295,
+      "name": "generate_hk_par_portfolio",
+      "reps": 5
+    },
+    {
+      "mean_ms": 385.338,
+      "median_ms": 380.13,
+      "min_ms": 372.004,
+      "name": "portfolio_digest (to_csv, governed)",
+      "reps": 5
+    }
+  ],
+  "top_hotspot_function": "_save_chunk",
+  "unsigned": true,
+  "unsigned_banner": "UNSIGNED educational performance evidence -- timings are environment-dependent and are NOT a production commitment; the governed reproducibility digest value is unchanged by the safe optimisation."
+}

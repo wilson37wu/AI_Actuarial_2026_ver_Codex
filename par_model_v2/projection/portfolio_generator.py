@@ -380,7 +380,7 @@ def generate_hk_par_portfolio(
     table = table.sort_values(["product_line", "policy_id"], kind="mergesort").reset_index(drop=True)
 
     summary = portfolio_summary(table)
-    digest = portfolio_digest(table)
+    digest = _portfolio_digest_presorted(table)  # table already canonical (roadmap 4.1 #10)
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     return PortfolioGenerationResult(
         policies=table,
@@ -399,6 +399,26 @@ def portfolio_digest(table: pd.DataFrame) -> str:
     """
     ordered = table[list(UNIFIED_COLUMNS)].sort_values(["product_line", "policy_id"], kind="mergesort")
     payload = ordered.to_csv(index=False).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _portfolio_digest_presorted(table: pd.DataFrame) -> str:
+    """SHA-256 digest of a portfolio that is ALREADY in canonical order.
+
+    Byte-for-byte identical to :func:`portfolio_digest` **when** ``table`` is
+    already sorted by ``["product_line", "policy_id"]`` and already carries
+    exactly :data:`UNIFIED_COLUMNS` in order -- which is the case for the frame
+    :func:`generate_hk_par_portfolio` has just built and sorted.  It skips the
+    redundant re-sort and column re-subset that :func:`portfolio_digest`
+    performs defensively for arbitrary inputs; that redundant work is a measured
+    ~9% of the 100k-policy generation runtime (see roadmap 4.1 #10 /
+    ``docs/PERF_PROFILE_100K_CARD.md``).  The governed digest *value* is
+    unchanged (regression-locked); this is a pure output-identical speed-up.
+
+    Not for external use with an arbitrary frame -- callers holding an unsorted
+    or reordered table MUST use :func:`portfolio_digest`.
+    """
+    payload = table.to_csv(index=False).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
 
 

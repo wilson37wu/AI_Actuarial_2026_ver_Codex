@@ -266,3 +266,22 @@ with an exact additive decomposition by starting-node régime and a Q-martingale
 check on the shared asset paths. This is an additive DIAGNOSTIC — the governed
 portfolio TVOG headline is untouched; re-baselining onto the path-wise basis
 stays OWNER-GATED.
+
+### 3.10 Batch Performance: Reproducibility-Digest-Bound (roadmap §4.1 #10)
+
+**Severity: Low (documented finding + safe optimisation applied — roadmap §4.1 #10 / Expansion-plan §2.6)**
+
+Profiling the 100,000-policy deterministic batch
+(`batch_perf_profile.py`; evidence `docs/validation/PERF_PROFILE_100K.json`,
+card `docs/PERF_PROFILE_100K_CARD.md`) shows the dominant cost is the SHA-256
+**reproducibility digest** of the generated portfolio computed via pandas
+`DataFrame.to_csv` — ~70% of generation runtime (top-`tottime` function
+`_save_chunk`). The batch is digest-bound, not model-compute-bound. Because the
+digest's byte output DEFINES the governed reproducibility value, it cannot be
+reduced by output-identical means; the safe optimisation (skip the redundant
+re-sort + column re-subset on the already-canonical frame — applied, digest
+byte-identical / regression-locked) is ~11.5% of generation, below the 20%
+target. A ≥20% cut IS available via a column-buffer-hash digest (~78% faster)
+but that CHANGES the governed digest value and is therefore **OWNER-GATED**
+(re-baseline of the reproducibility-digest scheme). Governed TVOG/aggregation
+headline and the portfolio digest value are both UNTOUCHED.
