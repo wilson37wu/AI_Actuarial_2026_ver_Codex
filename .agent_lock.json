@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-09T11:07Z-0a29",
-  "started_at": "2026-07-09T11:07:48Z",
-  "ttl_minutes": 120,
-  "task": "#4 Dynamic lapse: rate-differential lapse response function (MR-003)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-09T11:21:53Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
