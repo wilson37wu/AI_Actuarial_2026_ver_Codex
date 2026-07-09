@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-09T13:27:57Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-09T14:07Z-bc9c",
+  "started_at": "2026-07-09T14:07:06Z",
+  "ttl_minutes": 120,
+  "task": "#7 G2++ two-factor rate-model promotion: wire G2PP into production ESG path + curve-twist/martingale/swaption validation (roadmap 4.1 #7)",
+  "note": ""
 }
