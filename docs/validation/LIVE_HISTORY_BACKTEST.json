@@ -1,0 +1,171 @@
+{
+  "calibration": {
+    "a": 0.84527860920907,
+    "calibration_date": "2026-01-01",
+    "dividend_yield": 0.025,
+    "erp": 0.12041428571428572,
+    "lambda_r": 0.0,
+    "r0": 0.042,
+    "rho": 0.24086209320404586,
+    "sigma_S": 0.297584345786439,
+    "sigma_r": 0.009513236142594271
+  },
+  "data_sha256": "aa203ed72b3b8b967792e624447ab11c3e842757583c6da7e1d9e1e9453730f8",
+  "full_result": {
+    "audit_entry_id": "3dc9334eeef94b42a33e42dd6efecf39",
+    "created_at": "2026-07-09T13:24:04.244556+00:00",
+    "equity_coverage_pct": 1.0,
+    "es95_mean": 187892.49309778426,
+    "es99_mean": 228951.93186106495,
+    "kupiec_pvalue_95": 0.2672050597522633,
+    "kupiec_pvalue_99": 0.6233349482036092,
+    "martingale_all_pass": true,
+    "rate_coverage_pct": 0.75,
+    "requires_recalibration": false,
+    "run_id": "backtest-6826ed98a5bd",
+    "var95_exception_rate": 0.0,
+    "var99_exception_rate": 0.0
+  },
+  "gate_g09": {
+    "evaluated_at": "2026-07-09T13:24:06.620757+00:00",
+    "evidence": "n_obs=12, live_file=True; rate_cov=75.0%; equity_cov=100.0%; kupiec95_p=0.267; var99_breach=0.0%; report_populated=True; audit_entry_id=3dc9334eeef94b42a33e42dd6efecf39",
+    "gate_description": "Backtesting against live CNY market data: >=10 annual observations, rate/equity coverage >=70%, Kupiec VaR95 p>0.05, VaR99 breach <=5%, populated annual report, governance audit entry (SOA ASOP 56 \u00a73.5; IA TAS M \u00a73.6)",
+    "gate_id": "G-09",
+    "status": "PASS"
+  },
+  "inputs_digest": "56aaa654e6ef46134b87141b5c18bada6f5720208f53a43265980572789c8877",
+  "lineage": {
+    "approval_timestamp": "2026-01-01T00:00:00Z",
+    "approved_by": "ModelGovernance_Phase13",
+    "as_of_date": "2026-01-01",
+    "fixture_version": "1.0.0",
+    "lineage_id": "LIN_CNY_BACKTEST_HISTORY_20260101",
+    "market": "CN",
+    "produced_at": "2026-07-09T13:23:59.108615+00:00",
+    "sha256_checksum": "aa203ed72b3b8b967792e624447ab11c3e842757583c6da7e1d9e1e9453730f8",
+    "source_detail": "/sessions/optimistic-modest-edison/tmp/cycle_clone/par_model_v2/calibration/fixtures/cny_backtest_history_20260101.json",
+    "source_type": "file_fixture"
+  },
+  "market": "CNY",
+  "n_full": 12,
+  "n_in_sample": 7,
+  "n_oos": 5,
+  "oos_result": {
+    "audit_entry_id": null,
+    "created_at": "2026-07-09T13:24:06.620639+00:00",
+    "equity_coverage_pct": 1.0,
+    "es95_mean": 210563.27126687992,
+    "es99_mean": 254644.64981376342,
+    "kupiec_pvalue_95": 0.47387195607914057,
+    "kupiec_pvalue_99": 0.7512264183056867,
+    "martingale_all_pass": true,
+    "rate_coverage_pct": 1.0,
+    "requires_recalibration": false,
+    "run_id": "backtest-43f068b3cd14",
+    "var95_exception_rate": 0.0,
+    "var99_exception_rate": 0.0
+  },
+  "provenance": "file_fixture",
+  "recalibration": {
+    "engine_requires_recalibration": false,
+    "evaluated_at": "2026-07-09T13:24:06.620791+00:00",
+    "max_severity": "HIGH",
+    "n_breached": 1,
+    "rationale": "1 trigger(s) breached (oos_coverage_drift); worst severity HIGH -> SCHEDULE_RECALIBRATION.",
+    "recommendation": "SCHEDULE_RECALIBRATION",
+    "triggers": [
+      {
+        "breached": false,
+        "category": "coverage",
+        "comparator": ">=",
+        "name": "rate_band_coverage",
+        "observed": 0.75,
+        "rationale": "Realised short rates fall outside the P-measure band too often.",
+        "recommended_action": "Recalibrate HW1F mean-reversion (a) and short-rate vol (sigma_r) on refreshed CNY curve history.",
+        "severity": "CRITICAL",
+        "threshold": 0.7
+      },
+      {
+        "breached": false,
+        "category": "coverage",
+        "comparator": ">=",
+        "name": "equity_band_coverage",
+        "observed": 1.0,
+        "rationale": "Realised equity returns fall outside the P-measure band too often.",
+        "recommended_action": "Recalibrate GBM equity drift (ERP) and vol (sigma_S) on refreshed CSI 300 history.",
+        "severity": "CRITICAL",
+        "threshold": 0.7
+      },
+      {
+        "breached": false,
+        "category": "var_exception",
+        "comparator": ">",
+        "name": "kupiec_var95_pof",
+        "observed": 0.2672050597522633,
+        "rationale": "Kupiec POF rejects the VaR95 exception frequency.",
+        "recommended_action": "Review 95% tail calibration / scenario count; re-estimate loss-proxy dispersion.",
+        "severity": "HIGH",
+        "threshold": 0.05
+      },
+      {
+        "breached": false,
+        "category": "var_exception",
+        "comparator": ">",
+        "name": "kupiec_var99_pof",
+        "observed": 0.6233349482036092,
+        "rationale": "Kupiec POF rejects the VaR99 exception frequency.",
+        "recommended_action": "Review 99% tail calibration; re-estimate tail-loss dispersion and dependence.",
+        "severity": "HIGH",
+        "threshold": 0.05
+      },
+      {
+        "breached": false,
+        "category": "var_exception",
+        "comparator": "<=",
+        "name": "var99_breach_rate",
+        "observed": 0.0,
+        "rationale": "VaR99 exceedances exceed the regulatory tolerance.",
+        "recommended_action": "Recalibrate the tail; escalate to Model Owner for capital-adequacy review.",
+        "severity": "CRITICAL",
+        "threshold": 0.05
+      },
+      {
+        "breached": false,
+        "category": "var_exception",
+        "comparator": "<=",
+        "name": "var95_breach_rate",
+        "observed": 0.0,
+        "rationale": "VaR95 exceedances above the monitoring tolerance.",
+        "recommended_action": "Monitor; schedule a calibration review if the breach persists next cycle.",
+        "severity": "MEDIUM",
+        "threshold": 0.1
+      },
+      {
+        "breached": false,
+        "category": "risk_neutral",
+        "comparator": ">=",
+        "name": "martingale_q_measure",
+        "observed": 1.0,
+        "rationale": "Q-measure martingale test failed (risk-neutral drift off).",
+        "recommended_action": "Re-run the risk-neutral drift correction before any revaluation; do not re-baseline the headline.",
+        "severity": "CRITICAL",
+        "threshold": 1.0
+      },
+      {
+        "breached": true,
+        "category": "stability",
+        "comparator": "<=",
+        "name": "oos_coverage_drift",
+        "observed": 0.25,
+        "rationale": "In-sample vs out-of-sample band coverage diverges (parameter instability).",
+        "recommended_action": "Schedule recalibration with a rolling-window stability check (VR-S05).",
+        "severity": "HIGH",
+        "threshold": 0.2
+      }
+    ]
+  },
+  "run_timestamp": "2026-07-09T13:23:59.106755+00:00",
+  "schema": "live-history-backtest-1.0",
+  "unsigned": true,
+  "unsigned_banner": "UNSIGNED - educational-proxy market history resolved via the item-#1 live pipeline (file_fixture tier); replace with a credentialled ChinaBond/CSI/Wind extract and obtain Model-Owner sign-off before any regulatory or capital-adequacy use. Governed headline figures are NOT re-baselined here."
+}

@@ -65,6 +65,25 @@ def _loss_from_market_outcome(
     return rate_loss + equity_loss - diversification_credit
 
 
+def _chi2_sf_df1(lr_stat: float) -> float:
+    """Survival function P(X > lr_stat) for a chi-square variate with df=1.
+
+    Uses scipy when it is importable; otherwise falls back to the EXACT closed
+    form for one degree of freedom.  A chi-square(1) variate is Z**2 for a
+    standard normal Z, so P(Z**2 > x) = P(|Z| > sqrt(x)) = erfc(sqrt(x/2)),
+    which is numerically identical to ``scipy.stats.chi2.sf(x, df=1)`` and keeps
+    the Kupiec proportion-of-failures test runnable in scipy-free environments
+    (the offline sandbox / a minimal CI image).  ``math.erfc`` is stdlib.
+    """
+    x = float(max(0.0, lr_stat))
+    try:  # pragma: no cover - exercised in both scipy and scipy-free CI
+        from scipy import stats as scipy_stats  # lazy: only when present
+        return float(scipy_stats.chi2.sf(x, df=1))
+    except Exception:
+        import math
+        return float(math.erfc(math.sqrt(x / 2.0)))
+
+
 def _kupiec_pof_pvalue(
     n_exceptions: int,
     n_observations: int,
@@ -92,8 +111,7 @@ def _kupiec_pof_pvalue(
         log_l_alt += n_exceptions * np.log(observed_prob)
 
     lr_stat = max(0.0, -2.0 * (log_l_null - log_l_alt))
-    from scipy import stats as scipy_stats  # lazy: only needed here
-    return float(scipy_stats.chi2.sf(lr_stat, df=1))
+    return float(_chi2_sf_df1(lr_stat))
 
 
 @dataclass
@@ -550,6 +568,7 @@ __all__ = [
     "BacktestDataset",
     "BacktestEngine",
     "BacktestResult",
+    "_chi2_sf_df1",
     "_kupiec_pof_pvalue",
     "_loss_from_market_outcome",
 ]

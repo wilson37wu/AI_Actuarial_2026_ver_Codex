@@ -62,3 +62,7 @@ outputs/_igui_*selftest*.json
 # GUI run-console artifacts (GUI-1): per-user run output + job records + user results copy
 run_output/
 user_results/
+
+# runtime market-data snapshot caches (never commit)
+**/_snapshot_cache/
+par_model_backtest_snapshots/
