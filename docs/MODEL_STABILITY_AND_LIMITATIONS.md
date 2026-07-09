@@ -36,6 +36,8 @@ TVOG convergence was tested at four scenario counts with seed fixed at 42. The A
 **Drift 500 → 1,000:** 0.65% — within ASOP 56 §3.5 convergence tolerance (≤1%).  
 **Conclusion:** 500 scenarios is the validated minimum for TVOG. The 1,000-scenario run is recommended for production sensitivity and capital work (consistent with `docs/PARAMETER_CALIBRATION_METHODOLOGY.md §7`).
 
+> **Update (2026-07-09, roadmap §4.1 #5 / C-ROSS gap #6).** An extended, independent convergence study now spans the **500 → 1,000 → 2,000 → 5,000** ladder at the CBIRC 3.0% discount base with **95% CI bands** and, crucially, an *antithetic-aware* empirical standard error (the governed ESG draws antithetic shocks, so the naive `sigma/sqrt(N)` error overstates the true error ~10x). Under that error model the 2,000-scenario CBIRC floor already delivers a 95% CI half-width of ~0.6% of TVOG (target ≤2%), so the **regulatory floor — not precision — is the binding constraint; recommended production count = 2,000**. See `docs/SCENARIO_ADEQUACY_CONVERGENCE_STUDY.md` (+ `.json`), engine `par_model_v2/analysis/scenario_adequacy.py`. Diagnostic/UNSIGNED; governed headline untouched.
+
 ### 2.2 Sampling Noise Across Seeds (n=500)
 
 Five independent runs at n=500 (varying seed only):

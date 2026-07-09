@@ -1,0 +1,200 @@
+{
+  "schema": "scenario-adequacy-convergence-1.0",
+  "roadmap_item": "s4.1 #5 scenario adequacy at 2,000+ scenarios: convergence study 500->1000->2000->5000 with CI bands (C-ROSS gap #6)",
+  "generated_at": "2026-07-09T12:40:20.262146+00:00",
+  "inputs_digest": "9e4a2a4cc63ec999110c6afb83a944be34a8285d485fa5693c44fc525e8bd3b0",
+  "ladder": [
+    500,
+    1000,
+    2000,
+    5000
+  ],
+  "deterministic_discount_rate": 0.03,
+  "seed_base": 42,
+  "replications": 8,
+  "error_model": "empirical_antithetic",
+  "rel_tol": 0.02,
+  "rel_tol_pct": 2.0,
+  "cbirc_floor": 2000,
+  "points": [
+    {
+      "n_scenarios": 500,
+      "tvog": 8514.4691,
+      "pv_mean": 82761.2716,
+      "pv_std": 12788.3974,
+      "se_iid": 571.9145,
+      "error_model": "empirical_antithetic",
+      "effective_se": 47.6096,
+      "ci95_half_width": 93.313,
+      "ci95_low": 8421.1561,
+      "ci95_high": 8607.7821,
+      "rel_ci_half_width": 0.010959,
+      "rel_ci_half_width_pct": 1.0959,
+      "runtime_seconds": 8.2634,
+      "meets_cbirc_floor": false,
+      "meets_rel_tol": true,
+      "n_replications": 8,
+      "seeds": [
+        42,
+        10042,
+        20042,
+        30042,
+        40042,
+        50042,
+        60042,
+        70042
+      ],
+      "se_empirical": 47.6096,
+      "tvog_repl_mean": 8465.8508,
+      "variance_reduction_factor": 12.0126
+    },
+    {
+      "n_scenarios": 1000,
+      "tvog": 8528.4836,
+      "pv_mean": 82775.2861,
+      "pv_std": 12806.8723,
+      "se_iid": 404.9889,
+      "error_model": "empirical_antithetic",
+      "effective_se": 42.9085,
+      "ci95_half_width": 84.099,
+      "ci95_low": 8444.3845,
+      "ci95_high": 8612.5826,
+      "rel_ci_half_width": 0.009861,
+      "rel_ci_half_width_pct": 0.9861,
+      "runtime_seconds": 16.5795,
+      "meets_cbirc_floor": false,
+      "meets_rel_tol": true,
+      "n_replications": 8,
+      "seeds": [
+        42,
+        10042,
+        20042,
+        30042,
+        40042,
+        50042,
+        60042,
+        70042
+      ],
+      "se_empirical": 42.9085,
+      "tvog_repl_mean": 8475.5718,
+      "variance_reduction_factor": 9.4384
+    },
+    {
+      "n_scenarios": 2000,
+      "tvog": 8489.5785,
+      "pv_mean": 82736.381,
+      "pv_std": 12556.3914,
+      "se_iid": 280.7694,
+      "error_model": "empirical_antithetic",
+      "effective_se": 27.6954,
+      "ci95_half_width": 54.2821,
+      "ci95_low": 8435.2964,
+      "ci95_high": 8543.8605,
+      "rel_ci_half_width": 0.006394,
+      "rel_ci_half_width_pct": 0.6394,
+      "runtime_seconds": 32.8749,
+      "meets_cbirc_floor": true,
+      "meets_rel_tol": true,
+      "n_replications": 8,
+      "seeds": [
+        42,
+        10042,
+        20042,
+        30042,
+        40042,
+        50042,
+        60042,
+        70042
+      ],
+      "se_empirical": 27.6954,
+      "tvog_repl_mean": 8472.6558,
+      "variance_reduction_factor": 10.1378
+    },
+    {
+      "n_scenarios": 5000,
+      "tvog": 8461.0926,
+      "pv_mean": 82707.8951,
+      "pv_std": 12313.6067,
+      "se_iid": 174.1407,
+      "error_model": "empirical_antithetic",
+      "effective_se": 17.3334,
+      "ci95_half_width": 33.9729,
+      "ci95_low": 8427.1198,
+      "ci95_high": 8495.0655,
+      "rel_ci_half_width": 0.004015,
+      "rel_ci_half_width_pct": 0.4015,
+      "runtime_seconds": 82.414,
+      "meets_cbirc_floor": true,
+      "meets_rel_tol": true,
+      "n_replications": 8,
+      "seeds": [
+        42,
+        10042,
+        20042,
+        30042,
+        40042,
+        50042,
+        60042,
+        70042
+      ],
+      "se_empirical": 17.3334,
+      "tvog_repl_mean": 8458.4969,
+      "variance_reduction_factor": 10.0465
+    }
+  ],
+  "reference": {
+    "n_scenarios": 5000,
+    "tvog": 8461.0926,
+    "effective_se": 17.3334,
+    "se_constant_c": 1225.6576,
+    "variance_reduction_factor": 10.0465
+  },
+  "sizing": {
+    "required_n_for_rel_tol": 202,
+    "required_n_iid_conservative": 20341,
+    "recommended_n": 2000,
+    "predicted_rel_ci_at_floor": 0.006349,
+    "predicted_rel_ci_at_floor_pct": 0.6349,
+    "meets_rel_tol_at_floor": true,
+    "cbirc_floor_satisfied": true
+  },
+  "diagnostics": {
+    "mc_error_scaling_exponent": -0.4599,
+    "mc_error_scaling_theoretical": -0.5,
+    "convergence_ratios": [
+      {
+        "from_n": 500,
+        "to_n": 1000,
+        "observed_ratio": 0.9013,
+        "theoretical_ratio": 0.7071,
+        "abs_tvog_change": 14.0145,
+        "stable_within_ci": true
+      },
+      {
+        "from_n": 1000,
+        "to_n": 2000,
+        "observed_ratio": 0.6455,
+        "theoretical_ratio": 0.7071,
+        "abs_tvog_change": 38.9051,
+        "stable_within_ci": true
+      },
+      {
+        "from_n": 2000,
+        "to_n": 5000,
+        "observed_ratio": 0.6259,
+        "theoretical_ratio": 0.6325,
+        "abs_tvog_change": 28.4858,
+        "stable_within_ci": true
+      }
+    ],
+    "stable_from_n": 500
+  },
+  "total_runtime_seconds": 140.1318,
+  "unsigned_note": "Educational scenario-adequacy diagnostic on the governed TVOGEngine. Representative product + placeholder ESG calibration; automation-driven sign-off. NOT the governed portfolio TVOG headline. UNSIGNED pending owner / independent-review approval.",
+  "standards": [
+    "SOA ASOP 56 s3.5",
+    "SOA ASOP 25 s3.3",
+    "CBIRC C-ROSS (scenario floor >= 2,000)",
+    "IA TAS M s3.6"
+  ]
+}
