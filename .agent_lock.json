@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-09T15:10Z-2e31",
-  "started_at": "2026-07-09T15:10:15Z",
-  "ttl_minutes": 120,
-  "task": "#8 stochastic bonus declaration: pathwise TVOG vs current TVOG bridge (roadmap 4.1 #8)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-09T15:22:25Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
