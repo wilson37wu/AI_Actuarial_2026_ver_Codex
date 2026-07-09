@@ -1,0 +1,206 @@
+{
+  "schema": "dynamic-lapse-elasticity-tvog-1.0",
+  "run_timestamp": "2026-07-09T11:19:13.860389+00:00",
+  "roadmap_item": "\u00a74.1 #4 (MR-003) dynamic lapse: rate-differential response, bounded elasticity, TVOG delta",
+  "bounded_elasticity": {
+    "credited_rate": 0.025,
+    "base_year1": 0.12,
+    "marginal_response_bound_year1": 6.600845248813019,
+    "empirical_max_slope_year1": 5.167987399273821,
+    "bound_holds": true,
+    "efficiency_slope_peak_at_zero": 17.50704374010849,
+    "mass_lapse_slope_peak_at_tau": 4.5,
+    "semi_elasticity_profile": [
+      {
+        "spread_bps": -200,
+        "semi_elasticity_per_unit": 13.265590947206178,
+        "semi_elasticity_per_bp": 0.0013265590947206178,
+        "marginal_response": 1.1700876444807322
+      },
+      {
+        "spread_bps": -100,
+        "semi_elasticity_per_unit": 19.262458651425703,
+        "semi_elasticity_per_bp": 0.0019262458651425705,
+        "marginal_response": 1.9986049108896549
+      },
+      {
+        "spread_bps": 0,
+        "semi_elasticity_per_unit": 22.670771032040495,
+        "semi_elasticity_per_bp": 0.0022670771032040496,
+        "marginal_response": 2.914025123969437
+      },
+      {
+        "spread_bps": 100,
+        "semi_elasticity_per_unit": 22.18599970571963,
+        "semi_elasticity_per_bp": 0.002218599970571963,
+        "marginal_response": 3.5705607363135323
+      },
+      {
+        "spread_bps": 200,
+        "semi_elasticity_per_unit": 22.786603555737063,
+        "semi_elasticity_per_bp": 0.0022786603555737064,
+        "marginal_response": 4.589437422753183
+      },
+      {
+        "spread_bps": 400,
+        "semi_elasticity_per_unit": 13.280971455596625,
+        "semi_elasticity_per_bp": 0.0013280971455596625,
+        "marginal_response": 3.9591838481092765
+      }
+    ]
+  },
+  "tvog_delta": {
+    "schema": "dynamic-lapse-tvog-1.0",
+    "run_timestamp": "2026-07-09T11:19:13.860363+00:00",
+    "credited_rate": 0.025,
+    "rate_sigma": 0.01,
+    "discount_rate_annual": 0.03,
+    "tvog_static": 0.0,
+    "tvog_dynamic": -753.6047,
+    "tvog_delta": -753.6047,
+    "tvog_delta_pct_of_central": -0.018345,
+    "static": {
+      "basis": "static",
+      "credited_rate": 0.025,
+      "rate_sigma": 0.01,
+      "discount_rate_annual": 0.03,
+      "pv_central": -41078.9704,
+      "expected_pv": -41078.9704,
+      "tvog": 0.0,
+      "scenarios": [
+        {
+          "market_rate": 0.025,
+          "spread_bps": 0.0,
+          "prob_weight": 0.53333333,
+          "pv_net_liability": -41078.9704
+        },
+        {
+          "market_rate": 0.03855626,
+          "spread_bps": 135.56,
+          "prob_weight": 0.22207592,
+          "pv_net_liability": -41078.9704
+        },
+        {
+          "market_rate": 0.01144374,
+          "spread_bps": -135.56,
+          "prob_weight": 0.22207592,
+          "pv_net_liability": -41078.9704
+        },
+        {
+          "market_rate": 0.0535697,
+          "spread_bps": 285.7,
+          "prob_weight": 0.01125741,
+          "pv_net_liability": -41078.9704
+        },
+        {
+          "market_rate": -0.0035697,
+          "spread_bps": -285.7,
+          "prob_weight": 0.01125741,
+          "pv_net_liability": -41078.9704
+        }
+      ]
+    },
+    "dynamic": {
+      "basis": "dynamic",
+      "credited_rate": 0.025,
+      "rate_sigma": 0.01,
+      "discount_rate_annual": 0.03,
+      "pv_central": -61529.6346,
+      "expected_pv": -62283.2394,
+      "tvog": -753.6047,
+      "scenarios": [
+        {
+          "market_rate": 0.025,
+          "spread_bps": 0.0,
+          "prob_weight": 0.53333333,
+          "pv_net_liability": -61529.6346
+        },
+        {
+          "market_rate": 0.03855626,
+          "spread_bps": 135.56,
+          "prob_weight": 0.22207592,
+          "pv_net_liability": -100389.0452
+        },
+        {
+          "market_rate": 0.01144374,
+          "spread_bps": -135.56,
+          "prob_weight": 0.22207592,
+          "pv_net_liability": -26236.5321
+        },
+        {
+          "market_rate": 0.0535697,
+          "spread_bps": 285.7,
+          "prob_weight": 0.01125741,
+          "pv_net_liability": -115400.397
+        },
+        {
+          "market_rate": -0.0035697,
+          "spread_bps": -285.7,
+          "prob_weight": 0.01125741,
+          "pv_net_liability": -4248.9939
+        }
+      ]
+    },
+    "assumption": {
+      "beta": 0.55,
+      "kappa": 0.02,
+      "shock_max": 0.18,
+      "tau": 0.03,
+      "width": 0.01,
+      "credited_rate": 0.025,
+      "marginal_response_bound_year1": 6.600845248813019
+    },
+    "unsigned": true,
+    "unsigned_banner": "UNSIGNED \u2014 educational representative-policy TVOG proxy; NOT the governed portfolio TVOG headline. Replace the synthetic experience study + illustrative rate sigma and obtain APS X2 review before use.",
+    "standard_references": [
+      "SOA ASOP 7 \u00a73.3",
+      "SOA ASOP 56 \u00a73.1",
+      "IA TAS M \u00a73.5",
+      "IA TAS M \u00a73.6"
+    ]
+  },
+  "tvog_delta_vol_profile": [
+    {
+      "rate_sigma": 0.0025,
+      "tvog_static": 0.0,
+      "tvog_dynamic": -71.15031119815103,
+      "tvog_delta": -71.15031119815103,
+      "tvog_delta_pct_of_central": -0.0017320373524442674
+    },
+    {
+      "rate_sigma": 0.005,
+      "tvog_static": 0.0,
+      "tvog_dynamic": -274.09072104128427,
+      "tvog_delta": -274.09072104128427,
+      "tvog_delta_pct_of_central": -0.006672287988730864
+    },
+    {
+      "rate_sigma": 0.01,
+      "tvog_static": 0.0,
+      "tvog_dynamic": -753.6047362237732,
+      "tvog_delta": -753.6047362237732,
+      "tvog_delta_pct_of_central": -0.018345268350033646
+    },
+    {
+      "rate_sigma": 0.015,
+      "tvog_static": 0.0,
+      "tvog_dynamic": -628.0661910954514,
+      "tvog_delta": -628.0661910954514,
+      "tvog_delta_pct_of_central": -0.015289238858775226
+    },
+    {
+      "rate_sigma": 0.02,
+      "tvog_static": 0.0,
+      "tvog_dynamic": 762.053694464521,
+      "tvog_delta": 762.053694464521,
+      "tvog_delta_pct_of_central": 0.018550944348012938
+    }
+  ],
+  "production_use_restriction": "Educational representative-policy diagnostic. Synthetic experience study; illustrative rate sigma; automation-driven sign-off. NOT the governed portfolio TVOG headline. UNSIGNED pending APS X2 review.",
+  "standards": [
+    "SOA ASOP 7 \u00a73.3",
+    "SOA ASOP 56 \u00a73.1",
+    "IA TAS M \u00a73.5",
+    "IA TAS M \u00a73.6"
+  ]
+}

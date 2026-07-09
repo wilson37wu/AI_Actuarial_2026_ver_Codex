@@ -204,6 +204,82 @@ class DynamicLapseAssumption:
         raw = base * self.efficiency_multiplier(spread) + self.mass_lapse(spread)
         return float(min(max(raw, self.lapse_floor), self.lapse_cap))
 
+    # -- marginal response / bounded elasticity (roadmap §4.1 #4, MR-003) -----
+    def efficiency_multiplier_slope(self, spread: float) -> float:
+        """``d/ds`` of the Option-A arctan multiplier ``mult(s)``.
+
+        ``mult'(s) = beta * (2/pi) * (1/kappa) / (1 + (s/kappa)**2)`` — strictly
+        positive, maximised at ``s = 0`` where it equals ``beta*2/(pi*kappa)``.
+        """
+        x = spread / self.kappa
+        return self.beta * (2.0 / math.pi) * (1.0 / self.kappa) / (1.0 + x * x)
+
+    def mass_lapse_slope(self, spread: float) -> float:
+        """``d/ds`` of the Option-B logistic mass-lapse term ``shock(s)``.
+
+        ``shock'(s) = shock_max * sig*(1-sig) / width`` with
+        ``sig = logistic((s-tau)/width)`` — positive, maximised at ``s = tau``
+        where it equals ``shock_max/(4*width)``.
+        """
+        z = (spread - self.tau) / self.width
+        if z > 50.0 or z < -50.0:
+            return 0.0
+        sig = 1.0 / (1.0 + math.exp(-z))
+        return self.shock_max * sig * (1.0 - sig) / self.width
+
+    def marginal_response(
+        self,
+        spread: float,
+        base: Optional[float] = None,
+        policy_year: int = 1,
+        base_fn: Callable[[int], float] = base_annual_lapse,
+    ) -> float:
+        """Analytic ``d lapse / d spread`` — the marginal lapse response.
+
+        Derivative of the *pre-clip* lapse ``base*mult(s) + shock(s)`` w.r.t. the
+        rate differential ``s = market_rate - credited_rate``.  The clip only
+        flattens the curve, so this is also an upper bound on the derivative of
+        the clipped rate.  Always ``>= 0`` (lapse rises with the spread).
+        """
+        b = base_fn(policy_year) if base is None else base
+        return b * self.efficiency_multiplier_slope(spread) + self.mass_lapse_slope(spread)
+
+    def marginal_response_bound(
+        self,
+        base: Optional[float] = None,
+        base_fn: Callable[[int], float] = base_annual_lapse,
+    ) -> float:
+        """Closed-form Lipschitz bound on ``marginal_response`` over all spreads.
+
+        ``sup_s (d lapse/ds) = base * beta*2/(pi*kappa) + shock_max/(4*width)``
+        (the arctan slope peaks at ``s=0``; the logistic slope peaks at
+        ``s=tau``).  A finite bound proves the rate-differential lapse response
+        has **bounded elasticity**: lapse cannot react arbitrarily fast to a
+        rate move — a well-posedness requirement for a dynamic-lapse assumption
+        (SOA ASOP 7 §3.3; IA TAS M §3.5).  ``base`` defaults to the year-1
+        (largest) base lapse so the returned bound is global across durations.
+        """
+        b = base_fn(1) if base is None else base
+        return b * self.beta * (2.0 / math.pi) / self.kappa + self.shock_max / (4.0 * self.width)
+
+    def semi_elasticity(
+        self,
+        spread: float,
+        policy_year: int = 1,
+        base_fn: Callable[[int], float] = base_annual_lapse,
+    ) -> float:
+        """Semi-elasticity ``d ln(lapse) / d spread`` at ``spread``.
+
+        Fractional change in the annual lapse rate per unit change in the rate
+        differential (a per-bp figure is this value ``* 1e-4``).  Uses the
+        pre-clip lapse in the denominator; returns ``0.0`` where lapse is 0.
+        """
+        base = base_fn(policy_year)
+        lapse_pre = base * self.efficiency_multiplier(spread) + self.mass_lapse(spread)
+        if lapse_pre <= 0.0:
+            return 0.0
+        return self.marginal_response(spread, base=base) / lapse_pre
+
     def to_dict(self) -> Dict[str, object]:
         d = asdict(self)
         d["standard_references"] = list(self.standard_references)
