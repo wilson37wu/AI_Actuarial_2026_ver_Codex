@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-09T15:22:25Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-09T16:08Z-25ea",
+  "started_at": "2026-07-09T16:08:48Z",
+  "ttl_minutes": 120,
+  "task": "#9 independent-review readiness pack: APS X2 / TAS M 3.6.5 evidence bundle index",
+  "note": ""
 }
