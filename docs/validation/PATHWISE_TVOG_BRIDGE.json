@@ -1,0 +1,104 @@
+{
+  "schema": "pathwise-tvog-bridge-1.0",
+  "run_timestamp": "2026-07-09T15:21:51.103176+00:00",
+  "config": {
+    "n_outer": 4000,
+    "n_inner": 100,
+    "n_steps": 10,
+    "rf": 0.02,
+    "sigma": 0.15,
+    "guaranteed_rate": 0.02,
+    "rb_target": 0.02,
+    "tb_target": 0.06,
+    "cr0_center": 1.12,
+    "cr0_sigma": 0.15,
+    "l0": 100.0,
+    "seed": 42,
+    "healthy_cr_reference": null
+  },
+  "rule": {
+    "cr_trigger": 1.1,
+    "cr_floor": 0.9,
+    "bonus_share": 0.3,
+    "pre_floor": 0.6,
+    "reference_coverage": 1.12,
+    "max_relief": 0.12
+  },
+  "healthy_cr_reference": 1.1,
+  "healthy_node_share": 0.51625,
+  "bases": [
+    {
+      "basis": "without",
+      "tvog_guarantee": 27.84517,
+      "tvog_declared": 32.793674,
+      "mean_net_liability": 9.416647
+    },
+    {
+      "basis": "horizon",
+      "tvog_guarantee": 26.008926,
+      "tvog_declared": 30.191345,
+      "mean_net_liability": 7.014071
+    },
+    {
+      "basis": "pathwise",
+      "tvog_guarantee": 23.932023,
+      "tvog_declared": 26.752829,
+      "mean_net_liability": 4.89636
+    },
+    {
+      "basis": "max_cut",
+      "tvog_guarantee": 22.166397,
+      "tvog_declared": 24.647723,
+      "mean_net_liability": 0.410344
+    }
+  ],
+  "bridge_guarantee": {
+    "measure": "guarantee",
+    "tvog_current_horizon": 26.008926,
+    "delta_healthy_nodes": -1.418635,
+    "delta_stressed_nodes": -0.658268,
+    "tvog_pathwise": 23.932023,
+    "delta_total": -2.076902,
+    "delta_pct_of_current": -0.079853,
+    "identity_residual": -3.1086244689504383e-15
+  },
+  "bridge_declared": {
+    "measure": "declared",
+    "tvog_current_horizon": 30.191345,
+    "delta_healthy_nodes": -2.358299,
+    "delta_stressed_nodes": -1.080217,
+    "tvog_pathwise": 26.752829,
+    "delta_total": -3.438516,
+    "delta_pct_of_current": -0.113891,
+    "identity_residual": 0.0
+  },
+  "martingale_ratio": 1.00114498,
+  "martingale_ok": true,
+  "bounds_ok": true,
+  "pathwise_action_share": 0.89919,
+  "pathwise_restoration_share": 0.665318,
+  "tail_vs_mean_note": "Path-wise re-declaration cuts over-declared bonuses on deteriorating paths, so the mean-cost (TVOG) bridge can move opposite to the Phase 25 path-wise SCR tail (restoration lifts the 99.5% tail while trimming the mean). Tail and mean are complementary, not conflicting.",
+  "unsigned": true,
+  "unsigned_banner": "UNSIGNED \u2014 educational representative single-fund TVOG bridge; NOT the governed portfolio TVOG headline. Re-baselining the governed headline onto a path-wise declaration basis is OWNER-GATED. Replace the placeholder fund parameters and obtain APS X2 review before use.",
+  "standard_references": [
+    "SOA ASOP 56 \u00a73.1",
+    "SOA ASOP 7 \u00a73.3",
+    "IA TAS M \u00a73.2",
+    "IA TAS M \u00a73.6",
+    "IFoA MCEV Principles \u00a77"
+  ],
+  "roadmap_item": "\u00a74.1 #8 (Limitation #4) stochastic bonus declaration: path-wise RB/TB TVOG bridge vs current horizon-level convention",
+  "content_digest": "2a3963f6ede75c8f764d57a075ed153692941ac8aec0ab6824c0fd34cf69145c",
+  "use_restrictions": {
+    "classification": "EDUCATIONAL",
+    "production_use": false,
+    "governed_headline_touched": false,
+    "owner_gated_followon": "Re-baselining the governed portfolio TVOG/aggregation headline onto a path-wise RB/TB declaration basis.",
+    "restrictions": [
+      "Single representative participating fund; not the 7-driver governed nested model.",
+      "Risk-neutral GBM assets + placeholder guaranteed/bonus rates are educational; martingale property is verified but the level is illustrative.",
+      "TB modelled as a uniform uplift on the guaranteed benefit; the declared-benefit shortfall is a funding-cost proxy, not a booked reserve.",
+      "Declaration parameters (trigger/floor/PRE/targets) are the governed ManagementActionRule placeholders pending credentialled data + APS X2 review."
+    ]
+  }
+}
