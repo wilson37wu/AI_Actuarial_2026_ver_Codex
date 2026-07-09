@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-09T16:18:15Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-09T17:07Z-f16d",
+  "started_at": "2026-07-09T17:07:14Z",
+  "ttl_minutes": 120,
+  "task": "#10 performance profiling: 100k-policy batch hotspot",
+  "note": ""
 }
