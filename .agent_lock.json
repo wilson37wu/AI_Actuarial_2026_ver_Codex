@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-09T11:21:53Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-09T12:07Z-2833",
+  "started_at": "2026-07-09T12:07:14Z",
+  "ttl_minutes": 120,
+  "task": "#5 Scenario adequacy at 2,000+ scenarios: convergence study 500->1000->2000->5000 with CI bands",
+  "note": ""
 }
