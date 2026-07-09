@@ -400,10 +400,20 @@ class TestDiscountRateValidatorScalar:
         report = DiscountRateValidator().validate(0.20)   # above 15%
         assert not report.passed
 
-    def test_legacy_35pct_warns_about_cbirc(self):
-        """3.5% legacy rate should produce a CBIRC WARNING but still pass overall."""
+    def test_above_cap_without_approval_is_error(self):
+        """MR-002: 3.5% above the CBIRC cap with no approved deviation is a HARD
+        ERROR and fails the report (remediated from the prior WARNING)."""
         report = DiscountRateValidator().validate(0.035)
-        assert report.passed   # WARNING doesn't fail the report
+        assert not report.passed   # ERROR fails the report
+        cbirc_check = next(c for c in report.checks if c.check_id == "D3-R01")
+        assert not cbirc_check.passed
+        assert cbirc_check.severity == CheckSeverity.ERROR
+
+    def test_above_cap_with_approved_deviation_is_warning(self):
+        """MR-002: an approved deviation downgrades the breach to a governed
+        WARNING and the report passes."""
+        report = DiscountRateValidator().validate(0.035, approved_deviation=True)
+        assert report.passed   # WARNING does not fail the report
         cbirc_check = next(c for c in report.checks if c.check_id == "D3-R01")
         assert not cbirc_check.passed
         assert cbirc_check.severity == CheckSeverity.WARNING

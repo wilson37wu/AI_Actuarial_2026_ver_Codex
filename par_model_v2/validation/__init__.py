@@ -22,6 +22,7 @@ from .data_validator import (
     MortalityTableValidator,
     LapseTableValidator,
     DiscountRateValidator,
+    discount_rate_deviation_approved,
     FullDataValidationReport,
     validate_all,
 )
@@ -42,6 +43,7 @@ __all__ = [
     "MortalityTableValidator",
     "LapseTableValidator",
     "DiscountRateValidator",
+    "discount_rate_deviation_approved",
     "FullDataValidationReport",
     "validate_all",
 ]

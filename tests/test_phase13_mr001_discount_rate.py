@@ -61,13 +61,27 @@ def test_validator_no_cbirc_warning_at_default():
     assert cbirc_warn == []
 
 
-def test_validator_warns_at_legacy_rate():
+def test_validator_errors_at_legacy_rate_without_approval():
+    # MR-002 remediation: above the CBIRC cap with no approved deviation is now
+    # a HARD ERROR (was a WARNING pre-remediation), so the report fails.
     report = DiscountRateValidator().validate(LEGACY_RATE)
+    cbirc_err = [
+        c for c in report.checks
+        if getattr(c.severity, "name", "") == "ERROR" and not c.passed
+    ]
+    assert len(cbirc_err) >= 1
+    assert not report.passed
+
+
+def test_validator_warns_at_legacy_rate_with_approved_deviation():
+    # With an approved deviation the breach is a governed WARNING; report passes.
+    report = DiscountRateValidator().validate(LEGACY_RATE, approved_deviation=True)
     cbirc_warn = [
         c for c in report.checks
         if getattr(c.severity, "name", "") == "WARNING" and not c.passed
     ]
     assert len(cbirc_warn) >= 1
+    assert report.passed
 
 
 # ---------------------------------------------------------------------------

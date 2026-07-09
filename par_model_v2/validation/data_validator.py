@@ -828,6 +828,64 @@ _DR_CBIRC   = 0.030   # CBIRC maximum guaranteed rate (3.0% since 2023)
 _DR_LEGACY  = 0.035   # Legacy rate used in existing model (flagged as deviation)
 
 
+def discount_rate_deviation_approved(
+    records: Any,
+    rate: float,
+    cap: float = _DR_CBIRC,
+) -> bool:
+    """Return True if an APPROVED ChangeRecord authorises ``rate`` above ``cap``.
+
+    MR-002 remediation helper.  The CBIRC 3.0% valuation cap may only be
+    breached when the assumption owner has signed off a deviation through the
+    governance workflow (IA TAS M §3.5).  A deviation is recognised when the
+    governance store contains a ChangeRecord that is
+
+      * APPROVED (fully signed off), and
+      * an ``assumption_change`` (the default when the attribute is absent), and
+      * carries ``after_snapshot["discount_rate_annual"]`` strictly above the
+        cap and equal (to 1e-9) to the rate being validated.
+
+    The exact-rate match means every distinct above-cap override must be signed
+    off explicitly; an approval for one rate never licences a different one.
+    The MR-001 record (which lowered the *default* to 3.0%) carries an
+    after-snapshot equal to the cap, so it never authorises an override.
+
+    ``records`` is duck-typed: a ``GovernanceStore`` (its ``change_records``
+    are used) or any iterable of ChangeRecord-like objects (attributes
+    ``status``, ``change_type``, ``after_snapshot``).  This keeps the
+    validation layer free of a hard governance import.
+    """
+    if records is None:
+        return False
+    recs = getattr(records, "change_records", records)
+    try:
+        iterator = iter(recs)
+    except TypeError:
+        return False
+    for r in iterator:
+        status = getattr(r, "status", None)
+        status = getattr(status, "value", status)
+        if status != "APPROVED":
+            continue
+        change_type = getattr(r, "change_type", "assumption_change")
+        if change_type != "assumption_change":
+            continue
+        after = getattr(r, "after_snapshot", None) or {}
+        try:
+            val = after.get("discount_rate_annual")
+        except AttributeError:
+            continue
+        if val is None:
+            continue
+        try:
+            val = float(val)
+        except (TypeError, ValueError):
+            continue
+        if val > cap + 1e-12 and abs(val - float(rate)) <= 1e-9:
+            return True
+    return False
+
+
 class DiscountRateValidator:
     """Validates a scalar or term-structure discount rate assumption.
 
@@ -852,19 +910,29 @@ class DiscountRateValidator:
     def validate(
         self,
         data: Union[float, pd.DataFrame, List[Dict[str, Any]]],
+        approved_deviation: bool = False,
+        governance: Any = None,
     ) -> ValidationReport:
         report = ValidationReport(validator_name="DiscountRateValidator")
 
         if isinstance(data, (int, float)):
-            report.checks.extend(self._check_scalar(float(data)))
+            rate = float(data)
+            approved = bool(approved_deviation)
+            if governance is not None and not approved:
+                approved = discount_rate_deviation_approved(governance, rate)
+            report.checks.extend(self._check_scalar(rate, approved_deviation=approved))
         else:
             if isinstance(data, list):
                 data = pd.DataFrame(data)
-            report.checks.extend(self._check_term_structure(data))
+            report.checks.extend(
+                self._check_term_structure(
+                    data, approved_deviation=approved_deviation, governance=governance
+                )
+            )
 
         return report
 
-    def _check_scalar(self, rate: float) -> List[CheckResult]:
+    def _check_scalar(self, rate: float, approved_deviation: bool = False) -> List[CheckResult]:
         results = []
 
         # Range
@@ -876,17 +944,33 @@ class DiscountRateValidator:
             details=f"Rate = {rate*100:.2f}% is outside [{_DR_MIN*100:.1f}%, {_DR_MAX*100:.0f}%]" if not (_DR_MIN <= rate <= _DR_MAX) else "",
         ))
 
-        # CBIRC regulatory cap
+        # CBIRC regulatory cap (MR-002).  A rate above the 3.0% cap is a HARD
+        # ERROR (fails validation) unless an APPROVED deviation ChangeRecord
+        # authorises the override, in which case it is downgraded to a governed
+        # WARNING.  See docs/CBIRC_DISCOUNT_CAP_REMEDIATION.md.
+        above_cap = rate > _DR_CBIRC
+        cap_severity = CheckSeverity.WARNING if approved_deviation else CheckSeverity.ERROR
+        if not above_cap:
+            cap_details = ""
+        elif approved_deviation:
+            cap_details = (
+                f"Rate = {rate*100:.2f}% exceeds CBIRC cap {_DR_CBIRC*100:.1f}% but is "
+                f"authorised by an APPROVED deviation ChangeRecord (governed override; "
+                f"IA TAS M §3.5). Proceed with caution."
+            )
+        else:
+            cap_details = (
+                f"Rate = {rate*100:.2f}% exceeds CBIRC cap {_DR_CBIRC*100:.1f}% with NO "
+                f"approved deviation ChangeRecord. Hard regulatory stop (CBIRC C-ROSS 2023; "
+                f"SOA ASOP 56 §3.5): lower the rate to <= {_DR_CBIRC*100:.1f}% or record an "
+                f"approved discount_rate_annual deviation. Legacy {_DR_LEGACY*100:.1f}% is non-compliant."
+            )
         results.append(CheckResult(
             check_id="D3-R01",
             description=f"Discount rate ≤ CBIRC maximum ({_DR_CBIRC*100:.1f}%)",
-            passed=rate <= _DR_CBIRC,
-            severity=CheckSeverity.WARNING,
-            details=(
-                f"Rate = {rate*100:.2f}% exceeds CBIRC cap {_DR_CBIRC*100:.1f}%. "
-                f"This is a critical regulatory deviation (SOA ASOP 56 §3.5). "
-                f"Legacy rate {_DR_LEGACY*100:.1f}% flagged as non-compliant in Phase 1 audit."
-            ) if rate > _DR_CBIRC else "",
+            passed=not above_cap,
+            severity=cap_severity,
+            details=cap_details,
         ))
 
         # Very low rate warning
@@ -900,7 +984,7 @@ class DiscountRateValidator:
 
         return results
 
-    def _check_term_structure(self, df: pd.DataFrame) -> List[CheckResult]:
+    def _check_term_structure(self, df: pd.DataFrame, approved_deviation: bool = False, governance: Any = None) -> List[CheckResult]:
         results = []
         required = ["term_years", "rate"]
         missing = sorted(set(required) - set(df.columns))
@@ -926,14 +1010,36 @@ class DiscountRateValidator:
             details=f"{len(bad)} rate(s) out of range. Rows: {bad[:10]}" if bad else "",
         ))
 
-        # CBIRC cap
+        # CBIRC cap (MR-002).  Above-cap term rates are a HARD ERROR unless an
+        # approved deviation ChangeRecord authorises the override (governed
+        # WARNING).  Governance, when supplied, is consulted per above-cap rate.
         above_cap = df.loc[rates > _DR_CBIRC].index.tolist()
+        cap_approved = bool(approved_deviation)
+        if above_cap and governance is not None and not cap_approved:
+            cap_approved = all(
+                discount_rate_deviation_approved(governance, float(rates.loc[i]))
+                for i in above_cap
+            )
+        cap_severity = CheckSeverity.WARNING if cap_approved else CheckSeverity.ERROR
+        if not above_cap:
+            cap_details = ""
+        elif cap_approved:
+            cap_details = (
+                f"{len(above_cap)} term rate(s) exceed CBIRC cap but are authorised by "
+                f"APPROVED deviation ChangeRecord(s) (governed override). Rows: {above_cap[:10]}"
+            )
+        else:
+            cap_details = (
+                f"{len(above_cap)} term rate(s) exceed CBIRC cap {_DR_CBIRC*100:.1f}% with no "
+                f"approved deviation ChangeRecord (hard regulatory stop; CBIRC C-ROSS 2023). "
+                f"Rows: {above_cap[:10]}"
+            )
         results.append(CheckResult(
             check_id="D3-R03",
             description=f"All term rates ≤ CBIRC cap ({_DR_CBIRC*100:.1f}%)",
             passed=len(above_cap) == 0,
-            severity=CheckSeverity.WARNING,
-            details=f"{len(above_cap)} term rate(s) exceed CBIRC cap. Rows: {above_cap[:10]}" if above_cap else "",
+            severity=cap_severity,
+            details=cap_details,
         ))
 
         # Upward-sloping term structure (Expectations Hypothesis)
@@ -1046,6 +1152,7 @@ def validate_all(
     mortality:       Optional[Union[pd.DataFrame, List[Dict]]] = None,
     lapse:           Optional[Union[pd.DataFrame, List[Dict]]] = None,
     discount_rate:   Optional[Union[float, pd.DataFrame, List[Dict]]] = None,
+    discount_rate_approved_deviation: bool = False,
     governance_store: Any = None,
     actor: str = "Claude-Actuarial-Agent",
     phase: str = "Phase 3: Model Validation & Testing",
@@ -1080,7 +1187,11 @@ def validate_all(
         result.lapse = LapseTableValidator().validate(lapse)
 
     if discount_rate is not None:
-        result.discount_rate = DiscountRateValidator().validate(discount_rate)
+        result.discount_rate = DiscountRateValidator().validate(
+            discount_rate,
+            approved_deviation=discount_rate_approved_deviation,
+            governance=governance_store,
+        )
 
     if governance_store is not None:
         result.emit_to_governance_store(governance_store, actor=actor, phase=phase)
@@ -1100,6 +1211,7 @@ __all__ = [
     "MortalityTableValidator",
     "LapseTableValidator",
     "DiscountRateValidator",
+    "discount_rate_deviation_approved",
     # Combined
     "FullDataValidationReport",
     "validate_all",
