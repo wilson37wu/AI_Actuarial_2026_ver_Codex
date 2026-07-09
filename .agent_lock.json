@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-09T17:29:59Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-09T18:07Z-55a2",
+  "started_at": "2026-07-09T18:07:41Z",
+  "ttl_minutes": 120,
+  "task": "#11 mortality improvement + credibility blending (ASOP 25)",
+  "note": ""
 }
