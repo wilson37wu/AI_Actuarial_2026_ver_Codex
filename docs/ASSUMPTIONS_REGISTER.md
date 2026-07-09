@@ -85,6 +85,10 @@ This register documents all actuarial assumptions used in the PAR Fund Stochasti
 4. **No COVID or pandemic shock** — No stressed mortality table for scenario testing.
 5. **Smoker loading absent in enhanced table** — `smoker_status=N` only; base table has this dimension but no smoker rates populated.
 
+#### **Partial mitigation (2026-07-10, roadmap §4.1 #11 — ASOP 25 procedure)**
+
+Gaps #1 (credibility/basis) and #2 (mortality improvement) are addressed by an **additive** credibility-blending + improvement generator `par_model_v2/projection/mortality_credibility.py` (schema `mortality-credibility-blend-1.0`), which does **not** change the governed base table. It blends company experience with the standard/prior table by an ASOP 25 credibility procedure — limited-fluctuation (classical, full-credibility death standard `λ_F=(z_{(1+p)/2}/k)²≈1082.2`) or Bühlmann (`Z=n/(n+K)`, `K=EPV/VHM`) — as `AE_blended = Z·AE_observed + (1−Z)·1.0`, then projects the blended base-year table to the valuation year with an age-tapered static improvement scale `qx(v)=qx(base)·(1−MI_x)^(v−base)`. Evidence `docs/validation/MORTALITY_CREDIBILITY_BLEND.json`; card `docs/MORTALITY_CREDIBILITY_BLENDING_CARD.md`; tests `tests/test_mortality_credibility.py` (31). **UNSIGNED** — the demonstration experience is synthetic and the improvement scale illustrative (not a credentialled MP/CMI scale); adoption as the governed base requires owner sign-off + independent APS X2 review. Residual: improvement is static (attained-age), not generational; credibility is life-count (frequency) basis.
+
 ---
 
 ### C/D. Lapse (Voluntary Discontinuance)
