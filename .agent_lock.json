@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-09T12:43:56Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-09T13:07Z-05f4",
+  "started_at": "2026-07-09T13:07:28Z",
+  "ttl_minutes": 120,
+  "task": "#6 Backtest on real history: BacktestEngine on >=10y CNY curve / CSI 300 series, Kupiec POF + coverage, recalibration triggers (roadmap 4.1 #6)",
+  "note": ""
 }
