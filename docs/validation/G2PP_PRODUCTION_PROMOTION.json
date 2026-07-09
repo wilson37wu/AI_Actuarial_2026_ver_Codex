@@ -1,0 +1,108 @@
+{
+  "schema": "g2pp-production-promotion-1.0",
+  "title": "G2++ Two-Factor Rate-Model Production Promotion - Evidence",
+  "roadmap_item": "4.1 #7 (MR-004)",
+  "generated_at": "2026-07-09T14:35:21.920035+00:00",
+  "inputs_digest": "3f527ccad54df8a0c1e35fdcb14a49055e438590501a771342fb1ee2c5dd63b7",
+  "unsigned": true,
+  "unsigned_banner": "UNSIGNED - educational calibration to a synthetic proxy swaption surface; G2++ is a SELECTABLE production rate model but the governed headline stays on HW1F. Re-baselining the headline onto G2++ requires owner sign-off + independent review (IA TAS M \u00a73.6).",
+  "selectability": {
+    "generate_kwarg": "ScenarioSet.generate(rate_model=..., g2_params=...)",
+    "available_rate_models": [
+      "g2pp",
+      "hw1f"
+    ],
+    "default_rate_model": "hw1f",
+    "resolver_is_fail_loud": true,
+    "diagnostic_columns_added": [
+      "g2pp_x",
+      "g2pp_y"
+    ]
+  },
+  "hw1f_fallback_identity": {
+    "statement": "The default path is byte-for-byte unchanged; the extra G2++ RNG draw is taken only in the g2pp branch, after the hw1f draws.",
+    "default_q_digest": "1aa0b3f4cc460a2f85477d3548a998346a8e9fdaa18056dcadefd564677b8d1a",
+    "default_p_digest": "bf7ede63cdbdb5e99be1cc8882caeaf11f98a75203f557d33adb5c0ed78ce37e",
+    "pinned_q_digest": "1aa0b3f4cc460a2f85477d3548a998346a8e9fdaa18056dcadefd564677b8d1a",
+    "pinned_p_digest": "bf7ede63cdbdb5e99be1cc8882caeaf11f98a75203f557d33adb5c0ed78ce37e",
+    "q_identical": true,
+    "p_identical": true
+  },
+  "swaption_fit": {
+    "converged": true,
+    "n_quotes": 24,
+    "iterations": 932,
+    "rmse_vol_bps": 58.007671302357636,
+    "max_abs_vol_bps": 146.98506645408477,
+    "calibrated_params": {
+      "mean_reversion_x": 0.05695109253475439,
+      "mean_reversion_y": 0.3274295304927985,
+      "vol_x": 0.009877267453894664,
+      "vol_y": 0.0053770447055204095,
+      "factor_correlation": -0.9499998285745871
+    },
+    "gate_id": "G-SWPN",
+    "gate_passed": true,
+    "use_restriction": "EDUCATIONAL ONLY. Calibrated to a synthetic proxy swaption surface; re-calibrate to a validated market surface and obtain independent review before any production, capital, or disclosure use."
+  },
+  "martingale_evidence": {
+    "n_scenarios": 2000,
+    "horizon_months": 120,
+    "passed": true,
+    "diagnostics": {
+      "horizon_months": 120.0,
+      "n_scenarios": 2000.0,
+      "zcb_1y_max_absolute_error": 0.005283976534011803,
+      "zcb_1y_max_relative_error": 0.007366030404522363,
+      "zcb_1y_max_standard_error": 0.002102430835410893,
+      "zcb_1y_max_tolerance": 0.03430695356573644,
+      "zcb_10y_max_absolute_error": 0.017636944913020813,
+      "zcb_10y_max_relative_error": 0.0334481287968987,
+      "zcb_10y_max_standard_error": 0.003252799042826569,
+      "zcb_10y_max_tolerance": 0.02592863772386013
+    },
+    "failed_checks": []
+  },
+  "curve_twist_evidence": {
+    "passed": true,
+    "report": {
+      "rate_model": "g2pp",
+      "passed": true,
+      "checks": [
+        {
+          "check_id": "CT-COLUMNS",
+          "passed": true,
+          "severity": "ERROR",
+          "description": "Scenario data must include scenario_id, month, r_short, zcb_10y.",
+          "observed_value": 0.0,
+          "threshold": 0.0
+        },
+        {
+          "check_id": "CT-DECORRELATION",
+          "passed": true,
+          "severity": "ERROR",
+          "description": "Short- and long-tenor rate changes must decorrelate (|corr| <= 0.980) to evidence genuine curve twist; a one-factor model cannot.",
+          "observed_value": 0.8889444286337991,
+          "threshold": 0.98
+        },
+        {
+          "check_id": "CT-VS-BENCHMARK",
+          "passed": true,
+          "severity": "ERROR",
+          "description": "Two-factor twist correlation must sit at least 0.020 below the one-factor benchmark.",
+          "observed_value": 0.09529039314341625,
+          "threshold": 0.02
+        }
+      ],
+      "diagnostics": {
+        "short_long_change_correlation": 0.8889444286337991,
+        "short_tenor_years": 1.0,
+        "long_tenor_years": 10.0,
+        "factor_change_correlation": -0.9471820544090832,
+        "benchmark_short_long_change_correlation": 0.9842348217772153,
+        "decorrelation_gap_vs_benchmark": 0.09529039314341625
+      }
+    },
+    "interpretation": "A one-factor model drives every tenor off one Brownian factor so short/long changes are near-perfectly correlated (parallel shifts only). The two-factor G2++ decorrelates them, evidencing genuine curve twists / steepening."
+  }
+}

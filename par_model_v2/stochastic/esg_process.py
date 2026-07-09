@@ -2752,8 +2752,15 @@ class ParameterSnapshot:
         equity_factor=None,
         fx_factor=None,
         snapshot_id=None,
+        g2_params=None,
     ):
-        """Create a Phase 6 snapshot from current HW1F and GBM parameter dataclasses."""
+        """Create a Phase 6 snapshot from current HW1F/G2++ and GBM parameter dataclasses.
+
+        When ``g2_params`` (a :class:`G2PlusParams`) is supplied the snapshot
+        records ``rate.g2pp.*`` keys plus a ``rate.model`` marker instead of
+        the ``rate.hw1f.*`` keys (roadmap 4.1 #7 G2++ promotion). With
+        ``g2_params=None`` the snapshot is byte-for-byte identical to the
+        historical HW1F snapshot."""
         measure = _coerce_measure(measure)
         base_currency = _validate_currency_code(base_currency, "base_currency")
         calibration_date = _coerce_date(calibration_date or date.today(), "calibration_date")
@@ -2845,6 +2852,27 @@ class ParameterSnapshot:
             parameters["rate.hw1f.short_rate_floor"] = hw_params.short_rate_floor
         if hw_params.short_rate_ceiling is not None:
             parameters["rate.hw1f.short_rate_ceiling"] = hw_params.short_rate_ceiling
+        if g2_params is not None:
+            # G2++ two-factor promotion (roadmap 4.1 #7): swap the rate.* block
+            # for the two-factor parameter set and mark the active rate model.
+            for _hw_key in [k for k in parameters if k.startswith("rate.hw1f.")]:
+                parameters.pop(_hw_key, None)
+            parameters.update({
+                "rate.g2pp.mean_reversion_x": g2_params.mean_reversion_x,
+                "rate.g2pp.mean_reversion_y": g2_params.mean_reversion_y,
+                "rate.g2pp.vol_x": g2_params.vol_x,
+                "rate.g2pp.vol_y": g2_params.vol_y,
+                "rate.g2pp.factor_correlation": g2_params.factor_correlation,
+                "rate.g2pp.initial_x": g2_params.initial_x,
+                "rate.g2pp.initial_y": g2_params.initial_y,
+                "rate.g2pp.long_run_rate_p": g2_params.long_run_rate_p,
+                "rate.g2pp.market_price_of_risk_x": g2_params.market_price_of_risk_x,
+                "rate.g2pp.market_price_of_risk_y": g2_params.market_price_of_risk_y,
+            })
+            if g2_params.short_rate_floor is not None:
+                parameters["rate.g2pp.short_rate_floor"] = g2_params.short_rate_floor
+            if g2_params.short_rate_ceiling is not None:
+                parameters["rate.g2pp.short_rate_ceiling"] = g2_params.short_rate_ceiling
         parameters.update({
             "rate.curve.zero_rate_{}y".format("{:g}".format(tenor)): rate
             for tenor, rate in zip(initial_curve.tenors_years, initial_curve.zero_rates)
@@ -2867,6 +2895,16 @@ class ParameterSnapshot:
                 prefix + "rate_fx_correlation": fx_factor.params.rate_fx_correlation,
                 prefix + "initial_spot_rate": fx_factor.params.initial_spot_rate,
             })
+        snapshot_kwargs = {}
+        if g2_params is not None:
+            snapshot_kwargs["model_equation_refs"] = (
+                "G2PlusRateProcess._simulate_arrays",
+                "GBMEquityProcess._simulate_array",
+            )
+            snapshot_kwargs["discretisation"] = (
+                "monthly time step with G2++ two-factor conditional normal "
+                "rates and GBM equity returns"
+            )
         return cls(
             snapshot_id=snapshot_id,
             calibration_date=calibration_date,
@@ -2878,9 +2916,11 @@ class ParameterSnapshot:
             is_placeholder=bool(
                 hw_params.is_placeholder
                 or gbm_params.is_placeholder
+                or (g2_params is not None and g2_params.is_placeholder)
                 or (equity_factor is not None and equity_factor.is_placeholder)
                 or (fx_factor is not None and fx_factor.is_placeholder)
             ),
+            **snapshot_kwargs,
         )
 
     def to_dict(self):
@@ -3873,6 +3913,62 @@ def resolve_equity_model(model=None):
     return label
 
 
+# ---------------------------------------------------------------------------
+# Rate-model selector (HW1F default / G2++ two-factor promotion, roadmap 4.1 #7)
+# ---------------------------------------------------------------------------
+#
+# The production ESG path (:meth:`ScenarioSet.generate`) defaults to the
+# one-factor Hull-White short-rate process. Roadmap item #7 (MR-004) promotes
+# the validated two-factor Gaussian ``G2PlusRateProcess`` to a *selectable*
+# production rate model so callers can request genuine curve twists (short and
+# long tenors driven by two decorrelated factors) while HW1F stays the default
+# fallback. Selection is opt-in; existing callers that pass nothing are
+# byte-for-byte unchanged.
+
+DEFAULT_RATE_MODEL = "hw1f"
+
+#: Alias -> canonical rate-model key. Canonical keys: "hw1f", "g2pp".
+RATE_MODEL_REGISTRY = {
+    "hw1f": "hw1f",
+    "hw": "hw1f",
+    "hull-white": "hw1f",
+    "hullwhite": "hw1f",
+    "hull_white": "hw1f",
+    "one-factor": "hw1f",
+    "g2pp": "g2pp",
+    "g2++": "g2pp",
+    "g2plus": "g2pp",
+    "g2p": "g2pp",
+    "g2": "g2pp",
+    "two-factor": "g2pp",
+    "twofactor": "g2pp",
+}
+
+
+def available_rate_models():
+    """Return the sorted set of canonical rate-model keys."""
+    return tuple(sorted(set(RATE_MODEL_REGISTRY.values())))
+
+
+def resolve_rate_model(model=None):
+    """Resolve a rate-model alias to its canonical key ("hw1f" or "g2pp").
+
+    ``None`` resolves to :data:`DEFAULT_RATE_MODEL` ("hw1f"). Unknown values
+    raise ``ValueError`` (fail-loud) rather than silently defaulting, so a
+    typo in an ESG config can never quietly swap the rate model.
+    """
+    if model is None:
+        return DEFAULT_RATE_MODEL
+    key = str(model).strip().lower()
+    if key not in RATE_MODEL_REGISTRY:
+        raise ValueError(
+            "unknown rate_model {!r}; available: {}".format(
+                model, ", ".join(available_rate_models())
+            )
+        )
+    return RATE_MODEL_REGISTRY[key]
+
+
 def build_equity_process(model=None, params=None, rate_process=None):
     """Construct the configured equity process behind the feature flag.
 
@@ -4102,6 +4198,187 @@ class FXSpotProcess:
 # 5. ScenarioSet -- Container for combined rate + equity paths
 # ---------------------------------------------------------------------------
 
+@dataclass(frozen=True)
+class CurveTwistCheck:
+    """Single curve-twist evidence check."""
+
+    check_id: str
+    passed: bool
+    severity: str
+    description: str
+    observed_value: float
+    threshold: float
+
+    def __post_init__(self):
+        if self.severity not in ("ERROR", "WARNING", "INFO"):
+            raise ValueError("severity must be ERROR, WARNING, or INFO")
+
+    def to_dict(self):
+        return {
+            "check_id": self.check_id,
+            "passed": bool(self.passed),
+            "severity": self.severity,
+            "description": self.description,
+            "observed_value": float(self.observed_value),
+            "threshold": float(self.threshold),
+        }
+
+
+@dataclass(frozen=True)
+class CurveTwistEvidenceReport:
+    """Report bundling curve-twist evidence checks and diagnostics."""
+
+    rate_model: str
+    passed: bool
+    checks: tuple
+    diagnostics: dict
+
+    def failed_checks(self):
+        return tuple(c for c in self.checks if not c.passed)
+
+    def to_dict(self):
+        return {
+            "rate_model": self.rate_model,
+            "passed": bool(self.passed),
+            "checks": [c.to_dict() for c in self.checks],
+            "diagnostics": {k: float(v) if isinstance(v, (int, float)) else v
+                            for k, v in self.diagnostics.items()},
+        }
+
+
+class CurveTwistValidator:
+    """Evidence that a rate model produces genuine (non-parallel) curve twists.
+
+    A one-factor model (HW1F) drives every tenor off a single Brownian factor,
+    so short- and long-tenor rate CHANGES are near-perfectly correlated
+    (|corr| -> 1): the yield curve can only shift in parallel, never twist or
+    steepen on its own. A two-factor G2++ model decorrelates the short and long
+    ends. This validator quantifies the short-vs-long rate-change correlation
+    and, when a one-factor benchmark set is supplied, confirms the two-factor
+    set is materially more decorrelated -- the curve-twist evidence required by
+    the roadmap 4.1 #7 (MR-004) G2++ promotion. Educational thresholds; see
+    docs/G2PP_PRODUCTION_PROMOTION_CARD.md.
+    """
+
+    REQUIRED_COLUMNS = ("scenario_id", "month", "r_short", "zcb_10y")
+
+    def __init__(
+        self,
+        max_twist_correlation=0.98,
+        benchmark_margin=0.02,
+        short_tenor_years=1.0,
+        long_tenor_years=10.0,
+    ):
+        self.max_twist_correlation = float(max_twist_correlation)
+        self.benchmark_margin = float(benchmark_margin)
+        self.short_tenor_years = float(short_tenor_years)
+        self.long_tenor_years = float(long_tenor_years)
+        if not (0.0 < self.max_twist_correlation <= 1.0):
+            raise ValueError("max_twist_correlation must be in (0, 1]")
+        if self.benchmark_margin < 0.0:
+            raise ValueError("benchmark_margin must be non-negative")
+        if self.long_tenor_years <= self.short_tenor_years:
+            raise ValueError("long_tenor_years must exceed short_tenor_years")
+
+    def _panel_changes(self, frame, short_col, long_col, tenor):
+        f = pd.DataFrame(frame)
+        short = f.pivot(index="scenario_id", columns="month", values=short_col)
+        short = short.sort_index(axis=1).to_numpy(dtype=float)
+        if long_col == "r_short":
+            long_level = short
+        else:
+            zcb = f.pivot(index="scenario_id", columns="month", values=long_col)
+            zcb = zcb.sort_index(axis=1).to_numpy(dtype=float)
+            long_level = -np.log(np.clip(zcb, 1.0e-12, None)) / float(tenor)
+        d_short = np.diff(short, axis=1).reshape(-1)
+        d_long = np.diff(long_level, axis=1).reshape(-1)
+        mask = np.isfinite(d_short) & np.isfinite(d_long)
+        return d_short[mask], d_long[mask]
+
+    def _correlation(self, a, b):
+        if a.size < 2 or np.std(a) == 0.0 or np.std(b) == 0.0:
+            return float("nan")
+        return float(np.corrcoef(a, b)[0, 1])
+
+    def _twist_correlation(self, frame):
+        d_short, d_long = self._panel_changes(
+            frame, "r_short", "zcb_10y", self.long_tenor_years
+        )
+        return self._correlation(d_short, d_long)
+
+    def validate(self, scenario_data, benchmark_data=None, rate_model="g2pp"):
+        """Return curve-twist evidence for ``scenario_data``.
+
+        ``benchmark_data`` (optional) is a one-factor set used as the
+        parallel-shift baseline for the comparative check.
+        """
+        frame = pd.DataFrame(scenario_data)
+        checks = []
+        diagnostics = {}
+        missing = [c for c in self.REQUIRED_COLUMNS if c not in frame.columns]
+        checks.append(CurveTwistCheck(
+            "CT-COLUMNS", not missing, "ERROR",
+            "Scenario data must include scenario_id, month, r_short, zcb_10y.",
+            float(len(missing)), 0.0,
+        ))
+        if missing:
+            return self._report(rate_model, checks, diagnostics)
+
+        twist = self._twist_correlation(frame)
+        diagnostics["short_long_change_correlation"] = twist
+        diagnostics["short_tenor_years"] = self.short_tenor_years
+        diagnostics["long_tenor_years"] = self.long_tenor_years
+        checks.append(CurveTwistCheck(
+            "CT-DECORRELATION",
+            bool(np.isfinite(twist) and abs(twist) <= self.max_twist_correlation),
+            "ERROR",
+            "Short- and long-tenor rate changes must decorrelate "
+            "(|corr| <= {:.3f}) to evidence genuine curve twist; a one-factor "
+            "model cannot.".format(self.max_twist_correlation),
+            float(abs(twist)) if np.isfinite(twist) else 1.0,
+            self.max_twist_correlation,
+        ))
+
+        if "g2pp_x" in frame.columns and "g2pp_y" in frame.columns:
+            dx, dy = self._panel_changes(frame, "g2pp_x", "r_short", 1.0)
+            fxx = pd.DataFrame(frame).pivot(
+                index="scenario_id", columns="month", values="g2pp_x"
+            ).sort_index(axis=1).to_numpy(dtype=float)
+            fyy = pd.DataFrame(frame).pivot(
+                index="scenario_id", columns="month", values="g2pp_y"
+            ).sort_index(axis=1).to_numpy(dtype=float)
+            d_x = np.diff(fxx, axis=1).reshape(-1)
+            d_y = np.diff(fyy, axis=1).reshape(-1)
+            mask = np.isfinite(d_x) & np.isfinite(d_y)
+            diagnostics["factor_change_correlation"] = self._correlation(
+                d_x[mask], d_y[mask]
+            )
+
+        if benchmark_data is not None:
+            bench = self._twist_correlation(pd.DataFrame(benchmark_data))
+            diagnostics["benchmark_short_long_change_correlation"] = bench
+            gap = (bench - twist) if (np.isfinite(bench) and np.isfinite(twist)) else 0.0
+            diagnostics["decorrelation_gap_vs_benchmark"] = gap
+            checks.append(CurveTwistCheck(
+                "CT-VS-BENCHMARK",
+                bool(gap >= self.benchmark_margin),
+                "ERROR",
+                "Two-factor twist correlation must sit at least {:.3f} below the "
+                "one-factor benchmark.".format(self.benchmark_margin),
+                float(gap), self.benchmark_margin,
+            ))
+        return self._report(rate_model, checks, diagnostics)
+
+    def _report(self, rate_model, checks, diagnostics):
+        passed = all(c.passed or c.severity != "ERROR" for c in checks)
+        return CurveTwistEvidenceReport(
+            rate_model=str(rate_model),
+            passed=passed,
+            checks=tuple(checks),
+            diagnostics=diagnostics,
+        )
+
+
 @dataclass
 class ScenarioSet:
     """Container for simulated economic scenario paths (rates + equity).
@@ -4213,8 +4490,16 @@ class ScenarioSet:
         valuation_date=None,
         parameter_snapshot=None,
         cap_zcb_at_par=True,
+        rate_model="hw1f",
+        g2_params=None,
     ):
-        """Generate correlated HW1F rate + GBM equity scenarios.
+        """Generate correlated short-rate + GBM equity scenarios.
+
+        ``rate_model`` selects the short-rate process (roadmap 4.1 #7):
+        ``"hw1f"`` (default) uses the one-factor Hull-White process;
+        ``"g2pp"`` uses the two-factor Gaussian G2++ process (``g2_params``,
+        a :class:`G2PlusParams`) and adds ``g2pp_x`` / ``g2pp_y`` diagnostic
+        factor columns. The default path is byte-for-byte unchanged.
 
         Uses Cholesky decomposition for rate/equity correlation:
           Z_S = rho * Z_r + sqrt(1 - rho^2) * Z_indep
@@ -4272,10 +4557,14 @@ class ScenarioSet:
         if fx_factor is not None and not isinstance(fx_factor, FXReturnFactor):
             raise TypeError("fx_factor must be an FXReturnFactor")
 
-        hw_process = HullWhiteRateProcess(hw_params, initial_curve=initial_curve)
+        rate_model_key = resolve_rate_model(rate_model)
+        if rate_model_key == "g2pp":
+            rate_process = G2PlusRateProcess(g2_params, initial_curve=initial_curve)
+        else:
+            rate_process = HullWhiteRateProcess(hw_params, initial_curve=initial_curve)
         equity_model_label = resolve_equity_model(equity_model)
         gbm_process = build_equity_process(
-            equity_model_label, gbm_params, rate_process=hw_process
+            equity_model_label, gbm_params, rate_process=rate_process
         )
         fx_process = FXSpotProcess(fx_factor.params) if fx_factor is not None else None
         if parameter_snapshot is None:
@@ -4283,9 +4572,10 @@ class ScenarioSet:
                 measure=measure,
                 base_currency=base_currency,
                 calibration_date=valuation_date,
-                hw_params=hw_process.params,
+                hw_params=rate_process.params if rate_model_key == "hw1f" else None,
+                g2_params=rate_process.params if rate_model_key == "g2pp" else None,
                 gbm_params=gbm_process.params,
-                initial_curve=hw_process.initial_curve,
+                initial_curve=rate_process.initial_curve,
                 equity_factor=equity_factor,
                 fx_factor=fx_factor,
             )
@@ -4297,7 +4587,20 @@ class ScenarioSet:
         rho = gbm_process.params.rate_equity_correlation
         z_equity = rho * z_rate + np.sqrt(1.0 - rho ** 2) * z_independent
 
-        rate_paths = hw_process._simulate_array(n, T_months, measure, z_rate)
+        # HW1F: single factor drives r. G2++: z_rate drives factor x (the
+        # equity-correlated factor) and a fresh antithetic draw drives the
+        # independent part of factor y. The extra draw is taken ONLY in the
+        # g2pp branch and AFTER the hw1f draws, so the hw1f RNG stream (and
+        # therefore every governed hw1f headline) is byte-for-byte unchanged.
+        g2pp_x_paths = None
+        g2pp_y_paths = None
+        if rate_model_key == "g2pp":
+            z_rate_secondary = _antithetic_normals(rng, n, T_months)
+            g2pp_x_paths, g2pp_y_paths, rate_paths = rate_process._simulate_arrays(
+                n, T_months, measure, z_rate, z_rate_secondary
+            )
+        else:
+            rate_paths = rate_process._simulate_array(n, T_months, measure, z_rate)
         if isinstance(gbm_process, JumpDiffusionEquityProcess):
             jump_rng = np.random.default_rng(
                 np.random.SeedSequence(seed).spawn(1)[0]
@@ -4324,9 +4627,16 @@ class ScenarioSet:
 
         zcb_1y = np.empty_like(flat_rates)
         zcb_10y = np.empty_like(flat_rates)
-        for idx, (r_t, t) in enumerate(zip(flat_rates, times)):
-            zcb_1y[idx] = hw_process.zcb_price(float(r_t), float(t), float(t + 1.0))
-            zcb_10y[idx] = hw_process.zcb_price(float(r_t), float(t), float(t + 10.0))
+        if rate_model_key == "g2pp":
+            flat_x = g2pp_x_paths.reshape(-1)
+            flat_y = g2pp_y_paths.reshape(-1)
+            for idx, (x_t, y_t, t) in enumerate(zip(flat_x, flat_y, times)):
+                zcb_1y[idx] = rate_process.zcb_price(float(x_t), float(y_t), float(t), float(t + 1.0))
+                zcb_10y[idx] = rate_process.zcb_price(float(x_t), float(y_t), float(t), float(t + 10.0))
+        else:
+            for idx, (r_t, t) in enumerate(zip(flat_rates, times)):
+                zcb_1y[idx] = rate_process.zcb_price(float(r_t), float(t), float(t + 1.0))
+                zcb_10y[idx] = rate_process.zcb_price(float(r_t), float(t), float(t + 10.0))
         if cap_zcb_at_par:
             zcb_1y = np.minimum(zcb_1y, 1.0)
             zcb_10y = np.minimum(zcb_10y, 1.0)
@@ -4341,6 +4651,9 @@ class ScenarioSet:
             "equity_return_1m": equity_returns.reshape(-1),
             "measure": measure.value,
         })
+        if rate_model_key == "g2pp":
+            data["g2pp_x"] = g2pp_x_paths.reshape(-1)
+            data["g2pp_y"] = g2pp_y_paths.reshape(-1)
         if fx_factor is not None:
             data["fx_rate"] = fx_paths.reshape(-1)
             data["fx_return_1m"] = fx_returns.reshape(-1)
@@ -4383,6 +4696,13 @@ __all__ = [
     "phase6_consumer_mapping",
     "HullWhiteParams",
     "G2PlusParams",
+    "resolve_rate_model",
+    "available_rate_models",
+    "RATE_MODEL_REGISTRY",
+    "DEFAULT_RATE_MODEL",
+    "CurveTwistValidator",
+    "CurveTwistEvidenceReport",
+    "CurveTwistCheck",
     "RiskFreeCurve",
     "MartingaleEvidenceCheck",
     "MartingaleEvidenceReport",

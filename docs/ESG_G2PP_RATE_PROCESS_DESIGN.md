@@ -82,3 +82,27 @@ Targeted tests in `tests/test_esg_process.py` cover:
   starter curve fixtures and validation evidence are in place.
 - Q-measure martingale evidence remains a later Phase 7 task.
 
+
+## Production Promotion (roadmap §4.1 #7, MR-004) — 2026-07-09
+
+G2++ is now a **selectable production rate model** in the governed ESG path.
+`ScenarioSet.generate(rate_model="g2pp", g2_params=...)` builds the two-factor
+process, prices ZCBs with the affine G2++ formula, and emits `g2pp_x` / `g2pp_y`
+diagnostic columns. `resolve_rate_model()` normalises aliases and fails loud on
+unknown values; `available_rate_models()` returns `("g2pp", "hw1f")`.
+
+HW1F remains the default and is **byte-for-byte unchanged**: the extra factor-*y*
+Brownian draw is taken only in the `g2pp` branch and after the HW1F draws, so the
+governed HW1F headline is untouched (pinned Q/P digests regression-lock this).
+
+Two of the four "next steps" above are now addressed for the promoted path:
+swaption calibration (`calibrate_g2pp_to_swaptions`) feeds `g2_params`, and
+Q-measure martingale evidence is produced by `QMeasureMartingaleValidator` on the
+generated set. Curve-twist evidence — short↔long change decorrelation vs the
+one-factor HW1F benchmark — is produced by the new `CurveTwistValidator`.
+
+The prototype ZCB still omits the full G2++ convexity term, so the promoted path
+stays **UNSIGNED** (educational proxy surface); re-baselining the governed
+headline onto G2++, and swapping in the full-variance `EnhancedG2PlusRateProcess`
+analytic ZCB, remain owner-gated. See `docs/G2PP_PRODUCTION_PROMOTION_CARD.md` and
+`docs/validation/G2PP_PRODUCTION_PROMOTION.json`.
