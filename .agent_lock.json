@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-09T18:20:38Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-10T01:11Z-7503",
+  "started_at": "2026-07-10T01:11:08Z",
+  "ttl_minutes": 120,
+  "task": "#12 model-health VR-H11 calibration-drift + VR-H12 scenario-file schema-hash",
+  "note": ""
 }
