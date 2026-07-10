@@ -12986,3 +12986,15 @@ Exhausted-backlog verification + mount sync (auto-admissible). Full battery GREE
 - **One task:** Phase 38 Task 3 remains OWNER-GATED (native-tab cutover needs sha256 re-baseline + ui_data contract bump + jsdom env). No model-FORM/contract/headline/banner change.
 - **Non-duplicate improvement (docs-only, auto-admissible):** fixed `docs/VERIFICATION_RUNBOOK.md` §5 + Expected-GREEN table from stale **53/53 (3 batches, stage5 omitted)** to **66/66 (7 files)**, and documented the disk-pressure **MLMC whole-suite HANG** found this run → run per-file with `-p no:cacheprovider` (each <15s).
 - **ENV BLOCKER (persists):** sandbox `/` at 100% (43–51M free); undeletable `nobody`-owned ghost clones/venvs; owner disk reset needed before any build-heavy cycle.
+
+
+---
+
+## 2026-07-10T06:15Z — §4.1 #12 Model-Health Check Expansion (VR-H11 + VR-H12) — DONE
+
+Completed roadmap §4.1 #12 (last OPEN general-backlog item; §4.1 #1–#12 now all DONE). Extended `par_model_v2/validation/model_health.py` from 10→12 automated health checks and wired both into the `_CHECKS` registry + GovernanceStore audit entry.
+
+- **VR-H11 calibration drift:** `compute_calibration_drift()` monitors the live governed G2++ default calibration (`G2PlusParams`) vs pinned reference digest `e0c55f3c…`; injected-drift self-test; live→PASS (max_drift 0.0). WARN >2%, FAIL >5% or structural.
+- **VR-H12 scenario-file schema hash:** `_scenario_schema_fingerprint()` over live `esg_adapter._REQUIRED_COLUMNS` (7 cols) vs pinned `9b2c4bec…`; FAILs on any column add/remove/rename or dtype-kind change. Both pins OWNER-GATED to re-baseline.
+
+Verification GREEN on pinned lock (np1.26.4/sp1.13.1/pd2.2.3): Gate-C self_test_ok/engine_ready + smoke bit-match 49657.9/37499.0/30267.9; Gate-D spec-AST/workflow-YAML/bootstrap/pkg-validate 26/26; integrity 177/177, offline-home 4/4, node parity 10/10, MLMC 66/66; `tests/test_model_health.py` 63 PASS. Governed byte-stable: offline_home 03d6538d, ui_data 1.23.0, headline 39975.654628199336. Purely additive governance — NO model-FORM/contract/headline change. Evidence: `docs/MODEL_HEALTH_VRH11_VRH12_CARD.md`, `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_10_model_health_vrh11_vrh12.md`.

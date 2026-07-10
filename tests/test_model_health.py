@@ -1,5 +1,5 @@
 """
-Tests — Automated Model Health Checks (VR-H01 through VR-H10)
+Tests — Automated Model Health Checks (VR-H01 through VR-H12)
 ==============================================================
 
 Covers:
@@ -10,7 +10,7 @@ Covers:
   run_health_checks()                  — convenience function round-trip
   Individual check functions           — one smoke test each
 
-VR-H01 to VR-H10 — IMPLEMENTED & TESTED (Phase 3, Task 8)
+VR-H01 to VR-H12 — IMPLEMENTED & TESTED (Phase 3, Task 8; #12 2026-07-10)
 IA TAS M §3.3    — traceability via GovernanceStore integration
 SOA ASOP 56 §3.5 — model health monitoring as part of ongoing validation
 """
@@ -228,12 +228,9 @@ class TestHealthReport:
 
 class TestModelHealthCheckerSkip:
     def test_skip_reduces_run_count(self):
-        checker = ModelHealthChecker(skip_ids=["VR-H01", "VR-H02", "VR-H03",
-                                               "VR-H04", "VR-H05", "VR-H06",
-                                               "VR-H07", "VR-H08", "VR-H09",
-                                               "VR-H10"])
+        checker = ModelHealthChecker(skip_ids=[f"VR-H{i:02d}" for i in range(1, 13)])
         report = checker.run()
-        assert report.skipped == 10
+        assert report.skipped == 12
         assert report.passed == 0
         assert report.overall_status == HealthStatus.SKIP
 
@@ -244,10 +241,10 @@ class TestModelHealthCheckerSkip:
         assert len(skipped) == 1
         assert skipped[0].check_id == "VR-H10"
 
-    def test_total_always_10(self):
+    def test_total_always_12(self):
         checker = ModelHealthChecker(skip_ids=["VR-H01"])
         report = checker.run()
-        assert report.total == 10
+        assert report.total == 12
 
 
 # ---------------------------------------------------------------------------
@@ -259,7 +256,7 @@ class TestModelHealthCheckerGovernance:
         from par_model_v2.governance.audit_trail import GovernanceStore
         store = GovernanceStore()
         checker = ModelHealthChecker(governance_store=store,
-                                     skip_ids=list(f"VR-H{i:02d}" for i in range(1, 11)))
+                                     skip_ids=list(f"VR-H{i:02d}" for i in range(1, 13)))
         checker.run()
         assert len(store.audit_trail.entries) == 1
 
@@ -267,14 +264,14 @@ class TestModelHealthCheckerGovernance:
         from par_model_v2.governance.audit_trail import GovernanceStore, EntryType
         store = GovernanceStore()
         checker = ModelHealthChecker(governance_store=store,
-                                     skip_ids=list(f"VR-H{i:02d}" for i in range(1, 11)))
+                                     skip_ids=list(f"VR-H{i:02d}" for i in range(1, 13)))
         checker.run()
         entry = store.audit_trail.entries[0]
         assert entry.entry_type == EntryType.VALIDATION
 
     def test_no_crash_without_store(self):
         checker = ModelHealthChecker(
-            skip_ids=list(f"VR-H{i:02d}" for i in range(1, 11))
+            skip_ids=list(f"VR-H{i:02d}" for i in range(1, 13))
         )
         report = checker.run()
         assert report is not None
@@ -287,23 +284,23 @@ class TestModelHealthCheckerGovernance:
 class TestRunHealthChecksConvenience:
     def test_returns_health_report(self):
         report = run_health_checks(
-            skip_ids=list(f"VR-H{i:02d}" for i in range(1, 11))
+            skip_ids=list(f"VR-H{i:02d}" for i in range(1, 13))
         )
         assert isinstance(report, HealthReport)
 
     def test_model_version_propagated(self):
         report = run_health_checks(
-            skip_ids=list(f"VR-H{i:02d}" for i in range(1, 11)),
+            skip_ids=list(f"VR-H{i:02d}" for i in range(1, 13)),
             model_version="test-v9.9",
         )
         assert report.model_version == "test-v9.9"
 
     def test_to_json_round_trips(self):
         report = run_health_checks(
-            skip_ids=list(f"VR-H{i:02d}" for i in range(1, 11))
+            skip_ids=list(f"VR-H{i:02d}" for i in range(1, 13))
         )
         parsed = json.loads(report.to_json())
-        assert parsed["summary"]["skipped"] == 10
+        assert parsed["summary"]["skipped"] == 12
 
 
 # ---------------------------------------------------------------------------
@@ -403,7 +400,7 @@ class TestVRH10ESGAdapter:
 class TestFullHealthCheckSuite:
     def test_all_checks_run(self):
         report = run_health_checks()
-        assert report.total == 10
+        assert report.total == 12
 
     def test_overall_status_not_fail(self):
         """All checks should pass or warn on a clean codebase."""
@@ -414,15 +411,108 @@ class TestFullHealthCheckSuite:
 
     def test_report_id_is_uuid(self):
         import uuid
-        report = run_health_checks(skip_ids=list(f"VR-H{i:02d}" for i in range(1, 11)))
+        report = run_health_checks(skip_ids=list(f"VR-H{i:02d}" for i in range(1, 13)))
         uuid.UUID(report.report_id)  # raises ValueError if not valid UUID
 
     def test_generated_at_is_utc(self):
-        report = run_health_checks(skip_ids=list(f"VR-H{i:02d}" for i in range(1, 11)))
+        report = run_health_checks(skip_ids=list(f"VR-H{i:02d}" for i in range(1, 13)))
         assert report.generated_at.tzinfo is not None
 
     def test_all_check_ids_present(self):
         report = run_health_checks()
         ids = {r.check_id for r in report.results}
-        for i in range(1, 11):
+        for i in range(1, 13):
             assert f"VR-H{i:02d}" in ids, f"VR-H{i:02d} missing from report"
+
+
+# ---------------------------------------------------------------------------
+# 9. VR-H11 calibration-drift monitor + detector unit tests (roadmap #12)
+# ---------------------------------------------------------------------------
+
+class TestCalibrationDriftDetector:
+    def test_identical_is_pass(self):
+        from par_model_v2.validation.model_health import compute_calibration_drift
+        ref = {"a": 0.10, "b": 0.35, "rho": -0.70}
+        out = compute_calibration_drift(ref, dict(ref))
+        assert out["status"] == "PASS"
+        assert out["max_drift"] == 0.0
+
+    def test_small_move_warns(self):
+        from par_model_v2.validation.model_health import compute_calibration_drift
+        out = compute_calibration_drift({"a": 0.10}, {"a": 0.103})  # +3% -> WARN band
+        assert out["status"] == "WARN"
+
+    def test_large_move_fails(self):
+        from par_model_v2.validation.model_health import compute_calibration_drift
+        out = compute_calibration_drift({"a": 0.10}, {"a": 0.12})   # +20% -> FAIL
+        assert out["status"] == "FAIL"
+        assert out["max_drift"] > 0.05
+
+    def test_missing_key_is_structural_fail(self):
+        from par_model_v2.validation.model_health import compute_calibration_drift
+        out = compute_calibration_drift({"a": 0.1, "b": 0.2}, {"a": 0.1})
+        assert out["status"] == "FAIL"
+        assert out["missing"] == ["b"]
+
+    def test_extra_key_is_structural_fail(self):
+        from par_model_v2.validation.model_health import compute_calibration_drift
+        out = compute_calibration_drift({"a": 0.1}, {"a": 0.1, "c": 9.0})
+        assert out["status"] == "FAIL"
+        assert out["extra"] == ["c"]
+
+
+class TestVRH11CalibrationDrift:
+    def test_passes(self):
+        from par_model_v2.validation.model_health import _check_calibration_drift
+        status, msg, details = _check_calibration_drift()
+        assert status == HealthStatus.PASS, f"VR-H11 failed: {msg}"
+        assert details["max_drift"] == 0.0
+        assert details["injected_drift_detected"] is True
+
+    def test_reference_digest_regression_locked(self):
+        from par_model_v2.validation.model_health import (
+            _REFERENCE_CALIBRATION, _REFERENCE_CALIBRATION_DIGEST,
+            _calibration_snapshot_digest,
+        )
+        assert _calibration_snapshot_digest(_REFERENCE_CALIBRATION) == _REFERENCE_CALIBRATION_DIGEST
+
+
+# ---------------------------------------------------------------------------
+# 10. VR-H12 scenario-file schema hash (roadmap #12)
+# ---------------------------------------------------------------------------
+
+class TestVRH12ScenarioSchemaHash:
+    def test_passes(self):
+        from par_model_v2.validation.model_health import _check_scenario_schema_hash
+        status, msg, details = _check_scenario_schema_hash()
+        assert status == HealthStatus.PASS, f"VR-H12 failed: {msg}"
+        assert details["schema_hash"] == (
+            "9b2c4bec8d2a535fb10a249dd1845194f592861dbdcaa0a3843067da9e243938"
+        )
+        assert details["n_required_columns"] == 7
+
+    def test_fingerprint_matches_live_schema(self):
+        from par_model_v2.validation.model_health import (
+            _scenario_schema_fingerprint, _EXPECTED_SCENARIO_SCHEMA_HASH,
+        )
+        from par_model_v2.stochastic.esg_adapter import _REQUIRED_COLUMNS
+        assert _scenario_schema_fingerprint(_REQUIRED_COLUMNS) == _EXPECTED_SCENARIO_SCHEMA_HASH
+
+    def test_schema_mutation_changes_hash(self):
+        from par_model_v2.validation.model_health import _scenario_schema_fingerprint
+        base = {"scenario_id": ("iuf", "d"), "month": ("iuf", "d")}
+        mutated = {"scenario_id": ("iuf", "d"), "month": ("f", "d")}  # dtype-kind change
+        assert _scenario_schema_fingerprint(base) != _scenario_schema_fingerprint(mutated)
+
+
+class TestVRH11VRH12Registered:
+    def test_both_ids_in_full_report(self):
+        report = run_health_checks()
+        ids = {r.check_id for r in report.results}
+        assert "VR-H11" in ids
+        assert "VR-H12" in ids
+
+    def test_full_suite_has_twelve_checks_not_fail(self):
+        report = run_health_checks()
+        assert report.total == 12
+        assert report.overall_status != HealthStatus.FAIL, report.to_markdown()

@@ -2,7 +2,7 @@
 Automated Model Health Checks — PAR Actuarial Model v2
 =======================================================
 
-Implements VR-H01 through VR-H10: lightweight component-level health checks
+Implements VR-H01 through VR-H12: lightweight component-level health checks
 that run automatically at the start of every scheduled cycle to detect
 regressions before any development work is performed.
 
@@ -27,6 +27,8 @@ VR-H07 : GovernanceStore JSON round-trip integrity
 VR-H08 : IA validation requirements registry completeness
 VR-H09 : Monthly projection smoke test with AuditTrail wiring
 VR-H10 : ESGAdapter schema validation smoke test
+VR-H11 : Two-factor (G2++) rate-calibration drift vs pinned reference
+VR-H12 : ESG scenario-file column-schema hash vs pinned fingerprint
 
 Industry standards
 ------------------
@@ -37,11 +39,14 @@ ERM              — automated regression detection for tail-risk components
 DEVELOPMENT STATUS
 ------------------
 Phase 3, Task 8: Fully implemented. 10 health checks, all green on delivery.
+Roadmap 4.1 #12 (2026-07-10): added VR-H11 (calibration drift) and VR-H12
+(scenario-file schema hash) governance monitors -- 12 health checks, all green.
 """
 
 from __future__ import annotations
 
 import enum
+import hashlib
 import json
 import time
 import traceback
@@ -237,7 +242,7 @@ def _run_check(
 
 
 # ---------------------------------------------------------------------------
-# 2. Individual health checks (VR-H01 through VR-H10)
+# 2. Individual health checks (VR-H01 through VR-H12)
 # ---------------------------------------------------------------------------
 
 def _check_module_imports() -> Tuple[HealthStatus, str, Dict]:
@@ -628,6 +633,215 @@ def _check_esg_adapter() -> Tuple[HealthStatus, str, Dict]:
 
 
 # ---------------------------------------------------------------------------
+# 2b. Governance monitors backing VR-H11 / VR-H12 (roadmap 4.1 #12)
+# ---------------------------------------------------------------------------
+
+# VR-H11 -- pinned governed reference calibration snapshot: the
+# EnhancedG2PlusRateProcess / G2PlusParams defaults
+# (par_model_v2/stochastic/esg_process.py). The digest regression-locks the governed
+# two-factor rate calibration; any change to the live defaults surfaces here as drift.
+# Re-baseline is OWNER-GATED (a legitimate recalibration must be signed off first).
+_REFERENCE_CALIBRATION: Dict[str, Any] = {
+    "model": "G2++/EnhancedG2PlusRateProcess",
+    "mean_reversion_x": 0.10,
+    "mean_reversion_y": 0.35,
+    "vol_x": 0.010,
+    "vol_y": 0.006,
+    "factor_correlation": -0.70,
+    "long_run_rate_p": 0.025,
+    "market_price_of_risk_x": -0.10,
+    "market_price_of_risk_y": -0.05,
+}
+_REFERENCE_CALIBRATION_DIGEST: str = (
+    "e0c55f3c5001a8282dcf6d2b0d5ae060569f5c821d9f3878ef36cf712f7d43bc"
+)
+# Relative-drift tolerances (fraction of the reference magnitude).
+_CALIBRATION_WARN_TOL: float = 0.02   # >2%  -> WARN (investigate)
+_CALIBRATION_FAIL_TOL: float = 0.05   # >5%  -> FAIL (unreviewed calibration drift)
+
+# VR-H12 -- pinned SHA-256 of the ESG scenario-file column schema
+# (par_model_v2.stochastic.esg_adapter._REQUIRED_COLUMNS: name -> dtype-kind codes).
+# Re-baseline is OWNER-GATED: an approved scenario-schema/contract change must be
+# signed off before this pin moves.
+_EXPECTED_SCENARIO_SCHEMA_HASH: str = (
+    "9b2c4bec8d2a535fb10a249dd1845194f592861dbdcaa0a3843067da9e243938"
+)
+
+
+def _calibration_snapshot_digest(snapshot: Dict[str, Any]) -> str:
+    """Canonical SHA-256 of a calibration snapshot (sorted keys, floats rounded 1e-10)."""
+    canonical = json.dumps(
+        {k: (round(v, 10) if isinstance(v, (int, float)) else v)
+         for k, v in sorted(snapshot.items())},
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def compute_calibration_drift(
+    reference: Dict[str, Any],
+    candidate: Dict[str, Any],
+    warn_tol: float = _CALIBRATION_WARN_TOL,
+    fail_tol: float = _CALIBRATION_FAIL_TOL,
+    abs_floor: float = 1e-6,
+) -> Dict[str, Any]:
+    """Per-parameter relative drift of a candidate calibration vs a governed reference.
+
+    Relative drift for a numeric parameter is |cand - ref| / max(|ref|, abs_floor).
+    A missing/extra key, or a changed non-numeric value, is STRUCTURAL drift and fails
+    outright. Returns a JSON-safe dict
+    {status, max_drift, per_param, missing, extra, mismatched} where status is
+    "PASS" (no structural drift and max_drift <= warn_tol), "WARN"
+    (warn_tol < max_drift <= fail_tol) or "FAIL" (structural, or max_drift > fail_tol).
+    """
+    ref_keys, cand_keys = set(reference), set(candidate)
+    missing = sorted(ref_keys - cand_keys)
+    extra = sorted(cand_keys - ref_keys)
+    per_param: Dict[str, float] = {}
+    mismatched: List[str] = []
+    max_drift = 0.0
+    for k in sorted(ref_keys & cand_keys):
+        rv, cv = reference[k], candidate[k]
+        numeric = (isinstance(rv, (int, float)) and isinstance(cv, (int, float))
+                   and not isinstance(rv, bool) and not isinstance(cv, bool))
+        if numeric:
+            drift = abs(float(cv) - float(rv)) / max(abs(float(rv)), abs_floor)
+            per_param[k] = drift
+            if drift > max_drift:
+                max_drift = drift
+        elif rv != cv:
+            mismatched.append(k)
+    structural = bool(missing or extra or mismatched)
+    if structural or max_drift > fail_tol:
+        status = "FAIL"
+    elif max_drift > warn_tol:
+        status = "WARN"
+    else:
+        status = "PASS"
+    return {
+        "status": status,
+        "max_drift": max_drift,
+        "per_param": per_param,
+        "missing": missing,
+        "extra": extra,
+        "mismatched": mismatched,
+    }
+
+
+def _scenario_schema_fingerprint(required_columns: Dict[str, Tuple[str, str]]) -> str:
+    """Canonical SHA-256 over the ESG scenario-file column schema (name + dtype kinds)."""
+    canonical = json.dumps(
+        [[name, kinds] for name, (kinds, _desc) in required_columns.items()],
+        separators=(",", ":"), ensure_ascii=True,
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _check_calibration_drift() -> Tuple[HealthStatus, str, Dict]:
+    """VR-H11: two-factor (G2++) rate-calibration drift vs a pinned governed reference.
+
+    Monitors the LIVE governed default calibration (G2PlusParams in esg_process.py)
+    against the pinned _REFERENCE_CALIBRATION and self-tests that the drift detector
+    catches an injected out-of-tolerance perturbation (so a broken monitor cannot pass
+    silently). PASS when the live calibration matches the reference within tolerance;
+    WARN/FAIL surfaces drift for owner review (re-baseline is owner-gated).
+    """
+    ref_digest = _calibration_snapshot_digest(_REFERENCE_CALIBRATION)
+    assert ref_digest == _REFERENCE_CALIBRATION_DIGEST, (
+        f"Reference calibration digest moved: {ref_digest} "
+        f"!= pinned {_REFERENCE_CALIBRATION_DIGEST}"
+    )
+    probe_ref = {"a": 0.10, "b": 0.006, "rho": -0.70}
+    injected = compute_calibration_drift(probe_ref, dict(probe_ref, a=0.11))
+    assert injected["status"] == "FAIL", "drift detector missed an injected +10% move"
+    assert compute_calibration_drift(probe_ref, dict(probe_ref))["status"] == "PASS", \
+        "drift detector false-positive on identical snapshot"
+
+    from par_model_v2.stochastic.esg_process import G2PlusParams
+    p = G2PlusParams()
+    live = {
+        "model": "G2++/EnhancedG2PlusRateProcess",
+        "mean_reversion_x": p.mean_reversion_x,
+        "mean_reversion_y": p.mean_reversion_y,
+        "vol_x": p.vol_x,
+        "vol_y": p.vol_y,
+        "factor_correlation": p.factor_correlation,
+        "long_run_rate_p": p.long_run_rate_p,
+        "market_price_of_risk_x": p.market_price_of_risk_x,
+        "market_price_of_risk_y": p.market_price_of_risk_y,
+    }
+    drift = compute_calibration_drift(_REFERENCE_CALIBRATION, live)
+    live_digest = _calibration_snapshot_digest(live)
+    status_map = {
+        "PASS": HealthStatus.PASS,
+        "WARN": HealthStatus.WARN,
+        "FAIL": HealthStatus.FAIL,
+    }
+    status = status_map[drift["status"]]
+    if status is HealthStatus.PASS:
+        msg = (f"Calibration drift: G2++ live defaults match pinned reference "
+               f"(max_drift={drift['max_drift']:.4f}); injected-drift self-test caught")
+    else:
+        worst = (max(drift["per_param"], key=drift["per_param"].get)
+                 if drift["per_param"] else None)
+        msg = (f"Calibration DRIFT {drift['status']}: max_drift={drift['max_drift']:.4f}"
+               + (f" (worst: {worst})" if worst else "")
+               + (f"; missing={drift['missing']}" if drift["missing"] else "")
+               + (f"; extra={drift['extra']}" if drift["extra"] else ""))
+    return (
+        status,
+        msg,
+        {
+            "reference_digest": _REFERENCE_CALIBRATION_DIGEST,
+            "live_digest": live_digest,
+            "max_drift": round(drift["max_drift"], 6),
+            "drift_status": drift["status"],
+            "warn_tol": _CALIBRATION_WARN_TOL,
+            "fail_tol": _CALIBRATION_FAIL_TOL,
+            "n_params": len(_REFERENCE_CALIBRATION),
+            "injected_drift_detected": True,
+        },
+    )
+
+
+def _check_scenario_schema_hash() -> Tuple[HealthStatus, str, Dict]:
+    """VR-H12: ESG scenario-file schema hash vs a pinned governed fingerprint.
+
+    Computes a canonical SHA-256 over the live scenario-file column schema
+    (esg_adapter._REQUIRED_COLUMNS: column name -> dtype-kind codes) and compares it to
+    the pinned _EXPECTED_SCENARIO_SCHEMA_HASH. Any add/remove/rename of a required
+    column, or a dtype-kind change, moves the hash and FAILs the check -- a governance
+    tripwire for unreviewed scenario-file contract changes. Re-baseline is owner-gated.
+    """
+    from par_model_v2.stochastic.esg_adapter import _REQUIRED_COLUMNS
+    observed = _scenario_schema_fingerprint(_REQUIRED_COLUMNS)
+    n_cols = len(_REQUIRED_COLUMNS)
+    if observed != _EXPECTED_SCENARIO_SCHEMA_HASH:
+        return (
+            HealthStatus.FAIL,
+            (f"Scenario schema hash MISMATCH: observed {observed[:12]}... "
+             f"!= pinned {_EXPECTED_SCENARIO_SCHEMA_HASH[:12]}... "
+             f"({n_cols} required columns) -- owner re-baseline required"),
+            {
+                "observed_hash": observed,
+                "expected_hash": _EXPECTED_SCENARIO_SCHEMA_HASH,
+                "n_required_columns": n_cols,
+                "columns": list(_REQUIRED_COLUMNS.keys()),
+            },
+        )
+    return (
+        HealthStatus.PASS,
+        (f"Scenario schema hash matches pinned fingerprint "
+         f"({n_cols} required columns, sha256 {observed[:12]}...)"),
+        {
+            "schema_hash": observed,
+            "n_required_columns": n_cols,
+            "columns": list(_REQUIRED_COLUMNS.keys()),
+        },
+    )
+
+
+# ---------------------------------------------------------------------------
 # 3. Check registry
 # ---------------------------------------------------------------------------
 
@@ -642,6 +856,8 @@ _CHECKS: List[Tuple[str, str, Callable]] = [
     ("VR-H08", "IA validation registry",         _check_ia_validation_registry),
     ("VR-H09", "Monthly projection wiring",      _check_monthly_projection),
     ("VR-H10", "ESGAdapter schema validation",   _check_esg_adapter),
+    ("VR-H11", "Calibration drift monitor",      _check_calibration_drift),
+    ("VR-H12", "Scenario schema hash",           _check_scenario_schema_hash),
 ]
 
 
