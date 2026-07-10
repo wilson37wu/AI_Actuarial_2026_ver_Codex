@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-10T06:33:25Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-10T07:08Z-37cd",
+  "started_at": "2026-07-10T07:08:43Z",
+  "ttl_minutes": 120,
+  "task": "exhausted-backlog verification + full mount-sync pass (post-#12); no model-FORM/contract/headline/banner change",
+  "note": ""
 }
