@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-11T09:20:04Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-11T10:12Z-3d6a",
+  "started_at": "2026-07-11T10:12:47Z",
+  "ttl_minutes": 120,
+  "task": "W176 exhausted-backlog verification + mount-sync",
+  "note": ""
 }
