@@ -13110,3 +13110,17 @@ Sixteenth auto trigger on 2026-07-10 (after 06:15Z, 07:16Z, 08:18Z W151, 09:09Z 
 - **Governed byte-stable:** offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data contract 1.23.0; headline 39975.654628199336.
 - **Footprint:** state+log record only. Reverted transient run_model evidence timestamp churn (RUN_MODEL_SUMMARY/AGGREGATION_REPORT — run_timestamp only, SCR values unchanged). NO model-FORM / contract / headline / gate / code / banner change; NO new cycle_status doc (near-duplicate guard).
 - **Blocker (owner action):** scheduled task `auto_actuarial_stochastic_model` cronExpression='0 * * * *' (hourly, 6-min past) vs mandated '0 6,18 * * *' (18:00 & 06:00 UTC = 02:00 & 14:00 HKT). enabled=true, jitter=361s, lastRunAt 04:06:20Z. Causing redundant hourly cycles; confirmed via scheduled-tasks API this run.
+
+---
+
+## Cycle W171 — 2026-07-11T05:13Z — claude (auto)
+**Type:** exhausted-backlog verification + mount-sync (6th trigger 2026-07-11; 23rd consecutive hourly firing since cron bug)
+**Lock:** preflight PROCEED (owner null) → acquired 2026-07-11T05:09Z-280f → released at cycle end.
+**Task pointer:** Phase 38 Task 3 (ui_app.html native-tab cutover) remains **OWNER-GATED** (needs owner sha256 re-baseline + ui_data contract bump). Auto-admissible backlog **EXHAUSTED** — no new gap opened; no model-form change.
+**Verification (all GREEN, pinned venv np1.26.4/sp1.13.1/pd2.2.3):**
+- Gate C: `launch_offline_gui --self-test` self_test_ok:true engine_ready:true; `run_model --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-match **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- Gate D: actuarial_gui.spec AST-parse OK; release.workflow.yml valid; offline_bootstrap --self-test ok; build_phase_pkg_task1_validate 26/26.
+- Integrity: build_offline_home_validate **177/177**; test_offline_home_validate **4/4**; offline_home_loader_parity.cjs (node) **10/10**; MLMC suite **66/66**.
+- Governed byte-stable: offline_home.html md5 **03d6538d3cae9efb83062ecbfab096e9**; ui_data contract **1.23.0**; headline **39975.654628199336** (bit-identical).
+**Footprint:** state + log record only. No source/gate/model/contract/headline/banner/new-doc change.
+**Cadence flag (repeat):** scheduler still firing hourly (`0 * * * *`); should be `0 6,18 * * *` (06:00/18:00 UTC). 23rd consecutive hourly firing — **owner action required** to correct the schedule; the model itself is healthy and stable.
