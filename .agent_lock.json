@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-11T00:09Z-10bb",
-  "started_at": "2026-07-11T00:09:11Z",
-  "ttl_minutes": 120,
-  "task": "Phase 38 exhausted-backlog: full verification battery + full mount sync (Task 3 owner-gated)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-11T00:17:54Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
