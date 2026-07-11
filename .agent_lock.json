@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-11T01:09Z-6073",
-  "started_at": "2026-07-11T01:09:21Z",
-  "ttl_minutes": 120,
-  "task": "Exhausted-backlog verification + full mount-sync (off-cadence hourly trigger 2026-07-11T01:0xZ)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-11T01:17:13Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
