@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-11T04:09Z-c6b7",
-  "started_at": "2026-07-11T04:09:04Z",
-  "ttl_minutes": 120,
-  "task": "W170 exhausted-backlog verification + mount-sync (Phase 38 Task 3 owner-gated)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-11T04:20:48Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
