@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-07-11T07:16Z",
+  "last_run": "2026-07-11T08:13Z",
   "last_run_duration_minutes": 3,
-  "last_run_note": "W173 exhausted-backlog verification + mount-sync (2026-07-11T07:16Z; 8th trigger of 2026-07-11, 25th consecutive hourly firing since cron bug; independent re-run). Preflight PROCEED; acquired cleanly cycle 2026-07-11T07:09Z-febf. Reused pinned engine venv np1.26.4/sp1.13.1/pd2.2.3. FULL BATTERY GREEN: Gate C self_test_ok+engine_ready + smoke bit-match nested 49657.9/gaussian 37499.0/var-covar 30267.9; Gate D spec-AST + workflow-structural + offline_bootstrap self-test + build_phase_pkg_task1_validate 26/26; integrity 177/177, offline-home 4/4, node 10/10, MLMC 66/66. Governed byte-stable: offline_home.html 03d6538d, ui_data 1.23.0, headline 39975.654628199336. State+log only; Phase 38 Task 3 owner-gated; cron bug persists (owner action).",
+  "last_run_note": "W174 exhausted-backlog verification + mount-sync (2026-07-11T08:13Z; 9th trigger of 2026-07-11, 26th consecutive hourly firing since cron bug; independent re-run). Preflight PROCEED; acquired cleanly cycle 2026-07-11T08:09Z-ecb8. Reused pinned engine venv np1.26.4/sp1.13.1/pd2.2.3. FULL BATTERY GREEN: Gate C self_test_ok+engine_ready + smoke bit-match nested 49657.9/gaussian 37499.0/var-covar 30267.9; Gate D spec-AST + workflow-YAML-valid + offline_bootstrap self-test + build_phase_pkg_task1_validate all-pass; integrity 177/177, offline-home 4/4, node 10/10, MLMC 66/66. Governed byte-stable: offline_home.html 03d6538d, ui_data 1.23.0, headline 39975.654628199336. State+log only; Phase 38 Task 3 owner-gated; cron bug persists (owner action).",
   "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Tasks 1-2 COMPLETE (auto-admissible). ACTIVE in_progress = Phase 38 Task 3 = OWNER-GATED ui_app.html native-tab cutover (requires owner sha256 re-baseline across the gate scripts + a ui_data contract bump) - NOT auto-executed. Auto-admissible backlog SATURATED: governance-gate set saturated (INTEGRITY_GATE_MAP.md W92, VERIFICATION_RUNBOOK.md W93); tail-MLMC track complete through the stage-5 Neyman study (W95) consolidated into docs/MLMC_TAIL_EFFICIENCY_MAP.md (W96); offline-UI governed artifacts byte-stable; TASK_PROMPT hand-off banner refreshed W97 and left current through W98/W99/W100/W101/W102 (re-issuing is a near-duplicate). W99-W101 then W102 (2026-06-30 16:09Z) ran the SKILL-sanctioned exhausted-backlog branch: full verification battery GREEN + full tracked-file mount sync; NO new gate/code/model-FORM/contract/headline change and NO banner re-churn. Researched forward pointer unchanged: the highest-leverage genuinely-NEW direction is an LSMC (least-squares Monte Carlo) regression PROXY of the inner risk-neutral valuation to replace the brute-force nested inner loop for SCR - the canonical next model-FORM beyond the now-exhausted MLMC variance-reduction track - but it is a model-FORM change and stays OWNER-GATED. W144 continues the exhausted-backlog branch (W99-W143 lineage). W106 registered behind the same hard near-duplicate guard: default to the exhausted-backlog verification + full mount-sync pass unless a genuinely NEW non-duplicate gap is demonstrated. NO model-FORM/contract/headline change (owner-gated); Phase 38 Task 3 owner-gated; LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 longevity driver / signed per-OS binaries all OWNER-GATED.",
-  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W173_EXHAUSTED_BACKLOG_VERIFICATION_PLUS_MOUNT_SYNC__FULL_BATTERY_GREEN_MLMC_66of66__offline_home_03d6538d_ui_data_1_23_0_headline_39975p654628199336__NO_MODEL_NO_CONTRACT_NO_BANNER_NO_NEW_DOC_CHANGE__8TH_TRIGGER_2026_07_11_25TH_CONSECUTIVE_HOURLY__CADENCE_CRON_BUG_OWNER_ACTION_REQUIRED",
+  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W174_EXHAUSTED_BACKLOG_VERIFICATION_PLUS_MOUNT_SYNC__FULL_BATTERY_GREEN_MLMC_66of66__offline_home_03d6538d_ui_data_1_23_0_headline_39975p654628199336__NO_MODEL_NO_CONTRACT_NO_BANNER_NO_NEW_DOC_CHANGE__9TH_TRIGGER_2026_07_11_26TH_CONSECUTIVE_HOURLY__CADENCE_CRON_BUG_OWNER_ACTION_REQUIRED",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -1124,7 +1124,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-07-11T07:16Z",
+  "last_updated": "2026-07-11T08:13Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -5478,5 +5478,22 @@
     "change_footprint": "state+log record only; reverted transient run_model evidence churn (RUN_MODEL_SUMMARY/AGGREGATION_REPORT run_id+duration only, SCR unchanged); no source/gate/model-FORM/contract/headline/banner/doc change; owner-gated items untouched",
     "backlog_state": "auto-admissible backlog EXHAUSTED; owner-gated remaining: Phase 38 Task 3 native-tab cutover, LSMC inner-valuation proxy, MLMC stage-5 governed default, MR-LONGEV-1 longevity driver, signed per-OS binaries",
     "cadence_bug": "scheduler cron '0 * * * *' fires hourly (6-min past); intended '0 6,18 * * *' (06:00/18:00 UTC = 14:00/02:00 HKT). 25th consecutive hourly firing; nextRunAt 2026-07-11T08:06Z. OWNER ACTION REQUIRED. Agent will not self-modify its own trigger (not a task-file-sanctioned write)."
+  },
+  "cycle_2026_07_11_w174": {
+    "agent": "claude",
+    "when": "2026-07-11T08:13Z",
+    "cycle_id": "2026-07-11T08:09Z-ecb8",
+    "task_selected": "exhausted-backlog verification + full mount-sync pass (9th trigger of 2026-07-11; 26th consecutive hourly firing since cron bug; ~57min after W173 07:16Z; independent re-run). cronExpression \"0 * * * *\" re-confirmed via scheduled-tasks API this cycle (lastRunAt 08:06:22Z, nextRunAt 09:06:01Z, jitter 361s).",
+    "roadmap_item": "SKILL exhausted-backlog branch (verification + sync); no new auto-admissible gap; Phase 38 Task 3 (native-tab cutover) remains the in_progress OWNER-GATED pointer",
+    "delivered": "Fresh throwaway clone + reused pinned engine venv (np1.26.4/sp1.13.1/pd2.2.3); full verification battery re-run GREEN; mount reconciled to origin/main. NO model-FORM/contract/headline/gate/code/banner change; NO new cycle_status doc (near-duplicate per SKILL).",
+    "gates": "C self_test_ok+engine_ready + smoke bit-match nested 49657.9/gaussian 37499.0/var-covar 30267.9; D spec-AST + workflow-YAML-structural-valid + offline_bootstrap self-test + build_phase_pkg_task1_validate all-pass (sha256 baseline + governed_headline_present); integrity 177/177, offline-home 4/4, node 10/10, MLMC 66/66 (per-file 8+8+11+4+10+12+13)",
+    "governed_byte_stable": {
+      "headline": "39975.654628199336",
+      "offline_home_html_md5": "03d6538d3cae9efb83062ecbfab096e9",
+      "ui_data_contract": "1.23.0"
+    },
+    "change_footprint": "state+log record only; reverted transient run_model evidence churn (RUN_MODEL_SUMMARY/AGGREGATION_REPORT run_id+duration+timestamp only, SCR unchanged); no source/gate/model-FORM/contract/headline/banner/doc change; owner-gated items untouched",
+    "backlog_state": "auto-admissible backlog EXHAUSTED; owner-gated remaining: Phase 38 Task 3 native-tab cutover, LSMC inner-valuation proxy, MLMC stage-5 governed default, MR-LONGEV-1 longevity driver, signed per-OS binaries",
+    "cadence_bug": "scheduler cron '0 * * * *' fires hourly (6-min past); intended '0 6,18 * * *' (06:00/18:00 UTC = 14:00/02:00 HKT). 26th consecutive hourly firing; nextRunAt 2026-07-11T09:06:01Z. OWNER ACTION REQUIRED. Agent will not self-modify its own trigger (not a task-file-sanctioned write)."
   }
 }
