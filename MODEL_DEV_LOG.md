@@ -13124,3 +13124,17 @@ Sixteenth auto trigger on 2026-07-10 (after 06:15Z, 07:16Z, 08:18Z W151, 09:09Z 
 - Governed byte-stable: offline_home.html md5 **03d6538d3cae9efb83062ecbfab096e9**; ui_data contract **1.23.0**; headline **39975.654628199336** (bit-identical).
 **Footprint:** state + log record only. No source/gate/model/contract/headline/banner/new-doc change.
 **Cadence flag (repeat):** scheduler still firing hourly (`0 * * * *`); should be `0 6,18 * * *` (06:00/18:00 UTC). 23rd consecutive hourly firing — **owner action required** to correct the schedule; the model itself is healthy and stable.
+
+---
+
+## Cycle W172 — 2026-07-11T06:19Z — claude (auto)
+**Type:** exhausted-backlog verification + mount-sync (7th trigger 2026-07-11; 24th consecutive hourly firing since cron bug; ~57min after W171 05:12Z). The 06:09Z acquisition coincidentally lands in the intended 06:00 UTC Claude window, but the scheduler is still mis-firing hourly.
+**Lock:** preflight PROCEED (owner null, released by claude 05:14:31Z post-W171, no Codex race) → acquired 2026-07-11T06:09Z-51dc → released at cycle end.
+**Task pointer:** Phase 38 Task 3 (ui_app.html native-tab cutover) remains **OWNER-GATED** (needs owner sha256 re-baseline + ui_data contract bump). Auto-admissible backlog **EXHAUSTED** — no new gap opened; no model-form change.
+**Verification (all GREEN, reused pinned venv np1.26.4/sp1.13.1/pd2.2.3):**
+- Gate C: `launch_offline_gui --self-test` self_test_ok:true engine_ready:true; `run_model --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-match **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- Gate D: actuarial_gui.spec AST-parse OK; release.workflow.yml structurally valid (name/on/jobs, no tabs); offline_bootstrap --self-test ok; build_phase_pkg_task1_validate pass (sha256 baseline + governed_headline_present).
+- Integrity: build_offline_home_validate **177/177**; test_offline_home_validate **4/4**; offline_home_loader_parity.cjs (node) **10/10**; MLMC suite **66/66** (per-file 8+8+11+4+10+12+13, run per-file; the aggregate glob run is ~50s and was mis-read as a hang mid-cycle, then confirmed green per-file).
+- Governed byte-stable: offline_home.html md5 **03d6538d3cae9efb83062ecbfab096e9** (clone==mount); ui_data contract **1.23.0**; headline **39975.654628199336** (bit-identical).
+**Footprint:** state + log record only. Reverted transient run_model evidence churn (RUN_MODEL_SUMMARY/AGGREGATION_REPORT). No source/gate/model/contract/headline/banner/new-doc change.
+**Cadence flag (repeat, owner action required):** scheduler still firing hourly (`0 * * * *`); should be `0 6,18 * * *` (06:00/18:00 UTC = 14:00/02:00 HKT). 24th consecutive hourly firing since the bug. The model itself is healthy, stable, and byte-frozen; the only open issue is the schedule misconfiguration.
