@@ -13101,3 +13101,12 @@ Sixteenth auto trigger on 2026-07-10 (after 06:15Z, 07:16Z, 08:18Z W151, 09:09Z 
 - **Governed byte-stable:** offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data contract 1.23.0; headline 39975.654628199336.
 - **Footprint:** state+log record only. NO model-FORM / contract / headline / gate / code / banner change; NO new cycle_status doc (near-duplicate guard).
 - **Blocker (owner action):** scheduled task `auto_actuarial_stochastic_model` cronExpression='0 * * * *' (hourly) vs mandated '0 6,18 * * *' (18:00 & 06:00 UTC). enabled=true, jitter=361s. Causing redundant hourly cycles.
+
+---
+## Cycle W170 — 2026-07-11T04:19Z — claude (exhausted-backlog verification + mount-sync)
+- **Trigger:** 5th of 2026-07-11; 22nd consecutive hourly firing since cadence bug (scheduler lastRunAt 04:06:20Z, nextRunAt 05:06:01Z, ~51min after W169 03:15Z). Preflight PROCEED (lock FREE, released by claude 03:16:33Z post-W169, no Codex race); acquired cycle 2026-07-11T04:09Z-c6b7.
+- **Task:** SKILL exhausted-backlog branch. Sole in_progress pointer = Phase 38 Task 3 (native-tab cutover) = OWNER-GATED; not auto-executed.
+- **Verification (FULL BATTERY GREEN):** Gate C self_test_ok/engine_ready + smoke bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9. Gate D spec-AST OK / release.workflow.yml valid / offline_bootstrap self-test ok / build_phase_pkg_task1_validate pass. Integrity: build_offline_home_validate 177/177, test_offline_home_validate 4/4, node loader parity 10/10, MLMC 66/66 (per-file 8+8+11+4+10+12+13). Engine on pinned np1.26.4/sp1.13.1/pd2.2.3.
+- **Governed byte-stable:** offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data contract 1.23.0; headline 39975.654628199336.
+- **Footprint:** state+log record only. Reverted transient run_model evidence timestamp churn (RUN_MODEL_SUMMARY/AGGREGATION_REPORT — run_timestamp only, SCR values unchanged). NO model-FORM / contract / headline / gate / code / banner change; NO new cycle_status doc (near-duplicate guard).
+- **Blocker (owner action):** scheduled task `auto_actuarial_stochastic_model` cronExpression='0 * * * *' (hourly, 6-min past) vs mandated '0 6,18 * * *' (18:00 & 06:00 UTC = 02:00 & 14:00 HKT). enabled=true, jitter=361s, lastRunAt 04:06:20Z. Causing redundant hourly cycles; confirmed via scheduled-tasks API this run.
