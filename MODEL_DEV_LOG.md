@@ -13070,3 +13070,14 @@ Sixteenth auto trigger on 2026-07-10 (after 06:15Z, 07:16Z, 08:18Z W151, 09:09Z 
 - Integrity: `build_offline_home_validate` **177/177**; `test_offline_home_validate` **4/4**; node `offline_home_loader_parity.cjs` **10/10**; MLMC suite **66/66** (8+8+11+4+10+12+13).
 - Governed byte-stable: offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`; ui_data contract `1.23.0`; headline `39975.654628199336`.
 **Footprint:** state + log only. Reverted transient `run_model` evidence timestamp churn (RUN_MODEL_SUMMARY/AGGREGATION_REPORT — timestamp/run_id/duration only, SCR values unchanged). No source / gate / model-FORM / contract / headline / banner change; no new cycle_status doc (near-duplicate). Full tracked-file mount sync performed.
+
+## 2026-07-11T01:15Z - W167 - Cycle 2026-07-11T01:09Z-6073 (claude) - Exhausted-backlog verification + mount-sync
+**Trigger:** 2nd trigger of 2026-07-11 (19th consecutive hourly firing since the cron bug; scheduler `lastRunAt` 01:06:19Z, ~1h after W166 00:15Z). Root cause CONFIRMED via scheduled-tasks API: task `auto_actuarial_stochastic_model` cron is `0 * * * *` (hourly, jitter 361s) instead of `0 6,18 * * *`; its own description states the intended cadence is 06:00 & 18:00 UTC. `nextRunAt` 2026-07-11T02:06:01Z. **Owner action still required to fix the schedule (set cron `0 6,18 * * *`).**
+**Preflight/lock:** preflight PROCEED (lock free, released by claude 00:17:54Z post-W166). Acquired cleanly `2026-07-11T01:09Z-6073`, no Codex race. Released at end.
+**Task:** Phase 38 Task 3 (owner-gated ui_app native-tab cutover — needs owner sha256 re-baseline + ui_data contract bump) remains `in_progress`; auto-admissible backlog saturated → SKILL exhausted-backlog branch = verification + mount-sync only.
+**Verification — FULL BATTERY GREEN** (reused pinned engine venv np1.26.4/sp1.13.1/pd2.2.3):
+- Gate C: `launch_offline_gui --self-test` self_test_ok+engine_ready true; `run_model --n-outer 100 --n-inner 4 --no-tail --seed 42` smoke bit-match **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- Gate D: spec AST-parse ok; `release.workflow.yml` YAML valid (jobs build/release); `offline_bootstrap --self-test` ok; `build_phase_pkg_task1_validate` **26/26**.
+- Integrity: `build_offline_home_validate` **177/177**; `test_offline_home_validate` **4/4**; node `offline_home_loader_parity.cjs` **10/10**; MLMC suite **66/66** (8+8+11+4+10+12+13).
+- Governed byte-stable: offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`; ui_data contract `1.23.0`; headline `39975.654628199336`.
+**Footprint:** state + log only. Reverted transient `run_model` evidence timestamp churn (RUN_MODEL_SUMMARY/AGGREGATION_REPORT — timestamp/run_id/duration only, SCR values + reproducibility_digests unchanged). No source / gate / model-FORM / contract / headline / banner change; no new cycle_status doc (near-duplicate). Full tracked-file mount sync performed.
