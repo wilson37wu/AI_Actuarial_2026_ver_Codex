@@ -13059,3 +13059,14 @@ Sixteenth auto trigger on 2026-07-10 (after 06:15Z, 07:16Z, 08:18Z W151, 09:09Z 
 - Governed artifacts byte-stable: offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`, ui_data.json contract `1.23.0`, headline `39975.654628199336`.
 
 **Footprint:** state + log only. Reverted transient `run_model` evidence timestamp churn (RUN_MODEL_SUMMARY/AGGREGATION_REPORT). No source / gate / model-FORM / contract / headline / banner change; no new cycle_status doc (near-duplicate). Full tracked-file mount sync performed.
+
+## 2026-07-11T00:15Z - W166 - Cycle 2026-07-11T00:09Z-10bb (claude) - Exhausted-backlog verification + mount-sync
+**Trigger:** 1st trigger of 2026-07-11 (18th consecutive hourly firing since the cron bug; ~54 min after W165 23:15Z). Fired 00:09Z — inside Codex's nominal 00:00 window — but lock was FREE (released by claude 23:19:28Z post-W165) and no Codex race observed. Root cause unchanged: scheduled task `auto_actuarial_stochastic_model` cron is `0 * * * *` (hourly) instead of `0 6,18 * * *`. **Owner action still required to fix the schedule.**
+**Preflight/lock:** preflight PROCEED (lock free). Acquired cleanly `2026-07-11T00:09Z-10bb`, no Codex race. Released at end.
+**Task:** Phase 38 Task 3 (owner-gated ui_app native-tab cutover — needs owner sha256 re-baseline + ui_data contract bump) remains `in_progress`; auto-admissible backlog saturated → SKILL exhausted-backlog branch = verification + mount-sync only.
+**Verification — FULL BATTERY GREEN** (reused pinned engine venv np1.26.4/sp1.13.1/pd2.2.3):
+- Gate C: `launch_offline_gui --self-test` self_test_ok+engine_ready true; `run_model --n-outer 100 --n-inner 4 --no-tail --seed 42` smoke bit-match **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+- Gate D: spec AST-parse ok; `release.workflow.yml` YAML valid (jobs build/release); `offline_bootstrap --self-test` ok; `build_phase_pkg_task1_validate` **26/26**.
+- Integrity: `build_offline_home_validate` **177/177**; `test_offline_home_validate` **4/4**; node `offline_home_loader_parity.cjs` **10/10**; MLMC suite **66/66** (8+8+11+4+10+12+13).
+- Governed byte-stable: offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`; ui_data contract `1.23.0`; headline `39975.654628199336`.
+**Footprint:** state + log only. Reverted transient `run_model` evidence timestamp churn (RUN_MODEL_SUMMARY/AGGREGATION_REPORT — timestamp/run_id/duration only, SCR values unchanged). No source / gate / model-FORM / contract / headline / banner change; no new cycle_status doc (near-duplicate). Full tracked-file mount sync performed.
