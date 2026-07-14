@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-07-14T03:08Z-4c00",
-  "started_at": "2026-07-14T03:08:52Z",
-  "ttl_minutes": 120,
-  "task": "W181 exhausted-backlog verification + mount-sync",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-07-14T03:14:41Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
