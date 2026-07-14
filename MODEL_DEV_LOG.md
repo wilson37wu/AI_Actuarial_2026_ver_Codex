@@ -13287,3 +13287,10 @@ Preflight PROCEED (no Codex lock/commits since W178-W188); lock 2026-07-14T11:08
 FULL BATTERY GREEN: Gate C self_test_ok:true+engine_ready:true, smoke bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9; Gate D spec-AST + release.workflow.yml valid + offline_bootstrap self_test_ok:true + pkg-task1 validate all_pass 26/26 (incl. ui_app_byte_unchanged, governed_headline_present); integrity build_offline_home_validate 177/177 + test_offline_home_validate 4/4 + node loader parity 10/10 + MLMC 66/66 (run per-file under the 45s shell cap: 8+8+11+4+10+12+13).
 Governed byte-stable: offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data.json contract 1.23.0; headline 39975.654628199336.
 Record-only: no model-FORM/contract/headline/banner/new-doc change. Phase 38 Task 3 owner-gated (ui_app native-tab cutover pending sha256 re-baseline + contract bump). Forward pointer (LSMC proxy) unchanged; no banner re-churn (near-duplicate per W97-W188). LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 / signed per-OS binaries remain owner-gated.
+
+## W190 — 2026-07-14T12:08Z — exhausted-backlog verification + mount-sync (record-only)
+- Preflight PROCEED (no Codex lock/commits since W178–W189); lock `2026-07-14T12:08Z-ebcf`.
+- FULL BATTERY GREEN: Gate C smoke bit-match 49657.9/37499.0/30267.9 (`self_test_ok`/`engine_ready` true); Gate D spec-AST + release-workflow-YAML + offline_bootstrap self-test + pkg-task1 validate all_pass; Integrity 177/177 + offline 4/4 + node 10/10 + MLMC 66/66.
+- Governed artifacts byte-stable: offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`, ui_data contract `1.23.0`, headline `39975.654628199336`.
+- Changes: none (record-only). Phase 38 Task 3 stays owner-gated. Engine: reused pinned /tmp/engine_libs.
+- OWNER ACTION: cadence cron bug persists — TWELFTH firing on 2026-07-14 (~hourly, off nominal 06:00/18:00 UTC window; W190 landed inside Codex's 12:00 slot — lock won cleanly but the overlap defeats the 6h stagger); no run 2026-07-13.
