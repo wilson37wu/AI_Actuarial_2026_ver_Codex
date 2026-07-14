@@ -13233,3 +13233,9 @@ Preflight PROCEED; lock 2026-07-12T00:14Z-013f. FULL BATTERY GREEN (Gate C smoke
 - **FULL BATTERY GREEN:** Gate C self_test_ok/engine_ready + smoke bit-match 49657.9/37499.0/30267.9; Gate D spec-AST + workflow-YAML + offline_bootstrap self-test + pkg-task1 validate; integrity 177/177 + offline 4/4 + node 10/10 + MLMC 66/66.
 - **Governed byte-stable:** offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data contract 1.23.0; headline 39975.654628199336.
 - Changes: none (record-only). Phase 38 Task 3 owner-gated; LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 / signed per-OS binaries owner-gated.
+
+## W181 — 2026-07-14T03:12Z — exhausted-backlog verification + mount-sync (record-only)
+Preflight PROCEED (no Codex lock/commits since W178-W180); lock 2026-07-14T03:08Z-4c00. THIRD Claude firing 2026-07-14 (~54min after W180 02:14Z; W180 was ~48min after W179 01:20Z) — cron cadence still sub-hourly, owner action required; no run 2026-07-13.
+FULL BATTERY GREEN: Gate C self_test_ok:true+engine_ready:true, smoke bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9; Gate D spec-AST + release.workflow.yml + offline_bootstrap self-test + pkg-task1 validate (n_pass 26); integrity build_offline_home_validate 177/177 + test_offline_home_validate 4/4 + node loader parity 10/10 + MLMC 66/66.
+Governed byte-stable: offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9; ui_data.json contract 1.23.0; headline 39975.654628199336.
+Record-only: no model-FORM/contract/headline/banner/new-doc change. Phase 38 Task 3 owner-gated (ui_app native-tab cutover pending sha256 re-baseline + contract bump). LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 / signed per-OS binaries remain owner-gated.
