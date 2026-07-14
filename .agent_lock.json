@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-14T11:15:40Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-14T12:08Z-ebcf",
+  "started_at": "2026-07-14T12:08:53Z",
+  "ttl_minutes": 120,
+  "task": "W190 exhausted-backlog verification + mount-sync (Phase 38 Task 3 owner-gated)",
+  "note": ""
 }
