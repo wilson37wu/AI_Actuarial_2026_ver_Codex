@@ -1,5 +1,5 @@
 {
- "run_timestamp": "2026-07-06T22:08:18.588318+00:00",
+ "run_timestamp": "2026-07-14T01:09:58.683493+00:00",
  "phase": "Phase UIL: User-Input Loader + Run Orchestrator",
  "task": "Task 3 (B3): scripts/run_model.py orchestrator",
  "generator": "scripts/run_model.py",
@@ -152,7 +152,7 @@
   "copula_scr": 37498.981263276786,
   "copula_vs_nested_rel_error": 0.2448536430428491,
   "copula_report": {
-   "run_id": "copula-agg-dd4c52b9",
+   "run_id": "copula-agg-4b6c757b",
    "verdict": "PARTIAL - copula aggregation evidence generated with review items",
    "drivers": [
     "rate",
@@ -441,7 +441,7 @@
     }
    ],
    "reproducibility_digest": "7c8a1a1bd8c10a055994516c40ef508d24377df0b92dbffe7591e0252bfa7ba6",
-   "duration_seconds": 1.9566,
+   "duration_seconds": 1.6477,
    "config": {
     "n_sim": 200000,
     "seed": 55,
@@ -491,8 +491,8 @@
   "tail_diagnostics": {
    "skipped": true
   },
-  "run_id": "liq-7d-riskagg-6033b4af",
-  "duration_seconds": 16.18171548200189,
+  "run_id": "liq-7d-riskagg-0cca8d7c",
+  "duration_seconds": 15.323126664000029,
   "verdict": "PASS",
   "reproducibility_digest": "c9d24bc1199175f73d533ebf81d1a450fc01a7a93846f4af3a2016b44f405171",
   "notes": [
