@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-07-14T13:08Z",
- "last_run_duration_minutes": null,
- "last_run_note": "W191 exhausted-backlog verification + mount-sync (2026-07-14T13:08Z; THIRTEENTH Claude firing 2026-07-14, still off nominal 06:00/18:00 UTC window and clustered ~hourly, ~1h after W190 12:08Z. Cadence cron bug OWNER-ACTION-REQUIRED, no run 2026-07-13). Preflight PROCEED (no Codex lock/commits since W178-W190); acquired 2026-07-14T13:08Z-38f4. Reused pinned /tmp/engine_libs (numpy1.26.4/scipy1.13.1/pandas2.2.3) via PYTHONPATH. FULL BATTERY GREEN (MLMC 66/66); governed artifacts byte-stable (offline_home 03d6538d, ui_data 1.23.0, headline 39975.654628199336). Record-only; no model-FORM/contract/headline/banner/new-doc change.",
+ "last_run": "2026-07-14T14:09Z",
+ "last_run_duration_minutes": 6,
+ "last_run_note": "W192 exhausted-backlog verification + mount-sync (2026-07-14T14:09Z; FOURTEENTH Claude firing 2026-07-14, still off nominal 06:00/18:00 UTC window and clustered ~hourly, ~1h after W191 13:08Z. Cadence cron bug OWNER-ACTION-REQUIRED, no run 2026-07-13). Preflight PROCEED (no Codex lock/commits since W178-W191); acquired 2026-07-14T14:09Z-4283. Reused pinned /tmp/engine_libs (numpy1.26.4/scipy1.13.1/pandas2.2.3) via PYTHONPATH. FULL BATTERY GREEN (MLMC 66/66); governed artifacts byte-stable (offline_home 03d6538d, ui_data 1.23.0, headline 39975.654628199336). Record-only; no model-FORM/contract/headline/banner/new-doc change.",
  "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Tasks 1-2 COMPLETE (auto-admissible). ACTIVE in_progress = Phase 38 Task 3 = OWNER-GATED ui_app.html native-tab cutover (requires owner sha256 re-baseline across the gate scripts + a ui_data contract bump) - NOT auto-executed. Auto-admissible backlog SATURATED: governance-gate set saturated (INTEGRITY_GATE_MAP.md W92, VERIFICATION_RUNBOOK.md W93); tail-MLMC track complete through the stage-5 Neyman study (W95) consolidated into docs/MLMC_TAIL_EFFICIENCY_MAP.md (W96); offline-UI governed artifacts byte-stable; TASK_PROMPT hand-off banner refreshed W97 and left current through W98/W99/W100/W101/W102 (re-issuing is a near-duplicate). W99-W101 then W102 (2026-06-30 16:09Z) ran the SKILL-sanctioned exhausted-backlog branch: full verification battery GREEN + full tracked-file mount sync; NO new gate/code/model-FORM/contract/headline change and NO banner re-churn. Researched forward pointer unchanged: the highest-leverage genuinely-NEW direction is an LSMC (least-squares Monte Carlo) regression PROXY of the inner risk-neutral valuation to replace the brute-force nested inner loop for SCR - the canonical next model-FORM beyond the now-exhausted MLMC variance-reduction track - but it is a model-FORM change and stays OWNER-GATED. W144 continues the exhausted-backlog branch (W99-W143 lineage). W106 registered behind the same hard near-duplicate guard: default to the exhausted-backlog verification + full mount-sync pass unless a genuinely NEW non-duplicate gap is demonstrated. NO model-FORM/contract/headline change (owner-gated); Phase 38 Task 3 owner-gated; LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 longevity driver / signed per-OS binaries all OWNER-GATED.",
- "overall_status": "PHASE_38_TASK3_OWNER_GATED__W191_EXHAUSTED_BACKLOG_VERIFICATION_PLUS_MOUNT_SYNC__FULL_BATTERY_GREEN_MLMC_66of66__offline_home_03d6538d_ui_data_1_23_0_headline_39975p654628199336__NO_MODEL_NO_CONTRACT_NO_BANNER_NO_NEW_DOC_CHANGE__THIRTEENTH_FIRING_2026_07_14_STILL_OFF_WINDOW_NEAR_HOURLY__CADENCE_CRON_BUG_OWNER_ACTION_REQUIRED__NO_RUN_2026_07_13",
+ "overall_status": "PHASE_38_TASK3_OWNER_GATED__W192_EXHAUSTED_BACKLOG_VERIFICATION_PLUS_MOUNT_SYNC__FULL_BATTERY_GREEN_MLMC_66of66__offline_home_03d6538d_ui_data_1_23_0_headline_39975p654628199336__NO_MODEL_NO_CONTRACT_NO_BANNER_NO_NEW_DOC_CHANGE__FOURTEENTH_FIRING_2026_07_14_STILL_OFF_WINDOW_NEAR_HOURLY__CADENCE_CRON_BUG_OWNER_ACTION_REQUIRED__NO_RUN_2026_07_13",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -5834,6 +5834,28 @@
   "changes": "none (record-only); no model-FORM/contract/headline/banner/new-doc change; Phase 38 Task 3 owner-gated",
   "owner_actions": [
    "cron cadence bug PERSISTS - THIRTEENTH firing 2026-07-14, off nominal 06:00/18:00 UTC window and clustered ~hourly (W179 01:20Z .. W189 11:08Z .. W190 12:08Z .. W191 13:08Z); W190 landed in Codex 12:00 slot; W184 06:08Z was the only near-window run all day; no run 2026-07-13; needs 12h/6h-offset correction",
+   "Phase 38 Task 3 owner-gated (sha256 re-baseline + ui_data contract bump)",
+   "LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 / signed per-OS binaries owner-gated"
+  ]
+ },
+ "cycle_2026_07_14_w192": {
+  "type": "exhausted-backlog verification + mount-sync",
+  "timestamp": "2026-07-14T14:09Z",
+  "lock_cycle_id": "2026-07-14T14:09Z-4283",
+  "preflight": "PROCEED (no Codex lock/commits since W178-W191)",
+  "battery": "FULL GREEN",
+  "gate_c": "self_test_ok:true + engine_ready:true; smoke bit-match 49657.9/37499.0/30267.9",
+  "gate_d": "spec-AST + release-workflow-YAML + offline_bootstrap self-test ok (7/7) + pkg-task1 validate all_pass (26/26)",
+  "integrity": "177/177 + offline 4/4 + node 10/10 + MLMC 66/66 (per-file batched under 45s shell cap: 8+8+11+4+10+12+13)",
+  "governed_byte_stable": {
+   "offline_home_md5": "03d6538d3cae9efb83062ecbfab096e9",
+   "ui_data_contract": "1.23.0",
+   "headline": "39975.654628199336"
+  },
+  "engine_env": "reused pinned /tmp/engine_libs (numpy1.26.4/scipy1.13.1/pandas2.2.3) via PYTHONPATH",
+  "changes": "none (record-only); no model-FORM/contract/headline/banner/new-doc change; Phase 38 Task 3 owner-gated",
+  "owner_actions": [
+   "cron cadence bug PERSISTS - FOURTEENTH firing 2026-07-14, off nominal 06:00/18:00 UTC window and clustered ~hourly (W179 01:20Z .. W191 13:08Z .. W192 14:09Z); W184 06:08Z the only near-window run all day; no run 2026-07-13; needs 12h/6h-offset correction",
    "Phase 38 Task 3 owner-gated (sha256 re-baseline + ui_data contract bump)",
    "LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 / signed per-OS binaries owner-gated"
   ]
