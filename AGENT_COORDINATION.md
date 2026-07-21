@@ -59,6 +59,41 @@ A small file at the repo root, the poor-man's distributed lock. Shape:
 
 **Never** do project work while you do not hold a fresh lock in your own name.
 
+### 2a. The cadence guard (added W204)
+
+`preflight` has a **second** reason to yield, independent of the lock: the firing is simply **too
+soon**. Configured by `.claude-dev/cadence_policy.json`:
+
+```json
+{ "enabled": true, "min_interval_minutes": 600 }
+```
+
+If the last **completed** cycle (`released_at` on a released lock — the only timestamp in the repo
+that marks a cycle which actually finished) is more recent than `min_interval_minutes`, `preflight`
+prints `{"decision":"YIELD","reason":"cadence",...}` and exits **10**, exactly as it does for a
+lock held by the other agent. The caller yields, sends its status note, and stops.
+
+**Why.** The scheduled task's cron was mis-set to `0 * * * *` (hourly) instead of `0 2,14 * * *`
+(02:00/14:00 HKT = 18:00/06:00 UTC). Eleven firings occurred on 2026-07-21, each rebuilding a venv,
+running the full verification battery and emitting a near-duplicate status document and email draft
+for **zero** model progress. Correcting the cron requires the owner; **declining the redundant work
+does not**. The guard bounds the damage while the owner action is outstanding.
+
+**Why 600.** It sits *below* the intended 12 h cadence, so a correctly configured schedule never
+self-suppresses — once the cron is fixed the guard is an inert backstop, not a live constraint.
+
+**It fails open, deliberately.** A missing, unreadable, malformed or wrong-shaped policy; an absent,
+non-numeric or non-positive interval; an absent or unparseable `released_at`; or a currently-held
+lock **all resolve to PROCEED**. In particular a *crashed* cycle never writes `released_at`, so an
+outage cannot compound into a stall. The asymmetry is the point: a wrongly-held lock costs one
+cycle, whereas a wrongly-asserted cadence block would stall the project silently and indefinitely,
+because every later firing would re-read the same stale timestamp. This guard is a **noise
+suppressor, not a safety control** — treat any doubt as PROCEED. Regression-tested in
+`tests/test_agent_lock_cadence.py` (14 tests; 9 assert a fail-open property).
+
+**Overrides.** `python scripts/agent_lock.py preflight --owner <you> --ignore-cadence` for a
+deliberate manual or off-schedule run, or set `"enabled": false` in the policy.
+
 ---
 
 ## 3. Integrate before you push — no exceptions

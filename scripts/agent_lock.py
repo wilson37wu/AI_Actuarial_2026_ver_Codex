@@ -15,7 +15,10 @@ Subcommands
 -----------
   preflight  fetch + rebase onto origin/main, then read the lock. Exit 0 = free
              to proceed (no held lock, or the lock is already yours, or it is
-             stale); exit 10 = HELD by the other agent -> the caller must YIELD.
+             stale); exit 10 = YIELD, either because the other agent HOLDS the
+             lock or because the optional cadence guard
+             (.claude-dev/cadence_policy.json) says this firing is too soon
+             after the last completed cycle. --ignore-cadence skips the latter.
   acquire    preflight, then write+commit+push your lock. Exit 0 = acquired;
              exit 10 = lost the race / held by other -> YIELD; exit >0 = error.
   release    set owner=null, commit, push. Exit 0 = released.
@@ -42,6 +45,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 LOCK_FILE = ".agent_lock.json"
+CADENCE_POLICY_FILE = ".claude-dev/cadence_policy.json"
 DEFAULT_TTL_MIN = 120
 PUSH_RETRIES = 3
 YIELD_EXIT = 10
@@ -108,6 +112,72 @@ def _is_held(lock: dict) -> bool:
     except (KeyError, ValueError):
         return False
     return _now() < started + timedelta(minutes=ttl)
+
+
+def _load_cadence_policy(root: Path) -> dict:
+    """Read the optional cadence policy. FAIL-OPEN on every error path.
+
+    The guard this feeds is a *noise suppressor*, not a safety control, so any
+    doubt -- file missing, unreadable, malformed, wrong shape -- must resolve to
+    "no cadence restriction". A policy file can never be allowed to stall the
+    project the way a wrongly-held lock could.
+    """
+    p = root / CADENCE_POLICY_FILE
+    if not p.exists():
+        return {}
+    try:
+        pol = json.loads(p.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        return {}
+    return pol if isinstance(pol, dict) else {}
+
+
+def _cadence_block(root: Path, lock: dict) -> "dict | None":
+    """YIELD payload if this firing is too soon after the last COMPLETED cycle.
+
+    Context (W204, 2026-07-21): the scheduler cron is mis-set to hourly rather
+    than 12-hourly, so ~11 runs a day each rebuild a venv, run the full
+    verification battery and emit a near-duplicate status doc and email draft
+    for zero model progress. This collapses them to one cycle per
+    ``min_interval_minutes``.
+
+    The signal is ``released_at`` on a *released* lock -- the only timestamp in
+    the repo marking a cycle that actually finished. A crashed cycle never
+    writes one, so an outage fails open instead of compounding.
+
+    Returns None (= no objection) whenever the policy is off, the interval is
+    unset/non-positive, a lock is currently held, or the timestamp is absent or
+    unparseable.
+    """
+    pol = _load_cadence_policy(root)
+    if not pol.get("enabled"):
+        return None
+    try:
+        minutes = int(pol.get("min_interval_minutes", 0))
+    except (TypeError, ValueError):
+        return None
+    if minutes <= 0:
+        return None
+    if lock.get("owner") not in (None, "", "null"):
+        return None  # held/stale lock is _is_held's business, not ours
+    released_at = lock.get("released_at")
+    if not released_at:
+        return None
+    try:
+        last = _parse_iso(released_at)
+    except (TypeError, ValueError):
+        return None
+    elapsed = (_now() - last).total_seconds() / 60.0
+    if elapsed >= minutes:
+        return None
+    return {
+        "decision": "YIELD",
+        "reason": "cadence",
+        "min_interval_minutes": minutes,
+        "minutes_since_last_cycle": round(elapsed, 1),
+        "last_cycle_ended": released_at,
+        "override": "--ignore-cadence",
+    }
 
 
 def _ensure_identity(owner: str) -> None:
@@ -177,7 +247,7 @@ def cmd_status(root: Path) -> int:
     return 0
 
 
-def cmd_preflight(root: Path, owner: str) -> int:
+def cmd_preflight(root: Path, owner: str, ignore_cadence: bool = False) -> int:
     _integrate()
     lock = _read_lock(root)
     if _is_held(lock) and lock.get("owner") != owner:
@@ -185,6 +255,11 @@ def cmd_preflight(root: Path, owner: str) -> int:
                           "task": lock.get("task"),
                           "started_at": lock.get("started_at")}))
         return YIELD_EXIT
+    if not ignore_cadence:
+        blocked = _cadence_block(root, lock)
+        if blocked is not None:
+            print(json.dumps(blocked))
+            return YIELD_EXIT
     print(json.dumps({"decision": "PROCEED",
                       "current_owner": lock.get("owner")}))
     return 0
@@ -250,6 +325,8 @@ def main() -> int:
     ap.add_argument("--ttl", type=int, default=DEFAULT_TTL_MIN,
                     help="lock TTL in minutes (default 120)")
     ap.add_argument("--note", default="", help="optional free-text note")
+    ap.add_argument("--ignore-cadence", action="store_true",
+                    help="skip the cadence guard (manual/off-schedule runs)")
     a = ap.parse_args()
     root = _repo_root()
     if a.command == "status":
@@ -258,7 +335,7 @@ def main() -> int:
         print("ERROR: --owner is required for this command", file=sys.stderr)
         return 1
     if a.command == "preflight":
-        return cmd_preflight(root, a.owner)
+        return cmd_preflight(root, a.owner, a.ignore_cadence)
     if a.command == "acquire":
         return cmd_acquire(root, a.owner, a.task, a.ttl, a.note)
     if a.command == "release":

@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-07-21T16:07Z",
+  "last_run": "2026-07-21T17:08Z",
   "last_run_duration_minutes": null,
-  "last_run_note": "W203 exhausted-backlog verification + mount-sync (2026-07-21T16:07Z; TENTH hourly firing today). FULL BATTERY GREEN, governed artifacts byte-stable, mount sync NO-OP (1866 tracked / 1866 identical / 0 stale / 0 missing). Phase 38 Task 3 remains OWNER-GATED and was NOT executed. PRIMARY NEW FINDING: the /tmp clone accumulation is FIXABLE AGENT-SIDE and needs NO owner action. W201 raised the alarm, W202 downgraded it on reboot-reset grounds; W203 DISSOLVES it. Direct test established an OWNERSHIP ASYMMETRY: a clone is owned by the session user WHILE THAT SESSION IS ALIVE (rm -rf on own dir SUCCEEDS, probe passed), but the sandbox re-homes it to nobody:nogroup once the session ends (rm -rf then fails Permission denied on .git/index - re-confirmed against cc_20260721_071413). Therefore cleanup is possible ONLY in the cycle that created the clone, and skipping it is PERMANENT - no later agent can repair it, only a sandbox reboot. AGENT_COORDINATION.md s5 amended (documentation = auto-admissible) to make 'rm -rf $CLONE' the MANDATORY last action of every cycle, after push and after lock release. This removes ~100% of the per-cycle footprint and decouples the disk risk from the scheduler cadence entirely. SECOND NEW FINDING (correction to W202): the '--depth 1' lever is worth ~5MB/cycle, NOT the ~13MB W202 estimated - measured 36MB shallow vs 41MB full, because the WORKTREE not .git dominates the clone (shallow .git is still 8.6MB). --depth 1 is secondary to self-cleanup, not a substitute. THIRD (minor, ops): PyPI wheel installs through the sandbox egress proxy intermittently fail pip's sha256 check (scipy and pandas each failed once, both succeeded on retry with --no-cache-dir) - this is proxy truncation, NOT tampering; future cycles should retry rather than escalate. Also re-verified W202's boot reading: uptime -s prints LOCAL (+0800) time, so 15:12:42 local = 07:12:42Z - same boot, no reboot occurred; W202's timestamp was correct. Cron still '0 * * * *' - fix still HALF-APPLIED, not auto-applied (scheduler is owner infrastructure).",
+  "last_run_note": "W204 exhausted-backlog verification + mount-sync (2026-07-21T17:08Z; ELEVENTH hourly firing today). FULL BATTERY GREEN, governed artifacts byte-stable. Phase 38 Task 3 remains OWNER-GATED and was NOT executed. PRIMARY CHANGE: a CADENCE GUARD now suppresses redundant firings agent-side. The cron fix needs the owner, but its CONSEQUENCE does not - preflight consults .claude-dev/cadence_policy.json and YIELDs (exit 10) when a completed cycle is more recent than min_interval_minutes (600 = 10h, below the intended 12h so a correct schedule never self-suppresses). Simulated against the live schedule, ~11 full batteries/day collapse to ~2. The guard FAILS OPEN on every malformed input and on a crashed cycle (no released_at), so it can suppress noise but never stall the project; 9 of 14 new tests assert this. Override: --ignore-cadence, or enabled=false. This does NOT replace owner action 1 (correct the cron to '0 2,14 * * *'), re-derived and reconfirmed independently this cycle. SECONDARY: (a) orphaned venvs from dead sessions are still readable and carry the exact pinned stack - reuse them instead of building a fresh one (~5 min + several hundred MB saved, no new undeletable dir); (b) loader-parity and MLMC tests are PYTEST-style, so 'python -m unittest' collects ZERO from them and still prints OK - a false GREEN a future cycle could be fooled by; (c) test_agent_lock_identity has 4 tests, not W203's 3.",
   "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Tasks 1-2 COMPLETE (auto-admissible). ACTIVE in_progress = Phase 38 Task 3 = OWNER-GATED ui_app.html native-tab cutover (requires owner sha256 re-baseline across the gate scripts + a ui_data contract bump) - NOT auto-executed. Auto-admissible backlog SATURATED: governance-gate set saturated (INTEGRITY_GATE_MAP.md W92, VERIFICATION_RUNBOOK.md W93); tail-MLMC track complete through the stage-5 Neyman study (W95) consolidated into docs/MLMC_TAIL_EFFICIENCY_MAP.md (W96); offline-UI governed artifacts byte-stable; TASK_PROMPT hand-off banner refreshed W97 and left current through W98/W99/W100/W101/W102 (re-issuing is a near-duplicate). W99-W101 then W102 (2026-06-30 16:09Z) ran the SKILL-sanctioned exhausted-backlog branch: full verification battery GREEN + full tracked-file mount sync; NO new gate/code/model-FORM/contract/headline change and NO banner re-churn. Researched forward pointer unchanged: the highest-leverage genuinely-NEW direction is an LSMC (least-squares Monte Carlo) regression PROXY of the inner risk-neutral valuation to replace the brute-force nested inner loop for SCR - the canonical next model-FORM beyond the now-exhausted MLMC variance-reduction track - but it is a model-FORM change and stays OWNER-GATED. W194 continues the exhausted-backlog branch (W99-W193 lineage); W194 additionally recorded a clean-room engine rebuild parity check and a six-day cadence outage (no runs 2026-07-15..2026-07-20). W106 registered behind the same hard near-duplicate guard: default to the exhausted-backlog verification + full mount-sync pass unless a genuinely NEW non-duplicate gap is demonstrated. NO model-FORM/contract/headline change (owner-gated); Phase 38 Task 3 owner-gated; LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 longevity driver / signed per-OS binaries all OWNER-GATED. W197 (2026-07-21T10:08Z) continued the exhausted-backlog branch and added ONE genuinely-new non-duplicate finding: the cadence fix VALUE recommended by W196 is corrected from '0 6,18 * * *' to '0 2,14 * * *' on host-local-timezone evidence (host verified UTC+8; two sibling scheduler tasks map cron hour to HKT hour). Disambiguation is a single nextRunAt reading after the owner sets it. No model-FORM/contract/headline/banner change; no near-duplicate brief added.",
-  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W203_VERIFY_SYNC_GREEN__DISK_RISK_SOLVED_AGENT_SIDE__CRON_STILL_HOURLY. Auto-admissible backlog EXHAUSTED for 10 consecutive cycles; every remaining MODEL item is owner-gated. CHANGE THIS CYCLE: the disk-accumulation issue that W201/W202 escalated to the owner is now CLOSED agent-side - AGENT_COORDINATION.md now mandates end-of-cycle self-deletion of the throwaway clone, which W203 proved is the only window in which deletion is possible. The cron correction to '0 2,14 * * *' remains the top owner action but is now justified on cadence-correctness and duplicate-draft grounds ONLY. Second: decide whether Codex is intended to run at all (0 acquires, 0 commits). Third: rotate the GitHub PAT embedded in the mount's origin remote (raised W200, still unrotated).",
+  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W204_VERIFY_SYNC_GREEN__REDUNDANT_FIRING_NOISE_CLOSED_AGENT_SIDE__CRON_STILL_HOURLY. Auto-admissible MODEL backlog EXHAUSTED for 11 consecutive cycles; every remaining model item is owner-gated. CHANGE THIS CYCLE: the duplicate-work consequence of the mis-set cron is now bounded agent-side by a cadence guard in scripts/agent_lock.py preflight (.claude-dev/cadence_policy.json, 600 min, fail-open, --ignore-cadence override). OWNER ACTIONS, in priority order: (1) correct the scheduled-task cron to '0 2,14 * * *' - still '0 * * * *'; this was the ELEVENTH firing today; the guard bounds the damage but is not the fix; post-fix nextRunAt must read 18:06:01Z / 06:06:01Z. (2) decide whether Codex is intended to run at all - still 0 lock acquires, 0 commits, ever. (3) ROTATE THE GITHUB PAT embedded in the mount's origin remote - raised W200, still unrotated, now 5 cycles old. (4) unblock the model frontier - pick one: (a) Phase 38 Task 3 ui_app native-tab cutover [sha256 re-baseline + contract bump]; (b) LSMC SCR proxy [model-form]; (c) MR-LONGEV-1 longevity driver [model-form]; (d) promote MLMC to governed default [stage 5]; (e) declare the frontier complete and freeze. Until (4) is answered, cycles can only verify, sync and de-noise themselves.",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -1124,7 +1124,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-07-21T16:07Z",
+  "last_updated": "2026-07-21T17:08Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -6475,6 +6475,79 @@
       "NO LSMC proxy",
       "NO near-duplicate graphic or brief",
       "NO TASK_PROMPT banner re-churn"
+    ]
+  },
+  "cycle_2026_07_21_w204": {
+    "timestamp": "2026-07-21T17:08Z",
+    "cycle_id": "2026-07-21T17:08Z-ed58",
+    "type": "exhausted-backlog verification + mount-sync + agent-side cadence guard (tooling)",
+    "owner": "claude",
+    "verdict": "FULL BATTERY GREEN; governed artifacts byte-stable; redundant-firing noise closed agent-side",
+    "task_pointer": "Phase 38 Task 3 (ui_app.html native-tab cutover) - OWNER-GATED, not executed",
+    "gates": {
+      "gate_c_self_test_ok": true,
+      "gate_c_engine_ready": true,
+      "gate_c_smoke_bitmatch": {
+        "nested": 49657.9,
+        "gaussian_copula": 37499.0,
+        "var_covar": 30267.9
+      },
+      "gate_d_spec_ast": true,
+      "gate_d_workflow_yaml": true,
+      "gate_d_bootstrap_ok": true,
+      "gate_d_pkg_validate": "26/26 (incl ui_app_byte_unchanged)",
+      "offline_home_validate": "177/177",
+      "pytest_offline_home": "4/4",
+      "pytest_loader_parity": "5/5",
+      "node_loader_parity": "10/10",
+      "mlmc_suite": "66/66",
+      "agent_lock_identity": "4/4 (W203 recorded 3/3; the file contains FOUR tests - count corrected)",
+      "agent_lock_cadence": "14/14 (NEW this cycle)"
+    },
+    "governed_artifacts": {
+      "offline_home_html_md5": "03d6538d3cae9efb83062ecbfab096e9",
+      "ui_data_contract": "1.23.0",
+      "headline_scr": 39975.654628199336,
+      "byte_stable": true
+    },
+    "primary_contribution": {
+      "title": "Cadence guard - suppress redundant firings agent-side while the cron stays mis-set",
+      "problem": "The scheduler cron is '0 * * * *' (hourly) instead of '0 2,14 * * *'. W204 was the ELEVENTH firing on 2026-07-21. Each redundant firing runs the full verification battery and emits a near-duplicate status doc and email draft for zero model progress. Ten cycles have asked the owner to fix the cron; none has been actioned, so the noise compounds.",
+      "insight": "The cron fix needs the owner, but the CONSEQUENCE of the broken cron does not. A firing can decline to do work itself.",
+      "change": "scripts/agent_lock.py preflight now consults .claude-dev/cadence_policy.json and returns YIELD (exit 10) when a COMPLETED cycle is more recent than min_interval_minutes. Signal is released_at on a released lock - the only repo timestamp marking a finished cycle.",
+      "policy": {
+        "enabled": true,
+        "min_interval_minutes": 600
+      },
+      "why_600": "10h sits below the intended 12h cadence, so a CORRECTLY configured schedule never self-suppresses and the guard becomes an inert backstop. It is a noise suppressor, not a safety control.",
+      "fail_open": "Missing/unreadable/malformed policy, non-positive or non-numeric interval, absent or unparseable released_at, or a currently-held lock all resolve to PROCEED. A crashed cycle never writes released_at, so an outage cannot compound into a stall. 9 of the 14 new tests assert a fail-open property.",
+      "override": "--ignore-cadence for manual/off-schedule runs; or set enabled=false.",
+      "measured_effect": "Simulated against the live schedule: the 18:06Z/19:06Z/23:06Z hourly firings YIELD (exit 10); the 06:06Z next-day slot PROCEEDs. ~11 full batteries/day collapse to ~2.",
+      "scope": "Tooling + documentation only. NO model-form change; governed artifacts byte-identical; engine untouched.",
+      "does_not_replace": "Owner action 1 (correct the cron) remains the actual fix. This bounds the damage while it is outstanding."
+    },
+    "secondary_findings": {
+      "venv_reuse": "Orphaned venvs from prior sessions (nobody:nogroup, undeletable per W203) remain READABLE and EXECUTABLE and carry the exact pinned stack (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3). W204 reused /tmp/venv_w197 instead of building a fresh one: ~5 min and several hundred MB saved, and no NEW undeletable directory created. Reuse is self-verifying because the bit-match smoke gate would catch any environment drift. Recommended default for future cycles.",
+      "test_runner_correction": "tests/test_offline_home_loader_parity.py and the seven tests/test_mlmc_*.py files are PYTEST-style (module-level def test_*, no unittest.TestCase). 'python -m unittest' silently collects ZERO tests from them and still reports OK - a false GREEN. They must be run under pytest. Recorded because a future cycle using unittest would wrongly believe 71 tests passed.",
+      "agent_lock_identity_count": "tests/test_agent_lock_identity.py contains 4 tests, not the 3 recorded in W203. Each takes ~14s (real git operations), so the file needs a >55s budget or must be split.",
+      "cron_value_reconfirmed": "Independently re-derived this cycle from daily-markets-briefing (cron '0 7 * * *', jitter 84s, lastRunAt 2026-06-10T23:01:25Z = the 23:00Z boundary + 85s). Cron hours are evaluated in host-local HKT (UTC+8), so '0 2,14 * * *' fires 18:00/06:00 UTC = exactly the Claude slots. W201/W203's value STANDS."
+    },
+    "no_change_confirmations": [
+      "NO model-FORM change",
+      "NO contract bump",
+      "NO headline re-baseline",
+      "NO new stochastic driver",
+      "NO MLMC default promotion",
+      "NO LSMC proxy",
+      "NO near-duplicate graphic or brief",
+      "NO scheduled-task mutation (owner-scoped; reported only)"
+    ],
+    "files_changed": [
+      "scripts/agent_lock.py - cadence guard in preflight + --ignore-cadence + docstring",
+      ".claude-dev/cadence_policy.json - NEW, self-documenting policy",
+      "tests/test_agent_lock_cadence.py - NEW, 14 tests (9 fail-open)",
+      "AGENT_COORDINATION.md - section 2 cadence guard documented",
+      ".claude-dev/MODEL_DEV_STATE.json, MODEL_DEV_LOG.md, docs/cycle_status/..._w204_cadence_guard.md"
     ]
   }
 }

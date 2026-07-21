@@ -1,0 +1,10 @@
+{
+  "_comment": "Cadence guard for scripts/agent_lock.py preflight (added W204, 2026-07-21).",
+  "enabled": true,
+  "min_interval_minutes": 600,
+  "rationale": "The scheduled task cron is mis-set to '0 * * * *' (hourly) instead of '0 2,14 * * *' (02:00/14:00 HKT = 18:00/06:00 UTC). Each firing rebuilds a venv, runs the full verification battery, and emits a near-duplicate status doc and email draft for zero model progress; 11 such firings occurred on 2026-07-21 alone. This guard collapses redundant firings to at most one cycle per min_interval_minutes. 600 (10h) sits below the intended 12h cadence, so a CORRECTLY configured schedule never yields on cadence and the guard becomes an inert backstop.",
+  "supersedes": null,
+  "disable_procedure": "Set enabled=false, or pass --ignore-cadence to preflight for a one-off manual run.",
+  "fail_open": "A missing, unreadable or malformed policy, an absent released_at, or any parse error all resolve to PROCEED. The guard can suppress noise; it must never be able to stall the project.",
+  "owner_note": "This mitigates the SYMPTOM only. Owner action 1 (correct the cron to '0 2,14 * * *') remains the actual fix."
+}

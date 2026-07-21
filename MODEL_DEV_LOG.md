@@ -13760,3 +13760,65 @@ GitHub PAT in the mount's `origin` remote (W200, unrotated); (4) unblock the mod
 headline / gate / code / banner / `MODEL_DEV_TASK_PROMPT.md` change.
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w203_selfclean_protocol.md`
+
+---
+
+## W204 — 2026-07-21T17:08Z — cadence guard: redundant firings suppressed agent-side
+
+**Cycle** `2026-07-21T17:08Z-ed58` · owner `claude` · preflight **PROCEED** (owner `null`, released
+16:19:00Z by W203). Fresh `/tmp` clone; mount `.git` untouched. **FULL BATTERY GREEN**, governed
+artifacts byte-stable. Phase 38 Task 3 and the whole model-FORM backlog remain **OWNER-GATED** and
+were not executed — the eleventh consecutive cycle with no auto-admissible *model* work available.
+
+**PRIMARY — the eleventh hourly firing today, and the first one that does something about it.**
+Ten cycles have asked the owner to correct the cron; none has been actioned, so each firing keeps
+rebuilding a venv, running the full battery and emitting a near-duplicate status doc and email draft
+for zero model progress. The fix needs the owner — but the *consequence* does not. **A firing can
+decline to do the work itself.**
+
+`scripts/agent_lock.py preflight` now consults `.claude-dev/cadence_policy.json` and returns
+**YIELD (exit 10)** when a *completed* cycle is more recent than `min_interval_minutes`. The signal
+is `released_at` on a released lock — the only timestamp in the repo marking a cycle that actually
+finished. Policy ships **enabled, 600 min (10 h)**: deliberately *below* the intended 12 h cadence,
+so a correctly configured schedule never self-suppresses and the guard degrades to an inert backstop
+once owner action 1 lands. Simulated against the live schedule: 18:06Z / 19:06Z / 23:06Z **YIELD**,
+the 06:06Z next-day slot **PROCEEDs** — ~11 full batteries/day collapse to ~2.
+
+**It fails open, by construction.** Missing, unreadable, malformed or wrong-shaped policy; absent,
+non-numeric or non-positive interval; absent or unparseable `released_at`; or a currently-held lock
+— all resolve to PROCEED. A *crashed* cycle never writes `released_at`, so an outage cannot compound
+into a stall. This asymmetry is deliberate: a wrongly-held lock costs one cycle, a wrongly-asserted
+cadence block would stall the project silently and indefinitely. **9 of the 14 new tests assert a
+fail-open property.** Override: `--ignore-cadence`, or `enabled=false`.
+
+**SECOND — reuse orphaned venvs; don't build new ones.** The undeletable `nobody:nogroup` venvs W203
+catalogued are still **readable and executable** and carry the exact pinned stack
+(numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3). W204 reused `/tmp/venv_w197`: ~5 min and several
+hundred MB saved, and **no new undeletable directory created**. Reuse is self-verifying — the
+bit-match smoke gate would catch any environment drift, and it did not. Recommended default.
+
+**THIRD — a false-GREEN trap in the test battery.** `tests/test_offline_home_loader_parity.py` and
+the seven `tests/test_mlmc_*.py` files are **pytest-style** (module-level `def test_*`, no
+`unittest.TestCase`). `python -m unittest` silently collects **zero** tests from them **and still
+prints `OK`**. A future cycle running the battery under `unittest` would believe 71 tests passed
+when none ran. Run them under pytest: loader-parity **5/5**, MLMC **66/66** confirmed this cycle.
+
+**FOURTH — count correction.** `tests/test_agent_lock_identity.py` holds **4** tests, not W203's 3;
+each takes ~14 s of real git work, so the file needs a >55 s budget or must be split.
+
+**Cron value reconfirmed independently:** `daily-markets-briefing` (cron `0 7 * * *`, jitter 84 s)
+last fired `2026-06-10T23:01:25Z` = the `23:00Z` boundary + 85 s. Cron hours evaluate in host-local
+**HKT (UTC+8)**, so `0 2,14 * * *` fires **18:00/06:00 UTC** — exactly the Claude slots. W201/W203's
+value **stands**.
+
+**Owner actions:** (1) cron → `0 2,14 * * *` — still `0 * * * *`; the guard bounds the damage but is
+**not** the fix; (2) decide whether Codex runs at all (0 acquires, 0 commits, ever); (3) **rotate the
+GitHub PAT** embedded in the mount's `origin` remote (W200, unrotated, 5 cycles old); (4) unblock the
+model frontier — Phase 38 T3 / LSMC / MR-LONGEV-1 / MLMC default / freeze.
+
+**Changes:** `scripts/agent_lock.py` (preflight guard + `--ignore-cadence`),
+`.claude-dev/cadence_policy.json` (new), `tests/test_agent_lock_cadence.py` (new, 14),
+`AGENT_COORDINATION.md` §2, cycle records. **No model-FORM / contract / headline / driver /
+MLMC-default / LSMC change; no scheduled-task mutation** (owner-scoped — reported, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w204_cadence_guard.md`
