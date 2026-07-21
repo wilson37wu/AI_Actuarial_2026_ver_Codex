@@ -13409,3 +13409,58 @@ Model-FORM changes, contract bumps, headline re-baseline, MR-LONGEV-1, MLMC-as-d
 proxy** of the inner risk-neutral valuation.
 
 **Status doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w196_cadence_rootcause.md`
+
+---
+
+## W197 — 2026-07-21T10:08Z — verification + mount-sync + cadence fix-value correction
+
+**Agent:** Claude Cowork | **Lock:** `2026-07-21T10:08Z-f398` | **Verdict:** ✅ FULL BATTERY GREEN, record-only
+
+**Conclusion first.** W196's cron *diagnosis* is confirmed and still live; W196's proposed
+*fix value* is probably wrong and is corrected here.
+
+- **Cadence still broken.** Read from the scheduler this cycle: `cronExpression "0 * * * *"`,
+  `enabled true`, `lastRunAt 2026-07-21T10:06:40Z` (this run), `nextRunAt 2026-07-21T11:06:01Z`,
+  `jitterSeconds 361`. Fourth hourly firing today (W194 07:14Z, W195 08:08Z, W196 09:07Z, W197 10:07Z).
+  12× over-run vs the intended 2×/day.
+- **NEW (non-duplicate): the fix value is `0 2,14 * * *`, not `0 6,18 * * *`.** The scheduler
+  appears to evaluate cron in **host-local** time and the host is **UTC+8 (HKT)** — verified
+  directly (`Tue Jul 21 18:27:43 HKT 2026` = `10:27:43 UTC`). Two sibling tasks map cron hour to
+  the **HKT** hour, not UTC: `daily-markets-briefing` desc "07:00 HKT" → `0 7 * * *`;
+  `friday-weekly-digest` desc "18:00 HKT" → `0 18 * * 5`. This task's own description names its
+  intended HKT hours as **02:00 & 14:00**. Applying W196's `0 6,18 * * *` would fire
+  06:00/18:00 HKT = **22:00/10:00 UTC** — missing the Claude window and landing **2h before
+  Codex's 12:00Z slot**, eroding the 6h stagger in `AGENT_COORDINATION.md` §1.
+- **Caveat + disambiguation.** Not provable from the enabled task alone (its hour field is `*`,
+  so it carries no timezone signal) and the two corroborating tasks are disabled. `nextRunAt` is
+  reported in UTC, so **one reading** after the owner sets the cron closes it: 06:0xZ/18:0xZ →
+  `0 2,14 * * *` correct; 02:0xZ/14:0xZ → scheduler is UTC, use `0 6,18 * * *`.
+- **Not auto-applied** — scheduler is owner infrastructure outside the repo; the skill's
+  write-action rule limits this agent to reporting. Same call as W196.
+
+**Verification battery — all GREEN.** Fourth independent clean-room `venv` rebuild; numpy 1.26.4 /
+pandas 2.2.3 / scipy 1.13.1 resolved with no shadowing (third consecutive confirmation of the
+W195 venv-over-`pip --target` recommendation). Gate C: `self_test_ok true`, `engine_ready true`;
+smoke exact bit-match **nested 49657.9 | gaussian 37499.0 | var-covar 30267.9**. Gate D: spec
+AST-parse OK, `release.workflow.yml` structurally valid, `offline_bootstrap --self-test ok:true`,
+pkg task1 validate `ok:true`. Integrity **177/177**; `test_offline_home_validate` **4/4**; loader
+parity (node v22) **10/10**; MLMC **66/66**; `test_agent_lock_identity` **4/4**.
+
+**Governed artifacts byte-stable:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`,
+`ui_data.json` contract `1.23.0`, headline `39975.654628199336`. Smoke evidence reverted —
+diff was exclusively `run_timestamp`/`run_id`/`duration_seconds`/`wall_clock_seconds` churn,
+every computed figure bit-identical.
+
+**Mount sync:** full `git ls-files` md5 diff — **1861/1861 tracked files already matched**; only
+the dynamic `.agent_lock.json` differed. Zero copies needed (mount already at origin/main from
+W196; no Codex commits since W178).
+
+**Owner-gated, untouched:** Phase 38 Task 3 (`ui_app.html` native-tab cutover), LSMC proxy,
+MLMC-as-default stage 5, MR-LONGEV-1, signed per-OS binaries. Auto-admissible backlog remains
+saturated; no banner re-churn, no near-duplicate brief.
+
+**Security flag:** the working folder's `origin` remote embeds a **cleartext GitHub PAT** in
+`.git/config`, exposed to every agent session that reads the remote. Owner should rotate it and
+move to a credential helper or SSH remote.
+
+**Status doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w197_cadence_tz_correction.md`
