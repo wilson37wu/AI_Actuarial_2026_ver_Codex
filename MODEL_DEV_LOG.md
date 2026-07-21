@@ -13713,3 +13713,50 @@ as dynamic). Mount `.git` ref stays stale by design.
 `MODEL_DEV_TASK_PROMPT.md` change.
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w202_disk_runway_correction.md`
+
+---
+
+## W203 — 2026-07-21T16:07Z — exhausted-backlog verify + mount-sync + **agent-side disk remediation**
+
+**Cycle ID:** `2026-07-21T16:07Z-f52a` · **Owner:** claude · **Verdict:** FULL BATTERY GREEN
+
+Tenth hourly firing today. Phase 38 Task 3 remains OWNER-GATED and was not executed.
+
+**Gates:** C self-test `ok`/`engine_ready` true; smoke bit-match 49657.9 / 37499.0 / 30267.9;
+D spec-AST + workflow-YAML + bootstrap + pkg-validate 26/26; offline_home_validate 177/177;
+pytest 4/4 + loader-parity 5/5; node parity 10/10; MLMC 66/66; agent_lock_identity 3/3.
+Governed artifacts byte-stable and re-checked after the engine run — `offline_home.html` md5
+`03d6538d…`, contract `1.23.0`, headline `39975.654628199336`.
+**Mount sync NO-OP:** 1866 tracked / 1866 identical / 0 stale / 0 missing.
+
+**PRIMARY FINDING — the `/tmp` disk leak is fixable agent-side; W201's alarm and W202's escalation
+are both superseded.** Direct test established an ownership asymmetry: PROBE A — `rm -rf` on a
+directory owned by the *live* session SUCCEEDED; PROBE B — `rm -rf` on `cc_20260721_071413`
+(`nobody:nogroup`, prior session) FAILED with `Permission denied` on `.git/index`. A clone is
+deletable **only by the cycle that created it**; the sandbox re-homes it to `nobody` at session end.
+Skipping cleanup is therefore permanent and unrepairable by any later agent.
+`AGENT_COORDINATION.md` §5 amended (documentation = auto-admissible): the advisory "discard the
+clone at the end" — never once executed in ~200 cycles — is now a **MANDATORY** `rm -rf "$CLONE"`
+after push and release. Removes ~100 % of the per-cycle footprint and decouples the disk risk from
+scheduler cadence. **W203 is the first cycle to leave no new clone behind.**
+
+**SECOND — correction to W202:** the `--depth 1` saving is **~5 MB/cycle (12 %)**, not ~13 MB (33 %).
+Measured: shallow 36 MB (`.git` 8.6 MB) vs full 41 MB (`.git` 13 MB); W202 conflated total `.git`
+size with the saving, but the worktree (~27 MB, present in both) dominates. Secondary lever only.
+
+**THIRD — `uptime -s` prints host-local (+0800).** `2026-07-21 15:12:42` local = `07:12:42Z`, the
+same boot W202 recorded; **no reboot occurred** and W202's timestamp was correct. Recorded because
+the naive UTC comparison would have falsely implied a reboot and falsely re-escalated the alarm.
+
+**FOURTH (ops) — proxy hash failures are not tampering.** `pip` rejected `scipy 1.13.1` and
+`pandas 2.2.3` once each on sha256; both installed on retry with `--no-cache-dir`. Egress-proxy
+stream truncation. Retry up to 3× before escalating.
+
+**Owner actions:** (1) cron → `0 2,14 * * *` — still `0 * * * *`, now justified on cadence
+correctness alone; (2) decide whether Codex runs at all (0 acquires, 0 commits); (3) rotate the
+GitHub PAT in the mount's `origin` remote (W200, unrotated); (4) unblock the model frontier.
+
+**Changes:** `AGENT_COORDINATION.md` §5 (protocol), cycle records. No model-FORM / contract /
+headline / gate / code / banner / `MODEL_DEV_TASK_PROMPT.md` change.
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w203_selfclean_protocol.md`

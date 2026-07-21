@@ -103,6 +103,16 @@ cd /tmp/cycle_clone
 ```
 Write/verify source + state files on the mount (or off-mount), then **copy** them into the clone (`cp` preserves integrity; the in-place editor has corrupted files mid-write before — always re-parse JSON after writing). Never run `git add/commit` in the mounted worktree.
 
+> **MANDATORY end-of-cycle self-cleanup (W203).** "Discard the clone at the end" above was advisory and had never been executed; as a result `/tmp` accumulated one ~41 MB clone per firing (11 clones / 1.7 GB observed on a single 9 h boot, disk at 72 %). **The last action of every cycle — after push and after `agent_lock.py release` — must be `rm -rf "$CLONE"`.**
+>
+> This works because of an ownership asymmetry established by direct test in W203:
+> - a clone is owned by the **session user while that session is alive**, so the cycle that created it **can** delete it (`rm -rf` on own dir → succeeds);
+> - once the session ends the sandbox re-homes the directory to `nobody:nogroup`, after which **no later cycle can remove it** (`rm -rf` → `Permission denied` on `.git/index`; confirmed W202 and re-confirmed W203).
+>
+> Cleanup is therefore **only possible in the cycle that owns the clone**. Skipping it is permanent: the leak cannot be repaired later by any agent, only by a sandbox reboot. Self-cleanup removes ~100 % of the per-cycle footprint and makes the accumulation risk independent of the scheduler cadence.
+>
+> `--depth 1` (already specified above) is a **secondary** lever worth ~5 MB/cycle, not the ~13 MB estimated in W202: measured W203 as 36 MB shallow vs 41 MB full, because the worktree — not `.git` — dominates the clone. Use it, but do not rely on it in place of self-cleanup.
+
 > **Git identity in the throwaway clone.** A fresh clone inherits no `user.name`/`user.email`, so `git commit` fails with *"Author identity unknown"*. `scripts/agent_lock.py` now **self-heals** this (`_ensure_identity`): it sets a repo-local fallback identity (`<owner>-cowork-agent` / `<owner>-agent@actuarial-bot.local`) when none is configured, and **refuses to report a false `ACQUIRED`/`RELEASED`** if a commit silently fails (it verifies HEAD actually advanced and carries the intended owner before pushing, else exits 2). Previously an unset identity made the lock commit a no-op while the push of a stale HEAD returned 0 — a silent clobbering hazard. Regression-tested in `tests/test_agent_lock_identity.py`.
 
 ### Codex (normal Linux checkout)
