@@ -1,11 +1,11 @@
 {
  "session_id": "actuarial-model-auto-dev",
  "created_at": "2026-05-17T00:00:00Z",
- "last_run": "2026-07-21T08:08Z",
- "last_run_duration_minutes": 7,
- "last_run_note": "W195 exhausted-backlog verification + mount-sync (2026-07-21T08:08Z; fired just 54 MINUTES after W194 07:14Z - the HOURLY-DUPLICATE cadence failure mode has RETURNED on the same morning the schedule recovered from a six-day outage, so both failure modes are confirmed inside 24h and the scheduler is unstable in BOTH directions. Cadence cron bug is now the TOP owner action). Preflight PROCEED (lock free since W194 release; no Codex lock/commits since W178); acquired 2026-07-21T08:08Z-40d9. SECOND independent CLEAN-ROOM rebuild, this time via python -m venv + pip install -r rather than W194's pip --target - all three pins resolved correctly with no numpy shadowing and no manual dist-info cleanup, so venv is the recommended reproduction path for the lock file; the bit-match is now reproduced across two independent environments. FULL BATTERY GREEN (MLMC 66/66); governed artifacts byte-stable (offline_home 03d6538d, ui_data 1.23.0, headline 39975.654628199336); both reproducibility_digest values unchanged; mount sync effective NO-OP at 1858/1858 identical after reverting this cycle's own smoke-run evidence files. Record-only; no model-FORM/contract/headline/banner/new-doc change.",
+ "last_run": "2026-07-21T09:08Z",
+ "last_run_duration_minutes": 9,
+ "last_run_note": "W196 cadence cron ROOT-CAUSE + verification + mount-sync (2026-07-21T09:08Z; third firing in ~2h after W194 07:14Z and W195 08:08Z). RESOLVED the open cadence question by reading the scheduler config directly rather than inferring from timestamps: the task's cronExpression is '0 * * * *' (hour field '*'), i.e. EVERY HOUR, while its own description claims '12h cadence 18:00 & 06:00 UTC'. The intended '0 6,18 * * *' was mis-encoded; the task fires 24x/day instead of 2x/day (12x over-run), with jitterSeconds:361 explaining the minute-level scatter. nextRunAt 2026-07-21T10:06Z confirms it is STILL firing hourly. This also CORRECTS W195's 'unstable in BOTH directions' reading: there is ONE config bug (hourly cron) plus ONE availability gap (2026-07-15..20 host down) - an hourly cron cannot produce a six-day silence, so they are separate root causes with separate fixes. Fix is one field: '0 * * * *' -> '0 6,18 * * *'; NOT auto-applied because the scheduler is owner infrastructure outside the repo and the skill's write-action rule limits this agent to reporting. Preflight PROCEED (lock free since W195 release 08:14:39Z; no Codex lock/commits since W178); acquired 2026-07-21T09:08Z-d4ed. THIRD independent clean-room rebuild via python -m venv + pip install -r: all three pins resolved with no shadowing and no manual dist-info cleanup, CONFIRMING W195's venv-over-pip-target recommendation on a second trial; bit-match now reproduced across three environments. FULL BATTERY GREEN (MLMC 66/66, integrity 177/177, loader parity 10/10, pkg gate 26/26); governed artifacts byte-stable (offline_home 03d6538d3cae9efb83062ecbfab096e9, ui_data 1.23.0, headline 39975.654628199336); smoke evidence files reverted (timestamp/duration churn only, all computed figures bit-identical). Record-only; no model-FORM/contract/headline/banner change.",
  "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Tasks 1-2 COMPLETE (auto-admissible). ACTIVE in_progress = Phase 38 Task 3 = OWNER-GATED ui_app.html native-tab cutover (requires owner sha256 re-baseline across the gate scripts + a ui_data contract bump) - NOT auto-executed. Auto-admissible backlog SATURATED: governance-gate set saturated (INTEGRITY_GATE_MAP.md W92, VERIFICATION_RUNBOOK.md W93); tail-MLMC track complete through the stage-5 Neyman study (W95) consolidated into docs/MLMC_TAIL_EFFICIENCY_MAP.md (W96); offline-UI governed artifacts byte-stable; TASK_PROMPT hand-off banner refreshed W97 and left current through W98/W99/W100/W101/W102 (re-issuing is a near-duplicate). W99-W101 then W102 (2026-06-30 16:09Z) ran the SKILL-sanctioned exhausted-backlog branch: full verification battery GREEN + full tracked-file mount sync; NO new gate/code/model-FORM/contract/headline change and NO banner re-churn. Researched forward pointer unchanged: the highest-leverage genuinely-NEW direction is an LSMC (least-squares Monte Carlo) regression PROXY of the inner risk-neutral valuation to replace the brute-force nested inner loop for SCR - the canonical next model-FORM beyond the now-exhausted MLMC variance-reduction track - but it is a model-FORM change and stays OWNER-GATED. W194 continues the exhausted-backlog branch (W99-W193 lineage); W194 additionally recorded a clean-room engine rebuild parity check and a six-day cadence outage (no runs 2026-07-15..2026-07-20). W106 registered behind the same hard near-duplicate guard: default to the exhausted-backlog verification + full mount-sync pass unless a genuinely NEW non-duplicate gap is demonstrated. NO model-FORM/contract/headline change (owner-gated); Phase 38 Task 3 owner-gated; LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 longevity driver / signed per-OS binaries all OWNER-GATED.",
- "overall_status": "PHASE_38_TASK3_OWNER_GATED__W195_EXHAUSTED_BACKLOG_VERIFICATION_PLUS_MOUNT_SYNC__FULL_BATTERY_GREEN_MLMC_66of66__SECOND_CLEAN_ROOM_VENV_REBUILD_BITMATCH_49657p9_37499p0_30267p9__offline_home_03d6538d_ui_data_1_23_0_headline_39975p654628199336__MOUNT_SYNC_NOOP_1858of1858_IDENTICAL__NO_MODEL_NO_CONTRACT_NO_BANNER_NO_NEW_DOC_CHANGE__HOURLY_DUPLICATE_FIRING_RETURNED_W194_0714Z_W195_0808Z_54MIN__BOTH_CADENCE_FAILURE_MODES_INSIDE_24H__CADENCE_CRON_BUG_TOP_OWNER_ACTION",
+ "overall_status": "PHASE_38_TASK3_OWNER_GATED__W196_CADENCE_CRON_ROOT_CAUSE_FOUND__CRON_IS_0_STAR_STAR_STAR_STAR_HOURLY_NOT_0_6_18__FIRES_24X_PER_DAY_VS_2X__FIX_IS_ONE_FIELD_0_6comma18_STAR_STAR_STAR__REPORTED_NOT_AUTO_APPLIED_OWNER_INFRA__W195_BOTH_DIRECTIONS_READING_CORRECTED_TO_ONE_CRON_BUG_PLUS_ONE_HOST_DOWN_GAP__FULL_BATTERY_GREEN_MLMC_66of66_INTEGRITY_177of177_PARITY_10of10_PKG_26of26__THIRD_CLEAN_ROOM_VENV_REBUILD_BITMATCH_49657p9_37499p0_30267p9__offline_home_03d6538d_ui_data_1_23_0_headline_39975p654628199336__NO_MODEL_NO_CONTRACT_NO_BANNER_CHANGE",
  "phases": {
   "Phase 1: Model Review & Documentation": {
    "status": "completed",
@@ -1124,7 +1124,7 @@
   "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
   "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
  },
- "last_updated": "2026-07-21T08:08Z",
+ "last_updated": "2026-07-21T09:20Z",
  "cycle_2026_06_08_phase26_task2": {
   "verdict": "PASS",
   "gates": "6/6 pre-registered",
@@ -5927,5 +5927,64 @@
   "changes": "NONE (record-only). No model-FORM / contract / headline / banner / new-doc change. Phase 38 Task 3 remains in_progress and OWNER-GATED (ui_app.html native-tab cutover pending owner sha256 re-baseline + ui_data contract bump).",
   "owner_action_required": "CADENCE CRON BUG ESCALATED TO TOP ITEM - both failure modes now confirmed inside 24h: 2026-07-14 fifteen ~hourly firings; 2026-07-15..07-20 six-day outage (zero runs); 2026-07-21 W194 07:14Z then W195 08:08Z, 54 minutes apart = hourly duplication returned. The scheduler is unstable in BOTH directions, not merely drifting. Target 12h cadence at 06:00/18:00 UTC preserving the 6h offset from Codex (00:00/12:00 UTC). Until fixed, duplicate cycles burn compute re-verifying an unchanged repo: W195 produced zero substantive delta over W194.",
   "forward_pointer": "UNCHANGED: LSMC (least-squares Monte Carlo) regression proxy of the inner risk-neutral valuation to replace the brute-force nested inner loop for SCR - the canonical next model-FORM step beyond the exhausted MLMC variance-reduction track. Model-FORM change, stays OWNER-GATED. No banner re-churn (near-duplicate per W97-W194)."
+ },
+ "cycle_2026_07_21_w196": {
+  "cycle_id": "2026-07-21T09:08Z-d4ed",
+  "timestamp": "2026-07-21T09:08Z",
+  "owner": "claude",
+  "type": "cadence root-cause diagnosis + verification battery + mount-sync",
+  "task_selected": "Phase 38 Task 3 remains in_progress and OWNER-GATED (ui_app.html native-tab cutover; needs owner sha256 re-baseline + ui_data contract bump). Not executed.",
+  "headline_finding": "Scheduler cronExpression is '0 * * * *' (hourly), not the documented '0 6,18 * * *' (06:00/18:00 UTC). Root cause of the hourly-duplicate firing mode observed since W194/W195, now confirmed from the config itself rather than inferred from run timestamps.",
+  "scheduler_config_observed": {
+   "taskId": "auto_actuarial_stochastic_model",
+   "cronExpression": "0 * * * *",
+   "rendered_schedule": "At 6 minutes past the hour, every hour, every day",
+   "description_claims": "12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC, per AGENT_COORDINATION.md",
+   "enabled": true,
+   "jitterSeconds": 361,
+   "lastRunAt": "2026-07-21T09:06:40Z",
+   "nextRunAt": "2026-07-21T10:06:01Z",
+   "over_run_factor": "12x (24 firings/day vs intended 2)"
+  },
+  "w195_correction": "W195 recorded the scheduler as 'unstable in BOTH directions'. With the config in hand that is superseded: there is ONE config defect (hourly cron, permanent and still active) plus ONE availability gap (2026-07-15..2026-07-20, host off / app not running). An hourly cron cannot drift into a six-day silence, so these are distinct root causes requiring distinct owner fixes.",
+  "auto_applied": false,
+  "auto_applied_rationale": "The scheduler is owner infrastructure outside the repo; the skill's write-action rule permits write MCP actions only when the task file requests that specific action. The task file asks for a report with numbered actions, so the fix is reported, not applied.",
+  "engine_rebuild": "Third independent clean-room rebuild, python -m venv + pip install -r requirements-engine-lock.txt: numpy 1.26.4 / pandas 2.2.3 / scipy 1.13.1 all resolved cleanly, no numpy shadowing, no manual dist-info cleanup. Confirms W195's venv-over-pip-target recommendation on a second trial; governed bit-match now reproduced across three independent environments.",
+  "gate_c": {
+   "self_test_ok": true,
+   "engine_ready": true,
+   "nested": 49657.9,
+   "gaussian_copula": 37499.0,
+   "var_covar": 30267.9,
+   "bit_match": true
+  },
+  "gate_d": {
+   "spec_ast_parses": true,
+   "release_workflow_yaml_valid": true,
+   "offline_bootstrap_self_test": true,
+   "build_phase_pkg_task1_validate": "ok, 26/26",
+   "per_os_binary_build": "owner/CI-gated, correctly not attempted in-sandbox"
+  },
+  "integrity": {
+   "build_offline_home_validate": "177/177",
+   "test_offline_home_validate": "4/4",
+   "offline_home_loader_parity_cjs": "10/10",
+   "mlmc_suite": "66/66 (inner 8, stage3_wiring 8, tail_estimator 11, tail_stage3 4, tail_stage4 10, tail_stage4b 12, tail_stage5 13)"
+  },
+  "governed_artifacts": {
+   "offline_home_html_md5": "03d6538d3cae9efb83062ecbfab096e9",
+   "ui_data_contract": "1.23.0",
+   "headline_scr": "39975.654628199336",
+   "byte_stable": true
+  },
+  "smoke_evidence_reverted": "docs/validation/RUN_MODEL_*.json differed only in run_timestamp and duration_seconds; all computed figures bit-identical. Reverted per W195 precedent so the cycle is record-only.",
+  "owner_actions": [
+   "1. Fix the cron: '0 * * * *' -> '0 6,18 * * *'. Single-field change, restores 06:00/18:00 UTC cadence and the >=6h Codex stagger. TOP PRIORITY - still firing hourly (next 10:06Z).",
+   "2. Separately investigate the 2026-07-15..20 availability gap - distinct from the cron bug; likely host off / Cowork app not running.",
+   "3. Decide Phase 38 Task 3 (ui_app.html native-tab cutover): needs owner sha256 re-baseline + ui_data contract bump. Only item blocking a non-saturated auto backlog.",
+   "4. Consider rotating MODEL_DEV_LOG.md (1.21 MB). Fix (1) cuts growth 12x but existing bulk remains."
+  ],
+  "owner_gated_unchanged": "model-FORM changes, contract bumps, headline re-baseline, MR-LONGEV-1 longevity driver, MLMC-as-governed-default (stage 5), LSMC proxy, signed per-OS binaries. Forward pointer unchanged: LSMC regression proxy of the inner risk-neutral valuation.",
+  "status_doc": "docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w196_cadence_rootcause.md"
  }
 }

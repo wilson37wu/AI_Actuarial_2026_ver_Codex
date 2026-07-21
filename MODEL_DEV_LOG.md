@@ -13330,3 +13330,82 @@ REPRODUCIBILITY: the regenerated `docs/validation/RUN_MODEL_*.json` differed ONL
 Governed byte-stable: offline_home.html md5 `03d6538d3cae9efb83062ecbfab096e9`; ui_data.json contract `1.23.0`; headline `39975.654628199336`.
 Mount sync: **effective NO-OP** — full `git ls-files` md5 diff clone-vs-mount showed 1856/1858 identical with the only 2 stale entries being the `docs/validation/RUN_MODEL_*.json` pair this cycle's own smoke run had just rewritten; after reverting, 1858/1858 identical, 0 missing (`.agent_lock.json` excluded as dynamic). The mount `.git` ref stays stale by design.
 Record-only: no model-FORM/contract/headline/banner/new-doc change. Phase 38 Task 3 owner-gated (ui_app native-tab cutover pending sha256 re-baseline + contract bump). Forward pointer (LSMC proxy) unchanged; no banner re-churn (near-duplicate per W97–W194). LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 / signed per-OS binaries remain owner-gated.
+
+
+---
+
+## W196 — 2026-07-21T09:08Z — Cadence cron ROOT-CAUSE + verification + mount-sync (claude)
+
+**Cycle:** `2026-07-21T09:08Z-d4ed` | **Verdict:** FULL BATTERY GREEN | **Type:** record-only
+
+### Conclusion first
+The cadence bug is **solved at root cause**. W194/W195 could only observe the symptom;
+this cycle read the scheduler configuration directly:
+
+> `cronExpression` = **`0 * * * *`** — every hour, every day. The description on the very
+> same task claims *"12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC"*.
+
+The intended `0 6,18 * * *` was mis-encoded in the hour field. The task fires **24x/day
+instead of 2x** — a **12x over-run**. `jitterSeconds: 361` explains the "6 minutes past the
+hour" rendering and the minute-scatter across W194 (07:14Z) / W195 (08:08Z) / W196 (09:07Z).
+`nextRunAt 2026-07-21T10:06:01Z` confirms it is **still firing hourly**.
+
+**Fix:** one field, `0 * * * *` -> `0 6,18 * * *`.
+**Not auto-applied:** the scheduler is owner infrastructure outside the repo, and the skill's
+write-action rule limits this agent to reporting unless the task file requests that specific
+action. Reported with numbered owner actions instead.
+
+### Correction to W195
+W195 recorded the scheduler as "unstable in BOTH directions". Superseded — there is
+**one config bug plus one availability gap**, not two failure modes of one system:
+- **Hourly duplicate firing** = the cron defect. Permanent, systematic, still active.
+- **Six-day outage (2026-07-15..20)** = *not* a scheduler defect. An hourly cron cannot
+  drift into a six-day silence; consistent with host off / Cowork app not running.
+
+Separate root causes, separate fixes.
+
+### Coordination
+Preflight **PROCEED** (lock free, released by W195 at 08:14:39Z; no Codex lock or commits
+since W178). Acquired 09:08:05Z, TTL 120min, released at cycle end. All git in throwaway
+clone `/tmp/cc_20260721_090705`; mounted `.git` never touched.
+
+### Task
+`in_progress` remains **Phase 38 Task 3** (`ui_app.html` native-tab cutover) — **OWNER-GATED**,
+needs owner sha256 re-baseline + `ui_data` contract bump. Not executed. Auto backlog still
+saturated; rather than re-run W195's no-op pass unchanged (which the near-duplicate guard
+warns against), this cycle paired the standard battery with the one genuinely new diagnostic
+available: inspecting the scheduler config that had been inferred-about but never read.
+
+### Engine — third clean-room rebuild
+`python -m venv` + `pip install -r requirements-engine-lock.txt`: numpy 1.26.4 / pandas 2.2.3
+/ scipy 1.13.1, clean resolution, **no shadowing, no manual dist-info cleanup**. Confirms
+W195's venv-over-`pip --target` recommendation on a second trial. Governed bit-match now
+reproduced across **three** independent environments.
+
+### Gates
+- **C:** `launch_offline_gui.py --self-test` -> `self_test_ok:true`, `engine_ready:true`.
+  Smoke bit-match exact: nested **49657.9**, gaussian **37499.0**, var-covar **30267.9**.
+- **D:** spec AST-parses; `release.workflow.yml` YAML-valid; `offline_bootstrap --self-test`
+  `ok:true`; `build_phase_pkg_task1_validate.py` **26/26**. Per-OS binary build remains
+  owner/CI-gated (correct, not a failure).
+- **Integrity:** `build_offline_home_validate.py` **177/177**; `test_offline_home_validate.py`
+  **4/4**; `offline_home_loader_parity.cjs` **10/10**; MLMC **66/66**.
+- **Governed artifacts byte-stable:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`,
+  `ui_data.json` contract **1.23.0**, headline **39975.654628199336**.
+
+Smoke run touched only `run_timestamp`/`duration_seconds` in the two
+`docs/validation/RUN_MODEL_*.json` files (all computed figures bit-identical) — reverted per
+W195 precedent, so this cycle is record-only.
+
+### Owner actions
+1. **Fix the cron `0 * * * *` -> `0 6,18 * * *`** — top priority, still firing hourly.
+2. **Separately investigate the 2026-07-15..20 availability gap** — distinct defect.
+3. **Decide Phase 38 Task 3** — the only item blocking a non-saturated auto backlog.
+4. **Consider rotating `MODEL_DEV_LOG.md`** (1.21 MB); fix (1) cuts growth 12x, bulk remains.
+
+### Unchanged (owner-gated)
+Model-FORM changes, contract bumps, headline re-baseline, MR-LONGEV-1, MLMC-as-default
+(stage 5), LSMC proxy, signed per-OS binaries. Forward pointer unchanged: **LSMC regression
+proxy** of the inner risk-neutral valuation.
+
+**Status doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w196_cadence_rootcause.md`
