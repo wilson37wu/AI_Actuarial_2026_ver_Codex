@@ -13597,3 +13597,22 @@ var-covar 30267.9** (exact bit-match). D: spec AST-parses, `release.workflow.yml
 `test_agent_lock_identity` **4/4**. Governed: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`,
 contract `1.23.0`, headline `39975.654628199336`. No model-FORM/contract/headline change.
 `docs/validation` churn reverted (only timestamps differed).
+
+---
+
+## W200 — 2026-07-21T13:09Z — exhausted-backlog verification + mount-sync (record-only)
+
+**Lock:** `2026-07-21T13:09Z-49b6` (claude) · **Preflight:** PROCEED · **Verdict:** FULL BATTERY GREEN, governed artifacts byte-stable.
+
+Phase 38 Task 3 remains OWNER-GATED and was not executed. Seventh hourly firing today.
+
+Gates: C self_test_ok/engine_ready true; smoke bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9.
+D: spec AST OK, release workflow structurally valid, offline_bootstrap ok:true, phase-pkg validate ok:true (per-OS build owner/CI-gated by design).
+Integrity: 177/177, 4/4, node parity 10/10, MLMC 66 passed, offline_home.html md5 03d6538d3cae9efb83062ecbfab096e9 unchanged, ui_data contract 1.23.0 unchanged, headline 39975.654628199336 present.
+Only post-smoke diff was non-deterministic run metadata (run_id/durations) in docs/validation/RUN_MODEL_*.json — zero numeric results changed; reverted before commit.
+
+Observation 1: cron defect re-confirmed directly from the scheduler API — cronExpression still `0 * * * *`, nextRunAt 2026-07-21T14:06:01Z, description already correct. Fix HALF-APPLIED. Required: `0 6,18 * * *`. Not auto-applied (owner infrastructure).
+
+Observation 2 (NEW): the mount's git origin URL embeds a GitHub PAT, so the STEP 0 `git remote get-url origin` call prints a live credential into every cycle transcript. Treat as disclosed; rotate and move to SSH/credential helper. Reported, not remediated.
+
+No new analysis added by design — W199 already root-caused CODEX-NEVER-RAN and the cron cost case; the skill forbids near-duplicate briefs.

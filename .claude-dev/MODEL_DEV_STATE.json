@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-07-21T12:08Z",
-  "last_run_duration_minutes": 12,
-  "last_run_note": "W199 CODEX-NEVER-RAN + verification + mount-sync (2026-07-21T12:08Z; SIXTH hourly firing today after W194 07:14Z, W195 08:08Z, W196 09:07Z, W197 10:08Z, W198 11:06Z). GENUINELY-NEW NON-DUPLICATE FINDING: the Codex agent has NEVER acquired the lock and has NEVER committed - the two-agent coordination protocol has never been exercised by a second party. Definitive test: every value ever written to .agent_lock.json across full history is \"claude\" (318) or null (318); \"codex\" appears ZERO times across 312 acquires spanning 2026-06-10T18:49Z..2026-07-21T12:08Z (41 days). All 1111 commits are Claude-agent identities or the owner; zero Codex. This CORRECTS the prior record: W198 said 'no Codex commits since W178', implying Codex committed earlier - it never did. REFRAMES W196-W198: those cycles escalated the hourly cron primarily as a COLLISION hazard, but the stagger and lock protect against a counterparty that has never appeared, so the collision risk is theoretical. The realised cost of '0 * * * *' is 12x wasted compute/API spend and 12x near-duplicate cycle records (W194-W199 = six near-duplicates in six hours), NOT a clobbering hazard - still a reason to fix the cron, but on COST grounds, and it raises a NEW owner question never previously asked: is Codex intended to run at all? If not, the coordination machinery is pure overhead and the repo can run single-agent. SECOND FINDING: W198's unexplained '~14s PER TEST' note on test_agent_lock_identity is ROOT-CAUSED with a clean control - setUp blanks git config and redirects HOME (correctly, to simulate 'no identity'), which forces git to DERIVE a committer ident for the push reflog entry, triggering an FQDN lookup; this sandbox has no resolvable hostname so the resolver stalls (getent hosts $(hostname) = rc=2 after 10024ms), giving push-to-LOCAL-bare 13799ms vs 21ms with GIT_COMMITTER_EMAIL set. Fix: export GIT_AUTHOR/COMMITTER NAME+EMAIL in setUp; ~56s -> ~1s (~55x); does NOT weaken assertions (_identity_present reads git CONFIG, not env; the failure test uses a rejecting pre-commit hook). Auto-admissible, reported not implemented (one task per cycle), ready for next cycle. THIRD FINDING: W198's predicted Codex-window collision MATERIALISED - W199 fired 12:06:41Z inside the Codex 12:00Z slot - and was uncontested. Cadence still HALF-APPLIED: description corrected, cronExpression still '0 * * * *' enabled true; correct value '0 2,14 * * *'. NOT auto-applied (owner infrastructure; skill write-action rule) - same call as W196/W197/W198. FULL BATTERY GREEN (MLMC 66/66, integrity 177/177, offline_home_validate 4/4, loader parity 10/10, agent_lock_identity 4/4, pkg 26/26, smoke bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9). Governed artifacts byte-stable (offline_home.html md5 03d6538d..., contract 1.23.0, headline 39975.654628199336). No model-FORM/contract/headline change. Phase 38 Task 3 remains OWNER-GATED.",
+  "last_run": "2026-07-21T13:09Z",
+  "last_run_duration_minutes": null,
+  "last_run_note": "W200 exhausted-backlog verification + mount-sync (2026-07-21T13:09Z; SEVENTH hourly firing today after W194 07:14Z, W195 08:08Z, W196 09:07Z, W197 10:08Z, W198 11:06Z, W199 12:08Z). Record-only: FULL BATTERY GREEN, governed artifacts byte-stable. Phase 38 Task 3 remains OWNER-GATED and was NOT executed. Scheduler defect re-confirmed directly from the scheduler API this cycle: cronExpression is still '0 * * * *' with nextRunAt 2026-07-21T14:06:01Z, while the task description already reads the correct 12h cadence -- the fix remains HALF-APPLIED (description corrected, cron not). Required value: '0 6,18 * * *'. Not auto-applied (scheduler is owner infrastructure; skill limits this agent to reporting). No new analysis added this cycle by design: W199 already root-caused CODEX-NEVER-RAN and the cron cost case, and the skill forbids near-duplicate briefs.",
   "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Tasks 1-2 COMPLETE (auto-admissible). ACTIVE in_progress = Phase 38 Task 3 = OWNER-GATED ui_app.html native-tab cutover (requires owner sha256 re-baseline across the gate scripts + a ui_data contract bump) - NOT auto-executed. Auto-admissible backlog SATURATED: governance-gate set saturated (INTEGRITY_GATE_MAP.md W92, VERIFICATION_RUNBOOK.md W93); tail-MLMC track complete through the stage-5 Neyman study (W95) consolidated into docs/MLMC_TAIL_EFFICIENCY_MAP.md (W96); offline-UI governed artifacts byte-stable; TASK_PROMPT hand-off banner refreshed W97 and left current through W98/W99/W100/W101/W102 (re-issuing is a near-duplicate). W99-W101 then W102 (2026-06-30 16:09Z) ran the SKILL-sanctioned exhausted-backlog branch: full verification battery GREEN + full tracked-file mount sync; NO new gate/code/model-FORM/contract/headline change and NO banner re-churn. Researched forward pointer unchanged: the highest-leverage genuinely-NEW direction is an LSMC (least-squares Monte Carlo) regression PROXY of the inner risk-neutral valuation to replace the brute-force nested inner loop for SCR - the canonical next model-FORM beyond the now-exhausted MLMC variance-reduction track - but it is a model-FORM change and stays OWNER-GATED. W194 continues the exhausted-backlog branch (W99-W193 lineage); W194 additionally recorded a clean-room engine rebuild parity check and a six-day cadence outage (no runs 2026-07-15..2026-07-20). W106 registered behind the same hard near-duplicate guard: default to the exhausted-backlog verification + full mount-sync pass unless a genuinely NEW non-duplicate gap is demonstrated. NO model-FORM/contract/headline change (owner-gated); Phase 38 Task 3 owner-gated; LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 longevity driver / signed per-OS binaries all OWNER-GATED. W197 (2026-07-21T10:08Z) continued the exhausted-backlog branch and added ONE genuinely-new non-duplicate finding: the cadence fix VALUE recommended by W196 is corrected from '0 6,18 * * *' to '0 2,14 * * *' on host-local-timezone evidence (host verified UTC+8; two sibling scheduler tasks map cron hour to HKT hour). Disambiguation is a single nextRunAt reading after the owner sets it. No model-FORM/contract/headline/banner change; no near-duplicate brief added.",
-  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W199_VERIFY_SYNC_GREEN__CODEX_HAS_NEVER_RUN (0 codex lock acquires of 312; 0 codex commits of 1111; the 6h stagger and push-lock have never been exercised by a second agent). Cadence fix still HALF-APPLIED: description corrected, cronExpression still '0 * * * *' (hourly, 12x over-run); correct value '0 2,14 * * *' - owner infrastructure, reported not applied. Predicted Codex-window collision MATERIALISED at 12:06Z and was uncontested. Hourly-cron cost is now understood as wasted spend + near-duplicate records, not clobbering risk. NEW OWNER QUESTION: is Codex intended to run at all? test_agent_lock_identity ~14s/test ROOT-CAUSED (hostname-resolution stall in git ident derivation); one-line auto-admissible fix ready for next cycle. Auto-admissible backlog otherwise SATURATED. Governed artifacts byte-stable.",
+  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W200_VERIFY_SYNC_GREEN__CRON_STILL_HOURLY. Auto-admissible backlog EXHAUSTED for 7 consecutive cycles. Every remaining item is owner-gated. The single highest-value owner action is the one-line cron correction to '0 6,18 * * *'; second is deciding whether Codex is intended to run at all (0 acquires of 313, 0 commits of 1111).",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -1124,7 +1124,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-07-21T12:20Z",
+  "last_updated": "2026-07-21T13:09Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -6239,5 +6239,47 @@
     "contract_bump": false,
     "headline_rebaseline": false,
     "run_evidence_note": "docs/validation churn reverted; only run_timestamp/duration_seconds differed, all model numbers identical"
+  },
+  "cycle_2026_07_21_w200": {
+    "cycle": "W200",
+    "lock": "2026-07-21T13:09Z-49b6",
+    "owner": "claude",
+    "preflight": "PROCEED (owner null; released by claude 12:21:35Z)",
+    "task_executed": "W200 exhausted-backlog verification + mount-sync",
+    "phase_38_task_3": "OWNER-GATED - not executed",
+    "verdict": "FULL BATTERY GREEN - governed artifacts byte-stable - record-only",
+    "gate_C": {
+      "self_test_ok": true,
+      "engine_ready": true,
+      "smoke_bit_match": "nested 49657.9 | gaussian 37499.0 | var-covar 30267.9 (EXACT match to frozen reference)"
+    },
+    "gate_D": {
+      "actuarial_gui_spec_ast": "OK",
+      "release_workflow_yml": "structurally valid (122 lines, jobs: present; pyyaml absent in sandbox -> structural fallback)",
+      "offline_bootstrap_self_test": "ok:true",
+      "build_phase_pkg_task1_validate": "ok:true (governed_headline_present pass)",
+      "per_os_binary_build": "owner/CI-gated by design - not a failure"
+    },
+    "integrity": {
+      "build_offline_home_validate": "177/177",
+      "test_offline_home_validate": "4/4",
+      "offline_home_loader_parity_cjs": "10/10",
+      "mlmc_suite": "66 passed",
+      "offline_home_md5": "03d6538d3cae9efb83062ecbfab096e9 (UNCHANGED)",
+      "ui_data_contract": "1.23.0 (UNCHANGED)",
+      "governed_headline": "39975.654628199336 present"
+    },
+    "byte_stability_note": "The only working-tree diff after the smoke run was non-deterministic run metadata in docs/validation/RUN_MODEL_{AGGREGATION_REPORT,SUMMARY}.json (run_id, duration_seconds, wall_clock_seconds). Zero numeric model results changed. Reverted before commit.",
+    "env": "reused pinned venv /tmp/venv_w197 (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3)",
+    "scheduler_defect": {
+      "cronExpression": "0 * * * *",
+      "required": "0 6,18 * * *",
+      "nextRunAt_observed": "2026-07-21T14:06:01Z",
+      "lastRunAt_observed": "2026-07-21T13:06:42Z",
+      "jitterSeconds": 361,
+      "status": "HALF-APPLIED (description correct, cron wrong)",
+      "auto_applied": false
+    },
+    "security_finding": "NEW this cycle: the mounted working folder git remote embeds a GitHub personal access token in the origin URL, so `git remote get-url origin` prints a live credential in plaintext into every agent transcript and any log that captures it. Recommend rotating the PAT and moving to a credential helper / SSH remote. Reported, not remediated."
   }
 }
