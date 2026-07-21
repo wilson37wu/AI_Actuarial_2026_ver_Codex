@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-07-21T13:09Z",
+  "last_run": "2026-07-21T14:15Z",
   "last_run_duration_minutes": null,
-  "last_run_note": "W200 exhausted-backlog verification + mount-sync (2026-07-21T13:09Z; SEVENTH hourly firing today after W194 07:14Z, W195 08:08Z, W196 09:07Z, W197 10:08Z, W198 11:06Z, W199 12:08Z). Record-only: FULL BATTERY GREEN, governed artifacts byte-stable. Phase 38 Task 3 remains OWNER-GATED and was NOT executed. Scheduler defect re-confirmed directly from the scheduler API this cycle: cronExpression is still '0 * * * *' with nextRunAt 2026-07-21T14:06:01Z, while the task description already reads the correct 12h cadence -- the fix remains HALF-APPLIED (description corrected, cron not). Required value: '0 6,18 * * *'. Not auto-applied (scheduler is owner infrastructure; skill limits this agent to reporting). No new analysis added this cycle by design: W199 already root-caused CODEX-NEVER-RAN and the cron cost case, and the skill forbids near-duplicate briefs.",
+  "last_run_note": "W201 exhausted-backlog verification + mount-sync (2026-07-21T14:15Z; EIGHTH hourly firing today). FULL BATTERY GREEN, governed artifacts byte-stable. Phase 38 Task 3 remains OWNER-GATED and was NOT executed. ONE genuinely-new non-duplicate finding: W200 REGRESSED the cadence fix VALUE back to the disproven '0 6,18 * * *'. W198 had PROVEN the correct value is '0 2,14 * * *' (cron is evaluated in host-local HKT; sibling task daily-markets-briefing with cron '0 7 * * *' and jitter 84 fired at 23:01:25Z = 23:00Z boundary +85s = 07:00 HKT). '0 6,18 * * *' would fire 22:00/10:00 UTC - missing both Claude slots and cutting the Codex stagger from 6h to 2h. The scheduled task's own description already states the correct intent ('02:00 & 14:00 HKT = 18:00 & 06:00 UTC'). CORRECTED REQUIRED VALUE: '0 2,14 * * *'. Scheduler re-read this cycle: cronExpression still '0 * * * *', lastRunAt 14:06:42Z, nextRunAt 15:06:01Z - fix remains HALF-APPLIED. Not auto-applied (scheduler is owner infrastructure; skill limits this agent to reporting). Supporting urgency: /sessions is 100% full (a scratch write failed this run); / has 2.8G left and each hourly cycle leaves a ~42MB undeletable clone -> ~66 runs (~2.7 days) of headroom before cycles start failing.",
   "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Tasks 1-2 COMPLETE (auto-admissible). ACTIVE in_progress = Phase 38 Task 3 = OWNER-GATED ui_app.html native-tab cutover (requires owner sha256 re-baseline across the gate scripts + a ui_data contract bump) - NOT auto-executed. Auto-admissible backlog SATURATED: governance-gate set saturated (INTEGRITY_GATE_MAP.md W92, VERIFICATION_RUNBOOK.md W93); tail-MLMC track complete through the stage-5 Neyman study (W95) consolidated into docs/MLMC_TAIL_EFFICIENCY_MAP.md (W96); offline-UI governed artifacts byte-stable; TASK_PROMPT hand-off banner refreshed W97 and left current through W98/W99/W100/W101/W102 (re-issuing is a near-duplicate). W99-W101 then W102 (2026-06-30 16:09Z) ran the SKILL-sanctioned exhausted-backlog branch: full verification battery GREEN + full tracked-file mount sync; NO new gate/code/model-FORM/contract/headline change and NO banner re-churn. Researched forward pointer unchanged: the highest-leverage genuinely-NEW direction is an LSMC (least-squares Monte Carlo) regression PROXY of the inner risk-neutral valuation to replace the brute-force nested inner loop for SCR - the canonical next model-FORM beyond the now-exhausted MLMC variance-reduction track - but it is a model-FORM change and stays OWNER-GATED. W194 continues the exhausted-backlog branch (W99-W193 lineage); W194 additionally recorded a clean-room engine rebuild parity check and a six-day cadence outage (no runs 2026-07-15..2026-07-20). W106 registered behind the same hard near-duplicate guard: default to the exhausted-backlog verification + full mount-sync pass unless a genuinely NEW non-duplicate gap is demonstrated. NO model-FORM/contract/headline change (owner-gated); Phase 38 Task 3 owner-gated; LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 longevity driver / signed per-OS binaries all OWNER-GATED. W197 (2026-07-21T10:08Z) continued the exhausted-backlog branch and added ONE genuinely-new non-duplicate finding: the cadence fix VALUE recommended by W196 is corrected from '0 6,18 * * *' to '0 2,14 * * *' on host-local-timezone evidence (host verified UTC+8; two sibling scheduler tasks map cron hour to HKT hour). Disambiguation is a single nextRunAt reading after the owner sets it. No model-FORM/contract/headline/banner change; no near-duplicate brief added.",
-  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W200_VERIFY_SYNC_GREEN__CRON_STILL_HOURLY. Auto-admissible backlog EXHAUSTED for 7 consecutive cycles. Every remaining item is owner-gated. The single highest-value owner action is the one-line cron correction to '0 6,18 * * *'; second is deciding whether Codex is intended to run at all (0 acquires of 313, 0 commits of 1111).",
+  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W201_VERIFY_SYNC_GREEN__CRON_STILL_HOURLY. Auto-admissible backlog EXHAUSTED for 8 consecutive cycles. Every remaining item is owner-gated. The single highest-value owner action is the one-line cron correction to '0 2,14 * * *' (PROVEN value - W198; note W200 mistakenly reverted this to the disproven '0 6,18 * * *', corrected again in W201); second is deciding whether Codex is intended to run at all (0 acquires of 313, 0 commits of 1111). Sandbox disk headroom now bounds the cron fix: ~2.7 days at the current hourly burn rate.",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -1124,7 +1124,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-07-21T13:09Z",
+  "last_updated": "2026-07-21T14:15Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -6281,5 +6281,63 @@
       "auto_applied": false
     },
     "security_finding": "NEW this cycle: the mounted working folder git remote embeds a GitHub personal access token in the origin URL, so `git remote get-url origin` prints a live credential in plaintext into every agent transcript and any log that captures it. Recommend rotating the PAT and moving to a credential helper / SSH remote. Reported, not remediated."
+  },
+  "cycle_2026_07_21_w201": {
+    "cycle": "W201",
+    "lock": "2026-07-21T14:08Z-2ee0",
+    "owner": "claude",
+    "preflight": "PROCEED (owner null; released by claude 13:14:09Z; no Codex lock, no Codex commits ever)",
+    "task_executed": "W201 exhausted-backlog verification + mount-sync + ONE non-duplicate finding (cron fix-VALUE regression corrected)",
+    "phase_38_task_3": "OWNER-GATED - not executed",
+    "verdict": "FULL BATTERY GREEN - governed artifacts byte-stable",
+    "gate_C": {
+      "self_test_ok": true,
+      "engine_ready": true,
+      "smoke_bit_match": "nested 49657.9 | gaussian 37499.0 | var-covar 30267.9 (EXACT match to frozen reference)"
+    },
+    "gate_D": {
+      "actuarial_gui_spec_ast": "OK",
+      "release_workflow_yml": "structurally valid (top-level keys name/on/permissions/concurrency/jobs; pyyaml absent -> structural fallback)",
+      "offline_bootstrap_self_test": "ok:true (7/7 checks)",
+      "build_phase_pkg_task1_validate": "ok (26/26 checks pass)",
+      "per_os_binary_build": "owner/CI-gated by design - not a failure"
+    },
+    "integrity": {
+      "build_offline_home_validate": "177/177",
+      "test_offline_home_validate": "4/4",
+      "offline_home_loader_parity_cjs": "10/10",
+      "mlmc_suite": "66 passed",
+      "offline_home_md5": "03d6538d3cae9efb83062ecbfab096e9 (UNCHANGED)",
+      "ui_data_contract": "1.23.0 (UNCHANGED)",
+      "governed_headline": "39975.654628199336 (UNCHANGED)"
+    },
+    "new_finding_cron_value_regression": {
+      "severity": "HIGH - the owner-facing instruction carried a DISPROVEN value",
+      "what": "W200 REGRESSED the cadence fix value. W196 proposed '0 6,18 * * *'; W197 corrected it to '0 2,14 * * *'; W198 PROVED '0 2,14 * * *' correct and '0 6,18 * * *' wrong from a sibling task's recorded firing. W199 carried '0 2,14 * * *' forward correctly. W200 then reverted to '0 6,18 * * *' in its cycle-status doc AND in the governed state fields overall_status and last_run_note - the two fields an owner is most likely to read.",
+      "impact_if_applied": "'0 6,18 * * *' is evaluated in host-local time (HKT, UTC+8) -> fires 22:00 and 10:00 UTC. That misses BOTH Claude slots in AGENT_COORDINATION.md S1 (06:00/18:00 UTC) and places a Claude run only 2h before the Codex 12:00Z slot, cutting the designed 6h stagger to 2h. The lock would still be the backstop, but the first line of defence would be gone.",
+      "proof_reconfirmed_this_cycle": "daily-markets-briefing: cronExpression '0 7 * * *', jitterSeconds 84, lastRunAt 2026-06-10T23:01:25Z = 23:00:00Z boundary + 85s. 23:00 UTC = 07:00 HKT, so cron hour 7 was evaluated as 07:00 host-local. Cron hour therefore = HKT hour. Live-task jitter cross-check: auto_actuarial_stochastic_model jitterSeconds 361, nextRunAt 2026-07-21T15:06:01Z = 15:00:00 + 361s.",
+      "corrected_required_value": "0 2,14 * * *",
+      "corroboration": "The scheduled task's OWN description already states the intent correctly: '12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC, per AGENT_COORDINATION.md'. '0 2,14 * * *' matches that description; '0 6,18 * * *' contradicts it.",
+      "action": "State fields overall_status and last_run_note corrected to '0 2,14 * * *' this cycle."
+    },
+    "scheduler_reading_this_cycle": {
+      "cronExpression": "0 * * * *",
+      "enabled": true,
+      "lastRunAt": "2026-07-21T14:06:42.446Z (this run)",
+      "nextRunAt": "2026-07-21T15:06:01.000Z",
+      "jitterSeconds": 361,
+      "status": "STILL HOURLY - fix remains HALF-APPLIED (description correct, cron not). 8th firing today.",
+      "firings_today": "W194 07:14Z, W195 08:08Z, W196 09:07Z, W197 10:08Z, W198 11:09Z, W199 12:08Z, W200 13:09Z, W201 14:08Z"
+    },
+    "new_finding_sandbox_disk_headroom": {
+      "note": "Supporting urgency evidence for the SAME cron defect - not a separate brief.",
+      "sessions_fs": "/sessions 9.8G at 100% used, 0 bytes available; a scratch write FAILED this run ('No space left on device') and was worked around by using /tmp.",
+      "root_fs": "/ 9.6G, 2.8G available (holds /tmp).",
+      "accumulation": "Each hourly cycle leaves a ~42MB throwaway clone owned by 'nobody' (undeletable by later runs) plus lock-test dirs: 9 cc_* clones + 52 agentlock_test_* dirs = 1.6G in /tmp so far.",
+      "headroom": "~66 further hourly runs (~2.7 days) before / fills at the current ~42MB/run burn rate. Cutting to 2 runs/day extends that ~12x.",
+      "mitigation_applied": "Reused the existing pinned venv (/tmp/venv_w197: numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3) instead of building a new one, avoiding a further ~180MB."
+    },
+    "changes": "State-field correction + cycle records ONLY. No model-FORM, contract, headline, gate, code or banner change. Governed artifacts byte-identical.",
+    "timestamp": "2026-07-21T14:15Z"
   }
 }

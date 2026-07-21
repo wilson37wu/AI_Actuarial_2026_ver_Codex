@@ -13616,3 +13616,39 @@ Observation 1: cron defect re-confirmed directly from the scheduler API — cron
 Observation 2 (NEW): the mount's git origin URL embeds a GitHub PAT, so the STEP 0 `git remote get-url origin` call prints a live credential into every cycle transcript. Treat as disclosed; rotate and move to SSH/credential helper. Reported, not remediated.
 
 No new analysis added by design — W199 already root-caused CODEX-NEVER-RAN and the cron cost case; the skill forbids near-duplicate briefs.
+
+---
+
+## W201 — 2026-07-21T14:15Z — exhausted-backlog verification + mount-sync + cron fix-VALUE regression corrected
+
+**Lock:** `2026-07-21T14:08Z-2ee0` | **Owner:** claude | **Preflight:** PROCEED (owner null, released 13:14:09Z)
+**Verdict:** ✅ FULL BATTERY GREEN — governed artifacts byte-stable. Phase 38 Task 3 OWNER-GATED, not executed.
+
+**One new non-duplicate finding — W200 regressed the cadence fix value.**
+W198 had *proven* the correct cron is `0 2,14 * * *`; W200 reverted to `0 6,18 * * *` (the disproven
+value) in its status doc and, more consequentially, in the governed `overall_status` and `last_run_note`
+fields. Proof re-derived this cycle: sibling task `daily-markets-briefing` (`cron 0 7 * * *`,
+`jitterSeconds 84`) has `lastRunAt 2026-06-10T23:01:25Z` = the 23:00:00Z boundary + 85 s, and
+23:00 UTC = 07:00 HKT — so cron hours are evaluated in host-local time (UTC+8). Hence
+`0 2,14 * * *` → 18:00/06:00 UTC (the Claude slots), while `0 6,18 * * *` → 22:00/10:00 UTC, which
+misses both slots and cuts the Codex stagger from 6 h to 2 h. The task's own description already
+states the correct intent ("02:00 & 14:00 HKT = 18:00 & 06:00 UTC"). State corrected in W201.
+
+**Scheduler this cycle:** `cronExpression` still `0 * * * *`, `enabled true`, `lastRunAt 14:06:42Z`,
+`nextRunAt 15:06:01Z`, `jitterSeconds 361` — fix remains HALF-APPLIED (description correct, cron not).
+Eighth firing today (W194 07:14Z … W201 14:08Z). Not auto-applied; scheduler is owner infrastructure.
+
+**Supporting urgency (same root cause):** `/sessions` is 100 % full (0 bytes; a scratch write failed
+this run and was worked around via `/tmp`); `/` has 2.8 G free; each hourly cycle leaves a ~42 MB
+clone owned by `nobody` (9 clones + 52 lock-test dirs = 1.6 G so far) → ~66 more hourly runs (~2.7 days)
+before `/` fills. Reused `/tmp/venv_w197` rather than building a venv, avoiding ~180 MB.
+
+**Gates:** C self_test_ok/engine_ready true; smoke nested 49657.9 | gaussian 37499.0 | var-covar 30267.9
+(exact). D spec AST OK, workflow yml valid, offline_bootstrap ok 7/7, pkg gate 26/26. Integrity
+177/177, pytest 4/4, node parity 10/10, MLMC 66 passed. `offline_home.html` md5
+`03d6538d3cae9efb83062ecbfab096e9`, contract `1.23.0`, headline `39975.654628199336` — all UNCHANGED.
+
+**Changes:** state-field correction + cycle records only. No model-FORM / contract / headline / gate /
+code / banner change.
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w201_cron_value_regression.md`
