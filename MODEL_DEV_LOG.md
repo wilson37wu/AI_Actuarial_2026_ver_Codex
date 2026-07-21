@@ -13533,3 +13533,67 @@ saturated; no banner re-churn, no near-duplicate brief or graphic.
 helper or SSH remote.
 
 **Status doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w198_cadence_tz_proof.md`
+
+---
+
+## W199 — 2026-07-21T12:08Z — exhausted-backlog verification + mount-sync [claude]
+
+**Lock:** `2026-07-21T12:08Z-f04f` · **Preflight:** PROCEED (owner null; released by claude 11:21:59Z)
+**Task:** W199 verification + mount-sync. Phase 38 Task 3 remains OWNER-GATED, not executed.
+**Verdict:** FULL BATTERY GREEN · governed artifacts byte-stable · record-only
+
+### Finding 1 (headline, genuinely new) — Codex has never run
+
+Every value ever written to `.agent_lock.json` across full repo history: `"claude"` ×318,
+`null` ×318, **`"codex"` ×0** — across **312 acquires** spanning 2026-06-10T18:49Z →
+2026-07-21T12:08Z (41 days). All **1111** commits are Claude-agent identities
+(`claude-cowork-agent` 629, `Claude Cowork` 180, `claude-cowork` 61, `claude` 36, `AutoDev` 52,
++ variants) or the owner (`wilson37wu` 62, `Wilson Wu` 24). **Zero Codex commits.**
+
+Corrects the prior record: W198 said "no Codex commits since W178", implying Codex committed
+earlier. It never did.
+
+Reframes W196–W198, which escalated the hourly cron primarily as a **collision hazard**: the
+stagger and lock protect against a counterparty that has never appeared, so the collision risk
+is theoretical. The realised cost of `0 * * * *` is **12x wasted compute/API spend** and **12x
+near-duplicate cycle records** (W194–W199 = six near-duplicates in six hours) — still a reason
+to fix the cron, but on **cost** grounds. New owner question, never previously asked: **is Codex
+intended to run at all?** If not, the coordination machinery is pure overhead.
+
+### Finding 2 — W198's "~14s PER TEST" note root-caused
+
+`setUp` blanks git config and redirects `HOME` (correct — it simulates "no identity"), forcing
+git to **derive** a committer ident for the push reflog entry, which triggers an FQDN lookup.
+This sandbox has no resolvable hostname, so the resolver stalls.
+
+| measurement | value |
+|---|---|
+| `git push` → **local** bare origin, `GIT_COMMITTER_EMAIL` set | 21 ms |
+| same, ident env unset (control) | **13 799 ms** |
+| `getent hosts $(hostname)` | rc=2 after 10 024 ms |
+| raw git ops / pytest collection | 6–21 ms / 319 ms |
+
+Fix: export `GIT_AUTHOR_*`/`GIT_COMMITTER_*` in `setUp` → ~56s → ~1s (≈55x). Does not weaken
+assertions (`_identity_present()` reads git **config**, not env; the failure test uses a
+rejecting pre-commit hook). Auto-admissible; reported not implemented (one task per cycle).
+
+### Finding 3 — predicted collision materialised, uncontested
+
+W199 fired 12:06:41Z, inside the documented Codex 12:00Z slot. Preflight PROCEED, lock taken
+without a race — no Codex lock, no Codex commits (finding 1).
+
+### Cadence — still half-applied
+
+`cronExpression` `0 * * * *` (enabled), description corrected. Correct value `0 2,14 * * *`.
+Firings today: W194 07:14Z · W195 08:08Z · W196 09:07Z · W197 10:08Z · W198 11:06Z · W199 12:06Z.
+Not auto-applied — owner infrastructure, skill write-action rule. Same call as W196/W197/W198.
+
+### Gates
+
+C self-test `self_test_ok:true` / `engine_ready:true`; smoke **nested 49657.9 · gaussian 37499.0 ·
+var-covar 30267.9** (exact bit-match). D: spec AST-parses, `release.workflow.yml` valid,
+`offline_bootstrap ok:true`, pkg task1 `ok:true` 26/26. Integrity: `build_offline_home_validate`
+**177/177**, `test_offline_home_validate` **4/4**, node loader parity **10/10**, MLMC **66/66**,
+`test_agent_lock_identity` **4/4**. Governed: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`,
+contract `1.23.0`, headline `39975.654628199336`. No model-FORM/contract/headline change.
+`docs/validation` churn reverted (only timestamps differed).
