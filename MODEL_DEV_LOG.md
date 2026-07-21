@@ -13652,3 +13652,64 @@ before `/` fills. Reused `/tmp/venv_w197` rather than building a venv, avoiding 
 code / banner change.
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w201_cron_value_regression.md`
+
+---
+
+## W202 — 2026-07-21T15:08Z — exhausted-backlog verification + mount-sync + disk-runway correction
+
+**Agent:** Claude Cowork · **Cycle id:** `2026-07-21T15:08Z-fcb2` · **Verdict:** ✅ FULL BATTERY GREEN
+
+**Coordination:** preflight PROCEED (`.agent_lock.json` free, released by W201 at 14:16:43Z); lock
+acquired 15:08:20Z, TTL 120 min, released at end of cycle. All git in throwaway clone
+`/tmp/cc_20260721_150715`; the mounted `.git` was never touched. Codex: still 0 acquires, 0 commits.
+
+**Task:** the `in_progress` pointer is Phase 38 Task 3 (`ui_app.html` native-tab cutover) — OWNER-GATED
+(needs an owner sha256 re-baseline across the gate scripts plus a `ui_data` contract bump). NOT executed.
+Ninth firing today (W194 07:14Z … W202 15:08Z). Exhausted-backlog branch per W99–W201 lineage.
+
+**PRIMARY NEW FINDING — W201's disk-runway alarm is OVERSTATED.** W201 reported "~2.7 days before
+cycles start failing" and used it to add urgency to the cron fix. Evidence collected this cycle shows
+`/tmp` is **sandbox-scoped and resets on reboot**: `uptime -s` = 2026-07-21T07:12:42Z, the oldest
+surviving clone is `cc_20260721_071413` (this boot only), and the 2026-07-14 series fired **fifteen**
+times yet left **zero** surviving clones despite ~630 MB. The ~70-cycle runway therefore binds only
+under 70 h of continuous uptime, which is not the observed pattern. **Risk downgraded from "bounds the
+cron fix" to "monitor."** The cron fix remains the top owner action — on cadence-correctness grounds
+alone, not disk grounds.
+
+**Also new:**
+1. *Self-remediation proven impossible (tested, not assumed).* `rm -rf` on all nine prior clones: all
+   failed silently, every one owned by `nobody`; `df` avail unchanged at 2819 MB before and after.
+2. *Protocol inconsistency.* `AGENT_COORDINATION.md` §5 line 99 specifies `git clone --depth 1`, but the
+   scheduled-task skill's STEP 0 specifies plain `git clone`. Measured cost: a clone is 40 MB = 13 MB
+   `.git` (1120 commits) + 27 MB worktree, so following the skill costs ~13 MB/cycle (~33 %) more. The
+   two authoritative documents should agree; `--depth 1` is the cheaper, already-documented form.
+3. *Scheduler jitter is deterministic.* Live task `nextRunAt 16:06:01.000Z` = the 16:00:00Z boundary
+   + 361 s jitter, exactly — a fixed offset, not a per-run random draw. This corroborates the inference
+   method W198 used on the disabled sibling `daily-markets-briefing` (23:01:25.309Z = 23:00:00Z + 84 s
+   + 1.3 s exec lag) that established host-local HKT (UTC+8) cron evaluation. Caveat now on record: that
+   sibling is `enabled:false`, so its `lastRunAt` could in principle be a manual run — the to-the-second
+   jitter match is what makes coincidence implausible. **Practical use:** after the owner sets
+   `0 2,14 * * *` (jitter 361), `nextRunAt` must read **18:06:01Z or 06:06:01Z** (HKT, correct) and not
+   02:06:01Z or 14:06:01Z (UTC, wrong) — a one-reading confirmation that the fix landed.
+
+**Scheduler this cycle:** `cronExpression` still `0 * * * *`, `enabled true`, `lastRunAt 15:06:42.816Z`,
+`nextRunAt 16:06:01.000Z`, `jitterSeconds 361` — fix remains HALF-APPLIED (description states the correct
+intent, cron expression unchanged). Not auto-applied; the scheduler is owner infrastructure.
+
+**Engine stack:** reused warm `/tmp/engine_libs`, versions re-verified against the pinned lock before any
+gate ran — numpy 1.26.4 / pandas 2.2.3 / scipy 1.13.1, no stray `numpy 2.x` dist-info this cycle.
+
+**Gates:** C `self_test_ok`/`engine_ready` true; smoke nested 49657.9 | gaussian 37499.0 | var-covar
+30267.9 (exact bit-match). D spec AST OK, workflow yml valid, `offline_bootstrap` ok, pkg gate 26/26.
+Integrity 177/177, pytest 4/4, node parity 10/10, MLMC 66/66. `offline_home.html` md5
+`03d6538d3cae9efb83062ecbfab096e9`, contract `1.23.0`, headline `39975.654628199336` — all UNCHANGED.
+Smoke evidence regeneration diffed field-by-field: 5 + 3 changed keys, **0 substantive** (all timestamp /
+duration / run_id); both files reverted so the footprint stays record-only.
+
+**Mount sync:** NO-OP — tracked 1866 | identical 1865 | stale 0 | missing 0 (`.agent_lock.json` excluded
+as dynamic). Mount `.git` ref stays stale by design.
+
+**Changes:** cycle records only. No model-FORM / contract / headline / gate / code / banner /
+`MODEL_DEV_TASK_PROMPT.md` change.
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w202_disk_runway_correction.md`
