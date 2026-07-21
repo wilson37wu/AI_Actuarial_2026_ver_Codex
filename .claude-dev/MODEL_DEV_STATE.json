@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-07-21T10:08Z",
-  "last_run_duration_minutes": 22,
-  "last_run_note": "W197 verification + mount-sync + CADENCE FIX-VALUE CORRECTION (2026-07-21T10:08Z; FOURTH hourly firing today after W194 07:14Z, W195 08:08Z, W196 09:07Z). CONFIRMED W196's cron diagnosis directly from the scheduler (cronExpression '0 * * * *', enabled true, lastRunAt 2026-07-21T10:06:40Z, nextRunAt 2026-07-21T11:06:01Z - still firing hourly). NEW, NON-DUPLICATE FINDING: W196's proposed fix value '0 6,18 * * *' is probably WRONG. The scheduler appears to evaluate cron in HOST-LOCAL time and the host is UTC+8 (HKT) - verified directly this cycle (Tue Jul 21 18:27:43 HKT = 10:27:43 UTC). Two sibling tasks map cron hour to HKT hour, not UTC hour: daily-markets-briefing desc '07:00 HKT' -> cron '0 7 * * *'; friday-weekly-digest desc '18:00 HKT' -> cron '0 18 * * 5'. This task's own description names its intended HKT hours as 02:00 & 14:00, so the correct expression is '0 2,14 * * *'. Applying W196's '0 6,18 * * *' would fire 06:00/18:00 HKT = 22:00/10:00 UTC, missing the Claude window and landing 2h before Codex's 12:00Z slot, eroding the 6h stagger in AGENT_COORDINATION.md s1. Caveat recorded: unprovable from the enabled task alone (hour field '*' carries no tz signal); disambiguate in ONE reading via nextRunAt (reported in UTC) after setting the cron. NOT auto-applied (scheduler is owner infrastructure outside the repo; skill write-action rule limits this agent to reporting) - same call as W196. FOURTH independent clean-room venv rebuild: all three pins resolved, no shadowing, no manual dist-info cleanup (third consecutive confirmation of the W195 venv-over-pip-target recommendation). FULL BATTERY GREEN (MLMC 66/66, integrity 177/177, offline_home_validate 4/4, loader parity 10/10, agent_lock_identity 4/4, pkg gates ok, smoke bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9). Governed artifacts byte-stable (offline_home 03d6538d3cae9efb83062ecbfab096e9, ui_data 1.23.0, headline 39975.654628199336). Mount sync: 1861/1861 tracked files already matched (only dynamic .agent_lock.json differed) - zero copies needed. Smoke evidence reverted (timestamp/run_id/duration churn only; all computed figures bit-identical). Record-only; no model-FORM/contract/headline/banner change. ALSO FLAGGED: the working folder's origin remote embeds a cleartext GitHub PAT - owner should rotate it.",
+  "last_run": "2026-07-21T11:08Z",
+  "last_run_duration_minutes": 14,
+  "last_run_note": "W198 CADENCE TIMEZONE PROVEN + verification + mount-sync (2026-07-21T11:08Z; FIFTH hourly firing today after W194 07:14Z, W195 08:08Z, W196 09:07Z, W197 10:08Z). GENUINELY-NEW NON-DUPLICATE FINDING: W197's corrected cron value '0 2,14 * * *' is now CONFIRMED BY PROOF rather than description-inference, and WITHOUT touching the cron - closing the disambiguation W197 explicitly left open ('unprovable from the enabled task alone; needs one nextRunAt reading AFTER the owner sets it'). Method: use a sibling task's RECORDED FIRING instead of its description. daily-markets-briefing has cronExpression '0 7 * * *', jitterSeconds 84, lastRunAt 2026-06-10T23:01:25.309Z; 23:01:25Z = the 23:00:00Z hour boundary + 85s (matches the 84s jitter), and 23:00 UTC = 07:00 HKT - so the scheduler evaluated cron hour 7 as 07:00 HOST-LOCAL (HKT, UTC+8). The jitter mechanic was cross-checked on the live task to establish that reading is a SCHEDULED firing and not a manual run: auto_actuarial_stochastic_model jitterSeconds 361, nextRunAt 12:06:01Z = 12:00:00+361s, lastRunAt 11:06:41Z ~ 11:00:00+401s (both = hour boundary + jitter). VERDICT: '0 2,14 * * *' correct (02:00 HKT = 18:00 UTC, 14:00 HKT = 06:00 UTC = the AGENT_COORDINATION.md s1 Claude slots); W196's '0 6,18 * * *' confirmed WRONG (22:00/10:00 UTC). SECOND NEW FINDING: the fix is HALF-APPLIED - the scheduler description now reads '12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC, per AGENT_COORDINATION.md' (intent corrected) while cronExpression is STILL '0 * * * *' with enabled true; description and cron are inconsistent. THIRD NEW FINDING: nextRunAt 12:06:01Z lands INSIDE Codex's 12:00 UTC window - the hourly cron no longer merely over-runs 12x, it collides with the other agent's slot; the push-lock backstop is working (every cycle preflighted cleanly) but the 6h stagger is gone. NOT auto-applied (scheduler is owner infrastructure outside the repo; skill write-action rule limits this agent to reporting) - same call as W196/W197. FULL BATTERY GREEN (MLMC 66/66, integrity 177/177, offline_home_validate 4/4, loader parity 10/10, agent_lock_identity 4/4, pkg gates ok:true 26/26, smoke bit-match nested 49657.9 / gaussian 37499.0 / var-covar 30267.9). Reused pinned /tmp/engine_libs (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3) - no rebuild needed. OPERATIONAL NOTE (harness, not a gate failure): test_agent_lock_identity costs ~14s PER TEST (each setUp builds a bare origin + clone + commit), so the 4-test suite (~56s) exceeds this sandbox's 45s per-bash-call cap and presents as a hang when run as one call - run per-test or in chunks; all 4 pass. Governed artifacts byte-stable (offline_home 03d6538d3cae9efb83062ecbfab096e9, ui_data 1.23.0, headline 39975.654628199336). Mount sync: 1861/1861 tracked files already matched (only dynamic .agent_lock.json differed). Smoke evidence reverted (timestamp/run_id/duration churn only; all computed figures bit-identical). Record-only; no model-FORM/contract/headline/banner change; no near-duplicate brief or graphic. STILL FLAGGED: the working folder's origin remote embeds a cleartext GitHub PAT - owner should rotate it.",
   "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Tasks 1-2 COMPLETE (auto-admissible). ACTIVE in_progress = Phase 38 Task 3 = OWNER-GATED ui_app.html native-tab cutover (requires owner sha256 re-baseline across the gate scripts + a ui_data contract bump) - NOT auto-executed. Auto-admissible backlog SATURATED: governance-gate set saturated (INTEGRITY_GATE_MAP.md W92, VERIFICATION_RUNBOOK.md W93); tail-MLMC track complete through the stage-5 Neyman study (W95) consolidated into docs/MLMC_TAIL_EFFICIENCY_MAP.md (W96); offline-UI governed artifacts byte-stable; TASK_PROMPT hand-off banner refreshed W97 and left current through W98/W99/W100/W101/W102 (re-issuing is a near-duplicate). W99-W101 then W102 (2026-06-30 16:09Z) ran the SKILL-sanctioned exhausted-backlog branch: full verification battery GREEN + full tracked-file mount sync; NO new gate/code/model-FORM/contract/headline change and NO banner re-churn. Researched forward pointer unchanged: the highest-leverage genuinely-NEW direction is an LSMC (least-squares Monte Carlo) regression PROXY of the inner risk-neutral valuation to replace the brute-force nested inner loop for SCR - the canonical next model-FORM beyond the now-exhausted MLMC variance-reduction track - but it is a model-FORM change and stays OWNER-GATED. W194 continues the exhausted-backlog branch (W99-W193 lineage); W194 additionally recorded a clean-room engine rebuild parity check and a six-day cadence outage (no runs 2026-07-15..2026-07-20). W106 registered behind the same hard near-duplicate guard: default to the exhausted-backlog verification + full mount-sync pass unless a genuinely NEW non-duplicate gap is demonstrated. NO model-FORM/contract/headline change (owner-gated); Phase 38 Task 3 owner-gated; LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 longevity driver / signed per-OS binaries all OWNER-GATED. W197 (2026-07-21T10:08Z) continued the exhausted-backlog branch and added ONE genuinely-new non-duplicate finding: the cadence fix VALUE recommended by W196 is corrected from '0 6,18 * * *' to '0 2,14 * * *' on host-local-timezone evidence (host verified UTC+8; two sibling scheduler tasks map cron hour to HKT hour). Disambiguation is a single nextRunAt reading after the owner sets it. No model-FORM/contract/headline/banner change; no near-duplicate brief added.",
-  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W197_VERIFY_SYNC_GREEN__CADENCE_FIX_VALUE_CORRECTED_TO_0_2,14_*_*_* (local-time/HKT reading; W196's 0 6,18 * * * would land 22:00/10:00 UTC and erode the Codex stagger). Cron still '0 * * * *' (hourly, 12x over-run) - owner infrastructure, reported not applied. Auto-admissible backlog SATURATED. Governed artifacts byte-stable. Mount 1861/1861 in sync.",
+  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W198_VERIFY_SYNC_GREEN__CADENCE_FIX_VALUE_PROVEN_0_2,14_*_*_* (proof: sibling task daily-markets-briefing cron '0 7 * * *' recorded lastRunAt 2026-06-10T23:01:25Z = 23:00Z boundary + 84s jitter = 07:00 HKT, so cron hours are HOST-LOCAL UTC+8). Fix HALF-APPLIED: description corrected to 02:00/14:00 HKT = 18:00/06:00 UTC, cronExpression still '0 * * * *' (hourly, 12x over-run) - owner infrastructure, reported not applied. nextRunAt 12:06:01Z now COLLIDES with Codex's 12:00Z slot; lock backstop holding, 6h stagger gone. Auto-admissible backlog SATURATED. Governed artifacts byte-stable. Mount 1861/1861 in sync.",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -1124,7 +1124,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-07-21T10:30Z",
+  "last_updated": "2026-07-21T11:22Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -6059,5 +6059,95 @@
     ],
     "security_flag": "working folder origin remote embeds a cleartext GitHub PAT; owner should rotate and switch to a credential helper or SSH remote",
     "status_doc": "docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w197_cadence_tz_correction.md"
+  },
+  "cycle_2026_07_21_w198": {
+    "cycle": "W198",
+    "owner": "claude",
+    "lock": "2026-07-21T11:08Z-4c8a",
+    "timestamp": "2026-07-21T11:08Z",
+    "preflight": "PROCEED (owner null, released by claude 10:30:54Z; no Codex lock; no Codex commits since W178)",
+    "type": "exhausted-backlog verification + mount-sync (record-only) + one genuinely-new non-duplicate finding",
+    "new_finding_1_cadence_tz_proof": {
+      "closes": "the disambiguation W197 explicitly left open (unprovable from the enabled task alone; needed a post-hoc nextRunAt reading)",
+      "method": "use a sibling task's RECORDED FIRING (lastRunAt + jitter signature) instead of its description; no cron change required",
+      "evidence": {
+        "task": "daily-markets-briefing",
+        "cronExpression": "0 7 * * *",
+        "jitterSeconds": 84,
+        "lastRunAt": "2026-06-10T23:01:25.309Z",
+        "arithmetic": "23:01:25Z = 23:00:00Z boundary + 85s (matches jitterSeconds 84); 23:00 UTC = 07:00 HKT",
+        "inference": "scheduler evaluated cron hour 7 as 07:00 HOST-LOCAL (HKT, UTC+8)"
+      },
+      "cross_check_jitter_mechanic": {
+        "task": "auto_actuarial_stochastic_model",
+        "jitterSeconds": 361,
+        "nextRunAt": "2026-07-21T12:06:01Z = 12:00:00 + 361s",
+        "lastRunAt": "2026-07-21T11:06:41Z ~ 11:00:00 + 401s",
+        "purpose": "establishes both readings are hour-boundary + jitter, i.e. the 23:01:25Z reading is a SCHEDULED firing, not a manual run"
+      },
+      "verdict": "W197's '0 2,14 * * *' CONFIRMED CORRECT (02:00 HKT = 18:00 UTC, 14:00 HKT = 06:00 UTC = AGENT_COORDINATION.md s1 Claude slots); W196's '0 6,18 * * *' CONFIRMED WRONG (22:00/10:00 UTC)",
+      "post_hoc_reading_needed": false
+    },
+    "new_finding_2_half_applied": {
+      "description_now": "Build actuarial model with AI in full auto mode (12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC, per AGENT_COORDINATION.md)",
+      "cronExpression_now": "0 * * * *",
+      "enabled": true,
+      "issue": "description states the corrected intent but the behavioural change was never applied; description and cron are inconsistent"
+    },
+    "new_finding_3_codex_collision": {
+      "nextRunAt": "2026-07-21T12:06:01Z",
+      "issue": "lands inside Codex's 12:00 UTC window; hourly cron no longer merely over-runs 12x, it collides with the other agent's slot",
+      "mitigation_status": "push-lock backstop working (every cycle preflighted cleanly); the 6h stagger AGENT_COORDINATION.md s1 calls 'the first line of defence' is gone"
+    },
+    "hourly_firings_today": [
+      "W194 07:14Z",
+      "W195 08:08Z",
+      "W196 09:07Z",
+      "W197 10:08Z",
+      "W198 11:06Z"
+    ],
+    "gates": {
+      "gate_c": {
+        "self_test_ok": true,
+        "engine_ready": true,
+        "smoke_bitmatch": {
+          "nested": 49657.9,
+          "gaussian": 37499.0,
+          "var_covar": 30267.9
+        }
+      },
+      "gate_d": {
+        "spec_ast_parse": "OK",
+        "release_workflow_yaml": "valid",
+        "offline_bootstrap_self_test": "ok",
+        "pkg_task1_validate": "ok:true 26/26"
+      },
+      "integrity": {
+        "build_offline_home_validate": "177/177",
+        "test_offline_home_validate": "4/4",
+        "loader_parity_node": "10/10",
+        "mlmc_suite": "66/66 (27+14+25)",
+        "test_agent_lock_identity": "4/4"
+      }
+    },
+    "governed_artifacts_byte_stable": {
+      "offline_home_html_md5": "03d6538d3cae9efb83062ecbfab096e9",
+      "ui_data_contract_version": "1.23.0",
+      "headline_scr": "39975.654628199336"
+    },
+    "engine_env": "reused pinned /tmp/engine_libs via PYTHONPATH (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3); no rebuild needed; root / 3.0G free (69% used)",
+    "operational_note_harness": "test_agent_lock_identity costs ~14s PER TEST (setUp builds a bare origin + clone + commit); the 4-test suite (~56s) exceeds this sandbox's 45s per-bash-call cap and presents as a hang when run as one call. Run per-test or in chunks; all 4 pass. Recorded so later cycles do not misdiagnose it.",
+    "smoke_evidence": "reverted; diff exclusively run_timestamp/run_id/duration_seconds/wall_clock_seconds churn, every computed figure bit-identical",
+    "mount_sync": "full git ls-files md5 diff: 1861/1861 tracked files already matched; only dynamic .agent_lock.json differed; W198 files copied clone->mount after commit",
+    "owner_gated_untouched": [
+      "Phase 38 Task 3 (ui_app.html native-tab cutover)",
+      "LSMC proxy",
+      "MLMC-as-default stage 5",
+      "MR-LONGEV-1 longevity driver",
+      "signed per-OS binaries"
+    ],
+    "security_flag": "unchanged from W197: the working folder's origin remote embeds a cleartext GitHub PAT in .git/config; owner should rotate it and move to a credential helper or SSH remote",
+    "changes": "none to model FORM / contract / headline / banner; no near-duplicate brief or graphic; scheduler not modified (owner infrastructure; skill write-action rule limits this agent to reporting)",
+    "status_doc": "docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w198_cadence_tz_proof.md"
   }
 }

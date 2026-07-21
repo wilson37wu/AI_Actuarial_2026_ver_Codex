@@ -13464,3 +13464,72 @@ saturated; no banner re-churn, no near-duplicate brief.
 move to a credential helper or SSH remote.
 
 **Status doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w197_cadence_tz_correction.md`
+
+---
+
+## W198 — 2026-07-21T11:08Z — cadence timezone PROVEN + verification + mount-sync [claude]
+
+**Lock:** `2026-07-21T11:08Z-4c8a` (preflight PROCEED — `owner: null`, released by claude
+10:30:54Z; no Codex lock, no Codex commits since W178). **Type:** exhausted-backlog
+verification + mount-sync (record-only) plus ONE genuinely-new non-duplicate finding.
+**Fifth hourly firing today** (W194 07:14Z, W195 08:08Z, W196 09:07Z, W197 10:08Z, W198 11:06Z).
+
+**NEW — the cadence timezone question is CLOSED by proof, not inference.** W197 corrected
+W196's proposed fix to `0 2,14 * * *` but recorded it as *unprovable from the enabled task
+alone* (hour field `*` carries no tz signal), needing "one `nextRunAt` reading **after** the
+owner sets the cron". W198 closes it **without touching the cron**, using a sibling task's
+*recorded firing* instead of its description: `daily-markets-briefing` has
+`cronExpression 0 7 * * *`, `jitterSeconds 84`, `lastRunAt 2026-06-10T23:01:25.309Z`.
+`23:01:25Z` = the `23:00:00Z` boundary **+ 85 s** (matches the 84 s jitter), and
+`23:00 UTC = 07:00 HKT` — so the scheduler evaluated cron hour `7` as **07:00 host-local
+(HKT, UTC+8)**. The jitter mechanic was cross-checked on the live task to establish that
+this is a *scheduled* firing and not a manual run: `auto_actuarial_stochastic_model` has
+`jitterSeconds 361`, `nextRunAt 12:06:01Z` = `12:00:00 + 361 s`, `lastRunAt 11:06:41Z`
+≈ `11:00:00 + 401 s` — both readings are hour-boundary + jitter. **Verdict: W197's
+`0 2,14 * * *` is CONFIRMED CORRECT** (02:00 HKT = 18:00 UTC, 14:00 HKT = 06:00 UTC — exactly
+the `AGENT_COORDINATION.md` §1 Claude slots); W196's `0 6,18 * * *` is **confirmed wrong**
+(would fire 22:00/10:00 UTC). The post-hoc disambiguation reading W197 asked for is no
+longer needed.
+
+**NEW — the fix is HALF-APPLIED.** The scheduler `description` now reads "12h cadence:
+02:00 & 14:00 HKT = 18:00 & 06:00 UTC, per AGENT_COORDINATION.md" — intent matching W197's
+recommendation — while `cronExpression` is **still `0 * * * *`** with `enabled: true`.
+Description and cron are inconsistent; the behavioural change was never applied.
+
+**NEW — the next firing collides with Codex.** `nextRunAt` is `12:06:01Z`, inside **Codex's
+12:00 UTC window**. The hourly cron no longer merely over-runs 12×; it lands in the other
+agent's slot. The push-lock backstop is working (every cycle preflighted cleanly), but the
+6-hour stagger that `AGENT_COORDINATION.md` §1 calls "the first line of defence" is gone.
+**Not auto-applied** — the scheduler is owner infrastructure outside the repo and the skill's
+write-action rule limits this agent to reporting; same call as W196/W197.
+
+**Verification battery — all GREEN.** Reused the pinned stack at `/tmp/engine_libs`
+(numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3) via `PYTHONPATH`; no rebuild needed. Gate C:
+`self_test_ok true`, `engine_ready true`; smoke exact bit-match **nested 49657.9 |
+gaussian 37499.0 | var-covar 30267.9**. Gate D: spec AST-parse OK, `release.workflow.yml`
+valid YAML, `offline_bootstrap --self-test` ok, pkg task1 validate `ok:true` **26/26**.
+Integrity **177/177**; `test_offline_home_validate` **4/4**; loader parity (node) **10/10**;
+MLMC **66/66** (27+14+25); `test_agent_lock_identity` **4/4**.
+
+**Operational note (harness, not a gate failure).** `test_agent_lock_identity` costs ~14 s
+*per test* (each `setUp` builds a bare origin + clone + commit), so the 4-test suite (~56 s)
+exceeds this sandbox's **45 s per-bash-call cap** and presents as a hang when run in one
+call. Run per-test or in chunks; all 4 pass. Recorded so later cycles do not misdiagnose it.
+
+**Governed artifacts byte-stable:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`,
+`ui_data.json` contract `1.23.0`, headline `39975.654628199336`. Smoke evidence reverted —
+diff exclusively `run_timestamp`/`run_id`/`duration_seconds`/`wall_clock_seconds` churn,
+every computed figure bit-identical.
+
+**Mount sync:** full `git ls-files` md5 diff — **1861/1861 tracked files already matched**;
+only the dynamic `.agent_lock.json` differed. W198's own files copied clone → mount after commit.
+
+**Owner-gated, untouched:** Phase 38 Task 3 (`ui_app.html` native-tab cutover), LSMC proxy,
+MLMC-as-default stage 5, MR-LONGEV-1, signed per-OS binaries. Auto-admissible backlog remains
+saturated; no banner re-churn, no near-duplicate brief or graphic.
+
+**Security flag (unchanged from W197):** the working folder's `origin` remote still embeds a
+**cleartext GitHub PAT** in `.git/config`. Owner should rotate it and move to a credential
+helper or SSH remote.
+
+**Status doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_21_w198_cadence_tz_proof.md`
