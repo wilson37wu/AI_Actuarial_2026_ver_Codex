@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-21T14:16:43Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-21T15:08Z-fcb2",
+  "started_at": "2026-07-21T15:08:20Z",
+  "ttl_minutes": 120,
+  "task": "W202 exhausted-backlog verification + mount-sync (Phase 38 Task 3 owner-gated)",
+  "note": ""
 }
