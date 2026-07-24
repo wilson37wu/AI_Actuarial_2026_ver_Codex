@@ -14015,3 +14015,56 @@ contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; n
 mutation** (owner-scoped — reported, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_23_w208_verify_sync.md`
+
+---
+
+## W209 — 2026-07-24T00:16Z — exhausted-backlog verify + mount-sync; drift has ENTERED Codex's 00:00 slot [claude]
+
+**Conclusion first.** 16th consecutive exhausted-backlog cycle: no auto-admissible model work exists;
+every remaining model-FORM item is **OWNER-GATED** and was not executed. Full verification battery is
+**GREEN**, governed artifacts are byte-stable, and the mount is synced to origin/main. The one
+genuinely-new, non-duplicate finding: **the +11 h/cycle accepted-cycle drift has completed its wrap of
+the clock and this cycle actually fired inside Codex's nominal 00:00 UTC slot** (acquire **00:09:03Z**),
+converting W208's projection from *predicted* to *materialized*.
+
+**Full battery GREEN** (pinned `numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3`): Gate C self-test
+`true`/`true` and `run_model --n-outer 100 --n-inner 4 --no-tail --seed 42` **bit-matched**
+49657.9 / 37499.0 / 30267.9; Gate D spec-AST, workflow-YAML, bootstrap self-test, and
+`build_phase_pkg_task1_validate` **26/26** (incl. `ui_app_byte_unchanged`); integrity
+`build_offline_home_validate` **177/177**, offline-home pytest **4/4**, loader-parity **10/10** (node
+v22), MLMC **66/66** (inner+stage3 16, tail_est+tail3 15, tail4+tail4b 22, tail5 13). Governed artifacts
+re-checked byte-stable: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`, `ui_data.json`
+contract `1.23.0`, headline `39975.654628199336`. The smoke run's rewrite of
+`docs/validation/RUN_MODEL_{SUMMARY,AGGREGATION_REPORT}.json` was timestamp/run-id/path only
+(`reproducibility_digest` identical) and was reverted, per the W194–W208 convention. Agent-lock unit
+suites (cadence 14/14, identity 4/4) were **not re-run** (each spawns real git subprocesses ~19 s/test,
+over the sandbox 45 s/call ceiling); `agent_lock.py` was **live-exercised** (preflight PROCEED → acquire
+ACQUIRED 00:09:03Z → release).
+
+**GENUINELY-NEW finding — the drift has entered the other agent's window.** W208 projected the next
+accepted cycle onto `~00:0xZ 2026-07-24` = Codex's nominal 00:00 UTC slot; W209 acquired
+**00:09:03Z** — a THIRD successive confirmed forecast and the first that lands the accepted claude
+cycle *on* Codex's designated window. The accepted-cycle acquire series now has FIVE consecutive
+~+11.0 h points, completing a clock wrap:
+`04:09Z (W205) → 15:09:53Z (W206) → 02:09:23Z (W207) → 13:09:45Z (W208) → 00:09:03Z (W209)`.
+Mechanism: W208 released `13:22:18Z` → 600-min floor expired `2026-07-23T23:22:18Z` → first hourly
+cron firing past the floor is `00:00Z` → acquired `00:09:03Z` (release→acquire gap **≈646.8 min**).
+The W204 cadence guard rate-limits (≥600 min) but does **not** phase-lock. This is the exact
+configuration the lock backstop exists for (coincident windows); it held — Claude acquired uncontested,
+Codex still absent (0 acquires / 0 commits ever) — but the margin is now zero. Projected next accepted
+cycle: releases ~`00:2xZ` → floor expires ~`10:2xZ` → first hourly firing past it is `11:00Z` →
+**next PROCEED ~`11:0xZ 2026-07-24`** (one hour shy of Codex's 12:00 slot).
+
+**Owner actions (unchanged set; re-ordered by urgency).** (1) **cron `0 * * * *` → `0 2,14 * * *`** —
+now thrice-confirmed AND occupying the Codex 00:00 slot; **time-critical**; post-fix acquire stamps must
+read fixed `18:06:01Z`/`06:06:01Z`. (2) decide whether Codex runs at all (0 acquires ever) — now
+time-sensitive. (3) **rotate the GitHub PAT** in the mount's `origin` remote (W200, still unrotated).
+(4) unblock the model frontier — Phase 38 T3 / LSMC / MR-LONGEV-1 / MLMC default / freeze.
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_24_w209`, `last_run`,
+`last_updated`, `last_owner`, `overall_status`, `last_run_note`), `MODEL_DEV_LOG.md` (this entry),
+`docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_24_w209_verify_sync.md` (new). **No model-FORM /
+contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task
+mutation** (owner-scoped — reported, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_24_w209_verify_sync.md`
