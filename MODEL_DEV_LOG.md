@@ -14120,3 +14120,61 @@ contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; n
 mutation** (owner-scoped — reported, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_24_w210_verify_sync.md`
+
+## W211 — 2026-07-24T22:1xZ — exhausted-backlog verify + mount-sync; drift confirmed 5th time, has TRANSITED PAST Codex 12:00 slot (full-ring sweep complete) [claude]
+
+**Conclusion first.** 18th consecutive exhausted-backlog cycle: no auto-admissible model work exists;
+every remaining model-FORM item is **OWNER-GATED** and was not executed. Full verification battery is
+**GREEN**, governed artifacts are byte-stable, and the mount is synced to origin/main. The one
+genuinely-new, non-duplicate finding: **the +11 h/cycle accepted-cycle drift is confirmed a FIFTH
+successive time** — W211 acquired **22:09:05Z**, exactly the `~22:0xZ` W210 predicted — and has now
+**transited PAST Codex's 12:00 slot**, so the accepted cycle has swept **both** Codex windows (00:00 at
+W209, 12:00 across W210→W211) with **zero** lock contention. This is the first empirical proof the
+push-based lock backstop tolerates the hourly-cron drift across the **entire 24 h ring**, which
+**down-grades the cron fix from safety-critical to waste-only**.
+
+**Full battery GREEN** (pinned `numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3`, throwaway venv): Gate C
+self-test `self_test_ok:true`/`engine_ready:true` and `run_model --n-outer 100 --n-inner 4 --no-tail
+--seed 42` **bit-matched** 49657.9 / 37499.0 / 30267.9; Gate D spec-AST, workflow-YAML (stdlib
+structural parse — no pyyaml in this venv), bootstrap self-test, and `build_phase_pkg_task1_validate`
+**26/26** (incl. `ui_app_byte_unchanged`); integrity `build_offline_home_validate` **177/177**,
+offline-home pytest **4/4**, loader-parity **10/10** (node v22), MLMC **66/66** (inner+stage3 16,
+tail_est+tail3 15, tail4+tail4b 22, tail5 13 — run in two batches 31+35 under the sandbox 45 s/call
+ceiling). Governed artifacts re-checked byte-stable: `offline_home.html` md5
+`03d6538d3cae9efb83062ecbfab096e9`, `ui_data.json` contract `1.23.0`, headline `39975.654628199336`.
+The smoke run's rewrite of `docs/validation/RUN_MODEL_{SUMMARY,AGGREGATION_REPORT}.json` was
+timestamp/run-id/path only and was reverted, per the W194–W210 convention. Agent-lock unit suites
+(cadence 14/14, identity 4/4) were **not re-run** (each spawns real git subprocesses ~19 s/test, over
+the sandbox 45 s/call ceiling); `agent_lock.py` was **live-exercised** (preflight PROCEED → acquire
+ACQUIRED 22:09:05Z → release).
+
+**GENUINELY-NEW finding — the drift has completed a full sweep of BOTH Codex windows.** W210 projected
+the next accepted cycle onto `~22:0xZ 2026-07-24` (just past Codex's 12:00 slot); W211 acquired
+**22:09:05Z** — a FIFTH successive confirmed forecast. The accepted-cycle acquire series now has SEVEN
+consecutive ~+11.0 h points:
+`04:09Z (W205) → 15:09:53Z (W206) → 02:09:23Z (W207) → 13:09:45Z (W208) → 00:09:03Z (W209) → 11:08:38Z (W210) → 22:09:05Z (W211)`;
+the last inter-acquire gap is **11h00m27s**. W209 occupied the 00:00 Codex slot and W210 approached
+12:00 from below (~51 min shy); W211 has now jumped **past** 12:00, so across W209→W211 the accepted
+cycle transited **both** nominal Codex windows. Mechanism: W210 released `11:15:37Z` → 600-min floor
+expired `2026-07-24T21:15:37Z` → first hourly cron firing past the floor is `22:00Z` → acquired
+`22:09:05Z` (release→acquire gap **≈653.5 min**). The W204 cadence guard rate-limits (≥600 min) but
+does **not** phase-lock. **Crucially, Codex still holds 0 acquires / 0 commits ever**, so the full-ring
+sweep produced no contention — empirical evidence the lock backstop is sufficient even under the
+mis-set cron. Projected next accepted cycle: releases `~22:2xZ` → floor expires `~08:2xZ 2026-07-25` →
+first hourly firing past it is `09:00Z` → **next PROCEED `~09:0xZ 2026-07-25`, between both Codex slots**.
+
+**Owner actions (unchanged set; re-prioritised on the new safety evidence).** (1) **cron
+`0 * * * *` → `0 2,14 * * *`** — now **five-times-confirmed** drift that has swept both Codex slots;
+the backstop held throughout, so this is **waste-elimination, no longer safety-critical** (each stray
+hourly firing still rebuilds a venv and runs the full battery for zero model progress). (2) decide
+whether Codex runs at all (0 acquires ever). (3) **rotate the GitHub PAT** embedded in the mount's
+`origin` remote (W200, still unrotated) — the only genuinely open **security** item. (4) unblock the
+model frontier — Phase 38 T3 / LSMC / MR-LONGEV-1 / MLMC default / freeze (all owner-gated).
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_24_w211`, `last_run`, `last_updated`,
+`last_owner`, `overall_status`, `last_run_note`), `MODEL_DEV_LOG.md` (this entry),
+`docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_24_w211_verify_sync.md` (new). **No model-FORM /
+contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task
+mutation** (owner-scoped — reported, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_24_w211_verify_sync.md`
