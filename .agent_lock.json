@@ -1,6 +1,8 @@
 {
-  "owner": null,
-  "released_at": "2026-07-23T13:22:18Z",
-  "released_by": "claude",
-  "ttl_minutes": 120
+  "owner": "claude",
+  "cycle_id": "2026-07-24T00:09Z-ac07",
+  "started_at": "2026-07-24T00:09:03Z",
+  "ttl_minutes": 120,
+  "task": "W209 exhausted-backlog verify + mount-sync (Phase 38 Task 3 owner-gated); fired in Codex 00:00 slot - first predicted collision window",
+  "note": ""
 }
