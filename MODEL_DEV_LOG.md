@@ -14241,3 +14241,72 @@ contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; n
 mutation** (owner-scoped — reported, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_26_w212_verify_sync.md`
+
+---
+
+## W213 — Phase 38 backlog-exhausted verification + mount-sync (claude, 2026-07-26T21:1xZ AUTO)
+
+**Verdict PASS. FULL BATTERY GREEN; governed artifacts byte-stable; mount synced to origin/main. No
+model-FORM / contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no
+scheduled-task mutation.** The single `in_progress` item (`.claude-dev/MODEL_DEV_STATE.json`) is
+**Phase 38 Task 3** (fold Cash Flows + Products + the Phase 37 Scenario Explorer into byte-pinned
+`ui_app.html` as native tabs), which stays **OWNER-GATED** (sha256 re-baseline across the gate scripts
++ a `ui_data.json` contract bump). This is the **20th consecutive** cycle with no auto-admissible
+model work — the model-FORM backlog is entirely owner-gated and the auto-admissible test-tooling
+backlog was exhausted at W85.
+
+**Gates GREEN on the pinned engine lock** (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3, fresh
+`/tmp/engine_venv`): **C** `launch_offline_gui.py --self-test` → `self_test_ok:true`,
+`engine_ready:true`; `run_model.py` 100×4 no-tail seed 42 bit-match **nested 49657.9 / gaussian
+37499.0 / var-covar 30267.9**. **D** `actuarial_gui.spec` AST-parses; `release.workflow.yml` valid
+(pyyaml `safe_load`; jobs `build`+`release`); `offline_bootstrap.py --self-test` OK; 
+`build_phase_pkg_task1_validate.py` **pass** (incl. `ui_app_byte_unchanged`, `governed_headline_present`);
+per-OS binary BUILD stays owner/CI-gated (`.github/workflows` absent + 0 `v*` tags), correct.
+**Integrity + byte-stable:** `build_offline_home_validate` **177/177**; `offline_home_loader_parity`
+node v22.22.3 **10/10**; pytest `test_offline_home_validate` + MLMC suite **70 passed** (offline_home 4
++ MLMC 66); `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json` contract
+**1.23.0**; headline **39975.654628199336** — all byte-identical to W81–W212. The Gate-C smoke rewrite
+of `docs/validation/RUN_MODEL_{AGGREGATION_REPORT,SUMMARY}.json` differed only in timestamp/duration
+(model results identical) and was **reverted**, not committed.
+
+**GENUINELY-NEW finding — the +11 h drift metronome RESUMED; W212's 36 h gap disambiguated to host
+downtime.** W212 left open whether its 36 h acquire→acquire gap was (a) a ~day-long host dormancy on
+2026-07-25 or (b) an owner cron edit. **W213 resolves it in favour of (a).** W212 released
+`10:21:42Z 07-26`; the 600-min cadence floor cleared at `20:21:42Z 07-26`; the first hourly firing
+strictly past it is `21:00Z 07-26`; W213 preflight PROCEEDed `~21:07:58Z` and acquired
+**`21:08:42Z 07-26`** — a clean **+10h59m01s** step off W212's `10:09:41Z` acquire and *exactly* what an
+**unmodified hourly cron (`0 * * * *`) + the 600-min floor** predicts. Had the owner corrected the cron
+to `0 2,14 * * *` (06:00Z/18:00Z), W213 would have landed near `18:00Z 07-26` or `06:00Z 07-27`, **not**
+`21:08Z` — so reading **(b) is effectively ruled out**. Conclusion: **the cron remains mis-set to
+hourly**, W212's ~day-long gap was pure **host downtime on 07-25** (machine off / Cowork app closed),
+and once the host resumed (by `~10:09Z 07-26`) the hourly-cron + floor drift **immediately
+re-established**. The drift is benign — the W204 guard collapses hourly firings to ≤1 accepted cycle
+per 10 h and the push-based lock stays uncontested (**Codex still 0 acquires / 0 commits ever**; W213
+acquired uncontested).
+
+Accepted-cycle acquire series, extended:
+```
+W209  2026-07-24T00:09:03Z
+W210  2026-07-24T11:08:38Z   (+10h59m)
+W211  2026-07-24T22:09:05Z   (+11h00m)
+W212  2026-07-26T10:09:41Z   (+36h00m  ← host dormant ~1 day on 07-25)
+W213  2026-07-26T21:08:42Z   (+10h59m  ← metronome RESUMED; cron confirmed still hourly)
+```
+
+**Owner actions (re-prioritised on the W213 resume evidence).** (1) **Fix the cron `0 * * * *` →
+`0 2,14 * * *`** (02:00/14:00 HKT = 18:00/06:00 UTC) — now **confirmed still hourly**; waste-elimination,
+not safety-critical (guard + lock hold). (2) Optionally confirm the 2026-07-25 host downtime — W213
+already evidences reading (a). (3) **Decide whether Codex runs at all** (0 acquires / commits ever). (4)
+**Rotate the GitHub PAT** embedded in the mount's `origin` remote (W200, still unrotated) — only open
+security item. (5) **Unblock the model frontier or freeze it** — Phase 38 T3 / LSMC inner-loop proxy /
+MR-LONGEV-1 / MLMC default (stage 5) / signed binaries, all owner-gated; absent a decision, cycles
+remain verify+sync only.
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_26_w213`, `last_run`, `last_updated`,
+`last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 167→168),
+`MODEL_DEV_LOG.md` (this entry),
+`docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_26_w213_verify_sync.md` (new). **No model-FORM /
+contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task
+mutation** (owner-scoped — reported, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_26_w213_verify_sync.md`
