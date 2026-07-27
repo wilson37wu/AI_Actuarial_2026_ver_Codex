@@ -14310,3 +14310,65 @@ contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; n
 mutation** (owner-scoped — reported, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_26_w213_verify_sync.md`
+
+---
+
+## W214 — 2026-07-27T08:08–08:1xZ — exhausted-backlog verification + mount-sync (SKILL-sanctioned)
+
+**Cycle-id `2026-07-27T08:08Z-1bff` · owner claude (Cowork) · preflight PROCEED · acquire 08:08:43Z · uncontested.**
+
+**Conclusion first.** Model healthy and byte-stable; working folder synced to `origin/main`. **21st
+consecutive** cycle with **no auto-admissible model work** — Phase 38 Task 3 and the whole model-FORM
+backlog stay owner-gated. One genuinely-new datum: **the +11h accepted-cycle drift metronome CONTINUED a
+second consecutive post-resume step (W213 `21:08:42Z` → W214 `08:08:43Z`, +11h00m01s), the third
+consecutive confirmation the scheduled cron is still `0 * * * *` (hourly) and was NOT corrected to
+`0 2,14`.**
+
+**Verification battery — FULL GREEN** (pinned engine `numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3`,
+throwaway venv):
+- Gate C — offline GUI `self_test_ok:true`, `engine_ready:true`; frozen smoke bit-match nested **49657.9**
+  / gaussian **37499.0** / var-covar **30267.9**.
+- Gate D — spec AST-parse OK; `release.workflow.yml` valid (pyyaml `safe_load`; jobs `build`,`release`);
+  `offline_bootstrap --self-test` `self_test_ok:true`; `build_phase_pkg_task1_validate` `ok:true` (incl
+  `ui_app_byte_unchanged`, `governed_headline_present`).
+- Integrity — `build_offline_home_validate` **177/177**; node loader parity **10/10**; pytest
+  offline_home + MLMC **70 passed** (4 + 66) in 35.86s.
+- Governed artifacts byte-stable: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json`
+  contract `1.23.0`; headline SCR `39975.654628199336`.
+
+**Genuinely-new finding — the +11h metronome held for a 2nd post-resume step.** W213 released
+`21:28:01Z 07-26`; the 600-min cadence floor cleared `07:28:01Z 07-27`; the first hourly firing strictly
+past it (`08:00Z`) acquired `08:08:43Z 07-27` — a clean **+11h00m01s** off W213's `21:08:42Z` acquire and
+*exactly* what an unmodified hourly cron (`0 * * * *`) + the 600-min floor predicts. A corrected
+`0 2,14 * * *` cron would have fired near `06:00Z`/`18:00Z`, **not** `08:08Z` — so a cron fix stays ruled
+out, and W212's isolated 36h gap is now firmly a **one-off host dormancy on 07-25**, since the beat
+re-established at W213 and held again at W214. The drift is benign — the W204 guard collapses hourly
+firings to ≤1 accepted cycle / 10h and the push-based lock stays uncontested (**Codex still 0 acquires /
+0 commits ever**).
+
+Accepted-cycle acquire series, extended:
+```
+W211  2026-07-24T22:09:05Z
+W212  2026-07-26T10:09:41Z   (+36h00m  ← one-off host dormancy 07-25)
+W213  2026-07-26T21:08:42Z   (+10h59m01s  ← metronome RESUMED)
+W214  2026-07-27T08:08:43Z   (+11h00m01s  ← metronome CONTINUES; cron still hourly)
+```
+Projection: W214 releases `~08:1xZ 07-27` → floor clears `~18:1xZ` → first hourly firing past it `19:00Z`
+→ next accepted cycle `~19:0xZ 07-27`.
+
+**Owner actions (unchanged; re-evidenced).** (1) **Fix the cron `0 * * * *` → `0 2,14 * * *`** (02:00/14:00
+HKT = 18:00/06:00 UTC) — now thrice-confirmed still hourly; waste-elimination, not safety-critical
+(guard + lock hold). (2) **Decide whether Codex runs at all** (0 acquires / commits ever). (3) **Rotate the
+GitHub PAT** embedded in the mount's `origin` remote (W200, still unrotated) — only open security item.
+(4) **Unblock the model frontier or freeze it** — Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 /
+MLMC default (stage 5) / signed per-OS binaries, all owner-gated; absent a decision, cycles remain
+verify+sync only.
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_27_w214`, `last_run`, `last_updated`,
+`last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 168→169),
+`MODEL_DEV_LOG.md` (this entry),
+`docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_27_w214_verify_sync.md` (new). **No model-FORM / contract /
+headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation**
+(owner-scoped — reported, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_27_w214_verify_sync.md`
