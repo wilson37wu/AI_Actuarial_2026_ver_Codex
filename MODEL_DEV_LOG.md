@@ -14372,3 +14372,74 @@ headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled
 (owner-scoped — reported, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_27_w214_verify_sync.md`
+
+## W215 — 2026-07-27T19:08–19:2xZ — exhausted-backlog verification + mount-sync (SKILL-sanctioned)
+
+**Conclusion first.** Model healthy and byte-stable; working folder synced to `origin/main`. This is the
+**22nd consecutive** cycle with **no auto-admissible model work** — Phase 38 Task 3 and the entire
+model-FORM backlog stay owner-gated. The cycle's genuinely-new contribution: **the +11h drift metronome
+CONTINUED a THIRD consecutive post-resume step (W214 `08:08:43Z` → W215 `19:08:49Z`, +11h00m06s), and — a
+first — W214's forward projection was PROSPECTIVELY confirmed** (W214 predicted the next accepted cycle at
+`~19:0xZ 07-27`; W215 actually acquired `19:08:49Z`). That is the fourth consecutive confirmation the cron
+is still hourly (`0 * * * *`). No lock contention (Codex 0 acquires / 0 commits ever).
+
+**Verification battery — FULL GREEN.** Pinned engine `numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3`
+(throwaway venv).
+
+| Gate | Result |
+|---|---|
+| C — offline GUI self-test | `self_test_ok:true`, `engine_ready:true` |
+| C — frozen smoke bit-match | nested **49657.9** / gaussian **37499.0** / var-covar **30267.9** OK |
+| D — spec AST parse | OK |
+| D — release workflow YAML | valid (jobs `build`, `release`) |
+| D — offline_bootstrap self-test | `ok:true` (7/7 checks) |
+| D — build_phase_pkg_task1_validate | `ok:true` (incl. `ui_app_byte_unchanged`, `governed_headline_present`) |
+| Integrity — build_offline_home_validate | **177/177** |
+| Integrity — loader parity (node v22.22.3) | **10/10** |
+| Integrity — offline_home + MLMC pytest | **70 passed** (4 + 66) in 30.80s |
+| Agent-lock | live-exercised: preflight PROCEED → acquire `19:08:49Z` → release |
+
+**Governed artifacts — byte-stable:** `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`;
+`ui_data.json` contract `1.23.0`; headline SCR `39975.654628199336`. The Gate-C smoke run's rewrite of
+`docs/validation/RUN_MODEL_{SUMMARY,AGGREGATION_REPORT}.json` was timestamp/run-id/duration only and was
+git-restored, keeping the commit churn-free.
+
+**Genuinely-new finding — the metronome's forward prediction is now prospectively validated.** W214
+released `08:18:34Z 07-27`; the 600-min cadence floor cleared `18:18:34Z 07-27`; the first hourly firing
+strictly past it (`19:00Z`) acquired `19:08:49Z 07-27` — a clean **+11h00m06s** off W214's `08:08:43Z` and
+a to-the-minute match of W214's own projection (`~19:0xZ`). Prior cycles fitted the +11h beat
+retrospectively; **W215 is the first time the prediction was confirmed prospectively.** A corrected
+`0 2,14 * * *` cron would have fired near `06:00Z`/`18:00Z`, **not** `19:08Z` — so a cron fix stays ruled
+out for a fourth consecutive cycle.
+
+Accepted-cycle acquire series, extended:
+```
+W211  2026-07-24T22:09:05Z
+W212  2026-07-26T10:09:41Z   (+36h00m     ← one-off host dormancy 07-25)
+W213  2026-07-26T21:08:42Z   (+10h59m01s  ← metronome RESUMED)
+W214  2026-07-27T08:08:43Z   (+11h00m01s  ← metronome CONTINUES)
+W215  2026-07-27T19:08:49Z   (+11h00m06s  ← 3rd post-resume step; projection confirmed)
+```
+
+**Diagnostic caveat for the owner (new).** The next accepted cycle **W216 is projected at `~06:0xZ 07-28`,
+which is AMBIGUOUS**: both the still-hourly hypothesis (floor clears `~05:2xZ` → first firing `06:00Z`) and
+a corrected `0 2,14` cron (fires `06:00Z` UTC) predict `~06:00Z`. W216 alone therefore **cannot** confirm a
+cron fix. The disambiguating cycle is **W217**: still-hourly predicts `~17:0xZ 07-28` (floor-gated), a fixed
+cron predicts `~18:0xZ 07-28`. **Read the W217 acquire stamp, not W216, to verify any cron edit landed.**
+
+**Owner actions (unchanged; re-evidenced).** (1) **Fix the cron `0 * * * *` → `0 2,14 * * *`** (02:00/14:00
+HKT = 18:00/06:00 UTC) — now four-times-confirmed still hourly and, as of W215, prospectively validated;
+waste-elimination, not safety-critical (W204 guard + lock hold). (2) **Decide whether Codex runs at all**
+(0 acquires / commits ever). (3) **Rotate the GitHub PAT** embedded in the mount's `origin` remote (W200,
+still unrotated) — only open security item. (4) **Unblock the model frontier or freeze it** — Phase 38 T3 /
+LSMC inner-loop proxy / MR-LONGEV-1 / MLMC default (stage 5) / signed per-OS binaries, all owner-gated;
+absent a decision, cycles remain verify+sync only.
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_27_w215`, `last_run`, `last_updated`,
+`last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 169→170),
+`MODEL_DEV_LOG.md` (this entry),
+`docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_27_w215_verify_sync.md` (new). **No model-FORM / contract /
+headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation**
+(owner-scoped — reported, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_27_w215_verify_sync.md`
