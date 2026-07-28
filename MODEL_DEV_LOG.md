@@ -14471,3 +14471,31 @@ Both the +11h step and the persistent `:08` minute-phase point to an unmodified 
 **Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_28_w216`, `last_run`, `last_updated`, `last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 170→171), `MODEL_DEV_LOG.md` (this entry), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_28_w216_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation** (owner-scoped — reported, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_28_w216_verify_sync.md`
+
+---
+
+## W217 — 2026-07-28T17:08:31Z — exhausted-backlog verification + mount-sync (claude/Cowork)
+
+**Cycle-id** `2026-07-28T17:08Z-bd5f` · **Task pointer** Phase 38 Task 3 (ui_app.html native-tab cutover) — **OWNER-GATED, not executed** · **Preflight** PROCEED (lock free; cadence floor cleared `16:19:27Z`).
+
+**Conclusion.** Model healthy, byte-stable, mount synced to `origin/main`. **24th consecutive** cycle with no auto-admissible model work — the entire model-FORM backlog is owner-gated. Full verification battery GREEN. **W217 is the disambiguator the last two cycles deferred to, and it resolves the question: the cron is CONFIRMED STILL HOURLY.**
+
+**Battery (pinned engine numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3).**
+Gate C: `self_test_ok:true`, `engine_ready:true`; smoke bit-match nested **49657.9** / gaussian **37499.0** / var-covar **30267.9**.
+Gate D: spec AST OK; release workflow YAML valid (jobs `build`, `release`); `offline_bootstrap --self-test` ok; `build_phase_pkg_task1_validate` all 26 checks True (incl. `ui_app_byte_unchanged`, `governed_headline_present`).
+Integrity: `build_offline_home_validate` **177/177**; `test_offline_home_validate` **4/4**; node loader parity **10/10** (node v22.22.3); MLMC **66/66** (split 31 in 35.58s + 35 in 9.88s to fit the sandbox 45s/call ceiling).
+Governed byte-stable: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json` contract `1.23.0`; headline `39975.654628199336` verbatim. Gate-C smoke rewrite of `docs/validation/RUN_MODEL_{SUMMARY,AGGREGATION_REPORT}.json` git-restored (churn-free commit).
+
+**Metronome — DISAMBIGUATED.**
+```
+W215  2026-07-27T19:08:49Z   (+11h00m06s)
+W216  2026-07-28T06:08:32Z   (+10h59m43s  ← ambiguous slot)
+W217  2026-07-28T17:08:31Z   (+10h59m59s  ← 5th post-resume step; DISAMBIGUATES)
+```
+W216 could not distinguish the hypotheses because a corrected `0 2,14` cron also fires `06:00Z`. **W217 removes the ambiguity.** A fixed `0 2,14 * * *` cron fires only `06:00Z`/`18:00Z` UTC and **cannot** produce a `17:08:31Z` firing; the still-hourly hypothesis predicted exactly `~17:0xZ` (W216 released `06:19:27Z` → 600-min floor cleared `16:19:27Z` → the `16:00Z` tick was gated, the `17:00Z` tick was the first past the floor → acquire `17:08:31Z` after ~8m startup). The `:08` minute-of-hour firing phase is also preserved across all four steps. **Verdict: the cron is STILL `0 * * * *` (hourly); owner action 1 is decisively — not just suggestively — outstanding.** This is the 6th consecutive still-hourly confirmation and the first that is conclusive on its own.
+
+**Owner actions (re-evidenced; action 1 now DECISIVE).** (1) **Fix the cron `0 * * * *` → `0 2,14 * * *`** (02:00/14:00 HKT = 18:00/06:00 UTC) — W217 conclusively confirms it is still hourly; waste-elimination, not safety-critical (W204 cadence guard + lock hold bound the cost to ≤1 cycle/10h). (2) **Decide whether Codex runs at all** (0 acquires / commits ever). (3) **Rotate the GitHub PAT** embedded in the mount's `origin` remote (W200, still unrotated) — only open security item. (4) **Unblock or freeze the model frontier** — Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 / MLMC default (stage 5) / signed per-OS binaries, all owner-gated; absent a decision, cycles remain verify+sync only.
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_28_w217`, `last_run`, `last_updated`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 171→172), `MODEL_DEV_LOG.md` (this entry), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_28_w217_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation** (owner-scoped — reported, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_28_w217_verify_sync.md`
