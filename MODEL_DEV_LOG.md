@@ -14499,3 +14499,32 @@ W216 could not distinguish the hypotheses because a corrected `0 2,14` cron also
 **Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_28_w217`, `last_run`, `last_updated`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 171→172), `MODEL_DEV_LOG.md` (this entry), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_28_w217_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation** (owner-scoped — reported, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_28_w217_verify_sync.md`
+
+---
+
+## W218 — 2026-07-29T04:09:02Z — exhausted-backlog verification + mount-sync (claude/Cowork)
+
+**Cycle-id** `2026-07-29T04:09Z-7bda` · **Task pointer** Phase 38 Task 3 (ui_app.html native-tab cutover) — **OWNER-GATED, not executed** · **Preflight** PROCEED (lock free; cadence floor cleared `03:21:15Z`).
+
+**Conclusion.** Model healthy, byte-stable, mount synced to `origin/main`. **25th consecutive** cycle with no auto-admissible model work — the entire model-FORM backlog is owner-gated. Full verification battery GREEN. **W218 is a straightforward continuation of the W217 decisive finding: the cron is STILL HOURLY — 7th consecutive confirmation — a full ~11h after the disambiguation, with no new model information.** Recorded as a single non-duplicate data point; no banner/graphic churn.
+
+**Battery (pinned engine numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3, throwaway venv).**
+Gate C: `self_test_ok:true`, `engine_ready:true`; smoke bit-match nested **49657.9** / gaussian **37499.0** / var-covar **30267.9**.
+Gate D: spec AST OK; release workflow YAML valid (jobs `build`, `release`); `offline_bootstrap --self-test` ok; `build_phase_pkg_task1_validate` all 26 checks True (incl. `ui_app_byte_unchanged`, `governed_headline_present`).
+Integrity: `build_offline_home_validate` **177/177**; `test_offline_home_validate` **4/4**; node loader parity **10/10** (node v22.22.3); MLMC **66/66** (32.73s, single run this cycle).
+Governed byte-stable: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json` contract `1.23.0`; headline `39975.654628199336` verbatim. Gate-C smoke rewrite of `docs/validation/RUN_MODEL_{SUMMARY,AGGREGATION_REPORT}.json` (timestamp/run-id/duration churn only; reproducibility_digest unchanged) git-restored → churn-free commit.
+Agent-lock: live-exercised (preflight PROCEED `04:08:13Z` → acquire `04:09:02Z` → release this cycle). Cadence/identity unit suites launched but exceeded the sandbox 45s/call budget (git subprocesses); unchanged since W206, not re-confirmed this cycle.
+
+**Metronome — 6th post-resume step (still hourly).**
+```
+W216  2026-07-28T06:08:32Z
+W217  2026-07-28T17:08:31Z   (+10h59m59s  ← disambiguator: ruled out fixed 0 2,14 cron)
+W218  2026-07-29T04:09:02Z   (+11h00m31s  ← 6th post-resume step; 7th still-hourly confirmation)
+```
+W217 released `17:21:15Z 07-28` → the 600-min cadence floor cleared `03:21:15Z 07-29` → the `18:00Z..03:00Z` hourly ticks were gated (pre-floor) and the `04:00Z` tick was the first past it → preflight PROCEED `04:08:13Z` → acquire `04:09:02Z` (~9m startup). The `:08`/`:09` minute-of-hour firing phase is preserved. Like W217, W218 is independently dispositive: a fixed `0 2,14 * * *` cron fires only `06:00Z`/`18:00Z` and **cannot** produce a `04:09Z` firing — so this is the 2nd consecutive independently-conclusive still-hourly datum. **Verdict: the cron remains `0 * * * *` (hourly) as of `04:09Z 07-29`; owner action 1 still outstanding.**
+
+**Owner actions (unchanged; re-evidenced).** (1) **Fix the cron `0 * * * *` → `0 2,14 * * *`** (02:00/14:00 HKT = 18:00/06:00 UTC) — 7th consecutive still-hourly confirmation; waste-elimination, not safety-critical (W204 cadence guard + lock hold bound the cost to ≤1 cycle/10h). Once fixed the next accepted acquire should read `~06:00Z`/`~18:00Z`, not the `:08` phase. (2) **Decide whether Codex runs at all** (0 acquires / commits ever; verified `acquire[codex]`=0 vs `acquire[claude]`=331). (3) **Rotate the GitHub PAT** embedded in the mount's `origin` remote (W200, still unrotated) — only open security item. (4) **Unblock or freeze the model frontier** — Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 / MLMC default (stage 5) / signed per-OS binaries, all owner-gated; absent a decision, cycles remain verify+sync only.
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_29_w218`, `last_run`, `last_updated`, `last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 172→173), `MODEL_DEV_LOG.md` (this entry), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_29_w218_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation** (owner-scoped — reported, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_29_w218_verify_sync.md`
