@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-07-30T02:1xZ",
+  "last_run": "2026-07-30T13:13Z",
   "last_run_duration_minutes": null,
-  "last_run_note": "W220 exhausted-backlog verification + mount-sync (2026-07-30T02:07-02:1xZ). FULL BATTERY GREEN (Gate C self_test+engine_ready+smoke bit-match nested 49657.9/gaussian 37499.0/var-covar 30267.9; Gate D spec-AST + workflow YAML jobs build/release + bootstrap self-test + build_phase_pkg_task1_validate all checks True; integrity offline_home 177/177 + node parity 10/10 + pytest offline_home 4/4 + MLMC 66/66). Governed artifacts byte-stable (offline_home.html md5 03d6538d..., ui_data 1.23.0, headline 39975.654628199336). W220 datum: 2nd consecutive DIRECT scheduled-tasks-API read confirms cron STILL '0 * * * *' (hourly), enabled, jitter361s, nextRun 03:06:01Z - owner action 1 unapplied since W219's first direct read (~11h). No model-FORM/contract/headline/banner change; no scheduled-task mutation (owner-scoped - reported, not applied). Phase 38 Task 3 owner-gated.",
+  "last_run_note": "W221 exhausted-backlog verification + mount-sync (2026-07-30T13:07-13:1xZ). FULL BATTERY GREEN (Gate C self_test+engine_ready+smoke bit-match nested 49657.9/gaussian 37499.0/var-covar 30267.9; Gate D spec-AST + workflow YAML jobs build/release + bootstrap self-test + build_phase_pkg_task1_validate 26/26; integrity offline_home 177/177 + node parity 10/10 + pytest offline_home 4/4 + MLMC 66/66). Governed artifacts byte-stable (offline_home.html md5 03d6538d..., ui_data 1.23.0, headline 39975.654628199336). W221 datum: 3rd consecutive DIRECT scheduled-tasks-API read confirms cron STILL '0 * * * *' (hourly), enabled, jitter361s, lastRun 13:06:39.849Z, nextRun 14:06:01Z - owner action 1 unapplied ~22h after first direct read (W219). No model-FORM/contract/headline/banner change; no scheduled-task mutation (owner-scoped - reported, not applied). Phase 38 Task 3 owner-gated.",
   "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Tasks 1-2 COMPLETE (auto-admissible). ACTIVE in_progress = Phase 38 Task 3 = OWNER-GATED ui_app.html native-tab cutover (requires owner sha256 re-baseline across the gate scripts + a ui_data contract bump) - NOT auto-executed. Auto-admissible backlog SATURATED: governance-gate set saturated (INTEGRITY_GATE_MAP.md W92, VERIFICATION_RUNBOOK.md W93); tail-MLMC track complete through the stage-5 Neyman study (W95) consolidated into docs/MLMC_TAIL_EFFICIENCY_MAP.md (W96); offline-UI governed artifacts byte-stable; TASK_PROMPT hand-off banner refreshed W97 and left current through W98/W99/W100/W101/W102 (re-issuing is a near-duplicate). W99-W101 then W102 (2026-06-30 16:09Z) ran the SKILL-sanctioned exhausted-backlog branch: full verification battery GREEN + full tracked-file mount sync; NO new gate/code/model-FORM/contract/headline change and NO banner re-churn. Researched forward pointer unchanged: the highest-leverage genuinely-NEW direction is an LSMC (least-squares Monte Carlo) regression PROXY of the inner risk-neutral valuation to replace the brute-force nested inner loop for SCR - the canonical next model-FORM beyond the now-exhausted MLMC variance-reduction track - but it is a model-FORM change and stays OWNER-GATED. W194 continues the exhausted-backlog branch (W99-W193 lineage); W194 additionally recorded a clean-room engine rebuild parity check and a six-day cadence outage (no runs 2026-07-15..2026-07-20). W106 registered behind the same hard near-duplicate guard: default to the exhausted-backlog verification + full mount-sync pass unless a genuinely NEW non-duplicate gap is demonstrated. NO model-FORM/contract/headline change (owner-gated); Phase 38 Task 3 owner-gated; LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 longevity driver / signed per-OS binaries all OWNER-GATED. W197 (2026-07-21T10:08Z) continued the exhausted-backlog branch and added ONE genuinely-new non-duplicate finding: the cadence fix VALUE recommended by W196 is corrected from '0 6,18 * * *' to '0 2,14 * * *' on host-local-timezone evidence (host verified UTC+8; two sibling scheduler tasks map cron hour to HKT hour). Disambiguation is a single nextRunAt reading after the owner sets it. No model-FORM/contract/headline/banner change; no near-duplicate brief added.",
-  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W220_VERIFY_SYNC_GREEN__CRON_STILL_HOURLY_BY_2ND_DIRECT_SCHEDULER_API_READ(cronExpression='0 * * * *',enabled,jitter361s,lastRun_02:06:36Z_nextRun_03:06:01Z_07-30)__OWNER_ACTION_1_UNAPPLIED_SINCE_W219__DOC_FIX='0 2,14 * * *'(HKT=18:00/06:00_UTC). Auto-admissible backlog SATURATED (27th consecutive verify+sync); model-FORM frontier owner-gated (Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 / MLMC-default stage5 / signed per-OS binaries).",
+  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W221_VERIFY_SYNC_GREEN__CRON_STILL_HOURLY_BY_3RD_DIRECT_SCHEDULER_API_READ(cronExpression='0 * * * *',enabled,jitter361s,lastRun_13:06:39.849Z_nextRun_14:06:01Z_07-30)__OWNER_ACTION_1_UNAPPLIED_SINCE_W219(~22h)__DOC_FIX='0 2,14 * * *'(HKT=18:00/06:00_UTC). Auto-admissible backlog SATURATED (28th consecutive verify+sync); model-FORM frontier owner-gated (Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 / MLMC-default stage5 / signed per-OS binaries).",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -820,7 +820,7 @@
     "phases_completed": 27,
     "estimated_completion_pct": 99,
     "average_cycle_duration_minutes": 53,
-    "cycles_run": 175,
+    "cycles_run": 176,
     "tasks_total": 116,
     "last_task": "Owner pivot C+D executed: C end-to-end verified; D authored+verified (build owner/CI-gated)",
     "next_task": "Auto-cycles: maintain/verify C run-path + assist D activation (owner installs CI workflow + tags/dispatches, or local pyinstaller build). Stage-5 governed default remains separately sign-off-gated.",
@@ -1124,7 +1124,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-07-30T02:1xZ",
+  "last_updated": "2026-07-30T13:13Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -7194,5 +7194,47 @@
       "Unblock or freeze the model frontier: Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 longevity driver / MLMC default (stage 5) / signed per-OS binaries - all owner-gated; absent a decision, cycles remain verify+sync only."
     ],
     "changes_this_cycle": "state (this key + last_run/last_updated/last_owner/overall_status/last_run_note/cycles_run 174->175), MODEL_DEV_LOG.md (W220 entry), docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_30_w220_verify_sync.md (new). No model-FORM/contract/headline/driver/MLMC-default/LSMC change; no banner re-churn; no scheduled-task mutation (owner-scoped - reported via email draft, not applied). Gate-C smoke rewrote docs/validation/RUN_MODEL_{SUMMARY,AGGREGATION_REPORT}.json (timestamp/run-id/duration churn only; SCR values + reproducibility_digests identical) -> git-restored for a churn-free commit."
+  },
+  "cycle_2026_07_30_w221_verify_sync": {
+    "owner": "claude",
+    "timestamp": "2026-07-30T13:09Z",
+    "cycle_id": "2026-07-30T13:09Z-f49e",
+    "type": "exhausted-backlog verification + mount-sync (SKILL-sanctioned branch)",
+    "task_pointer": "Phase 38 Task 3 (ui_app.html native-tab cutover) - OWNER-GATED, not executed",
+    "verdict": "FULL BATTERY GREEN; governed artifacts byte-stable; mount synced to origin/main. 28th consecutive cycle with no auto-admissible model work (entire model-FORM frontier owner-gated). W221 datum: THIRD consecutive DIRECT scheduled-tasks-API read confirms cronExpression='0 * * * *' (hourly), enabled=true, jitterSeconds=361, lastRunAt 2026-07-30T13:06:39.849Z, nextRunAt 2026-07-30T14:06:01Z - owner action 1 remains UNAPPLIED ~11h after W220's 2nd direct read (2026-07-30T02:06Z). Fresh ground-truth status of a mutable field, not a re-inference.",
+    "gates": {
+      "gate_c_self_test_ok": true,
+      "gate_c_engine_ready": true,
+      "gate_c_smoke_bitmatch": {
+        "nested": 49657.9,
+        "gaussian_copula": 37499.0,
+        "var_covar": 30267.9
+      },
+      "gate_d_spec_ast": true,
+      "gate_d_workflow_yaml": "valid (pyyaml safe_load; jobs: build, release)",
+      "gate_d_bootstrap_ok": true,
+      "gate_d_pkg_validate": "ok (build_phase_pkg_task1_validate 26/26 checks pass incl ui_app_byte_unchanged, governed_headline_present)",
+      "offline_home_validate": "177/177",
+      "node_loader_parity": "10/10 (node v22.22.3)",
+      "pytest_offline_home_and_mlmc": "70 passed (offline_home 4/4 in 0.10s + MLMC 66/66: batch A 27 in 18.55s [inner+stage3_wiring+tail_estimator], batch B 39 in 17.12s [tail_stage3/4/4b/5]; split into two runs due to 45s sandbox call cap)",
+      "agent_lock_live": "preflight PROCEED 13:07Z (cadence floor cleared - 643 min after W220 release 02:23:24Z) + acquire 13:09:39Z (cycle f49e) + release this cycle (live-exercised); cadence/identity unit suites unchanged since W206, not re-run"
+    },
+    "governed_artifacts": {
+      "byte_stable": true,
+      "offline_home_html_md5": "03d6538d3cae9efb83062ecbfab096e9",
+      "ui_data_contract": "1.23.0",
+      "headline_scr": 39975.654628199336
+    },
+    "primary_observation": {
+      "title": "3rd consecutive DIRECT scheduler-API read: auto_actuarial_stochastic_model cron STILL '0 * * * *' (hourly), enabled=true, jitterSeconds=361, lastRunAt 2026-07-30T13:06:39.849Z, nextRunAt 2026-07-30T14:06:01Z. W219 first direct read (2026-07-29T15:06Z), W220 second (2026-07-30T02:06Z), W221 third confirms no owner change across ~22h.",
+      "detail": "Fresh ground-truth reading of a mutable field, not a re-inference. Task description field still reads '12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC' while cronExpression stays '0 * * * *' - description and cron disagree, confirming the fix was never applied. Host-local-timezone cross-check unchanged: sibling tasks render cron-hour = HKT-hour (daily-markets-briefing '0 7 * * *'='07:00 HKT'; friday-weekly-digest '0 18 * * 5'='18:00 HKT Fri'), so 18:00/06:00 UTC = 02:00/14:00 HKT = fix cron '0 2,14 * * *'. W204 cadence guard again demonstrably working: this firing PROCEEDED only because it fell 643 min past the W220 release 02:23:24Z (past the 600-min floor); the ~10 intervening hourly ticks (03:06..12:06Z) were suppressed, bounding hourly-cron waste to <=1 accepted cycle per ~10h."
+    },
+    "owner_actions": [
+      "Fix the cron '0 * * * *' -> '0 2,14 * * *' (02:00/14:00 HKT = 18:00/06:00 UTC). 3rd consecutive DIRECT scheduled-tasks-API confirmation (enabled=true, nextRunAt 2026-07-30T14:06:01Z); still unapplied ~22h after first direct read. Reversible one-field edit; waste-elimination, not safety-critical (W204 guard + lock hold bound cost to <=1 cycle/~10h).",
+      "Decide whether Codex runs at all (0 acquires / 0 commits ever; only claude has ever held the lock).",
+      "Rotate the GitHub PAT embedded in the mount 'origin' remote (flagged W200, still unrotated) - only open security item.",
+      "Unblock or freeze the model frontier: Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 longevity driver / MLMC default (stage 5) / signed per-OS binaries - all owner-gated; absent a decision, cycles remain verify+sync only."
+    ],
+    "changes_this_cycle": "state (this key + last_run/last_updated/last_owner/overall_status/last_run_note), MODEL_DEV_LOG.md (W221 entry), docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_30_w221_verify_sync.md (new). No model-FORM/contract/headline/driver/MLMC-default/LSMC change; no banner re-churn; no scheduled-task mutation (owner-scoped - reported via email draft, not applied). Gate-C smoke rewrote docs/validation/RUN_MODEL_{SUMMARY,AGGREGATION_REPORT}.json (timestamp/run-id/duration churn only; SCR values + reproducibility_digests identical) -> git-restored for a churn-free commit."
   }
 }
