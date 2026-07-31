@@ -14686,3 +14686,34 @@ The task's own `description` field documents the intended 12h cadence while `cro
 **Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_31_w223_verify_sync`, `last_run`, `last_updated`, `last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 177→178), `MODEL_DEV_LOG.md` (this entry), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_31_w223_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation** (owner-scoped — reported via email draft, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_31_w223_verify_sync.md`
+
+## W224 — 2026-07-31T22:09:38Z — exhausted-backlog verification + mount-sync (claude/Cowork)
+
+**Cycle-id** `2026-07-31T22:09Z-88d9` · **Task pointer** Phase 38 Task 3 (ui_app.html native-tab cutover) — **OWNER-GATED, not executed** · **Preflight** PROCEED (lock free; cadence floor cleared — 652 min after the W223 release `2026-07-31T11:16:07Z`).
+
+**Conclusion.** Model healthy, byte-stable, mount synced to `origin/main`. **31st consecutive** cycle with no auto-admissible model work — the entire model-FORM backlog is owner-gated. Full verification battery GREEN. **W224 datum: a SIXTH consecutive DIRECT scheduled-tasks-API read confirms `cronExpression = "0 * * * *"` (hourly), `enabled = true`, `jitterSeconds = 361`, `lastRunAt 2026-07-31T22:06:53.591Z`, `nextRunAt 2026-07-31T23:06:01Z` — i.e. owner action 1 remains UNAPPLIED ~55h after W219's first direct read (`2026-07-29T15:06Z`).** Current ground-truth status of a mutable field, not a re-inference.
+
+**Battery (pinned engine numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3, throwaway venv).**
+Gate C: `self_test_ok:true`, `engine_ready:true`; smoke bit-match nested **49657.9** / gaussian **37499.0** / var-covar **30267.9**.
+Gate D: spec AST OK; release workflow YAML valid (jobs `build`, `release`); `offline_bootstrap --self-test` ok; `build_phase_pkg_task1_validate` **26/26** checks True (incl. `ui_app_byte_unchanged`, `governed_headline_present`).
+Integrity: `build_offline_home_validate` **177/177**; `test_offline_home_validate` **4/4**; node loader parity **10/10** (node v22.22.3); MLMC **66/66** (batch A 27 in 17.93s [inner+stage3_wiring+tail_estimator] + batch B 39 in 15.90s [tail_stage3/4/4b/5]; split across two runs due to the 45s sandbox call cap).
+Governed byte-stable: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json` contract `1.23.0`; headline `39975.654628199336` verbatim. Gate-C smoke rewrite of `docs/validation/RUN_MODEL_{SUMMARY,AGGREGATION_REPORT}.json` (timestamp/run-id/duration churn only; SCR values + `reproducibility_digest`s identical) git-restored → churn-free commit.
+Agent-lock: live-exercised (preflight PROCEED `22:08Z` → acquire `22:09:38Z` cycle `88d9` → release this cycle).
+
+**W224 datum — the cron is STILL directly-confirmed hourly (6th consecutive direct read).**
+```
+scheduled task : auto_actuarial_stochastic_model
+cronExpression : 0 * * * *          <-- STILL hourly (GROUND TRUTH, read via API)
+enabled        : true
+jitterSeconds  : 361                <-- ~6m; explains the observed :06 firing phase
+lastRunAt      : 2026-07-31T22:06:53.591Z  (this firing)
+nextRunAt      : 2026-07-31T23:06:01Z
+description    : "...12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC, per AGENT_COORDINATION.md"
+```
+The task's own `description` field documents the intended 12h cadence while `cronExpression` remains `0 * * * *` — description and cron disagree, direct evidence the fix was never applied. W219 (`2026-07-29T15:06Z`) first direct read, W220 second, W221 third, W222 fourth, W223 fifth; W224 confirms no owner change across the full ~55h span. Host-local-timezone cross-check unchanged: sibling tasks render cron-hour = HKT-hour (`daily-markets-briefing` `0 7 * * *` = "07:01 AM HKT"; `friday-weekly-digest` `0 18 * * 5` = "06:03 PM HKT Fri"), so 18:00/06:00 UTC = 02:00/14:00 HKT = fix cron `0 2,14 * * *`. **Accepted-cycle metronome continues:** W223 acquire `11:09:19Z` → W224 acquire `22:09:38Z` = **+11h00m19s**, exactly the ~11h step an unmodified hourly cron + 600-min floor produces. The W204 cadence guard is again confirmed working: this cycle PROCEEDED only because it fired 652 min past the W223 release (past the 600-min floor); the ~10 intervening hourly ticks (`12:06Z..21:06Z` on 07-31) were suppressed — bounding hourly-cron waste to ≤1 accepted cycle per ~11h, as designed.
+
+**Owner actions (unchanged; action 1 re-confirmed by 6th direct read).** (1) **Fix the cron `0 * * * *` → `0 2,14 * * *`** (02:00/14:00 HKT = 18:00/06:00 UTC) — 6th consecutive DIRECT scheduled-tasks-API confirmation, still unapplied ~55h after first direct read; reversible one-field edit; waste-elimination, not safety-critical (W204 guard + lock hold bound cost to ≤1 cycle/~11h). (2) **Decide whether Codex runs at all** (0 acquires / 0 commits ever; only claude has ever held the lock). (3) **Rotate the GitHub PAT** embedded in the mount's `origin` remote (W200, still unrotated) — only open security item. (4) **Unblock or freeze the model frontier** — Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 / MLMC default (stage 5) / signed per-OS binaries, all owner-gated; absent a decision, cycles remain verify+sync only.
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_07_31_w224_verify_sync`, `last_run`, `last_updated`, `last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 178→179), `MODEL_DEV_LOG.md` (this entry), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_31_w224_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation** (owner-scoped — reported via email draft, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_07_31_w224_verify_sync.md`
