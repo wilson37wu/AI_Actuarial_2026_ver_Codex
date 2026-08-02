@@ -14780,3 +14780,37 @@ The task's own `description` field documents the intended 12h cadence while `cro
 **Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_08_01_w226_verify_sync`, `last_run`, `last_updated`, `last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 180→181), `MODEL_DEV_LOG.md` (this entry), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_01_w226_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation** (owner-scoped — reported via email draft, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_01_w226_verify_sync.md`
+
+
+## W227 — 2026-08-02T07:08:52Z — exhausted-backlog verification + mount-sync (claude/Cowork) — DEGRADED ENV (disk-full)
+
+**Cycle-id** `2026-08-02T07:08Z-832f` · **Task pointer** Phase 38 Task 3 (ui_app.html native-tab cutover) — **OWNER-GATED, not executed** · **Preflight** PROCEED (lock free; cadence floor cleared — ~643 min after the W226 release `2026-08-01T20:23:12Z`).
+
+**Conclusion.** Model unchanged and **byte-stable**; mount synced to `origin/main`. **34th consecutive** cycle with no auto-admissible model work — the entire model-FORM backlog is owner-gated. **This cycle ran DEGRADED: the root filesystem is 100% full, so the pinned engine venv (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3) could not be installed (ENOSPC) and Gate C (engine self-test + smoke bit-match) and the MLMC suite could NOT be run.** All gates that do NOT need the numerical stack were run and are GREEN, and the governed artifacts are byte-identical to W226 — and since this cycle changed no engine/model/UI code, the Gate C numeric property is inherited unchanged. **NEW owner escalation:** the hourly-cron over-firing (owner action 1) has now accumulated enough unreclaimable `nobody`-owned throwaway clones + venvs (~3.2 GB) to saturate the 9.6 GB disk — the waste is no longer merely redundant, it is now **blocking full verification**. A sandbox reboot / manual `/tmp` purge is required (no agent can delete `nobody`-owned dirs, per W202/W203).
+
+**Battery — PARTIAL (pure-stdlib gates only; numerical-stack gates blocked).**
+Gate C: **NOT RUN** — pinned venv uninstallable (root FS 100%). Frozen ref unchanged and inherited byte-identical from W226 (nested **49657.9** / gaussian **37499.0** / var-covar **30267.9**); no engine code touched this cycle.
+Gate D: spec AST **OK**; release workflow YAML **valid** (jobs `build`, `release`); `offline_bootstrap --self-test` **ok** (exit 0); `build_phase_pkg_task1_validate` **all checks True** (incl. `ui_app_byte_unchanged`, `governed_headline_present`).
+Integrity: `build_offline_home_validate` **177/177**; `test_offline_home_validate` **4/4** (pytest 9.1.1, system-site-packages venv); node loader parity **10/10** (node v22.22.3); MLMC suite **NOT RUN** — needs pinned numpy 1.26.4 (scipy absent system-wide; system numpy 2.2.6 / pandas 2.3.3 are wrong pins).
+Governed byte-stable: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json` contract `1.23.0`; headline `39975.654628199336` present; `ui_app.html` sha256 unchanged (`ui_app_byte_unchanged` gate True); git tree clean (no probe residue).
+Agent-lock: live-exercised (preflight PROCEED `07:08:xxZ` → acquire `07:08:52Z` cycle `832f` → release this cycle).
+
+**W227 datum — the cron is STILL directly-confirmed hourly (9th consecutive direct read).**
+```
+scheduled task : auto_actuarial_stochastic_model
+cronExpression : 0 * * * *          <-- STILL hourly (GROUND TRUTH, read via scheduled-tasks API)
+enabled        : true
+jitterSeconds  : 361                <-- ~6m; explains the observed :06 firing phase
+lastRunAt      : 2026-08-02T07:06:07.115Z  (this firing)
+nextRunAt      : 2026-08-02T08:06:01.000Z  <-- one hour on = independently dispositive vs a 0 2,14 cron
+description    : "...12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC, per AGENT_COORDINATION.md"
+```
+`description` documents the intended 12h cadence while `cronExpression` remains `0 * * * *` — direct evidence the fix was never applied. W219 (`2026-07-29T15:06Z`) first direct read; W220–W226 second–eighth; W227 ninth confirms no owner change across ~88h. The `nextRunAt 08:06:01Z` (one hour after this firing) is independently conclusive: a fixed `0 2,14 * * *` cron would schedule `18:00Z`, not `08:06Z`.
+
+**Disk-full root cause & scope (new this cycle).** `df /`: 9.6 G total, 9.5 G used, **100%** at cycle start. Space owned by `nobody` (prior sessions, undeletable by the current session per the W203 ownership asymmetry): 41 × `cc_*` clones ≈ 1.7 GB + 5 × ~310 MB venvs (`venv_w226`, `venv_w215`, `venv_engine`, `engine_venv`, `evenv`) ≈ 1.5 GB ≈ **3.2 GB locked**. The current session reclaimed only its own partial venv attempts (~182 MB) — insufficient for the ~280–310 MB pinned stack, whose install aborts with `OSError [Errno 28] No space left on device`. This is the first cycle where the leak has actually prevented Gate C / MLMC from running. The W203 mandate to `rm -rf` the clone at end-of-cycle prevents *future* growth from the running session but cannot recover already-`nobody`-owned dirs.
+
+**Owner actions (action 1 re-confirmed by 9th direct read; NEW disk action added).** (1) **Fix the cron `0 * * * *` → `0 2,14 * * *`** (02:00/14:00 HKT = 18:00/06:00 UTC) — 9th consecutive DIRECT confirmation, still unapplied ~88h after first direct read; reversible one-field edit; now doubly-motivated because the over-firing is the root cause of the disk exhaustion. (2) **Reclaim disk / reboot sandbox** — purge the ~3.2 GB of `nobody`-owned `/tmp/cc_*` clones and `/tmp/venv_*` so the pinned engine venv (and thus Gate C + MLMC) can run again; no agent can do this (undeletable ownership). (3) **Decide whether Codex runs at all** (0 acquires / 0 commits ever). (4) **Rotate the GitHub PAT** embedded in the mount's `origin` remote (W200, still unrotated). (5) **Unblock or freeze the model frontier** — Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 / MLMC default (stage 5) / signed per-OS binaries, all owner-gated.
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_08_02_w227_verify_sync`, `last_run`, `last_updated`, `last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 181→182), `MODEL_DEV_LOG.md` (this entry), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_02_w227_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation** (owner-scoped — reported via email draft, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_02_w227_verify_sync.md`
