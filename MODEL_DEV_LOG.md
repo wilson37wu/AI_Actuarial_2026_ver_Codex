@@ -14814,3 +14814,39 @@ description    : "...12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC, per AGE
 **Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_08_02_w227_verify_sync`, `last_run`, `last_updated`, `last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 181→182), `MODEL_DEV_LOG.md` (this entry), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_02_w227_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no banner re-churn; no scheduled-task mutation** (owner-scoped — reported via email draft, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_02_w227_verify_sync.md`
+
+
+## W228 — 2026-08-02T18:10:30Z — exhausted-backlog verification + mount-sync + hand-off refresh (claude/Cowork) — FULL BATTERY (venv-reuse)
+
+**Cycle-id** `2026-08-02T18:10Z-3da0` · **Task pointer** Phase 38 Task 3 (ui_app.html native-tab cutover) — **OWNER-GATED, not executed** · **Preflight** PROCEED (lock free; cadence floor cleared — ~647 min after the W227 release `2026-08-02T07:20:50Z`; this 18:06Z firing lands on the intended 18:00 UTC Claude slot).
+
+**Conclusion.** Model unchanged and **byte-stable**; mount synced to `origin/main`. **35th consecutive** cycle with no auto-admissible model work — the entire model-FORM backlog is owner-gated. **Unlike W227 (DEGRADED/partial), this cycle ran the FULL verification battery GREEN** — including Gate C (engine self-test + smoke bit-match) and the MLMC suite — by **reusing a pre-built pinned engine venv read-only** instead of trying to install a fresh one into the 99%-full root FS. This is the genuinely-new operational finding this cycle and is folded into the STEP-0 hand-off banner in `MODEL_DEV_TASK_PROMPT.md` (which had gone stale at W97).
+
+**The venv-reuse fix (new this cycle).** The disk-full blocker persists (root FS 99%, ~3.2 GB of `nobody`-owned prior-session `/tmp/cc_*` clones + `/tmp/venv_*` still unreclaimable by the unprivileged session). But five of those leaked venvs (`venv_w226`, `venv_engine`, `engine_venv`, `evenv`, `venv_w215`) are **readable/executable** and already carry the **exact pinned stack** (numpy 1.26.4 / scipy 1.13.1 / pandas 2.2.3). Running the engine and pytest with `/tmp/venv_w226/bin/python` needs **zero new disk** and produces the full green battery. W226/W227 degraded because they attempted `pip install` (ENOSPC); the correct move under disk-full is **reuse-before-build**.
+
+**Battery — FULL, GREEN.**
+Gate C: `launch_offline_gui.py --self-test` → `self_test_ok:true`, `engine_ready:true`; `run_model.py --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-matches the frozen reference **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+Gate D: spec AST **OK**; `release.workflow.yml` **valid** (jobs `build`, `release`); `offline_bootstrap --self-test` **ok**; `build_phase_pkg_task1_validate` **all_pass True** (26 checks incl. `ui_app_byte_unchanged`, `governed_headline_present`).
+Integrity: `build_offline_home_validate` **177/177**; `test_offline_home_validate` **4/4**; `offline_home_loader_parity` node **10/10**; MLMC suite **66/66** (`test_mlmc_*`).
+Governed byte-stable: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json` contract `1.23.0`; headline `39975.654628199336` present in `ui_data.json` and `offline_home.html`.
+Agent-lock: preflight PROCEED `18:10Z` → acquire `18:10:30Z` cycle `3da0` → release this cycle.
+
+**W228 datum — the cron is STILL directly-confirmed hourly (10th consecutive direct read).**
+```
+scheduled task : auto_actuarial_stochastic_model
+cronExpression : 0 * * * *          <-- STILL hourly (GROUND TRUTH, scheduled-tasks API)
+enabled        : true
+jitterSeconds  : 361                <-- ~6m; explains the observed :06 firing phase
+lastRunAt      : 2026-08-02T18:06:11.790Z  (this firing)
+nextRunAt      : 2026-08-02T19:06:01.000Z  <-- one hour on = dispositive vs a 0 2,14 cron (would be 06:00Z)
+description    : "...12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC, per AGENT_COORDINATION.md"
+```
+The W204 cadence guard (min 600 min) still bounds the damage: the ~11 intra-day hourly firings between the two real 12h slots yield on the cadence floor, so only the on-cadence firings (like this 18:06Z one, ~647 min after W227) do work.
+
+**Disk status.** `df /`: 99% used, ~181 MB free at cycle start. The ~3.2 GB `nobody`-owned leak is unchanged and still needs an owner reboot / `/tmp` purge — the venv-reuse trick makes verification **robust to** the condition but does not **resolve** it (a fresh full install would still ENOSPC). The current session's own clone (`/tmp/cc_20260802_180722`, ~41 MB) is removed at end-of-cycle per the W203 mandate.
+
+**Owner actions (action 1 re-confirmed by 10th direct read).** (1) **Fix the cron `0 * * * *` → `0 2,14 * * *`** — 10th consecutive DIRECT confirmation, still unapplied; reversible one-field edit; root cause of the disk leak. (2) **Reclaim disk / reboot sandbox** — purge the ~3.2 GB `nobody`-owned `/tmp` leak; no agent can delete it. (3) **Decide whether Codex runs at all** (0 acquires / 0 commits ever). (4) **Rotate the GitHub PAT** in the mount `origin` remote (W200, unrotated) — only open security item. (5) **Unblock or freeze the model frontier** — Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 / MLMC default (stage 5) / signed per-OS binaries, all owner-gated; absent a decision, cycles remain verify+sync only.
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_08_02_w228_verify_sync`, `last_run`, `last_updated`, `last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 182→183), `MODEL_DEV_LOG.md` (this entry), `MODEL_DEV_TASK_PROMPT.md` (STEP-0 hand-off banner refreshed to W228 with the venv-reuse note; stale since W97), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_02_w228_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no new graphic/brief; no scheduled-task mutation** (owner-scoped — reported via email draft, not applied).
+
+**Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_02_w228_verify_sync.md`
