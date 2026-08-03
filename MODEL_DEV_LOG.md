@@ -14850,3 +14850,34 @@ The W204 cadence guard (min 600 min) still bounds the damage: the ~11 intra-day 
 **Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_08_02_w228_verify_sync`, `last_run`, `last_updated`, `last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 182→183), `MODEL_DEV_LOG.md` (this entry), `MODEL_DEV_TASK_PROMPT.md` (STEP-0 hand-off banner refreshed to W228 with the venv-reuse note; stale since W97), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_02_w228_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no new graphic/brief; no scheduled-task mutation** (owner-scoped — reported via email draft, not applied).
 
 **Doc:** `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_02_w228_verify_sync.md`
+
+---
+
+## W229 — 2026-08-03T05:09Z — exhausted-backlog verify + sync (FULL battery via venv-reuse) — cycle `cad6`
+
+**Conclusion.** Model unchanged and **byte-stable**; mount synced to `origin/main`. **36th consecutive** cycle with no auto-admissible model work — Phase 38 Task 3 (`ui_app.html` native-tab cutover) and the entire model-FORM backlog remain owner-gated. FULL verification battery **GREEN**, achieved by reusing a pre-built pinned engine venv **read-only** (`/tmp/venv_w226`), per the W228 reuse-before-build policy for the disk-full condition.
+
+**Battery — FULL, GREEN.**
+Gate C: `launch_offline_gui.py --self-test` → `self_test_ok:true`, `engine_ready:true`; `run_model.py --n-outer 100 --n-inner 4 --no-tail --seed 42` bit-matches the frozen reference **nested 49657.9 / gaussian 37499.0 / var-covar 30267.9**.
+Gate D: spec AST **OK**; `release.workflow.yml` **valid** (jobs `build`, `release`); `offline_bootstrap --self-test` **ok**; `build_phase_pkg_task1_validate` **ok=True** (26/26 checks incl. `ui_app_byte_unchanged`, `governed_headline_present`).
+Integrity: `build_offline_home_validate` **177/177**; `test_offline_home_validate` **4/4**; `offline_home_loader_parity` node **10/10**; MLMC suite **66/66** (`test_mlmc_*`).
+Governed byte-stable: `offline_home.html` md5 `03d6538d3cae9efb83062ecbfab096e9`; `ui_data.json` contract `1.23.0`; headline `39975.654628199336` present in `ui_data.json` and `offline_home.html`.
+Agent-lock: preflight PROCEED `05:09Z` → acquire `05:09:37Z` cycle `cad6` → release this cycle.
+
+**NEW this cycle — the disk leak is actively WORSENING, not merely chronic.** `df /` free fell from **~181 MB** (W228 start, 18:10Z 08-02) to **~102 MB** (W229 start, 05:07Z 08-03) — about **−76 MB over ~11 h** — while the `nobody`-owned `/tmp` leak grew to **~2.66 GB across 54 dirs** (51 `cc_*` clones + 3 `venv_*`). Root cause of the *growth*: STEP 0 clones **before** it preflights, so every hourly cron misfire that correctly yields on the W204 cadence floor **still** leaves a ~41 MB unreclaimable clone. At the current burn, ~102 MB is **< ~1 day** of headroom, after which even venv-reuse verification risks ENOSPC on pytest temp/cache. This escalates owner action #2 (reboot/purge) from *chronic* to **time-critical**, and sharpens #1 (fix the hourly cron — the leak's root cause).
+
+**Scheduler — cron STILL hourly (11th consecutive DIRECT read).**
+```
+scheduled task : auto_actuarial_stochastic_model
+cronExpression : 0 * * * *          <-- STILL hourly (GROUND TRUTH, scheduled-tasks API)
+enabled        : true
+jitterSeconds  : 361
+lastRunAt      : 2026-08-03T05:06:16.326Z   (this firing)
+nextRunAt      : 2026-08-03T06:06:01.000Z   <-- +1h = hourly; a 0 2,14 cron would next fire 14:00Z
+description    : "...12h cadence: 02:00 & 14:00 HKT = 18:00 & 06:00 UTC, per AGENT_COORDINATION.md"
+```
+This 05:06Z firing is an **intra-day misfire** that happened to clear the 600-min cadence floor (~643 min after the W228 release at 18:23Z), so it did work ~1 h before the nominal 06:00Z slot. The guard is doing its job (≤1 working cycle per 600 min) but the hourly grid drifts the phase off the intended slots.
+
+**Owner actions (unchanged set; #2 now time-critical).** (1) **Fix the cron `0 * * * *` → `0 2,14 * * *`** — 11th direct confirmation, still unapplied; reversible one-field edit; root cause of the disk leak. (2) **Reboot/purge sandbox** to reclaim ~2.66 GB `nobody`-owned `/tmp` — **now time-critical** (< ~1 day headroom). (3) **Decide whether Codex runs at all** (0 acquires / 0 commits ever). (4) **Rotate the GitHub PAT** embedded in the mount `origin` remote (W200, unrotated). (5) **Unblock or freeze the model frontier** — Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 / MLMC stage-5 default / signed per-OS binaries.
+
+**Changes:** `.claude-dev/MODEL_DEV_STATE.json` (`cycle_2026_08_03_w229_verify_sync`, `last_run`, `last_updated`, `last_owner`, `overall_status`, `last_run_note`, `progress_metrics.cycles_run` 183→184), `MODEL_DEV_LOG.md` (this entry), `docs/cycle_status/LATEST_CYCLE_STATUS_2026_08_03_w229_verify_sync.md` (new). **No model-FORM / contract / headline / driver / MLMC-default / LSMC change; no new graphic/brief; no scheduled-task mutation** (owner-scoped — reported via email draft, not applied).
