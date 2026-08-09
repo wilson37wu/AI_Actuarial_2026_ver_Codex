@@ -3444,3 +3444,17 @@ Phase IGUI is **COMPLETE** (input+run GUI MVP + one-click packaging + own-run re
 **Forward motion requires an explicit OWNER decision (surfaced in status email; do not pre-empt, do not re-litigate every cycle):** (1) Phase 38 Task 3 native-tab cutover (contract bump + gate sha256 re-baseline); (2) Tail-MLMC Stage-5 governed-default re-baseline; (3) MR-LONGEV-1 longevity 5th driver (model-form change); (4) D packaging CI activation (`workflow`-scope token + per-OS build env, unavailable in sandbox).
 
 **Standing env note:** dev sandbox is ephemeral — engine venv and all cycle authoring stay off-mount in a throwaway clone; new files commit to origin/main and reach the Downloads mount on the owner's next `git pull` (the mount `.git` is stale by design under virtiofs).
+
+---
+
+## NEXT EXECUTION POINTER (updated 2026-08-09 after W239 — exhausted-backlog verification + mount sync)
+
+**Terminal auto-runnable state holds; refreshed from the stale W120 pointer.** W239 verdict PASS; governed artifacts byte-unchanged (offline_home `03d6538d`, ui_app `81824949`, ui_data contract `1.23.0`, headline `39975.654628199336`). FULL battery GREEN on a fresh pinned venv (C bit-match 49657.9/37499.0/30267.9; D pkg-gate 26/26; integrity 177/177 + 4/4 + node 10/10 + MLMC 66/66). The single authoritative `in_progress` driver remains `.claude-dev/MODEL_DEV_STATE.json` = **Phase 38 Task 3 (owner-gated `ui_app.html` native-tab cutover)** — held, not auto-admissible. This is the **46th consecutive** no-model-work cycle (W120→W239 all ran the same SKILL-sanctioned exhausted-backlog branch).
+
+**Next cycle default = same light exhausted-backlog loop:** rebuild the pinned engine venv off-mount; re-run C + D; confirm integrity 177/177 + 4/4 + node 10/10 + MLMC 66/66 and byte anchors unchanged; full tracked-file md5 mount sync; owner-reply check; status email. **No new model-research workstream, no duplicate owner brief, no model-form change.**
+
+**Ops watch (genuinely-new W239, non-blocking):** the `/tmp` ghost-clone leak is **flat at 8** with **zero** growth across ~10 hourly cron ticks since W238 — the leak tracks **app-active session boots**, not the mis-set hourly cron, so it is opportunity-bounded (refines the W238 "per-EXECUTING-firing" model). Disk healthy (73% used / 2.7 GB free). Self-clean of the cycle's own clone + venv remains mandatory (W203).
+
+**Forward motion requires an explicit OWNER decision (surfaced in status email; do not pre-empt, do not re-litigate every cycle):** (1) fix the scheduler cron `0 * * * *` → `0 2,14 * * *` (21st direct confirmation; only durable fix for off-phase firing + the leak); (2) Phase 38 Task 3 native-tab cutover (contract bump + gate sha256 re-baseline); (3) Tail-MLMC Stage-5 governed-default re-baseline; (4) MR-LONGEV-1 longevity 5th driver (model-form change); (5) LSMC inner-loop proxy (model-form change); (6) D packaging CI activation (`workflow`-scope token + per-OS build env, unavailable in sandbox); (7) rotate the GitHub PAT embedded in the mount `origin` remote (W200, unrotated); (8) decide whether Codex runs at all (0 commits ever).
+
+**Standing env note:** dev sandbox is ephemeral — engine venv and all cycle authoring stay off-mount in a throwaway clone; new files commit to origin/main and reach the Downloads mount on the owner's next `git pull` (the mount `.git` is stale by design under virtiofs).

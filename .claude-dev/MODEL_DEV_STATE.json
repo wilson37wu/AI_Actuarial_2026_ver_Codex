@@ -1,11 +1,11 @@
 {
   "session_id": "actuarial-model-auto-dev",
   "created_at": "2026-05-17T00:00:00Z",
-  "last_run": "2026-08-09T12:20Z",
-  "last_run_duration_minutes": 10,
-  "last_run_note": "W238 exhausted-backlog verify+sync (2026-08-09T12:20Z, cycle a974). FULL battery GREEN on fresh pinned venv (numpy 1.26.4/scipy 1.13.1/pandas 2.2.3) - Gate C bit-match nested 49657.9/gaussian 37499.0/var-covar 30267.9; Gate D ok (pkg 26/26); offline_home 177/177; pytest 4/4; node parity 10/10; MLMC 66/66; governed byte-stable (offline_home md5 03d6538d, ui_app md5 81824949, ui_data 1.23.0, headline 39975.654628199336). Genuinely-new: /tmp leak grew 6->8 (+2 clones from the 02-03Z active window), reconciling W236 per-firing and W237 app-active into 'per-EXECUTING-firing' (each firing that spins up a session leaks one clone whether or not it then cadence-yields; 04-11Z firings left none). Disk healthy 73% used/2.7GB free (W229 time-critical state retired since the W232 reboot). 20th direct scheduler read: cron STILL 0 * * * * (nextRunAt 13:06:01Z); 12:06Z firing landed in the nominal Codex 12:00 slot, no collision (Codex 0 commits ever). 45th consecutive no-model-work cycle. Mount synced; clone self-cleaned. [claude]",
+  "last_run": "2026-08-09T23:12Z",
+  "last_run_duration_minutes": 5,
+  "last_run_note": "W239 exhausted-backlog verify+sync (2026-08-09T23:12Z, cycle de91). FULL battery GREEN on fresh pinned venv (numpy 1.26.4/scipy 1.13.1/pandas 2.2.3) - Gate C bit-match nested 49657.9/gaussian 37499.0/var-covar 30267.9; Gate D ok (pkg 26/26); offline_home 177/177; pytest 4/4; node parity 10/10; MLMC 66/66; governed byte-stable (offline_home md5 03d6538d, ui_app md5 81824949, ui_data 1.23.0, headline 39975.654628199336); mount synced. NEW: /tmp leak FLAT at 8 (no growth since W238 despite ~10 hourly ticks 13-22Z => app-active-boot not per-tick; refines W238). 21st direct scheduler read: cron STILL 0 * * * * (nextRunAt 00:06:01Z). 46th consecutive no-model-work cycle. Mount synced; clone self-cleaned. [claude]",
   "current_phase": "Phase 38 (Asset/Liability/Net Cash-Flow & Products in the UI), owner-directed 2026-06-29. Tasks 1-2 COMPLETE (auto-admissible). ACTIVE in_progress = Phase 38 Task 3 = OWNER-GATED ui_app.html native-tab cutover (requires owner sha256 re-baseline across the gate scripts + a ui_data contract bump) - NOT auto-executed. Auto-admissible backlog SATURATED: governance-gate set saturated (INTEGRITY_GATE_MAP.md W92, VERIFICATION_RUNBOOK.md W93); tail-MLMC track complete through the stage-5 Neyman study (W95) consolidated into docs/MLMC_TAIL_EFFICIENCY_MAP.md (W96); offline-UI governed artifacts byte-stable; TASK_PROMPT hand-off banner refreshed W97 and left current through W98/W99/W100/W101/W102 (re-issuing is a near-duplicate). W99-W101 then W102 (2026-06-30 16:09Z) ran the SKILL-sanctioned exhausted-backlog branch: full verification battery GREEN + full tracked-file mount sync; NO new gate/code/model-FORM/contract/headline change and NO banner re-churn. Researched forward pointer unchanged: the highest-leverage genuinely-NEW direction is an LSMC (least-squares Monte Carlo) regression PROXY of the inner risk-neutral valuation to replace the brute-force nested inner loop for SCR - the canonical next model-FORM beyond the now-exhausted MLMC variance-reduction track - but it is a model-FORM change and stays OWNER-GATED. W194 continues the exhausted-backlog branch (W99-W193 lineage); W194 additionally recorded a clean-room engine rebuild parity check and a six-day cadence outage (no runs 2026-07-15..2026-07-20). W106 registered behind the same hard near-duplicate guard: default to the exhausted-backlog verification + full mount-sync pass unless a genuinely NEW non-duplicate gap is demonstrated. NO model-FORM/contract/headline change (owner-gated); Phase 38 Task 3 owner-gated; LSMC proxy / MLMC-default stage-5 / MR-LONGEV-1 longevity driver / signed per-OS binaries all OWNER-GATED. W197 (2026-07-21T10:08Z) continued the exhausted-backlog branch and added ONE genuinely-new non-duplicate finding: the cadence fix VALUE recommended by W196 is corrected from '0 6,18 * * *' to '0 2,14 * * *' on host-local-timezone evidence (host verified UTC+8; two sibling scheduler tasks map cron hour to HKT hour). Disambiguation is a single nextRunAt reading after the owner sets it. No model-FORM/contract/headline/banner change; no near-duplicate brief added.",
-  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W238_FULL_BATTERY_GREEN(fresh_pinned_venv;GateC_bitmatch+GateD+MLMC_66of66)__GOVERNED_ARTIFACTS_BYTE_STABLE(offline_home_md5_03d6538d;ui_app_md5_81824949;ui_data_contract_1.23.0;headline_39975.654628199336)__MOUNT_SYNCED__TMP_LEAK_6to8(+2_from_02-03Z_active_window=per-EXECUTING-firing;reconciles_W236+W237)__DISK_HEALTHY_73pct_2.7GB_free__CRON_STILL_HOURLY(20th_direct_read;nextRunAt_13:06:01Z)__45th_consecutive_no_model_work_cycle",
+  "overall_status": "PHASE_38_TASK3_OWNER_GATED__W239_FULL_BATTERY_GREEN(fresh_pinned_venv;GateC_bitmatch+GateD+MLMC_66of66)__GOVERNED_ARTIFACTS_BYTE_STABLE(offline_home_md5_03d6538d;ui_app_md5_81824949;ui_data_contract_1.23.0;headline_39975.654628199336)__MOUNT_SYNCED__TMP_LEAK_FLAT_8(no_growth_since_W238_despite_~10_hourly_ticks_13-22Z=app-active-boot_not_per-tick;refines_W238)__DISK_HEALTHY_73pct_2.7GB_free__CRON_STILL_HOURLY(21st_direct_read;nextRunAt_00:06:01Z)__46th_consecutive_no_model_work_cycle",
   "phases": {
     "Phase 1: Model Review & Documentation": {
       "status": "completed",
@@ -820,7 +820,7 @@
     "phases_completed": 27,
     "estimated_completion_pct": 99,
     "average_cycle_duration_minutes": 53,
-    "cycles_run": 193,
+    "cycles_run": 194,
     "tasks_total": 116,
     "last_task": "Owner pivot C+D executed: C end-to-end verified; D authored+verified (build owner/CI-gated)",
     "next_task": "Auto-cycles: maintain/verify C run-path + assist D activation (owner installs CI workflow + tags/dispatches, or local pyinstaller build). Stage-5 governed default remains separately sign-off-gated.",
@@ -1124,7 +1124,7 @@
     "tests": "27 new PASS (tests/test_phase25_task5_ui_propagation.py); targeted regression: all four UI-propagation suites 87 PASS, Phase 25 T1-T4 suites 140 PASS, governance/audit 79 PASS; compileall clean; ui self-test ok:true; offline-viewer self-test ok",
     "next_task": "Phase 26 Task 1 - design-note-first candidate selection: (a) full path-wise copula re-aggregation (quantified motivation 14.7% beyond-noise; rank-invariance machinery staged in /var/tmp/p25t4_stage), (b) credentialled-data calibration (human-blocked), (c) declaration-cadence refinement (annual board cadence; sensitivity 1.136 archived)."
   },
-  "last_updated": "2026-08-09T12:20Z",
+  "last_updated": "2026-08-09T23:12Z",
   "cycle_2026_06_08_phase26_task2": {
     "verdict": "PASS",
     "gates": "6/6 pre-registered",
@@ -7861,6 +7861,59 @@
     "headline_rebaselined": false,
     "owner_actions": [
       "1. Fix cron 0 * * * * -> 0 2,14 * * * (20th direct confirmation; only durable fix; reported not applied - owner-scoped).",
+      "2. Decide whether Codex runs at all (0 commits ever).",
+      "3. Rotate the GitHub PAT embedded in the mount origin remote (W200, unrotated).",
+      "4. Unblock or freeze the model frontier (Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 / MLMC stage-5 default / signed per-OS binaries - all owner-gated)."
+    ]
+  },
+  "cycle_2026_08_09_w239_verify_sync": {
+    "type": "exhausted-backlog verification + mount-sync (SKILL-sanctioned branch) - full battery re-run on fresh pinned venv",
+    "timestamp": "2026-08-09T23:12Z",
+    "cycle_id": "2026-08-09T23:09Z-de91",
+    "owner": "claude",
+    "task_pointer": "Phase 38 Task 3 (ui_app.html native-tab cutover) - OWNER-GATED, not executed",
+    "consecutive_no_model_work_cycles": 46,
+    "verification": {
+      "gate_c_self_test": "self_test_ok:true, engine_ready:true (numpy+scipy true)",
+      "gate_c_smoke_bitmatch": "nested 49657.9 / gaussian 37499.0 / var-covar 30267.9 (seed 42, 100x4, no-tail) - EXACT",
+      "gate_d": "spec AST OK; release.workflow.yml valid YAML (name/permissions/concurrency/jobs); offline_bootstrap --self-test ok:true; build_phase_pkg_task1_validate ok=True 26/26 (incl ui_app_byte_unchanged, governed_headline_present)",
+      "integrity_offline_home_validate": "177/177 (ok:true, failed:[])",
+      "integrity_offline_home_pytest": "4/4",
+      "integrity_node_loader_parity": "10/10 (node v22.22.3, ok:true)",
+      "integrity_mlmc_suite": "66/66 (1 skipped, 4246 deselected; test_mlmc_* all pass, 105.78s)"
+    },
+    "governed_byte_stable": {
+      "offline_home_html_md5": "03d6538d3cae9efb83062ecbfab096e9",
+      "ui_app_html_md5": "818249497e95ff25b8e4dda50d38502e",
+      "ui_app_byte_unchanged": true,
+      "ui_data_contract": "1.23.0",
+      "headline_scr": "39975.654628199336",
+      "note": "run_model smoke rewrote docs/validation/RUN_MODEL_{SUMMARY,AGGREGATION_REPORT}.json (run_timestamp/run_id/duration only; verdict PASS, reproducibility_digest 7c8a1a1b/c9d24bc1 and SCR identical); REVERTED via git checkout, not committed."
+    },
+    "tmp_leak_finding_W239": {
+      "finding": "Leak FLAT at 8 nobody-owned cc_* clones - NO growth since W238's 8 (no new clone in the 13:06Z-22:06Z window).",
+      "refines_w238": "W238's 'per-EXECUTING-firing' model predicted +1 clone per hourly firing that boots a sandbox; ~10 hourly cron ticks fired between the W238 12:21Z release and this 23:06Z firing yet left ZERO clones. Interpretation: those nominal hourly ticks did NOT actually boot a Cowork agent session (scheduler records lastRunAt without a session), so the operative variable is an APP-ACTIVE SESSION BOOT (bursts / active windows), not each cron tick. Leans back toward the W237 app-active-window model and bounds the leak: it grows only during real active windows, not with raw cron cadence.",
+      "disk": "df / = 9.6G total, 6.9G used, 2.7 GB free (73%) - healthy, FLAT vs W238; not the W229 time-critical state.",
+      "self_clean": "This session's own cc_20260809_230751 + /tmp/venv_w239 self-clean at end-of-cycle (W203 own-session deletable).",
+      "durable_fix": "Owner action 1 (cron -> 0 2,14) remains the durable fix."
+    },
+    "scheduler_direct_read": {
+      "read_number": "21st consecutive direct read",
+      "cronExpression": "0 * * * *",
+      "enabled": true,
+      "jitterSeconds": 361,
+      "lastRunAt": "2026-08-09T23:06:32.282Z",
+      "nextRunAt": "2026-08-10T00:06:01.000Z",
+      "note": "nextRunAt +1h dispositive of hourly cron; task description carries intended 02:00&14:00 HKT = 18:00&06:00 UTC, only cronExpression wrong. Proceeded on cleared 600-min cadence floor (~648 min after the W238 12:21Z release). This 23:06Z firing precedes the nominal Codex 00:00 slot by ~51 min; Codex has 0 commits ever and the lock releases before 00:00, so no collision."
+    },
+    "codex_participation": "0 acquires / 0 commits ever; owner decision on whether Codex runs at all remains open.",
+    "coordination": "preflight PROCEED 23:07Z -> acquire 23:09:30Z cycle de91 -> release this cycle; git in fresh /tmp clone of origin/main; mount .git untouched.",
+    "governed_artifacts_changed": false,
+    "model_form_change": false,
+    "contract_change": false,
+    "headline_rebaselined": false,
+    "owner_actions": [
+      "1. Fix cron 0 * * * * -> 0 2,14 * * * (21st direct confirmation; only durable fix; owner-scoped).",
       "2. Decide whether Codex runs at all (0 commits ever).",
       "3. Rotate the GitHub PAT embedded in the mount origin remote (W200, unrotated).",
       "4. Unblock or freeze the model frontier (Phase 38 T3 / LSMC inner-loop proxy / MR-LONGEV-1 / MLMC stage-5 default / signed per-OS binaries - all owner-gated)."
