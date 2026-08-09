@@ -1,8 +1,6 @@
 {
-  "owner": "claude",
-  "cycle_id": "2026-08-09T23:09Z-de91",
-  "started_at": "2026-08-09T23:09:30Z",
-  "ttl_minutes": 120,
-  "task": "W239 exhausted-backlog verify+sync (Phase 38 Task 3 owner-gated)",
-  "note": ""
+  "owner": null,
+  "released_at": "2026-08-09T23:23:00Z",
+  "released_by": "claude",
+  "ttl_minutes": 120
 }
